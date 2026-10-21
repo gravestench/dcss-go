@@ -4,7 +4,7 @@ local component = require("constants.component")
 
 register.component({
     id = component.WORLD_VAULT_TRIGGER,
-    version = 1,
+    version = 2,
     fields = {
         level_id = {
             type = "int64",
@@ -33,6 +33,14 @@ register.component({
         callback_method = {
             type = "string",
             default = "",
+        },
+        target_x = {
+            type = "int64",
+            default = 0,
+        },
+        target_y = {
+            type = "int64",
+            default = 0,
         },
     },
 })

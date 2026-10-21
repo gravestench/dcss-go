@@ -1,0 +1,56 @@
+# Hangedman swamp dais is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: hangedman_swamp_dais
+TAGS:    no_pool_fixup no_monster_gen no_item_gen patrolling
+DEPTH:   Swamp, Zot, !Zot:$
+KITEM:   *| = % no_pickup w:2 / * no_pickup / | no_pickup
+KFEAT:   aA = stone_arch
+KFEAT:   B = shallow_water
+KFEAT:   Z = zot trap
+: vault.run("configure_branch")
+# Source Lua: : if you.in_branch("Swamp") then
+# Source Lua: MONS:    swamp drake, hydra, swamp dragon
+# Source Lua: KMONS:   A = swamp dragon
+# Source Lua: KMONS:   B = green draconian
+# Source Lua: SUBST:   x = t
+# Source Lua: NSUBST:  1 = 2 / 3 / * = 1:80 23
+# Source Lua: : else
+# Source Lua: KMONS:   1 = green draconian
+# Source Lua: KMONS:   a = death drake
+# Source Lua: KMONS:   A = tentacled monstrosity / green death
+# Source Lua: KMONS:   B = green draconian stormcaller
+# Source Lua: KMONS:   % = ugly thing / orange demon
+# Source Lua: KMONS:   *d = swamp dragon w:8 / seven-headed hydra w:5 \
+# Source Lua:               / eight-headed hydra w:5
+# Source Lua: KMONS:   | = large abomination / tentacled monstrosity w:5
+# Source Lua: SHUFFLE: A%| / ad*
+# Source Lua: : end
+SUBST:   < : <:1 .:9
+NSUBST:  < = { / 1=}
+SHUFFLE: {} / {[ / {[ / }] / }]
+MARKER:  A = lua:fog_machine { cloud_type = "translocational energy", \
+                               pow_max = 2, delay_min = 100, delay_max = 150, \
+                               size = 1, walk_dist = 1 }
+MAP
+         xxxxx
+        @xWxWxxxx
+       @@......<xx
+    xxxxxxxxxx..Zxx
+   xxxxxcxxxx.x1.<x
+  xxxWWW.WWW.xGx..x
+ xxxW1..W...W.x.x.xx
+xxxW...twt...W.xx.Wx
+xxW1.t..t..t..Wxx.xx
+xxW...t.w.t...Wxx.Wx
+xxW.t..w|w..t.Wxx.xx
+xc.Wwtw|A|wtwW.cx@@
+xxW.t.%w|w..t.Wxx@
+xxW...t%w.t...Wxx
+xxW..t..t..t.1Wxx
+xxxB...twt...Wxxx
+ xxxB...W..1Wxxx
+  xxxWWW.WWWxxx
+   xxxxxcxxxxx
+    xxxxxxxxx
+ENDMAP

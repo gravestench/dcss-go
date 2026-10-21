@@ -1,0 +1,19 @@
+# Lightli tree ring is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: lightli_tree_ring
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+KPROP: *w = no_tele_into
+MAP
+tttttttttt
+tttttttttt
+ttwwwwwwtt
+ttwwwwwwtt
+ttww**wwtt
+ttwwwwwwtt
+ttwwwwwwtt
+ttt.tt.ttt
+tttt..tttt
+tttt@@tttt
+ENDMAP

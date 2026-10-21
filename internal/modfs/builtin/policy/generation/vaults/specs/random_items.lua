@@ -28,7 +28,8 @@ function random_items.describe(name, depth)
         result.class_id = classes.OBJ_STAVES
     elseif name == requests.ANY_BOOK then
         result.class_id = classes.OBJ_BOOKS
-    elseif name == requests.ANY_SCROLL then
+    elseif name == requests.ANY_SCROLL or
+        name == requests.ANY_CONCEALMENT_SCROLL then
         result.class_id = classes.OBJ_SCROLLS
     elseif name == requests.ANY_POTION then
         result.class_id = classes.OBJ_POTIONS

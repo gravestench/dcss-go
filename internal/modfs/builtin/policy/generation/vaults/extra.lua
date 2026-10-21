@@ -220,7 +220,8 @@ function extra.generate(ctx, builder, context)
     end
 
     local primary = place_chance_stage(ctx, builder, context, placed)
-    local explicit = place.place(ctx, builder, context, placed, extra.place)
+    local explicit = place.place(ctx, builder, context, placed,
+        extra.place, place_chance_map)
     local branch_regular = regular.place(ctx, builder, context,
         placed, extra.place)
     local ordinary = minivault.place(ctx, builder, context,

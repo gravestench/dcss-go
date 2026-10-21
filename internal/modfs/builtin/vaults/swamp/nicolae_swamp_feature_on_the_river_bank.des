@@ -1,0 +1,24 @@
+# Nicolae swamp feature on the river bank is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_feature_on_the_river_bank
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS: transparent no_pool_fixup decor
+SUBST: T = t., W = .Ww t:5, Q = tw, f = .GTV U:5 C:5
+MAP
+     tttQ..@..Qttt
+    ttQQQ.....QQQtt
+tttttQQwW.....WwQQttttt
+  ttQQwwW.....WwwQQtt
+  ttQwwwW..f..WwwwQtt
+   ttwwwW.....Wwwwtt
+   @TwwwWW...WWwwwT@
+   ..WwwwWWWWWwwwW..
+   T..WwwwwwwwwwW..T
+   tT..WwwwwwwwW..Tt
+   ttT..WWWwWWW..Ttt
+    ttT...WWW...Ttt
+     ttT.......Ttt
+      ttTTTTTTTtt
+ENDMAP

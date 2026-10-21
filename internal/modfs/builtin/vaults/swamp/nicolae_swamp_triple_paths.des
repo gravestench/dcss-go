@@ -1,0 +1,28 @@
+# Nicolae swamp triple paths is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_triple_paths
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS: transparent extra decor
+SUBST: T = t_
+CLEAR: _
+MAP
+         Tt@tT
+         Tt.tT
+     @TTTTt.tTTTT@
+    T..tttt.tttt..T
+    TT....t.t....TT
+     Tttt.t.t.tttT
+    TTttt.t.t.tttTT
+TTTTTtttt.t.t.ttttTTTTT
+ttttttttt.t.t.ttttttttt
+TTTTTtttt.t.t.ttttTTTTT
+    TTttt.t.t.tttTT
+     Tttt.t.t.tttT
+    TT....t.t....TT
+    T..tttt.tttt..T
+     @TTTtt.ttTTT@
+        TTt.tTT
+         Tt@tT
+ENDMAP

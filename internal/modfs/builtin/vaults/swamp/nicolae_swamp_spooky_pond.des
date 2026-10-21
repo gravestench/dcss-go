@@ -1,0 +1,29 @@
+# Nicolae swamp spooky pond is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_spooky_pond
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   transparent no_monster_gen
+KMONS:  1 = fenstrider witch
+KMONS:  2 = bog body / will-o-the-wisp w:5
+KMONS:  3 = will-o-the-wisp
+KFEAT:  12 = w
+KFEAT:  3 = W
+NSUBST: 2 = 2=2 / 2w, 3 = 2=3 / S
+SUBST:  S = W., D = Ww, P = p.
+MAP
+    ttttttttttt
+   ttSSSS3SSSStt
+  tt..St.S.tS..tt
+ tt..SttSSSttS..tt
+ttt.SttWWWWWttS.ttt
+....StSWD2DWStS....
+@...3tSW212WSt3...@
+....StSWD2DWStS....
+ttt.SttWWWWWttS.ttt
+ tt..SttSSSttS..tt
+  tt..St.S.tS..tt
+   ttSSSS3SSSStt
+    ttttttttttt
+ENDMAP

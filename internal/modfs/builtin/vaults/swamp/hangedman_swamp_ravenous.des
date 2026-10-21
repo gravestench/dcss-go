@@ -1,0 +1,27 @@
+# Hangedman swamp ravenous is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: hangedman_swamp_ravenous
+TAGS:    no_pool_fixup no_monster_gen patrolling transparent
+DEPTH:   Swamp, !Swamp:$
+MONS:    bog body, necrophage, ghoul
+SUBST:   jl = t
+KFEAT:   % = shallow_water / .
+SHUFFLE: jJ / lL, })
+SUBST:   JLT = w:4 t, M = ~:4 t, } = }:20 >, ) = ):25 <>
+CLEAR:   ~
+: vault.run("remains.any_corpse_percent")
+# Source Lua: : dgn.delayed_decay(_G, '%', 'any corpse')
+MAP
+ MMtttttt
+MtttWTWttt
+tt1W2w2W1tt
+t1WlTWt.W1t
+@%wlL}jJ.%t
+ ..lL3jJw.
+t%.lL)jJw%@
+t1W.tWTt.1t
+tt1W2w2W1tt
+MtttWTWtttM
+ MMtttttMM
+ENDMAP

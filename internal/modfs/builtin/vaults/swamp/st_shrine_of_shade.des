@@ -1,0 +1,23 @@
+# St shrine of shade is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: st_shrine_of_shade
+DEPTH:   Swamp, !Swamp:$
+MONS:    bog body w:20 / necrophage w:5 / ghoul w:5 / nothing w:25, ghost crab
+KMONS:   P = withered plant
+SUBST:   p = Pp, p = PP., o = P..
+MAP
+   oo.oooo
+  pppp.pppp
+ ppccc.cccpp
+opccppo.occpo
+opcp2c1c.ocpo
+ pc.c111cocp
+....11c11...@
+ pcoc111cocp
+opco.c1c2ocpo
+opccoo.ppccpo
+ ppccc.cccpp
+  ppppo.ppp
+   ooo.ooo
+ENDMAP

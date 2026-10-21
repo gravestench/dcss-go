@@ -1,0 +1,54 @@
+# Cheibrodos swamp mausoleum is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: cheibrodos_swamp_mausoleum
+DEPTH:   Swamp:2-, !Swamp:$
+ORIENT:  south
+TAGS:    no_monster_gen no_pool_fixup
+WEIGHT:  5
+MONS:    spectral hydra / spectral swamp dragon, death drake, necromancer
+MONS:    bog body w:8 / w:5 wraith / w:3 phantasmal warrior / w:1 freezing wraith
+KMONS:   5 = bog body / spriggan zombie w:4 / troll zombie w:4
+KMONS:   6 = large abomination w:2 / swamp worm zombie / goliath frog zombie / \
+             tyrant leech zombie w:6 / alligator zombie w:6
+KMONS:   q = withered plant
+KFEAT:   56 = W
+KPROP:   ~ = no_tele_into
+SUBST:   " = 6:15 W
+SHUFFLE: DE
+SUBST:   D = W, E = t, W = W:299 .:1, + = ++W, - = +, ~ = W
+MARKER:  V = lua:fog_machine { cloud_type = "thin mist", pow_min = 1, \
+             pow_max = 3, delay = 20, start_clouds = 1, size_min = 2, \
+             size_max = 4, spread_rate = -1 }
+SUBST:   u = V
+MAP
+ tttttt   tttttttttt
+ ttt..tt t~tt.tt.t.tttt
+txxx.Wtttttt.4..u.WWWttt  xxxxxx
+xxx.WWW..t..4.W..WW6tttttxxx%%xxx
+x"+.W-W...u..W6WW6WWWWuttx5+..+5x
+xxxWWxW6W...tttWWW6WWWWWDDxx..xxx
+x"+WWW6WtWttWxxxxEEEWWW6WDW+..+5x
+xxxWWxWxtWWtxxtWtWWEEW..Wxxx..xxx
+x"WWW+WxWWWxxDWWWWt.Ex..Wx"+.W+"x
+xxxWWxxxWttx.DDDW..6tx.WWxxxWWxxxtt
+xxx.WWxxxxxx..WDDW6.txWWWxxxWWxxxWtW
+x....WWWW..+...WDDW.xxtWtt6.WWWWtWW@
+x......W...+...WuDWWxxxttWW6.WWWWW..
+xxx..xxxxxxx..WW.tDWWxxxxxxxWWxxWtW@
+xxx..xxxWWxxWWWt..DDEEtttxxxWWxxxtt
+x5+..+5xWWWxxxW....xxEEWW.4-WW-"xt~
+xxx..xxxq..qxx.....xxtW4..xxWWxxxt
+x5+..-.q..|..xx...xxttW.4WWWWWW"x
+xxx..xxx$..qq2x+++xttttWWWWWWWxxx
+x5+..+5xq$$xxxx...xxxxttWxW..W+"x
+xxx%%xxxxxxxx%.....%xxxxxxxx..xxx
+ xxxxxxt~xx%..1.1.1..%xxt~xxxxxx
+   ttttt~xV....131....Vx~tt~ttt
+      tttxx%....1....%xx~ttt
+       tttxxx*.....*xxx~~tt
+        tttxxxx|W|xxxx~ttt
+         ttt~xxxxxxx~~tt
+          tttt~~t~~tttt
+            ttttttttt
+ENDMAP

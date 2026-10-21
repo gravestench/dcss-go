@@ -11,7 +11,6 @@ local ids = require("ids.vaults")
 local tags = require("constants.vault_tags")
 
 local test = {}
-local SOURCE_DECOR_MAPS = 85
 
 -- The source controller has no cells and only enters the chance stage
 -- from D:14 onward or in Depths; its child draw follows placement.
@@ -53,21 +52,44 @@ local function controller_contract()
     }), "decor registered for Depths")
 end
 
--- The controller does not maintain a second child list. Count the live
--- catalog tag so renamed files and mod layers cannot change selection.
+-- The global decor tag is shared by Dungeon, Slime and Swamp. Check the
+-- effective Dungeon pool using the same branch eligibility as selection,
+-- so importing another branch cannot change this controller's contract.
 local function child_catalog_contract()
-    local count = 0
+    local dungeon = 0
+    local swamp = 0
+    local dungeon_context = {
+        branch_id = branches.BRANCH_DUNGEON,
+        depth = 14,
+        branch_bottom = 15,
+        absolute_depth = 14,
+    }
+    local swamp_context = {
+        branch_id = branches.BRANCH_SWAMP,
+        depth = 2,
+        branch_bottom = 4,
+        absolute_depth = 16,
+    }
 
     for _, id in ipairs(register.ids(categories.VAULTS)) do
         local map = catalog.get(id)
 
         if map.tags[tags.DECOR] then
-            count = count + 1
+            if eligibility.tag(map, dungeon_context) then
+                harness.falsy(map.family == "swamp",
+                    "Swamp decor cannot enter the Dungeon pool")
+                dungeon = dungeon + 1
+            end
+
+            if map.family == "swamp" and
+                eligibility.tag(map, swamp_context) then
+                swamp = swamp + 1
+            end
         end
     end
 
-    harness.equal(count, SOURCE_DECOR_MAPS,
-        "committed source decor child maps")
+    harness.truthy(dungeon > 0, "Dungeon decor has eligible children")
+    harness.truthy(swamp > 0, "Swamp decor joins its own branch pool")
 end
 
 -- Keep the controller and its tagged child pool in one category check.

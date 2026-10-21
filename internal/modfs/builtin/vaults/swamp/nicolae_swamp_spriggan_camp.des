@@ -1,0 +1,26 @@
+# Nicolae swamp spriggan camp is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_spriggan_camp
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+KMONS:   D = patrolling spriggan rider
+KMONS:   SGHI = spriggan / nothing
+KMONS:   F = spriggan druid
+SHUFFLE: Ff/Gg/Hh/Ii
+SUBST:   ghi = .
+MAP
+       ttttt
+  ttttttgggt
+ @.ttt.t.G.t
+@......tt.tt
+t...D..S...t
+tttt.......tt
+ ttt.S..S...t
+ tt......tt.t
+tttt.tt.tt..t
+ti...t...tH.t
+tiI..t.F.thht
+ti...t...tttt
+tttttttttt
+ENDMAP

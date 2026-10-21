@@ -1,0 +1,22 @@
+# Nicolae swamp long stream is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_long_stream
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    decor
+ORIENT:  float
+SHUFFLE: Pp/Qq/Rr
+SUBST:   p = w, P = w_, QqRr = _
+CLEAR:   _
+MAP
+tttt
+t...@        RrrrrrR
+t.wwww  RrrrrrrRRRrrrrR       ttt
+t.wwwwRrrrR qqqqQ   RrrrrrR  ...t
+t..wwwwwqqqQq Qqqqq   qqqrrRwww..t
+tt... PppPqqq    QqqQQqQqqwwwwww.t
+ ttt   PpppP  PppppqqqqppppPwww..t
+         PppppppPPppppppP    @..tt
+           PPPP    PPPP       ttt
+ENDMAP

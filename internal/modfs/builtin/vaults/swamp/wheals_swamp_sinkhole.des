@@ -1,0 +1,21 @@
+# Wheals swamp sinkhole is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: wheals_swamp_sinkhole
+TAGS:   extra no_monster_gen decor
+DEPTH:  Swamp:1-2
+WEIGHT: 5
+KFEAT: ^ = shaft trap
+SUBST: u = Ww
+KPROP: wW^ = no_tele_into
+MAP
+ttttttttt
+twwwwwwwt
+twuuuuuwt
+twuWWWuwt
+twuW^Wuwt
+twuWWWuwt
+twuuuuuwt
+@wwwwwwwt
+ttttttttt
+ENDMAP

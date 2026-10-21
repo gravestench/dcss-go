@@ -1,0 +1,26 @@
+# Nicolae swamp necromancer hut is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_necromancer_hut
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+SUBST: m = xm, D = t_, q = tW., r = W., W = zW
+MONS:  necromancer
+KMONS: z = alligator zombie / swamp dragon zombie / hydra zombie / \
+           bunyip zombie / bog body w:5 / bloated husk w:5 / \
+           alligator simulacrum w:5 / swamp dragon simulacrum w:5 / \
+           hydra simulacrum w:5 / bunyip simulacrum w:5
+KFEAT: z = W
+CLEAR: _
+MAP
+  DDDDDDDDD
+ DDtttttttDD
+DDttxxxxxttDD
+Dtqqx...xqqtD
+Dtqrm.1.mrqtD
+Dqqrx...xrqqD
+ qrrxx+xxrrq
+  rr.z.z.rr
+    .....
+     @@@
+ENDMAP

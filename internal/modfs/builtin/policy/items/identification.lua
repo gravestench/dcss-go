@@ -291,7 +291,10 @@ function identification.reveal_item(ctx, entity, fields)
     local artefact_book = kind and artefact and
         kind.class == classes.OBJ_BOOKS
 
-    if fields.type then
+    -- DES `ident:type` may name a fixed book such as Fen Folio. Fixed books
+    -- have no hidden type to reveal, so do not save impossible knowledge.
+    if fields.type and kind and
+        (appearances.pool(kind) or manual or artefact) then
         state.known_type = true
     end
 

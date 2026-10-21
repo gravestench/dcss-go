@@ -1,0 +1,24 @@
+# Nicolae swamp decorative isthmus is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_decorative_isthmus
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   no_pool_fixup transparent decor
+ORIENT: float
+SUBST:  _ = t_, ' = w:50 ., D = t:50 w, Q = W:50 w
+CLEAR:  _
+MAP
+________________
+tttttttttttttttt
+tDD''QtDw..'Dttt
+t'ww.wtQQWwww'Qt
+wQQWwwwW.WwwwwW@
+wW.WQQWQQQWQQWQ.
+WQQQW.WwwQ...WQQ
+.QwQ..QwwQQQQQww
+@QwQQWQWwwwwwwDw
+QQDt'wWt...'tDtt
+tttttttttttttttt
+________________
+ENDMAP

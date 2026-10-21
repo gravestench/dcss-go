@@ -74,6 +74,7 @@ local function monster_options(record, level)
         depth = level.id,
         base_id = arguments.base_id ~= "" and arguments.base_id or nil,
         blob_size = arguments.blob_size or 1,
+        hydra_heads = arguments.hydra_heads or 0,
         band = arguments.band or false,
         variant = arguments.variant,
         colour = arguments.colour ~= "" and arguments.colour or nil,

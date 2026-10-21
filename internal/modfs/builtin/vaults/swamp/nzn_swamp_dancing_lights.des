@@ -1,0 +1,26 @@
+# Nzn swamp dancing lights is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nzn_swamp_dancing_lights
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   transparent no_pool_fixup
+KMONS:  O = will-o-the-wisp
+NSUBST: D = W / w, E = O / W, F = W / w, H = O / W, J = W / w, K = O / W
+SUBST:  w = wwwt
+KFEAT:  O = shallow_water
+MARKER: O = lua:fog_machine {  pow_min = 8, pow_max = 12, delay = 25, \
+                                size = 2, walk_dist = 1, spread_rate= 33 }
+MAP
+     www
+    wwEww
+    wEEEw
+    DDEDD
+  @@WDDDW@@
+  @WwWWWwW@
+ wFFWWWWWJJw
+wwHFFWwWJJKJw
+wHHHF@@@JKKKw
+wwHww   wwKww
+ www     www
+ENDMAP

@@ -1,0 +1,25 @@
+# Nicolae swamp bloodsuckers inc is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_bloodsuckers_inc
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:  transparent patrolling no_monster_gen
+SUBST: E = W., D = Ww
+KFEAT: 1 = w
+KMONS: 1 = vampire mosquito w:15 / vampire mosquito band w:5 / nothing w:5
+KMONS: 2 = tyrant leech / nothing w:3
+KMONS: p = plant
+MAP
+ t.@.t
+ tpppttttttt
+tt.2tt.....tt
+t..EwEEEwE2.t
+t.Ew1DED1wE.t
+t2E1wDEDw1E2t
+t.Ew1DED1wE.t
+t.2EwEEEwE..t
+tt.....tt2.tt
+ tttttttpppt
+       t.@.t
+ENDMAP

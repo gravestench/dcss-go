@@ -1,0 +1,27 @@
+# Cheibrodos swamp monstrosity is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: cheibrodos_swamp_monstrosity
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   no_monster_gen no_pool_fixup
+ORIENT: float
+MONS:   tentacled monstrosity
+NSUBST: " = 1=*| / 3=%$, - = ..twW
+SUBST:  ' = t:20 W
+MAP
+   ''''''''
+  'tttttttt'
+ 'ttttW--ttt'
+ 'tttWWWWW-tt
+'tttcc+cc-W-t'
+'ttcc...ccW-t'
+'ttc"..."c-Wt'
+tttc".1."c-Wt'
+tttcc"""ccW-t'
+@.W-ccncc-W-t'
+@..WWWWW-W-tt'
+tttt----WWtt'
+ tttttttttt'
+  '''''''''
+ENDMAP

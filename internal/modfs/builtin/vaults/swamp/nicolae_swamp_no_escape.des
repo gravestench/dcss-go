@@ -1,0 +1,28 @@
+# Nicolae swamp no escape is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_no_escape
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   patrolling
+NSUBST: 2 = 3=2 / ...2, E = 1 / 3=3 / 2=4 / 2 / 23. / .
+SUBST:  D = t., . = ..W, _ = t_
+KMONS:  1 = thorn hunter
+KMONS:  2 = swamp worm
+KMONS:  3 = goliath frog / bunyip w:5 / alligator w:5
+KMONS:  4 = eleionoma
+KFEAT:  @1234 = W / .
+CLEAR:  _
+MAP
+    _____
+ _ttttttttt
+ tttDDDE.2@
+_ttDE.E...@
+_tD..E...2@
+_t..E.E...@
+_tD..E...2@
+_ttDE.E...@
+ tttDDDE.2@
+ _ttttttttt
+    _____
+ENDMAP

@@ -1,0 +1,23 @@
+# Nicolae swamp well well well is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_well_well_well
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   transparent decor
+NSUBST: x = . / xxxx.
+SUBST:  p = p..., x : xxxxt, . = ...W
+KMONS:  p = plant
+KFEAT:  p = . w:30 / W
+MAP
+ ........
+..pppppp..
+.ppxxxxpp.
+.pxxwwxxp.
+.pxwwwwxp.
+.pxwwwwxp.
+.pxxwwxxp.
+.ppxxxxpp.
+..pppppp..
+ ........
+ENDMAP

@@ -1,0 +1,43 @@
+# Grunt witch cave is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: grunt_witch_cave
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+MONS: fenstrider witch
+MONS: hydra
+: vault.run("remains.witch_cave")
+# Source Lua: {{
+# Source Lua:   dgn.delayed_decay(_G, 'd',
+# Source Lua:                     'human skeleton / elf skeleton / dwarf skeleton' ..
+# Source Lua:                     ' / orc skeleton')
+# Source Lua: }}
+NSUBST: : = 5:W / *:.
+SUBST: w = w:10 t:10
+KFEAT: K = shallow_water
+KITEM: K = potion of degeneration ident:type w:20 / potion of mutation ident:type
+KPROP: w = no_tele_into
+MARKER: K = lua:fog_machine { cloud_type="black smoke", \
+                              pow_min = 10, pow_max = 30, delay = 50, \
+                              size = 1, walk_dist = 2, spread_rate = 25 }
+MARKER: L = lua:fog_machine { cloud_type="flame", \
+                              pow_min = 100, pow_max = 100, delay = 100, \
+                              size = 1, excl_rad = 0, walk_dist = 0 }
+MAP
+     wwwwww
+    wwxxxxww
+  wwxxx**xxxw
+ wwxxd%%%%Wxww
+wwxx::::vvvxxw
+wwx:d::1:KvLxw
+wxx::2::vvvdxw
+wxW:::::::2:xww
+wxx::::2::::dxw
+wxW::::::::xxxw
+wxxd:::::xxxww
+wwxxx:.:xxww
+ wwwxx.xxw
+   wwx.xww
+    wd.dww
+   ww.@.www
+ENDMAP

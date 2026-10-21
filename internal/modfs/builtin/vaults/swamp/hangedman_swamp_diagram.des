@@ -1,0 +1,31 @@
+# Hangedman swamp diagram is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: hangedman_swamp_diagram
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    transparent extra no_pool_fixup decor
+MONS:    bush
+SHUFFLE: AB, CD, EF, GH, IJ / IJ / JI
+SUBST:   A : tww.., C : tww.., E : t., G = t.
+SUBST:   I = wt1GT., BDF = t, H = .
+KMASK:   wW = no_monster_gen
+MAP
+   tt.tt@tt@tt.tt
+   tt.tt.tt.tt.tt
+   tttWWttttWWttt
+ttttttWWttttWWttt
+tttttttA.tt.Btttt
+..ttttttCWWDttttt
+ttWWtttttWWtttttt
+ttWWAttG.ttEtt
+@.tt.Ct.I.Fttt
+tttttWWt.JWttt
+tttttWWtFWWttt
+@.tt.DtEtttHtt
+ttWWBttttttttt
+ttWWtttttttttt
+..ttttt
+ttttttt
+ttttttt
+ENDMAP

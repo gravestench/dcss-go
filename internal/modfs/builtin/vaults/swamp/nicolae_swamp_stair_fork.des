@@ -1,0 +1,24 @@
+# Nicolae swamp stair fork is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_stair_fork
+TAGS: extra decor
+DEPTH: Swamp:2-, !Swamp:$
+SHUFFLE: {}[]()
+SUBST: W = w., T = t.
+MAP
+tttttt
+t...TTtt
+t.{...TTtt
+t.......TTtt
+tT..WWW...Ttt
+tT..WwwW...Ttt
+ tT.WwwwWW..Tt
+ tT..WwwwwW..@
+  tT..WwwwwW.
+  tT..Wwwwww
+   tT..Wwwww
+   ttT..Www
+    ttT..
+     tt@
+ENDMAP

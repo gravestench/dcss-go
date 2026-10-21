@@ -1,0 +1,30 @@
+# Grunt ruined hall is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: grunt_ruined_hall
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+MONS: swamp dragon, hydra, patrolling bog body
+NSUBST: : = 1:1 / 2:2 / 3:3 / 6:0 / *:-
+SUBST: - = .W
+SUBST: C = c:20 . W
+SUBST: + = +.
+SUBST: G = Gg
+KITEM: g = stone w:40 / large rock q:1
+KFEAT: g = floor
+KFEAT: _ = altar_yredelemnul / altar_kikubaaqudgha
+MAP
+  --------------------
+ -CCCCCCCCCCcccCCCcCCc-
+ -C%%C::::::::::::C%%c-
+ -C%:C::::::::::::C:%c-
+ -CC+C::G:::G:::G:C+cc-
+-.+::::::::::::::::::c-
+@.+:::::::::_::::::1:c-
+-.+::::::::::::::::::c-
+ -cC+c::G:::G:::G:c+cc-
+ -c%:c::::::::::::c:*c-
+ -c%%c::::::::::::c**c-
+ -cccccccccccccccccccc-
+  --------------------
+ENDMAP

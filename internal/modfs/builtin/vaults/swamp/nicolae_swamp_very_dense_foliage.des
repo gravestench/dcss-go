@@ -1,0 +1,33 @@
+# Nicolae swamp very dense foliage is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_very_dense_foliage
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:  decor transparent
+SUBST: _ = ._, - = t_, t = tttttt., . = ......W
+CLEAR: _
+MAP
+       -_-
+      tt.----_
+   --tttt.--.-_-
+   -.ttttt..tt.-----
+   --.tt..ttttt.--.-
+   --.t.tt.ttttt..tt
+  --.t.tttt.tt..ttttt
+  _.tt.tttt.t.tt.tttt-
+ _-tttt.tt.t.tttt.tt._
+ -.ttttt..tt.tttt.t.--
+ --.tt..ttttt.tt.t.--
+ --.t.tt.ttttt..tt.--
+--.t.tttt.tt..ttttt.-
+_.tt.tttt.t.tt.ttttt_
+-tttt.tt.t.tttt.tt._
+ ttttt..tt.tttt.t.--
+  tt..ttttt.tt.t.--
+  -.--.ttttt..tt.--
+  -----.tt..ttttt.-
+      -_-.--.ttttt-
+        _----.tt
+            -_-
+ENDMAP

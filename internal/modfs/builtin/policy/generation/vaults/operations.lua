@@ -108,6 +108,14 @@ local function declaration_records(vault, operation)
 
     local records = {}
     local argument = operation.argument
+
+    -- A comma immediately before `=` can be a target glyph, as in the
+    -- source Swamp KFEAT `^, = .`: both `^` and `,` become floor. It does
+    -- not separate two declarations because no assignment precedes it.
+    if argument:match("^%s*%S+,%s*[=:]") then
+        return { declaration_record(vault, operation, argument) }
+    end
+
     local comma_target, remainder = argument:match(
         "^(%s*,%s*[=:]%s*[^,]*)(.*)$")
 
@@ -485,7 +493,7 @@ end
 
 -- Expose only controlled random, context, and emission methods to ported vault hooks.
 local function hook_api(random, events, line, player, cells, state,
-    vault)
+    vault, hook_values)
     local api = {}
 
     player = player or {}
@@ -630,6 +638,28 @@ local function hook_api(random, events, line, player, cells, state,
         return player.settings and player.settings[name]
     end
 
+    -- Source DES scripts can calculate a value at one line and use it at a
+    -- later line. Keep it local to this single map application, including
+    -- failed placement attempts; no value enters the save or another map.
+    function api:remember(name, value)
+        if type(name) ~= "string" or name == "" then
+            error("vault hook memory needs a nonempty name")
+        end
+
+        hook_values[name] = value
+    end
+
+    -- A missing earlier script site is a broken port, not a fresh RNG draw.
+    function api:recall(name)
+        local value = hook_values[name]
+
+        if value == nil then
+            error("vault hook memory is missing " .. tostring(name))
+        end
+
+        return value
+    end
+
     -- Avoid offering a unique item already created in the current run.
     function api:unique_generated(name)
         return player.unique_items and player.unique_items[name] or false
@@ -726,6 +756,7 @@ function operations.apply(vault, cells, random, depth, player, state)
         [directives.MONS] = 1,
         [directives.ITEM] = 1,
     }
+    local hook_values = {}
 
     -- Validate one source operation, then apply terrain or queue its typed effect.
     local function apply_operation(operation)
@@ -796,7 +827,7 @@ function operations.apply(vault, cells, random, depth, player, state)
         if operation.kind == directives.HOOK_RUN then
             local events = {}
             local api = hook_api(random, events, operation.line,
-                player, cells, state, vault)
+                player, cells, state, vault, hook_values)
 
             hooks.run(vault, operation.argument, api)
 

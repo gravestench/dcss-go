@@ -1,0 +1,39 @@
+# Grunt lady of the lake is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: grunt_lady_of_the_lake
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+SUBST: w = w:50 t:10
+SUBST: W = w
+KITEM: O = great sword good_item w:20 / \
+           double sword good_item w:2 / \
+           triple sword good_item w:1
+KFEAT: K = deep_water
+KPROP: wK = no_tele_into
+: vault.run("configure_trigger")
+# Source Lua: {{
+# Source Lua:   local cf = TriggerableFunction:new{
+# Source Lua:       func="callback.grunt_lady_of_the_lake_trigger",
+# Source Lua:       repeated=true,
+# Source Lua:       data={triggered = false} }
+# Source Lua:   cf:add_triggerer(DgnTriggerer:new{type="player_move"})
+# Source Lua:   lua_marker("O", cf)
+# Source Lua:   lua_marker(":", cf)
+# Source Lua:   lua_marker("K", props_marker { merfolk_avatar_spawn = 1 })
+# Source Lua: }}
+MAP
+    wwwww
+  wwwwwwwww
+ wwwwwKwwwww
+ wwwwwWwwwww
+wwwwwwWwwwwww
+wwwwWW:WWwwww
+wwwwW:O:Wwwww
+wwwwwW:Wwwwww
+wwwww.wwwwwww
+ wwwww.wwwww
+ wwwww.wwwww
+  wwwww.www
+    ww@ww
+ENDMAP

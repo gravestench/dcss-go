@@ -17,6 +17,7 @@ local colours = require("constants.vault_colours")
 local monster_flags = require("constants.monster_flags")
 local schools = require("constants.spell_schools")
 local slime_blob = require("policy.monsters.slime_blob")
+local hydra_heads = require("policy.monsters.hydra_heads")
 local monster_requests = require("constants.vault_monster_requests")
 local item_requests = require("constants.vault_item_requests")
 local streams = require("constants.rng_streams")
@@ -48,6 +49,7 @@ local random_item_names = {
     [item_requests.ANY_MAGICAL_STAFF] = true,
     [item_requests.ANY_BOOK] = true,
     [item_requests.ANY_SCROLL] = true,
+    [item_requests.ANY_CONCEALMENT_SCROLL] = true,
     [item_requests.ANY_POTION] = true,
     [item_requests.ANY_WAND] = true,
     [item_requests.ANY_GOOD_ITEM] = true,
@@ -204,6 +206,16 @@ local function find_name(category, name, site)
     return ids[1]
 end
 
+-- Source mons_list accepts a colour before a nonbase draconian role. Both
+-- names must resolve so the role and its per-actor colour survive placement.
+local function draconian_names(name)
+    local colour, role = name:match("^([a-z]+) (draconian .+)$")
+
+    if colour then
+        return colour .. " draconian", role
+    end
+end
+
 -- DES names some unrand artefacts by their source tile token rather than
 -- their displayed title. Resolve those tokens through the same catalog
 -- used by item generation, so no room owns a private artefact name table.
@@ -321,7 +333,17 @@ function resolve.validate_monster(selected, site)
         return
     end
 
-    find_name(categories.MONSTERS, base_name or name, site)
+    local source_name = base_name or name
+    local draconian_base, draconian_role = draconian_names(source_name)
+
+    if hydra_heads.from_name(source_name) then
+        source_name = "hydra"
+    elseif draconian_role then
+        find_name(categories.MONSTERS, draconian_base, site)
+        source_name = draconian_role
+    end
+
+    find_name(categories.MONSTERS, source_name, site)
 end
 
 -- Permit random-item tokens but require concrete names to resolve in the catalog.
@@ -408,6 +430,8 @@ function resolve.monster(ctx, selected, depth, site)
         variant = "spectral"
     end
     local blob_size = slime_blob.size_for_name(name)
+    local head_count = hydra_heads.from_name(base_name or name)
+    local draconian_base, draconian_role = draconian_names(name)
     local band_name = name:match("^(.-) band$")
     local kind_id
     local base_id
@@ -443,7 +467,13 @@ function resolve.monster(ctx, selected, depth, site)
         else
             kind_id = monster_ids.MONS_SPECTRAL_THING
         end
-        base_id = find_name(categories.MONSTERS, base_name, site)
+        base_id = find_name(categories.MONSTERS,
+            head_count and "hydra" or base_name, site)
+    elseif head_count then
+        kind_id = monster_ids.MONS_HYDRA
+    elseif draconian_role then
+        kind_id = find_name(categories.MONSTERS, draconian_role, site)
+        base_id = find_name(categories.MONSTERS, draconian_base, site)
     else
         kind_id = find_name(categories.MONSTERS, name, site)
     end
@@ -475,6 +505,7 @@ function resolve.monster(ctx, selected, depth, site)
         kind_id = kind_id,
         base_id = base_id,
         blob_size = blob_size,
+        hydra_heads = head_count,
         band = band_name ~= nil,
         variant = variant,
         colour = colour,

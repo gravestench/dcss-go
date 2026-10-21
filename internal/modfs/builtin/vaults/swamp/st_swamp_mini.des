@@ -1,0 +1,18 @@
+# St swamp mini is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: st_swamp_mini
+DEPTH:   Swamp, !Swamp:$
+KMONS:   1 = hydra
+KMONS:   2 = swamp dragon
+KFEAT:   12 = shallow_water
+SUBST:   . = wW., 0:34, 3=112..., 4=122...
+MAP
+.......
+.cc.cc.
+.c000c.
+..000..
+.c000c.
+.cc.cc.
+.......
+ENDMAP

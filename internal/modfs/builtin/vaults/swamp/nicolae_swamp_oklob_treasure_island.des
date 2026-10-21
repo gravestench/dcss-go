@@ -1,0 +1,34 @@
+# Nicolae swamp oklob treasure island is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_oklob_treasure_island
+TAGS:    no_pool_fixup
+DEPTH:   Swamp, !Swamp:$
+SHUFFLE: Aa/Bb/Cc/Dd/Ee/Ff/Gg/Hh/Ii, %*$
+NSUBST:  ' = ^ / o / '
+SUBST:   abcde = w, fghi = t, ABCDE = .wW, FGHI = .t, ' = ':100 $$$%%
+SUBST:   _ = .._, . = ......W
+KFEAT:   ^ = permanent teleport trap
+KMONS:   o = oklob plant
+CLEAR:   _
+MAP
+       _____
+     __.....__
+    _........._
+   _...GGFFF..._
+  _...GggfffF..._
+ _...GggGFFffF..._
+ _..GggG'''FeeE.._
+_..AaaA'''''EeeE.._
+_..AaA'''''''EeE.._
+_..AaA'''''''EeE.._
+_..AaA'''''''DdD.._
+_..BbbB'''''DddD.._
+ _..BbbB'''DddD.._
+ _...BbbCCCcdD..._
+  _...BbccccC..._
+   _...BCCCC..._
+    _........._
+     __.....__
+       _____
+ENDMAP

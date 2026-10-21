@@ -1,0 +1,29 @@
+# Nicolae swamp dragon and kin is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_dragon_and_kin
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS: patrolling transparent
+SUBST: T = t., B = tt_
+NSUBST: d = D / d
+KMONS: D = swamp dragon
+KMONS: d = swamp drake w:12 / nothing w:3
+MAP
+        BBBBBB
+      .TtttttBB
+   ....T..T.tttt
+  BTT....T.T.TTt
+ BBtttttT.TT....
+BBtttTTTT.TttT..
+BttTTT.T.TTTttT.
+BtTT.T..TT.TTtTT
+BtT.TdT..T..TttB
+BtTd.T..T.TTTTtB
+BtTT.T.T.Td.dTtB
+BttT..T.T.T.TTtB
+BttTTdT..dTTTttB
+BBttTTTTTTTtttBB
+ BBtttttttttBBB
+  BBBBBBBBBBB
+ENDMAP

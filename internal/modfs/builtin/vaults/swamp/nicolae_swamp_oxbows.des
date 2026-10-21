@@ -1,0 +1,31 @@
+# Nicolae swamp oxbows is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_oxbows
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   decor
+NSUBST: D = w / ', E = w / ', F = w / ', H = w / ', J = w / ', K = w / '
+NSUBST: L = w / ', M = w / ', N = w / ', O = w / ', P = w / ', Q = w / '
+NSUBST: R = w / ', S = w / ', Z = w / ', a = w / ', p = w / ', q = w / '
+NSUBST: r = w / ', s = w / ', y = w / ', z = w / ', - = w / ', " = w / '
+NSUBST: ` = w / '
+SUBST:  ' = W.
+MAP
+ ''  .@.   '''''
+'ww'.....''awwwp''
+'www'...'Zwwa'pwwq'
+ 'wwD'.'SwZ''.''qwr
+  'Dw'.'wS'.....'rw
+   'w'.'w'.......'w
+  'Ew'.'wR'.....'sw
+ 'FwE'.'RwQ'...'-ws
+ HwF'...'QwP'.'"w-'
+ wH'.....'Pw'.'w"'
+ w'.......'w'.'w'
+ wJ'.....'Ow'.'w`'
+ JwK''.''NwO'.'`ww'
+ 'KwwL'MwwN'...'www'
+  ''LwwwM''.....'ww'
+    '''''   .@.  ''
+ENDMAP

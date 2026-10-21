@@ -1,0 +1,63 @@
+# Nicolae swamp flooded prison is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_flooded_prison
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    no_trap_gen patrolling
+ORIENT:  southeast
+KPROP:   " = no_tele_into
+KMASK:   " = no_monster_gen
+KMASK:   " = no_item_gen
+ITEM:    executioner's axe
+ITEM:    great sword / triple sword w:5 / great mace / eveningstar \
+         / glaive / bardiche / lajatang / arbalest w:5 / triple crossbow w:5
+ITEM:    chain mail / plate armour / crystal plate armour w:5 \
+         / kite shield / tower shield / helmet / pair of boots / pair of gloves
+ITEM:    wand of charming w:30 / wand of paralysis w:30 / any wand w:5 \
+         / wand of mindburst / lightning rod w:1
+ITEM:    large rock q:1
+KMONS:   1 = alligator / ghost crab w:5
+KMONS:   2 = bog body
+KMONS:   3 = ghoul
+KMONS:   4 = bloated husk
+KMONS:   5 = spectral spriggan rider / spectral spriggan berserker
+KMONS:   6 = freezing wraith / will-o-the-wisp w:5
+SUBST:   D = t., E = t-, - = - W:7 .:5, c = c:100 x
+SHUFFLE: dh
+NSUBST:  Z = 4=2 / 4 / 224, L = e / f / g, M = e / f / g, N = 3=5 / 3=5- / -
+NSUBST:  s = 2=5 / 2=5. / ., 6 = 6 / 6., J = ; / - / ;-
+KPROP:   dh = bloody
+KFEAT:   ; = iron_grate
+KFEAT:   "1 = w
+KFEAT:   24 = W
+FTILE:   ;- = floor_sandstone
+FTILE:   @efg35 = floor_sandstone / none
+FTILE:   'dr = floor_cobble_blood
+MAP
+      tttttttttttt..@@@...t
+ tttttttD....DttD...---..Dt
+ttttD...............---..tt
+ttt......DtD.......c;;;c.Dt
+tt.4.ttttttttD...ttct--c..t
+tWWWWwttttwwttw1wtwcNttcwwt
+tW...tt""tWWWttttt.ct--ctwt
+tW....t""t..s...t..c;;-cttt
+tw.sc-cc;c-;cc;-c.s.-3-.Dwt
+twD.cN-cWWc--cEN-...---..wt
+twt.--tcWZcNZc--cttwww-s.wt
+twttc--cWWc--cZ-ccccc;c.Dwt
+twttc;-c;;c-;c;;cLLLc-cD.wt
+twDDc----xx-N-t-J-3--NcDswt
+twD.;--N-ExtWtx-J----Nc.Dwt
+tws.cWWW--t--x-NJ-3-ttcD.wt
+tw..c;;cW;c;Nc-;cMMMc"cDswt
+t1.sc-Ec--c--c--ccccc;c..wt
+tw..cZ-c-Z--ZcNZc..s.s...wt
+tw..cN-ct-NWxc--c6'''''6.wt
+twW.c-cc;c-tt-;cc.'d'h'..wt
+ttWW.s..s..tt....6'''''6.wt
+twttWWW..DDtttD....s.s...wt
+twwtttwwwwwwwtwwwwwwwww1wwt
+ttttttttttttttttttttttttttt
+ENDMAP

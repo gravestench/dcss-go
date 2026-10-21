@@ -1,0 +1,15 @@
+# Swamp ruins default is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: swamp_ruins_default
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   luniq_extradecor chance_extradecor allow_dup extra no_dump
+PLACE:  Swamp, !Swamp:$
+: vault.post_place("assemble")
+# Source Lua: {{
+# Source Lua:   local n = 1
+# Source Lua:   hook("post_place", function()
+# Source Lua:     dgn.place_maps{tag="serial_swamp_ruin", count=n}
+# Source Lua:   end)
+# Source Lua: }}

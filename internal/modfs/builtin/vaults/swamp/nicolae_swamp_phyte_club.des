@@ -1,0 +1,52 @@
+# Nicolae swamp phyte club is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_phyte_club
+DEPTH:  Swamp:2-, !Swamp:$
+ORIENT: float
+TAGS:   transparent no_monster_gen no_item_gen
+KMONS:  Hh = thorn hunter
+KITEM:  h^m = % / * w:5
+KITEM:  o = * / | w:5
+KITEM:  b = Fen Folio ident:type
+KMONS:  Mm = shambling mangrove
+KMONS:  Oo = oklob plant / oklob sapling w:2
+KMONS:  F = fungus
+KMONS:  . = plant w:5 / fungus w:5 / nothing w:100
+KMONS:  - = plant / fungus / nothing w:80
+NSUBST: M = M / H / 2=hmm / 2=A / ., O = O / o / Hh / h^ / 1=b
+SUBST:  T = t., Z = ttW, _ = t_, v = t--
+KFEAT:  ^, = .
+CLEAR:  _
+MAP
+              @
+              ,
+     _______tT,Tt_______
+    __tttttttT,Tttttttt__
+    _ttO--tttT,Tttt--Ott_
+    _t----v.ttFtt.v----t_
+    _t--v.....t.....v--t_
+    _t--.M..ZZZZZ..M.--t_
+    _tv...ZZ.....ZZ...vt_
+   ttt...Z.........Z...ttt
+@ TTTtt.Z....WWW....Z.ttTTT @
+ ,,,,,t.Z..WW...WW..Z.t,,,,,
+  TTTtFZ...W..M..W...ZFtTTT
+  _ttt.Z..W.MtttM.W..Z.ttt_
+ __t...Z..W..ttt..W..Z...t__
+ _ttv..Z..W..ttt..W..Z..vtt_
+__t--..Z...W.M.M.W...Z..--t__
+_tt--.M.Z..WW...WW..Z.M.--tt_
+_tO-v...Z....WWW....Z...v-Ot_
+_tt---...Z.........Z...---tt_
+__ttt-v...ZZ.....ZZ...v-ttt__
+ ___tttttF..ZZZZZ..Fttttt___
+   __ttT,t....M....t,Ttt__
+     tT,Ttt.......ttT,Tt
+     T,Tttt.v...v.tttT,T
+     ,Tt__tt--v--tt__tT,
+    @    __t-----t__    @
+          _tttOttt_
+          ___ttt___
+            _____
+ENDMAP

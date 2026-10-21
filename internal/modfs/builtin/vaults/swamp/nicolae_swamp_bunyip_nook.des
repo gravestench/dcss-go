@@ -1,0 +1,24 @@
+# Nicolae swamp bunyip nook is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_bunyip_nook
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+NSUBST: W = 2=P / W
+SUBST:  ' = ..W
+KMONS:  pP = bunyip
+KFEAT:  P = W
+MAP
+    t.....t
+   tt..p..tt
+  tttt'''tttt
+ ttttt'''ttttt
+tttttt'''tttttt
+ttttt...ttttWPt
+ttt....ttttWWWt
+tt'''.tttWWWWWt
+tt'''ttt'''WWWt
+tt'''.p...'Wttt
+ tt......ttttt
+  ttttttttttt
+ENDMAP

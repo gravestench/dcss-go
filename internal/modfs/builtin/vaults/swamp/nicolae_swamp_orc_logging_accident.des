@@ -1,0 +1,42 @@
+# Nicolae swamp orc logging accident is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_orc_logging_accident
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS: decor extra no_monster_gen no_trap_gen
+SUBST: F = 't, T = _t
+NSUBST: p = 4:p / *:., ' = o / '
+SUBST: . = ...b
+KPROP: bp = bloody
+SUBST: b = .
+: vault.run("remains.orc_logging")
+# Source Lua: {{
+# Source Lua: dgn.delayed_decay_extra(_G, 'o', 'orc corpse', 'hand axe / broad axe, ' ..
+# Source Lua:    'leather armour / pair of gloves, mundane quarterstaff')
+# Source Lua: dgn.delayed_decay_extra(_G, 'p', 'orc corpse', 'hand axe / broad axe, ' ..
+# Source Lua:    'leather armour / pair of gloves')
+# Source Lua: }}
+KITEM: w = mundane quarterstaff
+KITEM: s = gold
+KFEAT: 'o = W
+CLEAR:  _
+MAP
+       TTTTT
+     TTtttttTTT
+    TttttFFttttTT
+   TttttFF'FtttttT
+  TtttttF'''FtttttT
+ TtttttttF''FttttttT
+ Ttt.p........p.ttttT
+TTt..xxxx........tptT
+Tttp.xwwx...xxmx...tT
+Tt...xww+...xpsx...tT
+Tt.p.xwwxp..+.sm.p.tT
+Tt...xxxx...x.sx..ttT
+Tt..p.......xxmx..tTT
+Ttt.....p......p.ttT
+TTtttt..........ttTT
+ TTTTtttt@@ttttttTT
+    TTTT     TTTTT
+ENDMAP

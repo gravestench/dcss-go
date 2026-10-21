@@ -1,0 +1,28 @@
+# Nicolae swamp soggy hallways is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_soggy_hallways
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   transparent
+KMONS:  0 = 0
+KMONS:  9 = 9
+KFEAT:  09@ = W
+SUBST:  0 = 00W, 9 = 990W, D = tWW
+NSUBST: P = W / t, Q = W / t, R = W / t, S = W / t
+MAP
+      tttt
+   ttttD9tttt
+t@@t0DQDWt0Dtttt
+tWWtWWQWDtWWSD0t
+tDWtDWQWDtDWSWWt
+tWWtWWQDWtWWSWDt
+tWDtWDQDWtWDSWWt
+tWWPDWtWDRDWtDWt
+tDWPWWtWDRWWtWWt
+tWWPWDtDWRWDtWDt
+t0DPWWtDWRWWtWWt
+ttttD0tWDRD0t@@t
+   tttt9Dtttt
+      tttt
+ENDMAP

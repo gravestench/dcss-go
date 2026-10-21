@@ -1,0 +1,32 @@
+# Nicolae swamp wrong neighborhood is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_wrong_neighborhood
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    transparent
+ORIENT:  float
+MONS:    shambling mangrove
+MONS:    eleionoma
+SHUFFLE: Pp/Qq/Rr, Qq
+NSUBST:  P = @ / 2=.W / K, p = @ / 2=.W / K, 2 = 2=2 / 2=2.
+SUBST:   Q : Kt, qRr = t, K = t., Z = t_
+CLEAR:   _
+MAP
+ZZtQQQQtZZtRRRRt
+Zttt..tttttt..tt
+ZttK.Kttttt..Ktt
+Zttt..KttttK..Kt
+ZtK.2..Kttttt2.t
+ttK..t.K.tKtK..t
+tt..ttK..t....Kt
+PtK.ttt.1.K.K.tt
+P...Kttt..tt.Ktp
+P..K.Kttt..t...p
+Ptt..tttK..tK..p
+ttK2..tt..Kttttp
+Zttt.K.t.2.K..tt
+ZtK....ttK...KtZ
+Ztt..Kttttt..ttZ
+ZtrrrrtZZtqqqqtZ
+ENDMAP

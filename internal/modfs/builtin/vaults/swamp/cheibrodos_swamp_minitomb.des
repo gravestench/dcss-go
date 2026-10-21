@@ -1,0 +1,24 @@
+# Cheibrodos swamp minitomb is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: cheibrodos_swamp_minitomb
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:  no_monster_gen
+KITEM: - = w:5 gold / w:2 any jewellery / w:20 nothing
+KMONS: - = bog body w:20 / troll zombie / troll skeleton / bloated husk w:5
+SUBST: ' = .W
+MAP
+  W@WWtW
+tWWWWtxW
+xtWWWtxx
+xtWWW+-x
+xxxWWxxx
+x-+WW+-x
+xxxW'xxx
+x-+'.+-x
+xxx..xxx
+x-+..+-x
+xxxxxxxx
+ xxxxxx
+ENDMAP

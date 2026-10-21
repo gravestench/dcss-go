@@ -431,6 +431,7 @@ local function select_entities(record, vault, random, depth, player)
         arguments.class_id = resolved.class_id or ""
         arguments.base_id = resolved.base_id or ""
         arguments.blob_size = resolved.blob_size or 1
+        arguments.hydra_heads = resolved.hydra_heads or 0
         arguments.band = resolved.band or false
         arguments.variant = resolved.variant or ""
         arguments.colour = resolved.colour or ""

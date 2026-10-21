@@ -7,6 +7,8 @@ local origin_component = require("policy.population.origin")
 local quality = require("constants.vault_item_quality")
 local purpose = require("constants.item_generation_purpose")
 local item_requests = require("constants.vault_item_requests")
+local item_sets = require("policy.item_generation.item_sets")
+local set_ids = require("constants.item_sets")
 local identification = require("policy.items.identification")
 
 local vault_items = {}
@@ -67,8 +69,16 @@ function vault_items.create(ctx, resolved, level_id, x, y, origin)
         error("cannot place vault item " .. tostring(resolved.kind_id))
     end
 
-    local rolled = generation.roll(ctx,
-        request_from(resolved, level_id, origin))
+    local request = request_from(resolved, level_id, origin)
+
+    -- DCSS chooses one concealment scroll subtype per run. Resolve the DES
+    -- set name only after the saved player item-set choice is available.
+    if resolved.request == item_requests.ANY_CONCEALMENT_SCROLL then
+        request.kind_id = item_sets.choice(ctx, ctx:player(),
+            set_ids.CONCEALMENT_SCROLLS)
+    end
+
+    local rolled = generation.roll(ctx, request)
     local definition = catalog.get("items", rolled.kind_id)
 
     if definition.class == classes.OBJ_CORPSES and

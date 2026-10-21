@@ -2,6 +2,7 @@
 
 local features = {
     TREE = "tree",
+    MANGROVE = "mangrove",
     GRANITE_STATUE = "granite_statue",
     METAL_WALL = "metal_wall",
     CRYSTAL_WALL = "crystal_wall",

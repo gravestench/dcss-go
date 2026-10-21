@@ -1,0 +1,38 @@
+# Beargit kiku chapel is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: beargit_kiku_chapel
+DEPTH: Swamp:2-
+TAGS: no_monster_gen
+MONS: bog body w:20 / bunyip zombie / bunyip skeleton / death scarab w:1
+MONS: patrolling spriggan berserker simulacrum w:20 / \
+      patrolling spriggan defender simulacrum / \
+      patrolling spriggan air mage simulacrum / \
+      juggernaut zombie w:5 / caustic shrike zombie w:1
+MONS: patrolling necromancer / patrolling fenstrider_witch; quick blade ego:pain
+MONS: ghost crab / death drake w:1
+KMONS: 5 = bunyip zombie / bunyip skeleton / swamp dragon skeleton / \
+           hornet zombie / death scarab w:1
+KFEAT: J = altar_kikubaaqudgha
+KFEAT: 5 = W
+ITEM: randbook disc:necromancy slevels:10 / \
+      randbook disc:necromancy slevels:12 / randbook disc:necromancy slevels:16
+SUBST: z = cccccccccccc...WWWwwt
+SUBST: F : VVVVY
+FTILE: . = floor_sandstone
+: vault.run("remains.kiku_corpse_k")
+# Source Lua: {{
+# Source Lua: dgn.delayed_decay_extra(_G, 'K', 'frost giant corpse / ' ..
+# Source Lua:                                   'frost giant skeleton / ' ..
+# Source Lua:                                   'shadow dragon corpse / ' ..
+# Source Lua:                                   'shadow dragon skeleton')
+# Source Lua: }}
+MAP
+.zzzzzcccccc
+.zWz5wc111dcc
+.zWWWW+WW.KFc
+@A.W45+2WW3Jc
+.z.WW5+..WKFc
+.zzzz.c111$cc
+....zzcccccc
+ENDMAP

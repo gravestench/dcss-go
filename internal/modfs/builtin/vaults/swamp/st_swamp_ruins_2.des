@@ -1,0 +1,27 @@
+# St swamp ruins 2 is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: st_swamp_ruins_2
+DEPTH:   Swamp, !Swamp:$
+KMONS:   1 = hydra
+KMONS:   2 = swamp dragon
+KMONS:   3 = swamp drake
+KFEAT:   123 = shallow_water
+SUBST:   . = wwwWWW...t, c = c:15 .:1 t:1 w:1 W:1, C=c.
+SUBST:   0:45, 4=11123....., 5=12223.....
+MAP
+    ......
+  ..........
+ ...ccCCcc...
+ ..cc....cc..
+..cc..00..cc..
+..c..0cc0..c..
+0.C..cccc0.C.0
+..C.0cccc..C..
+..c..0cc0..c..
+..cc..00..cc..
+ ..cc....cc..
+ ...ccCCcc...
+  ..........
+    ......
+ENDMAP

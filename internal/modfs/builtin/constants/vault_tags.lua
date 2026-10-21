@@ -7,6 +7,7 @@ local tags = {
     SPIDER_JUMPING_CHILD = "nico_jumpspide",
     SLIME_ENTRY = "slime_entry",
     SWAMP_ENTRY = "swamp_entry",
+    SERIAL_SWAMP_RUIN = "serial_swamp_ruin",
     SHOALS_ENTRY = "shoals_entry",
     TEMPLE_OVERFLOW_TROG = "temple_overflow_trog",
     TEMPLE_OVERFLOW_MAKHLEB = "temple_overflow_makhleb",

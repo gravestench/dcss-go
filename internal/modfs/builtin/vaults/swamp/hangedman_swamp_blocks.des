@@ -1,0 +1,29 @@
+# Hangedman swamp blocks is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: hangedman_swamp_blocks
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    transparent extra no_pool_fixup decor
+SHUFFLE: BC, DEF
+SUBST:   A : ttw, B : tttww, D : w., E : w..., C = t, F = .
+KMASK:   wW = no_monster_gen
+MAP
+  ...   ..    ..
+ .WWW....WW....w.
+.Wtttt..ttt.D.tAw
+.WttttW.ttt.D.tt.
+.WttttW.tBt......
+ .ttttW.....ttt..
+ ..WWW..FE..CttW.
+ ......FE...tttW.
+.Wttt.FE.WWW....
+.WttB.E.Wtttt..
+ .ttt...WttttW.
+ .......WttttW.
+ .DD.tCt.ttttW.
+ ....ttt..WWW..
+..tt.ttt......
+.WAt..WW.
+ .W.....
+ENDMAP

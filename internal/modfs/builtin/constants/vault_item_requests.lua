@@ -9,6 +9,7 @@ local requests = {
     ANY_MAGICAL_STAFF = "any magical staff",
     ANY_BOOK = "any book",
     ANY_SCROLL = "any scroll",
+    ANY_CONCEALMENT_SCROLL = "any concealment scroll",
     ANY_POTION = "any potion",
     ANY_WAND = "any wand",
     ANY_GOOD_ITEM = "any good_item",

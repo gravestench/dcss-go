@@ -1,0 +1,48 @@
+# Nicolae swamp standing stones is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_standing_stones
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   patrolling no_pool_fixup
+ORIENT: float
+: vault.run("configure_loot")
+# Source Lua: {{
+# Source Lua: kitem("d = potion of magic w:30 / potion of brilliance w:30 / " ..
+# Source Lua:       dgn.loot_potions)
+# Source Lua: kitem("e = scroll of summoning w:30 / scroll of blinking w:30" ..
+# Source Lua:       "/ scroll of vulnerability / " .. dgn.loot_scrolls)
+# Source Lua: }}
+KITEM:  f = nothing w:150 / ring of wizardry / ring of intelligence \
+        / ring of willpower / amulet of magic regeneration / any jewellery
+KITEM:  2 = any book / any scroll
+KMONS:  1 = fenstrider witch
+KMONS:  2 = necromancer
+KMONS:  3 = spriggan druid
+KMONS:  4 = bog body
+KFEAT:  1 = w
+KFEAT:  4de = W
+SUBST:  q = tw, S = Ww, D = t., . = .:70 W
+MAP
+     ttttttttttttt
+ tttttwSSSwtt4WWWttt
+ tSt.D......ttWttWStt
+tt.....ttD....tt....t
+tS.D.ttqS...DDt..D...
+ttq..wtD..b......S..@
+ tt..Swww..t.SSttttw
+  tt...wwwSttttt..tt
+ tt.t...Dtttt.....3tt
+tt..3t..tt......t...t
+tq.b...tbWWWb...tbS.t
+tS...D.tefwwWWtttt..t
+twtD..Wtdw1wWtt.S...t
+twtt..Wbtttttb.t.Sttt
+twqtt.WWW...t...wtt4t
+twqtqtt...b.t.DwttWSt
+twtw.qttqt...t.wtWWtt
+ttS.2...DtD..wwWWWtt
+ tt.D.b.....Swbtttt
+  ttttttSDSttttt
+       ttttt
+ENDMAP

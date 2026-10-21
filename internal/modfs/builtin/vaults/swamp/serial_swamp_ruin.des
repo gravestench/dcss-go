@@ -1,0 +1,16 @@
+# Serial swamp ruin is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: serial_swamp_ruin
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   luniq_serial luniq_extradecor chance_extradecor extra
+PLACE:  Swamp, !Swamp:$
+WEIGHT: 2
+: vault.post_place("assemble")
+# Source Lua: {{
+# Source Lua:   local n = 2 + crawl.random2(2)
+# Source Lua:   hook("post_place", function()
+# Source Lua:     dgn.place_maps{tag="serial_swamp_ruin", count=n}
+# Source Lua:   end)
+# Source Lua: }}

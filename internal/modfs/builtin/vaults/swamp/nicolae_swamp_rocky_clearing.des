@@ -1,0 +1,23 @@
+# Nicolae swamp rocky clearing is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_rocky_clearing
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS: transparent luniq_swclearing extra decor
+WEIGHT: 3
+SUBST: X = xxxtt.., E = .e, e = W..
+MAP
+       eeeee
+  eeeeeEEEEEeeeee
+ eEEEEE....XEEEEEe
+ eE.......XXX....Ee
+eE...XXX...X......Ee
+eE..XxxxX.....XX...Ee
+eE..XxxxX....XxxX..Ee
+eE...XXX......XX...Ee
+ eE..............EEe
+  eEEE...XX..EEEEee
+   eeeEEEEEEEeeee
+      eeeeeee
+ENDMAP

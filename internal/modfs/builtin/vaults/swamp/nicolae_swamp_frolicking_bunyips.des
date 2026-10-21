@@ -1,0 +1,24 @@
+# Nicolae swamp frolicking bunyips is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_frolicking_bunyips
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+MONS:   bunyip
+KMONS:  y = butterfly
+KMONS:  p = plant
+NSUBST: ' = 3=1 / 1. / y / 8=p / 8=W / .
+SUBST:  D = t., r = pW.
+MAP
+DDDtttttDDD
+DrtDDDDDtrD
+Dt'''''''tD
+tD'''''''Dt
+tD'''''''Dt
+tD'''''''Dt
+tD'''''''Dt
+tD'''''''Dt
+Dt'''''''tD
+DrtDDDDDt.r
+DDDtttttDr@
+ENDMAP

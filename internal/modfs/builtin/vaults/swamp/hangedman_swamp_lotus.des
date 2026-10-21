@@ -1,0 +1,29 @@
+# Hangedman swamp lotus is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: hangedman_swamp_lotus
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    transparent extra no_pool_fixup decor
+MONS:    plant
+SHUFFLE: ABCDE
+SUBST:   AB : w, C : wwW1, D : wWW1, E : W1
+KMASK:   wW = no_monster_gen
+MAP
+        ... ...
+     .............
+    ..ttttAAAtttt..
+  .......ttttt.......
+ ..ttttB.......Btttt..
+@.....tttt.t.tttt.....@
+.tttC....t...t....Cttt.
+ ..ttttD.......Dtttt..
+   ...tttttEttttt...
+      ....ttt....
+         .ttt.
+         .ttt.
+         .ttt.
+          .t.
+          .t.
+           @
+ENDMAP

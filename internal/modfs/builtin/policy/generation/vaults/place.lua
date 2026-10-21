@@ -69,7 +69,7 @@ end
 
 -- DCSS attempts exactly one PLACE minivault even when it is tagged
 -- extra or its geometry fails. Record the ID only after a successful fit.
-function place.place(ctx, builder, context, placed, fit)
+function place.place(ctx, builder, context, placed, fit, place_controller)
     local selected = place.choose(builder, place.candidates(context))
 
     if not selected then
@@ -77,6 +77,21 @@ function place.place(ctx, builder, context, placed, fit)
     end
 
     local vault = catalog.get(selected.id)
+
+    -- Source PLACE can select a mapless serial controller. Its post-place
+    -- hook owns child selection, so it must not enter the geometry fitter.
+    if #vault.rows == 0 then
+        if not place_controller then
+            error("mapless PLACE vault needs a controller runner")
+        end
+
+        if place_controller(ctx, builder, context, placed, vault) then
+            return vault.id
+        end
+
+        return nil
+    end
+
     local map = fit(ctx, builder, vault, context)
 
     if not map then

@@ -1,0 +1,30 @@
+# Nicolae swamp little tower is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_little_tower
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   decor no_pool_fixup
+KMONS:  P = plant
+NSUBST: X = - / x
+SUBST:  T = t-, - = ....P, z = WWw, _ = __w
+CLEAR: _
+MAP
+   ttt___
+  ttTwwww___
+  tTWwwwwwww___
+  tTWwwwwwwwwww___
+ tt.Wwwwzzzzzwwwzz
+ t.Tzwwzx---xzwwz.
+ .tzwwzx-xXx-xzzz.
+.Ttwwwz-xx-xx-zz-.
+@Ttwwwz-X---X-WW-@
+.Ttwwwz-xx-xx-zz-.
+ .tzwwzx-xXx-xzzz.
+ t.Tzwwzx---xzwwz.
+ tt.Wwwwzzzzzwwwzz
+  tTWwwwwwwwwww___
+  tTWwwwwwww___
+  ttTwwww___
+   ttt___
+ENDMAP

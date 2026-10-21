@@ -1,0 +1,31 @@
+# Nicolae swamp drake lake is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_drake_lake
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    transparent patrolling
+KMONS:   1 = death drake
+KMONS:   2 = swamp drake
+KMONS:   3 = rime drake
+SHUFFLE: DEFH/JKLN/OPQR
+SUBST:   DE = ., F = @, HJO = t, KLNPQR = _, M = tW
+NSUBST:  W = 1 / 11W. / 2=2 / 2=22W. / W.
+KFEAT:   123 = W
+CLEAR:   _
+MAP
+      RQQR
+      RPPR
+      RPPR
+    tttOOttt
+    tMWWWWMt
+   ttWWWWWWtt
+HHHtMWWMtWWMt
+FEEDWWtttMWWtt
+FEEDWWMtttMWMtNNN
+HHHtWWWttttWWJKKL
+   tMWWWMtMWWJKKL
+   ttMWWWWWWMtNNN
+    tttMWWWMtt
+      ttttttt
+ENDMAP

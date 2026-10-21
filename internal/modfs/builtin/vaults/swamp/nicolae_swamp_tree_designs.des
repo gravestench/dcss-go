@@ -1,0 +1,29 @@
+# Nicolae swamp tree designs is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_tree_designs
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    transparent decor
+SHUFFLE: JKLMNO / ------ / -----q / ----q- / ----qq / ---q-- / ---q-q / \
+         ---qqq / --q--- / --q--q / --q-q- / --q-qq / --qq-- / --qq-q / \
+         --qqqq / -q---- / -q---q / -q--q- / -q--qq / -q-q-- / -q-q-q / \
+         -q-qqq / -qq--- / -qq--q / -qq-q- / -qq-qq / -qqqqq / q----- / \
+         q----q / q---qq / q--q-- / q--q-q / q--qqq / q-q--- / q-q--q / \
+         q-q-q- / q-q-qq / q-qq-- / q-qq-q / q-qqqq / qq---- / qq---q / \
+         qq--q- / qq--qq / qq-q-- / qq-q-q / qq-qqq
+SUBST:   JKLMNOq = t, - = ., D = t_, p : t., P : t.
+CLEAR:   _
+MAP
+   DDDDDDDDD
+ DDtttttttttDD
+Dttt.......tttD
+tt...JKLKJ...tt
+...p.KMNMK.p...
+@..P.LNONL.P..@
+...p.KMNMK.p...
+tt...JKLKJ...tt
+Dttt.......tttD
+ DDtttttttttDD
+   DDDDDDDDD
+ENDMAP

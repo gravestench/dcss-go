@@ -1,0 +1,19 @@
+# Nicolae swamp little swirl is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_little_swirl
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:  decor
+SUBST: M = ..wt, D = t..
+MAP
+  ttttt
+ ttDDDttD.@.Dt
+ttD...MwM...Dtt
+tD...MwwwM...Dt
+tD...MwwwM...Dt
+tD...MwwwM...Dt
+ttD...MwM...Dtt
+ tD.@.DttDDDtt
+        ttttt
+ENDMAP

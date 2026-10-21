@@ -1,0 +1,27 @@
+# Nicolae swamp bean lake is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_bean_lake
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   transparent decor
+NSUBST: Q = 2=@ / _
+SUBST:  D = tt., L : w., R : w., E = w., . = ...W
+CLEAR:  _
+MAP
+Q..  ....Q
+..........
+.....EwwE...
+ ..EwwwwwwE..Q
+ ..wwwwwwwwR..
+..EwwwwwwwwR..
+..wwwwwwwwE..
+..wwwwwwE...Dt
+..EwwwwE...Dttt
+Q..wwww....DDtt
+  .EwwE.....Dt
+  ..LL..DD...
+   ....DtDD.Q
+   Q.. tttt
+        tt
+ENDMAP

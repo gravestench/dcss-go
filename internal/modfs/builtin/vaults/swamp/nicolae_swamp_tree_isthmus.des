@@ -1,0 +1,24 @@
+# Nicolae swamp tree isthmus is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_tree_isthmus
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   transparent decor
+ORIENT: float
+SUBST:  E = .Wtw
+MAP
+       wwwwwww
+     wwwwwwwwwww
+   wwwwEEEEEEwwwww
+ttwwwEEE....EEwwwwwwwtt
+.ttwEE..EEEE.Ewwwwwwtt.
+..ttE.EEEwwE.EwwwEEtt..
+@....EEwwwE.EwwwEE....@
+..ttEEwwwE.EwwEEE.Ett..
+.ttwwwwwwE.EEEE..EEwtt.
+ttwwwwwwwEE....EEEwwwtt
+     wwwwwEEEEEEwwww
+       wwwwwwwwwww
+         wwwwwww
+ENDMAP

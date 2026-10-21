@@ -5,6 +5,8 @@ local component = require("constants.component")
 local effects = require("constants.vault_effects")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
 local branches = require("ids.branches")
+local trigger_ids = require("constants.vault_triggers")
+local monsters = require("ids.monsters")
 
 local module = {}
 
@@ -22,6 +24,19 @@ function module.run(ctx, input)
     local live = {}
     local live_count = 0
     local live_vault = {}
+    local live_delayed = {}
+    local armed_delayed = {}
+
+    -- A source movement trigger can produce one permanent monster after
+    -- ordinary population. Its presence must not spend a roster slot.
+    for _, entity in ipairs(ctx:query({ component.WORLD_VAULT_TRIGGER })) do
+        local trigger = ctx:get(entity, component.WORLD_VAULT_TRIGGER)
+
+        if trigger_ids.PREFIX .. trigger.callback_module .. "." ..
+            trigger.callback_method == trigger_ids.LADY_OF_LAKE_SPAWN then
+            armed_delayed[trigger.level_id .. ":" .. trigger.vault_id] = true
+        end
+    end
 
     for _, entity in ipairs(ctx:query({ "core.ai", "core.actor" })) do
         if not ctx:has(entity, component.SUMMON) and
@@ -31,7 +46,11 @@ function module.run(ctx, input)
 
             local origin = ctx:get(entity, component.VAULT_ORIGIN)
 
-            if origin then
+            local delayed = ctx:get(entity, component.WORLD_VAULT_SPAWN)
+
+            if delayed then
+                live_delayed[delayed.level_id .. ":" .. delayed.vault_id] = true
+            elseif origin then
                 local key = origin.level_id .. ":" .. origin.record_index
 
                 live_vault[key] = true
@@ -78,6 +97,31 @@ function module.run(ctx, input)
                 local profile = roster.profile(profile_id)
 
                 maximum = maximum + death.experience(definition, profile.maximum)
+            end
+        end
+    end
+
+    -- Once the source entrance has fired, its avatar can die and award XP.
+    -- Count that one source body only when no armed entrance or live avatar
+    -- remains; otherwise the ordinary maximum would allow premature XP.
+    local counted_delayed = {}
+
+    for _, level in ipairs(input.vault_levels or {}) do
+        for _, record in ipairs(level.vault_records or {}) do
+            if record.kind == effects.MARKER and
+                record.identity == trigger_ids.LADY_OF_LAKE_SPAWN then
+                local key = level.id .. ":" .. record.source_id
+
+                if not counted_delayed[key] and
+                    not armed_delayed[key] and not live_delayed[key] then
+                    local id = monsters.MONS_MERFOLK_AVATAR
+                    local definition = catalog.get("monsters", id)
+                    local profile = roster.profile(id)
+
+                    maximum = maximum + death.experience(
+                        definition, profile.maximum)
+                    counted_delayed[key] = true
+                end
             end
         end
     end

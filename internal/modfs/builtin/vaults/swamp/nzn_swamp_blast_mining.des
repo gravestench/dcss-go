@@ -1,0 +1,31 @@
+# Nzn swamp blast mining is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nzn_swamp_blast_mining
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    no_pool_fixup
+WEIGHT:  5
+ITEM:    stone, tin of tremorstones
+MONS:    bloated husk, earth elemental
+SHUFFLE: HJ / 12
+# Averages 2 husks, 1.5 earth elementals, and ~1/3 chance of a tin
+SUBST:   D = WWWw.., E = xxWwd., F = WWd.
+NSUBST:  H = 1 / 111dx., J = 2 / 2dx.
+SUBST:   K = xxWwde
+NSUBST:  e = e / d
+MAP
+@          @
+ FDDDDDDDDF
+ DFDDDDDDFD
+ DDFEEEFFDD
+ DDFEEFEEDD
+ DDEFJHEEDD
+ DDEKHJKEDD
+ DDEEJHFEDD
+ DDEEFEEFDD
+ DDFFEEEFDD
+ DFDDDDDDFD
+ FDDDDDDDDF
+@          @
+ENDMAP

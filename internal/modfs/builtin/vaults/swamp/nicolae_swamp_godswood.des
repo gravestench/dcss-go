@@ -1,0 +1,23 @@
+# Nicolae swamp godswood is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_godswood
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS: transparent extra decor
+MAP
+ttt     ttt
+..ttttttt..
+@...ttt...@
+.tt..t..tt.
+tttt...tttt
+ tt..t..tt
+ t.......t
+ tt..w..tt
+  t.www.t
+ tt..w..tt
+ t...C...t
+ tt..t..tt
+  tt...tt
+   ttttt
+ENDMAP

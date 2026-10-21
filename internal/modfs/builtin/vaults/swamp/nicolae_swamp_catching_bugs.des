@@ -1,0 +1,29 @@
+# Nicolae swamp catching bugs is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_catching_bugs
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   transparent patrolling
+SUBST:  D = w-, S = Wwww, t = tt.._, - = ...W
+NSUBST: ' = 2=1 / 2=1. / ., w = 5=2 / 5=2w / w
+KMONS:  1 = goliath frog
+KMONS:  2 = vampire mosquito / spark wasp w:2
+KFEAT:  2 = w
+CLEAR:  _
+MAP
+   t......t
+  t..----..t
+ t..-DSSD-..t
+t..-DSwwSD-..t
+..-DSSDDSSD-..
+.-DSSD''DSSD-.
+.-SwD''''DwS-.
+.-SwD''''DwS-.
+.-DSSD''DwSD-.
+..-DSSDDWSD-..
+t..-DSwwWD-..t
+ t..-DSSD-..t
+  t..----..t
+   t......t
+ENDMAP

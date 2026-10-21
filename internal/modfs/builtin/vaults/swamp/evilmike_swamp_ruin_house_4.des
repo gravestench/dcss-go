@@ -1,0 +1,25 @@
+# Evilmike swamp ruin house 4 is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: evilmike_swamp_ruin_house_4
+SUBST:  x = xxxxx-, - = ----.
+# The source swamp_ruins helper supplied these fixed declarations.
+TAGS: serial_swamp_ruin extra transparent unrand
+DEPTH: Swamp
+WEIGHT: 6
+TILE: x = wall_brick_vines
+FTILE: - = floor_sandstone
+SUBST: - = .
+# Source Lua: : swamp_ruins(_G)
+MAP
+  .......
+ ..xxxxx..
+..xx---xx..
+.xx-----x
+.x--   --
+.x---
+.xx----
+..xx--
+ ..xx
+  ...
+ENDMAP

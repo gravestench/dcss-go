@@ -1,0 +1,24 @@
+# Nicolae swamp treefoil is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_treefoil
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS: transparent extra decor
+SUBST: T = t.
+KFEAT: . = . w:30 / W
+MAP
+tt       @     tt
+ ttt....T.T...Tttt
+  TtttT.TT..TtttT
+  ..TttT...tttT.
+   T..ttttttT..
+    T..TTtT..T.
+     @..TtT.T..
+      T.TtT.TT.@
+      ..TtT.TT
+       .TtT.
+        Tt.
+        ttT
+         t
+ENDMAP

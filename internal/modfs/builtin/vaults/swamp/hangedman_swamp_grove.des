@@ -1,0 +1,26 @@
+# Hangedman swamp grove is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: hangedman_swamp_grove
+TAGS:    no_pool_fixup no_monster_gen patrolling transparent
+DEPTH:   Swamp, !Swamp:$
+KMONS:   1 = eleionoma
+KMONS:   2 = spriggan druid
+KMONS:   3 = bunyip / alligator
+KFEAT:   12 = shallow_water
+SHUFFLE: })
+SUBST:   T = w:4 t, M = ~:4 t, } = }:20 >, ) = ):25 <>
+CLEAR:   ~
+MAP
+ MtttttttttM
+MttW3}2)3wttM
+Mtw.ttWtt.WtM
+Mtt..wtt..ttM
+Mttt.1tW.tttt
+Mtw.WwtwW.WTt
+MtWtttwtttWtt
+MtW.tT.Tt.1tM
+Ttt..twW..ttM
+ Ttt.www.ttM
+ @WWwtTtwW@
+ENDMAP

@@ -1,0 +1,26 @@
+# Grunt hermit hut is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: grunt_hermit_hut
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+MONS: orc high priest / orc sorcerer / wizard / necromancer band
+SHUFFLE: +d / +d / d+
+SUBST: w = w t:10
+SUBST: d = c
+SUBST: c = ccx
+KPROP: w = no_tele_into
+MAP
+    wwww
+  wwwwwwww
+ wwwwwwwwww
+ www....www
+www.cdcc.www
+www.c1%c.www
+www.c%.c.www
+www.cc+c.www
+ www....www
+ wwww.wwwww
+  www.wwww
+    w.@w
+ENDMAP

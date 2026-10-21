@@ -2023,6 +2023,14 @@ Use `api:emit` to insert a DES directive at the declaration's position or
 later, after the player moves, must record a persistent effect and leave its
 live behavior to a system.
 
+When the original DES script computes a value before intervening directives
+and uses it later, split it into two named hooks at those positions. The
+first calls `api:remember(name, value)`; the second calls
+`api:recall(name)`. That memory belongs only to this placement attempt. It
+does not enter the save and cannot leak into another vault. The Swamp hydra
+murder den uses this to roll its head count before substitutions, then emit
+its monster declaration after the static plant declaration.
+
 ### Dungeon layouts
 
 The effective `vaults/layout/*.des` files are also a live catalog. All 21
@@ -2231,6 +2239,15 @@ generic system runs after movement and before traps, only for the player,
 then destroys the trigger entity. Other `MARKER` identities are not treated
 as callbacks. See the Spider trap module and callback for a complete pair.
 
+If a callback creates a permanent monster after level population, give it
+saved origin state so restore can distinguish it from the level's random
+roster. The Lady of the Lake example uses `world.vault_spawn`, whose schema
+and save policy tie the avatar to the source entrance and target markers.
+That source-specific validator also prevents a saved avatar from claiming a
+different map. A new callback with a different spawn rule needs a matching
+origin and validation rule; simply calling `factory.spawn` creates a live
+actor but does not establish its save provenance.
+
 ### Branch end vaults
 
 A branch ending that fits inside an ordinary generated floor uses an end
@@ -2333,6 +2350,35 @@ The storm-palace finale's `BORDER_FILL` record makes exterior terrain open
 sea after the other vaults are placed. The connector records a surviving
 walkable route from each required stair to the finale, so this final fill
 does not strand the player or drown later authored cells.
+
+The ordinary Swamp family works the same way. Its 107 source definitions
+live under `vaults/swamp/`; 104 own a `MAP`, while three mapless controllers
+use `vault.post_place("assemble")` to choose child maps by tag. To add an
+ordinary Swamp encounter, put a uniquely named `.des` file in
+`vaults/swamp/` with `DEPTH: Swamp`, an authored `WEIGHT`, and a `MAP`. An
+explicit `ORIENT: float` enters the branch's regular weighted selection;
+omitting `ORIENT` makes it a minivault. Use `PLACE` only when the map needs a
+specific floor rule. If a calculated choice is necessary, add a same-named
+Lua module under `policy/generation/vaults/swamp/` and call its method from
+the `.des` file. The sparse `internal/script/testdata/swamp-vault-mod/`
+fixture shows a complete added map and hook.
+
+Swamp's `grunt_lady_of_the_lake` shows where generation ends and gameplay
+begins. Its `vault.run("configure_trigger")` hook records marker intent at
+the O, `:`, and K glyphs. Once the map is oriented, the population path
+materializes saved `world.vault_trigger` ECS components. Entering an O or
+`:` cell calls `policy/world/vault_trigger_callbacks/lady_of_lake.lua`;
+the callback reads the saved K target and attempts one awake avatar spawn.
+Keep a later player action in a gameplay callback and persist its mutable
+state in a component. A generation hook receives `api` and cannot use the
+live game `ctx`.
+
+Some source instructions remain typed level data while their visible effect
+is being ported. Swamp's delayed corpse decay and the dead-mangrove feature
+name are retained in vault records. Authored hydra head counts are saved on
+ECS actors, but their full attack and display behavior still needs the
+monster-domain implementation. A coloured draconian role keeps its base ID
+in the saved actor override; additive base traits also need that domain.
 
 #### Named transporters
 
@@ -2732,6 +2778,7 @@ second system just to make the source modifiers work.
 | `api:random_name()` | Generated name from the layout stream. |
 | `api:emit(directive, argument)` | Queue a DES directive; import its kind from `constants.vault_directives`. |
 | `api:record(kind, arguments)` | Queue a typed placement effect; import its kind from `constants.vault_effects`. |
+| `api:remember(name, value)`, `api:recall(name)` | Carry a source script value between hooks in one map placement; recall errors if the first hook did not run. |
 | `api:map_size()` | Return local width and height; an empty-MAP child gets its parent region's size. |
 | `api:set_cell(x, y, glyph)` | Paint one zero-based local cell; out-of-bounds positions raise an error. |
 | `api:has_tag(tag)` | Check a tag on the current DES map. |

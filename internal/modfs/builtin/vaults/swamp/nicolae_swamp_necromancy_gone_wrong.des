@@ -1,0 +1,39 @@
+# Nicolae swamp necromancy gone wrong is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_necromancy_gone_wrong
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   no_trap_gen patrolling
+KMASK:  'defgK = no_monster_gen
+KMASK:  'defgK = no_item_gen
+ITEM:   scimitar good_item ego:none / glaive good_item ego:none \
+        / broad axe good_item ego:none / staff of death / nothing w:40
+# Expanded the source fixed good_aux_armour choice here.
+ITEM: cloak good_item / scarf / helmet good_item / hat good_item \
+      / pair of gloves good_item / pair of boots good_item / nothing w:60
+# Source Lua: : item(dgn.good_aux_armour .. " / nothing w:60")
+ITEM:   scroll of brand weapon / scroll of fear / scroll of teleportation \
+        / scroll of blinking / nothing w:40
+ITEM:   randbook title:Reanimation_Made_Easy spells:animate_dead numspells:4 \
+            disc:necromancy
+MONS:   20-headed hydra zombie
+NSUBST: ' = 1 / 2=1' / d / e / f / g / K / '
+SUBST:  Q = t_, D = t., . = ...W
+: vault.run("remains.human_corpse_k")
+# Source Lua: : dgn.delayed_decay(_G, "K","human corpse")
+TILE:   x = wall_brick_vines
+FTILE:  'defgK = floor_sandstone / none w:5
+CLEAR:  _
+MAP
+ QttttttQ
+QttD.DtttQ
+Qt......ttQ
+ txm+mx.DttQ
+QQx'''x..DtQQ
+ Qm'''m.tttttQ
+tQx'''x..tD..@
+Qtxmxmxt.t..tD
+QQ QQQ tt.ttt
+ QQ Q QQtttQQ
+ENDMAP

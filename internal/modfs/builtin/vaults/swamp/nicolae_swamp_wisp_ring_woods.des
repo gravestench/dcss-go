@@ -1,0 +1,27 @@
+# Nicolae swamp wisp ring woods is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_wisp_ring_woods
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   no_pool_fixup transparent patrolling
+KMONS:  z = will-o-the-wisp
+NSUBST: P = 2=. / F / S, Q = 2=. / F / S, Z = 2=w / K, K = 6=t / w
+SUBST:  S = w., F = t., . = ..W
+KFEAT:  z = w
+MAP
+   ttt@.ttt
+  ttFPPPPFtt
+ ttF......Ftt
+ttF...SS...Ftt
+tF..SwwwwS..Ft
+tF..wzKKzw..Ft
+tF.SwKZZKwS.Ft
+tF.SwKZZKwS.Ft
+tF..wzKKzw..Ft
+tF..SwwwwS..Ft
+ttF...SS...Ftt
+ ttF......Ftt
+  ttFQQQQFtt
+   ttt.@ttt
+ENDMAP

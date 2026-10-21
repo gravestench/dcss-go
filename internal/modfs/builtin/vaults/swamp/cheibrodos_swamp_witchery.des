@@ -1,0 +1,25 @@
+# Cheibrodos swamp witchery is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: cheibrodos_swamp_witchery
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   no_monster_gen
+ITEM:   book of hexes / fen folio
+MONS:   fenstrider witch
+SUBST:  ' = %:20 d:1
+NSUBST: 1 = 1 / .
+MAP
+        WWW
+       WxxxW
+      Wxx'xxW
+      Wx.1'xW
+    WWWx+.xxW
+  WWWW..xmxW
+ Wxxx..WWWWW
+Wxx.+xW..WW
+Wx'1.mWWW@
+Wxx'xxWWW
+ WxxxWW
+  WWW
+ENDMAP

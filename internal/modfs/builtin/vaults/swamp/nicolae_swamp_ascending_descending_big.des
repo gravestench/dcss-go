@@ -1,0 +1,38 @@
+# Nicolae swamp ascending descending big is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_ascending_descending_big
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    transparent decor no_pool_fixup
+ORIENT:  float
+SUBST:   D = PQ, E = QR, F = RS, _ = S_
+: vault.run("stairs.configure")
+# Source Lua: : if you.depth() == 1 then
+# Source Lua: SUBST:   P = p, Q = q, R = r, S = s, Z = z
+# Source Lua: : elseif you.depth_fraction() < 1 then
+# Source Lua: SHUFFLE: PQRSZ/pqrsz
+# Source Lua: : end
+SUBST:   Ps = t, Qr = ., Rq = W, Sp = w, Z = [{(, z = ]})
+CLEAR:   _
+MAP
+___________________
+_SSSSSSSSSSSSSSSSS_
+_SFFFFFFFFFFFFFFFS_
+_SFRRRRRRRRRRRRRFS_
+_SFREEEEEEEEEEERFS_
+_SFREQQQQQQQQQERFS_
+_SFREQDDDDDDDQERFS_
+_SFREQDPPPPPDQERFS_
+_SFREQDPDDDPDQERFS_
+_SFREQQQQZDPDQERRRR
+_SFREQDPDDDPDQERFS_
+_SFREQDPPPPPDQERFS_
+_SFREQDDDDDDDQERFS_
+_SFREQQQQQQQQQERFS_
+_SFREEEEEEEEEEERFS_
+_SFRRRRRRRRRRRRRFS_
+_SFFFFFFFFFFFFFFFS_
+_SSSSSSSSSSSSSSSSS_
+___________________
+ENDMAP

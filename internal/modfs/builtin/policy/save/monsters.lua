@@ -462,7 +462,8 @@ function module.run(ctx, input)
         elseif ctx:get(entity, doom_howl.ARRIVAL) then
             validate_doom_arrival(ctx, entity, actor, health,
                 position, ai, input.current_aut)
-        elseif ctx:get(entity, component.VAULT_ORIGIN) then
+        elseif ctx:get(entity, component.VAULT_ORIGIN) or
+            ctx:get(entity, component.WORLD_VAULT_SPAWN) then
             validate_vault_monster(ctx, entity, actor, health,
                 position, ai, input.current_aut)
         -- Kirke's extra band and released actors have explicit origins, not

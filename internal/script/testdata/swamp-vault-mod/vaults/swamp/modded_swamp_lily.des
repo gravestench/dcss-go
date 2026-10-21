@@ -1,0 +1,11 @@
+# A sparse layer contributes one ordinary Swamp map and companion hook.
+NAME: modded_swamp_lily
+DEPTH: Swamp
+WEIGHT: 7
+ORIENT: float
+: vault.run("configure")
+MAP
+.....
+..s..
+.....
+ENDMAP

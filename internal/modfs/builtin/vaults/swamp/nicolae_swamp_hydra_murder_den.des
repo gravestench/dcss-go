@@ -1,0 +1,38 @@
+# Nicolae swamp hydra murder den is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_hydra_murder_den
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS: no_monster_gen
+: vault.run("roll_hydra_heads")
+# Source Lua: : local heads = crawl.roll_dice(2, 3) + 7
+KPROP: ' = no_tele_into
+SUBST: Z = T_
+NSUBST: ' = 1:h / 1:g / 2:c / 1:c' / 2:% / 2:%' / 5:p / 4:p' / *:'
+SUBST: ' = ....b
+KPROP: bc = bloody
+SUBST: b = ., . = ..W
+KFEAT: T = t
+KMONS: p = plant
+# Source Lua: : kmons( "h = " .. heads .. "-headed hydra patrolling" )
+: vault.run("declare_hydra")
+KITEM: g = any weapon good_item / any armour good_item / any jewellery good_item
+: vault.run("remains.human_corpse_c")
+# Source Lua: : dgn.delayed_decay(_G, 'c', 'human corpse')
+CLEAR: _
+MAP
+   ZZZZZZ
+  ZZttttZZ
+ ZZtt''tt.Z
+ZZtt''''tt.
+Ztt''''''t.
+Zt'''''''p..
+Zt'''''''t.@
+Zt'''''''t..
+Zt''''''tt.
+Ztt'''''t..
+ZZttt''ttZ
+ ZZZttttZZ
+   ZZZZZZ
+ENDMAP

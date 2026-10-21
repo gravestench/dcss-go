@@ -280,6 +280,13 @@ end
 function factory.spawn(ctx, kind_id, level_id, x, y, options)
     options = options or {}
 
+    if options.hydra_heads and options.hydra_heads ~= 0 and
+        (options.hydra_heads < 1 or options.hydra_heads > 20 or
+            options.hydra_heads % 1 ~= 0) then
+        error("invalid authored hydra head count " ..
+            tostring(options.hydra_heads))
+    end
+
     if options.hp and (options.hp < 1 or options.hp > 10000 or
         options.hp % 1 ~= 0) then
         error("invalid authored monster HP " .. tostring(options.hp))
@@ -297,6 +304,14 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
 
     if options.base_id then
         source = catalog.get("monsters", options.base_id)
+
+        -- Source colour+role draconians keep the role's HD and HP while
+        -- their saved base ID identifies the colour for additive traits.
+        if definition.genus_id == monsters.MONS_DRACONIAN and
+            source.genus_id == monsters.MONS_DRACONIAN and
+            definition.id ~= source.id then
+            source = definition
+        end
     end
 
     if not source.average_hp_10x or source.average_hp_10x <= 0 then
@@ -371,6 +386,12 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
 
     if blob_size > 1 then
         ctx:add(monster, component.SLIME_BLOB, { size = blob_size })
+    end
+
+    if options.hydra_heads and options.hydra_heads > 0 then
+        ctx:add(monster, component.MONSTER_HYDRA_HEADS, {
+            count = options.hydra_heads,
+        })
     end
     create_loadout(ctx, monster, loadout, options.origin)
     give_explicit_equipment(ctx, monster, equipment, options.origin)

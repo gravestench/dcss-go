@@ -1,0 +1,26 @@
+# Nicolae swamp baby hydras is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_baby_hydras
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+SHUFFLE: abcd
+SUBST:   a:@, bcd:t, D = .Wt, . = ...W
+KMONS:   1 = 1-headed hydra
+KMONS:   2 = 2-headed hydra / 3-headed hydra / 4-headed hydra
+KFEAT:   12 = . / W
+MAP
+             taat
+            tt..b
+  tttt     ttD..b
+ ttDDtttttttD.1.t
+ttD..DtDDttD...Dt
+tD....1..DDD..DDt
+tD2...DD...1..DDt
+ttD..DttDDDDD..Dt
+ ttDDtttttttD...t
+  tttt    ttD1.tt
+         tt....d
+         t...t.d
+         tccttt
+ENDMAP

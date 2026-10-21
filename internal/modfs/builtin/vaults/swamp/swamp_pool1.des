@@ -1,0 +1,20 @@
+# Swamp pool1 is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: swamp_pool1
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   no_pool_fixup allow_dup extra luniq_pool
+WEIGHT: 1000
+: vault.run("smear")
+# Source Lua: {{ smear_map({iterations=5, smear='w', onto='wwt"', boxy=false}) }}
+SUBST:  "=ttw
+MAP
+     ""
+   "www"
+  "wwwww"
+  wwwwwww"
+  "wwwww"
+   "www"
+    "w"
+ENDMAP

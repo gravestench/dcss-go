@@ -1,0 +1,19 @@
+# Nicolae swamp alligator family is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_alligator_family
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:   layout_swamp
+NSUBST: D = 2=W / t
+KMONS:  1 = alligator / nothing w:5
+KFEAT:  1@ = W
+MAP
+   tttt
+  tt11tt
+ tt1WW1tt
+tDWWWWWWDt
+tWDDWWDDWt
+ WWWDDWWW
+   @@@@
+ENDMAP

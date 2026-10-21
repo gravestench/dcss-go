@@ -1,0 +1,28 @@
+# Nicolae swamp snake nest is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_snake_nest
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:  transparent no_monster_gen
+KMONS: 1 = anaconda
+KMONS: 2 = water moccasin / black mamba / nothing w:20
+SUBST: D = ..ttw
+SUBST: . = .:20 2:3
+KFEAT: .12 = . / W w:2
+MAP
+       t.@.tttt
+tttt   tt....Dt
+tDDt    tDD...Dt
+@.DttttttD....Dt
+.....DDD.....Dtt
+tt........DDDtt
+tttt.DwD..Dtt
+ttD...wwD..Dt
+tD.........Dtt
+tD.1...tD...Dtt
+tDD...ttDD...Dt
+ttDDDDtttDD...t
+ tttttt tttD...
+          ttt.@
+ENDMAP

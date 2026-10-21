@@ -1,0 +1,30 @@
+# Hangedman swamp pad is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: hangedman_swamp_pad
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    transparent extra no_pool_fixup decor
+KMONS:   P = plant
+KFEAT:   P = shallow_water
+SHUFFLE: AB / AB / BA, CD / CD / DC, EF / EF / FE
+SUBST:   A = t, B = ., C : Pt~.., D = ., E = t, F = P
+KMASK:   ~ = no_monster_gen
+SUBST:   ~ = w
+MAP
+   .www.www.
+  .w...w...w.
+ .w.B.t.t.B.w.
+.w.A.ttttt.A.w.
+w.B.t..C..t.B.w
+w..t...D...t..w
+w.tt..EFE..tt.w
+.w.tCDFtFDCt.w.
+w.tt..EFE..tt.w
+w..t...D.wwt..w
+w.B.t..C.wPw..w
+.w.A.tttttwPw.w
+ .w.B.t.t..wPw.
+  .w...w....w.
+   .www.wwww.
+ENDMAP

@@ -1,0 +1,22 @@
+# Cheibrodos swamp pet leeches is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: cheibrodos_swamp_pet_leeches
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:  no_monster_gen
+MONS:  vampire mage, tyrant leech
+KPROP: .21 = bloody / w:30 nothing
+KPROP: e = bloody
+: vault.run("remains.human_corpse_e")
+# Source Lua: : dgn.delayed_decay(_G, 'e', 'human corpse')
+MAP
+ ttttt
+tt''ett
+txx+xxt
+tx.1.xt
+tx2.2xt
+tx...xt
+txx+xxt
+ tt@tt
+ENDMAP

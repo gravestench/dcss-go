@@ -1,0 +1,23 @@
+# Nicolae swamp stuck in the mud is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_stuck_in_the_mud
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    transparent
+SHUFFLE: Ss, Rr
+SUBST:   D = W., E = t..., SR = @, sr = t, M = tttW
+NSUBST:  W = 3=p / 3=pWW
+KITEM:   p = pair of boots
+KFEAT:   p = W
+MAP
+tttt    tttt
+S.EttttttE.R
+S..EtMMtE..R
+tE.DDWWDD.Et
+ttEDDWWDDEtt
+tE.DDWWDD.Et
+s..EtMMtE..r
+s.EttttttE.r
+tttt    tttt
+ENDMAP

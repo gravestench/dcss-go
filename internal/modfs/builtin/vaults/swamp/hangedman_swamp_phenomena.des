@@ -1,0 +1,27 @@
+# Hangedman swamp phenomena is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: hangedman_swamp_phenomena
+TAGS:    no_pool_fixup no_monster_gen patrolling transparent
+DEPTH:   Swamp, !Swamp:$
+KMONS:   1 = will-o-the-wisp
+KMONS:   2 = ball lightning
+KMONS:   3 = lightning spire
+KFEAT:   12 = deep_water
+KFEAT:   3 = shallow_water
+KMASK:   3 = opaque
+KPROP:   3 = no_tele_into
+SHUFFLE: })
+SUBST:   T = w:3 t, M = ~:4 t, W = W:3 w, . = .:3 W, } = }:20 >, ) = ):25 <>
+CLEAR:   ~
+MAP
+  Mtttttt  @tt
+ Mttttttttt..ttM
+Mttt3twwwtWT.wtt
+Mtt2w1w}wwt.wwwtt
+tttwww.w.w.wwwttt
+ttwww.tWw)w1w2ttM
+Mttw.TWt.wwt3tttM
+ Mtt..tttttttttM
+   tt@  ttttttt
+ENDMAP

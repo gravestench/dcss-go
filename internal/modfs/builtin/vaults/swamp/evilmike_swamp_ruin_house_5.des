@@ -1,0 +1,33 @@
+# Evilmike swamp ruin house 5 is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: evilmike_swamp_ruin_house_5
+NSUBST: x = 1:+ / *:x
+SUBST:  yx = xxxxx-, - = ----.
+NSUBST: - = 2:d / *:-
+: vault.run("remains.human_skeleton_d")
+# Source Lua: : dgn.delayed_decay(_G, 'd', 'human skeleton')
+# The source swamp_ruins helper supplied these fixed declarations.
+TAGS: serial_swamp_ruin extra transparent unrand
+DEPTH: Swamp
+WEIGHT: 6
+TILE: x = wall_brick_vines
+FTILE: - = floor_sandstone
+SUBST: - = .
+# Source Lua: : swamp_ruins(_G)
+MAP
+  ............
+ ..............
+..yxxxxxyxxxxy..
+..x-----y----x..
+..x-----y----x..
+..x-----y----x..
+..yyyy-yy---
+..x---y----
+..x---yxxxxx
+..x---x...
+..x---x...
+..yxxxy..
+ .......
+  .....
+ENDMAP

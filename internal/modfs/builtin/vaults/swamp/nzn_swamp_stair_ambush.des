@@ -1,0 +1,20 @@
+# Nzn swamp stair ambush is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nzn_swamp_stair_ambush
+DEPTH:  Swamp:2-, !Swamp:$
+MONS:   goliath frog / swamp worm, hydra / w:5 eleionoma, bunyip
+MONS:   spriggan druid
+NSUBST: 1 = 3 / 11W., 2 = 4 / 22W.
+MAP
+    @
+    1t
+   2WWt
+  tWWWW2
+ tWW{WWW1@
+@1WWW>WWt
+  2WWWWt
+   tWW2
+    t1
+     @
+ENDMAP

@@ -1,0 +1,25 @@
+# Nicolae swamp nymph family reunion is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_nymph_family_reunion
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:  transparent patrolling
+SUBST: D = wwwwW., M = wwt, - = ....t, . = ....W
+KMONS: 1 = water nymph
+KMONS: 2 = eleionoma
+KFEAT: 1 = w
+MAP
+@.ttttt
+...-ttttt
+t...--tttt
+tD.-.---ttt
+tDD.-.2--tt
+twDD.-.2-ttt
+tMwDD.-.--tt
+tMMwDD.-.-tt
+tM1MwDD.-.-t
+ttM1MwDD...t
+ ttMMMwDD...
+  tttttttt.@
+ENDMAP

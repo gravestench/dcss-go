@@ -1,0 +1,22 @@
+# Nicolae swamp trees clearing is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_trees_clearing
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS: transparent luniq_swclearing extra decor
+SUBST: w = Te, T = ttt.., E = .e, e = W..
+MAP
+      tttweeee
+    wtttTwEEEEeee
+  eeTtttT.....EEEe
+eeEE.TttT........Ee
+eE....TtT....T...Ee
+eE....TtT...TtT...Ee
+eE.....T....TtT...Ee
+ eE........TttTT.Ee
+  eE........TtttTEe
+  eeEEE.....Ttttww
+    eeeEEEEEwtttt
+       eeeeewttt
+ENDMAP

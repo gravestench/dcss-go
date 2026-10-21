@@ -1,0 +1,29 @@
+# Nicolae swamp some circles is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_some_circles
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    transparent decor
+# Shuffle guide:
+# PQR - sides (Q) guaranteed traversible, center (P)/corners (R) whatever
+# DER - sides/center guaranteed blocked, corners whatever
+# PFH - corners guaranteed traversible, sides/center whatever
+SHUFFLE: PQR/DER/PFH
+SUBST:   P : twWpM., Q : WpM., D : tE, E : wt, R : twWM, F : twWpM., H : WM
+KMONS:   pM = plant
+KFEAT:   M = W
+MAP
+............
+..RR....RR..
+.RRRRQQRRRR.
+.RRRRQQRRRR.
+..RRPPPPRR..
+..QQPPPPQQ..
+..QQPPPPQQ..
+..RRPPPPRR..
+.RRRRQQRRRR.
+.RRRRQQRRRR.
+..RR....RR..
+............
+ENDMAP

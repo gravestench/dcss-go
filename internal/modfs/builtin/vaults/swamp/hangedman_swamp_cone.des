@@ -1,0 +1,25 @@
+# Hangedman swamp cone is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: hangedman_swamp_cone
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    transparent extra no_pool_fixup decor
+SHUFFLE: ABCDEF
+SUBST:   AB : w, C : ww., D : w.., EF = ., G : ttw., H : wtt``, I : wtt``
+CLEAR:   `
+KMASK:   wW = no_monster_gen
+MAP
+t@......
+t.ttttG.H
+t.A.........
+t....BttttG.H
+t.tttttC.........
+t.A.......DttttG.H
+t....BttttttE.........
+t.tttttC.......FttttG@
+t.A.......Dtttttt.....
+t....Btttttt......I
+t.ttttt......I
+t@......I
+ENDMAP

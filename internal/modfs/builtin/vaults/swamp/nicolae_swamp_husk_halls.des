@@ -1,0 +1,31 @@
+# Nicolae swamp husk halls is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_husk_halls
+TAGS:    transparent
+DEPTH:   Swamp:2-
+ORIENT:  float
+KMONS:   1 = bloated husk
+KFEAT:   1 = W / .
+NSUBST:  1 = 2=1 / 2=1./ ., 0 = 2=0 / 2=0. / .
+SUBST:   { = {<, D = t., . = ...W, _ = t_
+SHUFFLE: {[(
+CLEAR:   _
+MAP
+   __tD@@Dt__
+   _ttD.1Dtt_
+   _ttD..Dtt_
+____ttD0.Dtt____
+_tttttD..Dttttt_
+ttttttt..ttttttt
+DDDDDtWWWWtDDDDD
+@1....W{[W..0..@
+@..0..W(<W....1@
+DDDDDtWWWWtDDDDD
+ttttttt..ttttttt
+_tttttD..Dttttt_
+____ttD.0Dtt____
+   _ttD..Dtt_
+   _ttD1.Dtt_
+   __tD@@Dt__
+ENDMAP

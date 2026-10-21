@@ -1,0 +1,34 @@
+# Nzn swamp weyward sisters is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nzn_swamp_weyward_sisters
+DEPTH:  Swamp:2-
+TAGS:   no_pool_fixup
+SUBST:  e = ddee. *:5
+SUBST:  2 = 222. *:1
+NSUBST: 3 = 3 / f / .
+MONS:   patrolling fenstrider witch, fungus, human att:good_neutral
+KITEM:  f = any good_item no_pickup
+KFEAT:  n = iron_grate
+MARKER: O = lua:fog_machine {   cloud_type = "flame", pow_min = 10, \
+                                pow_max = 10, delay = 10, size = 1, \
+                                walk_dist = 0, excl_rad = 0 }
+: vault.run("remains.human_corpse_d")
+# Source Lua: : dgn.delayed_decay(_G, 'd', 'human corpse')
+: vault.run("remains.human_skeleton_e")
+# Source Lua: : dgn.delayed_decay(_G, 'e', 'human skeleton')
+MAP
+    xxxxx@t
+    xxOxxWt
+    xeeexWt
+    x.1.xWt
+    xxAxxWt
+     t.tWWt
+tttttt.Wwxxxxx
+@WWWWwW.tx.n3x
+xxxxxW.W.A1=3x
+x222x.WWwx.n3x
+x21.AWtWwxxxxx
+x222xtttWWWWW@
+xxxxx  ttttttt
+ENDMAP

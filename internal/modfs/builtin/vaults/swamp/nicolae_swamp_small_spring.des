@@ -1,0 +1,22 @@
+# Nicolae swamp small spring is an authored Swamp definition.
+# Its source MAP and static directives remain beside the encounter.
+# Source: crawl-ref/source/dat/des/branches/swamp.des.
+NAME: nicolae_swamp_small_spring
+# The source default-depth applied before these files were split.
+DEPTH: Swamp
+TAGS:    transparent decor
+SHUFFLE: DEFHJKLMNOPRS / QQQ___QQ_____/ QQQ___Q___QQQ / __QQQQQ______ \
+         / _____QQQ_____ / _____QQ___QQQ / __QQQ_Q_QQQ__ / ______QQQQQ__ \
+         / ________QQQQQ / QQQQ___Q_____ / _QQQQQ_______ / _______QQQQQ_ \
+         / _____Q___QQQQ / _QQQ_QQQ_QQQ_
+SUBST:   DEFHJQ = w, KLMNOPRS = _, a = Ww, ' = .W
+CLEAR:   _
+MAP
+    .'''''......
+tttt.     ..wwa..
+txxx.DEFHJ.wwwwa.
+txwwwwKLMwwwwwwa.
+txxx.NOPRS.wwwwa.
+tttt.     ..wwa..
+    .'''''......
+ENDMAP
