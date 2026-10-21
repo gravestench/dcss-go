@@ -12,6 +12,10 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
+// Whole-floor generation may resolve many authored maps in one policy call.
+// Keep a finite deadline while giving that work more room than turn callbacks.
+const policyTimeout = 10 * time.Second
+
 // Policies are named Lua decisions that run outside the Akara system loop.
 // A caller passes plain values; the callback reads live state through ctx.
 func (r *Runtime) luaRegisterPolicy(state *lua.LState) int {
@@ -71,7 +75,7 @@ func (r *Runtime) policyWithContext(
 
 	callbackContext, cancel := context.WithTimeout(
 		context.Background(),
-		2*time.Second,
+		policyTimeout,
 	)
 	r.state.SetContext(callbackContext)
 

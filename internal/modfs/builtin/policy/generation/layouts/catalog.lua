@@ -73,6 +73,7 @@ end
 local function methods(definition)
     local run
     local validate
+    local veto
     local authored_map = #definition.rows > 0
 
     for _, operation in ipairs(definition.operations) do
@@ -90,6 +91,12 @@ local function methods(definition)
             end
 
             validate = operation.argument
+        elseif operation.kind == directives.HOOK_VETO then
+            if veto then
+                error("layout " .. definition.id .. " has multiple veto hooks")
+            end
+
+            veto = operation.argument
         end
     end
 
@@ -98,7 +105,7 @@ local function methods(definition)
             " has neither an authored MAP nor a run hook")
     end
 
-    return run, validate
+    return run, validate, veto
 end
 
 -- Register every effective source map, including zero-weight Dungeon maps.
@@ -277,7 +284,7 @@ function catalog.has_candidates(branch_id, local_depth)
 end
 
 function catalog.choose(random, branch_id, local_depth, branch_bottom,
-    primary_tags)
+    primary_tags, prefer_central)
     local candidates, total = placed_candidates(branch_id, local_depth,
         branch_bottom, primary_tags)
     local branch = register.get(categories.BRANCHES, branch_id)
@@ -291,6 +298,25 @@ function catalog.choose(random, branch_id, local_depth, branch_bottom,
 
         candidates, total = candidates_for(branch_id, local_depth,
             branch_bottom, primary_tags)
+
+        -- Source generation first asks for a central layout around a
+        -- centred primary vault, then falls back to the ordinary pool.
+        if prefer_central then
+            local central = {}
+            local central_weight = 0
+
+            for _, candidate in ipairs(candidates) do
+                if candidate.definition.tags.central then
+                    central[#central + 1] = candidate
+                    central_weight = central_weight + candidate.weight
+                end
+            end
+
+            if central_weight > 0 then
+                candidates = central
+                total = central_weight
+            end
+        end
     end
 
     if total == 0 then
@@ -314,10 +340,12 @@ end
 -- may reject a random shape; bounded retries consume new draws without
 -- changing layout identity. The postpass adds missing connected stairs.
 function catalog.execute(ctx, definition, branch_id, local_depth, profile,
-    prior_vault_ids)
-    local run, validate = methods(definition)
+    prior_vault_ids, options)
+    local run, validate, veto = methods(definition)
     local branch = register.get(categories.BRANCHES, branch_id)
     local width, height = hell_size.for_branch(branch, local_depth)
+    options = options or {}
+
     local api = {
         ctx = ctx,
         definition = definition,
@@ -329,7 +357,14 @@ function catalog.execute(ctx, definition, branch_id, local_depth, profile,
         width = width,
         height = height,
         prior_vault_ids = prior_vault_ids,
+        builder = options.builder,
+        primary_vault = options.primary_vault,
+        map_parameters = options.map_parameters,
     }
+
+    if veto and hooks.run(definition, veto, api) then
+        error("layout " .. definition.id .. " veto rejected candidate")
+    end
 
     -- Source layout validators can reject many draws before a connected
     -- floor has enough open area, especially with sparse room connectors.
@@ -347,7 +382,8 @@ function catalog.execute(ctx, definition, branch_id, local_depth, profile,
         end
 
         if not validate or hooks.run(definition, validate, result) then
-            result.stairs = stairs.complete(result.builder, profile)
+            result.stairs = stairs.complete(result.builder, profile,
+                options.reserved_for_primary)
             result.rows = result.builder:rows()
             result.id = definition.id
 

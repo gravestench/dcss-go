@@ -181,8 +181,15 @@ function features.apply_vault_terrain(cells, records, ctx, depth)
             keep = false
         elseif record.kind == effects.SOURCE_FEATURE then
             local feature = features.vault_terrain[record.identity]
+            local previous = record.base_glyph and
+                features.from_source_glyph[record.base_glyph]
+            local current = cells[record.y + 1][record.x + 1]
 
-            if feature then
+            -- An authored map drawn later may replace this layout cell.
+            -- Its final glyph wins over the older source feature record.
+            if previous and current ~= previous then
+                keep = false
+            elseif feature then
                 cells[record.y + 1][record.x + 1] = feature
 
                 if feature == record.identity and

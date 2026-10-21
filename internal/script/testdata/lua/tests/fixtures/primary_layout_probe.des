@@ -1,0 +1,10 @@
+# A fixture outside vaults/layout exercises the real parser without adding
+# a selectable source layout to the live catalog.
+NAME: primary_layout_probe
+DEPTH: Elf
+WEIGHT: 0
+TAGS: layout layout_type_rooms requires_primary_vault
+: vault.run("primary_layout_probe")
+: vault.veto("reject_without_primary")
+MAP
+ENDMAP

@@ -19,7 +19,7 @@ local function imported_dungeon_layouts()
     local branch_only = 0
     local explicitly_placed = 0
 
-    harness.equal(#paths, 62, "total source layout count")
+    harness.equal(#paths, 79, "total source layout count")
 
     for _, path in ipairs(paths) do
         local layout = des.parse(path, mod.read(path))
@@ -49,7 +49,7 @@ local function imported_dungeon_layouts()
 
     harness.equal(active, 17, "active Dungeon layouts")
     harness.equal(disabled, 4, "disabled Dungeon layouts")
-    harness.equal(branch_only, 37, "branch-only source layouts")
+    harness.equal(branch_only, 54, "branch-only source layouts")
     harness.equal(explicitly_placed, 4, "authored branch floors")
 end
 

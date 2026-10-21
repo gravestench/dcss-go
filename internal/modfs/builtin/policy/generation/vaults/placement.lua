@@ -253,7 +253,8 @@ local function rendered_glyph(source)
 end
 
 -- Implicit item and monster glyphs become typed records alongside rendered terrain.
-local function add_source_record(records, vault, source, x, y, overridden)
+local function add_source_record(records, vault, source, x, y, overridden,
+    base_glyph)
     local feature = glyphs.terrain[source]
 
     if feature and source ~= "." and not overridden then
@@ -261,6 +262,7 @@ local function add_source_record(records, vault, source, x, y, overridden)
             kind = effects.SOURCE_FEATURE,
             identity = feature,
             source = source,
+            base_glyph = base_glyph,
             x = x,
             y = y,
             vault_id = vault.id,
@@ -335,7 +337,8 @@ local function draw_map(vault, cells, builder, left, top, records,
 
                 builder:set(x, y, rendered)
                 occupied[#occupied + 1] = point
-                add_source_record(records, vault, source, x, y, keyed)
+                add_source_record(records, vault, source, x, y, keyed,
+                    rendered)
 
                 if source == "{" and not keyed then
                     source_stair = source_stair or point

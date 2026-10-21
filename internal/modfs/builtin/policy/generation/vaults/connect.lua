@@ -380,6 +380,10 @@ function connect.finish(ctx, builder, placed, required)
         end
     end
 
+    -- The generation owner uses this footprint to retire older terrain
+    -- records beneath connector cells after the vault is accepted.
+    placed.carved = carved
+
     return placed
 end
 

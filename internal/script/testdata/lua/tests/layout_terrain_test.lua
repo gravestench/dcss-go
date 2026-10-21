@@ -3,6 +3,8 @@
 -- separate table of expected DES syntax.
 local features = require("content.terrain_features")
 local glyphs = require("constants.vault_glyphs")
+local effects = require("constants.vault_effects")
+local generated = require("policy.generation.generated")
 local harness = require("tests.harness")
 
 local test = {}
@@ -42,11 +44,84 @@ local function rejects_unknown_glyph()
     harness.truthy(tostring(message):find("(1,0)", 1, true), "glyph coordinate")
 end
 
+-- A later authored vault may cover a layout wall. Its floor must win over
+-- the older wall's source record, while an unobstructed water record still
+-- upgrades the floor placeholder into its intended terrain.
+local function skips_overwritten_source_features()
+    local cells = features.decode_source_rows({ ".." })
+    local records = {
+        {
+            kind = effects.SOURCE_FEATURE,
+            identity = "DNGN_ROCK_WALL",
+            source = "x",
+            base_glyph = "#",
+            x = 0,
+            y = 0,
+        },
+        {
+            kind = effects.SOURCE_FEATURE,
+            identity = "DNGN_SHALLOW_WATER",
+            source = "W",
+            base_glyph = ".",
+            x = 1,
+            y = 0,
+        },
+    }
+
+    features.apply_vault_terrain(cells, records)
+
+    harness.equal(cells[1][1], "DNGN_FLOOR", "new authored floor wins")
+    harness.equal(cells[1][2], "DNGN_SHALLOW_WATER", "surviving water intent")
+end
+
+-- A new authored map owns every non-space source cell, even when it paints
+-- the same placeholder glyph as an older water record. Connector carving
+-- also takes ownership of any older source feature it opens.
+local function tracks_later_map_ownership()
+    local water = {
+        kind = effects.SOURCE_FEATURE,
+        identity = "DNGN_SHALLOW_WATER",
+        source = "W",
+        base_glyph = ".",
+        x = 0,
+        y = 0,
+    }
+    local rock = {
+        kind = effects.SOURCE_FEATURE,
+        identity = "DNGN_ROCK_WALL",
+        source = "x",
+        base_glyph = "#",
+        x = 1,
+        y = 0,
+    }
+    local records = {}
+
+    generated.append_vault_records(records, {
+        {
+            records = { water, rock },
+        },
+        {
+            records = {},
+            occupied = {
+                { x = 0, y = 0 },
+            },
+            carved = {
+                ["1:0"] = true,
+            },
+        },
+    })
+
+    harness.truthy(water.overridden, "same-glyph authored overlay")
+    harness.truthy(rock.overridden, "connector carve owns old wall")
+end
+
 -- Check the common decoder as a unit before live weighted layout selection.
 function test.run()
     decodes_layout_glyphs()
     keeps_basic_layout_features()
     rejects_unknown_glyph()
+    skips_overwritten_source_features()
+    tracks_later_map_ownership()
 end
 
 return test

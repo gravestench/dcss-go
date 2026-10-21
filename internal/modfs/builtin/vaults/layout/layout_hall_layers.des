@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_halls.des.
+# Geometry and source validation are in the named Lua module.
+NAME:   layout_hall_layers
+DEPTH:  Lair
+WEIGHT: 7
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand central layout_type_narrow_caves
+: vault.run("layout_hall_layers")
+MAP
+ENDMAP

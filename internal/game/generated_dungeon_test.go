@@ -30,6 +30,25 @@ func newGeneratedTestGame(t *testing.T, seed uint64) *Game {
 func descendGeneratedTo(t *testing.T, g *Game, lastDepth int) {
 	t.Helper()
 
+	// These tests inspect generated floors and links, not character survival.
+	// Keep incidental monster turns from ending the stair traversal early.
+	health, found := g.stores.Health.Get(g.player)
+
+	if !found {
+		t.Fatal("generated test player has no health")
+	}
+
+	originalMax := health.Max
+	originalCurrent := health.Current
+
+	health.Max = 10000
+	health.Current = health.Max
+
+	defer func() {
+		health.Max = originalMax
+		health.Current = originalCurrent
+	}()
+
 	for depth := 1; depth < lastDepth; depth++ {
 		level := g.levels[depth]
 		var down StairLink
@@ -66,6 +85,54 @@ func descendGeneratedTo(t *testing.T, g *Game, lastDepth int) {
 		if result.View.LevelID != depth+1 {
 			t.Fatalf("Dungeon:%d descent = %+v, %v", depth, result.View, err)
 		}
+	}
+}
+
+// Structural travel tests may find a wandering monster on their chosen
+// stair. Move that actor to another walkable cell so the test can inspect
+// the link without requiring the character to win an unrelated fight.
+func moveGeneratedPlayerToStair(
+	t *testing.T,
+	g *Game,
+	level *Level,
+	stair StairLink,
+) {
+	t.Helper()
+
+	if blocker, occupied := level.ActorAt(stair.X, stair.Y); occupied &&
+		blocker != g.player {
+		moved := false
+
+		for y, row := range level.Cells() {
+			for x := range row {
+				if !level.Walkable(x, y) {
+					continue
+				}
+
+				if _, taken := level.ActorAt(x, y); taken {
+					continue
+				}
+
+				if err := level.MoveActor(blocker, x, y); err != nil {
+					t.Fatal(err)
+				}
+
+				moved = true
+				break
+			}
+
+			if moved {
+				break
+			}
+		}
+
+		if !moved {
+			t.Fatal("generated stair blocker has no open destination")
+		}
+	}
+
+	if err := level.MoveActor(g.player, stair.X, stair.Y); err != nil {
+		t.Fatal(err)
 	}
 }
 

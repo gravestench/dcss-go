@@ -17,6 +17,7 @@ local vault_rules = require("constants.vault_generation_rules")
 local vault_extra = require("policy.generation.vaults.extra")
 local vault_encompass = require("policy.generation.vaults.encompass")
 local vault_primary = require("policy.generation.vaults.primary")
+local vault_used = require("policy.generation.vaults.used")
 local branch_schedule = require("policy.generation.branch_schedule")
 local temple_plan = require("policy.generation.temple.plan")
 local branch_levels = require("policy.generation.branch_levels")
@@ -88,6 +89,77 @@ local function layout_family(layout)
     end
 
     error("layout " .. layout.id .. " has no layout_type tag")
+end
+
+-- A wrapping layout needs its selected authored primary on the same grid
+-- before the layout hook runs. Other layouts keep ordinary later placement.
+-- Return the preplaced map separately so the extra stage can publish its
+-- records and uniqueness history without placing it a second time.
+function generated.prepare_layout(ctx, definition, input)
+    local options = {
+        map_parameters = input.map_parameters,
+    }
+    local preplaced
+    local primary_cells
+
+    if definition.tags.requires_primary_vault then
+        local specification = input.primary_spec
+
+        if not specification then
+            error("layout " .. definition.id .. " needs an authored primary")
+        end
+
+        local branch = register.get("branches", input.branch_id)
+        local width, height = hell_size.for_branch(branch, input.depth)
+        local builder = grid.new(ctx, width, height)
+        local placement_context = {
+            branch_id = input.branch_id,
+            depth = input.depth,
+            branch_bottom = branch.depth,
+            absolute_depth = branch.absolute_depth + input.depth - 1,
+            primary_vault_family = specification.family,
+            primary_allow_dummy = specification.allow_dummy,
+            primary_choice = input.primary_choice,
+            player = input.player,
+            used = vault_used.new(input.prior_vault_ids),
+        }
+
+        preplaced = vault_primary.preplace(ctx, builder, placement_context)
+        primary_cells = {}
+
+        for _, point in ipairs(preplaced.occupied) do
+            local key = point.x .. ":" .. point.y
+
+            primary_cells[key] = builder:cell(point.x, point.y)
+        end
+
+        local bounds = preplaced.bounds
+
+        options.builder = builder
+        options.reserved_for_primary = primary_cells
+        options.primary_vault = {
+            x1 = bounds.x,
+            y1 = bounds.y,
+            x2 = bounds.x + bounds.width - 1,
+            y2 = bounds.y + bounds.height - 1,
+        }
+    end
+
+    local layout = layouts.execute(ctx, definition, input.branch_id,
+        input.depth, input.profile, input.prior_vault_ids, options)
+
+    if preplaced then
+        for _, point in ipairs(preplaced.occupied) do
+            local key = point.x .. ":" .. point.y
+
+            if layout.builder:cell(point.x, point.y) ~= primary_cells[key] then
+                error("layout " .. definition.id ..
+                    " replaced an authored primary cell at " .. key)
+            end
+        end
+    end
+
+    return layout, preplaced
 end
 
 -- Fixed-orientation arrivals can collide with already generated stairs.
@@ -208,10 +280,29 @@ local function protected_cells(level, placed)
     return cells
 end
 
--- Keep each extra map's typed records in its placement order for population.
-local function append_vault_records(target, maps)
+-- A later authored MAP owns each occupied cell even when it draws the same
+-- placeholder glyph as the layout. Its connector also owns opened walls.
+-- Retire older source features before appending the map's own records.
+function generated.append_vault_records(target, maps)
     for _, map in ipairs(maps) do
-        for _, record in ipairs(map.records) do
+        local covered = {}
+
+        for _, point in ipairs(map.occupied or {}) do
+            covered[point.x .. ":" .. point.y] = true
+        end
+
+        for coordinate in pairs(map.carved or {}) do
+            covered[coordinate] = true
+        end
+
+        for _, record in ipairs(target) do
+            if record.kind == vault_effects.SOURCE_FEATURE and
+                covered[record.x .. ":" .. record.y] then
+                record.overridden = true
+            end
+        end
+
+        for _, record in ipairs(map.records or {}) do
             target[#target + 1] = record
         end
     end
@@ -512,6 +603,7 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
         }
     end
     local layout
+    local preplaced_primary
     local arrival
     local arrival_vault
     local scheduled_entries = {}
@@ -551,9 +643,50 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
             layout = vault_encompass.execute(ctx, definition,
                 encompass_context, profile)
         else
-            definition = layouts.choose(random, branch_id, depth, bottom)
-            layout = layouts.execute(ctx, definition,
-                branch_id, depth, profile, prior_vault_ids)
+            local primary_vault
+
+            if primary_spec then
+                primary_vault = vault_primary.select(random, {
+                    branch_id = branch_id,
+                    depth = depth,
+                    branch_bottom = bottom,
+                    absolute_depth = absolute_depth,
+                    primary_vault_family = primary_spec.family,
+                    primary_allow_dummy = primary_spec.allow_dummy,
+                    primary_choice = primary_choice,
+                    used = vault_used.new(prior_vault_ids),
+                })
+            end
+
+            local centred = primary_vault and
+                primary_vault.orientation == "centre"
+
+            definition = layouts.choose(random, branch_id, depth, bottom,
+                primary_vault and primary_vault.tags, centred)
+
+            local mode = centred and "central" or "layout"
+
+            layout, preplaced_primary = generated.prepare_layout(ctx,
+                definition, {
+                    branch_id = branch_id,
+                    depth = depth,
+                    profile = profile,
+                    prior_vault_ids = prior_vault_ids,
+                    primary_spec = primary_spec,
+                    primary_choice = primary_choice,
+                    player = {
+                        species_id = player.species_id,
+                        name = player.name,
+                        started = player.started,
+                        branch_id = branch_id,
+                        depth = depth,
+                        branch_bottom = bottom,
+                        absolute_depth = absolute_depth,
+                        run_choices = player.run_choices,
+                        unique_monsters = player.unique_monsters,
+                    },
+                    map_parameters = { mode },
+                })
         end
     end
 
@@ -564,6 +697,13 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
     end
 
     local protected = protected_cells(layout, arrival)
+
+    if preplaced_primary then
+        for _, point in ipairs(preplaced_primary.occupied) do
+            vault_extra.protect(protected, point)
+        end
+    end
+
     local entry_player = {
         branch_id = branch_id,
         depth = depth,
@@ -596,6 +736,7 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
             primary_allow_dummy = primary_spec and
                 primary_spec.allow_dummy or false,
             primary_choice = primary_choice,
+            preplaced_primary = preplaced_primary,
             layout_family = layout_family(layout),
             branch_vault_family = branch.abbreviation:lower(),
             shared_vault_family = hell_size.is_subbranch(branch) and
@@ -648,16 +789,16 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
     local source_down = {}
 
     if layout.records then
-        append_vault_records(records, { layout })
+        generated.append_vault_records(records, { layout })
     end
 
     if arrival then
-        append_vault_records(records, { arrival })
+        generated.append_vault_records(records, { arrival })
         add_source_stairs(arrival, source_up, source_down)
     end
 
-    append_vault_records(records, entry_maps)
-    append_vault_records(records, extra)
+    generated.append_vault_records(records, entry_maps)
+    generated.append_vault_records(records, extra)
 
     -- A Temple entrance map can also contain an ordinary Dungeon stair.
     -- Pair those authored exits with the next floor just like extra vault
@@ -735,8 +876,10 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
             "primary vault could not fit on base layout:", 1, true)
         local invalid_rune = tostring(result):find(
             "end vault rejected rune selection:", 1, true)
+        local layout_veto = tostring(result):find(
+            "veto rejected candidate", 1, true)
 
-        if not failed_fit and not invalid_rune then
+        if not failed_fit and not invalid_rune and not layout_veto then
             error(result)
         end
 
@@ -768,15 +911,26 @@ end
 local function level_record(ctx, floor)
     local arrival = floor.arrival
     local entry = floor_entry(floor)
-    local base_exclusions
+    local base_exclusions = {}
+
+    -- Procedural layouts may paint cells that must never receive ambient
+    -- monsters. Keep that source mask alongside authored vault exclusions.
+    for _, point in ipairs(floor.layout.spawn_exclusions or {}) do
+        base_exclusions[#base_exclusions + 1] = point
+    end
 
     if arrival then
-        base_exclusions = spawn_exclusions(arrival, floor.arrival_vault)
+        for _, point in ipairs(spawn_exclusions(arrival,
+            floor.arrival_vault)) do
+            base_exclusions[#base_exclusions + 1] = point
+        end
     elseif floor.layout.primary_placement then
         local definition = vault_catalog.get(floor.layout.id)
 
-        base_exclusions = spawn_exclusions(floor.layout.primary_placement,
-            definition)
+        for _, point in ipairs(spawn_exclusions(
+            floor.layout.primary_placement, definition)) do
+            base_exclusions[#base_exclusions + 1] = point
+        end
     end
 
     -- Shop records must still own the floor cell chosen by their DES map.

@@ -1,0 +1,12 @@
+# Source: crawl-ref/source/dat/des/builder/layout_geoelf_castle.des
+NAME:   layout_geoelf_castle
+DEPTH:  Elf:$
+WEIGHT: 15
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_rooms
+TAGS:   no_rotate no_vmirror no_hmirror
+TAGS:   requires_primary_vault
+: vault.veto("veto")
+: vault.run("layout_geoelf_castle")
+MAP
+ENDMAP

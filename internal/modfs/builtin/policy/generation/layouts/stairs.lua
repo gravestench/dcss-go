@@ -38,7 +38,7 @@ end
 
 -- Flood one connected region and retain only plain floor as a candidate
 -- for new stairs. Existing authored stair cells are never overwritten.
-local function region_from(builder, start, visited)
+local function region_from(builder, start, visited, excluded)
     local region = {
         floor = {},
         up = {},
@@ -55,7 +55,7 @@ local function region_from(builder, start, visited)
 
         first = first + 1
 
-        if glyph == "." then
+        if glyph == "." and not (excluded and excluded[key(point)]) then
             region.floor[#region.floor + 1] = point
         elseif glyphs.up[glyph] then
             region.up[#region.up + 1] = point
@@ -86,7 +86,7 @@ end
 -- distribute its down exits among separate bubbles; choosing only one
 -- would either discard source exits or make branch travel irreversible.
 -- Layouts with no authored stairs still use their largest playable region.
-local function selected_regions(builder, include_stairless)
+local function selected_regions(builder, include_stairless, excluded)
     local visited = {}
     local selected
     local authored_regions = {}
@@ -97,7 +97,7 @@ local function selected_regions(builder, include_stairless)
             local point = { x = x, y = y }
 
             if not visited[key(point)] and passable(builder:cell(x, y)) then
-                local region = region_from(builder, point, visited)
+                local region = region_from(builder, point, visited, excluded)
                 local authored = #region.up + #region.down > 0
 
                 all_regions[#all_regions + 1] = region
@@ -203,9 +203,9 @@ end
 -- Each profile states the minimum exits the branch needs in addition to
 -- authored exits. Terminal floors request no new down exits, while a
 -- branch entry requests only one return exit to its parent.
-function stairs.complete(builder, profile)
+function stairs.complete(builder, profile, excluded)
     profile = profile or { up = 3, down = 3 }
-    local regions = selected_regions(builder)
+    local regions = selected_regions(builder, nil, excluded)
 
     if #regions == 0 then
         error("layout has no playable floor for stairs")

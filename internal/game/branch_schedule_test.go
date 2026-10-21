@@ -437,10 +437,8 @@ func TestScheduledDungeonBranchesOpenOnFirstEntry(t *testing.T) {
 				return
 			}
 
-			if err := g.levels[entry.ParentDepth].MoveActor(g.player,
-				entrance.X, entrance.Y); err != nil {
-				t.Fatal(err)
-			}
+			moveGeneratedPlayerToStair(t, g,
+				g.levels[entry.ParentDepth], entrance)
 
 			result, err := g.Step(Command{Kind: CommandDownstairs})
 

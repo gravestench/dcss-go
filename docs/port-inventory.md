@@ -517,9 +517,14 @@ the presentation parity pass. Xom and Jiyva poof variants still need
 per-monster god state from the religion domain.
 
 An audit of the pinned `builder/` and `serial/` DES files finds 600 unique
-`NAME` values, of which 590 occur in the committed vault catalog. The 10
-remaining names are procedural layouts from `layout_geoelf`,
-`layout_geoelf_castle`, and `layout_halls`. The weighted `layout_delve`
+`NAME` values, all of which now occur in the committed vault catalog. The
+last ten procedural layouts use the source GeoElf and Halls families. GeoElf
+draws its room and corridor geometry in Lua, including the castle layout
+that wraps a preselected authored primary vault. Halls applies the source
+layer shapes and pinned noise functions before the shared stair pass.
+Their Lua hooks preserve source terrain and typed placement records; whole
+gameplay parity still depends on the mechanics those records request.
+The weighted `layout_delve`
 family covers the Depths cross, Zot circle, Spider galleries, and
 Cocytus dry-route/water split. The completed `layout_cc` family
 includes Chaotic City. The completed `layout_cellular` family now includes

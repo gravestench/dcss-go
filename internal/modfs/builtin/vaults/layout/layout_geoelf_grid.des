@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_geoelf.des
+NAME:   layout_geoelf_grid
+DEPTH:  Elf
+WEIGHT: 10
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_rooms
+TAGS:   no_rotate no_vmirror no_hmirror
+: vault.run("layout_geoelf_grid")
+MAP
+ENDMAP

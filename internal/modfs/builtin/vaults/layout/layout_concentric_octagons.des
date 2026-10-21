@@ -1,0 +1,12 @@
+# Source: crawl-ref/source/dat/des/builder/layout_halls.des.
+# Geometry and source validation are in the named Lua module.
+NAME:   layout_concentric_octagons
+DEPTH:  Lair, Snake, Zot
+WEIGHT: 3 (Lair), 5 (Snake), 10 (Zot)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand central layout_type_passages
+TAGS:   no_rotate no_vmirror no_hmirror
+: vault.run("layout_concentric_octagons")
+: vault.validate("validate")
+MAP
+ENDMAP

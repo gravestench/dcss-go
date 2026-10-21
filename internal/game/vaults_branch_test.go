@@ -44,9 +44,7 @@ func TestGeneratedVaultsPrimaryFloorsAndEndVault(t *testing.T) {
 		t.Fatalf("Vaults entrance = %+v", entrance)
 	}
 
-	if err := parent.MoveActor(g.player, entrance.X, entrance.Y); err != nil {
-		t.Fatal(err)
-	}
+	moveGeneratedPlayerToStair(t, g, parent, entrance)
 
 	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
 		t.Fatal(err)
@@ -109,7 +107,7 @@ func TestGeneratedVaultsPrimaryFloorsAndEndVault(t *testing.T) {
 		result, err := g.Step(Command{Kind: CommandDownstairs})
 
 		if err != nil {
-			t.Fatal(err)
+			t.Fatalf("Vaults:%d descent: %v", depth, err)
 		}
 
 		if result.View.LevelID != departure.ToLevelID {

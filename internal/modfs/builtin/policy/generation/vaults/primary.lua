@@ -8,6 +8,7 @@ local effects = require("constants.vault_effects")
 local directives = require("constants.vault_directives")
 local hooks = require("policy.generation.vaults.hooks")
 local controller = require("policy.generation.vaults.controller")
+local placement = require("policy.generation.vaults.placement")
 local primary_stairs = require("policy.generation.vaults.primary_stairs")
 local weights = require("policy.generation.vaults.weight")
 
@@ -107,6 +108,50 @@ function primary.choose(random, candidates)
     error("primary vault weight selection exceeded the catalog")
 end
 
+-- Keep one weighted primary choice across whole-floor redraws. Layouts
+-- that wrap the selected map and ordinary later placement must draw from
+-- the same source pool rather than selecting independently.
+local function selected_vault(random, context)
+    local candidates = primary.candidates(context)
+    local choice = context.primary_choice
+    local selected
+
+    if choice and choice.id then
+        for _, candidate in ipairs(candidates) do
+            if candidate.definition.id == choice.id then
+                selected = candidate.definition
+                break
+            end
+        end
+
+        if not selected then
+            error("previously selected primary vault is no longer eligible: " ..
+                choice.id)
+        end
+    else
+        selected = primary.choose(random, candidates)
+
+        if not selected then
+            error("primary vault catalog has no eligible map for " ..
+                context.primary_vault_family)
+        end
+
+        if choice then
+            choice.id = selected.id
+        end
+    end
+
+    return catalog.get(selected.id)
+end
+
+-- Let the generation owner know the source primary's tags and orientation
+-- before selecting a compatible layout. This chooses identity only;
+-- placement still belongs to the authored-map phase unless a layout needs
+-- the actual footprint first.
+function primary.select(random, context)
+    return selected_vault(random, context)
+end
+
 -- Count source-resolved rune intents, not map glyphs: NSUBST may remove
 -- candidate glyphs and a keyed slot may select a non-rune alternative.
 local function validate_runes(map, branch)
@@ -169,6 +214,27 @@ local function place_controller(builder, context, placed, fit, vault, branch)
     end
 end
 
+-- Publish the already fitted primary through the same history and child
+-- placement path whether it was drawn before or after its base layout.
+local function publish_map(ctx, builder, context, placed, fit, vault, map,
+    branch)
+    validate_runes(map, branch)
+
+    placed[#placed + 1] = map
+    context.used:add_map(vault, map)
+
+    for _, operation in ipairs(vault.operations) do
+        if operation.kind == directives.HOOK_POST_PLACE then
+            local api = controller.new(builder, context, placed, fit,
+                vault.id, map)
+
+            hooks.run(vault, operation.argument, api)
+        end
+    end
+
+    return vault.id
+end
+
 -- A selected primary is published only after its terrain and connector fit.
 -- The caller may redraw its base layout after a geometric failure, but it
 -- must never continue to ordinary extras without this required map.
@@ -177,39 +243,20 @@ function primary.place(ctx, builder, context, placed, fit)
         return nil
     end
 
-    local candidates = primary.candidates(context)
-    local choice = context.primary_choice
-    local selected
-
-    if choice and choice.id then
-        for _, candidate in ipairs(candidates) do
-            if candidate.definition.id == choice.id then
-                selected = candidate.definition
-                break
-            end
-        end
-
-        if not selected then
-            error("previously selected primary vault is no longer eligible: " ..
-                choice.id)
-        end
-    else
-        selected = primary.choose(builder, candidates)
-
-        if not selected then
-            error("primary vault catalog has no eligible map for " ..
-                context.primary_vault_family)
-        end
-
-        -- Keep this weighted choice across whole-floor redraws. A failed
-        -- geometric fit must not change the source map's probability.
-        if choice then
-            choice.id = selected.id
-        end
-    end
-
-    local vault = catalog.get(selected.id)
+    local vault = selected_vault(builder, context)
     local branch = register.get(categories.BRANCHES, context.branch_id)
+
+    if context.preplaced_primary then
+        local map = context.preplaced_primary
+
+        if map.id ~= vault.id then
+            error("preplaced primary differs from selected vault: " ..
+                map.id .. " versus " .. vault.id)
+        end
+
+        return publish_map(ctx, builder, context, placed, fit, vault,
+            map, branch)
+    end
 
     -- The Elf:1 source dummy spends its weighted choice but leaves the
     -- procedural layout's reciprocal entrance in place.
@@ -232,24 +279,30 @@ function primary.place(ctx, builder, context, placed, fit)
             tostring(reason))
     end
 
-    validate_runes(map, branch)
+    return publish_map(ctx, builder, context, placed, fit, vault,
+        map, branch)
+end
 
-    placed[#placed + 1] = map
-    context.used:add_map(vault, map)
-
-    -- A source end with geometry can also request a paired child after it
-    -- fits. Record the primary first so the child appears in the same saved
-    -- placement history; the pairing hook excludes this primary by ID.
-    for _, operation in ipairs(vault.operations) do
-        if operation.kind == directives.HOOK_POST_PLACE then
-            local api = controller.new(builder, context, placed, fit,
-                vault.id, map)
-
-            hooks.run(vault, operation.argument, api)
-        end
+-- A source layout may need the primary's actual bounds before it can draw
+-- surrounding terrain. Place the chosen authored map once on the empty
+-- builder; the normal extra pass will retain it and skip a second placement.
+function primary.preplace(ctx, builder, context)
+    if not context.primary_vault_family then
+        error("primary preplacement requires a branch primary")
     end
 
-    return vault.id
+    local vault = selected_vault(builder, context)
+
+    if vault.tags.dummy or #vault.rows == 0 then
+        error("primary preplacement requires an authored MAP: " .. vault.id)
+    end
+
+    local placed = placement.place(ctx, builder, vault, context.player)
+    local branch = register.get(categories.BRANCHES, context.branch_id)
+
+    validate_runes(placed, branch)
+
+    return placed
 end
 
 return primary

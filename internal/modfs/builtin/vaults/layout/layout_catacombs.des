@@ -1,0 +1,11 @@
+# Source: crawl-ref/source/dat/des/builder/layout_halls.des.
+# Geometry and source validation are in the named Lua module.
+NAME:   layout_catacombs
+DEPTH:  Crypt, !Crypt:$, Tar
+WEIGHT: 10 (Crypt), 10 (Tar)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_open_caves
+: vault.run("layout_catacombs")
+: vault.validate("validate")
+MAP
+ENDMAP

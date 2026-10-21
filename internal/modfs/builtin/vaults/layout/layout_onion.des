@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/builder/layout_halls.des.
+# Geometry and source validation are in the named Lua module.
+NAME:   layout_onion
+DEPTH:  Snake, Zot
+WEIGHT: 10 (Snake), 5 (Zot)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand central layout_type_narrow_caves
+: vault.run("layout_onion")
+MAP
+ENDMAP

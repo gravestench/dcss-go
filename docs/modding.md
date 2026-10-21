@@ -2209,6 +2209,28 @@ startup; a hook from another branch is checked when that layout runs.
 Import the shared geometry helpers from `policy.generation.layouts` and keep
 source-specific choices in your layout module.
 
+Layouts that surround an authored primary can declare
+`TAGS: requires_primary_vault` and a named `vault.veto("veto")` method.
+The generator selects and places the branch's primary map first, then
+passes its live builder as `api.builder` and its inclusive footprint as
+`api.primary_vault = { x1, y1, x2, y2 }` to the run hook. The veto method
+receives the same `api` before carving and returns true to reject that
+layout choice. Draw only outside the primary cells; the shared stair pass
+also reserves them. `layout_geoelf_castle.des` and its matching Lua module
+show this contract on Elf:3. Ordinary layouts receive no preplaced builder
+and should create one through `grid.new` as above.
+
+`api.map_parameters` is a list of generation mode names supplied by the
+floor owner. It currently contains `"central"` when a centred primary
+requested a compatible layout, or `"layout"` otherwise. The Halls family
+reads it through its invocation-local runtime. Treat this as floor context,
+not persistent state: a saved map contains the resulting terrain and typed
+records, not a live hook object. A layout that paints source terrain such
+as shallow water returns a `SOURCE_FEATURE` record with `base_glyph` set to
+the collision glyph initially painted on the builder. The generation owner
+retires that record when a later authored map takes the cell, even if both
+maps render the same placeholder glyph.
+
 For a cellular map, `policy.generation.layouts.subdivision` partitions the
 grid, `cell_graph.edges` finds shared borders, and `cellular_groups.new`
 tracks cardinal and diagonal neighbors without global state. The bundled
