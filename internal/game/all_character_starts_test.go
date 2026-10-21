@@ -422,14 +422,18 @@ func TestEveryLegalCharacterStartReachesDungeon(t *testing.T) {
 
 	defer runtime.Close()
 
-	failed := 0
-	examples := make([]string, 0, 10)
-	started := 0
+	legal := 0
+	// Each independent start creates a full Lua VM. Bound simultaneous VMs
+	// to keep the exhaustive test fast without growing memory with the
+	// number of legal species/job pairs.
+	starts := make(chan struct{}, 4)
 
 	for pair, choice := range choices {
 		if !pair.SpeciesFirst || choice.Restriction == "banned" {
 			continue
 		}
+
+		legal++
 
 		result, optionErr := runtime.Policy("character.weapon_options", map[string]any{
 			"species_id": pair.SpeciesID,
@@ -469,46 +473,35 @@ func TestEveryLegalCharacterStartReachesDungeon(t *testing.T) {
 			}
 		}
 
-		// Character creation is independent of the generated floor count.
-		// Use the fixed Dungeon here so each legal pair exercises startup
-		// without rebuilding fifteen unrelated maps and populations.
-		g, startErr := newScenarioWithRules(
-			17,
-			startChoice{
-				SpeciesID: pair.SpeciesID,
-				JobID:     pair.JobID,
-			},
-			weaponID,
-			"Tester",
-			ordinaryMonsterScenarioID,
-			rules,
-		)
+		t.Run(pair.SpeciesID+"/"+pair.JobID, func(t *testing.T) {
+			t.Parallel()
+			starts <- struct{}{}
+			defer func() { <-starts }()
 
-		if startErr != nil {
-			failed++
+			// Character creation is independent of generated floor count.
+			// The fixed Dungeon exercises startup for every legal pair.
+			g, startErr := newScenarioWithRules(
+				17,
+				startChoice{
+					SpeciesID: pair.SpeciesID,
+					JobID:     pair.JobID,
+				},
+				weaponID,
+				"Tester",
+				ordinaryMonsterScenarioID,
+				rules,
+			)
 
-			if len(examples) < cap(examples) {
-				examples = append(examples, fmt.Sprintf(
-					"%s/%s: %v",
-					pair.SpeciesID,
-					pair.JobID,
-					startErr,
-				))
+			if startErr != nil {
+				t.Fatal(startErr)
 			}
 
-			continue
-		}
-
-		started++
-		g.Close()
+			defer g.Close()
+		})
 	}
 
-	if failed > 0 {
-		t.Errorf("%d legal starts failed; examples: %v", failed, examples)
-	}
-
-	if started < 100 {
-		t.Fatalf("only %d legal starts reached the Dungeon", started)
+	if legal < 100 {
+		t.Fatalf("only %d legal character pairs exist", legal)
 	}
 }
 
