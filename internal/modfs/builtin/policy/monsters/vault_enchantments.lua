@@ -92,6 +92,15 @@ local function slow(ctx, actor)
     })
 end
 
+-- An authored petrified plant begins fully stonebound. The ordinary stasis
+-- component gives combat and AI their existing petrification behavior;
+-- the permanent claim below prevents its clock from releasing the plant.
+local function petrified(ctx, actor)
+    ctx:add(actor, component.MONSTER_STASIS, {
+        petrified_aut = 1,
+    })
+end
+
 local installers = {
     [enchantments.BLIND] = blind,
     [enchantments.CONFUSION] = confuse,
@@ -100,6 +109,7 @@ local installers = {
     [enchantments.MAD] = confuse,
     [enchantments.MUTE] = mute,
     [enchantments.PARALYSIS] = paralyze,
+    [enchantments.PETRIFIED] = petrified,
     [enchantments.SLOW] = slow,
 }
 

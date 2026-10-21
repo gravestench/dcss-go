@@ -1,6 +1,8 @@
 -- Source: actor.cc:can_hibernate, beam.cc:BEAM_HIBERNATION and
 -- apply_bolt_petrify, mon-ench.cc:calc_duration, monster.cc:hurt.
 local component = require("constants.component")
+local permanent = require("constants.vault_monster_enchantments")
+local vault_enchantments = require("policy.monsters.vault_enchantments")
 local catalog = require("policy.catalog")
 local range = require("policy.magic.range")
 local roll = require("policy.combat.roll")
@@ -350,7 +352,8 @@ function stasis.tick(ctx, target)
             current.petrified_aut = duration(ctx, target, definition, "petrified")
             ctx:emit("monster", "The " .. definition.name .. " stops moving altogether!")
         end
-    elseif current.petrified_aut > 0 then
+    elseif current.petrified_aut > 0 and not
+        vault_enchantments.active(ctx, target, permanent.PETRIFIED) then
         current.petrified_aut = math.max(0, current.petrified_aut - 10)
 
         if current.petrified_aut == 0 then

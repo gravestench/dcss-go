@@ -1,0 +1,22 @@
+# Grunt forest stairs basic is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: grunt_forest_stairs_basic
+TAGS:   transparent extra luniq_staircase decor
+DEPTH:  Lair
+MONS:   plant
+SUBST:  1 = 1.
+: vault.run("configure")
+# Source Lua: : if you.depth() == dgn.br_depth(you.branch()) then
+# Source Lua: SUBST:  ) = (
+# Source Lua: : end
+MAP
+.........
+..t...t..
+.t11.11t.
+..1t.t1..
+....)....
+..1t.t1..
+.t11.11t.
+..t...t..
+.........
+ENDMAP

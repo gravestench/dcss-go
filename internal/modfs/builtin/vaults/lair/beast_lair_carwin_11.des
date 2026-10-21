@@ -1,0 +1,30 @@
+# Beast lair carwin 11 is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: beast_lair_carwin_11
+TAGS: transparent luniq_beast_lair
+: vault.run("beasts.small")
+# Source Lua: : beast_lair_populate_mons_small(_G)
+# The source helper supplies fixed map eligibility and glyph rules.
+TAGS: no_trap_gen
+DEPTH: Lair, !Lair:$
+SUBST: A = 1:5 .
+SUBST: B = x:3 .
+SUBST: C = W:3 .
+SUBST: D = Wx1.
+SUBST: E : 1:3 .:9
+SUBST: F : x:3 .:9
+SUBST: G : W:3 .:9
+SUBST: M = 2:4 .:8
+SUBST: P : 2:2 .
+SUBST: L = *:1 % .:5
+SUBST: J = %:6 .:28
+# Source Lua: : beast_lair_randomise(_G)
+MAP
+     .E
+. .......xx
+ ..xxxxx..E
+..xx2x4xE..
+.xx...2xx.
+..B.xxxxxx..
+ ...    .....E
+ENDMAP

@@ -1,0 +1,50 @@
+# Grunt lair end beastmaster is an authored Lair:5 ending.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: grunt_lair_end_beastmaster
+TAGS:    no_monster_gen no_item_gen no_trap_gen patrolling
+PLACE:   Lair:$
+ORIENT:  northeast
+MONS:    deep troll shaman, dire elephant / hydra / lindwurm
+MONS:    catoblepas, death yak band
+MONS:    elephant, wolf, black bear / polar bear
+KMONS:   P = plant / fungus w:2 / bush w:1
+SHUFFLE: 567
+SUBST:   C = cx.., P = P .:9 t:1
+NSUBST:  % = 2:| / 3:* / *:%
+NSUBST:  5 = 2:5 / 3 = 5. / *:.
+NSUBST:  6 = 3:6 / 4 = 6. / *:.
+NSUBST:  7 = 1:7 / 2 = 7. / *:.
+: vault.run("remains.grunt_lair_end_beastmaster")
+# Source Lua: {{
+# Source Lua:   dgn.delayed_decay(_G, 'd', "human skeleton / orc skeleton / elf skeleton"
+# Source Lua:                              .. " / dwarf skeleton / ogre skeleton w:1"
+# Source Lua:                              .. " / naga skeleton w:1 / minotaur skeleton w:1"
+# Source Lua:                              .. " / merfolk skeleton w:1")
+# Source Lua: }}
+MAP
+                xxxxxxxxxxxxxx
+          xxxxxxx5P.Pxxxxxxxxx
+         xxP..5.5..P..xxxxxxxx
+        xxP5d5.5.5P.P..xxP.xxx
+       xx.5.5.5ccccccc....P..x
+       x...5.ccc.d...ccc.P..xx
+      xx.P.ccc..d......d...Px
+     xx..ccc...G..C..3..d..xx
+    xx..ccc.G....CcC..4..c.x
+    x.P.ccc..d..CcCcC...cc.x
+    x..ccc%.G..G.CcC...ccP.x
+   xx..ccc%%.2.dG.C..d.c...x
+   x...cccc%%.1.....G.ccP..x
+   x.P.ccccc%%.Gd.G...c..P.x
+  xx....ccccc%%.....ccc...xx
+ xx.d..Pccccccc%cccccP.6..x
+xx.P..7..cccccccc.P.6.6.Pxx
+..7..7.7P..ccP..P6.6d6.Pxx
+.P.7..7..d....P...6.6.xxx
+d.P.7P..P.xxxx.P..P6.xx
+.P.7..7..xx  xxx.P..xx
+..P.P..xxx     xxxxxx
+.P.P..xx
+..P.dxx
+@....x
+ENDMAP

@@ -1,0 +1,28 @@
+# Cheibrodos lair reptile den is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: cheibrodos_lair_reptile_den
+TAGS:    no_item_gen no_monster_gen transparent
+DEPTH:   Lair, !Lair:$
+MONS:    adder / water moccasin, komodo dragon / black mamba
+KMONS:   P = plant / fungus w:5
+SHUFFLE: "', ABC
+SUBST:   A = ., BC = x, D = x .:2
+NSUBST:  " = 7:1 / *:., ' = 2:2 / *:.
+NSUBST:  - = 6:P / *:., ; = 5:P / *:.
+MAP
+  ...........
+ ..DDDDCDDDD..
+..DxxxxCxxxxD..
+.Dxxx"""""xxxD.
+.Dxx";;;;;"xAD.
+.Ax";;;;;;;"xA.
+.DA";;---;;"xD.
+.Dx";;-(-;;"xD.
+.Dx";;---;;"xD.
+.Dx";;;;;;;"xD.
+.Dxx";;;;;"BBD.
+.Dxxx"""""BBBB.
+..DxxxAxxxBBB..
+ ..DDADDDDDB..
+  ...........
+ENDMAP

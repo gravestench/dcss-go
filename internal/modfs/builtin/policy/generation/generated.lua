@@ -12,6 +12,7 @@ local vault_placement = require("policy.generation.vaults.placement")
 local vault_connect = require("policy.generation.vaults.connect")
 local vault_glyphs = require("constants.vault_glyphs")
 local vault_effects = require("constants.vault_effects")
+local vault_rules = require("constants.vault_generation_rules")
 local vault_extra = require("policy.generation.vaults.extra")
 local branch_schedule = require("policy.generation.branch_schedule")
 local temple_plan = require("policy.generation.temple.plan")
@@ -156,7 +157,7 @@ local function spawn_exclusions(placed, vault)
         end
     end
 
-    if vault.tags.no_monster_gen then
+    if vault.tags[vault_rules.NO_MONSTER_GEN] then
         for _, point in ipairs(placed.occupied) do
             add(point.x, point.y)
         end
@@ -164,8 +165,18 @@ local function spawn_exclusions(placed, vault)
 
     for _, record in ipairs(placed.records) do
         if record.kind == vault_effects.MASK and
-            record.identity:find("no_monster_gen", 1, true) then
+            record.identity:find(vault_rules.NO_MONSTER_GEN, 1, true) then
             add(record.x, record.y)
+        elseif record.kind == vault_effects.GENERATION_RULE and
+            record.arguments and
+            record.arguments.rule == vault_rules.NO_MONSTER_GEN and
+            record.arguments.scope == vault_rules.VAULT then
+            -- A source helper can add the map-wide tag after selection.
+            -- This saved effect keeps that random decision local to the
+            -- selected map without mutating shared catalog definitions.
+            for _, point in ipairs(placed.occupied) do
+                add(point.x, point.y)
+            end
         end
     end
 

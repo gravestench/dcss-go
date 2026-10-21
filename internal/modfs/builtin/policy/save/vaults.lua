@@ -8,6 +8,7 @@ local depth_rules = require("policy.generation.vaults.depth")
 local temple = require("policy.generation.temple.catalog")
 local altar = require("policy.generation.altar.catalog")
 local slime_seal = require("policy.save.slime_seal")
+local tags = require("constants.vault_tags")
 
 local vaults = {}
 
@@ -98,7 +99,11 @@ local function validate_end_vault(level, branch)
         return
     end
 
-    for _, rune_id in ipairs(branch.runes or {}) do
+    -- A required finale can be rune-free, as on Lair:5. mod.null is the
+    -- catalog's absent-runes value and is not a Lua sequence.
+    local runes = type(branch.runes) == "table" and branch.runes or {}
+
+    for _, rune_id in ipairs(runes) do
         local count = 0
         local source_id
 
@@ -117,6 +122,28 @@ local function validate_end_vault(level, branch)
             not rune_owner_selected(selected, selected_ids, source_id) then
             error(label .. " needs exactly one " .. rune_id ..
                 " source record from " .. selected.id)
+        end
+    end
+
+    -- The source small Lair ending builds one other small ending. The
+    -- selected map cannot stand in for its own partner, and a forged extra
+    -- ID must not turn an ordinary Lair map into that partner.
+    if selected.tags[tags.LAIR_END_SMALL] then
+        local partners = 0
+
+        for _, id in ipairs(level.vault_ids or {}) do
+            if id ~= selected.id then
+                local definition = catalog.get(id)
+
+                if definition.family == branch.end_vault_family and
+                    definition.tags[tags.LAIR_END_SMALL] then
+                    partners = partners + 1
+                end
+            end
+        end
+
+        if partners ~= 1 then
+            error(label .. " needs exactly one paired small ending")
         end
     end
 end

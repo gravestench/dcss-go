@@ -1,0 +1,53 @@
+# Hangedman lair tendril chambers is an authored Lair:5 ending.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: hangedman_lair_tendril_chambers
+PLACE:   Lair:$
+ORIENT:  float
+MONS:    water moccasin / wyvern, hornet, cane toad
+MONS:    black mamba, redback, wolf spider, guardian serpent
+KMONS:   f = fungus
+KMONS:   P = plant
+# Connect the endpoints of two random quarters, open one of them to the center,
+# rarely fray walls not between chambers, fringe the openings with plants.
+SHUFFLE: AB / CD / EF / GH, DFH
+SUBST:   P = P:35 @:25, z = x:49 f:1, BCDEG = x, AH = ., F : xxP
+# A fixed number of chaff scattered throughout each eighth, and an even
+# distribution of the various stronger spawns.
+NSUBST:  1 = 6:1 / 4 = 1. / *:., 0 = 8:1 / 5 = 1. / 2:2 / *:.
+NSUBST:  9 = 1:256 / 2:3 / 2:4 / * = 33445
+NSUBST:  8 = 1:7 / 1:6 / 2 = 34 / * = 34 5:15 "
+NSUBST:  % = 10:% / 2 = %" / *:", x = 6:c / * = x
+KMASK:   %*" = no_monster_gen
+# The source helper makes this a paired small ending.
+TAGS: lair_end_small
+WEIGHT: 5
+: vault.post_place("small_end.pair")
+# Source Lua: : lair_small_ending(_G)
+MAP
+      PPPcccxxcccPPP
+   PPPP.cc%cccc%cc.PPPP
+  zz....c8$%**%$8c....zz
+ Pzc....cc8$**$8cc....czP
+PP.xx....c8""""8c....xx.PP
+P...xx1.0cc""""cc0.1xx...P
+P....xx1.0c8""8c0.1xx....P
+x....1xx1.cc""cc.1xx1....x
+xzx.0.1xx%%c""c%%xx1.0.xzx
+P.xzx0.%BB9c""c9DD%.0xzx.P
+ P..xzx%9AAxffxCC9%xzx..P
+ P....xxxAA""""CCxxx....P
+  ......xc0"ff"0xx......
+  ......xx""ff""cx......
+ P....xxxEE"00"GGxxx....P
+ P..xzx%9EExccxGG9%xzx..P
+P.xzx0.%FF%9xx9%HH%.0xzx.P
+xzx.0.1xx.%xxxx%.xx1.0.xzx
+x....1xx1.0x..x0.1xx1....x
+P....xx1.0xx..xx0.1xx....P
+P...xx1...z....z...1xx...P
+PP.xx....xx....xx....xx.PP
+ Pzc.....z......z.....czP
+  zz....xx......xx....zz
+   PPPP.z..P  P..z.PPPP
+      PPcPP    PPcPP
+ENDMAP

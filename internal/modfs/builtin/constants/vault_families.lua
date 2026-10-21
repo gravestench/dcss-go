@@ -1,6 +1,9 @@
 -- Family names are effective DES subdirectories, not a second content
 -- registry. Import these only where a rule selects a family by purpose.
 return {
+    LAIR = "lair",
+    LAIR_ENTRY = "lair_entry",
+    LAIR_END = "lair_end",
     SPIDER = "spider",
     SPIDER_ENTRY = "spider_entry",
     SNAKE = "snake",

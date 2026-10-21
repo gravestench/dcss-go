@@ -1,0 +1,29 @@
+# Bobbens ice dragon lair is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: bobbens_ice_dragon_lair
+TAGS:   no_monster_gen
+DEPTH:  Lair:4-
+MONS:   ice dragon
+MONS:   white imp
+SUBST:  $ = $:3 *:2, _ = %:1 `:3
+SUBST:  3 = 2:9 .:1
+SUBST:  ' = w:15 x:12 `:1, ; = x:2 .:3, G = G:1 .:3
+KPROP:  %` = no_tele_into
+MAP
+;;..;..;;;.;;.;;;
+;;...wwww.;;..ww.;;
+;..ww'''ww..wwwww;;;;
+;.ww'xxxwwwwwwwww;....
+;.ww'x$xx''''''w...ww.
+;..wwx$$xxxxxx'w..www.
+;;..wx$1x..>xx'wGwww.;
+;;;.wx$$.3x2.x'wwww.;
+;;;wwxxw3.xW.''www.;;
+;..www'xxxxxxw'wwww.;;
+..wwww''xxxxwww''ww.;;
+.wwwwwww...www'_'ww.;
+..wwwww....www'''w.;;
+.;www...V..wwwwww.;;
+;............www.;;;
+;;   ;;;....w..;
+ENDMAP

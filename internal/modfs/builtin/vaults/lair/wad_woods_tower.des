@@ -1,0 +1,36 @@
+# Wad woods tower is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: wad_woods_tower
+DEPTH:  D:2-, Lair
+ORIENT: float
+FTILE:  q13%OG. = floor_woodground
+# The source helper supplies these map-specific catalog facts.
+WEIGHT: 2
+MONS: plant
+MONS: bush
+MONS: fungus
+TAGS: uniq_wad_woods_large
+: vault.run("woods.populate")
+FTILE: .t+%*|q012345678COGTU = floor_grass
+KFEAT: O = shallow_water
+MARKER: O = lua:fog_machine{pow_min=3,pow_max=7,delay=21,size=2,walk_dist=1,spread_rate=36}
+# Source Lua: : wad_woods_setup(_G, "large", 2, true, 21, 2, 36)
+FTILE:  '*+T4 = floor_dirt
+MAP
+   tttt....   .tt1   tt.t    tttt  ..t
+t.1.tttt.tt.11O..t.11ttt..  15tttt....t
+t..11xxx.t.tttt.tttt....t1t..11t.t..ttt.
+ .t.xx4xxt.1ttt..t1t.tt.ttt.tttt.1.ttt1
+ .1x+'*'+x..t....t..t..1.t..11tt...t....
+  .txx4xx.....t.1ttt.1ttt.1..t.t...t.1
+t.15txxx.t.t.t..tt1.1G...t.t.1tt..ttt.
+ ..t.t...tt..t..1...'''%..1t..t..t...t.
+  .tt.t1...1t.1t...G'T'G.tt......t......
+ ...t..t.tt..111.t..'''.11.1..t.t.1..t.
+ ....t.t.t.ttt1.tt.1.G1t.t....t.t.5ttt..
+..t.tt.t.t..t1t..t.t1tt.ttt.t...1..ttt
+.11O...t..5.t..11t..t....1..11tt.1.t..t.
+t..t1t..t...11t..ttt..ttt....tOt...t.11t
+  1..t..t.  t..tt. 1t..  tt..tt  ttt.tt
+   t.t.1.   .t1.  ..     .11    .t.1...
+ENDMAP

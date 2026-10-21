@@ -1,0 +1,18 @@
+# Minmay lair drake nest is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: minmay_lair_drake_nest
+TAGS:   transparent
+DEPTH:  Lair:4-
+MONS:   rime drake, plant w:20 / fungus w:1 / bush w:1
+NSUBST: 1 = 2:1 / * = 1.., ' = 4:2 / * = ., . = 1:2 / 1:% / * = ..%2
+MAP
+   .'.
+  '...'
+ '.....'
+...111...
+'..111..'
+...111...
+ '.....'
+  '...'
+   .'.
+ENDMAP

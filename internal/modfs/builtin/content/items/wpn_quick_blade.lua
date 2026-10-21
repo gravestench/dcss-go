@@ -11,6 +11,10 @@ local categories = require("constants.catalog")
 local definition = {
     id = "WPN_QUICK_BLADE",
     name = "quick blade",
+    -- due_jungle_book uses the compact legacy DES spelling.
+    vault_aliases = {
+        "quickblade",
+    },
     glyph = 41,
     class = "OBJ_WEAPONS",
     class_value = 0,

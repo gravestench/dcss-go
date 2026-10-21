@@ -1,0 +1,48 @@
+# Wad woods settlement is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: wad_woods_settlement
+DEPTH:  D:2-, Lair
+ORIENT: float
+# The source helper supplies these map-specific catalog facts.
+WEIGHT: 1
+MONS: plant
+MONS: bush
+MONS: fungus
+TAGS: uniq_wad_woods_large
+: vault.run("woods.populate")
+FTILE: .t+%*|q012345678COGTU = floor_grass
+KFEAT: O = shallow_water
+MARKER: O = lua:fog_machine{pow_min=3,pow_max=7,delay=21,size=2,walk_dist=1,spread_rate=36}
+# Source Lua: : wad_woods_setup(_G, "large", 1, true, 21, 2, 36)
+NSUBST: 4 = 2:4 / 1 = 4' / *:', 6 = 4
+FTILE:  '4*+ = floor_dirt
+MAP
+               ..  tttt   ...   ...
+          .tt.t...t11t.......tt.ttt
+       .tt..tt.t1...t.1t...t...t...ttt
+     tt.ttt1t1t.t................t....ttt.
+      .t.tt.t.......xxx...............t..t.
+    ..ttt.t...xxx...+4x'''''''1......x.t..
+  1.tt.t1.....x4+'''xxx'....x+xx1...x.....
+t1.t.1t.t.....xxx..'1'''..1.x''x..........
+t...t..............'''1..T..x*6x..1.x......
+tttt...t...t.........'.%....xx+x1...x.11t1.
+ tt...11t1t.t.....x..''''''''''........t.ttt
+..t.t.tt.t1tt.t....x''.xxxx.......1...t1.t.
+t..tt...t.tt.t.t.1''x''+%4x..........ttt..1
+t.t...tt.tOt1.11.'....1xxxx1....t.t.t.ttttt
+ ...t..t.tt1t11.'1t..........t1t.t.t1t.tt1.
+  ...1t.%tt.t1..'tt.1....1..t.t.t.t.t.tOt...
+  ...tt1tt.t....'.1ttt1...tttt.ttt1t.t.t.tt
+  ..t11tt..1t...'....tt.1t.tt%tt.tt1t5t.t
+ ......t..1t1..G4G1..1t.t.tt.t.t.t.t.t.t.t
+.t.......t1.....'...1t1tt..1tt..t.ttt.t.t
+t1t....1........'..t.1..tt.tO.t..11ttt1t.
+1.tt.1....xxx..'..tt..t..tt5.t1.1tt..tt1tt
+  t.......x4+''....tt.t.11tt..t..t.1t..t.t.
+  tt..1...xxx....t..t.11.t.tt...t1.ttt..t...
+.t1.t.........1...tt.1.tt.tt..t.tttt...t..tt
+1.t1.t1.1..1.......t%.t.t.1tt.t11..t.t.51ttt
+tt.11..1.11..1.1  .1t.ttt      .t.ttt..1tt
+.1t   .1  111. .     tt        tt.t ttt.tt
+ENDMAP

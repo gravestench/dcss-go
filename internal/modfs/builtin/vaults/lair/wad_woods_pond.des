@@ -1,0 +1,51 @@
+# Wad woods pond is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: wad_woods_pond
+DEPTH:  D:2-, Lair
+ORIENT: float
+# The source helper supplies these map-specific catalog facts.
+WEIGHT: 1
+MONS: plant
+MONS: bush
+MONS: fungus
+TAGS: uniq_wad_woods_large
+: vault.run("woods.populate")
+FTILE: .t+%*|q012345678COGTU = floor_grass
+KFEAT: O = shallow_water
+MARKER: O = lua:fog_machine{pow_min=3,pow_max=7,delay=21,size=2,walk_dist=1,spread_rate=36}
+# Source Lua: : wad_woods_setup(_G, "large", 1, true, 21, 2, 36)
+FTILE:  ' = floor_dirt
+MAP
+                 .         tt.
+             tttt. tt  ttttt...ttt    tt   tt
+         tttttttt...ttttttt....tttt....t. ttt
+      tttt11.tt.t...t11t.......tt.ttttt..t..tt
+     ttttttt..tt.t1...t.1t...t...t...tttt..t.tt
+   ttt.tt.ttt1t1t.t.....tt.........t....ttt....
+  ttt....tttt.t.........Wt.t............t..t.t
+ ttttt..ttt.t...t.W.OWtWt1t....1........t....tt
+ tt11.tttt1.t..t...W1tWWtW1tWt....1....'.''..tt
+ttt1.t.1t.t......WtWWWwWWtWWtWtW.W......''...t
+ tt...t........tWtWWww.w0%WWWWWWWt.1......'..t
+  tttt...t...t....ttWWtwwtWWWtWW1W......11t1.tt
+  ttt...11t1t.t...W.W.WWWWtW1tW.tt.......t.tttt
+ tt.t.t.tt.t1tttt....W.tWtW1WO.t....1...t1.t...
+ttt..tttttt.tt.t.t.1.........1.........ttt..1t
+ tt.t...tttt.t1.11................t.t.t.ttttt
+ tt...t..t.tt1t11..1t..........t1t.t.t1t.tt1.
+ tt....1t..tt.t1...ttt1...1...t.t.t.t.t.t.t...
+ttt....tt1tt.t......1ttt1...tttt.ttt1t.t.t.tt..
+ tt...t11tt..1t........tt.1t.tt.tt.tt1t.t.t.tt.
+ .t......t..1t1.....1..1t.t.tt.t.t.t.t.t.t.t
+...t.......t1.........1t1tt..1tt..t.ttt.t.t.
+ .t1t....1.....'.....t.1..tt.t..t..11ttt1t.t
+  1.tt.1.....''''...tt..t..tt..t1.1tt..tt1t.t
+     ......'''''.....tt.t.11tt..t..t.1t..t.t.t
+      ..1...'.'''..t..t.11.t.tt...t1.ttt..t..t
+      t.........1...tt.1.tt.tt..t.tttt...t..tt
+      .t1.1..1.......t..t.t.1tt.t11..t.t..1t
+       ..1.11..1.11t.1t.tttt.t.t1.t.ttt..1ttt
+          ..111.1.ttttttt    ttttt tttttt.tt
+            ......ttttt       ttt  tttttt..
+              ..   ttt                    .
+ENDMAP

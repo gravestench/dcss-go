@@ -320,6 +320,9 @@ function enchant.dispel(ctx, monster, definition)
             ctx:remove(monster, component.MONSTER_STASIS)
         end
 
+        vault_enchantments.clear(ctx, monster,
+            vault_enchantment_ids.PETRIFIED)
+
         changed = true
     end
 

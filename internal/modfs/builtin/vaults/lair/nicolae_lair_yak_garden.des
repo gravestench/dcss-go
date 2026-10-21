@@ -1,0 +1,31 @@
+# Nicolae lair yak garden is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: nicolae_lair_yak_garden
+TAGS:   no_monster_gen no_item_gen no_trap_gen transparent
+DEPTH:  Lair:4-
+KMONS:  Y = yak
+KMONS:  D = death yak
+KMONS:  C = catoblepas
+KMONS:  P = plant
+KITEM:  f = stone
+SUBST:  P = P., f = f...
+NSUBST: D = 1:D / *:.
+MAP
+        .@@@.
+      .........
+    tt...P.P....tt
+   tttttPPPPPPPtttt.
+  .ttDfPP.Y....tDtt...
+ .PPttP..P.P.PP.ftP...
+ .P....PPP...PPP.PP..@
+..PP..PPPwwwC.P..PPP.@
+......Y.wwwwww.Y.ttP.@
+.@.PP..Pwwwwww...fttt.
+ @..P..PP.wwwPP.ttttt
+  @.PP.PPP..PP..PPttt
+  ...Ptt.P.PPPPPP....
+  ...ttfDttPP.......
+    .tttttt......@
+     ..tt.......
+        .....
+ENDMAP

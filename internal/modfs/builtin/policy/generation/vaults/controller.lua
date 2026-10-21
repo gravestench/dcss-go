@@ -71,10 +71,11 @@ local function child_context(parent, tag)
     return child
 end
 
--- Place related maps in request order. Source dgn.place_maps skips a map
--- whose geometry cannot fit and counts only successful children. A malformed
--- definition still errors from the shared placement path.
-function controller.place_maps(api, tag, count)
+-- Place related maps in request order. Optional family and ID constraints
+-- keep a composed map's eligibility aligned with its save contract. Source
+-- dgn.place_maps skips a map whose geometry cannot fit and counts only
+-- successful children. Malformed definitions still error on placement.
+function controller.place_maps(api, tag, count, options)
     if type(count) ~= "number" or count < 0 or
         count > MAX_CHILD_MAPS or count ~= math.floor(count) then
         error("serial controller requested an invalid map count")
@@ -82,21 +83,45 @@ function controller.place_maps(api, tag, count)
 
     local placed_count = 0
 
+    options = options or {}
+
     for _ = 1, count do
         local child = child_context(api.context, tag)
-        local selected = selection.choose_tag(api.builder, tag, child)
+        local excluded = {}
 
-        if not selected then
-            return placed_count
+        child.family = options.family or child.family
+
+        for id, blocked in pairs(child.excluded or {}) do
+            excluded[id] = blocked
         end
 
-        local vault = catalog.get(selected.id)
-        local map = api.place(nil, api.builder, vault, child)
+        child.excluded = excluded
 
-        if map then
-            api.placed[#api.placed + 1] = map
-            api.context.used:add_map(vault, map)
-            placed_count = placed_count + 1
+        if options.exclude_id then
+            child.excluded[options.exclude_id] = true
+        end
+
+        -- A tag draw can choose a map that cannot fit beside the primary.
+        -- Exclude only that rejected candidate and redraw from the remaining
+        -- effective pool. A failed fit never claims its name or source tag.
+        while true do
+            local selected = selection.choose_tag(api.builder, tag, child)
+
+            if not selected then
+                return placed_count
+            end
+
+            local vault = catalog.get(selected.id)
+            local map = api.place(nil, api.builder, vault, child)
+
+            if map then
+                api.placed[#api.placed + 1] = map
+                api.context.used:add_map(vault, map)
+                placed_count = placed_count + 1
+                break
+            end
+
+            excluded[vault.id] = true
         end
     end
 

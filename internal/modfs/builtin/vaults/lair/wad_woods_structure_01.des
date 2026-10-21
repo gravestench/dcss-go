@@ -1,0 +1,47 @@
+# Wad woods structure 01 is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: wad_woods_structure_01
+TAGS:   no_monster_gen
+DEPTH:  D:10-, Lair
+ORIENT: float
+# The source helper supplies these map-specific catalog facts.
+WEIGHT: 5
+MONS: plant
+MONS: bush
+MONS: fungus
+TAGS: uniq_wad_woods_large
+: vault.run("woods.populate")
+FTILE: .t+%*|q012345678COGTU = floor_grass
+KFEAT: O = shallow_water
+# Source Lua: : wad_woods_setup(_G, "large", 5, false, 0, 0, 0)
+FTILE:  "2T = floor_grass
+FTILE:  @'0+ = floor_dirt
+MAP
+   ttxcxxxxxxxxxxxxxxxxxxxxxxxcxxxxxct
+ ttttxc''''+''0'xxxxxx'''+''0'cx0'0'ctt
+ t.ttxc''0'xxxx'x''00x'''x''''cx''''ctt
+ tt.txc'0''x''x'x''''x''0x''''cx''''ct1
+tt.t.xc''''x''+'+'''0x'''x''''cc+cc+ct1tt
+t.t.txccc++ccccccxcxcxcxcc++cccx'x2'2tt1tt
+tttt.t.tt''tttttttcttttttt''ttx''x"'"ttt1t
+  ttt..tt''''''tttcttt''''''ttxxxx2'2tt1tt
+ ttt.tt..ttttt''ttctt''t...t.ttt.2"'"2.tt
+ t.tt.t.t.t..tt''tct''ttt..tttx22""'""22tt
+ tt.tt.ttt...t.t''c''t..t.t..tx2""'''""2tt
+ ttt.ttt..t.t.t..'''tt.t.ttt..x"2''T''2"tt
+  ttt...ttt.tt...0'0t.tt...tt.x2""'''""2t
+  ttt.t.t..t.t...'''ttt..tt..tx22""'""22tt
+tcccccccccccccccc+c+ccccccccccccccc+ccccct
+ tttttt.111ttt.1x'x'xtttttttttttttt1ttttt
+ ttt%1.tttt1..tt.'''.ttttttttttttt1.1tt
+  ttt.tt..1txxxc.'''.cxxxttt1tttttt.tttt
+ tt.tttt%.ttt1tt.'''.tttttt.t1ttttt.%*tt
+  tt.1ttt.tt1txx.'''.xxtt..ttt%tttttt..t
+  ttt.%.tt.tttcG.'''.Gct1tttttt.tttt..ttt
+ ttt.t1t1t.tttxx.'''.xx1ttttttt.ttttt.ttt
+ tt.tttt*.tt1ttt.'''.11ttttttt.tt1t.1tttt
+ ttt1tttttttt1xx.'''.xxtttttt.t.%t1tt
+ ttt..ttttttttcG.'''.Gcttttttt%.t.
+  tttt1.%tt   xx..'..xxtttt
+   ttttttt     1t.@.tttt
+ENDMAP

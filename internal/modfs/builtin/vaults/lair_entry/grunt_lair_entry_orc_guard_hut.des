@@ -1,0 +1,31 @@
+# Grunt lair entry orc guard hut is an authored Lair entrance.
+# Its keyed O cell becomes the saved branch stair after placement.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: grunt_lair_entry_orc_guard_hut
+TAGS:   lair_entry transparent
+ORIENT: float
+MONS:   bullfrog w:30 / scorpion w:20 / black bear w:20 / yak \
+        / komodo dragon w:5
+MONS:   patrolling orc warrior
+KMONS:  P = plant / fungus
+KFEAT:  O = enter_lair
+NSUBST: D = 2:1 / 2 = 1` / * = P``, 1 = 3:1 / 2 = 1. / * = `
+SUBST:  P = PP`, . = P:1 .:5, ` = .
+: vault.validate("exit.has_exit")
+# Source Lua: validate {{ return has_exit_from_glyph('O') }}
+MAP
+    ...@..
+  ..D.P.P...
+ ..D.PDPDP...
+ .D.PD11PDP..
+.D.PDPDPDPDP..
+..PDPccccDPDP.
+@PD1DcO2cP1P..
+..P1Pc%`cD1DP@
+.PDPDcc+cPDP..
+..PDPDP`PDP.D.
+ ..PDP11DP.D.
+ ...PDPDP.D..
+  ...P.P.D..
+    ..@...
+ENDMAP

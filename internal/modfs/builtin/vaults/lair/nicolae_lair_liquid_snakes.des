@@ -1,0 +1,27 @@
+# Nicolae lair liquid snakes is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: nicolae_lair_liquid_snakes
+TAGS:  no_pool_fixup transparent
+DEPTH: Lair
+KMONS: 1 = lava snake
+KMONS: 2 = electric eel
+KFEAT: 1 = l
+KFEAT: 2 = w
+SUBST: L = ..D, M = ..E, - = xx_, D = 1 l:240, E = 2 w:240
+CLEAR: _
+MAP
+        -----------
+       --xxxxxxxxx--
+--------xxDDD1DDDxx-
+xxxxxxxxxDDLLLLLDDxx
+xDDDDxxxDDLL...LLDDx
+x.LLDDxDDLL.....LL.x
+@..LLD1DLL.MMMMM...@
+@...LLLLL.MME2EMM..@
+x.MM.....MMEExEEMM.x
+xEEMM...MMEExxxEEEEx
+xxEEMMMMMEExxxxxxxxx
+-xxEEE2EEExx--------
+--xxxxxxxxx--
+ -----------
+ENDMAP

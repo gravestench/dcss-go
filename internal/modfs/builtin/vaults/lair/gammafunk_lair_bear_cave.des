@@ -1,0 +1,25 @@
+# Gammafunk lair bear cave is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: gammafunk_lair_bear_cave
+TAGS:   patrolling no_monster_gen
+DEPTH:  Lair
+MONS:   black bear / polar bear
+KFEAT:  " = W
+KMONS:  " = electric eel w:40 / nothing
+KITEM:  % = gold / stone
+SUBST:  % = %., * = *:40 |, B = 1., E = tE
+CLEAR:  E
+MAP
+EEEEEEEEEEEEEEEEEEEEEEEEE
+EtttttxxtttxxxxxxttxxtttE
+EttxxxxxxxxxxxxxxxxxxxxxE
+Etxxxxxxxxxxx..xxxxxxxxtE
+Etxxxxx"Wxx......x.xxxttE
+Exxx%...1.....x....xxxxtE
+Exxx%B.1...xxxxx.....xxtE
+Exxxx%%%*xxxxxxxxxxx..xtE
+Etxxx*xxxxxxxtxxxxxxx...@
+Etxxxxxxxxxxtttttttxxx..@
+EttxxxxxttttttttttttttttE
+EEEEEEEEEEEEEEEEEEEEEEEEE
+ENDMAP

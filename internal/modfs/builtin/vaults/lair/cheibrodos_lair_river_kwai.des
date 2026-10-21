@@ -1,0 +1,35 @@
+# Cheibrodos lair river kwai is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: cheibrodos_lair_river_kwai
+TAGS: no_item_gen no_monster_gen
+DEPTH: Lair
+ORIENT: northeast
+KMONS: P = plant
+MONS: bullfrog / cane toad, water moccasin / black mamba, hydra
+FTILE: _ = floor_dirt
+SUBST: P = ..P, - = .:1 x
+NSUBST: " = 1:3 / 4:P / 3=P. / 2:. / 2=.W / *:W
+NSUBST: ; = 3=12 / 2=12.. / 2:. / 2=.W / *:W
+NSUBST: ` = 1:1 . 1:2 / 1=12.., ' = 1=|* / 1=*% / *:%
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxx
+xwwwwxxxxxxxxxxxxxxxxxxx
+PwwwwPPP;-;;+;;+."""""xx
+PwwwwwPP;-;;-;;x".""""xx
+PwwwwwwP;-+---;x".""""xx
+@PwwwwwPP;;;-;;x""."""xx
+.PwwwwwwP``;-;;x""".."xx
+..Pwwwwww``;---xxxxxx.xx
+..Pwwwwwww.P;;;;PPPx''xx
+ ..Pwwwwww_wwwPPPPPx''xx
+ @..Pwwwww_wwwwwwwwxxxxx
+  ...Pwwww_wwwwwwwwwwwwx
+   ...Pwww_wwwwwwwwwwwwx
+    ...---`---wwwwwwwwwx
+    ...-WW`WW-wwwwwwwwwx
+    @..-````W-PPPwwwwwwx
+     ..-````P-```PPPPPxx
+     ..---+---........xx
+      ....@.....@....@xx
+                      xx
+ENDMAP

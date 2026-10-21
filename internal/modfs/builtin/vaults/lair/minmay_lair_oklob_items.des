@@ -1,0 +1,20 @@
+# Minmay lair oklob items is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: minmay_lair_oklob_items
+TAGS:   luniq_oklob extra
+DEPTH:  Lair
+MONS:   plant / fungus w:3 / bush w:5
+KMONS:  | = oklob plant
+KITEM:  | = |
+SUBST:  X = xx_
+CLEAR:  _
+SUBST:  % = ....%%%%**
+MAP
+XXXXXXXXX
+Xxxxxxxxx.
+Xx%%%1.x.@
+Xx%%%xx.x.
+Xx|%%xxxx
+XxxxxxXXX
+XXXXXXX
+ENDMAP

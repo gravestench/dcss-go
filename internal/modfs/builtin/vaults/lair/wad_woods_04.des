@@ -1,0 +1,35 @@
+# Wad woods 04 is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: wad_woods_04
+DEPTH:  Lair
+ORIENT: float
+# The source helper supplies these map-specific catalog facts.
+WEIGHT: 2
+MONS: plant
+MONS: bush
+MONS: fungus
+TAGS: uniq_wad_woods_rock
+: vault.run("woods.populate")
+FTILE: .t+%*|q012345678COGTU = floor_grass
+KFEAT: O = shallow_water
+# Source Lua: : wad_woods_setup(_G, "rock", 2, false, 0, 0, 0)
+FTILE:  '+*0 = floor_dirt
+MAP
+            .tttttt.ttxtx
+          t1t.tttxtt.tttx
+      tt1t11tt11ttxxx.xxx
+     tt.tt..tttttttx.x.xx
+    tt1t..tt11txxtt.ttx..
+    tttt.tttttxxxx.xxxxxx
+   tt1t2tttx.xxxx....xxxx
+   ttt11tt1.t..t.txxx.x.x
+  ..tttt1t.ttxx.xxxxxx.xx
+ .t.1.tt....ttxttxt..xx.x
+.ttttt..tttttttt.xxx..1x.
+tt1t.t.txx..xx..xxxxxxxxx
+tt...tttttxx.t.xxtxxxxxxx
+x.tt.x.xxxxx..xxxxx''*xxx
+.xx1xxxxxxxxxxx101x'0'xxx
+xxxx1.........4xxx+'''xxx
+xxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

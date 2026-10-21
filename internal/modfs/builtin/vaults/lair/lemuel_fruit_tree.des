@@ -1,0 +1,31 @@
+# Lemuel fruit tree is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: lemuel_fruit_tree
+TAGS:   extra transparent decor
+DEPTH:  Lair, Snake
+ORIENT: float
+MONS:   plant, fungus
+KITEM:  a : stone
+: vault.run("configure")
+# Source Lua: : if crawl.one_chance_in(5) then
+# Source Lua: SUBST:  '"~ = . 1
+# Source Lua: SUBST:  0`-. = .:90 a:2 2:1
+# Source Lua: SUBST:  _ = .:90 a:4
+# Source Lua: : else
+# Source Lua: CLEAR:  '-_
+# Source Lua: SUBST:  `" = . a 2:1
+# Source Lua: SUBST:  ~. = .:90 a:2 2:1
+# Source Lua: SUBST:  0 = 1
+# Source Lua: : end
+MAP
+   ________
+  _--------_
+ _---..~..--_
+_--'.......--_
+_---..`"`.~--_
+_---..`0`..--_
+_---..`"`..--_
+ _--~....~.-_
+  _--.....-_
+   ________
+ENDMAP

@@ -2,11 +2,13 @@ package game
 
 import (
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
 	"crawl/internal/save"
 	"crawl/internal/terrain"
+	"crawl/internal/vault"
 )
 
 // A run chooses entrances once, and save/restore retains the exact choice.
@@ -128,8 +130,23 @@ func TestScheduledLairEntrancePersistsOnParentFloor(t *testing.T) {
 		t.Fatal("Lair entrance does not occupy a linked stair cell")
 	}
 
+	entryID := ""
+
 	for _, record := range g.levels[depth].VaultRecords() {
-		if record.X == entrance.X && record.Y == entrance.Y {
+		if record.X == entrance.X && record.Y == entrance.Y &&
+			record.Kind == vault.KindFeature &&
+			record.Identity == "enter_lair" {
+			entryID = record.SourceID
+		}
+	}
+
+	if entryID == "" || !slices.Contains(g.levels[depth].VaultIDs(), entryID) {
+		t.Fatalf("Lair entrance has no saved authored source: %q", entryID)
+	}
+
+	for _, record := range g.levels[depth].VaultRecords() {
+		if record.X == entrance.X && record.Y == entrance.Y &&
+			record.SourceID != entryID {
 			t.Fatal("extra vault overlapped protected Lair entrance")
 		}
 	}

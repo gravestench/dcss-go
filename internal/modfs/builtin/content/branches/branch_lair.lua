@@ -2,6 +2,7 @@
 -- Entry and depth are catalog facts; generated levels and stair links are saved separately.
 
 local categories = require("constants.catalog")
+local families = require("constants.vault_families")
 
 local definition = {
     id = "BRANCH_LAIR",
@@ -29,6 +30,10 @@ local definition = {
     -- Source Lair population extends to depth twelve for vault requests,
     -- beyond the five floors the player can visit.
     ood_cap = 12,
+    -- Lair's fifth floor always has an authored source ending, even though
+    -- it does not grant a rune. Small endings may add a paired second map.
+    end_vault_family = families.LAIR_END,
+    end_vault_required = true,
 }
 
 register.definition(categories.BRANCHES, definition)

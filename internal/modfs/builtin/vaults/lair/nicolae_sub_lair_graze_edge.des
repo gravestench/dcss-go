@@ -1,0 +1,16 @@
+# Nicolae sub lair graze edge is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: nicolae_sub_lair_graze_edge
+TAGS:   allow_dup nico_grazesub no_pool_fixup unrand
+KMONS:  1 = plant
+KMONS:  2 = bush
+KFEAT:  12 = W / .
+NSUBST: D = w / J, E = w / J, F = w / J, H = w / J
+SUBST:  J = .:20 W:20 1:20 2w, w = wt
+MAP
+ D
+D E
+ E F
+  F H
+   H
+ENDMAP

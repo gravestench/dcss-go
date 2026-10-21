@@ -1,0 +1,42 @@
+# Lemuel fruit fields is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: lemuel_fruit_fields
+TAGS:   allow_dup extra transparent decor
+DEPTH:  Lair
+ORIENT: float
+WEIGHT: 9
+MONS:   plant, butterfly
+ITEM:   gold
+KFEAT:  ^~ = .
+: vault.run("configure")
+# Source Lua: : local size = crawl.random2(9)
+# Source Lua: : if size > 7 then
+# Source Lua: SUBST:  '`"- = ^:20 ~:15 ., . = d:3 .:150 1:10 2:4
+# Source Lua: : elseif size > 3 then
+# Source Lua: SUBST:  "` = ^:20 ~:15 ., . = d:5 .:50 1:8 2:4
+# Source Lua: : else
+# Source Lua: SUBST:  '" = ^:20 ~:15 ., . = d:5 .:50 1:8 2:4
+# Source Lua: : end
+CLEAR:  `'"-
+COLOUR: ^ = green
+FTILE:  ^ = floor_grass
+COLOUR: ~ = brown
+FTILE:  ~ = floor_dirt
+MAP
+       -------
+     -----------
+   -``------------
+ -``````-----------
+ ```````"'''-------
+-`````"""'''''-``----
+--```"""'''''""````--
+----`"''''''"""`````-
+-----'''''''"""`````-
+-----'""'''''""````--
+----``""""''''-``----
+ --`````"""'--------
+ --````````---------
+   -``````--------
+     -``--------
+       -------
+ENDMAP

@@ -1,0 +1,56 @@
+# Minmay lair end frog pond is an authored Lair:5 ending.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: minmay_lair_end_frog_pond
+TAGS:    no_monster_gen
+PLACE:   Lair:$
+ORIENT:  float
+KMONS:   1 = bullfrog
+KMONS:   2 = cane toad
+KMONS:   3 = vampire mosquito
+KMONS:   4 = blink frog
+KMONS:   5 = komodo dragon / hydra
+KMONS:   6 = patrolling tyrant leech
+KMONS:   7 = electric eel
+KMONS:   8 = goliath frog
+KMONS:   p = plant
+ITEM:    any good_item
+KFEAT:   123678p = W
+# Previously 11.6 bullfrogs, 16.6 cane toads,
+# and 7.1 vampire mosquitoes on average.
+NSUBST:  XW = 3:1 / 5:2 / 5:3 / 8 = 11WWW / 12 = 22WWW / 8 = 44WWW
+NSUBST:  W = 3 = 678 / *:W, 5 = 1:5 / *:4W
+NSUBST:  % = 1:d / 1:* / * = %%*|
+SHUFFLE: AB, CD
+SUBST:   AB = x, CD = w
+SUBST:   X = x:80 W:15 .:10 p:10
+SUBST:   W = W:80 w:25 p:10
+SUBST:   . = .:85 W:20 p:10
+KMASK:   d%*| = no_monster_gen
+MAP
+          ............xxx
+       .................xxx
+   .........WWWWWW........xxxx
+  .......WWWWWAWWWWWWWWW.......
+ x.....WWWWWAAAWWWWWWWWWWW.....
+ x...WWWWWWWWAAAWWWWWWWWWWW.....
+ x..WWWWWWWWWWAAAAWWWWWWWWWW....
+xxxxx..WWWWWWWAWWWWWWWWWWWWW....
+x.XXxxxx..WWWWWWWWWWWWWDWWWWW...
+x.WWXXXxxxxxxxpp4WWWWWWDWWWWW...
+x.WWWWWXXXxxppppp5WWWWWDDWWWW...
+..WWWWWWWW4pp%%%pp4WWWDDDDDWW...
+..WWWWWWWW6pp%%%%pp6WWWWDDWWWW..
+..WWWWCWWW4ppp%%%pp4WWWWWDWWWW..
+.WWWWCCWWWW4ppppppxxXXWWWWWWWW..
+.WWCCCCCWWWW5WppxxxxxxXXXWWWWW.x
+.WWWCCWWWWWWWWWWWWW..xxxxXXXWW.x
+.WWWCWWWWWWWWWBWWWWWWW..xxxxXX.x
+..WWCWWWWWWBBBBWWWWWWWWWWWWxxxxx
+..WWWWWWWWWWWBBBWWWWWWWWWWW...x
+...WWWWWWWWWWWBBBWWWWWWWW.....x
+....WWWWWWWWWWBWWWWWWWW.......x
+ .....WWWWWWWWWWWWWW.........
+  xxx......WWWWWW.........
+    xxxxx..............
+        xxxx.......
+ENDMAP

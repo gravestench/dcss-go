@@ -1,0 +1,20 @@
+# Erik lair orcish takeover is an authored Lair entrance.
+# Its keyed O cell becomes the saved branch stair after placement.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: erik_lair_orcish_takeover
+TAGS:   lair_entry transparent
+ORIENT: float
+MONS:   orc, warg, orc warrior / warg
+MONS:   orc priest / orc wizard / plant
+KFEAT:  O = enter_lair
+MAP
+xxxx..@..xxxx
+xx.........xx
+x...2...44..x
+...4..1......
+@....3O.....@
+......1..4...
+x...4...2...x
+xx.........xx
+xxxx..@..xxxx
+ENDMAP

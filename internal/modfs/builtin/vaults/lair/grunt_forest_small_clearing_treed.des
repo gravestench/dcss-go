@@ -1,0 +1,21 @@
+# Grunt forest small clearing treed is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: grunt_forest_small_clearing_treed
+TAGS:   transparent patrolling
+DEPTH:  Lair
+MONS:   plant / bush
+NSUBST: t = 2:t / * = t..
+SUBST:  T = t, * = **t
+KPROP:  * = no_tele_into
+KMASK:  * = opaque
+MAP
+ tt@@@tt
+t.......t
+t.1...1.t
+@..TTT..@
+@..T*T..@
+@..GTT..@
+t.1...1.t
+t.......t
+ tt@@@tt
+ENDMAP

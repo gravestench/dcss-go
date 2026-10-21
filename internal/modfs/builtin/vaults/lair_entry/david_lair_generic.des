@@ -1,0 +1,23 @@
+# David lair generic is an authored Lair entrance.
+# Its keyed O cell becomes the saved branch stair after placement.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: david_lair_generic
+TAGS:    lair_entry transparent
+ORIENT:  float
+MONS:    black bear / basilisk
+MONS:    wyvern, yak / death yak w:2, elephant
+KMONS:   P = plant / fungus
+SHUFFLE: 234, A1
+SUBST:   A = ., P = P.
+KFEAT:   O = enter_lair
+MAP
+xxxx..@..xxxx
+xx.........xx
+x..P.A...P..x
+..PP..1...P..
+@....2O3....@
+..P...1..P...
+x..P...A....x
+xx.........xx
+xxxx..@..xxxx
+ENDMAP

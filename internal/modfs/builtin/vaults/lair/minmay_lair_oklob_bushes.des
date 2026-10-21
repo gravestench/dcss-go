@@ -1,0 +1,35 @@
+# Minmay lair oklob bushes is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: minmay_lair_oklob_bushes
+TAGS:   luniq_oklob extra
+DEPTH:  Lair
+MONS:   oklob plant, bush
+: vault.run("configure")
+# Source Lua: : local size = crawl.random2(10)
+# Source Lua: : if size > 8 then
+# Source Lua: SUBST:  `'" = .
+# Source Lua: : elseif size > 6 then
+# Source Lua: SUBST:  `' = .
+# Source Lua: : elseif size > 3 then
+# Source Lua: SUBST:  ` = .
+# Source Lua: : end
+CLEAR:  `'"
+MAP
+       """
+    """""""""
+   """""""""""
+  """""'''"""""
+ """"'''''''""""
+ """'''```'''"""
+ """''`.%.`''"""
+"""''`.222.`''"""
+"""''`%212%`''"""
+"""''`.222.`''"""
+ """''`...`''"""
+ """'''```'''"""
+ """"'''''''""""
+  """""'''"""""
+   """""""""""
+    """""""""
+       """
+ENDMAP

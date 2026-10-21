@@ -1,0 +1,26 @@
+# Dpeg lair monsters is an authored Lair entrance.
+# Its keyed O cell becomes the saved branch stair after placement.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: dpeg_lair_monsters
+TAGS:    ruin lair_entry transparent
+ORIENT:  float
+MONS:    yak, death yak
+MONS:    iguana w:20 / black bear w:20 / komodo dragon / basilisk w:5
+MONS:    river rat / hell rat / quokka / rat
+MONS:    bullfrog w:40 / blink frog / cane toad
+SHUFFLE: 1345
+NSUBST:  1 = 2:11112 / * = 1..
+NSUBST:  3 = 1:2 / * = 2.., 5 = 1:4 / * = 4:5 .:9
+SUBST:   y = xx.
+KFEAT:   O = enter_lair
+MAP
+xxxxx...@...y
+x111.........
+x111.y...2...
+x11.y...y...@
+x..yy.O.yy...
+@...y...y....
+...2...y2.yy.
+..........yy.
+y...@........
+ENDMAP

@@ -1,0 +1,34 @@
+# Wad woods road 01 is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: wad_woods_road_01
+DEPTH:  Lair
+# The source helper supplies these map-specific catalog facts.
+WEIGHT: 2
+MONS: plant
+MONS: bush
+MONS: fungus
+TAGS: uniq_wad_woods_decor decor extra
+: vault.run("woods.populate")
+FTILE: .t+%*|q012345678COGTU = floor_grass
+KFEAT: O = shallow_water
+MARKER: O = lua:fog_machine{pow_min=3,pow_max=7,delay=32,size=3,walk_dist=1,spread_rate=24}
+# Source Lua: : wad_woods_setup(_G, "decor", 2, true, 32, 3, 24)
+FTILE:  @' = floor_dirt
+MAP
+    t1t.t1  tt.1tt   .@
+  .1tt1.1   tOtt.1.tt.'
+ tt..2ttt.1..tttt...%'.
+ t2t.ttt.ttt1tt2t.t.'.
+1t.tt..1tt1.tt.t.tt'.1
+t.tt.%1..1tt.1ttt''t1tt
+.........G.....1'...1..
+@'''''''''''''''''''''@
+.1...1...T3............
+t.t.tt.t.tt.tG..t.t.ttt
+tt.ttt.1..ttt..ttt.1.tt
+ .tt.t2ttt.tt1t1t1.t.t
+ tt.tt2ttt..%.2ttOttt
+ t..1tt.t1t..G...t.t
+  t.tt..2 1t.t.tt1t
+  t21t      ..tttt
+ENDMAP

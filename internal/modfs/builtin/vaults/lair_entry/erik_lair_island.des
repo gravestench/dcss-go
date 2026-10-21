@@ -1,0 +1,26 @@
+# Erik lair island is an authored Lair entrance.
+# Its keyed O cell becomes the saved branch stair after placement.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: erik_lair_island
+TAGS:   lair_entry transparent
+ORIENT: float
+MONS:   troll, hound w:15 / wolf
+KFEAT:  O = enter_lair
+SUBST:  - = w., 2 = 2:5 .:1
+MAP
+.@........wwwwww-.....
+..-.-.-..wwwwwww.-..-.
+..--w..wwwwwwwww-.--..
+...--w.wwwwwwwwwwww-..
+...wwww-wwwwwwwwww--..
+..wwwwww--w--w2wwww..@
+..wwwwww--....wwww---.
+....1....2.2O2.wwww...
+..-wwwww---2.2www.ww-.
+.....wwww2..w.2www....
+..wwwwwwwww-.wwww---..
+@..wwwwwwwwwwwwwww....
+....-ww..ww-www..w....
+....-......--.w..---..
+...........-...@......
+ENDMAP

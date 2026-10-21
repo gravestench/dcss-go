@@ -1,0 +1,37 @@
+# Nicolae lair grazing beasts is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: nicolae_lair_grazing_beasts
+TAGS:     no_pool_fixup patrolling transparent
+DEPTH:    Lair
+KITEM:    H = % / * w:5
+KMONS:    13 = plant
+KMONS:    2 = bush
+KMONS:    H = plant / nothing w:25
+KMONS:    L = yak band w:25 / elephant band w:25 / death yak band / \
+              catoblepas / dire elephant w:5 / dream sheep band w:5
+KFEAT:    12 = W / .
+SUBVAULT: Q : nico_grazesub
+SUBVAULT: R : nico_grazesub
+SUBVAULT: S : nico_grazesub
+SUBVAULT: Z : nico_grazesub
+NSUBST:   D = 2=W / wW / w, ' = 1=L
+SUBST:    H = H ':15, ' = L:5 .:250 3:100, J = .:20 W:20 1:20 2w, w = wt
+MAP
+     .......
+    ..J...J..
+   ..QDDDDDR..
+  ..QwQ'''RwR..
+ ..QwQ'''''RwR..
+..QwQ'''''''RwR..
+.JwQ'''''''''RwJ.
+.JwJ'''HHH'''JwJ.
+.JwJ'''HHH'''JwJ.
+.JwJ'''HHH'''JwJ.
+.JwZ'''''''''SwJ.
+..ZwZ'''''''SwS..
+ ..ZwZ'''''SwS..
+  ..ZwZJJJSwS..
+   ..ZwwwwwS..
+    ..JJJJJ..
+     .......
+ENDMAP

@@ -1,0 +1,40 @@
+# Minmay lair oklob chamber is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: minmay_lair_oklob_chamber
+TAGS:   luniq_oklob no_monster_gen
+DEPTH:  Lair
+ORIENT: north
+KMONS:  p = plant
+KMONS:  P = oklob plant
+# Lair:1 is absdepth 11, for reference.
+: vault.run("configure")
+# Source Lua: : local size = crawl.random2(10) + you.absdepth() - 10
+# Source Lua: : if size > 8 then
+# Source Lua: SUBST:  '`" = ., yza = x, XYZ = ?, 1234 = p
+# Source Lua: NSUBST: ? = 1:% / 4:P / * = ?
+# Source Lua: : elseif size > 6 then
+# Source Lua: SUBST:  '` = ., XY = ?, yzZ4 = x, 123 = p
+# Source Lua: NSUBST: ? = 1:% / 3:P / * = ?
+# Source Lua: : elseif size > 3 then
+# Source Lua: SUBST:  ' = ., X = ?, 3yY = x, 12 = p
+# Source Lua: NSUBST: ? = 1:% / 2:P / * = ?
+# Source Lua: : else
+# Source Lua: SUBST:  X2 = x, 1 = p
+# Source Lua: NSUBST: ? = 1:% / 1:P / * = ?
+# Source Lua: : end
+CLEAR:  '`"34yzaYZ
+SUBST:  ? = ....111$$%%*|
+MAP
+xxxxxxx
+xxxxxxx
+xxxxxxx
+aaaaaaa
+zZZZZZa
+yYYYYZa
+xXXXYZa
+x??XYZa
+x??XYZa
+x11234a
+....'`"
+ .@'`"
+ENDMAP

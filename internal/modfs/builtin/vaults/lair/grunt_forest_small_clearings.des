@@ -1,0 +1,23 @@
+# Grunt forest small clearings is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: grunt_forest_small_clearings
+TAGS:    transparent extra decor
+DEPTH:   Lair
+MONS:    plant / bush
+KPROP:   G = no_tele_into
+SHUFFLE: Ww. / ''` / ''`
+SUBST:   t = t.., '` = 1:49 .:405
+SUBST:   G = w-, W = WW., w = wwW
+KMASK:   w- = no_monster_gen
+KMASK:   w- = opaque
+MAP
+ tt@@@tt
+t.......t
+t..WWW..t
+@.WwwwW.@
+@.WwGwW.@
+@.WwwwW.@
+t..WWW..t
+t.......t
+ tt@@@tt
+ENDMAP

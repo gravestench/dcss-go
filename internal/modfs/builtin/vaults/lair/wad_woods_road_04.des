@@ -1,0 +1,31 @@
+# Wad woods road 04 is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: wad_woods_road_04
+DEPTH:  Lair
+KMONS:  P = oklob plant
+# The source helper supplies these map-specific catalog facts.
+WEIGHT: 1
+MONS: plant
+MONS: bush
+MONS: fungus
+TAGS: uniq_wad_woods_small
+: vault.run("woods.populate")
+FTILE: .t+%*|q012345678COGTU = floor_grass
+KFEAT: O = shallow_water
+# Source Lua: : wad_woods_setup(_G, "small", 1, false, 0, 0, 0)
+FTILE:  @'+T = floor_dirt
+MAP
+  ttt..@..ttttttttt
+ t11...'.ttt1ttP11t
+ tttt1..'.tttt1t*1tt
+ttt1tttt.'..ttttt1t
+  ttttttt.'..1tt1ttt
+   tt1t...'tttt..t..
+  t1tttt.''''''''...
+  ttttt..'.t1.tt.''@
+   ttt1t.'tttttttttt
+   tt1ttt.'.ttttttt
+  tt1tttttt'..ttttt
+  ttt1tt1..'.ttttt
+   ttt1tt..@ttt
+ENDMAP

@@ -1,0 +1,28 @@
+# Guppyfry lair drakes is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: guppyfry_lair_drakes
+DEPTH:  Lair
+: vault.run("configure")
+# Source Lua: : if you.depth() > 3 and crawl.coinflip() then
+# Source Lua: MONS:   rime drake / swamp drake / acid dragon
+# Source Lua: MONS:   steam dragon
+# Source Lua: MONS:   plant
+# Source Lua: SUBST:  -_ = wwWW..%
+# Source Lua: SHUFFLE: .t
+# Source Lua: : else
+# Source Lua: SUBST:  12 = 0, _ = wW.%, 3- = .
+# Source Lua: : end
+MAP
+.3WW-3.....
+.ttWW-ttt..
+.3ttW-tt.t.
+.ttWWtt...t
+tt1Wttt2.tt
+.ttWW-t3.t.
+..ttWW_-1t.
+.tt1_WWttt.
+..tt-_Wtt3.
+.tt3.tWWttW
+.ttt.ttWWW-
+....3.3-W-.
+ENDMAP

@@ -1,0 +1,22 @@
+# Nicolae lair lindhole is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: nicolae_lair_lindhole
+TAGS:  transparent
+DEPTH: Lair
+KMONS: 1 = lindwurm
+SUBST: K = LLLL., L = lx, ~ = 1.., - = x_, % = %%%$*.
+CLEAR: _
+MAP
+-----------
+-KKKKKKKKKK
+-K....~...@
+-K.~.......
+-L..LLLLLLL-
+-L..Lxxxxxx-
+-L..LLLLLLx-
+-L.~...%%Lx-
+-L....1%%Lx-
+-LLLLLLLLLx-
+-xxxxxxxxxx-
+------------
+ENDMAP

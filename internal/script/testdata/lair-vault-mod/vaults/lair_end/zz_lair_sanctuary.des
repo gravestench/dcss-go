@@ -1,0 +1,12 @@
+# A modded end is eligible at Lair:5 without adding a branch rule.
+NAME: zz_lair_sanctuary
+PLACE: Lair:$
+WEIGHT: 1
+ORIENT: float
+MAP
+xxxxxxx
+x.....x
+x..P..x
+x.....x
+xxxxxxx
+ENDMAP

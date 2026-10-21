@@ -1,0 +1,19 @@
+# Grunt forest stairs clearing is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: grunt_forest_stairs_clearing
+DEPTH:  Lair:2-, !Lair:$
+MONS:   wolf, black bear, polar bear, spriggan
+KMONS:  P = plant / bush
+NSUBST: t = 2:t / * = t.
+NSUBST: Q = 3:1 / 1:2 / 1:3 / 1:4 / *:.
+MAP
+.tt...tt.
+t..Q.Q..t
+t.t.Q.t.t
+.Q.P.P.Q.
+..Q.).Q..
+.Q.P.P.Q.
+t.t.Q.t.t
+t..Q.Q..t
+.tt...tt.
+ENDMAP

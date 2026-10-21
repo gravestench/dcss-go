@@ -1,0 +1,74 @@
+# Gammafunk lair ancient temple is an authored Lair:5 ending.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: gammafunk_lair_ancient_temple
+TAGS:    no_pool_fixup no_monster_gen
+PLACE:   Lair:$
+ORIENT:  float
+KITEM:   % = any
+KITEM:   * = star_item
+KITEM:   | = superb_item
+: vault.run("loot.potions")
+# Source Lua: : kitem("d = " .. dgn.loot_potions)
+KITEM:   e = throwing net q:3 / rapier good_item / captain's cutlass w:2 \
+         / trident randart / trident of the octopus king w:2 \
+         / demon trident w:5 / phial of floods / ring of the octopus king w:2
+KMONS:   p = plant
+KMONS:   1 = hornet / wyvern / blink frog / cane toad / steam dragon
+KMONS:   2 = elephant / komodo dragon / polar bear / rime drake
+KMONS:   3 = snapping turtle / sea snake / manticore / wind drake / harpy
+KMONS:   4 = dire elephant / hydra / torpor snail
+KMONS:   5 = patrolling merfolk avatar
+KFEAT:   p12345de%*| = W
+NSUBST:  % = 2=d / 2=d% / e / %%*|
+# Open up squares on the fixed portions of the temple walls, on the outer
+# colums, and in the inner room.
+SUBST:   c = c:20 .:1 W:1, a = ccc-, q = cccc'
+# Each wall has a 50% chance of being broken open
+SHUFFLE: DEFHJ / uuyzz
+SUBST:   u = -, y = c, z = '
+SHUFFLE: KLMNO / uuyzz
+SUBST:   u = -, y = c, z = '
+SHUFFLE: PQRSZ / uuyzz
+SUBST:   u = -, y = c, z = '
+# For broken wall areas, put four wall squares in the area, spread out in a way
+# that prevents clumping. Also put some dry floor in these areas.
+SHUFFLE: DE, HJ, KL, NO, PQ, SZ
+NSUBST:  DFH = 4=c, DEF = 2=. / 2=.- / -, HJ = 2=. / 2=.' / '
+NSUBST:  KMN = 4=c, KLM = 2=. / 2=.- / -, NO = 2=. / 2=.' / '
+NSUBST:  PRS = 4=c, PQR = 2=. / 2=.- / -, SZ = 2=. / 2=.' / '
+# Monsters of each tier are distributed across outer and inner portions.
+NSUBST:  - = 12=1W / 8=2W / 4=3W / 2=4WWW / W, ' = 4=2W / 8=3W / 5 / W
+# Ruin statues, possibly place inner chamber doors. Also replace some shallow
+# water with floor and some with plants throughout the map.
+SUBST:   G = GGGW., + : +.W, W = W:125 .:10 p:10, " = W.
+COLOUR:  c = white
+MAP
+""""""""""""""""""""""""
+"aa--aa--aa--aa--aa--aa"
+"aa--aa--aa--aa--aa--aa"
+"----------------------"
+"----aa---a--a---aa----"
+"aa--c------------c--aa"
+"aa--c---LKLKLK---c--aa"
+"----cG--KLKLKL--Gc----"
+"----cccccMMMMccccc----"
+"aa--cU''ONONON''Uc--aa"
+"aa--c'''GONONG'''c--aa"
+"--EDcHJ'qqqqqq'SZcPQ--"
+"--DEFJH'q%%%%q'ZSRQP--"
+"a-EDFHJ'q%ww%q'SZRPQ-a"
+"a-DEFJH'q%ww%q'ZSRQP-a"
+"--EDFHJ'q%%%%q'SZRPQ--"
+"--DEcJH'qq++qq'ZScQP--"
+"aa--c'''G''''G'''c--aa"
+"aa--cU''''''''''Uc--aa"
+"----ccccc----ccccc----"
+"----cG----------Gc----"
+"aa--c-a-a-GG-a-a-c--aa"
+"aa--c------------c--aa"
+"----aa-aaa--aaa-aa----"
+"----------------------"
+"aa--aa--aa--aa--aa--aa"
+"aa--aa--aa--aa--aa--aa"
+""""""""""""""""""""""""
+ENDMAP

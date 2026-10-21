@@ -1,0 +1,38 @@
+# Beast lair carwin large 1 is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: beast_lair_carwin_large_1
+TAGS:   transparent luniq_beast_lair
+ORIENT: float
+: vault.run("beasts.large")
+# Source Lua: : beast_lair_populate_mons_large(_G)
+# The source helper supplies fixed map eligibility and glyph rules.
+TAGS: no_trap_gen
+DEPTH: Lair, !Lair:$
+SUBST: A = 1:5 .
+SUBST: B = x:3 .
+SUBST: C = W:3 .
+SUBST: D = Wx1.
+SUBST: E : 1:3 .:9
+SUBST: F : x:3 .:9
+SUBST: G : W:3 .:9
+SUBST: M = 2:4 .:8
+SUBST: P : 2:2 .
+SUBST: L = *:1 % .:5
+SUBST: J = %:6 .:28
+# Source Lua: : beast_lair_randomise(_G)
+MAP
+                E.EEJ
+      1     1  ..E.ME
+...........1.xxx.ME.
+ .Axxxxx..xxxx.xxxA..
+..xxJ..xx.xx.B.FFxx1.E
+ ..xxx.B........GGxx...
+ .xxA.....FFxxG..Gxxx.
+ .x...423...xGGG.GGGx.
+..x.AxxxFFFxxG4223Axx.1
+..xx..AFFFxx%LL4xxxx..
+..Axx..MFxxxxxxxx.xxx.
+ ..x..xxxxAxx......A..
+ .A.............  .
+      .            ..
+ENDMAP

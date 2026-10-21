@@ -1,0 +1,10 @@
+# A sparse mod adds one keyed gate without replacing the base entrance pool.
+NAME: modded_lair_gate
+TAGS: lair_entry
+WEIGHT: 7
+KFEAT: O = enter_lair
+MAP
+.....
+..O..
+.....
+ENDMAP

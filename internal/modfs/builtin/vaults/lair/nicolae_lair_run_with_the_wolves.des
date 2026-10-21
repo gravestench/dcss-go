@@ -1,0 +1,21 @@
+# Nicolae lair run with the wolves is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: nicolae_lair_run_with_the_wolves
+TAGS:   ruin transparent
+DEPTH:  Lair
+KMONS:  1 = wolf spider
+KMONS:  2 = wolf band
+NSUBST: D = 1 / 12 / 2
+MAP
+         xxxxx
+      xxxxxxxxxxx
+   xxxxxxx...xxxxxxx
+xxxxxxxx.......xxxxxxxx
+...........D...........
+@..........D..........@
+...........D...........
+xxxxxxxx.......xxxxxxxx
+   xxxxxxx...xxxxxxx
+      xxxxxxxxxxx
+         xxxxx
+ENDMAP

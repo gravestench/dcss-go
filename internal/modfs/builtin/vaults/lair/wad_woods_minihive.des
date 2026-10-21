@@ -1,0 +1,49 @@
+# Wad woods minihive is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: wad_woods_minihive
+TAGS:   uniq_beehive
+DEPTH:  D:8-, Lair
+ORIENT: float
+MONS:   killer bee, queen bee
+KMONS:  8 = meliai
+KITEM:  8 = %
+KFEAT:  a = x
+# The source helper supplies these map-specific catalog facts.
+WEIGHT: 5
+MONS: plant
+MONS: bush
+MONS: fungus
+TAGS: uniq_wad_woods_med
+: vault.run("woods.populate")
+FTILE: .t+%*|q012345678COGTU = floor_grass
+KFEAT: O = shallow_water
+# Source Lua: : wad_woods_setup(_G, "med", 5, false, 0, 0, 0)
+: vault.run("configure")
+# Source Lua: : if you.in_branch("Lair") and you.depth() < 4
+# Source Lua: :  or you.in_branch("D") and you.depth() < 12 then
+# Source Lua: SUBST:  8 = 6
+# Source Lua: : end
+KMASK:  W = no_monster_gen
+COLOUR: a = yellow
+TILE:   a = wall_wax
+MAP
+        ttttttt..t    tt.
+      .ttt.t.tt...t  ttt..
+    ttt.tt..tt.1t.t.1t...t...
+ t.t1ttt....1WW..t....t1...t...
+t..t..t.1..tWWW.t...1..t.tt..tt.
+ttt.t1...t...tWW.1t.t...tt...ttt
+tttt....aaamaaa1Wt.t...t..tt1ttt
+t.t1.t1aa6.a66aaWWt1.1t.ttttttt
+ tt.ttaaa.aba.aaaWW.t..ttttt1ttt
+  tt.aa86a7a.a.6aaWtt1t...tt.tt
+  t.aaaaaab|baaaaaa.t.......ttt
+ t1.1aa66a.a.a.8aa.t...t.t.ttttt
+tt.1..aaa.aba6aaa.1..t..tttt%ttt
+t.t....aa.8a6.aaWW.t.tt.tt..t
+tt.t.1.1aaaaaaaWWwW1.t..t.tt
+ tt.t1.1....t1WWwW.....1ttt
+  1..t.tt..tt.tWWt1.1tt...
+    t.tttxtttt1ttttttxx.
+      .txxxt   ttxxtttt.
+ENDMAP

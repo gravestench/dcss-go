@@ -1,0 +1,11 @@
+# Lair entry dummy is an authored Lair entrance.
+# Its keyed O cell becomes the saved branch stair after placement.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: lair_entry_dummy
+TAGS:   lair_entry extra transparent
+WEIGHT: 30
+ORIENT: float
+KFEAT:  O = enter_lair
+MAP
+O
+ENDMAP

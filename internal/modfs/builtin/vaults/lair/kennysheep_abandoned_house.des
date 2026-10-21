@@ -1,0 +1,25 @@
+# Kennysheep abandoned house is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: kennysheep_abandoned_house
+TAGS:   ruin transparent
+DEPTH:  Lair
+MONS:   rat, river rat, hell rat
+KITEM:  d = gold
+NSUBST: d = 1:d / 1:* / 1:9 / 1:3 / * = d11223.......
+MAP
+      .......
+.......ccccc.........
+.ccccccccccccccccccc.
+.cccccccdddccccccccc.
+.ccdddccdddcc..dddcc.
+.ccdddccdddcc..dddcc.
+.cc...cc...+...dddcc.
+.cccc.cccc.ccccccccc.
+.cccc+cccc+ccccccccc.
+.cc.....+...+...ddcc.
+.ccddddcc...cc..ddcc.
+.ccddddcc...cc..ddcc.
+.cccccccc+++cccccccc.
+.ccccccc.....ccccccc.
+.....................
+ENDMAP

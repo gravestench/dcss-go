@@ -1,0 +1,51 @@
+# Evil forest is an authored Lair:5 ending.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: evil_forest
+TAGS:    no_pool_fixup no_wall_fixup no_monster_gen no_rotate
+PLACE:   Lair:$
+ORIENT:  southeast
+WEIGHT:  5
+MONS:    rime drake, hydra w:15 / dire elephant, wizard
+MONS:    red devil / ice devil w:15 / orange demon w:15
+MONS:    hellwing / smoke demon, sun demon / sixfirhy / hell beast w:4
+KMONS:   hH = hell hound
+KMONS:   F = fungus
+KITEM:   A = superb_item no_pickup, any good_item no_pickup \
+             / no_pickup gold good_item w:15, % no_pickup \
+             / nothing, % no_pickup / nothing
+KFEAT:   A = enter_hell
+KFEAT:   _ = altar_makhleb
+KFEAT:   L = endless_lava
+NSUBST:  1 = 3 = 11122 / * = 1h, 4 = 5:4 / 1:4H / *:H
+SUBST:   T = ttt.
+KPROP:   ` = bloody
+KMASK:   '"`456H = no_item_gen
+FTILE:   "_A456H = floor_cage
+COLOUR:  "456H = red
+MAP
+  ...TTTT....  .............................
+ ..TttttttT.......Tt.TtT....TT..TT......Tt....
+..TtttttttttT..TTtttttttT..TttttttTT..TTtttT...
+..Tttttttttttt0ttttttttttttttttttttttttttttttT..
+.Tttttttttttttt.ttttttttttttttttT.Ttttttttttttttt
+..Ttttttttttttt.tttttttttttttttT.1.Tttttttttttttttxx
+.....ttttttttt..tttttttttttttttT....ttttttttttttttxx
+..Ttt0.tttttt....ttttttttttttttt..Tt..ttttttttttttxx
+..Ttttt.......t.0.tttttttttttt...ttttt.0ttttttttttxx
+..ttttttt..0tttt.t..ttttttttt.0.tttttttt..ttttttttxx
+.Tttttttttttttt..ttt...ttt....ttttttttttT.1Tttttttxx
+...Ttttttttttt..ttttt.......tttttttttttT....Ttttttxx
+...tttttttttt.1ttttttt0ttFtttttttttcccccc++cccccccxx
+..Tttttttttt..tttttttttttt+ccccccccc'''''''''''''clL
+..Ttttttttt.0t..ttttttttttc''''''''c'''G````G''''clL
+.Tttttttttt..tt..tttttttttc''G'G'''+'''''''''''''clL
+..Tttttttt..tttt.tttttttttc'''c'G''ccccccccccccccclL
+.Tttttttt..ttttt..ttttttttc''c'G'''c"""""""4lllllllL
+..Ttttt.0ttttttt...tttttttc'''G'c''c""""""""44lllllL
+....T..tttttttt....tttttttc''G'c'''+""""_""654AllllL
+...T0tttttttttt*Q1ttttttttc'''G'G''c"""""4444llllllL
+..Ttttttttttttttttttttttttc'''''''3c""""4llllllllllL
+ttttttttttttttttttttttttttcccccccccccccllllllllllllL
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxllllllllllllllllllL
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxLLLLLLLLLLLLLLLLLLL
+ENDMAP

@@ -90,7 +90,11 @@ end
 -- Count source-resolved rune intents, not map glyphs: NSUBST may remove
 -- candidate glyphs and a keyed slot may select a non-rune alternative.
 local function validate_runes(map, branch)
-    for _, rune_id in ipairs(branch.runes or {}) do
+    -- Lair has a mandatory source ending but no rune. The content loader
+    -- represents its absent runes with mod.null, not a Lua array.
+    local runes = type(branch.runes) == "table" and branch.runes or {}
+
+    for _, rune_id in ipairs(runes) do
         local count = 0
 
         for _, record in ipairs(map.records or {}) do
@@ -205,6 +209,17 @@ function end_vault.place(ctx, builder, context, placed, fit)
 
     placed[#placed + 1] = map
     context.used:add_map(vault, map)
+
+    -- A source end with geometry can also request a paired child after it
+    -- fits. Record the primary first so the child appears in the same saved
+    -- placement history; the pairing hook excludes this primary by ID.
+    for _, operation in ipairs(vault.operations) do
+        if operation.kind == directives.HOOK_POST_PLACE then
+            local api = controller.new(builder, context, placed, fit, vault.id)
+
+            hooks.run(vault, operation.argument, api)
+        end
+    end
 
     return vault.id
 end

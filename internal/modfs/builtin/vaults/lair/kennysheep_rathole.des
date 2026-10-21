@@ -1,0 +1,19 @@
+# Kennysheep rathole is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: kennysheep_rathole
+TAGS:   no_monster_gen
+DEPTH:  Lair
+MONS:   river rat band, hell rat, river rat / rat
+KMONS:  P = plant / fungus w:2
+NSUBST: ' = 1:1 / 2:P / 2:2 / 2:3
+MAP
+ xxxx
+ xxxxxx
+xxd.'xxxx
+xx..'''xx
+xx'''.''xx
+xxx'''''xx
+  x'x'.''x
+  xxx'...x
+     @  @
+ENDMAP

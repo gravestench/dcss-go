@@ -1,0 +1,39 @@
+# Wad woods river 01 is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: wad_woods_river_01
+TAGS:   extra
+DEPTH:  D:2-, Lair
+ORIENT: float
+# The source helper supplies these map-specific catalog facts.
+WEIGHT: 1
+MONS: plant
+MONS: bush
+MONS: fungus
+TAGS: uniq_wad_woods_med
+: vault.run("woods.populate")
+FTILE: .t+%*|q012345678COGTU = floor_grass
+KFEAT: O = shallow_water
+# Source Lua: : wad_woods_setup(_G, "med", 1, false, 0, 0, 0)
+MAP
+      tttt       ttttt
+   t.tt1t.tt.   tt.t..tt
+  t..t1ttt.t.t.tt11t.tt.t
+ .1tt.ttttttt.t.t..t.t.t...
+ .t.tttttt.t.tt1....t.t.t...
+  t.t1tttt.1ttt.t.ttt.t.tt1t.
+.ttt.t.tt1t.1t.tt1t0t.tt.t.ttt
+t.1t5tt.tt.tt.t.ttt%t.t.t1tttt
+ttt1t......0..1tWWWWWWWWWWWttt
+ tt...tWWWWWWWWWWwwwwwwwwwWWWW
+WWWWWWWWwwwwwwwwwwWWWWWWwwwwww
+wwwwwwwwwwwWWWWWWWWW1.tWWWWWWW
+WWWWWWWWWWWWWt....1.......ttt
+tttt..tt.t..%.t.t..ttt1..t.tt
+ttt5tt.t.tt1t1t.t%1tt.t5tttttt
+ tt1t.tttttt.t.tttt.t.t1t1.ttt
+  ttt.t.t1t.t.t.1tt.t.tt11tt
+  tt.1tt1t.ttttt.t.t.t1t.ttt
+    .t1tttttttttttt.ttt.t.tt
+    .tttt   tt ttttt.ttttt
+   .ttt           ttt.tt
+ENDMAP

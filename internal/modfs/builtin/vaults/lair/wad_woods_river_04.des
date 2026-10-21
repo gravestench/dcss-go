@@ -1,0 +1,34 @@
+# Wad woods river 04 is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: wad_woods_river_04
+TAGS:   no_vmirror no_rotate
+DEPTH:  D, Lair
+TILE:   X = wall_brick_dark_leak
+TILE:   x = wall_brick_dark
+SUBST:  X = x
+# The source helper supplies these map-specific catalog facts.
+WEIGHT: 1
+MONS: plant
+MONS: bush
+MONS: fungus
+TAGS: uniq_wad_woods_decor decor extra
+: vault.run("woods.populate")
+FTILE: .t+%*|q012345678COGTU = floor_grass
+KFEAT: O = shallow_water
+# Source Lua: : wad_woods_setup(_G, "decor", 1, false, 0, 0, 0)
+MAP
+   ttttxxxtttt
+ tt1txxxxxxxtt
+ttt1xxxxXxxxx1tt
+tttt1xxxWxxx1tt
+ttt.t.1tWt.1t1tt
+tt.t1tt1WW1tt.tt
+.1ttt1tWWtt1tt.t
+ttt11tttWWttt1t1
+tt.ttt1WWWtt*ttt
+t.ttttWWWttttt1t
+ tttt.WwWttt.tt
+   tttWwW1tttt
+   tttWwW..ttt
+    ttWwWt..t
+ENDMAP

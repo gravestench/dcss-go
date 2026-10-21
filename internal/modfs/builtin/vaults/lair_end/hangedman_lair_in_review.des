@@ -1,0 +1,52 @@
+# Hangedman lair in review is an authored Lair:5 ending.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: hangedman_lair_in_review
+TAGS:    no_monster_gen no_item_gen patrolling
+ORIENT:  float
+PLACE:   Lair:$
+# Compensate for the oblong floating status in the double vault set-up.
+WEIGHT:  14
+# Non-banded band monsters to highlight the vault, then
+# four trio sets (mythological lizards, fast poison,
+# duos of bovids / elephantae, fantasy hybrids), then bosses.
+MONS:    wolf / blink frog / yak / hell rat w:2
+MONS:    basilisk, rime drake, lindwurm
+MONS:    wyvern, manticore, catoblepas
+KMONS:   8 = water moccasin
+KMONS:   9 : cane toad w:90 / hornet
+KMONS:   0 : black mamba w:90 / wolf spider
+KMONS:   A = elephant
+KMONS:   B = death yak
+KMONS:   C = dream sheep
+KMONS:   D = hydra / torpor snail w:6 / dire elephant w:6
+KMONS:   P = plant w:12 / fungus w:8
+KITEM:   ~ = any good_item
+SHUFFLE: 2d3e4f / 5g6h7i / 8j9k0l / AABBCC, $%*|
+NSUBST:  J = 2:. / 1 = x:9 .:1 / *:x, K = 2:. / 1 = x:9 .:1 / *:x
+NSUBST:  L = 2:. / 1 = x:9 .:1 / *:x
+SUBST:   X = xx..., P = PP., defghijkl = ., E = 44700C
+# The source helper makes this a paired small ending.
+TAGS: lair_end_small
+WEIGHT: 5
+: vault.post_place("small_end.pair")
+# Source Lua: : lair_small_ending(_G)
+MAP
+     xxx  xx  xxxx   xxxx  xx  xxx
+     xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    xxxxx.P.xxxxxxxxxxxxxxx.P.xxxxx
+  xxxXXP.....PXXxxxxxxxXXP.....PXXxxx
+ xxxXX.........XXxxxxxXX.........XXxxx
+ xXX....xJxJx....XxxxX....xLxLx....XXx
+xxX.....x...J.....XxX.....L...x.....Xxx
+xxX....Xxdgjx.X..PxxxP..X.xfilxX....Xxx
+xxP.c..Xx258J...xxx~xxx...L470xX..c.Pxx
+xxx...xxxxxxxx...K369K...xxxxxxxx...xxx
+xx..c..1.ExxP..X.xehkx.X..Pxx.|...c..xx
+xx........xx.....K.D.K.....xx*~$....xxx
+@..x.....1xxX....xxxxx....Xxx.%.E..xxx
+  x.......XxxXX.........XXxxX..9D3xxx
+   .xx...PxxxxXXP.....PXXxxxxP..6xxx
+   @xxxxxxxxxxxxxx.P.xxxxxxxxxxxxxxx
+       xxxxxxxxxxxxxxxxxxxxxxxxxxx
+           xxx  xxx xxx  xxx
+ENDMAP

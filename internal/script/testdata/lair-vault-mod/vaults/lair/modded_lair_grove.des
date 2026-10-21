@@ -1,0 +1,10 @@
+# A depth-qualified ordinary grove joins source Lair maps by discovery.
+NAME: modded_lair_grove
+DEPTH: Lair
+WEIGHT: 7
+ORIENT: float
+MAP
+.....
+..t..
+.....
+ENDMAP

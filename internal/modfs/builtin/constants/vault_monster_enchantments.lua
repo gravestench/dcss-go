@@ -8,6 +8,7 @@ local enchantments = {
     MAD = "mad",
     MUTE = "mute",
     PARALYSIS = "paralysis",
+    PETRIFIED = "petrified",
     SLOW = "slow",
 }
 

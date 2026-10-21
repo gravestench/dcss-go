@@ -106,6 +106,14 @@ local function declaration_records(vault, operation)
         return { declaration_record(vault, operation, operation.argument) }
     end
 
+    -- A keyed item or monster declaration owns one glyph assignment.
+    -- Commas after it separate slots within that assignment, and a later
+    -- weighted alternative such as `w:15` is not another glyph target.
+    if operation.kind == directives.KITEM or
+        operation.kind == directives.KMONS then
+        return { declaration_record(vault, operation, operation.argument) }
+    end
+
     local records = {}
     local argument = operation.argument
 

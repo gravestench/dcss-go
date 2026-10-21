@@ -1,0 +1,26 @@
+# Forest entry grove is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: forest_entry_grove
+DEPTH:  Lair:2-, !Lair:$
+MONS:   centaur w:4 / spriggan
+MONS:   wolf, black bear, polar bear
+KMONS:  P = plant / bush
+NSUBST: Q = 2:1 / *:.
+NSUBST: R = 3:2 / 1:3 / 1:4 / *:.
+MAP
+   xxxxxxxxx
+  xxxttttxxxx
+ xxxttttttttxx
+xxtttt...tttxxx
+xttt..Q.Q..ttxx
+xttt.Q.R.Q.tttx
+xtt.........ttx
+xtt.R..)..R.ttx
+xtt..R...R..ttx
+xttt..R.R..tttx
+xttt.......tttx
+xxtttt...ttttxx
+ xxxtt..ttxxxx
+  xxxtt..ttxx
+   xxtt@@ttx
+ENDMAP

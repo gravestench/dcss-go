@@ -1,0 +1,30 @@
+# Nicolae quartered pool super is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: nicolae_quartered_pool_super
+TAGS:    transparent extra decor uniq_qpool
+DEPTH:   Lair
+SHUFFLE: Aa, Bb, Cc, Dd, Ee, Ff, Gg, Hh, Ii, Jj, Kk, Ll, Mm
+SHUFFLE: Nn, Oo, Pp, Qq, Rr, Ss, Tt, Uu, Vv, Ww, Xx, Yy, Zz
+SHUFFLE: 12, 34, 56
+SUBST:   abcdefghijklmnopqrstuvwxyz135 = ., ABCDEFGHIJKLMNOPQRSTUVWXYZ246 = W
+NSUBST:  7 = 1:@ / * = t@
+MAP
+      777777
+    771xtTX277
+   75zwspPSWZ67
+  73yvrolLORVY47
+ 75yuqnkiIKNQUY67
+ 7zvqmjhfFHJMQVZ7
+71wrnjgedDEGJNRW27
+7xsokhecbBCEHKOSX7
+7tplifdbaABDFILPT7
+7TPLIFDBAabdfilpt7
+7XSOKHECBbcehkosx7
+72WRNJGEDdegjnrw17
+ 7ZVQMJHFfhjmqvz7
+ 76YUQNKIiknquy57
+  74YVROLlorvy37
+   76ZWSPpswz57
+    772XTtx177
+      777777
+ENDMAP

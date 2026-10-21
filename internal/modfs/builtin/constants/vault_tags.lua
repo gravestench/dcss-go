@@ -2,6 +2,8 @@
 -- families without scattering literal selector strings through Lua policy.
 local tags = {
     DECOR = "decor",
+    LAIR_ENTRY = "lair_entry",
+    LAIR_END_SMALL = "lair_end_small",
     SNAKE_ENTRY = "snake_entry",
     SPIDER_ENTRY = "spider_entry",
     SPIDER_JUMPING_CHILD = "nico_jumpspide",

@@ -1,0 +1,31 @@
+# Minmay guarded unrand snakebite is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: minmay_guarded_unrand_snakebite
+TAGS:    ruin
+DEPTH:   Lair
+ORIENT:  southeast
+ITEM:    snakebite no_pickup
+KMONS:   A = adder
+KMONS:   B = water moccasin
+KMONS:   C = black mamba
+SUBST:   1 = A B:2 .:48, 2 = A B:5 .:60, 3 = A B C:2 .:88, 4 = A:2 B C:4 .:64
+SUBST:   5 = A:1 B C .:84, 6 = B:5 C .:60, 7 = B.
+MAP
+xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxx222xxxx
+@11xxxxxx222xxx3xxx
+xxx1xx112xxxxxxx3xx
+xxxx11xxxxxxxxxx3xx
+xxxxxxxxxxxxxxxx3xx
+xxxxxxxxxx44xxx3xxx
+xxxxxxx444xx433xxxx
+xxxx554xxxxxxxxxxxx
+xxx5xxxxxxxxxxxxxxx
+xx5xxxxxxxxxxxxxxxx
+xx5xxxxxxxxxx77xxxx
+xxx5xxxxxxxx7xx7dxx
+xxxx56xxx666xxxxxxx
+xxxxxx666xxxxxxxxxx
+xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,24 @@
+# Nicolae quartered pool little is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: nicolae_quartered_pool_little
+TAGS:    transparent extra decor uniq_qpool
+DEPTH:   Lair
+SHUFFLE: Aa, Bb, Cc, Dd, Ee, Ff, Gg, Hh, Ii, Jj, Kk, Ll, Mm, Nn, Oo, Pp, Qq
+SUBST:   abcdefghijklmnopq = ., ABCDEFGHIJKLMNOPQ = W
+NSUBST:  7 = 1:@ / * = t@@@
+MAP
+    777777
+   7qolLOQ7
+  7pnkiIKNP7
+ 7pmjhfFHJMP7
+7qnjgedDEGJNQ7
+7okhecbBCEHKO7
+7lifdbaABDFIL7
+7LIFDBAabdfil7
+7OKHECBbcehko7
+7QNJGEDdegjnq7
+ 7PMJHFfhjmp7
+  7PNKIiknp7
+   7QOLloq7
+    777777
+ENDMAP

@@ -1,0 +1,21 @@
+# Nicolae lair lil pond is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: nicolae_lair_lil_pond
+TAGS:   transparent ruin decor extra
+DEPTH:  Lair
+NSUBST: D = . / x
+SUBST:  - = . / W
+MAP
+............
+....xxxx....
+..DDDxxxxx..
+..x------x..
+.xx-wwww-xx.
+.xx-wwww-xx.
+.xx-wwww-xx.
+.xx-wwww-xx.
+..x------x..
+..xxxxxxxx..
+....xxxx....
+............
+ENDMAP

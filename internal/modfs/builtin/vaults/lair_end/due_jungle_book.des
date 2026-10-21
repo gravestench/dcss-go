@@ -1,0 +1,80 @@
+# Due jungle book is an authored Lair:5 ending.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: due_jungle_book
+TAGS:    no_pool_fixup no_wall_fixup no_monster_gen
+PLACE:   Lair:$
+ORIENT:  north
+# A necromancy-themed loot item behind the obsidian statue.
+ITEM:    morg w:1 / rapier ego:pain w:5 / rapier ego:draining w:5 \
+         / quickblade ego:pain w:5 / quickblade ego:draining w:5 \
+         / demon blade ego:draining / sword of Zonguldrok w:1 \
+         / great sword ego:draining / triple sword ego:draining \
+         / demon whip ego:pain w:5 / demon whip ego:draining w:5 \
+         / eveningstar ego:draining / sceptre of Torment w:1 \
+         / great mace ego:draining / majin-bo w:1 / lajatang ego:draining \
+         / broad axe ego:draining / battleaxe ego:draining \
+         / executioner's axe ego:draining / shadow dragon scales \
+         / cigotuvi's embrace w:1 / amulet of regeneration randart \
+         / ring of positive energy randart / staff of death \
+         / book of necromancy / book of death / book of unlife \
+         / randbook owner:Kikubaaqudgh disc:necromancy \
+         / necronomicon w:1
+# Source spells the two unrand names "zonguldruk" and "scetpre" here.
+# Those are legacy typos; use the pinned artefact catalog's real names.
+KMONS:   pq = withered plant
+MONS:    elephant skeleton / elephant zombie / spectral elephant \
+         / elephant simulacrum / spectral cane toad / cane toad simulacrum
+MONS:    elephant, cane toad / death yak
+MONS:    spectral death yak w:20 / death yak simulacrum w:20 \
+         / dire elephant skeleton / dire elephant zombie \
+         / spectral dire elephant w:5 / dire elephant simulacrum w:5
+MONS:    dire elephant, patrolling necromancer, obsidian statue
+# The anaconda's name is Kaa.
+KMONS:   R = spectral anaconda
+KFEAT:   R = deep_water
+KFEAT:   s = closed_clear_door
+# Thin out elephant/dire elephant bands of central necromancers a bit.
+SUBST:   2 = 22., 5 = 55.
+# DE/FH/JK will always have a monster set, with one a guaranteed necromancer
+# plus band, next a 50% chance to be a # necromancer band, 50% chance to be
+# derived undead band, last guaranteed derived undead band. Necromancer band is
+# 4 live monsters on average, mostly elephants, sometimes other beasts mixed
+# in. Derived undead band is a stonger derived undead with 4 weaker ones on
+# average.
+SHUFFLE: DE / FH / JK
+SUBST:   D = 6, E = 23...
+SHUFFLE: FH / SZ
+SUBST:   F = 6, H = 23..., JS = 4, KZ = 11...
+# LM / NO / PQ each have 50% chance of being a derived undead band, 50% chance
+# of nothing.
+SHUFFLE: LM / NO / PQ
+SHUFFLE: LM / SZ
+SUBST:   L = 4, M = 11..., SZ = .
+SHUFFLE: NO / SZ
+SUBST:   N = 4, O = 11..., SZ = .
+SHUFFLE: PQ / SZ
+SUBST:   P = 4, Q = 11..., SZ = .
+SUBST:   a = tttxxc, p = p-, q = q., r = xxx.., - = .:100 Z, Z = 12345
+COLOUR:  t = brown
+TILE:    t = dngn_tree_dead
+TILE:    G = dngn_statue_elephant
+: vault.run("feature_names.dead_tree")
+# Source Lua: : set_feature_name("tree", "dead tree")
+MAP
+   xxxcccccccc
+  xxttrrrLrrrcc
+ xxttqqqMMM.qrcc
+xxqtq....MM..qrcc                           ccccc
+xx...qrrqr..r..rcccccccccccccccccccccccccccccaaGttq.
+xq.qttcccc++c++ccccccccccccccccccccccccccccaaaKKJttqq.
+xt7ttccccG--c..OOGcc.WWccGqqqGccqqqccQQ.....qqGKKGttt.
+cnsncccccp-pcq.OON+..WwW+.55%|cG.2..+QQQqqc.cq.Kaaatq.
+cndnccccc-c-ccccOGcqWwwR+.56**c|$22.cPqcccc---caaccc..
+cnnnccccc+cp--pccccqwwwwcG5qqGc*%22.cccc---pc+ccccccc.
+ccccGEEqq.cccc---pcWWWWqccnnnccG62qqcp--pcccc.qqHHGcc.
+xxxc*DE..qccccccc-cccWqcccGpGcccqqccc-cccccccq..HF*cc.
+xxxcGEEqqqccttaccp-pcccccGpYpGccnncp-pccattccqqqHHGcc.
+ xxcccccccctq..qccc-----------------cccq..qtcccccccc..
+ .axacccatq..  .qtcccccccc+++cccccccctq.  .qqtcccatq.
+ ..........     ..........@@@....a.....     ........
+ENDMAP

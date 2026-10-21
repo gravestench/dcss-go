@@ -2210,6 +2210,19 @@ The source warning also requests a `crawl.more()` acknowledgment. The
 current terminal client displays its message without a blocking prompt;
 message acknowledgment is a separate UI behavior still to port.
 
+Lair's 13 source entrances live in `vaults/lair_entry/`. Add a gate there
+with `TAGS: lair_entry` and exactly one keyed
+`KFEAT: O = enter_lair`. The scheduled Dungeon floor draws one weighted
+gate, preserves its keyed stair in the save, and gives Lair:1 a reciprocal
+exit. The dummy source entry remains a valid one-cell candidate. Lair's
+ordinary rooms live in `vaults/lair/`; a modded room with `DEPTH: Lair`
+joins the regular pool automatically. `wad_woods_*.des` demonstrates a
+shared `woods.populate` hook: fixed vegetation, grass, and fog remain in
+DES, while `policy/generation/vaults/lair/woods.lua` chooses monsters from
+branch and absolute depth. A hook emits only the varying directives at its
+authored position. See `internal/script/testdata/lair-vault-mod/` for a
+sparse layer adding a Lair gate, room, and ending together.
+
 Swamp and Shoals complete the source Lair entrance families. Put a new
 Swamp gate in `vaults/swamp_entry/<name>.des` with
 `TAGS: swamp_entry` and one `KFEAT: O = enter_swamp`. Shoals uses
@@ -2251,9 +2264,10 @@ actor but does not establish its save provenance.
 ### Branch end vaults
 
 A branch ending that fits inside an ordinary generated floor uses an end
-vault family. Snake, Swamp, Spider, and Shoals declare
+vault family. Lair, Snake, Swamp, Spider, and Shoals declare
 `end_vault_required = true` and name their matching `*_end` family in the
-branch file. The nine Snake, eleven Swamp, nine Spider, and 26 Shoals source
+branch file. The fourteen Lair, nine Snake, eleven Swamp, nine Spider, and
+26 Shoals source
 definitions live in matching `vaults/` subdirectories. Every file keeps
 its `NAME`, final-floor `PLACE` when it is a selectable ending, and its
 authored directives and MAP rows. Shoals also has four mapless controllers
@@ -2268,8 +2282,9 @@ substituting an ordinary floor.
 
 To add an ending, put one source-format `.des` file at
 `vaults/<family>/<name>.des` with a unique `NAME`, positive effective
-`WEIGHT`, exact final-floor `PLACE` such as `Swamp:$`, and one real rune
-request matching the branch's declared rune. A same-path overlay replaces
+`WEIGHT`, and exact final-floor `PLACE` such as `Swamp:$`. A rune branch
+also needs one real rune request matching its declared rune; Lair:5 has no
+rune. A same-path overlay replaces
 a bundled map; a new filename adds a weighted candidate. If the map needs
 a computed choice, put a named hook at
 `policy/generation/vaults/<family>/<name>.lua` and reference its method
@@ -2308,6 +2323,16 @@ owns the rune record. A false-rune item may use the source `mimic`
 modifier on `KITEM`; population then adds
 the saved `vault.item_mimic` component. Pickup reveals the illusion
 without granting rune progress.
+
+Five Lair:5 endings are tagged `lair_end_small`. Their authored MAP has
+`: vault.post_place("small_end.pair")`, whose method lives in
+`policy/generation/vaults/lair_end/small_end.lua`. The controller chooses
+one other fitting map with the same tag from the effective catalog, records
+both IDs, and rejects a floor with no fitting partner. Restore checks that
+the saved primary has exactly one distinct small-ending partner. A mod can
+add another candidate with `PLACE: Lair:$` and
+`TAGS: lair_end_small`, or add an ordinary weighted Lair ending without
+that tag. The hook receives the controller `api`, not the game `ctx`.
 
 The successful end map becomes the floor's primary vault ID and remains in
 `vault_ids`. Its typed rune record is historical: picking up the ECS item

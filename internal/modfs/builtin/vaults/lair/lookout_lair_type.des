@@ -1,0 +1,18 @@
+# Lookout lair type is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: lookout_lair_type
+TAGS: extra no_pool_fixup transparent
+DEPTH: Lair:4-
+MONS: w:1 generate_awake patrolling catoblepas / w:4 nothing
+SUBST: a = w W .
+SUBST: ' = W .
+MAP
+  a'a aa
+ a'wwwWa
+ a'w1.wa
+a'aw..ww
+ a'w...Wa
+  'wwwww@
+  a''a''
+     'a
+ENDMAP

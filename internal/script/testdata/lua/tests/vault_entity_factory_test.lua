@@ -28,6 +28,7 @@ local permanent = require("constants.vault_monster_enchantments")
 local attitudes = require("constants.attitude")
 local behaviors = require("constants.ai_behaviors")
 local vault_enchantments = require("policy.monsters.vault_enchantments")
+local monster_stasis = require("policy.magic.effects.statuses.monster_stasis")
 local paralysis = require("policy.magic.effects.zaps.paralysis")
 local confusion = require("policy.magic.effects.statuses.confusing_touch")
 local hex_status = require("policy.combat.monster_hexes.status")
@@ -265,6 +266,33 @@ local function permanent_source_enchantments(ctx)
         "dispel left a stale permanent blind marker")
     harness.falsy(vault_enchantments.active(world, actor, permanent.DUMB),
         "dispel left a stale permanent paralysis marker")
+end
+
+-- Evilmike's catoblepas cave declares a permanently petrified plant.
+-- It must be stonebound in the live ECS and stay that way after a tick.
+local function permanent_petrified_plant(ctx)
+    local world = world_context(ctx)
+    local actor = factory.spawn(world, monsters.MONS_PLANT, 1, 39, 10, {
+        origin = origin,
+        permanent_enchantments = {
+            permanent.PETRIFIED,
+        },
+    })
+
+    harness.truthy(monster_stasis.petrified(world, actor),
+        "authored petrified plant begins stonebound")
+
+    monster_stasis.tick(world, actor)
+
+    harness.truthy(monster_stasis.petrified(world, actor),
+        "authored petrified plant does not expire")
+
+    monster_enchant.dispel(world, actor,
+        catalog.get(categories.MONSTERS, monsters.MONS_PLANT))
+
+    harness.falsy(vault_enchantments.active(world, actor,
+        permanent.PETRIFIED),
+        "dispel clears the permanent petrified source marker")
 end
 
 -- Authored item modifiers survive through entity creation and stacking.
@@ -751,6 +779,7 @@ function test.run(ctx)
     fixed_source_vitals(ctx)
     authored_actor_identity(ctx)
     permanent_source_enchantments(ctx)
+    permanent_petrified_plant(ctx)
     vault_items_keep_variant_and_quantity(ctx)
     vault_jewellery_keeps_source_half(ctx)
     source_gear_and_explicit_equipment(ctx)

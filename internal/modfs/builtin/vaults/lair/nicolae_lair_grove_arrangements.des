@@ -1,0 +1,31 @@
+# Nicolae lair grove arrangements is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: nicolae_lair_grove_arrangements
+TAGS:    transparent decor extra
+DEPTH:   Lair
+SHUFFLE: abcdefghi/''''T''''/T'''''''T/T'''T'''T/T'T'''T'T/T'T'T'T'T/\
+         TTT'''TTT/'T'T'T'T'/T'T''''T'/'T'TTT'T'/'T'''''T'/TTTT'TTTT/\
+         T'TTTTT'T/TT'TTT'TT/'''TTT'''/T'TT'TTTT/TT'T'T'TT/TT'''''TT/\
+         TT''T''TT/TT''TT'T'/T''''T'T'
+SUBST:   abcdefghiT = ttttt., ' = ., _ = ._
+CLEAR:   _
+MAP
+__________________
+_................_
+_..aa...bb...cc.._
+_.aaaa.bbbb.cccc._
+_.aaaa.bbbb.cccc._
+_..aa...bb...cc.._
+_................_
+_..dd...ee...ff.._
+_.dddd.eeee.ffff._
+_.dddd.eeee.ffff._
+_..dd...ee...ff.._
+_................_
+_..gg...hh...ii.._
+_.gggg.hhhh.iiii._
+_.gggg.hhhh.iiii._
+_..gg...hh...ii.._
+_................_
+__________________
+ENDMAP

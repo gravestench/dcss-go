@@ -1,0 +1,47 @@
+# Lemuel ratsnest is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: lemuel_ratsnest
+ORIENT:  northeast
+DEPTH:   D:5-8, Lair:1-3
+MONS:    rat, quokka, river rat, hell rat
+ITEM:    gold / stone
+SUBST:   d = d$$$........., e = d$$$
+SHUFFLE: 234 / 324 / 243
+: vault.run("configure")
+# Source Lua: : if you.in_branch("Lair") then
+# Source Lua: NSUBST:  4 = 1:4 / * = 40, 3 = 2:3 / * = 34.
+# Source Lua: NSUBST:  2 = 2:2 / * = 224., 1 = 2:1 / * = 13.
+# Source Lua: CLEAR:   "
+# Source Lua: : else
+# Source Lua: SUBST:   " = x
+# Source Lua: NSUBST:  1 = 2:1 / * = 1., 2 = 2:2 / * = 2., 3 = 2:3 / * = 3.
+# Source Lua: :   if you.absdepth() > 6 then
+# Source Lua: SUBST:   4 = 430
+# Source Lua: :   else
+# Source Lua: SUBST:   4 = 30
+# Source Lua: :   end
+# Source Lua: : end
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxx.eexxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxx343dxx.xxxxxxxx.334433xxxxxxxxx23..exx
+xxd222...xxxxxxxx..224422xxxxxx1111...xxx
+x..111..xxxxxxxxx..111111.xxx.111...xxxxx
+xx.111..xxxxxxxxxx.11111..x......xxxxxxxx
+xxxx..xx.x.xxxxxx.xx..........xxxxxxxxxxx
+xxxxx.xxx.x..x.xx.x.xx....x.xxxxxxxxxxxxx
+xxxxx...x.xxx.x33xx.xxxx.xxxxxxxxxxxxxxxx
+xxxxxxx.x.xxxx221x.xxx...xxxxxxxxxxxxxxxx
+xxxxxxxx.xxxxx111.xxxx.xxxxxxxxxxxxxxxxxx
+"""""""xx..xxx.x.x.xxx.xxxxxxxxxxxxxxxxxx
+"""""""xxx..x.xx.x.xx.xxxxxxxxxxxxxxxxxxx
+"""""""xxxxx..xx..x.x.xxxxxxxxxxxxxxxxxxx
+"""""""xxxxxxxx.xxxx.xxxxxxxxxxxxxxxxxxxx
+"""""""""""""xx.xxxxxxxxxxxxxxxxxxxxxxxxx
+"""""""""""""xxx.xxx"""""""""""""""""""xx
+"""""""""""""xx.x.xx"""""""""""""""""""xx
+"""""""""""""xxx.x.x"""""""""""""""""""xx
+"""""""""""""xxxx.xx"""""""""""""""""""xx
+"""""""""""""xxxx@xx"""""""""""""""""""xx
+ENDMAP

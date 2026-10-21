@@ -1,0 +1,25 @@
+# Erik lair dragon is an authored Lair entrance.
+# Its keyed O cell becomes the saved branch stair after placement.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: erik_lair_dragon
+TAGS:    lair_entry no_rotate
+ORIENT:  float
+MONS:    steam dragon / acid dragon / swamp drake
+MONS:    basilisk / wyvern / komodo dragon
+NSUBST:  2 = 3=2 / 3=2. / .
+SHUFFLE: %!*O
+SUBST:   z = .xc, ! = %
+KFEAT:   O = enter_lair
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxzxxxzxzxxzx.2xxzxxxzx*zxxxz.2.xxxx
+xxxxxxxxxxxxxxx.2.......zxx.x.zxxxz.zzxxxxzx.zxxx
+xxxxxxxxxxxxxz....xxx...2....zzzzzz..zzzzx..%cccc
+xxzxxzzzxxxxx..xxzzxxzz..........z...zzz..zzc+.zc
+@......xxx.2.xxzxxxxxxzxzxzz.......1...2.x.ccc.zc
+xxxzxxx...xxxxxxxxxxxxzxxxx.zz.2...z......zccc$cc
+xxxxxxzxxxzxxxxxxxxxxxx....xxzz...z....zz..zzcczc
+xxxxxxxxxxxxxxxxxxxxxzz2xxxzxxzzzz..zzz2zz.2Ozccc
+xxxxxxxxxxxxxxxxxxxxxz!zxxxxxxxxxx.xxxzxxxzxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

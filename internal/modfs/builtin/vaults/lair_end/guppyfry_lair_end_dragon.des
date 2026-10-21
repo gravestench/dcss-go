@@ -1,0 +1,43 @@
+# Guppyfry lair end dragon is an authored Lair:5 ending.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: guppyfry_lair_end_dragon
+TAGS:   patrolling no_monster_gen no_pool_fixup
+PLACE:  Lair:$
+ORIENT: southeast
+MONS:   rime drake / swamp drake / acid dragon / steam dragon
+MONS:   basilisk / komodo dragon, iguana
+MONS:   fire dragon, swamp dragon
+KMONS:  P = plant
+SUBST:  - = wwWW....%Ptt233, W = WWW., ? = 12**
+# The source helper makes this a paired small ending.
+TAGS: lair_end_small
+WEIGHT: 5
+: vault.post_place("small_end.pair")
+# Source Lua: : lair_small_ending(_G)
+MAP
+@..@..@..xxxxxxxxxxxxxxxxx
+xPWW-P.xxxxttttttttttxxxxx
+xttWW-ttttttttPWW-..ttxxxx
+xtttW-tt.tttt-WwwWP.1ttxxx
+xtttWWtt...t--WwwwW-.tttxx
+xtt1Wttt1.tt.WWttPWW.-tttx
+xttWw-tP.t..Wttt--WWW.tttx
+xxttWWt-1t..W--ttPWwwWttxx
+xtt1-Wwttt.-wWtt.WwwwWttxx
+xxtt--WttP.wWtttWwwwwWtttx
+xttP.tWWttwWPtt.WWWwwWttxx
+xttt.ttWww-.ttttPWwwwWtttx
+xxttP.P-W-.tt%?$.WwwW.ttxx
+xxtt...PWWttt*%.WwwW.ttxxx
+xxttt.t.-Wtt45*.WwwW.ttxxx
+xttttt..Wwttt*%..WW.tttxxx
+xxxxtt..-WWtt%?$.WwWW.ttxx
+xxxxxtt..-WWtttPWWwW..ttxx
+xxxxxxtt..PWWttWWwW.tttxxx
+xxxxxxxttt1.WWttWW..ttxxxx
+xxxxxxxxttt.WwwwWP-ttxxxxx
+xxxxxxxxxtt.-WwW..ttttxxxx
+xxxxxxxxxttttWW-.tttxxxxxx
+xxxxxxxxxxtttttttttxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

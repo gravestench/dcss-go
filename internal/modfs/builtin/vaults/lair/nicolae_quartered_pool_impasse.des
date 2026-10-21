@@ -1,0 +1,19 @@
+# Nicolae quartered pool impasse is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: nicolae_quartered_pool_impasse
+TAGS:    transparent extra decor no_pool_fixup uniq_qpool
+DEPTH:   Lair
+SHUFFLE: DN, EO, FP, HQ, JR, KS, LZ, M-
+SUBST:   DEFHJKLM = w, NOPQRSZ- = l
+MAP
+  ......
+ ..LHQZ..
+..MKFPS-..
+.LKJEORSZ.
+.HFEDNOPQ.
+.QPONDEFH.
+.ZSROEJKL.
+..-SPFKM..
+ ..ZQHL..
+  ......
+ENDMAP

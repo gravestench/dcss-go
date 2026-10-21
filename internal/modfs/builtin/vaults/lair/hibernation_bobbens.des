@@ -1,0 +1,28 @@
+# Hibernation bobbens is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: hibernation_bobbens
+DEPTH:  Lair
+TAGS:   no_monster_gen no_item_gen
+MONS:   ice dragon / fire dragon / swamp dragon / anaconda w:5
+MONS:   swamp dragon / hydra / catoblepas
+MONS:   swamp drake / w:20 cane toad / w:20 komodo dragon /\
+        w:20 basilisk / w:20 black mamba
+KMONS:  P = plant
+: vault.run("configure")
+# Source Lua: : if you.absdepth() > 14 then
+# Source Lua: SUBST:  M = 1:1 2:9 3:20
+# Source Lua: : else
+# Source Lua: SUBST:  M = 2:1 3:4
+# Source Lua: : end
+SUBST:  ; = x:3 .:1
+MAP
+xxxxxxxxxx
+xxx....xxx
+xx$....%xx
+xxPPxx%Mxx
+xxx..xxxxx
+xxx;.;xxxx
+xxx;..xxxx
+xxxx..;xxx
+xxx....xxx
+ENDMAP

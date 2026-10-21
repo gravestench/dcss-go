@@ -1,0 +1,45 @@
+# Minmay lair end enchanted forest is an authored Lair:5 ending.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: minmay_lair_end_enchanted_forest
+PLACE:  Lair:$
+ORIENT: northwest
+MONS:   black bear / polar bear w:12, wolf, dream sheep / hornet w:20
+MONS:   spriggan, spriggan rider, boggart
+KITEM:  * = gold no_pickup, star_item no_pickup, star_item no_pickup
+KITEM:  | = gold no_pickup, superb_item no_pickup, star_item no_pickup
+KITEM:  $ = gold no_pickup, star_item no_pickup
+SUBST:  T : T:20 .:1 t:1, T = tt..., E = t_
+CLEAR:  _
+NSUBST: . = 5:1 / 3 = 10 / 3:3 / 3 = 3.. / *:.
+NSUBST: 2 = 8:2 / 18 = 2. / *:., 4 = 6:4 / 6 = 4. / *:.
+NSUBST: 5 = 1:5 / *:6, 9 = 2:6 / 2 = 56 / *:4
+NSUBST: * = 1:| / *:*
+MAP
+ttttttttttttttttttttttttttttttttttttttttttttttttttt
+tttttttttttttttttttttttttttttttttttttttttttttttttt
+tttttttttT*G*Ttttttt....ttttttttt.....ttTTtttttTT
+ttttttttt4.*.9TTT....Tt.5..TTT....ttT.2222TTtt..@
+tttttttTT.4.4....TTttttttT..4...TttttttTT222..ttT
+tttttT.....9..4TtttttttttT4...4ttttttttt22ttttttt
+ttttT..ttT4.4.Tttttttt..T....4.tttttttt..tttttttE
+tttt.ttttttttttttttttt......tt..TttT...TT.tttttt
+tttT2tttttttttttttttttT....ttttt.....ttttT.Tttt
+ttT22tttT.9TtttttttT....tTTttttttTTttttttt..ttE
+tt22ttt$.4..tttttT5.TTT..tttttttttttttttttt.tt
+tt22tttT9.4.ttttT.TttttT.22tttttttttttttttT.tt
+tt2tttttt..TtttT2TtttttttT22TttttttttttttT.ttt
+tt2ttttttt.TtTT22tttttttttT222ttttttttttt.Tttt
+tt..tttttTT..222Ttttttttttttt22ttTTTTtt..TtttE
+ttT.tttt.....TTT222TttttttttttT...TT...TttttE
+ttt..tt...TTttttttt..TTttttttttT..4...Tttttt
+tttT....TtttttttttttT@   EEttttt49.49ttttttE
+ttttT..tttttttttttttE      EEttttT.$TttttE
+ttttT..TtttttttttttE          ttttttttt
+ttttt...ttttttttttE            ttttttt
+tttttT..TttttttE                 EEE
+ttttttt.@ttE
+ttttttE
+tttE
+tE
+t
+ENDMAP

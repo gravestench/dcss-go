@@ -1,0 +1,21 @@
+# Hangedman lair unloving vines is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: hangedman_lair_unloving_vines
+TAGS:    extra decor
+DEPTH:   Lair
+KMONS:   P = plant
+KMASK:   ` = no_monster_gen
+SHUFFLE: xP'. / xP'. / .'xP
+SUBST:   '` = .
+MAP
+           xPx
+         xxPxPxx    ````..@
+        xPP'.'PPx   ....'''
+      xxP''.'.''Px...'''PPP
+   xxxPP'```.``'Px.''PPPxxx
+xxxPPP''.xP'``.```'PPxxx
+PPP'''...xP''.'.''Pxx
+'''....   xPP'.'PPx
+@..````    xxPxPxx
+             xPx
+ENDMAP

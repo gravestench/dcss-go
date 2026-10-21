@@ -1,0 +1,53 @@
+# Hangedman lair caniforms friends is an authored Lair:5 ending.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: hangedman_lair_caniforms_friends
+PLACE:   Lair:$
+TAGS:    no_monster_gen no_rotate patrolling
+ORIENT:  southwest
+MONS:    wolf, warg, hell hound, raiju
+MONS:    black bear, polar bear
+KMONS:   P = plant
+# The one big reward and the several smaller stacks of items
+# are randomly split between the mostly-dog and mostly-bear sections.
+KITEM:   % = any, any w:1
+KITEM:   *| = gold, gold, gold, any good_item
+NSUBST:  2 = 2:22334 / *:3
+SHUFFLE: %'*" / %'"|
+SUBST:   X = xx., z = xx`, ' = ., " = x, p = PP.
+SUBST:   H = 3:3 4:1, 0 = 2
+CLEAR:   `
+# The source helper makes this a paired small ending.
+TAGS: lair_end_small
+WEIGHT: 5
+: vault.post_place("small_end.pair")
+# Source Lua: : lair_small_ending(_G)
+MAP
+xxxxxxxxxxxxxxxxxxxxzzz  @  @  @
+xxxxxxxxxxxxxxxxxxxxxxxxxp..p..
+xxxxxxxxxxxxxxxxxxxxxxxxxxp..p.
+xxxxxxXxxxxxxxxxxxxxxxxxxxx....
+xx%'56xxxxXXxxxxxxxxxxxxxxxP..p@
+xx6..56xXx55xPxxxxxxxxxx...xP..
+xxx9..xxx%...xPxx1x.x.x..1..xP.
+xxXx...xxx...Px5x.........0..xp@
+xxxxxx.......Px........x...Xxxx
+xxxxXH.xx5...xP5..x2..x.xxxxxxx
+xxxxxx1Hxx.%XXxx..xxxxxxxxxxxxxz
+xxxxx"x06.Hxxxxx..xx1x.xx2xxxxxz
+xxxxXx....5XxxxX....x.x....xHxxz
+xxxxx%....xxxxxxx.............xz
+xxxxx5....5xXxxxxx............xz
+xxxxXx5....6xxxxxxxx1x...x2x..xx
+xxxxxxP6.%6xXxxxxxxxxxx.xxxxx..x
+xxxxxPxPxPxxxxxxxxxxxxxxxxxxx.Xx
+xxxxxx6x6xxxxx1'xxxxxx2.x2x...xx
+xxxxx...xxxxxx..xHx1x.........xz
+xx*x1.....'xx1.....x.........xxz
+xxx0.9......x................xxx
+xxH...1.xx....xx.....xx.1.2xxxxx
+xxx2.0'xxxX..xxX2...xHxX1x1xxxxx
+xxx.H.xxxxxx.xxxx'.xxxxxxxxxxxxx
+xxx'.%xxxxxxxxxxxx2xxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

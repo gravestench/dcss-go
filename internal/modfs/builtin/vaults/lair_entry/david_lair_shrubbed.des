@@ -1,0 +1,21 @@
+# David lair shrubbed is an authored Lair entrance.
+# Its keyed O cell becomes the saved branch stair after placement.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: david_lair_shrubbed
+TAGS:   lair_entry transparent
+ORIENT: float
+MONS:   komodo dragon
+KMONS:  P = plant
+KFEAT:  O = enter_lair
+SUBST:  ' = P.
+MAP
+xxxxxxxxxxxxx
+xxPPPPPPPPPxx
+xPP1.'PPPPPPx
+xPP.O.'PPP''.
+xPP'..PPP'..@
+xPPPPPP''....
+xP''PP......x
+xx.''..'...xx
+xxxx..@..xxxx
+ENDMAP

@@ -1,0 +1,23 @@
+# Kennysheep snail temple is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: kennysheep_snail_temple
+DEPTH:  Lair
+MONS:   torpor snail
+KFEAT:  a = altar_cheibriados
+NSUBST: 1 = 1:1 / * = 1.
+MAP
+ @
+x.x   xxxxxxxxx
+x.x  xx...1....@
+x.x xx.xxxxxxxx
+x.x x.xxbbbbbbxxxx
+x.xxx.xbbWWWWW...xx
+x.xx.xbbWbbbbbbxx.xxx
+x...1.WWW1a1WWW..1...@
+xxx.xxbbbbbbWbbx.xxxx
+  xx...WWWWWbbx.xx
+   xxxxxbbbbbxx.x
+   xxxxxxxxxxx.xx
+  @.......1...xx
+   xxxxxxxxxxxx
+ENDMAP

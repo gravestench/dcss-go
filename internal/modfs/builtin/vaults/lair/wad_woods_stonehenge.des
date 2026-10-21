@@ -1,0 +1,36 @@
+# Wad woods stonehenge is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: wad_woods_stonehenge
+DEPTH:   D:2-, Lair
+ORIENT:  float
+# The source helper supplies these map-specific catalog facts.
+WEIGHT: 2
+MONS: plant
+MONS: bush
+MONS: fungus
+TAGS: uniq_wad_woods_med
+: vault.run("woods.populate")
+FTILE: .t+%*|q012345678COGTU = floor_grass
+KFEAT: O = shallow_water
+MARKER: O = lua:fog_machine{pow_min=3,pow_max=7,delay=21,size=2,walk_dist=1,spread_rate=36}
+# Source Lua: : wad_woods_setup(_G, "med", 2, true, 21, 2, 36)
+SHUFFLE: 4% / '"
+SUBST:   '" = .
+MAP
+       .....t..tt1.t  t.t    .. tt...
+      tt1tt.1tOt.t.11ttt..1.15tttt.1..
+     ttt%t.tttt.tttt....t1t..11t.t.1tt..
+    ttttttt1ttt..t1t.tt.ttt.tttt.1.ttt1t
+    ttttttt.t.t..t..t..1.t..11tt1..t.1.ttt
+   tttttt1t.1.t.1ttt.1t..1..t.t...1t11..tt
+  15tttttt1t.t...t1..G...t.t......tt..1t11
+t.tt.t.t.tt..t..1......c...c...t..t..t.t
+.t11t.t1.t.1t.1t.........%.......t..1...
+t1..t1.t.tt.t111.t...c.04C40.c..1t.1.tt.t.
+ .1t.t.11t.ttt1.t..1.....%......t.5tttt...
+  t.tt.t.t..t1t......1.c...c...1.1..tt1.
+  1O.ttt1.5.t..11t1....1.1..11tt.1.t1...
+   t1tttt.1.11t..ttt1.tt11tt.tOt1.tt.11
+    tt..t.t1   tt.11t1.1    .tt.1ttt.
+      .t.t  .   .t..t        .t1.t
+ENDMAP

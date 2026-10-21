@@ -1,0 +1,26 @@
+# Kennysheep catoblepas arena is an authored Lair room.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: kennysheep_catoblepas_arena
+TAGS:   no_monster_gen ruin
+DEPTH:  Lair:3-, !Lair:$
+MONS:   catoblepas
+NSUBST: d = 4=%* / 3:0 / *:.
+MAP
+xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxx
+xxxxxxxdd1ddxxxxxxx
+xxxxxcdddddddcxxxxx
+xxxxxdcccccccdxxxxx
+xxxddcdddcdddcddxxx
+xxxddcdddcdddcddxxx
+xxxccdcccdcccdccxxx
+xxx..c...c...c..xxx
+xxx..c...c...c..xxx
+xxxxx.ccc.ccc.xxxxx
+xxxxxc.......cxxxxx
+xxxxxxx..}..xxxxxxx
+xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxx
+ENDMAP

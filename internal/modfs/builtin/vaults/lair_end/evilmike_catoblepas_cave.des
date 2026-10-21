@@ -1,0 +1,49 @@
+# Evilmike catoblepas cave is an authored Lair:5 ending.
+# Source: crawl-ref/source/dat/des/branches/lair.des.
+NAME: evilmike_catoblepas_cave
+TAGS:   no_monster_gen no_rotate no_item_gen
+PLACE:  Lair:$
+ORIENT: northwest
+ITEM:   any good_item
+MONS:   yak, death yak, manticore
+KMONS:  4C = patrolling catoblepas
+# These are still living plants for all intents and purposes...
+KMONS:  P = plant perm_ench:petrified dbname:petrified_plant \
+            col:lightgrey tile:mons_withered_plant / nothing
+NSUBST: 0 = 3:1 / 1:2 / * = 1112
+NSUBST: 9 = 1:C / 2:2 / 2:3 / * = 11222
+COLOUR: d|*$4c- = lightgrey
+FTILE:  d|*$4c- = floor_cobble_blood
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxcccxxxxxxxxxxxxxxxxx
+xxxxccc*cccxxxxxxxxxxxxxxxx
+xxxxcd|$$4cxxxxxxxxxxxxxxxx
+xxxxcc$---ccxxxxxxxxxxxxxxxxxx
+xxxxxcc----ccxxx%PxxPxxxxxxxxxxx
+xxxxxxccc---cxxP......Pxxxxxxxxxxx
+xxxxxxxxcc-ccxP.9.0.x...xxxxxxxxxxx
+xxxxxxxxxc-cxx.0.9.xxxP..xxxxPP.%xxxx
+xxxxxxxxxc-cxxP...xxxxx...xxxx0.9xxxx
+xxxxxxxxxx.cxxxx..xxxxxxx...xx.1.0xxx
+xxxxxxxxxx.xxxxxx...xxxxxxx......xxxx
+xxxxxxxxxx.xxxxxxxx..xxxxxx...xxPPxxx
+xxxxxxx.....xxxxxxx..Pxxxx..xxxxxxxxxx
+xxxxxx90.x..xxxxxxP..xxxx..xxxxcccxxxx
+xxxxxx0xxxx..xxxxxx..Pxxx.xxxccc4ccxxx
+xxxxxxxxxx..xxxxxx0.......xxcc----ccxx
+xxxxxxxxxP..Pxxxx01xxxP...Pcc------cxx
+xxxxxxxxx.....xx..xxxxxxP..c------ccx
+xxxxxxxxP.G.G.....xxxxxxx..---cc--cxx
+xxx%xxx..G.P9.G.xxxxxxxxxxx-ccc---cxx
+x%P9Pxx..9..G....xxxxxxxxxxxxc---ccxx
+xx0..1....P..G..PPxxxxxxPPxxx...xxxx
+xxxP1...xxxP..PxxxxxxxxxxP9....xxxxx
+xxxxxPPxxxxxxxxxxxxxxxxxxx......xxx
+xxxxxxxxxxxxxxxxxxxxxxxx......G...
+xxxxxxxxxxxxxxxxxxxxxx....G.......
+xxxxxxxxxxxxxxxx     ........G....
+xxxxxxxxx             ..G........
+xxx                   .........G.
+x                           .....
+ENDMAP
