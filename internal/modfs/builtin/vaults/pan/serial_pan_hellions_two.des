@@ -1,0 +1,17 @@
+# serial_pan_hellions_two is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    serial_pan_hellions_two
+DEPTH: Pan
+MONS:    hellion, any demon
+SHUFFLE: 12
+# Source Lua: : serial_pan_setup(_G, "hellions")
+TAGS: serial_pan_hellions unrand transparent allow_dup no_dump
+: vault.run("shared.serial_grate")
+MAP
+  ...l.
+ .lll.l.
+.ll12.1l
+ .lll.l.
+  ...l.
+ENDMAP

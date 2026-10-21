@@ -1,0 +1,72 @@
+# gloorx_vloq_grunt_torture_chamber is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   gloorx_vloq_grunt_torture_chamber
+DEPTH: Pan
+TAGS:   gloorx_vloq uniq_gloorx_vloq
+ORIENT: centre
+# Source Lua: : pan_lord_setup(_G, 'Gloorx Vloq')
+TAGS: unrand
+: vault.run("shared.gloorx_vloq")
+TILE:   c = dngn_stone_wall_darkgray
+MONS:   patrolling Gloorx Vloq, Executioner, curse skull
+MONS:   demonic crawler, shadow wraith
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Gloorx Vloq')
+# Source Lua: }}
+: vault.run("shared.gloorx_vloq_epilogue")
+MAP
+xxxxxxxxxxxxxxxx.@.xxxxxxxxxxxxxxxx
+x.c.c.c.....................c.c.c.x
+xc.c.c.......................c.c.cx
+x.c.c.........................c.c.x
+xc.c.............5.............c.cx
+x.c..5.......................5..c.x
+xc.........c.......c.......c.....cx
+x..4.x.x.x.c.x.x.x.c.x.x.x.c.x..4.x
+x..........c.......c.......c......x
+x.x....c...c...c...c...c...c....x.x
+x...ccccccccccccccccccccc+ccccc...x
+x...c..c...c...c...c...c...c..c...x
+x...c..c.......c.......c.2....c...x
+x...c..c.....cccc+cccc.c......c...x
+x...c..c..4..c.c.....c.c...4..c...x
+x...c........c.1...2.c........c...x
+x...c........c...cc..c........c...x
+x...+.2.3....c..cOc..c...3..2.+...x
+x...c........c..cc...c........c...x
+x...c........c.2...2.c........c...x
+x...c..4...c.c.....c.c..4..c..c...x
+x...c......c.cccc+cccc.....c..c...x
+x...c....2.c.......c.......c..c...x
+x...c..c...c...c...c...c...c..c...x
+x...ccccc+ccccccccccccccccccccc...x
+x.x....c...c...c...c...c...c....x.x
+x......c.......c.......c..........x
+x.4..x.c.x.x.x.c.x.x.x.c.x.x.x..4.x
+xc.....c.......c.......c.........cx
+x.c..5.......................5..c.x
+xc.c.............5.............c.cx
+x.c.c.........................c.c.x
+xc.c.c.......................c.c.cx
+x.c.c.c.....................c.c.c.x
+xxxxxxxxxxxxxxxx.@.xxxxxxxxxxxxxxxx
+ENDMAP
+
+
+#############################################################################
+# Pandemonium lesser demon vaults: repeating rune vaults.
+#############################################################################
+# Pandemonium demon vaults are selected by tag. They must have the tag "pan",
+# or they won't even be considered. Tags are case-sensitive.
+#
+# Tagging these levels also ensures they won't be generated in the main
+# dungeon.
+#
+# The first block consists of repeating vaults featuring a rune and Pan lord.
+# TAG: allow_dup
+# : pan_demonic(_G, 'P', true)     -- place the rune with a pandemonium lord
+# : pan_demonic(_G, 'P')           -- place the rune without lord; have to
+#                                  -- put down the Pan lord manually
+#
+# Of these maps, rand_demon_1 to rand_demon_9 are ancient heritage.

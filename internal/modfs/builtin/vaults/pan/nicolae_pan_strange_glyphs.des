@@ -1,0 +1,40 @@
+# nicolae_pan_strange_glyphs is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_strange_glyphs
+DEPTH: Pan
+TAGS: allow_dup luniq transparent decor extra
+# 2/15 chance of five glyphs, 1/3 chance of four glyphs, 1/3 chance of three,
+# 2/15 chance of two, 1/15 chance of just one.
+# Source Lua: : local count = crawl.random2(15)
+# Source Lua: : if count < 13 then
+# Source conditional: SUBST: Ee = _
+# Source Lua: : end
+# Source Lua: : if count < 8 then
+# Source conditional: SUBST: Dd = _
+# Source Lua: : end
+# Source Lua: : if count < 3 then
+# Source conditional: SUBST: Cc = _
+# Source Lua: : end
+# Source Lua: : if count < 1 then
+# Source conditional: SUBST: Bb = _
+# Source Lua: : end
+: vault.run("choose_count")
+SUBVAULT: A : sub_strange_glyph
+SUBVAULT: B : sub_strange_glyph
+SUBVAULT: C : sub_strange_glyph
+SUBVAULT: D : sub_strange_glyph
+SUBVAULT: E : sub_strange_glyph
+SUBST: bcde = .
+CLEAR: _
+MAP
+.........bbbbbbbbccccccccddddddddeeeeeeee
+.AAAAAAA.BBBBBBBbCCCCCCCcDDDDDDDdEEEEEEEe
+.AAAAAAA.BBBBBBBbCCCCCCCcDDDDDDDdEEEEEEEe
+.AAAAAAA.BBBBBBBbCCCCCCCcDDDDDDDdEEEEEEEe
+.AAAAAAA.BBBBBBBbCCCCCCCcDDDDDDDdEEEEEEEe
+.AAAAAAA.BBBBBBBbCCCCCCCcDDDDDDDdEEEEEEEe
+.AAAAAAA.BBBBBBBbCCCCCCCcDDDDDDDdEEEEEEEe
+.AAAAAAA.BBBBBBBbCCCCCCCcDDDDDDDdEEEEEEEe
+.........bbbbbbbbccccccccddddddddeeeeeeee
+ENDMAP

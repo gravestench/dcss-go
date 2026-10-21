@@ -1,0 +1,38 @@
+# evilmike_mini_pan_T is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   evilmike_mini_pan_T
+DEPTH: Pan
+KITEM:  | = |
+KFEAT:  | = (
+SUBST:  + : +..
+MONS:   pandemonium lord
+# Source Lua: : pan_demonic_rune(_G, 'P')
+: vault.run("shared.rune_p")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc")
+MAP
+xxxxxxxxxxxxxxxx
+xxxxxxxcccxxxxxx
+xxxxxxxcP+...xxx
+xxxxxxxccc.C.xxx
+xxxxxxxxxxA.Bxxx
+xxxxxxxxxx...xxx
+xxxxxxxxxx...xxx
+..............xx
+@.....A......1xx
+..............xx
+xxxxxxxxxx...xxx
+xxxxxxxxxx...xxx
+xxxxxxxxxxB.Axxx
+xxxxxxxccc.C.xxx
+xxxxxxxc|+...xxx
+xxxxxxxcccxxxxxx
+xxxxxxxxxxxxxxxx
+ENDMAP
+
+###################################
+
+# based slightly on rand_demon_3

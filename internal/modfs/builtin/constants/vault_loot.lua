@@ -2,6 +2,36 @@
 -- consumables. Keeping them together lets map hooks import one name rather
 -- than repeat ten item expressions and drift when the catalog changes.
 local loot = {
+    GOOD_SCROLLS =
+        "w:120 scroll of identify no_pickup / " ..
+        "w:55 scroll of identify no_pickup q:2 / " ..
+        "w:15 scroll of identify no_pickup q:3 / " ..
+        "w:85 scroll of teleportation no_pickup / " ..
+        "w:45 scroll of teleportation no_pickup q:2 / " ..
+        "w:10 scroll of teleportation no_pickup q:3 / " ..
+        "w:85 any concealment scroll no_pickup / " ..
+        "w:33 any concealment scroll no_pickup q:2 / " ..
+        "w:95 scroll of enchant weapon no_pickup / " ..
+        "w:40 scroll of enchant weapon no_pickup q:2 / " ..
+        "w:54 scroll of blinking no_pickup / " ..
+        "w:22 scroll of blinking no_pickup q:2 / " ..
+        "w:54 scroll of enchant armour no_pickup / " ..
+        "w:22 scroll of enchant armour no_pickup q:2 / " ..
+        "w:45 scroll of magic mapping no_pickup / " ..
+        "w:20 scroll of magic mapping no_pickup q:2 / " ..
+        "w:40 scroll of amnesia no_pickup / " ..
+        "w:15 scroll of amnesia no_pickup q:2 / " ..
+        "w:33 scroll of immolation no_pickup q:1 / " ..
+        "w:11 scroll of immolation no_pickup q:2 / " ..
+        "w:30 scroll of silence no_pickup q:1 / " ..
+        "w:10 scroll of silence no_pickup q:2 / " ..
+        "w:11 scroll of acquirement no_pickup q:1 / " ..
+        "w:4 scroll of acquirement no_pickup q:2 / " ..
+        "w:1 scroll of acquirement no_pickup q:3 / " ..
+        "w:15 scroll of brand weapon no_pickup q:1 / " ..
+        "w:15 scroll of torment no_pickup q:1 / " ..
+        "w:15 scroll of vulnerability no_pickup",
+
     SCROLLS =
         "w:15 scroll of teleportation / " ..
         "w:15 any concealment scroll / " ..

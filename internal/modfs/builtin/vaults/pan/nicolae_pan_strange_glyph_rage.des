@@ -1,0 +1,18 @@
+# nicolae_pan_strange_glyph_rage is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_strange_glyph_rage
+DEPTH: Pan
+TAGS: unrand sub_strange_glyph allow_dup
+SHUFFLE: PQS/pqs, YZ/yz
+SUBST: S : .P, P : .x, Qpr = ., s = q, q : .x, \
+       Y : .x, Z : .x, yz = .
+MAP
+xyyYzzx
+xYY...x
+x....x.
+xxxxx..
+x..Q...
+x...Q..
+xPPPPSS
+ENDMAP

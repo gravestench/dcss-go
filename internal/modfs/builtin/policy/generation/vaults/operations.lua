@@ -622,6 +622,28 @@ local function hook_api(random, events, line, player, cells, state,
         return player.depth
     end
 
+    -- Pan exit vaults scale their portal odds with the five collected Pan
+    -- runes. The region generator supplies this saved player fact; requiring
+    -- it avoids silently treating a missing capture as zero collected runes.
+    function api:pan_rune_count()
+        if type(player.pan_rune_count) ~= "number" then
+            error("Pan vault hook needs saved Pan rune count")
+        end
+
+        return player.pan_rune_count
+    end
+
+    -- Pan vault scripts inspect the saved rune ledger supplied by their
+    -- generator. A missing ledger is a broken call contract, never an
+    -- implicit claim that the player has collected no runes.
+    function api:has_rune(item_id)
+        if type(player.collected_runes) ~= "table" then
+            error("Pan vault hook needs saved rune progress")
+        end
+
+        return player.collected_runes[item_id] == true
+    end
+
     -- Use absolute depth when present, otherwise the captured local depth.
     function api:absolute_depth()
         return player.absolute_depth or player.depth

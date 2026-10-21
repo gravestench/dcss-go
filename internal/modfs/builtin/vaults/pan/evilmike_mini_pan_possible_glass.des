@@ -1,0 +1,29 @@
+# evilmike_mini_pan_possible_glass is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    evilmike_mini_pan_possible_glass
+DEPTH: Pan
+SHUFFLE: mnxcll
+# Source Lua: : pan_demonic_rune(_G, 'P', true)
+: vault.run("shared.rune_p_lord")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C<')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc_stair")
+MAP
+ ...........
+.............
+..m.m.m.m.m..
+...mBm.mBm...
+..mBm.<.mBm..
+...m.....m...
+..m.B.P.3.m..
+...m.....m...
+..mBm.C.mBm..
+...mBm.mBm...
+..m.m.m.m.m..
+.............
+ ...........
+ENDMAP
+
+###################################

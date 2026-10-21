@@ -1,0 +1,49 @@
+# lom_lobon is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:      lom_lobon
+DEPTH: Pan
+TAGS:      lom_lobon uniq_lom_lobon no_rotate
+ORIENT:    north
+# Source Lua: : pan_lord_setup(_G, 'Lom Lobon')
+TAGS: unrand
+: vault.run("shared.lom_lobon")
+MONS:      patrolling Lom Lobon, glowing orange brain, rakshasa
+MONS:      wizard w:20 / lich / draconian annihilator / deep elf annihilator
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Lom Lobon')
+# Source Lua: }}
+: vault.run("shared.lom_lobon_epilogue")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxwwwwwwwwwwww.......wwwwwwwxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxwwwwwwwwwwwwbbbwwwwwww.......wwwwwwwxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxwwwwwwwwwwwwbbbbbbbbbbbwwwwww.........wwwwwwxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxwwwwwwwwwwwwbbbbwwwwwwwwwbbbbwwwwww.........wwwwwwxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxwwwwwwwbbbbbbbbwwwwwwwwwwwwwwwbbbwwwww...........wwwwwxxxxxxxxxxxxx
+xxxxxxxxxxxxwwwwwbbbb......bbbwwwwwwwwwwww...bbwwwww.............wwwxxxxxxxxxxxx
+xxxxxxxxxxxxwwwbbb...........bbbwwwwww........bbwwwww.............wwxxxxxxxxxxxx
+xxxxxxxxxxxwwwbb...............bbwwww..........bwwwwww.............wwxxxxxxxxxxx
+xxxxxxxxxxxwwbb........1O.......bbww...........bbwwww..............wwxxxxxxxxxxx
+xxxxxxxxxxwwwb...................bw......2......bwww.....U....2.....wwxxxxxxxxxx
+xxxxxxxxxxwwbb...................bb.............bww.................wwxxxxxxxxxx
+xxxxxxxxxxwwbb..3................bbb............bbw..............4..wwxxxxxxxxxx
+xxxxxxxxxwwbbb...................b.b............4....................wwxxxxxxxxx
+xxxxxxxxxwwbwbb.................bb.......U......4..........U..........wxxxxxxxxx
+xxxxxxxxxwwbwwbb...............bb..b............bbw..............4.....xxxxxxxxx
+xxxxxxxxxwwbbwwbbb...........bbb..bb............bwww...................xxxxxxxxx
+xxxxxxxxxwwwbwwwwb..b..2..bbbb....b.............bwww...................xxxxxxxxx
+xxxxxxxxxxwwbwwww...bbbbbbb.......bw.....3.....bbwwww...U.....3.......xxxxxxxxxx
+xxxxxxxxxxwwbbww.................bbww........wwbwwwww.................xxxxxxxxxx
+xxxxxxxxxxwwwbbw................bbwwwww....wwwbbwwww..................xxxxxxxxxx
+xxxxxxxxxxwwwwbb...4...U........bwwwwwwwwwwwwbbwww....................xxxxxxxxxx
+xxxxxxxxxxxwwwwbbb...........bbbbbwwwwwwwwwbbbwww....................xxxxxxxxxxx
+xxxxxxxxxxxwwwwwwbbbb.....bbbbwwwbbbbwwwbbbbwwww....................xxxxxxxxxxxx
+xxxxxxxxxxxwwwwwwwwwbbbbbbbwwwwwwwwwbbbbbwwwww......4.....4........xxxxxxxxxxxxx
+xxxxxxxxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww......................xxxxxxxxxxxxxx
+xxxxxxxxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwww.......................xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxwwwwwwwwwwwwwwwwwwwww........................xxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxwwwwwww......................xxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...@.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -3,6 +3,7 @@
 local requests = {
     ANY_DEMON = "any demon",
     COMMON_DEMON = "common demon",
+    GREATER_DEMON = "greater demon",
     ANY_COMMON_DEMON = "any common demon",
     RANDOM = "random",
     BASE_DRACONIAN = "base draconian",

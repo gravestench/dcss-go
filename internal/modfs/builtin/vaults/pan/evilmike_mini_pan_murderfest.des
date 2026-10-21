@@ -1,0 +1,40 @@
+# evilmike_mini_pan_murderfest is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   evilmike_mini_pan_murderfest
+DEPTH: Pan
+WEIGHT: 2
+MONS:   pandemonium lord
+KITEM:  ( = |
+KFEAT:  ( = (
+NSUBST: | = 1:P / 1:( / *:|
+SUBST:  + : +., X : =c, c : cccx
+# I don't want this vault to be an autoexplore trap
+MARKER: G = lua:props_marker { stop_explore = "ominous statue." }
+# Source Lua: : pan_demonic_rune(_G, 'P')
+: vault.run("shared.rune_p")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc")
+MAP
+xxxxxxxxxxxxxxxxx
+xcccccccccccccccx
+xc|c.........c|cx
+xcc+..A.C..A.+ccx
+xc..C.......C..cx
+xc.A..=====....cx
+xccccXX...==.A.cx
+...........=...cx
+@.......G..=.1.cx
+...........=...cx
+xccccXX...==...cx
+xc.A..=====..A.cx
+xc..C.......C..cx
+xcc+.A..C.A..+ccx
+xc|c.........c|cx
+xcccccccccccccccx
+xxxxxxxxxxxxxxxxx
+ENDMAP
+
+###################################

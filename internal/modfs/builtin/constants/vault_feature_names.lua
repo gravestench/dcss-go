@@ -4,6 +4,7 @@ local names = {
     DEAD_TREE = "dead tree",
     DEAD_MANGROVE = "dead mangrove",
     GOLDEN_STATUE = "golden statue",
+    STRANGELY_GLOWING_BALL = "weirdly glowing ball",
     SILVER_WALL = "silver wall",
     WHITE_CRYSTAL_WALL = "wall of white crystal",
     SARCOPHAGUS = "sarcophagus",

@@ -1,0 +1,36 @@
+# grunt_pan_sceptre is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    grunt_pan_sceptre
+DEPTH: Pan
+TAGS:    allow_dup no_trap_gen
+ORIENT:  float
+KMONS:   d = pandemonium lord
+KFEAT:   d = (
+# Source Lua: : pan_demonic_rune(_G, 'e')
+: vault.run("shared.rune_e")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc")
+MAP
+ @........@
+@B.cccccc.B@
+..cc.de.cc..
+c+c......c+c
+c.c.C..C.c.c
+c.c......c.c
+c.c..BB..c.c
+cBcc....ccBc
+c..cc++cc..c
+cc..B..B..cc
+ ccc.CC.ccc
+   cccccc
+ENDMAP
+
+################################################################################
+# A Pandemonium lord with a mercantile bent has set up a bazaar in Pandemonium.
+# There are three mostly-usual stores, but the center store is where the Pan
+# lord keeps their most special merchandise: the demonic rune of Zot.
+# If you already have the demonic rune, it's got a selection of randarts for
+# you instead.

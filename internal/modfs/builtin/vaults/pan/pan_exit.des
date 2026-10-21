@@ -1,0 +1,16 @@
+# pan_exit is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   pan_exit
+DEPTH: Pan
+TAGS:   extra allow_dup transparent no_dump
+CHANCE: 100%
+# Source Lua: {{
+# Source Lua: local exit_chance = 5 + 3*count_pan_runes()
+# Source Lua: local floor_chance = 100 - exit_chance
+# Source Lua: kfeat("O = exit_pandemonium w:" .. exit_chance .. " / floor w:" .. floor_chance)
+# Source Lua: }}
+: vault.run("shared.exit_portal")
+MAP
+O
+ENDMAP

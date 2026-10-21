@@ -1,0 +1,24 @@
+# serial_pan_fixed_disco_two is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   serial_pan_fixed_disco_two
+DEPTH: Pan
+WEIGHT: 8
+TILE:   x : wall_zot_white / wall_zot_darkgray
+# Source Lua: : serial_pan_setup(_G, "disco")
+TAGS: serial_pan_disco unrand transparent allow_dup no_dump
+: vault.run("shared.serial_grate")
+MAP
+    .........
+    .x.x0x.x.
+.............
+.x.x0x.x.
+.........
+ENDMAP
+
+#############################################################################
+# Pandemonium vaults: non-panlord-related.
+#############################################################################
+
+###################################
+# A couple of small vaults featuring blood fountains.

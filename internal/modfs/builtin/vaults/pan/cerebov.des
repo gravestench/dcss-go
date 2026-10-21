@@ -1,0 +1,49 @@
+# cerebov is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:      cerebov
+DEPTH: Pan
+TAGS:      cerebov uniq_cerebov
+ORIENT:    northeast
+# Source Lua: : pan_lord_setup(_G, 'Cerebov')
+TAGS: unrand
+: vault.run("shared.cerebov")
+MONS:      patrolling Cerebov, Balrug, brimstone fiend
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Cerebov')
+# Source Lua: }}
+: vault.run("shared.cerebov_epilogue")
+TILE:       v = dngn_metal_wall_brown
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+...............................xxxx
+.............vvvvv.............xxxx
+.............v$$$v.............xxxx
+.............v|||v.............xxxx
+.............v$$$v.............xxxx
+.vvvvv...vvvvvv+vvvvvv...vvvvv.xxxx
+.v|$|vvvvv...........vvvvv$|$v.xxxx
+.v$|$+.....vvvvvvvvv.....+|$|v.xxxx
+.v|$|v.vvvvvvvvOvvvvvvvv.v$|$v.xxxx
+.vvvvv.vvvvvv..3..vvvvvv.vvvvv.xxxx
+...v...vv.....vvv.....vv...v...xxxx
+...v.vvvv....vv1vv....vvvv.v...xxxx
+...v.vv......v...v......vv.v...xxxx
+...v.vvvv.............vvvv.v...xxxx
+...v...vv..2.......2..vv...v...xxxx
+.vvvvv.vv..2.......2..vv.vvvvv.xxxx
+.v|$|v.vv.............vv.v$|$v.xxxx
+.v|$|+.vv...vv...vv...vv.+$|$v.xxxx
+.v|$|v.vv...vv+++vv...vv.v$|$v.xxxx
+.vvvvv.vvvvvvv...vvvvvvv.vvvvv.xxxx
+....v..vvvvvvv...vvvvvvv..v....xxxx
+....vv...................vv....xxxx
+.....vv.vv+vv..2..vv+vv.vv.....xxxx
+......vvv|||v.....v$$$vvv......xxxx
+........v|$|vv...vv$|$v........xxxx
+........v|||v.....v$$$v........xxxx
+........vvvvv.....vvvvv........xxxx
+...............................xxxx
+...............@...............xxxx
+ENDMAP

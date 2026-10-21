@@ -229,7 +229,7 @@ local function check_vetoes(ctx, builder, placed)
         return runes.has(ctx, ctx:player(), kind_id)
     end
 
-    -- Ignacio's chance uses the number of Pan runes only.
+    -- Ignacio's chance uses the number of all five Pan runes only.
     function api:pan_rune_count()
         return runes.pan_count(ctx, ctx:player())
     end

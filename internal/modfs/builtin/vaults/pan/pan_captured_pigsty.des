@@ -1,0 +1,38 @@
+# pan_captured_pigsty is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   pan_captured_pigsty
+DEPTH: Pan
+TAGS:   extra
+MONS:   red devil, holy swine
+KFEAT:  o = iron_grate
+# Source Lua: {{
+# Source Lua: local function swineherd_die(monster, killer_type, killer_index, silent, wizard)
+# Source Lua:   local p = dgn.find_marker_positions_by_prop("pigsty_gate", 1)[1]
+# Source Lua:   if (p == nil) then
+# Source Lua:     crawl.mpr("Error: someone stolen the pigsty gate!")
+# Source Lua:     return
+# Source Lua:   end
+# Source Lua:   if dgn.grid(p.x, p.y) ~= dgn.fnum("iron_grate") then
+# Source Lua:     return
+# Source Lua:   end
+# Source Lua:   dgn.grid(p.x, p.y, "floor")
+# Source Lua:   if (you.see_cell(p.x, p.y)) then
+# Source Lua:     crawl.mpr("The grate goes up!")
+# Source Lua:   else
+# Source Lua:     crawl.mpr("You hear a sound of rusty metal sliding.")
+# Source Lua:   end
+# Source Lua: end
+# Source Lua: }}
+# Source marker: 1 = lua:MonPropsMarker:new {monster_dies_lua_key = swineherd_die}
+# Source marker: o = lua:props_marker {pigsty_gate=1}
+: vault.run("markers")
+MAP
+xxxxx
+x222x
+x222x
+xxoxx
+@..1@
+ENDMAP
+
+###################################

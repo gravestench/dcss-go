@@ -1,0 +1,16 @@
+# nicolae_pan_strange_glyph_disgust is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_strange_glyph_disgust
+DEPTH: Pan
+TAGS: unrand sub_strange_glyph allow_dup
+NSUBST: X = Y / x, Y = 2:x... / 1:x. / *:x
+MAP
+..xxxxx
+.x..X..
+x..YxY.
+X...X..
+x..YxY.
+.x..X..
+..xxxxx
+ENDMAP

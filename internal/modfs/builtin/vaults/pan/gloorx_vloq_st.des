@@ -1,0 +1,50 @@
+# gloorx_vloq_st is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:      gloorx_vloq_st
+DEPTH: Pan
+TAGS:      gloorx_vloq uniq_gloorx_vloq
+ORIENT:    southeast
+# Source Lua: : pan_lord_setup(_G, 'Gloorx Vloq')
+TAGS: unrand
+: vault.run("shared.gloorx_vloq")
+TILE:      c = dngn_stone_wall_darkgray
+MONS:      patrolling Gloorx Vloq, Executioner, curse skull
+MONS:      soul eater, shadow wraith, unseen horror
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Gloorx Vloq')
+# Source Lua: }}
+: vault.run("shared.gloorx_vloq_epilogue")
+MAP
+xxxxxxxxxxxxxxxxxx.@.xxxxxxxxxxxxxxxxxx
+xxxxx.............................xxxxx
+xxxx...xxx.x.xxx.x.x.x.xxx.x.xxx...xxxx
+xxx....xxx.x.xxx.x5x5x.xxx.x.xxx....xxx
+xx...................................xx
+x..6..ccccccccccccccccccccccccccc..6..x
+xx...xcxxxxxxxxxxxxxxxxxxxxxxxxxcx...xx
+x.x.x.cx.x4x.x.x.x.x.x.x.x.x4x.xc.x.x.x
+x..x..cxx.x.x.x.x.xOx.x.x.x.x.xxc..x..x
+x.x.x.cx.x.x.x.x.xxxxx.x.x.x.x.xc.x.x.x
+xx...xcxx.x.x.x.x4...4x.x.x.x.xxcx...xx
+x.x.x.cx3x.x.x.x.x...x.x.x.x.x3xc.x.x.x
+x..x..cxx.x.x.x.x.....x.x.x.x.xxc..x..x
+x.x.x.cx.x.x2x.x.x...x.x.x2x.x.xc.x.x.x
+xx...xcxx.x.x.x.x.....x.x.x.x.xxcx...xx
+x.x.x.cx.x.x.x.x.x.1.x.x.x.x.x.xc.x.x.x
+x5.x.5cxx.x.x.x.x.....x.x.x.x.xxc5.x.5x
+x.x.x.cx2x.x.x.x.x...x.x.x.x.x2xc.x.x.x
+xx...xcxx.x.x.x.x.....x.x.x.x.xxcx...xx
+x.x.x.cx.x.x.x.x.x...x.x.x.x.x.xc.x.x.x
+x..x..cxx.x.x.x.x4...4x.x.x.x.xxc..x..x
+x.x.x.cx.x.x.x.x.x...x.x.x.x.x.xc.x.x.x
+xx...xccx.x.x.x.x.....x.x.x.x.xccx...xx
+xxx.x.xccx.x.x.x.x...x.x.x.x.xccx.x.xxx
+xxxx....ccc2x.x.x.....x.x.x2ccc....xxxx
+xxxxx.....cccc.x.x...x.x.cccc.....xxxxx
+xxxxxxx......ccccx...xcccc......xxxxxxx
+xxxxxxxxx.......cc+++cc.......xxxxxxxxx
+xxxxxxxxxxxx.......2.......xxxxxxxxxxxx
+xxxxxxxxxxxxxxx.........xxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

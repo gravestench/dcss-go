@@ -1,0 +1,20 @@
+# serial_pan_pain_two is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    serial_pan_pain_two
+DEPTH: Pan
+MONS:    smoke demon, tormentor, any demon
+KMASK:   1 = opaque
+# Source Lua: : serial_pan_setup(_G, "pain")
+TAGS: serial_pan_pain unrand transparent allow_dup no_dump
+: vault.run("shared.serial_grate")
+MAP
+ xxxxxxx
+ x11m2xx
+ xmmx3xx
+ xllx.xx
+ @.....@
+xxxxxxxxx
+ENDMAP
+
+########################################

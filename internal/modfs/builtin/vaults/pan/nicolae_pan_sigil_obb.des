@@ -1,0 +1,22 @@
+# nicolae_pan_sigil_obb is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_sigil_obb
+DEPTH: Pan
+TAGS: transparent extra decor allow_dup luniq_pan_sigil
+SHUFFLE: ef
+SUBST: a : .x, b : .x, c : .x, d : .x, e : .x, f : ., g : .x, h : .x, \
+       i : .x, j : .x, k : .x, l : .x, m : .x, n : .x, o : .x
+MAP
+...........................
+..nl.j....fe.d.ef....j.ln..
+.oc.g.h.bkaxxxxxakb.h.g.co.
+.m.x...x..fe.x.ef..x...x.m.
+..g.x.x.h....x....h.x.x.g..
+.i...xxxxxxxxxxxxxxxxx...i.
+..g.x.x.h....x....h.x.x.g..
+.m.x...x..fe.x.ef..x...x.m.
+.oc.g.h.bkaxxxxxakb.h.g.co.
+..nl.j....fe.d.ef....j.ln..
+...........................
+ENDMAP

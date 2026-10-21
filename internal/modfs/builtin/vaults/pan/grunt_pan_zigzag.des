@@ -1,0 +1,28 @@
+# grunt_pan_zigzag is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    grunt_pan_zigzag
+DEPTH: Pan
+TAGS:    no_trap_gen
+KMONS:   d = pandemonium lord
+KFEAT:   d = (
+# Source Lua: : pan_demonic_rune(_G, 'e')
+: vault.run("shared.rune_e")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc")
+MAP
+............
+.cccccccccc.
+.c..B..B..+.
+.c.B.cccccc.
+.cc.C.cc....
+..cc.dCcc...
+...ccCe.cc..
+....cc.C.cc.
+.cccccc.B.c.
+.+..B..B..c.
+.cccccccccc.
+............
+ENDMAP

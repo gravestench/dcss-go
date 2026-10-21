@@ -1,0 +1,60 @@
+# mnoleg_grunt_wretched_star is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    mnoleg_grunt_wretched_star
+DEPTH: Pan
+ORIENT:  centre
+TAGS:    mnoleg uniq_mnoleg
+# Source Lua: : pan_lord_setup(_G, 'Mnoleg')
+TAGS: unrand
+: vault.run("shared.mnoleg")
+NSUBST:  O = 1:O / *:|
+TILE:    c = dngn_stone_wall_yellow
+MONS:    patrolling Mnoleg, patrolling cacodemon
+MONS:    neqoxec, tentacled monstrosity, large abomination
+MONS:    very ugly thing band w:20 / floating eye / golden eye band / \
+         great orb of eyes / shining eye
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Mnoleg')
+# Source Lua: }}
+: vault.run("shared.mnoleg_epilogue")
+MAP
+              .@.@.
+           xx.......xx
+         xxx...ccc...xxx
+       xxxc...ccOcc...cxxx
+      xx.ccc..c.c.c..ccc.xx
+     xx.3.....cc.cc.....3.xx
+    xxcc......c...c......ccxx
+   xx.cccc.6.cc...cc.6.cccc.xx
+   x.3.ccc...c.....c...ccc.3.x
+  xxc..cccc..c..2..c..cccc..cxx
+  xcc....cc..c.....c..cc....ccx
+ xx.c..6.................6..c.xx
+ x..........3.......3..........x
+ ......cccc..cc...cc..cccc......
+...ccccc.....c..4..c.....ccccc...
+@.cc.c........5...5........c.cc.@
+..cOc....2......1......2....cOc..
+@.cc.c........5...5........c.cc.@
+...ccccc.....c..4..c.....ccccc...
+ ......cccc..cc...cc..cccc......
+ x..........3.......3..........x
+ xx.c..6.................6..c.xx
+  xcc....cc..c.....c..cc....ccx
+  xxc..cccc..c..2..c..cccc..cxx
+   x.3.ccc...c.....c...ccc.3.x
+   xx.cccc.6.cc...cc.6.cccc.xx
+    xxcc......c...c......ccxx
+     xx.3.....cc.cc.....3.xx
+      xx.ccc..c.c.c..ccc.xx
+       xxxc...ccOcc...cxxx
+         xxx...ccc...xxx
+           xx.......xx
+              .@.@.
+ENDMAP
+
+
+#######################################################################
+# Lom Lobon
+#

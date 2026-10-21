@@ -1,0 +1,26 @@
+# nicolae_pan_mnolegish_1 is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_mnolegish_1
+DEPTH: Pan
+TAGS: transparent extra decor allow_dup luniq_decor_lord
+SHUFFLE: AB, DG/CH, EI/FJ
+SUBST: ACEHI : c, BDF : ., GI : @
+TILE: c = dngn_stone_wall_yellow
+MAP
+ccc.@.ccccccccc
+ccAA...ccc.cccD
+cAAAc...c...cDG
+.AAccc.......DD
+@.ccccc...c...c
+.BBccc...ccc.CC
+cBBBc.....cccCH
+ccBB...c...cccC
+ccc...ccc...ccc
+cc...ccccc...cc
+c...ccccc...ccc
+...ccccc...cccc
+@.cccccEE.FFccc
+.cccccEEEcFFFcc
+cccccEIEcccFJFc
+ENDMAP

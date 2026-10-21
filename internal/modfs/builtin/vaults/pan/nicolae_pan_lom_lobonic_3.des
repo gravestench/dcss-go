@@ -1,0 +1,24 @@
+# nicolae_pan_lom_lobonic_3 is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_lom_lobonic_3
+DEPTH: Pan
+TAGS: transparent extra decor allow_dup no_pool_fixup luniq_decor_lord
+SUBST: - = ..w, B = bw, X = ..x, p = ..b
+COLOUR: x = white
+TILE: x = wall_hall_white
+MAP
+        bbbbb
+   xx  bbwwBbb
+@.xxxxbb--wwBbb
+..xxxxbp..-wwBbb
+..XxxXp....-wwBb
+............-wwb
+@...........-wwb
+............-wwb
+..XxxXp....-wwBb
+..xxxxbp..-wwBbb
+@.xxxxbb--wwBbb
+   xx  bbwwBbb
+        bbbbb
+ENDMAP

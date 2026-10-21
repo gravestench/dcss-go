@@ -1,0 +1,28 @@
+# nicolae_pan_gloorx_vloqian_4 is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_gloorx_vloqian_4
+DEPTH: Pan
+TAGS: transparent extra decor allow_dup luniq_decor_lord
+SHUFFLE: ab, de, fg
+SUBST: a = x, b = ., df = c, e : .ccc, g : .ccc
+COLOUR: x = blue
+TILE: x = wall_hall_darkgray
+TILE: c = dngn_stone_wall_darkgray
+MAP
+...............
+.ababababababa.
+.b...........b.
+.a.ccdcecdcc.a.
+.b.c.......c.b.
+.a.c.cc.cc.c.a.
+.b.c.f...f.c.b.
+.a...g...g...a.
+.b.c.f...f.c.b.
+.a.c.cc.cc.c.a.
+.b.c.......c.b.
+.a.ccdcecdcc.a.
+.b...........b.
+.ababababababa.
+...............
+ENDMAP

@@ -1,0 +1,18 @@
+# nicolae_pan_strange_glyph_contempt is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_strange_glyph_contempt
+DEPTH: Pan
+TAGS: unrand sub_strange_glyph allow_dup
+SHUFFLE: ab, cd, ef
+SUBST: ace = x, bdf = .
+NSUBST: A = . / x, B = . / x, C = . / x, D = . / x
+MAP
+ab.xeex
+AA.cx.f
+BB.c.xf
+CC.xddx
+DD....x
+ba...x.
+.bxxx..
+ENDMAP

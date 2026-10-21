@@ -125,8 +125,9 @@ local function ignacio_decision(world, player)
     runes.collect(world, player, rune_ids.DARK)
     runes.collect(world, player, rune_ids.GLOWING)
     runes.collect(world, player, rune_ids.MAGICAL)
-    harness.equal(runes.pan_count(world, player), 4,
-        "only four Pan runes count for Ignacio")
+    runes.collect(world, player, rune_ids.DEMONIC)
+    harness.equal(runes.pan_count(world, player), 5,
+        "all five source Pan runes count for Ignacio and exits")
 
     connect.finish(world, random({ 0, 1 }), map, {})
     harness.equal(history.pan_state(world, monsters.MONS_IGNACIO),

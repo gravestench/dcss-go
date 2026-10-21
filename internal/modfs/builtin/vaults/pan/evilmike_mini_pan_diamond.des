@@ -1,0 +1,30 @@
+# evilmike_mini_pan_diamond is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   evilmike_mini_pan_diamond
+DEPTH: Pan
+SUBST:  m : nx, n : mnxx.
+NSUBST: 1 = 1:< / *:1
+# Source Lua: : pan_demonic_rune(_G, 'P', true)
+: vault.run("shared.rune_p_lord")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C<')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc_stair")
+MAP
+    .....
+   ..m.m..
+  ..mmBmm..
+ ..mm.n.mm..
+..mmA...Amm..
+.mm...C...mm.
+..Bn.CPC.nB..
+.mm...C...mm.
+..mmA...Amm..
+ ..mm.n.mm..
+  ..mmBmm..
+   ..m.m..
+    .....
+ENDMAP
+
+###################################

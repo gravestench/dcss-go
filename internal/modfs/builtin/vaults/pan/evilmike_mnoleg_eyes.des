@@ -1,0 +1,68 @@
+# evilmike_mnoleg_eyes is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:       evilmike_mnoleg_eyes
+DEPTH: Pan
+ORIENT:     northwest
+TAGS:       mnoleg uniq_mnoleg
+# Source Lua: : pan_lord_setup(_G, 'Mnoleg')
+TAGS: unrand
+: vault.run("shared.mnoleg")
+NSUBST:     O = 1:O / *:|
+TILE:       c = dngn_stone_wall_yellow
+MONS:       patrolling mnoleg
+MONS:       floating eye / golden eye / eye of devastation / \
+            shining eye
+MONS:       w:3 large abomination / w:2 tentacled monstrosity
+MONS:       cacodemon
+MONS:       neqoxec
+NSUBST:     C = 1:4 / *:N
+NSUBST:     N = 2:4 / *:5
+NSUBST:     M = 5:3 / 2=3. / *:.
+NSUBST:     E = 3:2 / 2=22. / 2=2.. / *:.
+SHUFFLE:    '-
+NSUBST:     ' = 5:3 / 2=3. / 1:4 / 3:5 / *:.
+NSUBST:     - = 5:2 / 2=2. / 1:4 / 3:5 / *:.
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Mnoleg')
+# Source Lua: }}
+: vault.run("shared.mnoleg_epilogue")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xcccccccccccccccccccccccccccccccccccx
+xcOcccccccccccccccccccccOcccccccccccx
+xcc...ccccccccccccccc...ccccccccccccx
+xcc.ccMcccccccccccccMcc.ccccccccccccx
+xcc.ccM.ccccccccccc.Mcc.ccccccccccccx
+xcccMMC..ccccccccc..CMMcccccccccccccx
+xcccc.....ccccccc.....ccccc''cccccccx
+xccccc.....ccccc.....ccccc''''ccccccx
+xcccccc.............ccccc''''''cccccx
+xccccccc...EEE.....ccccc''''''''ccccx
+xcccccccc.EEEEE...ccccc''''''''''cccx
+xcccccccc.EE1EE...cccc.'''''''''''ccx
+xcccccccc.EEEEE...ccc'''cc'''''''..cc
+xcccccccc..EEE....cc'''cccc'''''.....
+xcccccccc.........cc'''cccc'''cc....@
+xccccccc...........cc'''cc'''cc......
+xcccccc.............cc''''''cc.....cc
+xccccc.....ccccc.....cc''''cc.....ccx
+xcccc.....ccccccc.....cc''cc.....ccxx
+xcccMMC..ccccc--cc.....cccc.....ccxxx
+xcc.ccM.ccccc----cc.....cc.....ccxxxx
+xcc.ccMccccc------cc..........ccxxxxx
+xcc...ccccc---cc---cc........cccxxxxx
+xcOccccccc---cccc---cc......ccccxxxxx
+xcccccccc----cccc---cc......ccccxxxxx
+xccccccc------cc---cc........cccxxxxx
+xcccccc-----------cc........N.ccxxxxx
+xcccccc----------cc.....cc.N2..cxxxxx
+xccccccc--------cc.....cccc..N.cxxxxx
+xcccccccc------cc.....cccccc...cxxxxx
+xccccccccc-----c.....cccccccccccxxxxx
+xcccccccccc---......ccxxxxxxxxxxxxxxx
+xccccccccccc-......ccxxxxxxxxxxxxxxxx
+xcccccccccccc.....ccxxxxxxxxxxxxxxxxx
+xccccccccccccc...ccxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxc.@.cxxxxxxxxxxxxxxxxxxx
+ENDMAP

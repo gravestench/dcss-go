@@ -1,0 +1,30 @@
+# evilmike_mini_pan_doors_b is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   evilmike_mini_pan_doors_b
+DEPTH: Pan
+# The doors are not treated as large gates, but individually:
+MARKER: X = lua: props_marker { connected_exclude="true" }
+SUBST:  X = +
+NSUBST: D = 2:C / 2:B / 2:A / 1:P / 1:|
+KITEM:  | = |
+KFEAT:  | = (
+# Source Lua: : pan_demonic_rune(_G, 'P', true)
+: vault.run("shared.rune_p_lord")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc")
+MAP
+xxxxxxxxxxxxx
+xxxxDxDxDxDxx
+xxx.........x
+xxxXXXXXXXXXx
+@...........x
+xxxXXXXXXXXXx
+xxx.........x
+xxxxDxDxDxDxx
+xxxxxxxxxxxxx
+ENDMAP
+
+###################################

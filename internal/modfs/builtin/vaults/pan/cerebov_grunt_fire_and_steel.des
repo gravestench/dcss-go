@@ -1,0 +1,47 @@
+# cerebov_grunt_fire_and_steel is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   cerebov_grunt_fire_and_steel
+DEPTH: Pan
+TAGS:   cerebov uniq_cerebov
+ORIENT: north
+# Source Lua: : pan_lord_setup(_G, 'Cerebov')
+TAGS: unrand
+: vault.run("shared.cerebov")
+NSUBST: O = 1:O / *:|
+MONS:   patrolling Cerebov, balrug, brimstone fiend, sun demon
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Cerebov')
+# Source Lua: }}
+: vault.run("shared.cerebov_epilogue")
+TILE:   v = dngn_metal_wall_brown
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+....................................................
+..................lllllll...lllllll...lllllll.......
+....llll...llll...lvvvvvl...lvvvvvl...lvvvvvl.......
+....lvvl...lvvl...lv|||vl...lv|||vl...lv$|$vl.......
+@..llvvv+++vvvll..lv|$|vl...lv|||vl..llv|O|vll.....@
+.lllvv.......vvllllv|||vlllllv|||vllllvv$|$vvll.....
+.lvvv....4....vvllvvv+vvvlllvvv+vvvllvvvv+vvvvll....
+.lvv..4.....2..vvvvvl.lvvvvvvvl.lvvvvvvl...lvvvllll.
+.llv...vvvvv...vlllll4lllllllll4lllllvll...llvvvvvl.
+...+.4.v|$|v...+.....................+..4.2..v$|$vl.
+...+...v$|$+...+.....2.........2.....+...1.3.+|O$vl.
+...+.4.v|$|v...+.....................+..4.2..v$|$vl.
+.llv...vvvvv...vlllll4lllllllll4lllllvll...llvvvvvl.
+.lvv..4.....2..vvvvvl.lvvvvvvvl.lvvvvvvl...lvvvllll.
+.lvvv....4....vvllvvv+vvvlllvvv+vvvllvvvv+vvvvll....
+.lllvv.......vvllllv$$$vlllllv$$$vllllvv$|$vvll.....
+@..llvvv+++vvvll..lv$$$vl...lv$|$vl..llv|O|vll.....@
+....lvvl...lvvl...lv$$$vl...lv$$$vl...lv$|$vl.......
+....llll...llll...lvvvvvl...lvvvvvl...lvvvvvl.......
+..................lllllll...lllllll...lllllll.......
+....@..........................................@....
+ENDMAP
+
+
+##############################################################################
+# Gloorx Vloq
+#

@@ -1,0 +1,16 @@
+# nicolae_pan_strange_glyph_regret is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_strange_glyph_regret
+DEPTH: Pan
+TAGS: unrand sub_strange_glyph allow_dup
+SUBST: X : .x, Y : ..x, Z : ...x
+MAP
+xxxxxxx
+X.Y.Z.x
+X.Y...x
+X....x.
+.....x.
+...xx..
+xxx....
+ENDMAP

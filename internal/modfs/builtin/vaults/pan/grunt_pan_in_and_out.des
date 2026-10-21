@@ -1,0 +1,28 @@
+# grunt_pan_in_and_out is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    grunt_pan_in_and_out
+DEPTH: Pan
+TAGS:    no_trap_gen
+KMONS:   d = pandemonium lord
+KFEAT:   d = (
+# Source Lua: : pan_demonic_rune(_G, 'e')
+: vault.run("shared.rune_e")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc")
+MAP
+............
+.c+cccccc+c.
+.c.c.de.c.c.
+.cBc....cBc.
+.c.c.CC.c.c.
+.cBc....cBc.
+.c.cc++cc.c.
+.cBcc..ccBc.
+.c.cc..cc.c.
+.cB..CC..Bc.
+.cccccccccc.
+............
+ENDMAP

@@ -1,0 +1,32 @@
+# rand_demon_pan_entry_7 is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   rand_demon_pan_entry_7
+DEPTH: Depths
+TAGS:   transparent
+NSUBST: ? = 1:O / 4:1 / *:.
+# Source Lua: : pan_entry_feature(_G, 'O')
+# The source entry setup declares these selection facts before placement.
+TAGS: extra luniq_enter_pan chance_enter_pan
+CHANCE: 25% (Depths), 100% (Depths:2)
+KFEAT: O = enter_pandemonium
+# Source Lua: : pan_entry_vault_contents(_G, 'O')
+: vault.run("shared.threat_o")
+# The source always applies these guards and population slots.
+TAGS: patrolling no_monster_gen nolayout_encompass
+MONS: common demon
+MONS: common demon / nothing
+MAP
+............
+.xxx....xxx.
+.x?xx+xxx?x.
+.xx+....+xx.
+..x.x++x.x..
+..x.+??+.+..
+..+.+??+.x..
+..x.x++x.x..
+.xx+....+xx.
+.x?xxx+xx?x.
+.xxx....xxx.
+............
+ENDMAP

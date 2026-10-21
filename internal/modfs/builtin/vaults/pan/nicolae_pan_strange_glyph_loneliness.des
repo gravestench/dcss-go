@@ -1,0 +1,17 @@
+# nicolae_pan_strange_glyph_loneliness is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_strange_glyph_loneliness
+DEPTH: Pan
+TAGS: unrand sub_strange_glyph allow_dup
+SHUFFLE: abcd
+SUBST: X = .x, abc = x, d = .
+MAP
+xbxxx.X
+a.c..x.
+xdx...x
+x.....x
+x...X.x
+.x...x.
+X.xxx.X
+ENDMAP

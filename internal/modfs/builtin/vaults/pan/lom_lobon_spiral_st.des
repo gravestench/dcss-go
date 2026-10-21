@@ -1,0 +1,67 @@
+# lom_lobon_spiral_st is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:      lom_lobon_spiral_st
+DEPTH: Pan
+TAGS:      lom_lobon no_pool_fixup patrolling uniq_lom_lobon
+ORIENT:    northeast
+# Source Lua: : pan_lord_setup(_G, 'Lom Lobon')
+TAGS: unrand
+: vault.run("shared.lom_lobon")
+MONS:      patrolling Lom Lobon, titan, shock serpent, wizard
+KMONS:     S = storm dragon
+KMONS:     d = draconian annihilator
+KMONS:     e = deep elf annihilator
+COLOUR:    c = white
+KFEAT:     S = deep_water
+NSUBST:    D = 1:S / *:w
+TILE:      c = dngn_stone_wall_white
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Lom Lobon')
+# Source Lua: }}
+: vault.run("shared.lom_lobon_epilogue")
+MAP
+cccccccccccccccccccccccccccccccccccccccc
+cbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbc
+cbbbbbb.....bb+..2..bbbbbwwwbbbbbbbbbbbc
+cbbbb.........bb...bbbwwwwwwwwwbbbbbbbbc
+cbbb...........bbObbwww.....wwwwwbbbbbbc
+cbb.............bbbww.........wwwwbbbbbc
+cbb.............bbww.....w......wwwbbbbc
+cb.......1.......bw....www.......wwbbbbc
+cb...............bw...wwwww...V..wwwbbbc
+cb...............bb..wwwwwww......wwbbbc
+cbb.............bbb.....wwwww.....wwbbbc
+cbb.............bbbb...2..wwwww....wwbbc
+cbbb...........bbbbbbb.......www...wwwbc
+cbbbbb.......bbbbbbbbbbbbbb...bbb...wwwc
+cbbbbbbb...bbbbbbbbbbbbbwwww....bb..wwwc
+cbbbbbb...bbbbbbbbbbbwwwwwwwww...bb..wwc
+cbbbbb..wbbbbbbbbbbwwwwwwwwwwww...b..wwc
+cbbb...wwwbbbbbbbbwwwwwwwwwwwwww..bb.wwc
+cbb...wwwwwbbbbbbbwwwwww..wwwwww...b..wc
+cbb.d..wwwwwbbbbb.wwwww.ee.wwwww...b..wc
+cbb.....wwwwwwbbb.wwwwww..wwwwww...b..wc
+cbb...d.wwww....2..wwwwwwwwwwwww..bb..Dc
+cwb.........www.....wwwwwwwwwww...bw..wc
+cwbb...wwwwwwwwbbb...wwwwwwwww...bbw..wc
+cwbbbdwwwwwwwwbbbbb....wwww.....bbww.wwc
+cwwbbbbwwwwbbbbwwwbbb.........bbbww..wwc
+cwwSbbbbbbbbwwwwwwwwbbb....bbbbwww...wwc
+cwwwwwbbbbwwwwwwwwwwwwbbbbbbwwwDww...wwc
+cwwwwwwwwwwwww.4.wwwwwwwwwwwwwwwww....wc
+cwwwwwwwwww........wwwwwwwwwwwwww.....wc
+cwwwwwwww...........wwwwwwwwwwww.....wwc
+cwwwwwww.....U...U......wwwwwwww.....wwc
+cwwwwbbbb..................wwww.....wwwc
+cwwbbb..............ww..............wwDc
+cwbb..3...........wwwwww.....2.....wwwwc
+cwb$.........ww..wwwwwwwww.......wwwwwwc
+cwb$..3.....wwww..wwwwwwwww....wwwwwwwwc
+cwbb....3.bbwwww...wwwwwwwwwwwwwwwwwwwcc
+cwwbbb$$bbbwwwwww....wwwwwwwwwwwwwwwwccc
+ccwwwbbbbwwwww...w....wwwwwwwwwwwwwwcccc
+cccwwwwwwwwww..4.....4.wwwwwwwwwwwcccccc
+cccccwwwwww............wwwwwwwwwcccccccc
+cccccccccccccccc..@..ccccccccccccccccccc
+ENDMAP

@@ -78,6 +78,20 @@ local function common_demon(ctx)
     return tier[ctx:random("vault_monster", #tier) + 1]
 end
 
+-- Source greater-demon requests select class II on six of ten outcomes
+-- and class I otherwise, then draw a species uniformly in that tier.
+local function greater_demon(ctx)
+    local tier
+
+    if ctx:random("vault_monster", 10) < 6 then
+        tier = tiers[2]
+    else
+        tier = tiers[1]
+    end
+
+    return tier[ctx:random("vault_monster", #tier) + 1]
+end
+
 -- DES place: requests 8 and 9 bias the monster pool above the floor depth by different curves.
 local function effective_depth(request, depth, branch_id)
     local branch = register.get(categories.BRANCHES, branch_id)
@@ -126,6 +140,10 @@ function random_monsters.pick(ctx, request, depth, site, place)
     if request == requests.COMMON_DEMON or
         request == requests.ANY_COMMON_DEMON then
         return common_demon(ctx)
+    end
+
+    if request == requests.GREATER_DEMON then
+        return greater_demon(ctx)
     end
 
     -- A map's place:D:N override changes both the population branch and

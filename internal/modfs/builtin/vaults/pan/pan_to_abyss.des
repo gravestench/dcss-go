@@ -1,0 +1,32 @@
+# pan_to_abyss is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   pan_to_abyss
+DEPTH: Pan
+TAGS:   extra allow_dup transparent no_dump
+CHANCE: 100%
+# Source Lua: {{
+# Source Lua: local exit_chance = 25 + 10*count_pan_runes()
+# Source Lua: local floor_chance = 100 - exit_chance
+# Source Lua: kfeat("O = exit_through_abyss w:" .. exit_chance ..
+# Source Lua:       " / floor w:" .. floor_chance)
+# Source Lua: }}
+: vault.run("shared.abyss_portal")
+MAP
+O
+ENDMAP
+
+
+##############################################################################
+# Pan Demon Lairs
+#
+# NOTE: The pandemonium lord levels are requested by tag; if you change the
+# tag, also update dungeon.cc.
+#
+# You can define alternate levels for a pandemonium lord by using the same
+# TAGS: and a different NAME:
+##############################################################################
+
+###########################################################################
+# Mnoleg
+#

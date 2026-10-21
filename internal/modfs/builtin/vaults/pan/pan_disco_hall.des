@@ -1,0 +1,67 @@
+# pan_disco_hall is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    pan_disco_hall
+DEPTH: Pan
+TAGS:    pan_fixed_rune_disco pan_fixed_lure_disco no_rotate
+ORIENT:  southeast
+MONS:    rakshasa, demonspawn corrupter, demonspawn blood saint
+MONS:    dancing weapon ; demon trident good_item ego:distortion
+MONS:    dancing weapon ; lajatang good_item ego:distortion
+MONS:    dancing weapon ; demon blade good_item ego:distortion
+MONS:    brimstone fiend / ice fiend / tzitzimitl / hell sentinel
+KMONS:   p = demonic plant
+KMONS:   P = pandemonium lord
+ITEM:    any potion
+# Source Lua: : if demonic_rune_vault_is_decoy() then
+# Source conditional: KITEM:   O = superb_item / demonic rune of zot mimic
+# Source Lua: : else
+# Source conditional: KITEM:   O = demonic rune of zot
+# Source Lua: epilogue{{
+# Source Lua: if not you.have_rune("demonic") then
+# Source Lua:   pan_declare_demonic_rune()
+# Source Lua: end
+# Source Lua: }}
+# Source Lua: : end
+: vault.run("shared.fixed_rune_or_lure")
+: vault.run("shared.fixed_rune_epilogue")
+KFEAT:   D = granite_statue
+KFEAT:   X = rock_wall
+KFEAT:   _ = floor
+KFEAT: { = {
+# Previously a raw average of 9.2 place:Pan spawns.
+NSUBST:  - = 2:7 / 8:0 / 4 = 00. / *:.
+SHUFFLE: 123, 456
+COLOUR:  D = random
+COLOUR:  P.xp01234567dO = disco
+# WALL_ZOT_BLUE and FLOOR_PEBBLE are the bases
+# for disco-coloured variants of the tiles thereof.
+RTILE:   x = wall_zot_blue
+FTILE:   D.xp01234567dO = floor_pebble
+FTILE:   _{+ = floor_hall
+TILE:    D = dngn_disco_ball
+# Source Lua: : set_feature_name("granite_statue", "weirdly glowing ball")
+: vault.run("shared.disco_ball_name")
+MARKER:  D = lua:props_marker { veto_destroy="veto" }
+MAP
+               xx+xx
+               xp.px
+               x...x
+   xxxxxxxxxxxxxx_xxxxxxxxxxxxxxxxxxxxxxx
+   x....................x1-------------3x
+   x.x.x.x.x.x.x.x.x.x..x-------------2-x
+   x.0...............0..x---------------xxxxxxXXX
+   x.x.x.x.x.x.x.x.x.x..x---------------_....xXXX
+xxxx.....................---------------_.d4.xXXX
+xp.x.....................---------------_....xXXX
++.._.........{..........D-------P-------_.O5.xXXX
+xp.x.....................---------------_....xXXX
+xxxx.....................---------------_.d6.xXXX
+   x.xxxxxxxxxxxxxxxxx..x---------------_....xXXX
+   x.x0d0x.d0x0d.x0d0x..x---------------xxxxxxXXX
+   x.x0..x0..x..0x..0x..x-------------1-xxxxxxXXX
+   x._..............._..x2-------------3xxxxxxXXX
+   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxXXX
+   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+ENDMAP

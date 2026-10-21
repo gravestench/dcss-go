@@ -1,0 +1,56 @@
+# mnoleg_grunt is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    mnoleg_grunt
+DEPTH: Pan
+ORIENT:  west
+TAGS:    mnoleg uniq_mnoleg
+# Source Lua: : pan_lord_setup(_G, 'Mnoleg')
+TAGS: unrand
+: vault.run("shared.mnoleg")
+TILE:    c = dngn_stone_wall_yellow
+SHUFFLE: Od, 1e
+KFEAT:   d = .
+KFEAT:   e = .
+MONS:    patrolling Mnoleg, patrolling cacodemon
+MONS:    neqoxec, tentacled monstrosity, large abomination, very ugly thing band
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Mnoleg')
+# Source Lua: }}
+: vault.run("shared.mnoleg_epilogue")
+MAP
+xxxxx@.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxc..cccc.............cccccccccccc..cx
+xxxxc..ccc.......2.......cccccccccc...cx
+xxxxc..cc....ccccc...cc.3.cccccccc..2.cx
+xxxxc........cccc...cccc..ccccccc.....cx
+xxxxc.3......ccc...ccccc..cccccc......cx
+xxxxc....cc..cc...ccccc...ccccc...cc..cx
+xxxxc...ccc..c...ccccc...ccccc...ccc..cx
+xxxxc..ccc...c..cccccc..ccccc...ccc...cx
+xxxxccccc...cc..cccccc..cccc...ccc...ccx
+xxxxcccc...ccc.6.ccccc...cc...ccc...cccx
+xxxxccc...ccccc...ccccc......ccc...ccccx
+xxxxcc...ccccccc...ccccc.3..ccc...cccccx
+xxxxc...ccc..cccc..5..ccc..ccc...ccc..cx
+xxxxc..ccc....ccc.2....cccccc...ccc...cx
+xxxxc..cc.6....cc..cc.3..ccc...ccc..3.cx
+xxxxc.5....cc.5..4.cd1cc...5..ccc.....cx
+xxxxc.....ccc..5...cceOc.4..5.cc....5.cx
+xxxxc.3..ccc...ccc..3.cc..cc....6.cc..cx
+xxxxc...ccc...cccccc....2.ccc....ccc..cx
+xxxxc..ccc...ccc..ccc..5..cccc..ccc...cx
+xxxxccccc...ccc..3.ccccc...ccccccc...ccx
+xxxxcccc...ccc......ccccc...ccccc...cccx
+xxxxccc...ccc...cc...ccccc.6.ccc...ccccx
+xxxxcc...ccc...cccc..cccccc..cc...cccccx
+xxxxc...ccc...ccccc..cccccc..c...ccc..cx
+xxxxc..ccc...ccccc...ccccc...c..ccc...cx
+xxxxc..cc...ccccc...ccccc...cc..cc....cx
+xxxxc......cccccc..ccccc...ccc......3.cx
+xxxxc.....ccccccc..cccc...cccc........cx
+xxxxc.2..cccccccc.3.cc...ccccc....cc..cx
+xxxxc...cccccccccc.......2.......ccc..cx
+xxxxc..cccccccccccc.............cccc..cx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.@xx
+ENDMAP

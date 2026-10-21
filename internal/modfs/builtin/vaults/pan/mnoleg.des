@@ -1,0 +1,50 @@
+# mnoleg is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:      mnoleg
+DEPTH: Pan
+ORIENT:    northeast
+TAGS:      mnoleg uniq_mnoleg
+# Source Lua: : pan_lord_setup(_G, 'Mnoleg')
+TAGS: unrand
+: vault.run("shared.mnoleg")
+TILE:      c = dngn_stone_wall_yellow
+MONS:      patrolling Mnoleg, neqoxec, cacodemon, tentacled monstrosity
+NSUBST:    2 = 4:3 / 3 = 234 / *:2
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Mnoleg')
+# Source Lua: }}
+: vault.run("shared.mnoleg_epilogue")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x.................2............xxxx
+x.....2........................xxxx
+x..ccccccccc.....cccc..ccccccc.xxxx
+x..ccccccccc.2...ccccc..cccccc.xxxx
+x..ccccccccc.......cccc..ccccc.xxxx
+x..ccccccccc...1..cOcccc..cccc.xxxx
+x2.ccccccccc..2....cccccc2.ccc.xxxx
+x..ccccccccc.....ccccccccc..cc.xxxx
+x..cccccccc.......ccccccccc..c.xxxx
+x..ccccccc...ccc...ccccccccc...xxxx
+x..cccccc...ccccc...ccccccccc..xxxx
+x..ccccc...ccccccc...ccccccccc.xxxx
+x..cccc...ccccccccc...ccccccc..xxxx
+x..ccc.2.ccccccccccc.2.ccccc...xxxx
+x..cc.....ccccccccccc...ccc....xxxx
+x..c...c...ccccccccccc...c.2...xxxx
+x.....ccc.2.ccccccccccc......c.xxxx
+x....ccccc...ccccccccccc....cc.xxxx
+x.2.ccccccc...ccccccccccc..ccc.xxxx
+x.................2.......cccc.xxxx
+x...c..ccccccc.ccccccc...ccccc.xxxx
+x..ccc......2c.c2cccc...cccccc.xxxx
+x.ccccc..ccc.c.c2ccc.2.ccccccc.xxxx
+x.cccccc..cc.c.c.cc...cccccccc.xxxx
+x.ccccccc..c.c.c.c...ccccccccc.xxxx
+x.cccccccc...c.c....cccccccccc.xxxx
+x.ccccccccc..c.c...ccccccccccc.xxxx
+x..............................xxxx
+xxxxxxxxxxxxxx@xxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,45 @@
+# lemuel_hall_of_pain is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    lemuel_hall_of_pain
+DEPTH: Pan
+TAGS:    pan_fixed_rune_pain pan_fixed_lure_pain
+ORIENT:  float
+MONS:    pandemonium lord, brimstone fiend
+MONS:    tormentor, smoke demon, any demon
+# Source Lua: : if demonic_rune_vault_is_decoy() then
+# Source conditional: KITEM:   O = superb_item / demonic rune of zot mimic
+# Source Lua: : else
+# Source conditional: KITEM:   O = demonic rune of zot
+# Source Lua: epilogue{{
+# Source Lua: if not you.have_rune("demonic") then
+# Source Lua:   pan_declare_demonic_rune()
+# Source Lua: end
+# Source Lua: }}
+# Source Lua: : end
+: vault.run("shared.fixed_rune_or_lure")
+: vault.run("shared.fixed_rune_epilogue")
+KFEAT:   m = iron_grate
+KFEAT:   { = {
+NSUBST:  3 = 6:3 / *:.
+NSUBST:  4 = 16:4 / 4 = 4. / 2 = 234 / *:.
+MAP
+.......@.......
+cccccc+++cccccc
+cOc4cl...lc4c|c
+c1c4cl.5.lc4c|c
+c0c4cl...lc4c0c
+c5c4cl...lc4c5c
+c3c4cl...lc4c3c
+c5c4ml...lm4c5c
+c3c4cl...lc4c3c
+c5c4cl.5.lc4c5c
+c3c4ml...lm4c3c
+c3c4cl...lc4c3c
+c5c4cl...lc4c5c
+c.m4ml...lm4m.c
+c.c4cl.5.lc4c.c
+c.cccl5.5lccc.c
+c.+..5.5.5..+.c
+ccccccccccccccc
+ENDMAP

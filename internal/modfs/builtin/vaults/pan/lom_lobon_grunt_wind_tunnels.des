@@ -1,0 +1,68 @@
+# lom_lobon_grunt_wind_tunnels is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    lom_lobon_grunt_wind_tunnels
+DEPTH: Pan
+TAGS:    lom_lobon no_pool_fixup uniq_lom_lobon
+ORIENT:  west
+# Source Lua: : pan_lord_setup(_G, 'Lom Lobon')
+TAGS: unrand
+: vault.run("shared.lom_lobon")
+SHUFFLE: O2
+MONS:    patrolling Lom Lobon, patrolling titan, patrolling wind drake
+MONS:    blizzard demon / titan / spriggan air mage / storm dragon
+MONS:    draconian annihilator / deep elf annihilator / \
+         wizard w:20 / rakshasa w:20 / glowing orange brain / \
+         blizzard demon / green death / titan w:5 / \
+         spriggan air mage w:5 / lich w:5
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Lom Lobon')
+# Source Lua: }}
+: vault.run("shared.lom_lobon_epilogue")
+MAP
+ccccccccccccccccccccccccccccccccccccccccccc
+cbbbbbbbbbbwwwwwwwwwwwwwwwwwwwwwccccccccccc
+cbbbbbbbb..5..........5........wwwwwccccccc
+cbbbbb......wwwwwwwwwwwwwww........wwwccccc
+cbbb........ww.3....4.....ww.........wwcccc
+cbbb...5.....ww....4.....3.ww.......5.wwccc
+cbb......5....wwwwwwwwwwwwwww..........wccc
+cbb.......bb......5..........5....5....wwcc
+cbb......bbbbb..........................wcc
+cb.3..3.bbbbbbbbwwwwwwwwwwwwwwwww.......wcc
+cb......bcccccccccccccccccccccccw...3...wcc
+cbb..4..bbbbbbbbbbbbbbbbbccccwwww......wwcc
+cbb...........wwwwbbbbbbbccwww........wwccc
+cbb......3....5..wwwbbbbbccw.........wwcccc
+cbb................wwbbbbcww...3...wwwccccc
+cbbb...3............wwbbbcw......wwwccccccc
+cbbbb................wbbbcw..U...cccccccccc
+cbbbbbb......ww......wwbbcw..........cccccc
+cbbb..bb....wwww....5.wbbcw....5..........c
+cbb.O......ww.4ww.....wwbcw...............@
+cbb.2......ww1.ww.....wwbcw...............@
+cbbb..bb....wwww....5.wbbcw....5..........c
+cbbbbbb......ww......wwbbcw..........cccccc
+cbbbb................wbbbcw..U...cccccccccc
+cbbb...3............wwbbbcw......wwwccccccc
+cbb................wwbbbbcww...3...wwwccccc
+cbb......3....5..wwwbbbbbccw.........wwcccc
+cbb...........wwwwbbbbbbbccwww........wwccc
+cbb..4..bbbbbbbbbbbbbbbbbccccwwww......wwcc
+cb......bcccccccccccccccccccccccw...3...wcc
+cb.3..3.bbbbbbbbwwwwwwwwwwwwwwwww.......wcc
+cbb......bbbbb..........................wcc
+cbb.......bb.....5...........5....5....wwcc
+cbb......5....wwwwwwwwwwwwwww..........wccc
+cbbb...5.....ww....4.....3.ww.......5.wwccc
+cbbb........ww.3....4.....ww.........wwcccc
+cbbbbb......wwwwwwwwwwwwwww........wwwccccc
+cbbbbbbbb..5..........5........wwwwwccccccc
+cbbbbbbbbbbwwwwwwwwwwwwwwwwwwwwwccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccc
+ENDMAP
+
+
+#############################################################################
+# Cerebov
+#

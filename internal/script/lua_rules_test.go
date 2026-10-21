@@ -389,6 +389,9 @@ func runLuaRule(t *testing.T, rules modfs.Ruleset, name string) {
 	} else if name == "tests/worley_cave_layouts_test.lua" {
 		// Several full grids run the source noise sampler in one Lua test.
 		limitDuration = 15 * time.Second
+	} else if name == "tests/pan_all_placement_test.lua" {
+		// Every active Pan map executes placement and any named source hooks.
+		limitDuration = 60 * time.Second
 	}
 
 	limit, cancel := context.WithTimeout(context.Background(), limitDuration)

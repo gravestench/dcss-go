@@ -1,0 +1,40 @@
+# nicolae_pan_gloorx_vloqian_3 is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_gloorx_vloqian_3
+DEPTH: Pan
+TAGS: transparent extra decor allow_dup luniq_decor_lord
+SHUFFLE: abfg/dehi
+# Source Lua: : if crawl.coinflip() then
+# Source conditional: SUBST: d = a, e = b, h = f, i = g
+# Source Lua: : end
+: vault.run("first_pair")
+SUBST: dehi = .
+SHUFFLE: ab/gf
+# Source Lua: : if crawl.coinflip() then
+# Source conditional: SUBST: f = b, g = a
+# Source Lua: : end
+: vault.run("second_pair")
+SUBST: fg = .
+SHUFFLE: ab
+SUBST: a = x, b = .
+COLOUR: x = blue
+TILE: x = wall_hall_darkgray
+TILE: c = dngn_stone_wall_darkgray
+MAP
+    ccccccc
+   ccabdeacc
+  @.ifghifg.@
+ c..bdeabde..c
+ccifghifghifgcc
+cabdeabdeabdeac
+cfghifghifghifc
+cdeabdeabdeabdc
+chifghifghifghc
+cabdeabdeabdeac
+ccghifghifghicc
+ c..bdeabde..c
+  @.ghifghi.@
+   ccabdeacc
+    ccccccc
+ENDMAP

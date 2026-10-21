@@ -1,0 +1,34 @@
+# nicolae_pan_strange_glyph_worry is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_strange_glyph_worry
+DEPTH: Pan
+TAGS: unrand sub_strange_glyph allow_dup
+SHUFFLE: Aa, Bb, Cc
+SUBST: ABC = x, abc = ., q = .pr, p : .x, r : .x, Q = .PR, P : .x, R : .x
+MAP
+.xpqrx.
+x.....x
+xAA.CCx
+xaxbxcx
+x.BBB.x
+x.....x
+.xPQRx.
+ENDMAP
+
+### Holy Pan Level ############################################################
+#
+# The angels have gained a foothold in pandemonium.
+#
+# This level's main feature is a TSO fortress with a lot of loot. Smaller
+# features are a temple of Zin, a weird Ely pasture in a cave, and a river for
+# some reason. There's also a cave with a pearl dragon and apis.
+#
+# This level has a lot of open space where it mostly is up to the RNG to place
+# monsters.
+#
+# Four exits are given, with one placed randomly and the others in a room.
+#
+# My opinion is that in the long term this concept would work better as a
+# portal vault (for pan, even).
+#

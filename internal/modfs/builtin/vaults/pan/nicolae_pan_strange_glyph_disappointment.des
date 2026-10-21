@@ -1,0 +1,17 @@
+# nicolae_pan_strange_glyph_disappointment is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_strange_glyph_disappointment
+DEPTH: Pan
+TAGS: unrand sub_strange_glyph allow_dup
+SHUFFLE: PQ/PQ/pq, RS/RS/rs, TU/TU/tu
+SUBST: PRT = x, QSU = ., prt = Y, qsu = x, Y : xx.
+MAP
+xxx.xxx
+..x.x.x
+...x..x
+......x
+YxPxRxT
+x.Q.S.U
+x.Q.S.U
+ENDMAP

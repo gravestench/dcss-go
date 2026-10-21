@@ -1,0 +1,24 @@
+# serial_pan_frozen_one is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   serial_pan_frozen_one
+DEPTH: Pan
+TAGS:   no_pool_fixup
+MONS:   any demon
+KMONS:  2 = blizzard demon
+KFEAT:  2 = w
+# Source Lua: : serial_pan_setup(_G, "frozen")
+TAGS: serial_pan_frozen unrand transparent allow_dup no_dump
+: vault.run("shared.serial_grate")
+MAP
+  ...ccccc
+ ..wwccccc
+ .wwwccccc
+ .ww2ccccc
+1ccccGcccc
+ .ww2c2ww.
+ .wwwcwww.
+ ..wwcww..
+  ...c...
+     1
+ENDMAP

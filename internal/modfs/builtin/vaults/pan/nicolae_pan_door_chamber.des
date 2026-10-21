@@ -1,0 +1,33 @@
+# nicolae_pan_door_chamber is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_door_chamber
+DEPTH: Pan
+WEIGHT: 5
+MARKER: + = lua:props_marker { connected_exclude="true" }
+MARKER: - = lua:props_marker { connected_exclude="true" }
+NSUBST: + = 1:P / 1:( / 2:B / 2:C / *:+
+SUBST: - = +
+# Source Lua: : pan_demonic_rune(_G, 'P', true)
+: vault.run("shared.rune_p_lord")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc")
+MAP
+   x..@..x
+ xxx.....xxx
+ xx...A...xx
+xx.-------.xx
+...-+++++-...
+...-+++++-...
+@.A-+++++-A.@
+...-+++++-...
+...-+++++-...
+xx.-------.xx
+ xx...A...xx
+ xxx.....xxx
+   x..@..x
+ENDMAP
+
+###################################

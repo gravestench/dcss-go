@@ -1,0 +1,18 @@
+# nicolae_pan_strange_glyph_fear is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_strange_glyph_fear
+DEPTH: Pan
+TAGS: unrand sub_strange_glyph allow_dup
+SHUFFLE: ABCDabcd/-X--XyzX/--X-XXyz/---XzXXy, ab, yz, \
+         12345/rrprp/prrpp
+SUBST: AXyacd = x, BCDbz- = ., 245p = x, 13r = ., Q : ...x, V = .x
+MAP
+V.xDDDx
+x.Aa.dC
+x.A.x.C
+x.Ab.cC
+x2xBBBx
+134....
+115QQQQ
+ENDMAP

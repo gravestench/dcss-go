@@ -1,0 +1,60 @@
+# evilmike_gloorx_vloq_box is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:       evilmike_gloorx_vloq_box
+DEPTH: Pan
+TAGS:       gloorx_vloq uniq_gloorx_vloq
+ORIENT:     southeast
+# Source Lua: : pan_lord_setup(_G, 'Gloorx Vloq')
+TAGS: unrand
+: vault.run("shared.gloorx_vloq")
+SUBST:      X : xx.
+SUBST:      V : x.
+# Source Lua: : if crawl.coinflip() then
+SUBST:      C : c, d : c
+# Source Lua: : else
+SUBST:      C : ., d : +
+# Source Lua: : end
+TILE:       c = dngn_stone_wall_darkgray
+MONS:       patrolling Gloorx Vloq
+MONS:       executioner, curse skull, shadow demon
+MONS:       shadow wraith, demonic crawler
+KMONS:      O = demonic crawler
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Gloorx Vloq')
+# Source Lua: }}
+: vault.run("shared.gloorx_vloq_epilogue")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x.5..........................5.xx
+x5x.V.x.x.V.x.x.V.x.x.V.x.x.V.5xx
+x..x.x.V.x.x.V.x2x.V.x.x.V.x2V.xx
+x.V.........................x..xx
+x..x.........................x.xx
+x.x....ccccccccccccccccccc..V..xx
+x..V...cxxxxxxxxxxxxxxxxxc...x.xx
+x.x....cxxxxxxxxxxxxxx...c..x..xx
+x..x...cxxxxxxxxxxxxx3.X.c...V.xx
+x.V....cxxxxxxxxxxx......c..x..xx
+x..x...cxxxxxxxx.....X.X.c...x.xx
+x.x..cccxxxx.............c..V..xx
+x...4c6+.2.........X.X.X.cc..x.xx
+....cc6c.................+4.x..xx
+@...cO6c1....2...X.X.X.X.dC..V.xx
+....cc6c.................+4.x..xx
+x...4c6+.2.........X.X.X.cc..x.xx
+x.x..cccxxxx.............c..V..xx
+x..x...cxxxxxxxx.....X.X.c...x.xx
+x.V....cxxxxxxxxxxx......c..x..xx
+x..x...cxxxxxxxxxxxxx3.X.c...V.xx
+x.x....cxxxxxxxxxxxxxx...c..x..xx
+x..V...cxxxxxxxxxxxxxxxxxc...x.xx
+x.x....ccccccccccccccccccc..V..xx
+x..x.........................x.xx
+x.V.........................x..xx
+x..x.x.V.x.x.V.x2x.V.x.x.V.x2V.xx
+x5x.V.x.x.V.x.x.V.x.x.V.x.x.V.5xx
+x.5..........................5.xx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,28 @@
+# nicolae_pan_glass_arcs is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_glass_arcs
+DEPTH: Pan
+# Source Lua: : pan_demonic_rune(_G, 'P', true)
+: vault.run("shared.rune_p_lord")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C<')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc_stair")
+MAP
+     ccccc
+  ccccccccccc
+  ...ccccc...
+  n.A..c..A.n
+ ..nn..<..nn..
+ ...nn...nn...
+ @A.nn.P.nn.A@
+ ...nn...nn...
+ ..nn..C..nn..
+  n.A..c..A.n
+  ...ccccc...
+  ccccccccccc
+     ccccc
+ENDMAP
+
+###################################

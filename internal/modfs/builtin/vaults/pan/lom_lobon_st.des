@@ -1,0 +1,67 @@
+# lom_lobon_st is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:      lom_lobon_st
+DEPTH: Pan
+TAGS:      lom_lobon no_pool_fixup uniq_lom_lobon
+ORIENT:    northwest
+# Source Lua: : pan_lord_setup(_G, 'Lom Lobon')
+TAGS: unrand
+: vault.run("shared.lom_lobon")
+MONS:      patrolling Lom Lobon
+MONS:      blizzard demon, green death, wizard, draconian annihilator
+MONS:      sixfirhy
+SUBST:     0 = 23444445566
+NSUBST:    Q = 1:O / *:4
+NSUBST:    B = 1:. / *:b
+TILE:      v = dngn_metal_wall_blue
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Lom Lobon')
+# Source Lua: }}
+: vault.run("shared.lom_lobon_epilogue")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxwxxwwwwwwwxxxxxxxwwwwwwwwwxxxxxxxxxxxx
+xxxxxxxxwxwwwwbbbbbbbwwxxwwwbbbbbbbwwwxxxxxxxxxxx
+xxxxxxxwwwwwbbbb...bbbbwwwbbbb...bbbbwwwxxwxxxxxx
+xxxxwxxwwwwbb....0....bbwbb....0....bbwwwwwwxxxxx
+xxxwwwwwwwbb...........bbb...........bbwwwwwwxxxx
+xxxwwwwwwbb...wwwwwww.......wwwwwww...bbwwwwxxxxx
+xxxxwwwwbb...wwwwwwwww.....wwwwwwwww...bbwwwwxxxx
+xxwwwwwbb...wwbbbbbbbww...wwbbbbbbbww...bbwwwwxxx
+xxxwwwbb...wwbbwwwwwbbw...wbbwwwwwbbww...bbwwwxxx
+xxxwwbb...wwbbwwwwwwwbb...bbwwwwwwwbbww...bbwwwxx
+xxwwbb...wwbbwwvvvwwwwbbBbbwwwwvvvwwbbww...bbwxxx
+xwwwbb..wwbbwwvv.vvwwwwb.bwwwwvv.vvwwbbww..bbwwxx
+xxwbb...wwbwwwv.Q.vwwwwb.bwwwwv.Q.vwwwbww...bbwwx
+xxwbb.0.wwbwwwvv.+vwwwwb.bwwwwv+.vvwwwbww.0.bbwwx
+xwwbb...wwbwwwwvvv.wwwbb.bbwww.vvvwwwwbww...bbwxx
+xxwwbb..wwbbwwwwwww.wbb...bbw.wwwwwwwbbww..bbwxxx
+xxwwbb...wwbbwwwwwww.........wwwwwwwbbww...bbwxxx
+xwwwwbb...wwbbwwwwwb.........bwwwwwbbww...bbwwxxx
+xxxwwwbb...wwbbwwwbb.........bbwwwbbww...bbwwxxxx
+xxxxwwwbb.....bbbbb...........bbbbb.....bbwwwwxxx
+xxxwwwwwb.....B.........1.........B.....bwwwwwxxx
+xxxwwwwbb.....bbbbb...........bbbbb.....bbwwwwwxx
+xxwwwwbb...wwbbwwwbb.........bbwwwbbww...bbwwwxxx
+xwwwwbb...wwbbwwwwwb.........bwwwwwbbww...bbwwwxx
+xxwwbb...wwbbwwwwwww.........wwwwwwwbbww...bbwwxx
+xxwwbb..wwbbwwwwwww.wbb...bbw.wwwwwwwbbww..bbwwxx
+xwwbb...wwbwwwwvvv.wwwbb.bbwww.vvvwwwwbww...bbwwx
+xwwbb.0.wwbwwwvv.+vwwwwb.bwwwwv+.vvwwwbww.0.bbwxx
+xxwbb...wwbwwwv.Q.vwwwwb.bwwwwv.Q.vwwwbww...bbwwx
+xxxwbb..wwbbwwvv.vvwwwwb.bwwwwvv.vvwwbbww..bbwwxx
+xxwwbb...wwbbwwvvvwwwwbbBbbwwwwvvvwwbbww...bbwwxx
+xxxxwbb...wwbbwwwwwwwbb...bbwwwwwwwbbww...bbwwwxx
+xxxxwwbb...wwbbwwwwwbbw...wbbwwwwwbbww...bbwwwxxx
+xxxxxwwbb...wwbbbbbbbww...wwbbbbbbbww...bbwwwwxxx
+xxxxwwwwbb...wwwwwwwww.....wwwwwwwww.......wwwxxx
+xxxwwwwwwbb...wwwwwww.......wwwwwww...b.....wwwxx
+xxxxwwwwwwbb...........bbb...........bb.......wxx
+xxxxxxwwwwwbb....0....bbwbb....0....bbw....6....x
+xxxxxxwxwwwwbbbb...bbbbwwwbbbb...bbbbwww......6..
+xxxxxxxxxwwwwwbbbbbbbwwwwwwwbbbbbbbwwwwww.6......
+xxxxxxxxxwxwwwwwwwwwwwwwxxxwwwwwwwwwwxxxw........
+xxxxxxxxxxxxxxxxwwxxxxxxxxxxxxxxwwxwxxxxxx.......
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx..@..
+ENDMAP

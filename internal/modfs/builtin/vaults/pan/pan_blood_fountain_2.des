@@ -1,0 +1,21 @@
+# pan_blood_fountain_2 is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   pan_blood_fountain_2
+DEPTH: Pan
+TAGS:   extra allow_dup transparent
+CHANCE: 5%
+SUBST:  Y = YYV
+SUBST:  ' = '..
+SUBST:  . = " / .:80
+KPROP:  '" = bloody
+SUBST:  '=. , "=.
+MAP
+ @.....
+ '''.'''
+.'Y'.'Y'.
+.'''''''.
+ ..'Y'..
+  .'''.
+   ...
+ENDMAP

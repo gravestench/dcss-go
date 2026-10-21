@@ -1,0 +1,40 @@
+# grunt_pan_frozen_over is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   grunt_pan_frozen_over
+DEPTH: Pan
+TAGS:   pan_fixed_rune_frozen pan_fixed_lure_frozen
+TAGS:   no_pool_fixup no_monster_gen transparent
+ORIENT: float
+MONS:   blizzard demon, demonspawn black sun
+MONS:   juggernaut simulacrum, ice devil
+KMONS:  56 = ice statue
+KMONS:  P = pandemonium lord
+# Source Lua: : if demonic_rune_vault_is_decoy() then
+# Source conditional: KITEM:  O = superb_item / demonic rune of zot mimic
+# Source Lua: : else
+# Source conditional: KITEM:  O = demonic rune of zot
+# Source Lua: epilogue{{
+# Source Lua: if not you.have_rune("demonic") then
+# Source Lua:   pan_declare_demonic_rune()
+# Source Lua: end
+# Source Lua: }}
+# Source Lua: : end
+: vault.run("shared.fixed_rune_or_lure")
+: vault.run("shared.fixed_rune_epilogue")
+KFEAT: 5 = W
+KFEAT: 6 = w
+KFEAT: { = {
+SUBST: A : wWW., B : wWW., C : WW., D : WW.
+MAP
+ccccccccccccccccccc
+.AwcwA1*1O1*1AwcwA.
+4AwcwB%12P21%BwcwA4
+.AwccwB%1.1%BwccwA.
+ .BwccwA%1%AwccwB.
+ .Bwwcc65556ccwwB.
+  3CCwDDwwwDDwCC3
+   ..CwwwwwwwC.
+     ..DDDDD..
+       .4.4.
+ENDMAP

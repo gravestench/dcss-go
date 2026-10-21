@@ -1,0 +1,22 @@
+# serial_pan_draining_one is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    serial_pan_draining_one
+DEPTH: Pan
+MONS:    ghost moth, any demon
+SHUFFLE: CDE
+SUBST:   C : vv..., DE = .
+KMASK:   1 = opaque
+# Source Lua: : serial_pan_setup(_G, "boxes")
+TAGS: serial_pan_boxes unrand transparent allow_dup no_dump
+: vault.run("shared.serial_grate")
+MAP
+  .D..EE
+  .D..EE
+...D.2..
+..mmm...
+CCm1mDDD
+..mmm...
+.2.C..
+...C..
+ENDMAP

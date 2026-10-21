@@ -1,0 +1,28 @@
+# rand_demon_8 is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   rand_demon_8
+DEPTH: Pan
+MONS:   pandemonium lord
+# Source Lua: : pan_demonic_rune(_G, 'P')
+: vault.run("shared.rune_p")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc")
+MAP
+............
+....xxxxxxx.
+..xxx....1x.
+.xx..C..P.x.
+.x.....(..x.
+.xx.......x.
+..xxAA..C.x.
+....AA...xx.
+.....x...x..
+..G..xx.xx..
+......xxx...
+............
+ENDMAP
+
+###################################

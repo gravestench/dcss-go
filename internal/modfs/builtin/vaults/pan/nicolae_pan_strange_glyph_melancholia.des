@@ -1,0 +1,17 @@
+# nicolae_pan_strange_glyph_melancholia is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_strange_glyph_melancholia
+DEPTH: Pan
+TAGS: unrand sub_strange_glyph allow_dup
+SHUFFLE: pq, rs, tu, vw, yz
+SUBST: prtvy = x, qsuwz = .
+MAP
+txx.xxv
+u..x..w
+..yzy..
+x..x..x
+xpqxrsx
+xqpxsrx
+x..x..x
+ENDMAP

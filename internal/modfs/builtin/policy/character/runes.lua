@@ -65,7 +65,7 @@ function runes.count(ctx, player)
     return count
 end
 
--- Ignacio's source chance uses only the four Pan runes, not the total
+-- Ignacio's source chance uses only the five Pan runes, not the total
 -- number collected across Dungeon Crawl's other branches.
 function runes.pan_count(ctx, player)
     local count = 0

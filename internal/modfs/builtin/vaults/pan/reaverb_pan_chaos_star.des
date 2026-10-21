@@ -1,0 +1,29 @@
+# reaverb_pan_chaos_star is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   reaverb_pan_chaos_star
+DEPTH: Pan
+TAGS:   extra decor transparent
+MAP
+        ...
+ ....  ..x..  ....
+ .xx.  .x.x.  .xx.
+ .x... ..x.. ...x.
+ ...x.. .x. ..x...
+   ..x...x...x..
+    ..x.....x..
+ ... ....x.... ...
+..x.....xxx.....x..
+.x.xxx.xxxxx.xxx.x.
+..x.....xxx.....x..
+ ... ....x.... ...
+    ..x.....x..
+   ..x...x...x..
+ ...x.. .x....x...
+ .x... ..x.. ...x.
+ .xx.  .x.x.  .xx.
+ ....  ..x..  ....
+        ...
+ENDMAP
+
+###################################

@@ -1,0 +1,17 @@
+# nicolae_pan_strange_glyph_acedia is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_strange_glyph_acedia
+DEPTH: Pan
+TAGS: unrand sub_strange_glyph allow_dup
+SHUFFLE: abcde
+SUBST: abcd = x, e : x.
+MAP
+.x..a.b
+x.x.a.b
+x.x.a.b
+.xxxxxx
+..c.d.e
+..c.d.e
+..c.d.e
+ENDMAP

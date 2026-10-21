@@ -1,0 +1,21 @@
+# serial_pan_draining_three is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    serial_pan_draining_three
+DEPTH: Pan
+WEIGHT:  4
+MONS:    ghost moth, any demon
+SUBST:   - : +.
+# Source Lua: : serial_pan_setup(_G, "boxes")
+TAGS: serial_pan_boxes unrand transparent allow_dup no_dump
+: vault.run("shared.serial_grate")
+MAP
+.mmm+m
+.m1-2+
+.m-m-m
+.+2-1m
+.m+mmm
+......
+ENDMAP
+
+###################################

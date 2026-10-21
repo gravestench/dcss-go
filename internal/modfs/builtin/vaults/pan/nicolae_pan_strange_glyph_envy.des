@@ -1,0 +1,17 @@
+# nicolae_pan_strange_glyph_envy is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_strange_glyph_envy
+DEPTH: Pan
+TAGS: unrand sub_strange_glyph allow_dup
+SHUFFLE: ab, cd, ef, gh
+SUBST: ac = ., bdeg = x, fhX = .x
+MAP
+exX.Xxg
+f.x.x.h
+.cd.dc.
+.x...x.
+x.....x
+x..a..x
+.xxbxx.
+ENDMAP

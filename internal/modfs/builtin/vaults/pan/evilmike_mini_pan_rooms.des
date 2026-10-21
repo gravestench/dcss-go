@@ -1,0 +1,34 @@
+# evilmike_mini_pan_rooms is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    evilmike_mini_pan_rooms
+DEPTH: Pan
+WEIGHT:  3
+SUBST:   + : +.
+SHUFFLE: 123(P
+KITEM:   | = |
+KFEAT:   | = (
+SUBST:   123 = A, 4 = BC, 5 = B
+# Source Lua: : pan_demonic_rune(_G, 'P', true)
+: vault.run("shared.rune_p_lord")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc")
+MAP
+xxxxxxxxxxxxxx
+xx5..xxxxx..4x
+xx.|..+.+..P.x
+xx4..xx.xx..5x
+xxxxxxx.xxxxxx
+......x.xx..4x
+@.....+.+..3.x
+......x.xx..5x
+xxxxxxx.xxxxxx
+xx4..xx.xx..5x
+xx.1..+.+..2.x
+xx5..xxxxx..4x
+xxxxxxxxxxxxxx
+ENDMAP
+
+###################################

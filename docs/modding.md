@@ -2933,6 +2933,7 @@ second system just to make the source modifiers work.
 | `api:roll_dice(count, sides)` | Sum of `count` independent dice with `sides` faces. |
 | `api:subset(values, count)` | `count` array elements selected without replacement. |
 | `api:branch_id()`, `api:depth()` | Captured branch ID and local depth, when supplied. |
+| `api:pan_rune_count()` | Saved count of the five Pan runes; Pan region generation must supply it. |
 | `api:absolute_depth()` | Captured absolute depth, or local depth if supplied. |
 | `api:depth_fraction()` | Local depth divided by branch bottom; requires both facts. |
 | `api:map_tag()` | Captured placement tag, when supplied. |
@@ -3013,11 +3014,41 @@ Pan unique veto hooks can also call `api:unique_seen(monster_id)`,
 `api:pan_unique_state(monster_id)`,
 `api:set_pan_unique_state(monster_id, decision)`, and `api:roll(bound)`.
 The first two read saved player components. `pan_rune_count` counts the
-four Pan runes, and Ignacio's decision is stored once across later levels.
+five Pan runes, and Ignacio's decision is stored once across later levels.
 Import rune item IDs from `constants.runes` and decision values from
 `constants.pan_unique_decision`; do not retype their strings in a hook.
 Rune pickup removes its floor entity and records its ID in
 `character.runes` for save/restore and future branch checks.
+
+### Pandemonium map files
+
+The 141 active source Pan definitions are individual committed files under
+`vaults/pan_entry/` and `vaults/pan/`. They retain their source `MAP` rows.
+The one source-tagged `removed` controller is omitted because its intended
+double-vault guarantee did not work. `pan_mini_dummy_balancer.des` is an
+active weighted placeholder, so it belongs in the catalog but has no
+traversable map to place. A mod can add another Pan map as one `.des` file
+in the appropriate family; a same-path file in a later VFS layer replaces
+the built-in definition.
+
+Shared source script behavior lives in
+`policy/generation/vaults/pan/shared.lua`; an individual map's behavior
+lives beside it in a Lua module named for that map. A line such as
+`: vault.run("shared.rune_p_lord")` calls the shared method at that point
+among DES directives. The source script is retained in nearby comments
+for explanation, while only the named hook executes. A Pan hook may read
+`api:has_rune(rune_item_id)` and `api:pan_rune_count()` only when the Pan
+generator supplies saved player rune facts. The count includes the demonic
+rune and the four named lord runes. The five fixed rune/lure maps also read
+`api:map_tag()`; their controller request tag decides whether O contains
+the real demonic rune or a decoy. Do not infer that choice from file order.
+
+Generation hooks can attach an `ENTRY_MESSAGE` record for a lord realm or
+rune site. The record is level data, so a future entry or a restored game
+does not rerun map generation just to display a message. Pigsty's source
+monster-death script instead becomes two typed marker records and a live
+Lua death hook: its actor's saved vault origin locates the swineherd, and
+the gate marker locates the grate after rotation.
 
 Most named monsters keep a claimed ID for the whole run, including after
 death. Boris and Natasha are source exceptions. Boris's death records a

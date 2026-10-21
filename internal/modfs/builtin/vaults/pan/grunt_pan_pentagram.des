@@ -1,0 +1,32 @@
+# grunt_pan_pentagram is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    grunt_pan_pentagram
+DEPTH: Pan
+TAGS:    no_trap_gen
+# Source Lua: : pan_demonic_rune(_G, 'P', true)
+: vault.run("shared.rune_p_lord")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc")
+MAP
+    ...........
+  ...cccc+cccc...
+ ..ccc.......ccc..
+ .cc.cc..B..cc.cc.
+..c...+cc.cc+...c..
+.c+...c.ccc.c...+c.
+.c..B.cCcccCc.B..c.
+.c....cc+.+cc....c.
+.c..cccc.P.cccc..c.
+.c.cc.C+.(.+C.cc.c.
+.cc+ccccc+ccccc+cc.
+.c......cCc......c.
+.cc..B..c.c..B..cc.
+..cc....c+c....cc..
+ ..+c....c....c+..
+  ..ccc..c..ccc..
+   ...ccccccc...
+     .........
+ENDMAP

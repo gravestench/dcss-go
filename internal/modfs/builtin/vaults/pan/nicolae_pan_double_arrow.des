@@ -1,0 +1,44 @@
+# nicolae_pan_double_arrow is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_double_arrow
+DEPTH: Pan
+# Source Lua: : pan_demonic_rune(_G, 'P', true)
+: vault.run("shared.rune_p_lord")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C<')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc_stair")
+MAP
+       c
+      ccc
+     ccxcc
+    ccxxxcc
+   ccxxxxxcc
+  ccxxx.xxxcc
+ ccxxx...xxxcc
+ccxxx.....xxxcc
+ xxx..B.B..xxx
+  x.........x
+  .B.x...x.B.
+ ...xx.<.xx...
+...xxx...xxx...
+..xxxx...xxxx..
+@xxxxx.P.xxxxx@
+..xxxx...xxxx..
+...xxx...xxx...
+ ...xx.C.xx...
+  .B.x...x.B.
+  x.........x
+ xxx..B.B..xxx
+ccxxx.....xxxcc
+ ccxxx...xxxcc
+  ccxxx.xxxcc
+   ccxxxxxcc
+    ccxxxcc
+     ccxcc
+      ccc
+       c
+ENDMAP
+
+###################################

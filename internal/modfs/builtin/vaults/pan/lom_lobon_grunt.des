@@ -1,0 +1,64 @@
+# lom_lobon_grunt is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    lom_lobon_grunt
+DEPTH: Pan
+TAGS:    lom_lobon no_pool_fixup uniq_lom_lobon
+ORIENT:  north
+# Source Lua: : pan_lord_setup(_G, 'Lom Lobon')
+TAGS: unrand
+: vault.run("shared.lom_lobon")
+MONS: patrolling Lom Lobon
+MONS: draconian annihilator / deep elf annihilator / \
+      wizard w:20 / rakshasa w:20 / glowing orange brain / \
+      blizzard demon / green death / titan w:5 / \
+      spriggan air mage w:5 / lich w:5
+SUBST:   W = ww.
+SUBST:   - = ..w
+# Source Lua: epilogue{{
+# Source Lua:   pan_lord_epilogue('Lom Lobon')
+# Source Lua: }}
+: vault.run("shared.lom_lobon_epilogue")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxwwwwwwwwwwwxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxwwwwwwwwwwwwwwwwwxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxwwwwwwbbbbbbbbbwwwwwwxxxxxxxxwwwwwxxxxxxxxxxxxx
+xxxxxxxxxwwwwbbbbwwwwwwwbbbbwwwwwwwwwwwwwwwwwwwxxxxxxxxxx
+xxxxxxxxwwwbbbwwwwWWWWWWwwwbbbwwwwwwwwwWWWwwwwwwxxxxxxxxx
+xxxxxxxwwwbbwwwwWW------WWWwwbbwwwwwwwW---Wwwwwwwwwxxxxxx
+xxxxxxwwwbbwwwWW--..2...---WWwbbwwwwwW-$$$-Wwwwwwwwwwxxxx
+xxxxxwwwbbwwwW--...........--WwbbwwwwW-.U.-Wwwwwwwwwwxxxx
+xxxxwwwbbwwwW-...------......-WwbbwwwW-2.2-Wwwwwwwwwwwxxx
+xxxwwwbbwwwW-..--WWWWWW----.2.-WwbbwwwW---Wwwwwwwwwwwwwxx
+xxxwwbbwwwW-..-WWwwwwwwWWWW--..-WwbbwwwWWWwwwwwwwwwwwwwwx
+xxwwwbwwwbb...bbwwwwwwwwwwwWW-..-WwbwwwwwwwwWWWWwwwwwwwwx
+xxwwbbwbbb..2..bbbwwwwwwwwwwW-..-WwbbwwwwwWW----WWwwwwwwx
+xxwwbwbb.........bbwwwwwwwwwwW-..-WwbwwwwW--.2.2--Wwwwwwx
+xwwwbbb...........bbwwwwwwwwwW-..-WwbwwwwW-.......-Wwwwwx
+xwwbbb.............bwwwwwwwwwW-..-WwbbwwwW-...U....-Wwwwx
+xwwbbbbb...........bbwwwWWWwwwW-2.-WwwwwW-...2.2...-Wwwwx
+xwwbb..bb...........bwwW---WwwW-...-WWWW-.2..---....-Wwwx
+xwwbb...b...........bwW-$.2-WwW-....----....-WWW-...-Wwwx
+xwwbbO2.+.2...1...2.bwW-$U.-WwW-.U.2.......-WwwwW-...-Wwx
+xwwbb...b...........bwW-$.2-WwW-....-------WwwwwwW-2.-Wwx
+xwwbb..bb...........bwwW---WwwW-...-WWWWWWWwwwwwwW-..-Wwx
+xwwbbbbb...........bbwwwWWWwwwW-2.-WwwwwwwwwwwwwwW-..-Wwx
+xwwbbb.............bwwwwwwwwwW-..-WwbbwwxxxxxxwwwW-..-Wwx
+xwwwbbb...........bbwwwwwwwwwW-..-WwbwwwxxxxxxxwwW-.2-Wwx
+xxwwbwbb.........bbwwwwwwwwwwW-..-WwbwwxxxxxxxxxwW-..-Wwx
+xxwwbbwbbb..2..bbbwwwwwwwwwwW-..-WwbbwwxxxxxxxxxwW-..-Wwx
+xxwwwbwwwbb...bbwwwwwwwwwwwWW-..-WwbwwwxxxxxxxxxW-...-Wxx
+xxxwwbbwwwW-..-WWwwwwwwWWWW--..-WwbbwwxxxxxxxxxW-.2.-Wxxx
+xxxwwwbbwwwW-..--WWWWWW----.2.-WwbbwwwxxxxxxxxxW-...-Wxxx
+xxxxwwwbbwwwW-...------......-WwbbwwwxxxxxxxxxW-....-Wxxx
+xxxxxwwwbbwwwW--...........--WwbbwwwxxxxxxxxxW-....-Wxxxx
+xxxxxxwwwbbwwwWW--..2...---WWwbbwwwxxxxxxxxxxW-...-Wxxxxx
+xxxxxxxwwwbbwwwwWW------WWWwwbbwwwxxxxxxxxxxxW-...-Wxxxxx
+xxxxxxxxwwwbbbwwwwWWWWWWwwwbbbwwwxxxxxxxxxxxW-.2.-Wxxxxxx
+xxxxxxxxxwwwwbbbbwwwwwwwbbbbwwwwxxxxxxxxxxxxW-...-Wxxxxxx
+xxxxxxxxxxwwwwwwbbbbbbbbbwwwwwwxxxxxxxxxxxxxW-..-Wxxxxxxx
+xxxxxxxxxxxxwwwwwwwwwwwwwwwwwxxxxxxxxxxxxxxxW-..-Wxxxxxxx
+xxxxxxxxxxxxxxxwwwwwwwwwwwxxxxxxxxxxxxxxxxxxW-..-Wxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-.@@.-xxxxxxx
+ENDMAP

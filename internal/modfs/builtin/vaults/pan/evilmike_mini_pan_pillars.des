@@ -1,0 +1,34 @@
+# evilmike_mini_pan_pillars is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   evilmike_mini_pan_pillars
+DEPTH: Pan
+SUBST:  X : x.., Y : x+, Z : cx
+NSUBST: | = 1:( / *:|
+KITEM:  ( = |
+KFEAT:  ( = (
+# Source Lua: : pan_demonic_rune(_G, 'P')
+: vault.run("shared.rune_p")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C<')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc_stair")
+MAP
+xxxxxxxxxxxxxx.@
+xc|.........|x..
+xc.Z.Z.Z.Z.Z.x..
+xc....B.B....x..
+xc.Z.A...A.Z.x..
+xc..B.CXC.B..Y..
+xcPZ..X1X..Z.+..
+xc..B.CXC.B..Y..
+xc.Z.A...A.Z.x..
+xc....B.B....x..
+xc.Z.Z.Z.Z.Z.x..
+xc|.........|x..
+xxxxxxxxxxxxxx.@
+ENDMAP
+
+###################################
+
+# I'm sorry

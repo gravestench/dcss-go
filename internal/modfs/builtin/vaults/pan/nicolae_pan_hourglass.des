@@ -1,0 +1,38 @@
+# nicolae_pan_hourglass is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_hourglass
+DEPTH: Pan
+NSUBST: P = 1:P / *:(
+MONS: common demon, greater demon
+# Source Lua: : pan_demonic_rune(_G, 'P', true)
+: vault.run("shared.rune_p_lord")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc")
+MAP
+   xxxxxxxxx
+  xm...P...mx
+ xm.C.....C.mx
+ xm...xxx...mx
+ xm..xxxxx..mx
+ xm..BxxxB..mx
+  xm.......mx
+   xm..C..mx
+    xm.B.mx
+    ..mBm..
+    @BBmBB@
+    ..mBm..
+    xm.B.mx
+   xm..C..mx
+  xm.......mx
+ xm..BxxxB..mx
+ xm..xxxxx..mx
+ xm...xxx...mx
+ xm.C.....C.mx
+  xm...P...mx
+   xxxxxxxxx
+ENDMAP
+
+###################################

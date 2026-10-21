@@ -3,6 +3,7 @@
 local items = require("ids.items")
 
 return {
+    DEMONIC = items.RUNE_DEMONIC,
     FIERY = items.RUNE_CEREBOV,
     DARK = items.RUNE_GLOORX_VLOQ,
     GLOWING = items.RUNE_MNOLEG,

@@ -1,0 +1,18 @@
+# pan_surprise is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   pan_surprise
+DEPTH: Pan
+TAGS:   extra
+KMONS:  1 = executioner
+# It may be a surprise for the executioner as well if the player has high
+# stealth -- an alarm trap would be found by most chars who dare Pan and thus
+# spoil the fun.
+MAP
+xxxx
+xx.x
+x1x@
+xxx
+ENDMAP
+
+##################################

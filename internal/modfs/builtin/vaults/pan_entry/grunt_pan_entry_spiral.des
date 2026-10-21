@@ -1,0 +1,32 @@
+# grunt_pan_entry_spiral is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:  grunt_pan_entry_spiral
+DEPTH: Depths
+TAGS:  transparent
+SUBST: d = 112
+# Source Lua: : pan_entry_feature(_G, 'e')
+# The source entry setup declares these selection facts before placement.
+TAGS: extra luniq_enter_pan chance_enter_pan
+CHANCE: 25% (Depths), 100% (Depths:2)
+KFEAT: e = enter_pandemonium
+# Source Lua: : pan_entry_vault_contents(_G, 'e')
+: vault.run("shared.threat_e")
+# The source always applies these guards and population slots.
+TAGS: patrolling no_monster_gen nolayout_encompass
+MONS: common demon
+MONS: common demon / nothing
+MAP
+............
+.x+xxxxxxxx.
+.x.xx2.2..+.
+.x.x.xxxxxx.
+.x2x1x.1.xx.
+.x.x.dexx2x.
+.x2xxfg.x.x.
+.xx.1.x1x2x.
+.xxxxxx.x.x.
+.+..2.2xx.x.
+.xxxxxxxx+x.
+............
+ENDMAP

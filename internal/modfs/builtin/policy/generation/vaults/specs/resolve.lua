@@ -30,6 +30,7 @@ local names_by_category = {}
 local random_monster_names = {
     [monster_requests.ANY_DEMON] = true,
     [monster_requests.COMMON_DEMON] = true,
+    [monster_requests.GREATER_DEMON] = true,
     [monster_requests.ANY_COMMON_DEMON] = true,
     [monster_requests.RANDOM] = true,
     ["0"] = true,

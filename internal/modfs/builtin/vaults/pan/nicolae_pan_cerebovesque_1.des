@@ -1,0 +1,25 @@
+# nicolae_pan_cerebovesque_1 is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: nicolae_pan_cerebovesque_1
+DEPTH: Pan
+TAGS: transparent extra decor allow_dup luniq_decor_lord
+SUBST: A : .lv, B : .lv, C : .lv
+TILE: v = dngn_metal_wall_brown
+MAP
+...............
+.vvvvv...vvvvv.
+.vAAAv...vBBBv.
+.vAAAvv+vvBBBv.
+.vAAA.....BBBv.
+.vvv.......vvv.
+...v..CCC..v...
+...+..CCC..+...
+...v..CCC..v...
+.vvv.......vvv.
+.vBBB.....AAAv.
+.vBBBvv+vvAAAv.
+.vBBBv...vAAAv.
+.vvvvv...vvvvv.
+...............
+ENDMAP

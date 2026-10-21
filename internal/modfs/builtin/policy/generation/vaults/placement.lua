@@ -70,11 +70,12 @@ local function protected_stair(builder, left, top, map_width, map_height)
 end
 
 -- Nonfloating vaults honor their side preference before random-fit attempts.
-local function preferred_origin(vault, map_width, map_height, random)
+local function preferred_origin(vault, map_width, map_height, random, options)
     -- An explicit PLACE layout is the source floor, even if its source
     -- orientation says north rather than encompass. The Hall of Zot uses
     -- all 80 columns while ordinary fixed vaults still need a margin.
-    local whole_level = vault.orientation == "encompass" or
+    local whole_level = (options and options.whole_level) or
+        vault.orientation == "encompass" or
         (vault.family == "layout" and #vault.places > 0)
     local maximum_width = whole_level and width or width - 4
     local maximum_height = whole_level and height or height - 4
@@ -88,20 +89,27 @@ local function preferred_origin(vault, map_width, map_height, random)
     local top = math.floor((height - map_height) / 2)
     local side = vault.orientation
 
+    -- Pan primary maps can span all 80 columns while retaining a north or
+    -- south source orientation. Such a map has no two-cell side margin.
+    local horizontal_margin = map_width <= width - 4 and 2 or 0
+    local vertical_margin = map_height <= height - 4 and 2 or 0
+
     if side:find("west", 1, true) then
-        left = 2
+        left = horizontal_margin
     elseif side:find("east", 1, true) then
-        left = width - map_width - 2
+        left = width - map_width - horizontal_margin
     elseif side == "float" then
-        left = 2 + random:roll(width - map_width - 3)
+        left = horizontal_margin + random:roll(
+            width - map_width - 2 * horizontal_margin + 1)
     end
 
     if side:find("north", 1, true) then
-        top = 2
+        top = vertical_margin
     elseif side:find("south", 1, true) then
-        top = height - map_height - 2
+        top = height - map_height - vertical_margin
     elseif side == "float" then
-        top = 2 + random:roll(height - map_height - 3)
+        top = vertical_margin + random:roll(
+            height - map_height - 2 * vertical_margin + 1)
     end
 
     return left, top
@@ -183,7 +191,8 @@ local function origin(vault, cells, map_width, map_height, builder, options)
         return chosen.x, chosen.y
     end
 
-    local left, top = preferred_origin(vault, map_width, map_height, builder)
+    local left, top = preferred_origin(vault, map_width, map_height,
+        builder, options)
 
     -- Use either the explicit protected set or the builder stair guard for a fit.
     local function conflict(x, y)
@@ -204,8 +213,8 @@ local function origin(vault, cells, map_width, map_height, builder, options)
     end
 
     for _ = 1, options and options.attempts or 32 do
-        left = 2 + builder:roll(width - map_width - 3)
-        top = 2 + builder:roll(height - map_height - 3)
+        left, top = preferred_origin(vault, map_width, map_height,
+            builder, options)
 
         if not conflict(left, top) then
             return left, top

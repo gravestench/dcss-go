@@ -1,0 +1,28 @@
+# grunt_pan_spiral is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:    grunt_pan_spiral
+DEPTH: Pan
+TAGS:    no_trap_gen
+KMONS:   d = pandemonium lord
+KFEAT:   d = (
+# Source Lua: : pan_demonic_rune(_G, 'g')
+: vault.run("shared.rune_g")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B', 'C')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_abc")
+MAP
+............
+.c+cccccccc.
+.c.ccB.B..+.
+.c.c.cccccc.
+.cBcCc.C.cc.
+.c.c.deccBc.
+.cBccfg.c.c.
+.cc.C.cCcBc.
+.cccccc.c.c.
+.+..B.Bcc.c.
+.cccccccc+c.
+............
+ENDMAP

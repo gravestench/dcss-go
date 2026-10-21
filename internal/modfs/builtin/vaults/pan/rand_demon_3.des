@@ -1,0 +1,28 @@
+# rand_demon_3 is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME:   rand_demon_3
+DEPTH: Pan
+NSUBST: A = 1:< / *:B
+# Source Lua: : pan_demonic_rune(_G, 'P', true)
+: vault.run("shared.rune_p_lord")
+# Source Lua: : pan_lord_vault_contents(_G, 'A', 'B<', 'C')
+TAGS: allow_dup
+ORIENT: float
+: vault.run("shared.lord_ab_stair_c")
+MAP
+............
+.x.x.xBx.x..
+..x.xBxBx.x.
+.x.x.xAx.x..
+..xBxAxAxBx.
+.xBxAxPxAxB.
+..xBxAxAxBx.
+.x.x.xAxBx..
+..x.xBxBx.x.
+.x.x.xBx.x..
+..x.x.x.x.x.
+............
+ENDMAP
+
+###################################

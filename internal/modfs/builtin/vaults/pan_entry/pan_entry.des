@@ -1,0 +1,18 @@
+# pan_entry is a Pandemonium map from pinned DCSS.
+# MAP rows and ordinary DES declarations remain source-authoritative.
+# Source: crawl-ref/source/dat/des/branches/pan.des.
+NAME: pan_entry
+DEPTH: Depths
+TAGS: allow_dup overwrite_floor_cell no_exits replace_portal transparent
+TAGS: fallback_enter_pan
+WEIGHT: 50
+# Source Lua: : pan_entry_feature(_G, 'O', true)
+# The source entry setup declares these selection facts before placement.
+TAGS: extra luniq_enter_pan chance_enter_pan
+CHANCE: 25% (Depths), 100% (Depths:2)
+KFEAT: O = enter_pandemonium
+MAP
+O
+ENDMAP
+
+# Other entries; these ones are derived from rand_demon Pan vaults.
