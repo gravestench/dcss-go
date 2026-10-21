@@ -185,7 +185,7 @@ end
 -- A hit can make a temporary web even when physical damage was zero. The
 -- web owner checks body size, immunity, current hold, and terrain.
 local function ensnare(ctx, hit)
-    if roll.melee(ctx, 3) ~= 0 then
+    if hit.player_moving or roll.melee(ctx, 3) ~= 0 then
         return false
     end
 

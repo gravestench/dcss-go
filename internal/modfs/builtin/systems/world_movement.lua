@@ -11,6 +11,7 @@ local acrobat = require("policy.jewellery.acrobat")
 local trap_held = require("policy.traps.held")
 local barbs = require("policy.combat.barbs")
 local roll = require("policy.combat.monster_roll")
+local opportunity = require("policy.combat.opportunity_attacks")
 
 -- Theory of operation: Movement first handles escape and occupied cells, then commits a legal destination.
 -- A failed constriction escape spends the movement action; a successful one costs the holder energy.
@@ -114,6 +115,19 @@ function system.update(ctx, actor, elapsed_aut)
         (not fastroot.escape(ctx, actor) or
             not vine_grip.escape(ctx, actor) or
             not escape_grasp(ctx, actor, intent)) then
+        return
+    end
+
+    -- Source opportunity strikes resolve while the player still occupies
+    -- the old cell. A lethal or displacing strike cancels the pending move.
+    if actor == ctx:player() and not opportunity.run(ctx, position, {
+        level_id = position.level_id,
+        x = x,
+        y = y,
+    }, elapsed_aut) then
+        intent.kind = intent_ids.WAIT
+        ctx:set(actor, component.INTENT, intent)
+
         return
     end
 

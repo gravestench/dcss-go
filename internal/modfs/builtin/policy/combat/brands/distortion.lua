@@ -40,19 +40,18 @@ end
 -- Example: distortion.apply(ctx, hit) makes one weighted melee draw, then
 -- chooses warp damage, banishment, blink, or no extra effect.
 function distortion.apply(ctx, hit)
-    -- attack.cc: 35 small, 25 large, 5 banish, 20 blink,
-    -- and 15 no effect. The player-moving exclusion belongs to a
-    -- simultaneous movement attack; these scheduled monster attacks
-    -- occur after movement has completed.
-    local choice = roll.melee(ctx, 100)
+    -- attack.cc: 35 small, 25 large, 5 banish, 20 blink, and 15 none.
+    -- During a departure strike, banish and blink have zero source weight
+    -- so the old movement destination cannot be applied to a new level.
+    local choice = roll.melee(ctx, hit.player_moving and 75 or 100)
 
     if choice < 35 then
         warp_damage(ctx, hit, true)
     elseif choice < 60 then
         warp_damage(ctx, hit, false)
-    elseif choice < 65 then
+    elseif choice < 65 and not hit.player_moving then
         abyss.banish(ctx, hit.defender)
-    elseif choice < 85 then
+    elseif choice < 85 and not hit.player_moving then
         blink(ctx, hit)
     end
 end

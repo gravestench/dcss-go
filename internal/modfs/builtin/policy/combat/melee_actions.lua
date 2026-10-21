@@ -341,7 +341,8 @@ end
 -- A monster attacking the player uses player defense and reaction phases.
 -- The monster-to-monster path below has different allegiance and summon
 -- handling, so it has a separate entry point.
-function actions.monster(ctx, attacker)
+function actions.monster(ctx, attacker, options)
+    local player_moving = options and options.player_moving or false
     local actor = ctx:get(attacker, "core.actor")
 
     if not actor then
@@ -430,7 +431,8 @@ function actions.monster(ctx, attacker)
     if outcome.kind == "hit" and brand_id and
         (health.current > 0 or brands.after_death(brand_id)) then
         brands.apply(ctx, brand_id, outcome.damage,
-            actor.kind_id, definition.name, health)
+            actor.kind_id, definition.name, health,
+            attacker, player_moving)
     end
 
     local flavour_hit
@@ -443,6 +445,7 @@ function actions.monster(ctx, attacker)
             defender = player,
             hit_dice = attack_input.hd,
             damage_done = dealt,
+            player_moving = player_moving,
         }
 
         attack_flavours.apply(ctx, attack.flavour_id, flavour_hit)
@@ -491,7 +494,9 @@ function actions.monster(ctx, attacker)
         end
     end
 
-    grab(ctx, attacker, definition, ctx:get(player, "core.health"))
+    if not player_moving then
+        grab(ctx, attacker, definition, ctx:get(player, "core.health"))
+    end
     player_reactions.after_attack(ctx, attacker, definition)
     trample.follow(ctx, flavour_hit)
 end

@@ -1643,6 +1643,15 @@ when the monster spawns and after each action. It places ordinary saved ECS
 clouds; do not add a separate timer or cloud list to the monster definition.
 The ring constants map the source enchantment names to cloud IDs in one place.
 
+`policy/combat/opportunity_attacks.lua` handles a player stepping away from
+an adjacent monster. It checks the monster's content attack, saved energy,
+statuses, allegiance, and visibility before drawing the one-in-three chance.
+The strike runs through ordinary monster melee while the player is still in
+the old cell. If you add a melee brand or flavour that moves either actor,
+read `hit.player_moving`: an opportunity strike must not trample, ensnare,
+constrict, banish, or blink the moving player. The policy refunds up to ten
+attack-energy points, leaving slow attacks with their extra cost.
+
 For a player spell, set `player_scope = scopes.BOOK` or
 `player_scope = scopes.INVOKED` in its definition and import
 `constants.spell_scopes` as `scopes` in that file. Put its resolver in a

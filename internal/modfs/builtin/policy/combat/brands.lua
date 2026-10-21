@@ -67,14 +67,16 @@ function brands.poison_bite(ctx, hit_dice, source_id)
 end
 
 -- Build one hit envelope so every monster brand sees the same attacker and defender state.
-function brands.apply(ctx, id, damage_done, source_id, attacker_name, health)
+function brands.apply(ctx, id, damage_done, source_id, attacker_name,
+    health, attacker, player_moving)
     local impact = {
         damage_done = damage_done,
         source_id = source_id,
         attacker_name = attacker_name,
         health = health,
-        attacker = ctx:actor(),
+        attacker = attacker or ctx:actor(),
         defender = ctx:player(),
+        player_moving = player_moving or false,
     }
 
     effect(id).apply(ctx, impact, brands)

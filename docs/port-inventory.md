@@ -487,8 +487,13 @@ Passwall-interruption checks. An authored Hellion Island Pan rune now has a
 live test through DES placement, pickup, two transits, restore, and exit.
 Pan lord Pain brands inspect the actor's rolled spell list for Necromancy
 instead of looking up the source's dynamic `MST_GHOST` as a static book.
-The opportunity-attack scheduler has not yet ported the source
-player-moving state that suppresses its trample. Generated
+Player movement now checks source-style opportunity attacks before leaving
+an adjacent hostile monster's reach. The Lua rule checks visibility,
+incapacitation, attack ability, effective speed, and possible action energy
+before its one-in-three roll. It refunds up to ten attack-energy points and
+passes `player_moving` through melee, suppressing trample, ensnare, constrict,
+and movement-disrupting distortion outcomes. Sanctuary and Wujian movement
+exceptions belong to their future religion and ability slices. Generated
 lords now save source-style names and source colour rolls; their
 names reach combat messages and both values reach the terminal entity view.
 Source `ETC_RANDOM` now redraws visible monsters and clouds with UI-only

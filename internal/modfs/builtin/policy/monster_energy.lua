@@ -160,19 +160,10 @@ local function speed_brand_cost(ctx, input, field, base_cost)
     return math.max(1, cost)
 end
 
--- Deduct the selected intent's cost after terrain, brand, and status modifiers.
-function energy.spend(ctx, input)
-    if input.points < energy.threshold then
-        -- The selected monster was ready before its action. Polymorph and
-        -- forced movement can reset its energy during that action; their
-        -- lower value is already the resulting delay.
-        if input.was_ready then
-            return { points = input.points }
-        end
-
-        error("monster lacks action energy")
-    end
-
+-- Read the same movement or attack cost for the ordinary scheduler and an
+-- opportunity strike. A monster with a slow attack keeps only the excess
+-- cost after Crawl's ten-point opportunity refund.
+function energy.cost(ctx, input)
     local field = costs[input.intent]
 
     if not field then
@@ -224,6 +215,24 @@ function energy.spend(ctx, input)
         ctx:entity(input.actor)) then
         cost = math.floor(cost * 3 / 2)
     end
+
+    return cost
+end
+
+-- Deduct the selected intent's cost after terrain, brand, and status modifiers.
+function energy.spend(ctx, input)
+    if input.points < energy.threshold then
+        -- The selected monster was ready before its action. Polymorph and
+        -- forced movement can reset its energy during that action; their
+        -- lower value is already the resulting delay.
+        if input.was_ready then
+            return { points = input.points }
+        end
+
+        error("monster lacks action energy")
+    end
+
+    local cost = energy.cost(ctx, input)
 
     return { points = input.points - cost, cost = cost }
 end
