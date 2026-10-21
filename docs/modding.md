@@ -1533,6 +1533,41 @@ with the player and god IDs. Mod systems can use those signals for divine
 abilities, passives, and gifts; the current port does not yet implement
 those downstream god systems or altar prayer commands.
 
+#### Worship transitions and per-god entry rules
+
+`policy/religion/worship.lua` owns `join(ctx, player, god_id, source)` and
+`renounce(ctx, player)`. Import `constants.religion_sources` for `ALTAR` or
+`ECUMENICAL`, and import god IDs from `constants.gods` when using a bundled
+god. A mod-added god supplies its ID in its own definition. The owner checks
+live eligibility, leaves the old god, sets the new starting piety, applies a
+first-god Monk bonus and good-god transfer, invokes named behavior, and
+increments the saved worship count. Renunciation runs the same leave path and
+records source `wrath_penance` on `religion.worship`. The later wrath system
+will consume that debt. The calling prayer command still owns confirmation
+and turn time; invoking `join` directly does not spend a turn.
+
+Each `content/gods/<name>.lua` definition declares `starting_piety` and
+`wrath_penance` as nonnegative integers. If a god has an exceptional entry
+rule, set `behavior_module` to a Lua module under
+`policy/religion/gods/<name>.lua`. That module may export `check` for
+eligibility, `prepare` for state needed before bonuses, `monk_bonus`,
+`join`, `ecumenical_bonus`, or `leave`. Export only the methods the god
+actually uses. The shared owner supplies 35 piety to a first-god Monk and
+20 more for an ecumenical altar unless that god provides the matching
+exception method. For example, `policy/religion/gods/ru.lua` schedules a
+saved sacrifice offer instead of pretending Ru earns ordinary piety;
+`gozag.lua` deducts the source service fee from the saved wallet when joining.
+
+The order matters: `prepare` runs after the new god is set; the Monk bonus
+and good-god transfer run next; `join` follows; then the ecumenical bonus is
+applied. A named `leave` runs after the shared owner has cleared current
+worship and recorded penance. `constants.religion_signals.LEFT` and `JOINED`
+announce that transition. God-specific state that must survive a save belongs
+in its own component schema. The bundled Ashenzari, Ru, Xom, and
+Yredelemnul components illustrate this. Their pending rewards remain saved
+until those god systems are ported; the current engine does not yet resolve
+all divine abilities, gifts, passives, and wrath effects.
+
 If an existing category's field is unclear, search for the field name in its
 consumer policy. That tells you whether it is display data, generation data,
 or a live rule input. For a new category owned wholly by a mod, use
