@@ -1,0 +1,16 @@
+# minmay orc temple a is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   minmay_orc_temple_a
+DEPTH:  Orc
+MONS:   orc, patrolling orc priest
+KFEAT:  _ = altar_beogh
+MAP
+ccccccc
+c..2..c
+c2._.2c
+c.....c
+ccc+ccc
+ I...I
+ .111.
+  .1.
+ENDMAP

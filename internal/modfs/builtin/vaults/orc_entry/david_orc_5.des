@@ -1,0 +1,37 @@
+# david orc 5 is an authored Dungeon gate to the Orcish Mines.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:    david_orc_5
+TAGS:    orc_entry
+ORIENT:  float
+KFEAT:   C = altar_beogh
+SHUFFLE: EFGH
+SUBST:   E=3
+SUBST:   F=1, G=1, H=1
+MONS:    orc priest / nothing
+# Source Lua: : if you.absdepth() >= 10 then
+# Source branch: MONS:    orc w:32 / w:7 orc warrior / w:1 orc knight
+# Source Lua: : elseif you.absdepth() >= 8 then
+# Source branch: MONS:    orc w:40 / orc warrior
+# Source Lua: : else
+# Source branch: MONS:    orc w:80 / orc warrior
+# Source Lua: : end
+: vault.run("choose_raiders")
+MONS:    orc priest
+# Source Lua: : if you.absdepth() >= 10 then
+# Source branch: MONS:    orc w:32 / w:7 orc warrior / w:1 orc knight
+# Source Lua: : else
+# Source branch: MONS:    orc w:32 / w:7 orc warrior
+# Source Lua: : end
+: vault.run("choose_escort")
+SUBST:   x : cxv
+KFEAT:   O = enter_orcish_mines
+MAP
+xxxxxxxxxxxxxxx
+x......O......x
+x......F......x
+x2..T.ECG.T..2x
+x2222..H..2222x
+x42222.I.22224x
+xxI+IxxxxxI+Ixx
+...@.......@...
+ENDMAP

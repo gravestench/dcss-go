@@ -1,0 +1,25 @@
+# nicolae orc pool cavern is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: nicolae_orc_pool_cavern
+TAGS: extra decor transparent
+DEPTH: Orc
+SUBST: W = ww., X = x:80 .:40 w
+MAP
+       xxx@@x
+    xxxxxx..xx
+   xxxxxxX..Xxx
+  xxxxxxX...Xxxx
+ xxxxXXX..Xxxxxx
+ xxxX.......Xxxxx
+xxxX..WWWW..Xxxxx
+xxxX..WwwW.Xxxxxx
+xxxX..WwwW.Xxxxxx
+xxxX..WWWW..Xxxx
+@.xX.........Xxx
+@......XX.....Xxx
+x.....XxxXX...Xxx
+xxxxXXxxxxxX....@
+ xxxxxxxxxxxX...@
+   xxxxxxxxxxxxxx
+      xxxxxxxxx
+ENDMAP

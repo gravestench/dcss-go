@@ -1,0 +1,30 @@
+# guppyfry orc lava fort is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:    guppyfry_orc_lava_fort
+TAGS:    no_item_gen no_monster_gen transparent
+DEPTH:   Orc
+KMONS:   1 = orc high priest / orc sorcerer
+KMONS:   2 = orc knight
+KMONS:   3 = orc warrior / orc ; arbalest . spear | hand axe | mace
+KMONS:   4 = orc priest / orc / nothing
+KMONS:   5 = orc wizard / nothing
+KMONS:   6 = ogre / two-headed ogre / troll / deep troll / ogre mage / nothing
+KMONS:   7 = warg
+KFEAT:   S = any shop
+SUBST:   ? = 3467
+SUBST:   - = S34.
+SHUFFLE: 352?
+MAP
+llllx..xllll
+llllx..xllll
+ll5lx..xl5ll
+lll5x..x5lll
+xxxx-??-xxxx
+....?12?....
+....?21?....
+xxxx-??-xxxx
+lll5x..x5lll
+ll5lx..xl5ll
+llllx..xllll
+llllx..xllll
+ENDMAP

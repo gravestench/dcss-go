@@ -1,0 +1,23 @@
+# nicolae orc damp corner is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: nicolae_orc_damp_corner
+TAGS: transparent decor extra
+DEPTH: Orc
+SUBST: E = 1X, ' = ...WW11, X = xx.
+KMONS: 1 = fungus / nothing w:3
+KFEAT: 1 = W / . w:20
+MAP
+  x@@xx
+  x..Xxxx
+ xxX...Xxxxxxxx
+ xxxXX...Xxxxxxxx
+xxxxxxXX...'EExxxx
+xxxxxxxxxX''''Exxxx
+xxxxxxxxxx'''''Exxx
+xxxxxxXXXX''''Exxx
+ xxxXX....''EExxx
+ xxX...XXxxxxxxx
+  x..Xxxxxxxx
+  x..Xxxxx
+   @@xx
+ENDMAP

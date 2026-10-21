@@ -1,0 +1,36 @@
+# minmay orc entry temple large is an authored Dungeon gate to the Orcish Mines.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   minmay_orc_entry_temple_large
+TAGS:   orc_entry
+WEIGHT: 1
+ORIENT: float
+MONS:   orc w:40 / orc warrior / orc wizard, patrolling orc priest
+SUBST:  " = 1.......
+SUBST:  ' = $.
+KFEAT:  _ = altar_beogh
+KFEAT:  O = enter_orcish_mines
+MAP
+ccccc   ccccc
+c'''c   c'''c
+c'''c   c'''c
+c'''c   c'''c
+cc+ccccccc+cc
+c"""""""""""c
+c"""""""""""c
+c"""""""""""c
+c"""I"""I"""c
+c"""""2"""""c
+c""""2_2""""c
+c"""""2"""""c
+c"""I"""I"""c
+c"""""""""""c
+ccc"""""""ccc
+ccc"""""""ccc
+cccccc+cccccc
+cccccI.Iccccc
+ccccI...Icccc
+cccI.....Iccc
+   .......
+   ...O...
+   .......
+ENDMAP

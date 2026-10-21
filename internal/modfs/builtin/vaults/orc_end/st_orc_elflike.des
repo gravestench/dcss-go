@@ -1,0 +1,30 @@
+# st orc elflike is an authored Orc:2 ending.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:    st_orc_elflike
+TAGS:    no_item_gen no_monster_gen
+PLACE:   Orc:$
+ORIENT:  float
+MONS:    orc high priest, orc sorcerer, orc knight
+MONS:    orc warrior, orc priest, orc wizard
+KFEAT:   S = any shop
+MAP
+xxxxxxxxxxxxxxxxxxxxxxx
+xcccccccccccccccccccccx
+xccccccS.......Sccccccx
+xccccS...cc.cc...Sccccx
+xccc...cc3...3cc...cccx
+xcc5.cc3...1...3cc.5ccx
+xcc5...............5ccx
+xcc..c2..1...1..2c..ccx
+xcc..cc2.......2cc..ccx
+xc....cc.......cc....cx
+xc.c6.....c.c.....6c.cx
+xc.cc6....c.c....6cc.cx
+xc..ccc444c.c444ccc..cx
+xcc..cccccc.cccccc..ccx
+xccc...cccc.cccc...cccx
+xccccc...........cccccx
+xcccccccccc.ccccccccccx
+xcccccccccc.ccccccccccx
+          .@.
+ENDMAP

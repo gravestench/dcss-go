@@ -49,7 +49,7 @@ end
 
 -- A new floor may still have pending shop records. Once populated, each
 -- authored shop entrance must have exactly one saved shop entity.
-local function authored_cells(input)
+local function authored_cells(ctx, input)
     local cells = {}
     local seen = {}
 
@@ -70,7 +70,30 @@ local function authored_cells(input)
                 seen[key] = true
 
                 if not record.pending then
-                    cells[key] = true
+                    local cell = ctx:cell(level.id, record.x, record.y)
+
+                    if cell == terrain.DNGN_ENTER_SHOP then
+                        cells[key] = true
+                    else
+                        local site = {
+                            path = record.arguments and record.arguments.path or
+                                "vaults/shop/" .. record.source_id .. ".des",
+                            vault_id = record.source_id,
+                            line = record.line,
+                        }
+                        local floor_allowed = false
+
+                        for _, alternative in ipairs(shop_spec.parse(
+                            record.identity, site)) do
+                            if not alternative.kind_id then
+                                floor_allowed = true
+                            end
+                        end
+
+                        if not floor_allowed or cell ~= terrain.DNGN_FLOOR then
+                            error("authored shop choice lost its floor cell " .. key)
+                        end
+                    end
                 end
             end
         end
@@ -82,7 +105,7 @@ end
 -- Saved shop entities must occupy distinct authored entrance cells with known kinds.
 local function validate_shops(ctx, input)
     local occupied = {}
-    local authored = authored_cells(input)
+    local authored = authored_cells(ctx, input)
     local generated = input.scenario_id == "generated-dungeon-basic-v1"
 
     for _, entity in ipairs(ctx:query({ component.SHOP })) do

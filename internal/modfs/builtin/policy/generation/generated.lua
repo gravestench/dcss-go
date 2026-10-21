@@ -12,6 +12,7 @@ local vault_placement = require("policy.generation.vaults.placement")
 local vault_connect = require("policy.generation.vaults.connect")
 local vault_glyphs = require("constants.vault_glyphs")
 local vault_effects = require("constants.vault_effects")
+local vault_features = require("constants.vault_features")
 local vault_rules = require("constants.vault_generation_rules")
 local vault_extra = require("policy.generation.vaults.extra")
 local branch_schedule = require("policy.generation.branch_schedule")
@@ -308,11 +309,13 @@ local function place_branch_entrances(ctx, builder, layout, protected,
     required, player, chosen, branch_id, depth, temple)
     local links = {}
     local maps = {}
+    local provisional_links = {}
     local entries = branch_schedule.entries(chosen, branch_id, depth)
     local start = layout.stairs[1].up
 
     for _, entry in ipairs(entries) do
         local point
+        local authored = false
         local branch = register.get("branches", entry.branch_id)
         local is_temple = entry.branch_id == branches.BRANCH_TEMPLE
         local available = is_temple and
@@ -327,6 +330,7 @@ local function place_branch_entrances(ctx, builder, layout, protected,
 
             if placed then
                 maps[#maps + 1] = placed
+                authored = true
             end
         end
 
@@ -336,7 +340,7 @@ local function place_branch_entrances(ctx, builder, layout, protected,
             vault_extra.protect(protected, point)
         end
 
-        links[#links + 1] = {
+        local link = {
             x = point.x,
             y = point.y,
             to_level_id = available and
@@ -350,9 +354,69 @@ local function place_branch_entrances(ctx, builder, layout, protected,
             target_branch_id = entry.branch_id,
             source_feature = entry.entry_feature,
         }
+
+        links[#links + 1] = link
+
+        if not authored then
+            provisional_links[#provisional_links + 1] = link
+        end
     end
 
-    return links, maps
+    return links, maps, provisional_links
+end
+
+-- Some source endings include a keyed branch entrance in their own map.
+-- Move the existing scheduled link to that authored cell and remove the
+-- provisional lone stair; two links to the same branch would be incorrect.
+function generated.bind_authored_branch_links(builder, links, maps, protected)
+    local authored_features = {
+        [vault_features.ENTER_ELF] = branches.BRANCH_ELF,
+    }
+    local found = {}
+
+    for _, map in ipairs(maps) do
+        for _, record in ipairs(map.records or {}) do
+            local target = record.kind == vault_effects.FEATURE and
+                authored_features[record.identity]
+
+            if target then
+                if found[target] then
+                    error("multiple authored entrances to " .. target)
+                end
+
+                found[target] = record
+            end
+        end
+    end
+
+    for branch_id, record in pairs(found) do
+        local link
+
+        for _, candidate in ipairs(links) do
+            if candidate.target_branch_id == branch_id then
+                link = candidate
+                break
+            end
+        end
+
+        if not link then
+            error("authored entrance has no scheduled link to " .. branch_id)
+        end
+
+        if link.x ~= record.x or link.y ~= record.y then
+            if builder:cell(link.x, link.y) ~= ">" then
+                error("provisional branch stair was replaced before binding")
+            end
+
+            protected[link.x .. ":" .. link.y] = nil
+            builder:set(link.x, link.y, ".")
+        end
+
+        builder:set(record.x, record.y, ">")
+        protected[record.x .. ":" .. record.y] = true
+        link.x = record.x
+        link.y = record.y
+    end
 end
 
 -- Generate one floor before pairing its stairs with neighboring floors.
@@ -399,6 +463,13 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
     end
 
     local protected = protected_cells(layout, arrival)
+    local scheduled_entries = {}
+
+    for _, scheduled in ipairs(branch_schedule.entries(chosen_schedule,
+        branch_id, depth)) do
+        scheduled_entries[scheduled.branch_id] = true
+    end
+
     local entry_player = {
         branch_id = branch_id,
         depth = depth,
@@ -407,8 +478,9 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
         species_id = player.species_id,
         name = player.name,
         started = player.started,
+        branch_entries = scheduled_entries,
     }
-    local branch_links, entry_maps = place_branch_entrances(ctx,
+    local branch_links, entry_maps, provisional_links = place_branch_entrances(ctx,
         layout.builder, layout, protected, required, entry_player,
         chosen_schedule, branch_id, depth, temple)
     local extra, controller, extra_ids = vault_extra.generate(
@@ -430,6 +502,7 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
             arrival_vault = arrival_vault,
             protected = protected,
             required = required,
+            provisional_links = provisional_links,
             player = {
                 species_id = player.species_id,
                 name = player.name,
@@ -439,9 +512,13 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
                 branch_bottom = bottom,
                 absolute_depth = absolute_depth,
                 layout_family = layout_family(layout),
+                branch_entries = scheduled_entries,
             },
         }
     )
+
+    generated.bind_authored_branch_links(layout.builder, branch_links,
+        extra, protected)
 
     local records = {}
     local source_up = {}

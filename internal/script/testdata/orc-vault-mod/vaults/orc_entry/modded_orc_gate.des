@@ -1,0 +1,10 @@
+# A sparse layer adds a keyed Orc gate without replacing source maps.
+NAME: modded_orc_gate
+TAGS: orc_entry
+WEIGHT: 7
+KFEAT: O = enter_orcish_mines
+MAP
+.....
+..O..
+.....
+ENDMAP

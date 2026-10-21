@@ -610,6 +610,13 @@ local function hook_api(random, events, line, player, cells, state,
         return player.branch_id
     end
 
+    -- A map can key a branch gate only on its scheduled parent floor.
+    -- This fact comes from the saved branch schedule, not a guessed depth.
+    function api:branch_entry(branch_id)
+        return player.branch_entries and
+            player.branch_entries[branch_id] or false
+    end
+
     -- Read local branch depth for source branch-dependent scripts.
     function api:depth()
         return player.depth
@@ -869,7 +876,7 @@ function operations.apply(vault, cells, random, depth, player, state)
         record.path = record.path or vault.path
     end
 
-    return records, state.used:ids()
+    return records, state.used:ids(), hook_values
 end
 
 return operations

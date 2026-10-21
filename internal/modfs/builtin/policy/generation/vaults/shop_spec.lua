@@ -53,6 +53,20 @@ end
 
 -- Each slash alternative owns its stock, name, count, greed, and selection weight.
 local function alternative(text, items, site)
+    -- Source keyed features may choose bare floor instead of a shop.
+    -- Keep its ordinary weight in the same draw and create no stock.
+    if text == "." then
+        if #items > 0 then
+            fail(site, text, "floor alternative cannot carry shop stock")
+        end
+
+        return {
+            weight = 10,
+            items = {},
+            site = site,
+        }
+    end
+
     local kind, options = text:match("^(.- shop)%s*(.*)$")
     local id = kinds[kind]
 

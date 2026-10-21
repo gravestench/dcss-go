@@ -1,0 +1,36 @@
+# minmay orc temple c is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   minmay_orc_temple_c
+TAGS:   transparent
+DEPTH:  Orc
+MONS:   orc, orc priest, orc high priest
+SUBST:  . = 1 .:200
+SUBST:  . = 0 .:200
+SUBST:  " = .
+KFEAT:  _ = altar_beogh
+MAP
+ccccccccccccccccccc
+c.................c
+c.................c
+c..I..c..c..c..I..c
+c.................c
+c.................c
+c..c..cc+++cc..c..c
+c.....c""2""c.....c
+c.....c2"""2c.....c
+c..c..+""_""+..c..c
+c.....c2"""2c.....c
+c.....cI"3"Ic.....c
+c..c..ccccccc..c..c
+c.................c
+c.................c
+c..I..c..c..c..I..c
+c.................c
+c.................c
+cccccccc+++cccccccc
+     .........
+     .I.2.2.I.
+     .........
+      .......
+        ...
+ENDMAP

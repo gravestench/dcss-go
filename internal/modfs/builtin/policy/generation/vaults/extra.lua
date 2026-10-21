@@ -145,7 +145,7 @@ local function place_chance_map(ctx, builder, context, placed, vault)
     for _, operation in ipairs(vault.operations) do
         if operation.kind == directives.HOOK_POST_PLACE then
             local api = controller.new(builder, context, placed, extra.place,
-                vault.id)
+                vault.id, map)
 
             hooks.run(vault, operation.argument, api)
         end

@@ -2031,6 +2031,12 @@ does not enter the save and cannot leak into another vault. The Swamp hydra
 murder den uses this to roll its head count before substitutions, then emit
 its monster declaration after the static plant declaration.
 
+A map's `vault.post_place` method can also call `api:recall(name)` for a
+value remembered by an earlier `vault.run` in that same map. The Orc
+community town hall rolls its house count before the map's substitutions,
+then places that many child houses after the town hall fits. The value is
+discarded with the placement attempt; it is not a persistent game setting.
+
 ### Dungeon layouts
 
 The effective `vaults/layout/*.des` files are also a live catalog. All 21
@@ -2223,6 +2229,15 @@ branch and absolute depth. A hook emits only the varying directives at its
 authored position. See `internal/script/testdata/lair-vault-mod/` for a
 sparse layer adding a Lair gate, room, and ending together.
 
+Orc follows the same three-stage pattern. Add a Dungeon gate to
+`vaults/orc_entry/` with `TAGS: orc_entry` and exactly one
+`KFEAT: O = enter_orcish_mines`; add ordinary rooms under `vaults/orc/`
+with `DEPTH: Orc`; add Orc:2 endings under `vaults/orc_end/` with
+`PLACE: Orc:$`. The source file used `default-depth: Orc`, but each split
+file declares its own depth so discovery order cannot change eligibility.
+See `internal/script/testdata/orc-vault-mod/` for one sparse addition to
+each stage. The source one-cell entry dummy remains a weighted candidate.
+
 Swamp and Shoals complete the source Lair entrance families. Put a new
 Swamp gate in `vaults/swamp_entry/<name>.des` with
 `TAGS: swamp_entry` and one `KFEAT: O = enter_swamp`. Shoals uses
@@ -2264,10 +2279,10 @@ actor but does not establish its save provenance.
 ### Branch end vaults
 
 A branch ending that fits inside an ordinary generated floor uses an end
-vault family. Lair, Snake, Swamp, Spider, and Shoals declare
+vault family. Lair, Orc, Snake, Swamp, Spider, and Shoals declare
 `end_vault_required = true` and name their matching `*_end` family in the
-branch file. The fourteen Lair, nine Snake, eleven Swamp, nine Spider, and
-26 Shoals source
+branch file. The fourteen Lair, sixteen Orc, nine Snake, eleven Swamp,
+nine Spider, and 26 Shoals source
 definitions live in matching `vaults/` subdirectories. Every file keeps
 its `NAME`, final-floor `PLACE` when it is a selectable ending, and its
 authored directives and MAP rows. Shoals also has four mapless controllers
@@ -2284,7 +2299,7 @@ To add an ending, put one source-format `.des` file at
 `vaults/<family>/<name>.des` with a unique `NAME`, positive effective
 `WEIGHT`, and exact final-floor `PLACE` such as `Swamp:$`. A rune branch
 also needs one real rune request matching its declared rune; Lair:5 has no
-rune. A same-path overlay replaces
+rune; neither does Orc:2. A same-path overlay replaces
 a bundled map; a new filename adds a weighted candidate. If the map needs
 a computed choice, put a named hook at
 `policy/generation/vaults/<family>/<name>.lua` and reference its method
@@ -2333,6 +2348,24 @@ the saved primary has exactly one distinct small-ending partner. A mod can
 add another candidate with `PLACE: Lair:$` and
 `TAGS: lair_end_small`, or add an ordinary weighted Lair ending without
 that tag. The hook receives the controller `api`, not the game `ctx`.
+
+Orc's `grunt_orc_gardens.des` is a mapless ending that places four
+`grunt_orc_garden` helpers. Its Lua controller passes one theme, a unique
+shop choice, and the first helper's boss role through the optional
+`api:place_maps(tag, count, { settings = ... })` table. Each child reads
+its own values with `api:setting(name)`; settings are copied for every
+placement and do not enter another map's context. A child may use
+`allow_dup`, so four placements can share one DES `NAME` while keeping
+their own typed records. The mapful Orc community ending adds two big
+houses and four to six small houses after its town hall. Both endings
+validate those child counts on restore.
+
+`pubby_orc_utopia.des` demonstrates a scheduled branch gate in an ending.
+Its named Lua hook imports `ids.branches` and asks
+`api:branch_entry(branches.BRANCH_ELF)` before
+emitting the `enter_elven_halls` feature. The floor then moves the one
+scheduled Elf stair link to that authored cell. Do not infer the gate from
+the current hardcoded branch depth; a mod may change the schedule.
 
 The successful end map becomes the floor's primary vault ID and remains in
 `vault_ids`. Its typed rune record is historical: picking up the ECS item

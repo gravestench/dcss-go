@@ -146,6 +146,14 @@ local function validate_end_vault(level, branch)
             error(label .. " needs exactly one paired small ending")
         end
     end
+
+    -- A mapful source controller may have composed children after its own
+    -- placement. Its named validator checks that saved composition too.
+    for _, operation in ipairs(selected.operations) do
+        if operation.kind == directives.HOOK_VALIDATE then
+            hooks.run(selected, operation.argument, level)
+        end
+    end
 end
 
 -- Vault IDs in a save must still resolve against the active catalog.

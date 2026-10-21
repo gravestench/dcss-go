@@ -101,6 +101,20 @@ function controller.place_maps(api, tag, count, options)
             child.excluded[options.exclude_id] = true
         end
 
+        -- Child settings are copied for each placement. Source controllers
+        -- can pass a boss role or shop without leaking it into siblings.
+        local settings = {}
+
+        for name, value in pairs(child.player.settings or {}) do
+            settings[name] = value
+        end
+
+        for name, value in pairs(options.settings or {}) do
+            settings[name] = value
+        end
+
+        child.player.settings = settings
+
         -- A tag draw can choose a map that cannot fit beside the primary.
         -- Exclude only that rejected candidate and redraw from the remaining
         -- effective pool. A failed fit never claims its name or source tag.
@@ -154,15 +168,29 @@ function controller.level_tiles(api, floor_tile, rock_tile)
     }
 end
 
+-- A map's pre-place run hook may make a source choice that its post-place
+-- controller uses after the map fits. Keep that value local to this attempt.
+function controller.recall(api, name)
+    local value = api.map and api.map.hook_values and
+        api.map.hook_values[name]
+
+    if value == nil then
+        error("controller hook memory is missing " .. tostring(name))
+    end
+
+    return value
+end
+
 -- Bind one ephemeral controller object to its builder, level facts, and
 -- already placed maps. Source-specific policy remains in its own Lua file.
-function controller.new(builder, context, placed, place, controller_id)
+function controller.new(builder, context, placed, place, controller_id, map)
     local api = {
         builder = builder,
         context = context,
         placed = placed,
         place = place,
         controller_id = controller_id,
+        map = map,
     }
 
     api.roll = controller.roll
@@ -173,6 +201,7 @@ function controller.new(builder, context, placed, place, controller_id)
     api.has_tag = controller.has_tag
     api.place_maps = controller.place_maps
     api.level_tiles = controller.level_tiles
+    api.recall = controller.recall
 
     return api
 end

@@ -1,0 +1,20 @@
+# mines1 david is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   mines1_david
+DEPTH: Orc
+TAGS:   allow_dup transparent
+KFEAT:  C = altar_beogh
+WEIGHT: 20
+MAP
+...........
+.xxxx.xxxx.
+.xx.....xx.
+.x.......x.
+.x.......x.
+.....C.....
+.x.......x.
+.x.......x.
+.xx.....xx.
+.xxxx.xxxx.
+...........
+ENDMAP

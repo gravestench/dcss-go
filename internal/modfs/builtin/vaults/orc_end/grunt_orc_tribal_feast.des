@@ -1,0 +1,32 @@
+# grunt orc tribal feast is an authored Orc:2 ending.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   grunt_orc_tribal_feast
+TAGS:   patrolling no_item_gen no_monster_gen
+PLACE:  Orc:$
+ORIENT: float
+MONS:   orc knight, orc high priest, orc sorcerer
+MONS:   orc warrior, orc priest, orc wizard, orc
+MARKER: O = lua:fog_machine { cloud_type='flame', pow_min = 10, pow_max = 10, \
+                              delay = 10, size = 1, excl_rad = 0 }
+# Source Lua: : dgn.delayed_decay(_G, 'd', 'yak skeleton')
+# Source Lua: : dgn.delayed_decay(_G, 'e', 'rat skeleton')
+: vault.run("remains.schedule")
+KFEAT:  A = any shop
+MAP
+      ccccccc
+     cce.6.5ccc
+   xxc4.1.1..Acc
+   x...e.2....2cc
+  xx.4.d...e...Ac
+ xx.e.e3.O.3.1.Ac
+ x7..4.e..e...3cc
+xx.e.c.d.2.e.Acc
+x..7xc4e.e.6cccc
+x...xcc.5cccc
+x.7..xcccc
+xx....7xxxxx
+ xx.7....6.6.
+  xx....5.1.5
+   xxx.7.....
+     xx.4.@.4
+ENDMAP

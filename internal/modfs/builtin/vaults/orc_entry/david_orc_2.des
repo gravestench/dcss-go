@@ -1,0 +1,18 @@
+# david orc 2 is an authored Dungeon gate to the Orcish Mines.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: david_orc_2
+TAGS: orc_entry no_rotate transparent
+MONS: weight:50 orc / orc warrior / nothing
+ORIENT: float
+KFEAT: O = enter_orcish_mines
+MAP
+xxxx..@..xxxx
+x.....I.....x
+x...........x
+.....111.....
+@I...1O1...I@
+.....111.....
+x...........x
+x.....I.....x
+xxxx..@..xxxx
+ENDMAP

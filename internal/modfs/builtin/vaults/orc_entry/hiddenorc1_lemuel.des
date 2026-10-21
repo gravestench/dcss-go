@@ -1,0 +1,23 @@
+# hiddenorc1 lemuel is an authored Dungeon gate to the Orcish Mines.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   hiddenorc1_lemuel
+TAGS:   orc_entry
+ORIENT: float
+MONS:   orc w:40 / orc wizard w:2 / orc priest w:2, orc warrior
+SUBST:  ? = .x
+SUBST:  ! : .$
+KFEAT: O = enter_orcish_mines
+MAP
+x??@....@....@??x
+xx??.........??xx
+ xx??1111111??xx
+  xx??11111??xx
+   xx??111??xx
+    xx??1??xx
+     xxI2Ixx
+      xv+vx
+      x!!!x
+      x!O!x
+      x!!!x
+      xxxxx
+ENDMAP

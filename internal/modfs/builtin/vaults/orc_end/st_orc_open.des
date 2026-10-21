@@ -1,0 +1,21 @@
+# st orc open is an authored Orc:2 ending.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:    st_orc_open
+TAGS:    no_item_gen no_monster_gen transparent
+PLACE:   Orc:$
+ORIENT:  float
+MONS:    ogre, two-headed ogre, troll, deep troll w:19 / iron troll w:1
+MONS:    ogre mage, two-headed ogre w:14 / ettin w:1, cyclops w:29 / stone giant w:1
+KFEAT:   S = any shop
+MAP
+ .....
+..111..  .... ....
+..151....4....3S3..
+..111.....321..3..11
+ .......2.252......1
+  ....6...123..7..@
+   ..S.3...........
+  ..4........6.1S.
+  ...3.7..S2.. 11.
+   .... ....
+ENDMAP

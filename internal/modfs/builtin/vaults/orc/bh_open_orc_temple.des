@@ -1,0 +1,27 @@
+# bh open orc temple is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   bh_open_orc_temple
+TAGS:   transparent
+DEPTH:  Orc
+SUBST:  " = 1.......
+MONS:   orc w:8 / orc priest w:2 / orc warrior
+MONS:   patrolling orc high priest
+KFEAT:  _ = altar_beogh
+SUBST:  ' = $.
+MAP
+     cccccccccc
+ .............c
+...I..I..I..I.c
+.........""...cc
+.........""...cc
+..I..I..I""I'''c
+........""""'''c
+.I......"""2'_'c
+........""""'''c
+..I..I..I""I'''c
+.........""...cc
+.........""...cc
+..I...I..I..I.cc
+ .............c
+     cccccccccc
+ENDMAP

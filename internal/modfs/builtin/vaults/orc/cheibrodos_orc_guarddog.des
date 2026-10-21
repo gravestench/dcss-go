@@ -1,0 +1,21 @@
+# cheibrodos orc guarddog is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: cheibrodos_orc_guarddog
+TAGS: no_monster_gen transparent
+DEPTH: Orc
+ORIENT: float
+MONS: warg
+NSUBST: 1 = 3:1 / 4=1..
+MAP
+xxx..@..xxx
+x1...1...1x
+x.........x
+...IxxxI...
+...x$$$x...
+@1.x$$$+..@
+...x$$$x...
+...IxxxI...
+x.........x
+x1...1...1x
+xxx..@..xxx
+ENDMAP

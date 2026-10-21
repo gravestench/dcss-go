@@ -1,0 +1,15 @@
+# mines5 lemuel is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:  mines5_lemuel
+DEPTH: Orc
+SUBST: ?: wx
+MONS:  warg / wolf,goblin
+MAP
+x???????x
+xwwwwwwwx
+xwwwwwwwx
+x1.1.1.1x
+x.1.1.1.x
+x1.2...1x
+xxxx+xxxx
+ENDMAP

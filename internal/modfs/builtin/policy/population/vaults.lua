@@ -257,6 +257,15 @@ local function materialize_shop(ctx, level, record)
 
     local selected = shop_spec.choose(random, alternatives)
 
+    -- A keyed shop/floor choice spent its source draw but selected floor;
+    -- no shop entity or stock belongs at this cell.
+    if not selected.kind_id then
+        return {
+            level_id = level.id,
+            index = record.index,
+        }
+    end
+
     selected.level_id = level.id
     selected.x = record.x
     selected.y = record.y

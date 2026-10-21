@@ -1,0 +1,19 @@
+# kennysheep orc monster closet entryway is an authored Dungeon gate to the Orcish Mines.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   kennysheep_orc_monster_closet_entryway
+TAGS:   orc_entry
+KFEAT:  O = enter_orcish_mines
+MONS:   gnoll / gnoll sergeant / orc warrior / orc w:15 /\
+                kobold brigand / ogre
+MONS:   troll
+MAP
+xxxxxxx
+xI121Ix
+x11111x
+x11O11x
+x11111x
+xI111Ix
+xxx+xxx
+@.....@
+xxxxxxx
+ENDMAP

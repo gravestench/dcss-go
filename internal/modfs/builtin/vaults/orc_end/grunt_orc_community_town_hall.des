@@ -1,0 +1,47 @@
+# grunt orc community town hall is an authored Orc:2 ending.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   grunt_orc_community_town_hall
+TAGS:   transparent no_monster_gen no_item_gen
+PLACE:  Orc:$
+ORIENT: float
+KMONS:  O = Saint Roka band w:3 / orc warlord band, orc warlord band
+MONS:   orc knight / orc warrior w:30, orc sorcerer / orc wizard w:30
+MONS:   orc high priest / orc priest w:30
+MONS:   orc warrior / orc w:30, orc / nothing
+KFEAT:  _ = altar_beogh
+KFEAT:  A = antique armour shop
+KFEAT:  B = antique weapon shop
+# Source pre-place Lua rolls before the later NSUBST choice is applied.
+: vault.run("community.roll_house_count")
+NSUBST: 0 = 2:1 / 3:2 / *:3
+# Source Lua: {{
+# Source Lua:   local small_house_count = 4 + crawl.random2(3)
+# Source Lua:   hook("post_place", function()
+# Source Lua:     dgn.place_maps{tag="grunt_orc_community_big_house", count=2}
+# Source Lua:     dgn.place_maps{tag="grunt_orc_community_house", count=small_house_count}
+# Source Lua:   end)
+# Source Lua: }}
+: vault.post_place("community.place")
+: vault.validate("community.validate")
+MAP
+   .........
+  ...ccccc...
+ ..ccc._.ccc..
+ .ccA0.O.0Bcc.
+..cccI0.0Iccc..
+.ccccc...ccccc.
+.c..4c.4.c4..c.
+.c.0.+...+.0.c.
+.c4..c.4.c..4c.
+.ccccc.I.ccccc.
+.c4..c.4.c..4c.
+.c.0.+...+.0.c.
+.c..4c...c4..c.
+.ccccc.4.ccccc.
+.ccccI...Icccc.
+..ccc.4.4.ccc..
+ ...cc+++cc...
+   .........
+     .I.I.
+      .@.
+ENDMAP

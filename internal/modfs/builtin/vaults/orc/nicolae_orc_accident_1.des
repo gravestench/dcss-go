@@ -1,0 +1,35 @@
+# nicolae orc accident 1 is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   nicolae_orc_accident_1
+TAGS:   uniq_orcaccident
+DEPTH:  Orc
+ORIENT: southeast
+MONS:   patrolling orc warrior / patrolling orc knight w:2
+KITEM:  W = gold q:1 / gold q:2 / gold q:3 / nothing w:100
+KFEAT:  W = shallow_water
+KFEAT:  X = x
+SUBST:  e = xx..., f = xx"""
+MARKER: P = lua:fog_machine { cloud_type = "flame", \
+            pow_min = 10000, pow_max = 10000, delay = 1, \
+            size = 1, walk_dist = 0, start_clouds = 1 }
+KPROP:  " = no_tele_into
+TILE:   X = wall_spider
+TILE:   c = wall_stone_smooth
+COLOUR: X = yellow
+MAP
+ e@@@@@@@exxxxxxxxxxxxxxxxx
+ee......exxxxfeeeeefxxxxxxx
+x......exxeeeee...eeeeeeexx
+x.....efee..............eex
+xe....efe.......1.....1..ex
+xe....efe....ee..WWWWW...ex
+xe....eee....ee..WI.IW...ex
+xe.....e.....ee..W.P.W...ex
+xe..........eee..WI.IW...ex
+xee.........efe..WWWWW...ex
+xfee........exe.1.....1.eex
+xxfee......eexe.........exx
+xxxfeeeeeeeexXXX......XXXxx
+xxxxxxffffxxxXccccccccccXxx
+xxxxxxxxxxxxxXccccccccccXxx
+ENDMAP

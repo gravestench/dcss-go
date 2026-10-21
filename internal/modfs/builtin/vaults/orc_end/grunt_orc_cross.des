@@ -1,0 +1,39 @@
+# grunt orc cross is an authored Orc:2 ending.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   grunt_orc_cross
+TAGS:   patrolling no_item_gen no_monster_gen transparent
+PLACE:  Orc:$
+ORIENT: float
+MONS:   orc knight, orc high priest, orc sorcerer
+MONS:   orc warrior, orc wizard, orc priest
+SHUFFLE: ABCD, EFGH
+KMONS:  A = Saint Roka band w:3 / orc warlord band, orc warlord band
+KMONS:  B = Nergalle w:3 / orc sorcerer, orc sorcerer
+KMONS:  C = Urug w:3 / orc knight, orc knight
+KMONS:  D = Blork the orc w:3 / orc wizard, orc wizard
+KFEAT:  E = general shop
+KFEAT:  F = antique armour shop
+KFEAT:  G = antique weapon shop
+KFEAT:  H = book shop / jewellery shop
+KFEAT:  _ = altar_beogh
+MAP
+cccc  c..@..c  cccc
+cE6ccccI.4.Icccc5Fc
+c5..ccc.....ccc..6c
+cc...cc.....cc...cc
+ cc...c..2..c...cc
+  cc.4.......4.cc
+ccccc.........ccccc
+..I....A...B....I..
+...................
+@4..1...._....1..4@
+...................
+..I....C...D....I..
+ccccc.........ccccc
+  cc.4.......4.cc
+ cc...c..3..c...cc
+cc...cc.....cc...cc
+c6..cccI...Iccc..5c
+cG5cccc..4..cccc6Hc
+cccc  c..@..c  cccc
+ENDMAP

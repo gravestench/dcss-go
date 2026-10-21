@@ -1,0 +1,21 @@
+# nicolae orc bridge out is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: nicolae_orc_bridge_out
+TAGS: extra decor no_pool_fixup
+DEPTH: Orc
+KPROP: L = no_tele_into
+SUBST: L = lll., X = xx., Z = llx, l : lw
+MAP
+       xxxx
+    xxxxxxxxx
+  xxxxZZxxxxxx
+ xxxxZllZZxX.@
+xxxxllllllx..@
+xxX..LLLL....x
+xX...LLLL..Xxx
+@..xllllllxxx
+@.XxZlllZxxxx
+xxxxxZZZxxxx
+   xxxxxxx
+      xxxx
+ENDMAP

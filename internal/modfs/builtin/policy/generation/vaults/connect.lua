@@ -2,6 +2,7 @@
 local connect = {}
 local effects = require("constants.vault_effects")
 local glyphs = require("constants.vault_glyphs")
+local grid = require("policy.generation.grid")
 local hooks = require("policy.generation.vaults.hooks")
 local history = require("policy.population.unique_history")
 local runes = require("policy.character.runes")
@@ -42,10 +43,15 @@ local function closest_edge(point, bounds)
             y = bounds.y + bounds.height,
         },
     }
-    local chosen = candidates[1]
+    local chosen
 
     for _, candidate in ipairs(candidates) do
-        if candidate.distance < chosen.distance then
+        -- An encompass map may touch the grid boundary. Its nearest
+        -- geometric edge can be outside the 80x70 level, so choose the
+        -- nearest edge that can actually lead to another floor cell.
+        if candidate.x > 0 and candidate.x < grid.width - 1 and
+            candidate.y > 0 and candidate.y < grid.height - 1 and
+            (not chosen or candidate.distance < chosen.distance) then
             chosen = candidate
         end
     end
@@ -307,7 +313,8 @@ function connect.finish(ctx, builder, placed, required)
 
     for _, from in ipairs(connectors) do
         local edge = closest_edge(from, placed.bounds)
-        local target = nearest_outside_floor(builder, placed.bounds, edge)
+        local target = edge and nearest_outside_floor(builder,
+            placed.bounds, edge)
 
         if not target then
             error(string.format("%s: vault %s: no ordinary Dungeon floor to connect",

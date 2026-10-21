@@ -1,0 +1,23 @@
+# david orc 4 is an authored Dungeon gate to the Orcish Mines.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: david_orc_4
+TAGS: orc_entry no_rotate
+ORIENT: float
+SUBST:  ? = I G .
+MONS:   orc warrior band
+NSUBST: a = 1:1 / *:.
+NSUBST: b = 1:1 / *:.
+NSUBST: c = 1:1 / *:.
+NSUBST: d = 1:1 / *:.
+KFEAT:  O = enter_orcish_mines
+MAP
+xxxxxxxxxxxxxxxxxxxxxx
+xx?xxx?xxx?xxx?xxxxxxx
+xaaaxbbbxcccxdddx.lllx
+.aaaabbbbccccdddx.$llx
+@aaaabbbbccccddd+.$Olx
+.aaaabbbbccccdddx.$llx
+xaaaxbbbxcccxdddx.lllx
+xx?xxx?xxx?xxx?xxxxxxx
+xxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,38 @@
+# zombieorc1 lemuel is an authored Dungeon gate to the Orcish Mines.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   zombieorc1_lemuel
+TAGS:   orc_entry
+ORIENT: float
+MONS:   orc zombie / orc skeleton w:2 / goblin zombie w:2 /\
+        hobgoblin zombie w:2 / goblin skeleton w:1 / hobgoblin skeleton w:1
+MONS:   ogre zombie / troll zombie w:3
+MONS:   shadow / phantom / w:1 wraith
+# Source Lua: : if you.absdepth() >= 10 then
+# Source branch: MONS:   w:1 orc sorcerer / orc priest / nothing
+# Source Lua: : else
+# Source branch: MONS:   orc priest / nothing
+# Source Lua: : end
+: vault.run("choose_priest")
+SUBST:  ? = x . $:1
+KFEAT:  O = enter_orcish_mines
+MAP
+xxx.xxxxxxxxxxxxxxxxxxx
+xxx?.x?x?xx?xxx??xx?xxx
+xx..xxx..1.xxx....11xxx
+xx.x??x.x1xx?x.21xx?..x
+xx...x..xxx.2..1.x.x??.
+xx?x.....?x.x..x.x1?.xx
+xx..??12x?x31.1?x.x??xx
+xxx..x..x??O3x..x.xx.xx
+x?..?x....34x?.x.??x.xx
+xx.x??.x.x..?x..xx.x?xx
+x?xx?xx.x??...x.1x.1??x
+xx..xxx...x.x.x.1?1.xxx
+x?.2....xx2.x...xx.x??x
+xxx??xx..xx.xx.x?..xxxx
+xx..1.x.x.1...x2.x1..xx
+..x??x.xxx..xxxx??.??xx
+xx?.??.11.x?xxx..x..xxx
+x??xxxx???xx?xxx??x.?xx
+xxxxxxxxxxxxxxxxxxxx.xx
+ENDMAP

@@ -13,6 +13,10 @@ local definition = {
     id = "MONS_PILLAR_OF_SALT",
     status = "defined",
     name = "pillar of salt",
+    -- Orc's salted ending gives this same monster an authored shape label.
+    vault_aliases = {
+        "orc-shaped pillar of salt",
+    },
     glyph = 56,
     colour_id = "WHITE",
     flags = {

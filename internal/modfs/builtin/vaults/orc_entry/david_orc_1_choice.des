@@ -1,0 +1,30 @@
+# david orc 1 choice is an authored Dungeon gate to the Orcish Mines.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: david_orc_1_choice
+TAGS: orc_entry
+MONS: orc, warg / orc priest / orc warrior, orc warrior / orc
+ITEM: % / scroll of teleportation ident:type / scroll of identify ident:type
+ITEM: % / w:2 * / scroll of blinking ident:type / scroll of fear ident:type
+SHUFFLE: %1
+ORIENT: float
+KFEAT: O = enter_orcish_mines
+MAP
+           xxx
+        xxxxOxxxx
+     xxxx.......xxxx
+   xxx.............xxx
+  xx....x.......x....xx
+ xx....xxx.....xxx....xx
+xx.....xxx.I.I.xxx..I..x
+xx......x.......x......xx
+x..x.x..x..x+x..x..x+x..x
+x.xx.xx.x.xx.xx.x.xx.xx.x
+x.x%1.x.x.x2e2x.x.x3d3x.x
+x.x.%1x.x.x2e2x.x.xd3dx.x
+x.xx.xx.x.xx.xx.x.xx.xx.x
+x..x.x..x..x+x..x..x+x..x
+x.......+.......+.......x
+xx.....xxx.I.I.xxx..I..xx
+ xx...xx xx...xx xx...xx
+  x.@.x   xxxxx   x.@.x
+ENDMAP

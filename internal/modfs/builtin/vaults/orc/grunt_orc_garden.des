@@ -1,0 +1,52 @@
+# grunt orc garden is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: grunt_orc_garden
+DEPTH: Orc
+TAGS: grunt_orc_garden allow_dup transparent no_monster_gen no_item_gen
+# Source Lua: {{
+# Source Lua:   if dgn.persist.grunt_orc_gardens_giant_problem then
+# Source Lua:     if dgn.persist.grunt_orc_gardens_boss then
+# Source Lua:       mons("stone giant")
+# Source Lua:     else
+# Source Lua:       mons("ettin")
+# Source Lua:     end
+# Source Lua:     mons("cyclops")
+# Source Lua:     mons("nothing")
+# Source Lua:     nsubst("0 : 1:1 / 2:2 / *:.")
+# Source Lua:   else
+# Source Lua:     if dgn.persist.grunt_orc_gardens_boss then
+# Source Lua:        mons("orc warlord")
+# Source Lua:     end
+# Source Lua:     mons("orc knight / orc sorcerer w:5 / orc high priest w:5")
+# Source Lua:     if not dgn.persist.grunt_orc_gardens_boss then
+# Source Lua:       mons("nothing")
+# Source Lua:     end
+# Source Lua:     mons("orc warrior / orc sorcerer w:1 / orc high priest w:1 /"
+# Source Lua:          .. "ogre w:1 / troll w:1 / warg w:1")
+# Source Lua:     nsubst("0 : 1:1 / *:2")
+# Source Lua:   end
+# Source Lua: }}
+: vault.run("configure")
+MONS: nothing w:20 / fungus
+SUBST: . = ..4
+NSUBST: 3 = 5:3 / 1:I / 4:P / *:.
+SUBST: P = .4
+# Source Lua: : if is_validating() or dgn.persist.grunt_orc_gardens_store == nil then
+# Source branch: KFEAT: A = any shop
+# Source Lua: : else
+# Source Lua: : kfeat("A = " .. dgn.persist.grunt_orc_gardens_store)
+# Source Lua: : end
+: vault.run("choose_shop")
+MAP
+   .....
+ ...PPP...
+ .PPP3PPP.
+..P33333P..
+.PP33033PP.
+.P330A033P.
+.PP33033PP.
+..P33333P..
+ .PPP3PPP.
+ ...PPP...
+   .....
+ENDMAP

@@ -1,0 +1,12 @@
+# A modded Orc:2 ending needs only its own DES map and source PLACE.
+NAME: zz_orc_foundry
+PLACE: Orc:$
+WEIGHT: 1
+ORIENT: float
+MAP
+xxxxxxx
+x.....x
+x..+..x
+x.....x
+xxxxxxx
+ENDMAP

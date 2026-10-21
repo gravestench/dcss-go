@@ -1,0 +1,47 @@
+# pf orc diabolical is an authored Orc:2 ending.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: pf_orc_diabolical
+TAGS: patrolling no_item_gen no_monster_gen transparent
+PLACE: Orc:$
+ORIENT: float
+MONS: orc / nothing w:5, orc warrior / nothing w:5
+MONS: orc priest / nothing w:5, common demon / nothing w:5
+MONS: orc knight
+MONS: demonspawn / nothing w:5
+MONS: orc high priest / orc sorcerer
+SHUFFLE: BC
+KFEAT: A = w:20 general shop / distillery shop / scroll shop
+KFEAT: B = book shop / jewellery shop
+KFEAT: C = antique weapon shop / antique armour shop
+KFEAT: P = enter_pandemonium
+TILE:  c = wall_stone_dark
+FTILE: .1234567@ = floor_pebble_lightred
+MAP
+             cc2@2c
+            ccc33ccc
+           ccc..ccccc
+          ccc..ccc3ccc
+         ccc..ccc232ccc
+        ccc..ccc.c2c.ccc
+       ccc..ccc...c...ccc
+      ccc..ccc...ccc...ccc
+     ccc..ccc.4.cc7cc.4.ccc
+    ccc.1......cc75.cc.4.ccc
+   ccc.1.1c.3.cc..c..cc...ccc
+  ccc123c32..cc..ccc.3cc.c.ccc
+ cccA2c1211.cc6.cB7cc32.2.27ccc
+ccc5.11.c1.cc77.76.Pcc.c....5ccc
+ cccA2c1211.cc6.cC7cc32.2.27ccc
+  ccc123c32..cc..ccc.3cc.c.ccc
+   ccc.1.1c.3.cc..c..cc...ccc
+    ccc.1......cc75.cc.4.ccc
+     ccc..ccc.4.cc7cc.4.ccc
+      ccc..ccc...ccc...ccc
+       ccc..ccc...c...ccc
+        ccc..ccc.c2c.ccc
+         ccc..ccc232ccc
+          ccc..ccc3ccc
+           ccc..ccccc
+            ccc33ccc
+             cc2@3c
+ENDMAP

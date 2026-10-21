@@ -1,0 +1,19 @@
+# david orc 3 is an authored Dungeon gate to the Orcish Mines.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: david_orc_3
+TAGS: orc_entry transparent
+MONS: weight:80 nothing / weight:50 orc / orc priest / orc wizard / orc warrior
+MONS: nothing / orc warrior / warg / orc priest
+ORIENT: float
+KFEAT: O = enter_orcish_mines
+MAP
+1.....@....11
+1............
+.............
+......21.....
+@.....O.....@
+.....12......
+.............
+.............
+11..@......11
+ENDMAP

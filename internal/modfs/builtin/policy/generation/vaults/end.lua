@@ -215,7 +215,8 @@ function end_vault.place(ctx, builder, context, placed, fit)
     -- placement history; the pairing hook excludes this primary by ID.
     for _, operation in ipairs(vault.operations) do
         if operation.kind == directives.HOOK_POST_PLACE then
-            local api = controller.new(builder, context, placed, fit, vault.id)
+            local api = controller.new(builder, context, placed, fit,
+                vault.id, map)
 
             hooks.run(vault, operation.argument, api)
         end

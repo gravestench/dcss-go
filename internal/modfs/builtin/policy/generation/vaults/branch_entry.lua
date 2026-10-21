@@ -23,6 +23,11 @@ local source_entries = {
         tag = tags.LAIR_ENTRY,
         feature = features.ENTER_LAIR,
     },
+    [branches.BRANCH_ORC] = {
+        family = families.ORC_ENTRY,
+        tag = tags.ORC_ENTRY,
+        feature = features.ENTER_ORC,
+    },
     [branches.BRANCH_SWAMP] = {
         family = families.SWAMP_ENTRY,
         tag = tags.SWAMP_ENTRY,

@@ -89,6 +89,17 @@ func TestLairVaultMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/lair_vault_mod_test.lua")
 }
 
+// A sparse layer adds an Orc gate, ordinary room, and finale by discovery.
+func TestOrcVaultMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/orc-vault-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/orc_vault_mod_test.lua")
+}
+
 // A sparse layer extends Spider entries, ordinary maps, and jumping helpers.
 func TestSpiderVaultMod(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/spider-vault-mod")

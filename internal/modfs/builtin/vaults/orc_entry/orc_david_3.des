@@ -1,0 +1,26 @@
+# orc david 3 is an authored Dungeon gate to the Orcish Mines.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: orc_david_3
+TAGS: orc_entry transparent
+ORIENT: float
+#
+# Source Lua: : if you.absdepth() >= 10 then
+# Source branch: MONS: weight:20 orc / orc warrior / weight:1 orc knight
+# Source Lua: : else
+# Source branch: MONS: weight:30 orc / orc warrior
+# Source Lua: : end
+: vault.run("choose_raiders")
+#
+KFEAT: X = armour shop / .
+KFEAT: Y = weapon shop / .
+SUBST: ? = 1 $
+KFEAT: O = enter_orcish_mines
+MAP
+@.........@
+...??..??..
+.?.........
+.?.X.O.Y.?.
+.........?.
+...??...?..
+@.........@
+ENDMAP

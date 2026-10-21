@@ -1,7 +1,7 @@
 -- Theory of operation: an encompass finale is the floor's main authored
 -- feature. The generic layout pass may have already completed its missing
--- stairs in that footprint. Move only those generated base stairs outside
--- the fixed map, then let the usual connector join them to its exits.
+-- stairs or scheduled a branch entrance in that footprint. Move these
+-- provisional stairs outside the fixed map before testing its fit.
 local glyphs = require("constants.vault_glyphs")
 local grid = require("policy.generation.grid")
 
@@ -64,8 +64,35 @@ local function destination(builder, bounds, protected, original)
     return best
 end
 
--- Mutate the existing point object: the layout stair pair and the required
--- connector list both reference it, so save and reciprocal travel agree.
+-- Mutate the original point: both the layout stair pair and the scheduled
+-- branch link retain this reference when the map subsequently moves it.
+local function relocate_point(builder, bounds, protected, point)
+    if not inside(bounds, point) then
+        return
+    end
+
+    local glyph = builder:cell(point.x, point.y)
+
+    if not glyphs.up[glyph] and not glyphs.down[glyph] then
+        error("end vault provisional stair lost its source glyph")
+    end
+
+    local next_point = destination(builder, bounds, protected, point)
+
+    if not next_point then
+        error("encompass end vault has no outside stair landing")
+    end
+
+    protected[point.x .. ":" .. point.y] = nil
+    builder:set(point.x, point.y, ".")
+    builder:set(next_point.x, next_point.y, glyph)
+    point.x = next_point.x
+    point.y = next_point.y
+    protected[point.x .. ":" .. point.y] = true
+end
+
+-- Authored entrance maps have their own placed records, so only the
+-- scheduler's temporary lone stairs can move with a whole-floor ending.
 function end_stairs.relocate(builder, vault, context)
     if vault.orientation ~= "encompass" then
         return
@@ -75,26 +102,11 @@ function end_stairs.relocate(builder, vault, context)
     local protected = context.protected
 
     for _, point in ipairs(context.required or {}) do
-        if inside(bounds, point) then
-            local glyph = builder:cell(point.x, point.y)
+        relocate_point(builder, bounds, protected, point)
+    end
 
-            if not glyphs.up[glyph] and not glyphs.down[glyph] then
-                error("end vault base stair lost its source glyph")
-            end
-
-            local next_point = destination(builder, bounds, protected, point)
-
-            if not next_point then
-                error("encompass end vault has no outside stair landing")
-            end
-
-            protected[point.x .. ":" .. point.y] = nil
-            builder:set(point.x, point.y, ".")
-            builder:set(next_point.x, next_point.y, glyph)
-            point.x = next_point.x
-            point.y = next_point.y
-            protected[point.x .. ":" .. point.y] = true
-        end
+    for _, link in ipairs(context.provisional_links or {}) do
+        relocate_point(builder, bounds, protected, link)
     end
 end
 

@@ -1,0 +1,20 @@
+# nicolae orc lost temple is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: nicolae_orc_lost_temple
+TAGS: no_item_gen no_trap_gen luniq_orc_cave
+DEPTH: Orc
+NSUBST: D = + / c
+SUBST: C = c.
+KFEAT: _ = altar_beogh
+MAP
+ xxxxxx.
+xxcccDCC.@
+xxcI...I..
+xxc.....Cx
+xxD.._..Dxx
+xxc.....cxx
+xxcI...Icxx
+xxcccDcccxx
+ xxxxxxxxx
+   xxxxx
+ENDMAP

@@ -1,0 +1,27 @@
+# grunt orc community big house 1 is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:    grunt_orc_community_big_house_1
+DEPTH: Orc
+TAGS:    grunt_orc_community_big_house allow_dup transparent no_monster_gen
+TAGS:    no_item_gen
+KMONS:   A = orc knight / orc sorcerer / orc high priest / \
+             orc warrior / orc wizard / orc priest
+MONS:    orc warrior / orc wizard / orc priest
+MONS:    orc warrior / orc w:30
+KFEAT:   A = any shop
+KFEAT:   _ = altar_beogh
+SHUFFLE: def
+SUBST:   d = +, ef = c
+MAP
+  .......
+ ..ccccc..
+..cc.A.cc..
+.cc.....cc.
+.c.2._.2.c.
+.c1.2I2.1c.
+.c.2...2.c.
+.cc.....cc.
+..cc...cc.
+ ..cdefc..
+  ...@...
+ENDMAP

@@ -1,0 +1,10 @@
+# orc 0 dummy is an authored Dungeon gate to the Orcish Mines.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   orc_0_dummy
+TAGS:   orc_entry transparent
+WEIGHT: 50
+ORIENT: float
+KFEAT:  O = enter_orcish_mines
+MAP
+O
+ENDMAP

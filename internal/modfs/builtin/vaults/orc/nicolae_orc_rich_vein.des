@@ -1,0 +1,19 @@
+# nicolae orc rich vein is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: nicolae_orc_rich_vein
+TAGS: no_item_gen no_trap_gen luniq_orc_cave
+DEPTH: Orc
+WEIGHT: 3
+SUBST: X = $xxx, $ = $$$..
+KITEM: S = nothing / gold q:1 / gold q:2 / gold q:3
+MAP
+    xxxx
+ xxxxXXxx
+xxXXX$$Xx
+xX$$X$$Xxx
+xX$$$$$Xxx
+xXxx$$$Xxx
+xxxSSxXxx
+ @SSxxxx
+  .xxx
+ENDMAP

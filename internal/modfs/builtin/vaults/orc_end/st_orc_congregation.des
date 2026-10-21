@@ -1,0 +1,45 @@
+# st orc congregation is an authored Orc:2 ending.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:    st_orc_congregation
+TAGS:    no_item_gen no_monster_gen transparent
+PLACE:   Orc:$
+ORIENT:  float
+MONS:    orc / nothing, orc warrior / nothing, orc priest / nothing
+MONS:    orc wizard / nothing, orc knight, orc high priest, orc sorcerer
+KMONS:   V = orc warlord
+KFEAT:   V = T
+# This one has a lot more high level orcs than the rest,
+# so instead of adding more shops, guarantees good shops.
+KFEAT:   S = general shop
+KFEAT:   A = antique armour shop
+KFEAT:   B = antique weapon shop
+KFEAT:   C = book shop / jewellery shop
+SHUFFLE: 74/63
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xcccccccccccccccccccccccccccx
+xc1111.ccC..ccccc..Bcc.1111cx
+xc122...ccS..ccc..Acc...221cx
+xc122....cc...c...cc....221cx
+xcc...7...ccc...ccc...7...ccx
+xccc..4.33.........33.4..cccx
+xcccc.4..33..222..33..4.ccccx
+xcccc.4ccc33.222.33ccc4.ccccx
+xcccc.4ccc.6..5..6.ccc4.ccccx
+xcccc..ccc.........ccc..ccccx
+xcccc..ccc..5.V.5..ccc..ccccx
+xcccc..ccc.........ccc..ccccx
+xcccc.4ccc.7..6..7.ccc4.ccccx
+xcccc.4ccc...222...ccc4.ccccx
+xcccc.4......222......4.ccccx
+xc1...4...............4...1cx
+xc122.4..333.....333..4.221cx
+xc122..ccc333222333ccc..221cx
+xc1111.ccc.1122211.ccc.1111cx
+xccccccccc.11...11.cccccccccx
+xccccccccc.11...11.cccccccccx
+xccccccccc.1.....1.cccccccccx
+xccccccccccc.....cccccccccccx
+          .........
+            ..@..
+ENDMAP

@@ -1,0 +1,35 @@
+# mines bat river is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   mines_bat_river
+TAGS:   no_item_gen no_monster_gen no_pool_fixup
+DEPTH:  Orc
+MONS:   bat
+MONS:   generate_awake orc ; shortbow ego:flaming | shortbow ego:freezing | shortbow ego:vorpal
+NSUBST: . = 2:2 / 2:c
+NSUBST: c = *: 2 .
+# There were arrows here. They're gone now. Sorry
+NSUBST: b = 3:1 / 10:d / 4:e / *: .:20 1:1 d:2 e:2
+# Source Lua: : dgn.delayed_decay(_G, 'e', 'bat corpse')
+: vault.run("schedule_decay")
+SHUFFLE: ABC
+SUBST:  A = @
+SUBST:  B = x
+SUBST:  C = x
+MAP
+     xxx
+   xxxxxxx
+   xxxww.xx
+   xxbww..AA
+  xxbbww...Ax
+ xxbbbbwwW..x
+ xbbbbbbwwW.x
+xxbbbbbbbwW.xx
+xbbbbbbbbww..x
+xxbxbbbbWWww.B
+ xxbbbbbW.WW.B
+ xxxbbbwwWW..x
+  xxxxwwWW..xx
+    xxxwW..CC
+    xxxxxxxC
+     xxxxxxx
+ENDMAP

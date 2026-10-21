@@ -1,0 +1,21 @@
+# nicolae orc jurassic orc is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: nicolae_orc_jurassic_orc
+TAGS: transparent extra decor no_rotate no_vmirror
+WEIGHT: 1
+DEPTH: Orc
+MAP
+      .........xxx
+    ......cc....xxxx
+  .....ccc.cc.c..xxxx
+ ...ccc..c.ccc.c.xxxxx
+..cc.c...cc.ccc.cxxxxx
+..cccccccccccccc.cxxxx
+..c.c.c.c.ccc.cccxxxxx
+@..c.c.c.ccc...ccxxxx
+...cccccccc.....cxxxx
+...............xxxxx
+ .............xxxxx
+    .........xxxxx
+       ....xxxx
+ENDMAP

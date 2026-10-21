@@ -1,0 +1,16 @@
+# nicolae orc lava room is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: nicolae_orc_lava_room
+TAGS: no_item_gen no_trap_gen luniq_orc_cave
+DEPTH: Orc
+SUBST: L = l., X = lx
+MAP
+   x.@xx
+ xxx..xxx
+xxx....Xxx
+xX.....Llxx
+xXLLLLLLlXx
+xxllllllXxx
+ xxXXXXXxx
+  xxxxxxx
+ENDMAP

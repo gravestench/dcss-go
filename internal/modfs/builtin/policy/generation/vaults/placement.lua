@@ -679,7 +679,7 @@ function placement.place(_, builder, vault, player, options)
     local cells, map_width, map_height = matrix(vault.rows)
     local width_before = map_width
     local height_before = map_height
-    local source_records, helper_ids = operations.apply(vault,
+    local source_records, helper_ids, hook_values = operations.apply(vault,
         cells, builder, 0, player)
 
     validate_cells(vault, cells)
@@ -753,6 +753,9 @@ function placement.place(_, builder, vault, player, options)
         exits = exits,
         occupied = occupied,
         vault_ids = helper_ids,
+        -- Placement-local Lua choices are available to a post-place hook.
+        -- They are not level data and never enter the saved vault records.
+        hook_values = hook_values,
         records = filtered,
         bounds = {
             x = left,

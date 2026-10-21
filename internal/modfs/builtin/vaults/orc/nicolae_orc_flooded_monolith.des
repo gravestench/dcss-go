@@ -1,0 +1,19 @@
+# nicolae orc flooded monolith is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: nicolae_orc_flooded_monolith
+TAGS: extra decor transparent
+DEPTH: Orc
+SUBST: W = w., c : ccccbv
+MAP
+  .......
+ ..WWWWW..
+..WWwwwWW..
+.WWwwwwwWW.
+.WwwcccwwW.
+.WwwcccwwW.
+.WwwcccwwW.
+.WWwwwwwWW.
+..WWwwwWW..
+ ..WWWWW..
+  .......
+ENDMAP

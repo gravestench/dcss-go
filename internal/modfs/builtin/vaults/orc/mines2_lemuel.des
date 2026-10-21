@@ -1,0 +1,13 @@
+# mines2 lemuel is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: mines2_lemuel
+DEPTH: Orc
+SUBST: ? = x@
+MAP
+  ?x+x?
+ ?xx.xx?
+?xx$$$xx?
+?xx$$$xx?
+ ?xxxxx?
+   ???
+ENDMAP

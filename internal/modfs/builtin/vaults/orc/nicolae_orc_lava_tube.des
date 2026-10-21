@@ -1,0 +1,23 @@
+# nicolae orc lava tube is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: nicolae_orc_lava_tube
+TAGS: extra decor transparent
+DEPTH: Orc
+SUBST: X = xx., L = ll., Z = lx
+MAP
+                 xxxx@@@xx
+           xxxxxxxxxZ...xxx
+       xxxxxxxxxxxxxx...lZxx
+    xxxxxZZZZxxxxxxxZ...llZx
+  xxxxxxXLllllxxxxxZ...LllZx
+ xxxxXXX...LLXXxxxxX...LlZxx
+xxxxX....X.....XZxX...XXxxx
+xZllL...XxZxx........Xxxxx
+xZll...XxxxxllL.....Xxxxx
+xZll..XXxxxxlllxZXXXxxx
+xxxX...XxxxxZZxxxxxxxx
+ xxxX...Zxxxxxxxxxxx
+ xxxX...XXxxxxxxxx
+  xxxZ...Xxxxxxx
+   xxx@@@xxxx
+ENDMAP

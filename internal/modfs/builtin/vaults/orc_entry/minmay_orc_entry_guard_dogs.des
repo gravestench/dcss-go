@@ -1,0 +1,13 @@
+# minmay orc entry guard dogs is an authored Dungeon gate to the Orcish Mines.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   minmay_orc_entry_guard_dogs
+TAGS:   orc_entry transparent
+WEIGHT: 5
+ORIENT: float
+MONS:   patrolling warg / nothing w:2
+KFEAT:  O = enter_orcish_mines
+MAP
+1.1
+.O.
+1.1
+ENDMAP

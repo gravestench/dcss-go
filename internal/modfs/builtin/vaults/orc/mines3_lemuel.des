@@ -1,0 +1,22 @@
+# mines3 lemuel is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:  mines3_lemuel
+DEPTH: Orc
+SUBST: ? = +.
+SUBST: ! = x@
+SUBST: $ = $:30 *
+MONS:  oklob plant
+MAP
+    !@!
+   !x?x!
+   !x.xx!
+  !xx..xx!
+  !xxx..xx!
+   !xxx.1x!
+   !xxxx.x!
+  !xxxxx.xx!
+ !xx$$x..xxx
+!!xx$$?.xxxx
+!xxx$$xxxx!
+ !xxxxxxx!
+ENDMAP

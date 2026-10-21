@@ -1,0 +1,19 @@
+# nicolae orc crystal geode is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: nicolae_orc_crystal_geode
+TAGS: no_item_gen no_trap_gen luniq_orc_cave
+DEPTH: Orc
+SUBST: B = b'
+NSUBST: ' = d / '
+KITEM: d = nothing w:49 / crystal plate armour w:1
+MAP
+ xxxxxxxx
+xx....xxxx
+...x...bbxx
+@xxxB...bbxx
+ xbbB'''Bbxx
+ xbB'''BBbxx
+ xbbBBBBbbxx
+ xxbbbbbbxx
+  xxxxxxxx
+ENDMAP

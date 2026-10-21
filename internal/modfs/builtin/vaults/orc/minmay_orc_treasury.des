@@ -1,0 +1,35 @@
+# minmay orc treasury is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   minmay_orc_treasury
+TAGS:   transparent
+DEPTH:  Orc
+MONS:   orc warlord band, orc knight band
+SUBST:  $ = $:100 *|
+MAP
+vvvvvvvvvvvvvvvvvvvvvvv
+v$$$$$$$$v......9v||||v
+v$$$$$$$$+.......vvvv+v
+v$$$$$$$$v...2........v
+v$$$vvvvvv............v
+v$$vv.......9....v..1.v
+v$vv............vv....v
+vvv...9.........vv....v
+v........1......vv....v
+v..2.....v......vv...9v
+v.......vvv.....vv....v
+v........v.9.....v....v
+v.....................v
+vv...................vv
+ vv......vvvvv......vv
+  vv....vvvvvvv....vv
+   vv++vvvvvvvvv++vv
+    .........0.....
+    ....v.v.v.v.0..
+    .0.............
+    ...............
+     ......0....0.
+     ...0.........
+      ...........
+       ......0..
+         .....
+ENDMAP

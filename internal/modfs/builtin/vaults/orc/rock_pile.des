@@ -1,0 +1,21 @@
+# rock pile is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   rock_pile
+TAGS:   no_item_gen no_monster_gen transparent
+DEPTH:  Orc
+MONS:   orc ; sling, boulder beetle
+KITEM:  d = w:3 stone / w:1 large rock q:1
+SUBST:  a = .:4 b
+NSUBST: b = 1:2 / 5:1 / *:d
+SUBST:  1 = 1 .
+MAP
+     . .
+   ....
+ ..axaxa..
+ .xabbbax..
+..aabbaxa...
+ .xaaaax..
+  .aaxa....
+   . . ..
+    ...
+ENDMAP

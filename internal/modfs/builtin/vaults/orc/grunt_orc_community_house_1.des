@@ -1,0 +1,21 @@
+# grunt orc community house 1 is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:    grunt_orc_community_house_1
+DEPTH: Orc
+TAGS:    grunt_orc_community_house allow_dup transparent no_monster_gen
+TAGS:    no_item_gen
+MONS:    orc warrior / orc priest / orc wizard
+MONS:    orc / nothing
+SHUFFLE: def, I_ / I- / -_ / _- / -I
+SUBST:   d = +, ef = c
+KFEAT:   - = floor
+KFEAT:   _ = altar_beogh
+MAP
+.......
+.ccccc.
+.c1_1c.
+.c2I2c.
+.c.2.c.
+.cdefc.
+...@...
+ENDMAP

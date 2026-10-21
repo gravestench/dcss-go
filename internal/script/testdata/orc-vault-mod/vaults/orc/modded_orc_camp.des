@@ -1,0 +1,10 @@
+# A depth-qualified camp joins the ordinary Orc map pool by discovery.
+NAME: modded_orc_camp
+DEPTH: Orc
+WEIGHT: 7
+ORIENT: float
+MAP
+.....
+..1..
+.....
+ENDMAP

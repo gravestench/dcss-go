@@ -1,0 +1,13 @@
+# minmay orc barracks is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   minmay_orc_barracks
+DEPTH:  Orc
+MONS:   orc / orc warrior w:2, orc knight / orc warlord
+SUBST:  c : cx
+MAP
+ccccccccccccccccccccc
+c1.1.1.1.1.1.1.1c...c
++...............+.2.c
+c1.1.1.1.1.1.1.1c...c
+ccccccccccccccccccccc
+ENDMAP

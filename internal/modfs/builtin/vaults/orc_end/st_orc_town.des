@@ -1,0 +1,42 @@
+# st orc town is an authored Orc:2 ending.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:    st_orc_town
+TAGS:    no_rotate no_item_gen transparent
+PLACE:   Orc:$
+ORIENT:  float
+MONS:    orc / nothing
+#
+# Source Lua: : local brnd = crawl.random2(8)
+# Source Lua: : if brnd > 5 then
+# Source branch: MONS:    orc wizard, orc sorcerer
+# Source Lua: : elseif brnd > 2 then
+# Source branch: MONS:    orc priest, orc high priest
+# Source Lua: : else
+# Source branch: MONS:    orc warrior, orc knight
+# Source Lua: : end
+: vault.run("choose_garrison")
+#
+MONS:    warg / nothing
+KFEAT:   S = any shop
+KFEAT:   _ = altar_beogh
+SUBST:   5 = 32, A:+, C:+, B:c, D:c
+SUBST:   T : TIII
+SHUFFLE: AC/BD
+MAP
+...................................
+...................................
+..cccccc..ccc.ccc.ccccccc..cccccc..
+..cS521c..ccc.ccc.ccccccc..c125Sc..
+..c5211D..ccc.ccc4ccccccc..B.125c..
+..c2111c4....1......121..4.c..12c..
+..cccCcc...11211.4ccc1ccc..ccAccc..
+@......4..1T232T1.ccc.ccc.4.......@
+..cccCcc...112114.ccc.ccc.cccAccc..
+..c11..c4.ccc+ccc.ccc1ccc4c...11c..
+..c211.D..c1...1c...131...B..112c..
+..c5211c..c2.3.2c4ccc1ccc.c.1125c..
+..cS521c..c1._.1c.ccc.ccc.c1125Sc..
+..cccccc..ccccccc.ccc.ccc.ccccccc..
+...................................
+...................................
+ENDMAP

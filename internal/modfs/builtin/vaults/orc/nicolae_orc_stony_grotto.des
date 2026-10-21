@@ -1,0 +1,23 @@
+# nicolae orc stony grotto is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: nicolae_orc_stony_grotto
+TAGS: extra decor transparent
+DEPTH: Orc
+SUBST: X = xxxc...., C = xc, D = ...c
+MAP
+  @Cxxxx
+ @..xCcxxxx
+ Cx...xxxxxxx
+ xxC...CXXxxxx
+ xxX..xx..DXxxx
+xxxC..xD.c..XCxx
+xxxX....cccD.Xxxx
+xxC.c....c..ccxxx
+xxXccc..D...ccXxx
+xxxxc.Dcc.....Cxx
+xxxxX..cc..C..XCx
+ xxxxX....CC...xx
+   xxxxXXXxxx..C
+     xxxxxxxC..@
+         xxxxC@
+ENDMAP

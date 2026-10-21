@@ -1,0 +1,96 @@
+# pubby orc utopia is an authored Orc:2 ending.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:   pubby_orc_utopia
+ORIENT: encompass
+TAGS:   patrolling no_item_gen no_monster_gen
+PLACE:  Orc:$
+WEIGHT: 5
+SUBST:  $ = $:1 .:4
+MONS:   orc w:8 / orc warrior w:1 / nothing w:1
+MONS:   orc priest, orc warrior, orc warrior band
+MONS:   ogre w:8 / two-headed ogre w:4 / troll w:1 / warg w:1 / nothing w:8
+MONS:   orc knight, orc sorcerer
+KMONS:  D = orc high priest
+KMONS:  E = Saint Roka band w:1 / orc warlord band, orc warlord band
+KMONS:  P = plant / nothing
+NSUBST: u = 2:s / I
+KFEAT:  s = any shop
+KFEAT:  _ = altar_beogh
+# Source Lua: : if you.where() == dgn.level_name(dgn.br_entrance("Elf")) then
+# Source branch: KFEAT:  p = enter_elven_halls
+# Source Lua: : else
+# Source branch: KFEAT:  p = abandoned_shop w:5 / fountain_blue / floor w:30
+# Source Lua: : end
+: vault.run("choose_elf_gate")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx4xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.p.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$xxxxxxxxcccccxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxcc7|7ccxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.$xxxxxxxcc2...2ccxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxx.x$.xxxxxxxxc...Y...cxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxx$...$xxx.xxxxcc..4..ccxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxx4.$..xxxxx.xxxxccc.cccxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxx...xxxxx..xxxxxxc+cxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxx..5.xxxxxxx$...xxx..$xx.xxxx.xxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxx5xx..xx......xxxxxxxxx..5xx$..xxxx..xxx.xxxxxxcccccxxxxxxxxxxxxx
+xxxx..x....x....$....xxxxxx$...x..xxxx$..x...xxxxxcc...ccxxxxxxxxxxxx
+xxx...xxxx.........1..xxxxx......xxxxx......xxxxxcc.....ccxxxxxxxxxxx
+xxx$...xx.$...x...1.1..xxxxx.$..$xxxxxx..$.xxxxxcc.......ccxxxxxxxxxx
+xx....xxx.....x..1...1..xxxx.....xxxxx....xxxxxxc....2D...cxxxxxxxxxx
+x...xx.xx.xx....1..{..1.xxxxxx...$xxxx..xxxxxxxxc...3u2...cxxccccccxx
+xxxx.......x.....1...1..xxxxxx$...xxx...x..xxxxxc....4....cxcc....ccx
+xxxx....$...xx.x..1.1..xxxxxxx..$...........xxxxcc.......cccc......cc
+xxxxx........x.x...1..xxxvvvvxxx.....$.xxxx.xxxxxcc.....cccc....2D..c
+xxx..................xxxxv..vvvx...$.xxxxxxx.xxxxxcc...cccc....4u2..c
+xx....$.......$.xx...xxxxv0.+.vxxx...xxxxxvvvvxxxxcc...ccc......3...c
+xx...5.....$....xxx...xxxv.%v.vvvvvv+vvvvvv..vvvxcc...ccc..........cc
+xx.....$.........xx....xxvvvv.v%..vv.vv.%.v0.+.vxc....cc...........cx
+xx....x.........5.xx...xxv..v.v..0vv.vv.0.v.%v.vcc...cc.....cc...cccx
+xx...x..x..........x$...xv0%+.vv+vvv.vvv+vvvvv.vc....c.....cccccccxxx
+xxxxxx....x.......$xx...xv..v..........v.......vc.2.cc..2..cxxxxxxxxx
+xxx.x..xxxx..xx.....x...xvvvv....vv+vv.v....vvvvc...c.....ccxxxxxxxxx
+xx....xxxxxxxxx.....xx..xv..v0...v3..v.v1.1.v..vc..cc.....ccccccxxxxx
+xx5..xxxxx...xx.$....x...v..+....v.*0v......+..v...c......cc...ccxxxx
+x....xxxx..1..xx.........v..vvvv.vvvvv.vvvv.v.%v.........cc.....ccxxx
+xx..5xxx..1.1..xx.....$..vvvv..........v*0v.vvvv........cc...I...ccxx
+xxx.xxx..1...1.....5.....1Ivv.vvvv0....v3.+.vvvv.I...I...I.......Icxx
+xx..x...1..[..1............+..v3*v..T..v..v....+............E_....cxx
+xx.......1...1...........1Ivv.+.0v...0.vvvv.vvvv.I...I...I.......Icxx
+xx.x..x...1.1..xx...$....vvvv.v..v..........vvvv........cc...I...ccxx
+xx..xxxx...1..xx.........v..v.vvvv.vvvvv.vvvv0.v.........cc.....ccxxx
+xxx.xxxxxx...xx..5.......v0.+......v.*.v....+..v...c......cc...ccxxxx
+xx5xxxxxxxxxxxx.......$..v.%vvvvvv.v0.3v....v.%vc..cc.....ccccccxxxxx
+xxxxxxxxxxxxxxx..$.......vvvvxxxxv.vv+vv..1.vvvvc...c.....ccxxxxxxxxx
+xxxxxxxxxxxxx.......x.....xxxx.xxv.............vc.2.cc..2..cxxxxxxxxx
+xxxxxxxxx.x..$.....x......xxxxx..vvv.vvv+vvvvv.vc....c.....cccccccxxx
+xxxxxxxx.5........xx.....xxxx.....xv.vv0..v..v.vcc...cc.....cc...cccx
+xxxxxxxx.........xx.....xxxxx....xxv.vv...v..+.vxc....cc...........cx
+xxxxxx.xx..$..5.xxx.....xxxx.xx....v+vvvvvv..vvvxcc...ccc..........cc
+xxxxx..........xxx...x...x.xxxxxx.....xxxxvvvvxxxxcc...ccc......3...c
+xxxxx..........xx.....xx..x.x..........xx.xxxxxxxxcc...cccc....4u2..c
+xxxxx.$.....$.xxx..1...xx.xx....$.......xx.xxxxxxcc.....cccc....2D..c
+xxxxxx.........x..1.1..xxxxx......4..$.....Pxxxxcc.......cccc......cc
+xxxxxxx..$.x..xx.1...1..xxx..$.............WWxxxc....4....cxcc....ccx
+xxxxxxxxxx...xxx1..(..1...xx...x.......txWWwxxxxc...3u2...cxxccccccxx
+xxxxxxxxxxx.xxx..1...1.....xxx......xxxxxxwwwxxxc....2D...cxxxxxxxxxx
+xxxxxxxxxxxxxxx...1.1....$.xx.....$..xxxxxwwxxxxcc.......ccxxxxxxxxxx
+xxxxxxxxxxxxxxx....1.................Ptxxxxxwxxxxcc.....ccxxxxxxxxxxx
+xxxxxvvvvvxxx...xx..............$..t...Wxxxxwwxxxxcc...ccxxxxxxxxxxxx
+xxxvvv$$$vxxxxxxxccccccc.............WWWxxwwwwwxxxxcccccxxxxxxxxxxxxx
+xvvv$$650vccccxxxc.....c.........PtPWWWWwxwwwxwxxxxxxxxxxxxxxxxxxxxxx
+vv$$$$7..+.+.cxxxc..4..c.......$.xxxWWwwwwwwwwwwxxxxxxxxxxxxxxxxxxxxx
+xvvv$$050vcc.cxxxc.0U..+.$.......xxwwwwwwwwwwwwwwwwwxxxxxxxxxxxxxxxxx
+xxxvvv$$$vxc.ccccc..0..c....$..xxxxxwwxwwwwxwwwxwwxxxxxxxxxxxxxxxxxxx
+xxxxxvvvvvxc.c...c.....c..xxx...xxxxxxwwwxxxwwwwwxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxc.c2.0ccc+cccccccccccccxxxxxwwwxwwwwwxxxxxxxxxxxxxxxxxxxxx
+xxxxxccccccc.+._.+.........+.....cccccccwwwwwwwxxxxxxxxxxxxxxxxxxxxxx
+xxxxxllll0.ccc2.0c.cc+ccc+cc.....c.0Wwwwwwwwxxxxxxxxxxxxxxxxxxxxxxxxx
+xlxxlllll..+.c...c.c...c...c.....+..WWwwwwwxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxlllllll0.c.cc+cc.c0.0c0.0ccccccc.0Wwwwxxxwwxxxxxxxxxxxxxxxxxxxxxxxx
+xllllccccccc.......cs6.c.6scxxxxccccccccxxxxwxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxcccccccccccccccccxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

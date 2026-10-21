@@ -1,0 +1,30 @@
+# elf legates is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:    elf_legates
+DEPTH:   Orc
+SHUFFLE: 23
+SUBST:   6 : 6 .
+NSUBST:  0 = 3=9. / *=0.
+SUBST:   X = xx. b:2 I:1 $:1 *:1
+MONS:    patrolling orc warlord
+MONS:    patrolling orc sorcerer
+MONS:    patrolling orc high priest
+MONS:    deep elf knight / deep elf archer
+MONS:    deep elf pyromancer / deep elf zephyrmancer / nothing w:20
+MONS:    deep elf pyromancer / deep elf zephyrmancer / nothing w:40
+ITEM:    good_item scimitar / good_item chain mail
+SUBST:   = : +x
+MAP
+ xxxxx=xxx
+xxXXXI1IXXx
+xX..02.3XXx
+xXX000.00Xx
+xXX000.00Xx
+xX.000.00Xx
+xXX00...0Xx
+xX.X.d4d.Xx
+xXX.65556Xx
+xxXX.6.6XXx
+xxxXX..XXxx
+ xxxx@@@xx
+ENDMAP

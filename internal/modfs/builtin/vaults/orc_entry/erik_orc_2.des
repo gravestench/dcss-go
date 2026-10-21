@@ -1,0 +1,31 @@
+# erik orc 2 is an authored Dungeon gate to the Orcish Mines.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:  erik_orc_2
+TAGS:  orc_entry no_pool_fixup no_rotate
+ORIENT: float
+MONS:  orc warrior, orc priest/orc wizard, weight:100 orc / orc warrior
+# Source Lua: : if you.absdepth() >= 10 and crawl.one_chance_in(10) then
+# Source branch: MONS: orc knight
+# Source branch: SUBST: G = .
+# Source Lua: : else
+# Source branch: MONS:  orc warrior
+# Source branch: SUBST: G = 4
+# Source Lua: : end
+: vault.run("choose_guard")
+SUBST: c = c:1000 x
+KFEAT: O = enter_orcish_mines
+MAP
+.............................
+.Iwwwwwwwwwwwwwwwwwwwwwwwwww.
+.wIwwwwwwwwwwwwwwwwwwwwwwwww.
+.ww2+cccccccccccccccccccccww.
+.ww.c.......3.3.3......w2cww.
+.wwxx........3.3.......cccww.
+.122........3.I.3.....G4Ocww.
+.wwxx........3.3.......cccww.
+.ww.c.......3.3.3......w2cww.
+.ww2+cccccccccccccccccccccww.
+.wIwwwwwwwwwwwwwwwwwwwwwwwww.
+.Iwwwwwwwwwwwwwwwwwwwwwwwwww.
+.............................
+ENDMAP

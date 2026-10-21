@@ -1,0 +1,9 @@
+# mines dummy is an authored Orc room or helper map.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME: mines_dummy
+DEPTH: Orc
+TAGS: dummy
+WEIGHT: 60
+MAP
+x
+ENDMAP

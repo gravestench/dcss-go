@@ -1,0 +1,33 @@
+# st orc mages is an authored Orc:2 ending.
+# Source: crawl-ref/source/dat/des/branches/orc.des.
+NAME:    st_orc_mages
+TAGS:    no_item_gen no_monster_gen transparent
+PLACE:   Orc:$
+ORIENT:  float
+MONS:    orc / nothing, orc wizard / nothing, orc sorcerer
+MONS:    orc priest / nothing, orc high priest, orc warrior
+KFEAT:   S = any shop
+SHUFFLE: 23/45
+MAP
+  ...................
+ ...ccccccccccccccc...
+...cc4.4...6...4.4cc...
+..cc4.2.4..6..4.2.4cc..
+..c..4.2.ccccc.2.4..c..
+..c.2.2.2.c.c.2.2.2.c..
+..c..2.2c.....c2.2..c..
+..c...2ccc.3.ccc2...c..
+..c..c..c.....c..c..c..
+..11.cc...cSc...cc.11..
+..61.c..3.S5S.3..c.16.@
+..11.cc...cSc...cc.11..
+..c..c..c.....c..c..c..
+..c...2ccc.3.ccc2...c..
+..c..2.2c.....c2.2..c..
+..c.2.2.2.c.c.2.2.2.c..
+..c..4.2.ccccc.2.4..c..
+..cc4.2.4..6..4.2.4cc..
+...cc4.4...6...4.4cc...
+ ...ccccccccccccccc...
+  ...................
+ENDMAP
