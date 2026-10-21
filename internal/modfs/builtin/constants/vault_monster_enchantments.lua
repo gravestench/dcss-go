@@ -11,6 +11,7 @@ local enchantments = {
     PARALYSIS = "paralysis",
     PETRIFIED = "petrified",
     SLOW = "slow",
+    SHAPESHIFTER = "shapeshifter",
 }
 
 enchantments.VALID = {}

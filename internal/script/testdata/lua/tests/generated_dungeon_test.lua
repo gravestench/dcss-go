@@ -139,6 +139,47 @@ local function extra_parent_down_gets_child_landing()
         "extra parent exit lands on an up stair")
 end
 
+-- Encompassing source maps can leave a lone authored exit in a disconnected
+-- side room. Coordinate sorting would put that room before the main chamber
+-- and strand a player who first entered through a later parent stair.
+local function encompass_selected_stair_lands_in_main_chamber()
+    local parent = floor(1)
+    local child = floor(2)
+    local builder = grid.new({})
+
+    for y = 35, 45 do
+        for x = 35, 45 do
+            builder:set(x, y, ".")
+        end
+    end
+
+    builder:set(5, 5, "<")
+    builder:set(40, 40, "<")
+    builder:set(42, 40, "<")
+
+    child.layout.builder = builder
+    child.layout.prefer_main_entry = true
+    child.layout.stairs = {
+        { up = { x = 40, y = 40 } },
+        { up = { x = 42, y = 40 } },
+        { up = { x = 5, y = 5 } },
+    }
+
+    stairs.first(parent)
+
+    local selected = parent.layout.stairs[3].down
+    local _, entry = stairs.pair(parent_context(parent), {
+        id = parent.id,
+        width = 80,
+        height = 70,
+        seen = {},
+        stairs = parent.links,
+    }, child, selected)
+
+    harness.equal(entry.x, 40, "selected departure uses main chamber")
+    harness.equal(entry.y, 40, "selected departure keeps main row")
+end
+
 -- A child vault may author another up exit. Add its parent departure only
 -- on connected, unoccupied floor; the wall and active actor remain intact.
 local function extra_child_up_gets_safe_parent_departure()
@@ -229,6 +270,7 @@ end
 function test.run()
     first_floor_has_pending_downstairs()
     extra_parent_down_gets_child_landing()
+    encompass_selected_stair_lands_in_main_chamber()
     extra_child_up_gets_safe_parent_departure()
     branch_entry_uses_one_parent_entrance()
 end

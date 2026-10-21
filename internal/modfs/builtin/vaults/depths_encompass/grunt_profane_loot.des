@@ -1,0 +1,26 @@
+# Profane Halls uses this helper when its H chamber does not need the Zot
+# gate. Shared guardian setup remains a Lua hook; this DES owns the room,
+# loot, and the source mask that suppresses incidental monster generation.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME: grunt_profane_loot
+TAGS: grunt_profane_loot no_monster_gen
+: vault.run("shared.profane_setup")
+# Source Lua: : grunt_profane_halls_setup(_G)
+SHUFFLE: KLMN
+KMONS: K = storm dragon
+KMONS: L = shadow dragon
+KMONS: M = quicksilver dragon
+KMONS: N = golden dragon
+KITEM: KLMN> = any good_item
+KITEM: 12 = any
+MAP
+  cc+cc
+ cc1%1cc
+cc2%K%2cc
+c1%***%1c
++%L*>*N%+
+c1%***%1c
+cc2%M%2cc
+ cc1%1cc
+  cc+cc
+ENDMAP

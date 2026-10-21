@@ -81,10 +81,11 @@ end
 -- distribute its down exits among separate bubbles; choosing only one
 -- would either discard source exits or make branch travel irreversible.
 -- Layouts with no authored stairs still use their largest playable region.
-local function selected_regions(builder)
+local function selected_regions(builder, include_stairless)
     local visited = {}
     local selected
     local authored_regions = {}
+    local all_regions = {}
 
     for y = 1, grid.height - 2 do
         for x = 1, grid.width - 2 do
@@ -93,6 +94,8 @@ local function selected_regions(builder)
             if not visited[key(point)] and passable(builder:cell(x, y)) then
                 local region = region_from(builder, point, visited)
                 local authored = #region.up + #region.down > 0
+
+                all_regions[#all_regions + 1] = region
 
                 if authored then
                     authored_regions[#authored_regions + 1] = region
@@ -103,6 +106,10 @@ local function selected_regions(builder)
                 end
             end
         end
+    end
+
+    if include_stairless then
+        return all_regions
     end
 
     if #authored_regions > 0 then
@@ -234,6 +241,87 @@ function stairs.complete(builder, profile)
         for _, pair in ipairs(complete_region(builder,
             region, needed_up, needed_down, serials)) do
             pairs[#pairs + 1] = pair
+        end
+    end
+
+    return pairs
+end
+
+-- A source encompassing MAP can intentionally put a one-way authored exit
+-- in a tiny side region. Keep that exit instead of trying to fabricate its
+-- opposite on a cell that does not exist. Complete the branch minimum in
+-- the largest playable region, which also supplies the entry landing.
+function stairs.complete_encompass(builder, profile)
+    local regions = selected_regions(builder, true)
+
+    if #regions == 0 then
+        error("encompassing map has no playable floor for stairs")
+    end
+
+    local main = regions[1]
+    local authored_up = 0
+    local authored_down = 0
+
+    for _, region in ipairs(regions) do
+        authored_up = authored_up + #region.up
+        authored_down = authored_down + #region.down
+
+        if #region.floor > #main.floor then
+            main = region
+        end
+    end
+
+    local add_up = math.max(0, profile.up - authored_up,
+        1 - #main.up)
+    local add_down = math.max(0, profile.down - authored_down)
+
+    if profile.down > 0 then
+        add_down = math.max(add_down, 1 - #main.down)
+    end
+
+    if #main.floor < add_up + add_down then
+        error("encompassing map has too few main-region floor cells for stairs")
+    end
+
+    table.sort(main.floor, before)
+
+    for index = 1, add_up do
+        local point = take_floor(builder, main)
+        local glyph = new_up[((authored_up + index - 1) % #new_up) + 1]
+
+        builder:set(point.x, point.y, glyph)
+        main.up[#main.up + 1] = point
+    end
+
+    for index = 1, add_down do
+        local point = take_floor(builder, main)
+        local glyph = new_down[((authored_down + index - 1) % #new_down) + 1]
+
+        builder:set(point.x, point.y, glyph)
+        main.down[#main.down + 1] = point
+    end
+
+    local pairs = {}
+
+    -- The first pair supplies the live floor entry, so emit the main region
+    -- first even when a smaller side region appeared earlier in the MAP.
+    local function append_region(region)
+        table.sort(region.up, before)
+        table.sort(region.down, before)
+
+        for index = 1, math.max(#region.up, #region.down) do
+            pairs[#pairs + 1] = {
+                up = region.up[index],
+                down = region.down[index],
+            }
+        end
+    end
+
+    append_region(main)
+
+    for _, region in ipairs(regions) do
+        if region ~= main then
+            append_region(region)
         end
     end
 

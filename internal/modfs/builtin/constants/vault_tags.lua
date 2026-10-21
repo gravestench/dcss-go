@@ -1,6 +1,9 @@
 -- Shared serial tags keep controller requests tied to their authored map
 -- families without scattering literal selector strings through Lua policy.
 local tags = {
+    UNIQ_DEPTHS_ENCOMPASS = "uniq_d_encompass",
+    GRUNT_PROFANE_LOOT = "grunt_profane_loot",
+    GRUNT_ZOT_PORTAL = "grunt_zot_portal",
     DECOR = "decor",
     LAIR_ENTRY = "lair_entry",
     LAIR_END_SMALL = "lair_end_small",

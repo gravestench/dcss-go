@@ -18,6 +18,7 @@ function authored.execute(api)
         branch_bottom = api.branch_bottom,
         absolute_depth = api.absolute_depth,
         prior_vault_ids = api.prior_vault_ids,
+        branch_entries = api.branch_entries,
     }
     local placed = placement.place(nil, builder, api.definition, player)
     local protected = {}
@@ -34,6 +35,7 @@ function authored.execute(api)
         records = placed.records,
         vault_ids = placed.vault_ids,
         protected = protected,
+        placement = placed,
     }
 end
 

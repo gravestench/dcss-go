@@ -8,6 +8,7 @@ local names = {
     WHITE_CRYSTAL_WALL = "wall of white crystal",
     SARCOPHAGUS = "sarcophagus",
     GRAVESTONE = "a gravestone",
+    IRON_STATUE = "iron statue",
     ADVENTURERS_GRAVESTONE = "adventurer's gravestone",
     HIDEOUS_STATUE = "statue of a hideous four-limbed creature",
     WRECKAGE = "broken wreckage",

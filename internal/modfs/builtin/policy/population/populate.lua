@@ -79,7 +79,11 @@ local function populate_level(ctx, level, allowed, scenario_id)
         local cells = free_cells(ctx, level, excluded)
 
         if #cells == 0 then
-            error("Dungeon:" .. level.id .. " has no free monster spawn cell")
+            -- An encompassing map can mark every playable cell as
+            -- no_monster_gen. Its authored monsters still materialize, but
+            -- ordinary population has nowhere legal to appear. Stop the
+            -- ambient pass without changing the saved source roll budget.
+            break
         end
 
         local monster_id = pool.pick(ctx, choices, total)

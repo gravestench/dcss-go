@@ -2262,6 +2262,30 @@ The grave entrance also illustrates a local feature-name hook: its
 lives in the same-named file under
 `policy/generation/vaults/depths_entry/`.
 
+Depths also has a separate whole-floor family under
+`vaults/depths_encompass/`. Five maps have positive weights on Depths:2–3;
+two have an explicit `PLACE: Depths:$` rule. The generation owner tries an
+eligible encompassing map before an ordinary layout. Its `ORIENT: encompass`
+MAP owns the floor, so ordinary secondary vaults are skipped. The shared
+`uniq_d_encompass` tag permits only one such map in a run; later floors use
+the ordinary layout path. A mod can add a map by creating
+`vaults/depths_encompass/<name>.des` with a unique `NAME`, a Depths `DEPTH`
+or `PLACE`, a positive effective `WEIGHT`, `ORIENT: encompass`, and the
+shared uniqueness tag. A same-path file replaces a bundled map. The
+`internal/script/testdata/depths-encompass-mod/` fixture demonstrates both.
+
+These maps keep their original MAP syntax and static directives. Put any
+calculated behavior in
+`policy/generation/vaults/depths_encompass/<name>.lua` and declare it at
+the intended point in the DES file with `: vault.run("method")`. A dotted
+method such as `shared.profane_setup` instead loads `shared.lua` in that
+family. Tagged `SUBVAULT` children are separate `.des` files, so a mod can
+add another Profane temple or replace one Crystal Crosses arm without
+copying the encompassing parent. The final Profane Halls gate uses the
+child's keyed `enter_zot` feature for the scheduled branch link. The Lua
+hooks receive the generation `api` described above; use
+`api:branch_entry(ids.branches.BRANCH_ZOT)` for schedule-dependent choices.
+
 The ten bundled Swamp entrances retain their source `MARKER` declarations
 for fog machines. Population turns each marker into a saved ECS fog entity,
 so a modded Swamp gate can use the same marker syntax without a new system.

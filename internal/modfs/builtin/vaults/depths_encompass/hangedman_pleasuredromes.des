@@ -1,0 +1,131 @@
+# Pleasuredromes is an explicit Depths bottom map. Its first hook scales
+# traps and guardians with absolute depth; its second hook opens a source
+# Zot portal only when the branch schedule chooses this floor.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME:    hangedman_pleasuredromes
+TAGS:    no_monster_gen no_item_gen uniq_d_encompass
+ORIENT:  encompass
+PLACE:   Depths:$
+DEPTH:   Depths:2-
+WEIGHT:  1 (Depths:$), 10
+# everything here (bar the very top) spawns regularly in depths,
+# if possibly as part of a band.
+MONS:    wizard w:8 / necromancer w:8 / tengu warrior / \
+         spriggan defender w:2 / tengu conjurer / nothing w:2
+MONS:    rakshasa / hell knight / stone giant w:5 / \
+         vampire mage / ettin / spriggan berserker / \
+         deep troll earth mage / deep troll shaman w:5
+MONS:    fire giant / frost giant / stone giant w:6 / lich w:4 / \
+         vampire knight / spriggan air mage / tengu reaver / \
+         deep elf high priest w:4 / deep elf demonologist w:4 / \
+         deep elf annihilator w:4 / deep elf sorcerer w:4 / \
+         deep elf death mage w:2 / deep elf elementalist w:2
+MONS:    very ugly thing w:10 / ugly thing w:30 / \
+         great orb of eyes / glowing orange brain / deep troll
+MONS:    fire dragon / ice dragon / very ugly thing / glowing shapeshifter / \
+         titanic slime creature w:4 / jiangshi w:2 / phantasmal warrior w:2 / \
+         caustic shrike skeleton w:2 / spark wasp zombie w:2
+MONS:    sphinx / entropy weaver / spark wasp / flayed ghost / \
+         storm dragon w:4 / shadow dragon w:4 / quicksilver dragon w:4 / \
+         iron dragon w:4 / golden dragon w:4 / caustic shrike / \
+         tentacled monstrosity / juggernaut zombie w:2
+MONS:    spriggan defender w:30 / titan w:30 / ancient lich w:30 / \
+         deep elf blademaster / deep elf master archer / \
+         draconian monk / draconian annihilator / draconian knight / \
+         juggernaut w:20
+KMONS:   Z = draconian knight / draconian annihilator
+KFEAT:   z^ = zot trap w:499 / floor w:1
+KFEAT:   Z = enter_zot
+SHUFFLE: Y], {([>, HI / HI / IH, JK / JK / KJ
+SHUFFLE: NO / NO / ON, PQ / PQ / QP, RS / RS / SR, lm / lm / ml
+NSUBST:  ] = 1:) / 1:] / *:>
+SUBST:   B : b.., C : cb., D : x.., E : xx., F : xx.
+SUBST:   L : xx., M : xx., j : x.., k : x.., n : x.
+SUBST:   HJOQRm = x, IKNPSl = .
+SUBST:   b : bbbbbbvc, @ = 14, ! = 24, & = 36
+NSUBST:  14 = 1:36
+: vault.run("configure")
+# Source Lua: : local Z = math.max(math.min(5 + (you.absdepth() - 23) * 5, 30), 10)
+# Source Lua: :   subst("2 = 2:20 3:" .. Z)
+# Source Lua: :   subst("5 = 5:20 6:" .. Z)
+# Source Lua: :   subst("1 = 1:" .. 40 - Z .. " 2:" .. Z - 5)
+# Source Lua: :   subst("4 = 4:" .. 40 - Z .. " 5:" .. Z - 5)
+: vault.run("zot_portal")
+# Source Lua: : if you.where() == dgn.level_name(dgn.br_entrance("Zot")) then
+# Source Lua: SUBST:  )]}> = ., " = `
+# Source Lua: NSUBST: ' = 1:Z / 2:^ / *:`
+# Source Lua: : end
+SUBST:  ' = .
+MARKER: Y = lua:props_marker { portal=1 }
+FTILE:  Z`^ = floor_marble
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxJ.............xxxxxx
+xxxxxxxxxxx......c.........xxx
+xxxxxxxxx"".....cbc..x......xxx
+xxxxxklxP".....cbcbc.x......Mxxxx
+xxxxxl'"4.....xF.b.cc...n....Lxxxx
+xxxxxx""1....x...x..cc.x.......xxx
+xxxxxP41.........b..@cc.........xxx
+xxxx"".....x..xxb.bxb.cc..@.....xxx
+xxJx".....x..E...b...b.cc@..n...xxx
+xx.......x.......xx..x.1cc.x.....xx
+xx.............F...x.b*..cc......xx
+xx.....x..E........xb.bxb.cc.xx..xx
+xx....x..x...........b.2.b5cc....xxxxxxxxxxxxx
+xx...cF..x..F....%...xx.2x..cc...xxxxxxxxxxxxxx
+xx..cb...b......%*.....x.b...bc..xxxx@.%.%.@.xxx
+xx.cbcbxb.bx...%*.*%...xb.bxbcbc.xxxxx........xxx
+xx..cb...b.x.....*%....x.b...bc..xxxxxx........xxx
+xx...cc..x..xx...%...xx..x..cc...xxxxxxx%.......xxx
+xx....cc@b...b.......b%63b5cc....xxxxxxxx...I.x.xxxx
+xx..xx.cc.bcb.bx...xb.bxb.cc..xx.xx..xxxxx...H.!..xxx
+xx......cc..*b.x...x%b%*|cc......xx....xxxx.x...x..xxx
+xx.....x.cc!.x2.xxx.6x*7cc.......xx.......xx...H....xxx
+xxxx..n..@cc.b.2.b..3b|cc.....xMx.x.xLx.....x.x.I....xx
+ xxx....@..cc.bxb.bxb.cc.@.xxx...xxx...xxx...x......@xx
+  xx........cc5..b..5cc.........x...x........xx......xx
+  xxxxL....x.cc..x..cc...x.@..SR..@..RS..@.x..xx....%xx
+  xxxxxM..n...cc.b.cc....x....SR.....RS....x..xxx%...xx
+     xxx.....x.cbcbc.....x....SR.....RS....x..xxxx..%xx
+    xxcc.....x..cbc..x..x..SSSJ.x.Q.x.HSSS..x..xxxx..xx
+    xcc..........c...x..L..RRR.K.cPc.I.RRR..M..xxxxx@xx
+   xxc.xx...............x.x...x.J...H.x...x.x...xxxxxxx
+   xc4.xx...xxxxxxxxxxxx.x.....c.>.[.c.....x....xxxxxxx
+   xc....xx.....nnnnxxxxxx.@..NO..z..ON..@.xxxxxxxxxxxxxxx
+  xc.....xx........nx....x.....c.(.{.c.....x.xxxxxxxxxxxxxx
+  xc.......xx......nx...x.x...x.H...J.x...x.x]...........xxxxxx
+  xxc......xx.......xx..M..RRR.I.cPc.K.RRR..L...Y..c......xxxxx
+   xc...j....xx......x..x..SSSH.x.Q.x.JSSS..x.....cbc........xx
+   xxc.......xx.c....x...x....SR.....RS....x].Y..xbcbx.......xxx
+    xc..........b....xx..x....SR.....RS....x....x..b..x......Lxxxxx
+    x@cc......cb%bc...x..x.@..SR..@..RS..@.x.x.x..4c...x.x....Mxxxx
+    xc..cc..cc.4b.....KJ........x...x.....x....b..1b14.b.........xx
+    xc....cc....c.xx..KJ...xxx...xxx...xxx.}.xb.bcbcbcb.bx.......xxx
+    xxc........c..xx...KJ.....xLx.x.xMx]....x..b..%b%..b..x......xxx
+     xc.....k..c....xx..KJJ.......xx]....x.x..4c.0ccc5.c...x.x....xxx
+     xxc..%...c.....xx...KKxx.....xx...Y...b.41b*cc7cc%b25.b.......xx
+     xxc..%%..c.......xx....xxxx..xx.....xb.bcbcbc6x6cbcbcb.bx.....xx
+     xc..k.....c......xx.......xxxxx.Y..x..b..*b@..x..5b*..b..x....xx
+    xxc........c...j....xx......nnnx...x...c.0cc.@|x|*4cc3.c...x...xx
+    xc....cc....c.......xx.c......nx..cb.41c%cc3.|x%*|.4cc*b36.bc..xx
+    xc2.cc..cc."b".........b......nx.cbcbccccc7xxx%|%xxxccbcbcbcbc.xx
+    x.cc......cb'bc......cb%bc....nx..cb..1c%cc3.|*%x.....%C...Bx..xx
+    xc........!"b".cc..cc.4b.......x...x..4c.5cc.*|x....C..x...x...xx
+   xxc.mm....ll!c....cc....c.xx....x....x..b..%c21.x.....%.x..x....xx
+   xc..mm...%ll..c........c..xx....x.....xb.bccccc1x....D.x........xx
+   xc......xx%...c.....k..c....xx..........b..2c*ccc.C%D...........xx
+  xc%.....%xx.....c..%...c.....xx........x.x..5c.5cc.....D.x.......xx
+  xc%....xx%......c..%%..c.......xx.........x..b..*b%..x.........HOxx
+  xxc...%xx......c..k.....c......xx..........xb.bcbcCxx..x.......Pxxx
+   xc&.ll%...mm..c........c...j....xx..........b..3b........"""JRlxxx
+   xxc5ll....mm.c....cc....c.......xx.cxM....x.x..6c........"'"jxxxxx
+    xc25........c2.ccxxcc..c.........ccxxL......x..b..x....."""kxxxxx
+    xxcc&.....cc.ccxxxxxxcc@cc.....4ccxxxx.......xbcBx......Jjklxxxxx
+     xxxcc%%ccxxxxxx    xxxxxxcc..ccxxx xx........cbx.......Rxxxxxxxx
+       xxxccxxx              xxxccxxx   xxxxx......c......HPlxxxxxxxx
+         xxxx                  xxxx     xxxxxx............Oxxxxxxxxxx
+                                            xxxxxxxxxxxxxxxxxxxxxxxxx
+                                             xxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

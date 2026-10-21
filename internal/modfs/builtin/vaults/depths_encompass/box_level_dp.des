@@ -1,0 +1,97 @@
+# Box Level fills an entire middle Depths floor with two opposing monster
+# themes. The hooks choose one coherent theme and the source potion pool;
+# the MAP and its many keyed rooms remain authoritative here.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME:    box_level_dp
+DEPTH: Depths:2-, !Depths:$
+TAGS:    no_pool_fixup no_rotate uniq_d_encompass
+ORIENT:  encompass
+: vault.run("loot_potions")
+# Source Lua: : kitem("g = " .. dgn.loot_potions)
+KITEM:   zZ = any potion / nothing w:90
+# Two themes: birds with elves, and spriggans with giants.
+: vault.run("choose_theme")
+# Source Lua: : if crawl.coinflip() then
+# Source Lua: MONS:   tengu conjurer / tengu warrior / deep elf elementalist \
+# Source Lua:         / sphinx / nothing
+# Source Lua: MONS:   tengu reaver / deep elf annihilator / deep elf high priest \
+# Source Lua:         / caustic shrike
+# Source Lua: : else
+# Source Lua: MONS:   spriggan berserker / spriggan air mage / ettin / stone giant \
+# Source Lua:         / frost giant / fire giant / nothing
+# Source Lua: MONS:   spriggan defender / titan / juggernaut
+# Source Lua: : end
+KMONS:   L = fire dragon
+KMONS:   ~ = ice dragon
+KMONS:   z = meliai / spark wasp w:2 / nothing w:20
+KMONS:   Z = spark wasp
+KFEAT:   L = l
+KFEAT:   ~ = w
+NSUBST:  w = ~ / w, l = L / l
+NSUBST:  D = + / b, E = + / b, F = + / b, H = + / b, J = + / x, K = + / n
+SUBST:   ' : ''l. , ' = l., " : ""W. , " = Ww..
+SUBST:   * = * % % $ $ .
+SUBST:   ; = 9 0
+SUBST:   ! = %$, & = *%
+COLOUR:  a = yellow
+TILE:    a = wall_wax
+SUBST:   a = x
+MARKER:  P = lua:props_marker { portal=1 }
+KFEAT:   P = stone_arch
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x.......xccccccxxxxxxx.........................................w"..xxx
+x.(...{.xc....cbbbbbxx................xxx...................."w......x
+x.......++.U..++.].++.....'''....'l'....xxx................."ww"..)..x
+x...[...xc....cbbbbbxx...'''..''lllll'....xx...vvJvvJv......"ww"....xx
+x.......xcccccccxxxxxx.......'llllllll.....x...v....9v...."www".....xx
+xxxxxxxxxxxxxxxxxxxxxx.......'lllllll'.....x...J.....J.."ww.w".....xxx
+x.............................'lllll'.....xx...v9....v.www..w".....xxx
+x....""w.............".xxx......'ll'......x....vvJJJJvwww.www.....xxxx
+x.."wwwww"..........w....xxxx............xx....."wwwwwwww.ww"....xxxxx
+x.wwwwwwww"........w........xxxxxxx....xxx........"www"...ww"...xxxxxx
+x..wwwwwww"......"ww......""......xxxxxx....."...........ww"....xxxxxx
+xx..""ww".......www....."wwwwwwwwww........."www"......wwwww"....xxxxx
+xxx.........."wwww"..""wwwwwwwwwwwwwwwwww".www"...wwwwwwwwwwww.....xxx
+xxxxx....""wwwwwwwwWWwwwwww.......wwwwwwwwwwwwwwwwwwwwwww.....xx....xx
+xxx..""wwwwwwwwwwwwWWww"......G.G......"wwwwxxww".........xxxxx.....xx
+x."wwwwwwwwwwwwwxxx__xxxxxxxxxx+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx....x
+xwwwwwwww".."wwwxww.."w........................................>xx...x
+xxwwww""....."xwxw"...ww........................................xx...x
+xxww".........xxxw..............................................xx..xx
+xww............xx"w...ccccccccccccccccccKcccccccccccccccccc.....xx..xx
+xw"...xxx.......x..w..c...*...*...*...*...*...*...*...*...c.....x...xx
+xw....x!x..xxx..x..w..c...................................c.....x...xx
+xxx...x+x..x!x..x.....c*..;...;...;...;...;...;...;...;..*c.....xx..xx
+xxx....1..1+!x..x.....c...................................c.....xx...x
+x..........xxx.xx.....c.......bbbbbbbbbb.bbbbbbbbbb.......c.....xx..xx
+x..xxxx........xx.....c.......b.........b.........b.......c.....x...xx
+x..x!!+1..xxxx..x.....c*..;...b.bbbDbbb.b.bbbEbbb.b...;..*c.....x..xxx
+x..xxxx..1+!!x..x.....c.......b.b8...|b.b.b|...8b.b.......c.....xx.xxx
+x.........xxxx..x.....c.......b.D|.P.|D.b.E|.P.|E.b.......c.....xx.xxx
+x.......1.......x.....c.......b.b|...8b.b.b8...|b.b.......c.....x...xx
+xxx....121....xxx.....c*..;...b.bbbDbbn.b.nbbEbbb.b...;..*c.....x...xx
+x!x...cc+cc...xxx.....c.......b.........b.........b.......c.....xx..xx
+x&+1..c!2!c...xxx.....K........bbbbbbbbb.bbbbbbbbb........K.....x..xxx
+x!x...c&&&c...xxx.....c.......b.........b.........b.......c.....x..xxx
+xxx...ccccc...xxx.....c*..;...b.bbbHbbn.b.nbbFbbb.b...;..*c.....x.xxxx
+x...............x.....c.......b.b|...8b.b.b|...8b.b.......c.....x.xxxx
+xx...1...xxxx...x.....c.......b.H|.P.|H.b.F|.P.|F.b.......c.....x..x.x
+xx..x+x.1+!!x...x.....c.......b.b8...|b.b.b8...|b.b.......c.....xx...x
+x...x!x..xxxx...x.....c*..;...b.bbbHbbb.b.bbbFbbb.b...;..*c.....xxx.xx
+x...xxx.........x.....c.......b.........b.........b.......c.....xxx.xx
+x.........xxxxxxx.....c.......bbbbbbbbbb.bbbbbbbbbb.......c.....xxx..x
+xxxx......+*9*9*+.....c...................................c.....xxxx.x
+xxxx..xx..xxxxxxx.....c*..;...;...;...;...;...;...;...;..*c.....x....x
+x.....xx........x.....c...................................c.....x.xx.x
+x.xx.....xxx....x.....c...*...*...*...*...*...*...*...*...c.....x.xx+x
+x.xx....1+!x..xxx.....ccccccccccccccccccKcccccccccccccccccc.....xxx..x
+x....xx..xxx..xxx...............................................xx..xx
+x....xx.......xxx.........................................z..z..x....x
+xx............xxx<.............................................zxa...x
+xx..x......xx...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxazzxx
+xxx........xx.....xxx...xx.x..xx...xxaaaaaaagaaga.a..aaaaaaaaaaaaazzxx
+xxxx..xx..............x...x...xx.xx.xaaazazzaaza.a.aa.za.z.aaaa.a.aazx
+xxxxxxxxxxx....x..xx.x.xx.x..x..xx}..xagazaaZzazzaa..aa..aa....z.agaxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

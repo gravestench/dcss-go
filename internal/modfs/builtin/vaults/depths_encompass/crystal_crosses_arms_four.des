@@ -1,0 +1,24 @@
+# This four-way arm is a repeatable helper for Crystal Crosses. Its tag lets
+# the parent request it twice while the local door substitution varies each
+# copy without changing the parent MAP.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME:    crystal_crosses_arms_four
+DEPTH: Depths:2-, !Depths:$
+TAGS:    unrand allow_dup crystal_crosses_four
+SUBST:   + : +++.
+TILE:    b = wall_emerald
+MAP
+b+b.b   bbbbb
+    .   b
+    b   b
+    +   b
+    bbbb bbbb
+        b   +
+        b   b
+        b   .
+    b.b+b   b.b+b
+    .
+    b
+    +
+    b
+ENDMAP

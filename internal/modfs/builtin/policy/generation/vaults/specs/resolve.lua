@@ -39,6 +39,13 @@ local random_monster_names = {
     super_out_of_depth_monster = true,
     moderate_out_of_depth_monster = true,
     [monster_requests.BASE_DRACONIAN] = true,
+    [monster_requests.NONBASE_DRACONIAN] = true,
+}
+
+local random_undead_names = {
+    [monster_requests.RANDOM_SPECTRE] = true,
+    [monster_requests.RANDOM_SPECTRAL] = true,
+    [monster_requests.RANDOM_SIMULACRUM] = true,
 }
 
 local random_item_names = {
@@ -238,6 +245,54 @@ local function source_depth(selected, depth)
     return tonumber(value) or depth
 end
 
+-- A bare source spectre or simulacrum chooses its corpse species from the
+-- requested branch floor. Resolve the abbreviation through the catalog so
+-- added branches use the same rule without a new hard-coded branch case.
+local function undead_place(selected, depth, site)
+    local abbreviation, floor =
+        (selected.place or ""):match("^([A-Za-z]+):(%d+)$")
+
+    if abbreviation then
+        for _, id in ipairs(register.ids(categories.BRANCHES)) do
+            local branch = register.get(categories.BRANCHES, id)
+
+            if branch.abbreviation == abbreviation then
+                return id, tonumber(floor)
+            end
+        end
+
+        choice.fail(site, selected.place,
+            "unknown undead source branch " .. abbreviation)
+    end
+
+    return site.branch_id or branch_ids.BRANCH_DUNGEON, depth
+end
+
+-- Filter out species that cannot leave remains before choosing the saved
+-- base identity for a source random spectre or simulacrum.
+local function random_undead_base(ctx, selected, depth, site)
+    local branch_id, floor = undead_place(selected, depth, site)
+    local rows = pool.at_depth(branch_id, floor)
+    local eligible = {}
+    local total = 0
+
+    for _, row in ipairs(rows) do
+        local definition = catalog.get(categories.MONSTERS, row.id)
+
+        if definition.leaves_corpse then
+            eligible[#eligible + 1] = row
+            total = total + row.weight
+        end
+    end
+
+    if total == 0 then
+        choice.fail(site, selected.source,
+            "no undead base species at " .. tostring(selected.place))
+    end
+
+    return pool.pick(ctx, eligible, total)
+end
+
 -- Random corpse requests filter to species capable of leaving the requested remains.
 local function generic_corpse_species(ctx, depth, skeleton, site)
     local rows = pool.at_depth(branch_ids.BRANCH_DUNGEON, depth)
@@ -303,6 +358,7 @@ function resolve.validate_monster(selected, site)
     end
 
     if selected.no_spawn or random_monster_names[name] or
+        random_undead_names[name] or
         name:match("^monster_array_[1-7]$") then
         return
     end
@@ -451,7 +507,13 @@ function resolve.monster(ctx, selected, depth, site)
         colour = colours.RANDOM[ctx:random("vault_colour", #colours.RANDOM) + 1]
     end
 
-    if random_monster_names[name] then
+    if random_undead_names[name] then
+        variant = name ~= monster_requests.RANDOM_SIMULACRUM and
+            "spectral" or "simulacrum"
+        kind_id = variant == "spectral" and
+            monster_ids.MONS_SPECTRAL_THING or monster_ids.MONS_SIMULACRUM
+        base_id = random_undead_base(ctx, selected, depth, site)
+    elseif random_monster_names[name] then
         kind_id = random_monsters.pick(ctx, name,
             source_depth(selected, depth), site, selected.place)
     elseif name:match("^monster_array_[1-7]$") then

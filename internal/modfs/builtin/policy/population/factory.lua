@@ -14,6 +14,7 @@ local habitats = require("constants.monster_habitats")
 local terrain = require("constants.terrain")
 local monsters = require("ids.monsters")
 local object_classes = require("ids.object_classes")
+local armour_slots = require("constants.armour_slots")
 local weapon_brands = require("constants.weapon_brands")
 local armour_egos = require("constants.armour_egos")
 local missile_brands = require("constants.missile_brands")
@@ -235,16 +236,49 @@ local function explicit_equipment(ctx, options)
     return selected
 end
 
--- Create and equip each authored item while attaching the same vault origin as its monster.
+-- Give successive source weapon slots to the primary and alternate hands.
+-- Body armour and shields use their catalog slots. Any further items that
+-- would claim an occupied slot remain carried, preserving authored gear
+-- without corrupting the save invariant that each slot has one owner.
 local function give_explicit_equipment(ctx, monster, selected, origin)
+    local weapons = 0
+    local missiles = 0
+    local occupied = {}
+
     for index, entry in ipairs(selected) do
         local entity
         local slot
 
         if entry.class == object_classes.OBJ_WEAPONS then
-            slot = "weapon"
+            weapons = weapons + 1
+
+            if weapons == 1 then
+                slot = "weapon"
+            elseif weapons == 2 then
+                slot = "alternate_weapon"
+            end
         elseif entry.class == object_classes.OBJ_MISSILES then
-            slot = "missile"
+            missiles = missiles + 1
+
+            if missiles == 1 then
+                slot = "missile"
+            end
+        elseif entry.class == object_classes.OBJ_ARMOUR then
+            local definition = catalog.get("items", entry.item.kind_id)
+            local source_slot = definition.armour and
+                definition.armour.slot_id
+
+            if source_slot == armour_slots.BODY_ARMOUR then
+                slot = "body"
+            elseif source_slot == armour_slots.SHIELD then
+                slot = "shield"
+            end
+        end
+
+        if occupied[slot] then
+            slot = nil
+        elseif slot then
+            occupied[slot] = true
         end
 
         if entry.rolled then
@@ -420,14 +454,17 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
         })
     end
 
-    vault_enchantments.install(ctx, monster,
-        options.permanent_enchantments)
-
     if options.origin then
         prepare_habitat(ctx, source, level_id, x, y)
     end
 
     ctx:place_actor(monster, level_id, x, y)
+
+    -- Shapeshifter's permanent enchantment picks its first body using the
+    -- actual cell. Install all source statuses after placement so this
+    -- shared policy can see the position and preserve a valid form lineage.
+    vault_enchantments.install(ctx, monster,
+        options.permanent_enchantments)
 
     if kind_id == monsters.MONS_SHAPESHIFTER or
         kind_id == monsters.MONS_GLOWING_SHAPESHIFTER then

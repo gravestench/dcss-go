@@ -1,0 +1,10 @@
+# A same-path override changes this bundled map without copying its Lua
+# handler. Mod selection sees the new weight and geometry under the old ID.
+NAME: box_level_dp
+DEPTH: Depths:2-, !Depths:$
+WEIGHT: 3
+TAGS: uniq_d_encompass
+ORIENT: encompass
+MAP
+{..}
+ENDMAP

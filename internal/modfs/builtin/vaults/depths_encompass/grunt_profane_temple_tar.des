@@ -1,0 +1,37 @@
+# The Tartarus temple is a death-themed tagged child of Profane Halls. Its
+# local map remains independent so a mod can replace this room alone while
+# the parent still selects helpers by the common temple tag.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME: grunt_profane_temple_tar
+TAGS: grunt_profane_temple no_monster_gen
+: vault.run("shared.profane_setup")
+# Source Lua: : grunt_profane_halls_setup(_G)
+NSUBST: 4 = 8:4 / *:., 5 = 1:6 / *:5
+KMONS: 4 = shadow wraith / nothing w:30
+KMONS: 5 = soul eater
+KMONS: 6 = reaper w:18 / lich w:5 / bone dragon w:4
+KFEAT: A = stone_arch
+MARKER: A = lua:props_marker { portal=1 }
+KMASK: 12345 = !no_monster_gen
+MAP
+.%%%.......%%%.
+.ccc...4...ccc.
+...............
+.4....ccc....4.
+.....c...c.....
+...4..5V5..4...
+.....c...c.....
+.4....ccc....4.
+...............
+.ccc...4...ccc.
+..5..G...G..5..
+ .....4.4.....
+ ....G...G....
+ .............
+  ...G...G...
+  ...........
+   ..G...G..
+   ....B....
+    .:%3%:.
+     %2A2%
+ENDMAP

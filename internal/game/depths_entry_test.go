@@ -108,3 +108,52 @@ func TestScheduledDepthsEntryUsesSourceMap(t *testing.T) {
 		t.Fatal("Depths gate changed across restore")
 	}
 }
+
+// A source encompassing map replaces the ordinary Depths:2 layout before
+// provisional stairs can overwrite its geometry. Its ID remains in the
+// saved floor history across an actual branch descent and restore.
+func TestDepthsEncompassOwnsWholeFloor(t *testing.T) {
+	g := newGeneratedTestGame(t, 41)
+	descendGeneratedTo(t, g, 15)
+
+	health, _ := g.stores.Health.Get(g.player)
+
+	health.Max = 10000
+	health.Current = health.Max
+
+	depthsOne := followBranch(t, g, g.levels[15], "BRANCH_DEPTHS")
+	depthsTwo := descendBranch(t, g, depthsOne, 2)
+
+	selected := map[string]bool{
+		"box_level_dp":                       true,
+		"hangedman_crystal_crosses_colossus": true,
+		"lemuel_river_lethe":                 true,
+		"radiant_caverns_a_rkd":              true,
+		"radiant_caverns_b_rkd":              true,
+	}
+
+	if !selected[depthsTwo.VaultID()] {
+		t.Fatalf("Depths:2 whole-floor map = %q", depthsTwo.VaultID())
+	}
+
+	if !slices.Contains(depthsTwo.VaultIDs(), depthsTwo.VaultID()) {
+		t.Fatalf("Depths:2 map missing from saved history: %v",
+			depthsTwo.VaultIDs())
+	}
+
+	health.Max = 18
+	health.Current = 18
+
+	snapshot := g.Snapshot()
+	restored, err := Restore(snapshot)
+
+	if err != nil {
+		t.Fatalf("restore Depths encompass map: %v", err)
+	}
+
+	defer restored.Close()
+
+	if !reflect.DeepEqual(snapshot, restored.Snapshot()) {
+		t.Fatal("Depths encompassing floor changed across restore")
+	}
+}

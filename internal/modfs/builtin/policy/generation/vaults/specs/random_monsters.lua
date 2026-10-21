@@ -27,6 +27,22 @@ local function base_draconian(ctx)
     return choices[ctx:random("vault_monster", #choices) + 1]
 end
 
+-- RANDOM_NONBASE_DRACONIAN chooses uniformly among the six active source
+-- draconian jobs. Colour/job combinations are then owned by the normal
+-- monster profile rather than invented here in the DES name parser.
+local function nonbase_draconian(ctx)
+    local choices = {
+        monsters.MONS_DRACONIAN_STORMCALLER,
+        monsters.MONS_DRACONIAN_MONK,
+        monsters.MONS_DRACONIAN_SHIFTER,
+        monsters.MONS_DRACONIAN_ANNIHILATOR,
+        monsters.MONS_DRACONIAN_KNIGHT,
+        monsters.MONS_DRACONIAN_SCORCHER,
+    }
+
+    return choices[ctx:random("vault_monster", #choices) + 1]
+end
+
 -- Source summon_any_demon chooses lesser, common, or greater with equal
 -- chance, then applies the source sixty/forty split inside the latter two.
 local function any_demon(ctx)
@@ -98,6 +114,10 @@ end
 function random_monsters.pick(ctx, request, depth, site, place)
     if request == requests.BASE_DRACONIAN then
         return base_draconian(ctx)
+    end
+
+    if request == requests.NONBASE_DRACONIAN then
+        return nonbase_draconian(ctx)
     end
     if request == requests.ANY_DEMON then
         return any_demon(ctx)

@@ -122,6 +122,18 @@ func TestDepthsEntryMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/depths_entry_mod_test.lua")
 }
 
+// An effective mod layer can replace one encompassing map and add another
+// without changing the source family selector or the Lua hook resolver.
+func TestDepthsEncompassMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/depths-encompass-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/depths_encompass_mod_test.lua")
+}
+
 // A sparse layer extends Spider entries, ordinary maps, and jumping helpers.
 func TestSpiderVaultMod(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/spider-vault-mod")

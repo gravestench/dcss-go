@@ -411,6 +411,64 @@ local function source_gear_and_explicit_equipment(ctx)
     harness.equal(goblin_items, 1, "explicit equipment replaces generated gear")
 end
 
+-- A source ettin has two separately chosen weapon slots. Both must remain
+-- equipped and saveable rather than claiming the same primary slot.
+local function source_two_weapon_slots(ctx)
+    local world = world_context(ctx)
+    local ettin = factory.spawn(world, monsters.MONS_ETTIN, 1, 20, 9, {
+        origin = origin,
+        equipment = {
+            { "great mace" },
+            { "great mace" },
+        },
+    })
+    local slots = {}
+
+    for _, entity in ipairs(ctx:query({ component.CARRIED_BY })) do
+        local carried = ctx:get(entity, component.CARRIED_BY)
+
+        if carried.holder == ettin then
+            local equipped = ctx:get(entity, component.EQUIPPED)
+
+            harness.truthy(equipped, "ettin weapon is equipped")
+            slots[equipped.slot] = (slots[equipped.slot] or 0) + 1
+        end
+    end
+
+    harness.equal(slots.weapon, 1, "one primary weapon")
+    harness.equal(slots.alternate_weapon, 1, "one alternate weapon")
+end
+
+-- Crystal Crosses assigns robes or dragon scales before a guardian's
+-- weapon. The authored armour must affect combat, not merely be carried.
+local function source_armour_is_equipped(ctx)
+    local world = world_context(ctx)
+    local guardian = factory.spawn(world,
+        monsters.MONS_DEEP_ELF_ANNIHILATOR, 1, 21, 9, {
+        origin = origin,
+        equipment = {
+            { "robe" },
+            { "scimitar" },
+        },
+    })
+    local slots = {}
+
+    for _, entity in ipairs(ctx:query({ component.CARRIED_BY })) do
+        local carried = ctx:get(entity, component.CARRIED_BY)
+
+        if carried.holder == guardian then
+            local equipped = ctx:get(entity, component.EQUIPPED)
+
+            if equipped then
+                slots[equipped.slot] = true
+            end
+        end
+    end
+
+    harness.truthy(slots.body, "source robe occupies body armour slot")
+    harness.truthy(slots.weapon, "guardian still wields its sword")
+end
+
 -- A Trog guard's authored faith and identified antimagic spear must reach
 -- ECS components rather than being discarded after parsing its DES text.
 local function trog_guard_keeps_source_gear(ctx)
@@ -438,8 +496,12 @@ local function trog_guard_keeps_source_gear(ctx)
     harness.truthy(spear, "Trog guard receives its authored spear")
     harness.equal(ctx:get(spear, component.ITEM).ego,
         weapon_brands.ANTIMAGIC, "authored weapon brand survives")
-    harness.truthy(ctx:get(spear, component.ITEM_IDENTIFICATION).known_type,
-        "source ident:type survives on the item")
+    -- Fixed weapon types are inherently known. Their `ident:type` source
+    -- annotation needs no redundant saved instance flag.
+    local state = ctx:get(spear, component.ITEM_IDENTIFICATION)
+
+    harness.truthy(not state or not state.known_type,
+        "fixed spear type needs no redundant instance flag")
 end
 
 -- Equipment alternatives use their item weights before the winner is
@@ -783,6 +845,8 @@ function test.run(ctx)
     vault_items_keep_variant_and_quantity(ctx)
     vault_jewellery_keeps_source_half(ctx)
     source_gear_and_explicit_equipment(ctx)
+    source_two_weapon_slots(ctx)
+    source_armour_is_equipped(ctx)
     trog_guard_keeps_source_gear(ctx)
     weighted_vault_equipment(ctx)
     undead_uses_source_species(ctx)

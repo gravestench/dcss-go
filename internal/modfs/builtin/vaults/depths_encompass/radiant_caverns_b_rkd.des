@@ -1,0 +1,58 @@
+# Radiant Caverns B is the alternate rare elemental layout. Its shared Lua
+# setup emits the source roster and transformations, while this DES owns
+# the different map and remains replaceable without touching Caverns A.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME:   radiant_caverns_b_rkd
+DEPTH: Depths:2-, !Depths:$
+TAGS:   no_monster_gen no_item_gen uniq_d_encompass
+ORIENT: encompass
+: vault.run("shared.radiant_setup")
+# Source Lua: : radiant_caverns_setup(_G)
+WEIGHT: 5
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxx.HH.....xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxHHt..x..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxx....xxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxx..3.33...1.......xxb.bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxx..xxxxxxxxxxxxxxxxxbb.bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxx.txxxxxxxxxxxxxxxxxbb...bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxx4.xxxxbbbbbbbbbbbbbbb..]..bbbbbbbbbbbbbbbxxxxxxxxxxxxxxxxx
+xxxxxxxxxx..xxxxbb.................................bbxxxxxxxxxxxxxxxx
+xxxxxxxxx.t.xxxbb......................t............bbxxxxxxxxxxxxxxx
+xxxxxxxx.44xxxbb.....5..mmm...t.........mmm.5......j.bbxxxxxxxxxxxxxx
+xxxxxxx..4xxxbb.h..t....mmm.......5.....mmm....t....j.bbxxxxxxxxxxxxx
+xxxxxx.3.xxxbb.h..5......t..5..........5........t..j.j.bbxxxxxxxxxxxx
+xxxxx.3.xxxbbww..h..n............t................n...wwbbxxxxxxxxxxx
+xxxxx..xxxbbwwwwh...t.......n..n.5.n...n.i.......5..jwwwwbbxxxxxxxxxx
+xxxxx.xxxxbwwwwwwt..5....wwwwww.......wwwwwwii......wwwwwwbxxxxxxxxxx
+xxxxx.xxxxbsswwwwwg.....wwwwwwww.n.n.wwwwwwwwi..t..wwwwwssbxxxxxxxxxx
+xxxxx.xxxxbGsswwwwg.ggnwwbbbbbbww...wwbbbbbbww.n.n.wwwwssGbxxxxxxxxxx
+xxxx...xxxbbsswwwwwwwwwwwbuu..bww.t.wwb.yu.bwwwwwwwwwwwssbbxxxxxxxxxx
+xxx.....xxxbbswwwwwwwwwwwb.yAubww.t.wwbuAuubwwwwwwwwwwwsbbxxxxxxxxxxx
+xx..NN...xxxbbwwwwbbbbbbwb.z.ubww...wwb.z..bwbbbbbbwwwwbbxxxxxxxxxxxx
+xx..NN.t.xxxxbbwwwbuuuzbwb+bbbbbb+++bbbbbb+bbb.u.ubwwwbbxxxxxxxxxxxxx
+xx.t.......xxxbbwwbuA..bbb..b...........b..bbbyzAubwwbbxxxxxxxxxxxxxx
+xx..JJt..xx.xxxbbwby...bb...b...........b...bb..u.bwbbxxxxxxxxxxxxxxx
+xx.......xxx.xxxbbbbbb.br...b...b...b...b...rb.bbbbbbxxxxxxxxxxxxxxxx
+xxx.....xxxxx.xxxxxbbb+b..b+b.....7.....b+b..b+bbbxxxxxxxxxxxxxxxxxxx
+xxxx...xxxxxxxt.xxxxbb....b.b...b7.7b...b.b....bbxxxxxxxxxxxxxxxxxxxx
+xxxxx..xxxxxxxxt.xxxbb....b.b...........b.b....bbxlllllxxxxxxxxxxxxxx
+xxxxxx..xxxxxxxx..xxbbt...bzbqq.b...b.qqbzb...tbbxlKK.lxxxxxxxxxxxxxx
+xxxxxxx..xxxxxxx..xxbbz1..b.bbq.......qbb.b..1zbbxl.K.lxxxxxxxxxxxxxx
+xxxxxxxx..xxxxxx..xxbbbbbbb.Gbbbb+++bbbbG.bbbbbbbxlllllxxxxxllxxxxxxx
+xxxxxxxx..xxxxxx..xxbbuuuub.tbb.......bbt.buuuubbxxxllxxxxxllx.xxxxxx
+xxxxxxxx..xxxxxx..xxbb.uuub.bb.........bb.buuu.bbxxllxxxxxllxx.xxxxxx
+xxxxxxxx..xxxxxxJ.xxbb..uub.b....ttt....b.buu..bbxllxxxxxllxx...xxxxx
+xxxxxx.......xxx.Jxxbb....b.....ttttt.....b....bbxlllxxxxlxxss..<xxxx
+xxxxxx.SSStt.xxx..xxxbbbb+bbbb...ttt...bbbbb+bbbxllxllxxlllxxsG.xxxxx
+xxxxx..SSS.t.xx....xxxbb.zyz.b....1....b.yzz.bbxllxxllxllxllxxxxxxxxx
+xxxxx.t......xx.JJssxxxbb....bb.bb>bb.bb....bbxxlxx..lllxxxllxxxxxxxx
+xxxxx........xx).sssxxxxbb......tbbbt......bbxxllxx..LLL..xxllxxxxxxx
+xxxxxxxxxxx.xxxxxxxxxxxxxbbbbbbbbbbbbbbbbbbbxxx.llxx.LL..ssxxlxxxxxxx
+xxxxxxxxxxx...xxxxxxMM..xxxxxxxxxxxxxxxxxxxxxxx.tllxxssssxxxxlxxxxxxx
+xxM...xxxxxxx.xxxxxxMM.t.xxxx............xxxxxxx.Kllxx<xxxllllxxxxxxx
+xxs.x.xxxxxxx....xxx.......xx.xxx.[..xxx.xx.....t.Kllxxxlllxxxxxxxxxx
+xxssx..M.....xxxx...xxxxxx....xx.{.(.}xx....xxxxxxxxlllllxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

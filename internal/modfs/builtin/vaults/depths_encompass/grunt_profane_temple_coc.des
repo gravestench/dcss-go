@@ -1,0 +1,38 @@
+# The Cocytus temple is one tagged child of Profane Halls. Its cold-themed
+# terrain and residents stay in DES; the shared hook supplies guardians
+# appropriate to this floor's scheduled Zot entrance.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME: grunt_profane_temple_coc
+TAGS: grunt_profane_temple no_monster_gen
+: vault.run("shared.profane_setup")
+# Source Lua: : grunt_profane_halls_setup(_G)
+NSUBST: 4 = 8:4 / *:., 5 = 1:6 / *:5
+KMONS: 4 = ice devil / ettin simulacrum w:20 / freezing wraith
+KMONS: 5 = quicksilver dragon simulacrum
+KMONS: 6 = blizzard demon
+KMONS: 8 = ice statue
+KFEAT: A = stone_arch
+MARKER: A = lua:props_marker { portal=1 }
+KMASK: 12345 = !no_monster_gen
+MAP
+wwww.......wwww
+www....5....www
+ww...........ww
+w...4.www.4...w
+.....wwwww.....
+....ww%%%ww....
+..4.ww%8%ww.4..
+....ww%%%ww....
+.....wwwww.....
+....4.www.4....
+...W.......W...
+ ..WW.5.5.WW..
+ ...W.....W...
+ ...WW...WW...
+  ..4W4.4W4..
+  ...W...W...
+   .........
+   ....B....
+    .:%3%:.
+     %2A2%
+ENDMAP

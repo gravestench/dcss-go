@@ -6,6 +6,10 @@ local requests = {
     ANY_COMMON_DEMON = "any common demon",
     RANDOM = "random",
     BASE_DRACONIAN = "base draconian",
+    NONBASE_DRACONIAN = "nonbase draconian",
+    RANDOM_SPECTRE = "spectre",
+    RANDOM_SPECTRAL = "spectral",
+    RANDOM_SIMULACRUM = "simulacrum",
 }
 
 return requests

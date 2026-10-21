@@ -1,0 +1,69 @@
+# Radiant Caverns A is one of two rare whole-floor elemental maps. It shares
+# monster and substitution policy with B, but keeps this distinct geometry
+# and its own source identity for saved history and same-path mod overrides.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME:   radiant_caverns_a_rkd
+DEPTH: Depths:2-, !Depths:$
+TAGS:   no_monster_gen no_item_gen uniq_d_encompass
+ORIENT: encompass
+: vault.run("shared.radiant_setup")
+# Source Lua: : radiant_caverns_setup(_G)
+WEIGHT: 5
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xx{.(.[.....xxxxxxxxxlllxxxsss..xxxxxxxxxxxxxxx.....H....xxxxxxxxxxxx
+xx...........xxxxxxxlllxxxxssJJ..xxxxxxxxxxx..t..HH...H...xxxxxxxxxxx
+xx}..........xxxxxlllxxxxx).JJ...xxxxxxx............xx....xxxxxxxxxxx
+xxxxxxx........xxxlllxxxxxxx...xx..xxxxx..tt...xxllxxxx.t...xxxxxxxxx
+xxxxxxxx....KK..xlllxxxxxxxxxxxxxx..xx...tt...xxllxxxx......xxxxxxxxx
+xxxxxxxx....KK.Klllxxxxxxxxxxxxxxxx.........xxxllxxxx...4..xxxxxxxxxx
+xxxxxxx.......Klll......xxxxxxxxxxxx......xxxxll......t.4.xxxxxxxxxxx
+xxxxxx..t...xxlll....N.N.xxxxxxxxxx.....xxxxxll.tt.......xxxxxxxxxxxx
+xxxxxx....xxxlllx....N.N..xxxxxxxxx..t.xxxxxll34..xxxxxxxxxxxxxxxxxxx
+xxxxx....xxllllxx..........xxxxxxx.SS.xxxxxllx4....xxxxxxxxxxxxxxxxxx
+xxxxx...xxllllxx.L..xx..L..xxxxxx.SS.xxxxxllxxx..t..xxxxxxxxxxxxxxxxx
+xxxx.M..xlllxxx....xxxx..Lt.xxxx.SS.xxxxxllxxxxx.3...xxxxxxxxxxxxxxxx
+xxxx.M..lllxx.....xxxxxx.....xx....xxxxxllssxxxx.34..xxxxxxxxxxxxxxxx
+xxxx..MM......L..xxxxxxxx....xx...xxxxxllssG<xx..t..xxxxxxxxxxxxxxxxx
+xxxxlll...t.....xxxxxxxxxx.L.....xxxxxllxxxxxx.3...xxxxxxxxxxxxxxxxxx
+xxxlllx.....L..xxxxxxxxxxxxxxxxxxxxxxllxxxxx1...xxxxxxxxxxxxxxxxxxxxx
+xxlllxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxllxxxx...xxxxxxxxxxxxxxxxxxxxxxxx
+xllxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx......t...xxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxb.bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxbb.bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxbb...bxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxbbbbbbbbbbbbbbb..]..bbbbbbbbbbbbbbbxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxbb.................................bbxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxbb......................t............bbxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxbb.....5..mmm...t.........mmm.5......j.bbxxxxxxxxxxxxxx
+xxxxxxxxxxxxxbb.h..t....mmm.......5.....mmm....t....j.bbxxxxxxxxxxxxx
+xxxxxxxxxxxxbb.h..5......t..5..........5........t..j.j.bbxxxxxxxxxxxx
+xxxxxxxxxxxbbww..h..n............t................n...wwbbxxxxxxxxxxx
+xxxxxxxxxxbbwwwwh...t.......n..n.5.n...n.i.......5..jwwwwbbxxxxxxxxxx
+xxxxxxxxxxbwwwwwwt..5....wwwwww.......wwwwwwii......wwwwwwbxxxxxxxxxx
+xxxxxxxxxxbsswwwwwg.....wwwwwwww.n.n.wwwwwwwwi..t..wwwwwssbxxxxxxxxxx
+xxxxxxxxxxbGsswwwwg.ggnwwbbbbbbww...wwbbbbbbww.n.n.wwwwssGbxxxxxxxxxx
+xxxxxxxxxxbbsswwwwwwwwwwwbuu..bww.t.wwb.yu.bwwwwwwwwwwwssbbxxxxxxxxxx
+xxxxxxxxxxxbbswwwwwwwwwwwb.yAubww.t.wwbuAuubwwwwwwwwwwwsbbxxxxxxxxxxx
+xxxxxxxxxxxxbbwwwwbbbbbbwb.z.ubww...wwb.z..bwbbbbbbwwwwbbxxxxxxxxxxxx
+xxxxxxxxxxxxxbbwwwbuuuzbwb+bbbbbb+++bbbbbb+bbb.u.ubwwwbbxxxxxxxxxxxxx
+xxxxxxxxxxxxxxbbwwbuA..bbb..b...........b..bbbyzAubwwbbxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxbbwby...bb...b...........b...bb..u.bwbbxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxbbbbbb.br...b...b...b...b...rb.bbbbbbxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxbbb+b..b+b.....7.....b+b..b+bbbxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxbb....b.b...b7.7b...b.b....bbxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxbb....b.b...........b.b....bbxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxbbt...bzbqq.b...b.qqbzb...tbbxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxbbz1..b.bbq.......qbb.b..1zbbxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxbbbbbbb.Gbbbb+++bbbbG.bbbbbbbxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxbbuuuub.tbb.......bbt.buuuubbxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxbb.uuub.bb.........bb.buuu.bbxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxbb..uub.b....ttt....b.buu..bbxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxbb....b.....ttttt.....b....bbxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxbbbb+bbbb...ttt...bbbbb+bbbxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxbb.zyz.b....1....b.yzz.bbxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxbb....bb.bb>bb.bb....bbxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxbb......tbbbt......bbxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxbbbbbbbbbbbbbbbbbbbxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

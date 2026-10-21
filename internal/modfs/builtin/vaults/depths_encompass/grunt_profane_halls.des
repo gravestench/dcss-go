@@ -1,0 +1,113 @@
+# Profane Halls is a whole-floor Depths ending. Its four temple requests
+# choose among tagged helpers; the H chamber becomes the Zot gate only when
+# the branch schedule places Zot here, otherwise it becomes a loot chamber.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME: grunt_profane_halls
+TAGS: no_monster_gen uniq_d_encompass
+PLACE: Depths:$
+DEPTH: Depths:2-
+WEIGHT: 1 (Depths:$), 10
+ORIENT: encompass
+SHUFFLE: {[(<
+: vault.run("zot_shape")
+# Source Lua: : if you.where() == dgn.level_name(dgn.br_entrance("Zot")) then
+# Source Lua: SUBST: }])> = G
+# Source Lua: : else
+# Source Lua: SHUFFLE: }])>
+# Source Lua: : end
+SUBVAULT: d : grunt_profane_temple
+SUBVAULT: e : grunt_profane_temple
+SUBVAULT: f : grunt_profane_temple
+SUBVAULT: g : grunt_profane_temple
+: vault.run("shared.profane_setup")
+# Source Lua: : grunt_profane_halls_setup(_G)
+: vault.run("zot_monsters")
+# Source Lua: : if you.where() == dgn.level_name(dgn.br_entrance("Zot")) then
+# Source Lua: NSUBST: D = 1:K / 1:L / 1:M / 1:N
+# Source Lua: KMONS: K = storm dragon
+# Source Lua: KMONS: L = shadow dragon
+# Source Lua: KMONS: M = quicksilver dragon
+# Source Lua: KMONS: N = golden dragon
+# Source Lua: : else
+# Source Lua: KMONS: D = 8 band
+# Source Lua: : end
+KMONS: 0 = 0 band w:15 / nothing
+KMONS: 9 = 9 band / 0 band
+KMASK: 1290KLMN = !no_monster_gen
+: vault.run("zot_child")
+# Source Lua: : if you.where() == dgn.level_name(dgn.br_entrance("Zot")) then
+# Source Lua: SUBVAULT: H : grunt_zot_portal
+# Source Lua: : else
+# Source Lua: SUBVAULT: H : grunt_profane_loot
+# Source Lua: : end
+MAP
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccdddddddddddddddcccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccdddddddddddddddcccccccccccccccccccccccccccccccc
+ccccccccccccccc.ccccccccccccccccdddddddddddddddcccccccccccccccc.ccccccccccccccc
+cccccccccccccc..ccccccccccccccccdddddddddddddddcccccccccccccccc..cccccccccccccc
+ccccccccccccc.G.cccGcGcGGcGcGcccdddddddddddddddcccGcGcGGcGcGccc.G.ccccccccccccc
+ccccccccc.......c..............cdddddddddddddddc..............c.......ccccccccc
+ccccccccc.{.....+......0.......+ddddddddddddddd+.......0......+.....[.ccccccccc
+ccccccccc.......+......0.......+ddddddddddddddd+.......0......+.......ccccccccc
+ccccccccc...U...c..............cdddddddddddddddc..............c...U...ccccccccc
+cccccccc........cccGcGcGGcGcGcccdddddddddddddddcccGcGcGGcGcGccc........cccccccc
+ccccccc.G.....}.ccccccccccccccccdddddddddddddddcccccccccccccccc.].....G.ccccccc
+cccccc..........cccccccccccccccccdddddddddddddccccccccccccccccc..........cccccc
+cccccccccc++ccccccccccccccccc...cdddddddddddddc...ccccccccccccccccc++cccccccccc
+ccccccccc....ccccccccccccc......+ddddddddddddd+......ccccccccccccc....ccccccccc
+ccccccccG....Gccccccccccc.......++ddddddddddd++.......cccccccccccG....Gcccccccc
+ccccccccc....cccccccccc%...9.....+ddddddddddd+.....9...%cccccccccc....ccccccccc
+ccccccccG....GccccccccU*.........ccdddddddddcc.........*UccccccccG....Gcccccccc
+ccccccccc.00.cccccccc%*.......cccccdddddddddccccc.......*%cccccccc.00.ccccccccc
+ccccccccG....Gcccccc........ccc%%.ccdddddddcc.%%ccc........ccccccG....Gcccccccc
+ccccccccc....cccccc.......++c......ccdddddcc......c++.......cccccc....ccccccccc
+ccccccccG....Gcccc...9...c+.........ccccccc.........+c...9...ccccG....Gcccccccc
+ccccccccc....cccc.......cc........1....:....1........cc.......cccc....ccccccccc
+cccccccccc++ccccc......cc..............1..............cc......ccccc++cccccccccc
+cccceeeeeeeeeeecc++...cc.....G.......G...G.......G.....cc...++ccfffffffffffcccc
+cccceeeeeeeeeeeeee++ccc%.........1.G...D...G.1.........%ccc++ffffffffffffffcccc
+cccceeeeeeeeeeeeeeeeccc%.....1....2.........2....1.....%cccffffffffffffffffcccc
+cccceeeeeeeeeeeeeeeeeecc.........G.:%HHHHH%:.G.........ccffffffffffffffffffcccc
+cccceeeeeeeeeeeeeeeeeeecc..........%HHHHHHH%..........ccfffffffffffffffffffcccc
+cccceeeeeeeeeeeeeeeeeeeec.......G..HHHHHHHHH..G.......cffffffffffffffffffffcccc
+cccceeeeeeeeeeeeeeeeeeeec..........HHHHHHHHH..........cffffffffffffffffffffcccc
+cccceeeeeeeeeeeeeeeeeeeec:.G..1..D.HHHHHHHHH.D..1..G.:cffffffffffffffffffffcccc
+cccceeeeeeeeeeeeeeeeeeeec..........HHHHHHHHH..........cffffffffffffffffffffcccc
+cccceeeeeeeeeeeeeeeeeeeec.......G..HHHHHHHHH..G.......cffffffffffffffffffffcccc
+cccceeeeeeeeeeeeeeeeeeecc..........%HHHHHHH%..........ccfffffffffffffffffffcccc
+cccceeeeeeeeeeeeeeeeeecc.........G.:%HHHHH%:.G.........ccffffffffffffffffffcccc
+cccceeeeeeeeeeeeeeeeccc%.....1....2.........2....1.....%cccffffffffffffffffcccc
+cccceeeeeeeeeeeeee++ccc%.........1.G...D...G.1.........%ccc++ffffffffffffffcccc
+cccceeeeeeeeeeecc++...cc.....G.......G...G.......G.....cc...++ccfffffffffffcccc
+cccccccccc++ccccc......cc..............1..............cc......ccccc++cccccccccc
+ccccccccc....cccc.......cc........1....:....1........cc.......cccc....ccccccccc
+ccccccccG....Gcccc...9...c+.........ccccccc.........+c...9...ccccG....Gcccccccc
+ccccccccc....cccccc.......++c......ccgggggcc......c++.......cccccc....ccccccccc
+ccccccccG....Gcccccc........ccc%%.ccgggggggcc.%%ccc........ccccccG....Gcccccccc
+ccccccccc.00.cccccccc%*.......cccccgggggggggccccc.......*%cccccccc.00.ccccccccc
+ccccccccG....GccccccccU*.........ccgggggggggcc.........*UccccccccG....Gcccccccc
+ccccccccc....cccccccccc%...9.....+ggggggggggg+.....9...%cccccccccc....ccccccccc
+ccccccccG....Gccccccccccc.......++ggggggggggg++.......cccccccccccG....Gcccccccc
+ccccccccc....ccccccccccccc......+ggggggggggggg+......ccccccccccccc....ccccccccc
+cccccccccc++ccccccccccccccccc...cgggggggggggggc...ccccccccccccccccc++cccccccccc
+cccccc..........cccccccccccccccccgggggggggggggccccccccccccccccc..........cccccc
+ccccccc.G.....).ccccccccccccccccgggggggggggggggcccccccccccccccc.>.....G.ccccccc
+cccccccc........cccGcGcGGcGcGcccgggggggggggggggccGcGccGGcGcGccc........cccccccc
+ccccccccc...U...c..............cgggggggggggggggc..............c...U...ccccccccc
+ccccccccc.......+......0.......+ggggggggggggggg+.......0......+.......ccccccccc
+ccccccccc.(.....+......0.......+ggggggggggggggg+.......0......+.....<.ccccccccc
+ccccccccc.......c..............cgggggggggggggggc..............c.......ccccccccc
+ccccccccccccc.G.cccGcGcGGcGcGcccgggggggggggggggccGcGccGGcGcGccc.G.ccccccccccccc
+cccccccccccccc..ccccccccccccccccgggggggggggggggcccccccccccccccc..cccccccccccccc
+ccccccccccccccc.ccccccccccccccccgggggggggggggggcccccccccccccccc.ccccccccccccccc
+ccccccccccccccccccccccccccccccccgggggggggggggggcccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccgggggggggggggggcccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ENDMAP

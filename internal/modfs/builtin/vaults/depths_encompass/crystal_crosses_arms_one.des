@@ -1,0 +1,25 @@
+# This single-arm Crystal Crosses helper varies its entry opening before
+# the parent places it. `allow_dup` is intentional: the parent requests two
+# independent arms of this type on one encompassing floor.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME:    crystal_crosses_arms_one
+DEPTH: Depths:2-, !Depths:$
+TAGS:    unrand allow_dup crystal_crosses_one
+SHUFFLE: B+ / B+ / B+ / +B
+SUBST:   B = b, + : +..
+TILE:    b = wall_emerald
+MAP
+bb+bb   bbbbb
+    b   b
+    B   b
+    b   b
+    bbbb bbbb
+        b   b
+        b   B
+        b   b
+    bbBbb   bb+bb
+    b
+    +
+    b
+    b
+ENDMAP

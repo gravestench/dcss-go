@@ -1,0 +1,88 @@
+# River Lethe fills a middle Depths floor with water, undead, and several
+# authored stair approaches. `no_monster_gen` keeps ordinary population
+# out of its sealed layout while the keyed source monsters still materialize.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME:    lemuel_river_lethe
+DEPTH: Depths:2-, !Depths:$
+TAGS:    no_rotate no_monster_gen no_item_gen uniq_d_encompass
+ORIENT:  encompass
+KITEM:   r = any scroll
+KITEM:   e = any / any good_item w:4
+KITEM:   DP = potion of experience ident:type / any good_item
+KITEM:   E = |
+KMONS:   p = plant / fungus w:2
+MONS:    spectral thing
+MONS:    phantasmal warrior / vampire knight / vampire mage \
+         / deep elf death mage
+MONS:    iron dragon / war gargoyle
+MONS:    spectre place:Depths:4 / simulacrum place:Depths:4
+MONS:    eidolon / soul eater / death drake / flayed ghost / shadow dragon w:2
+MONS:    ancient lich / dread lich / tzitzimitl
+MONS:    orange crystal statue
+KMONS:   DE = patrolling glowing orange brain
+KMONS:   F = 0 band
+KMONS:   H = patrolling water elemental / patrolling spectral place:Depths:4 \
+             / patrolling simulacrum place:Depths:4
+KMONS:   P = floating eye
+SHUFFLE: qr / su / yz / JK, 7N
+SUBST:   q = +, syJ = x, N = xw, p = pp.
+NSUBST:  L = + / x, M = + / x, u = u / * / %, z = u / %, K = u / %
+NSUBST:  . = 12=4 / 2=. / 4=4. / ., ; = 9=2 / 4=2. / .
+NSUBST:  . = 13=F / 4=F. / ., w = 6=H / 4=Hw / w
+KFEAT:   Du = >
+KFEAT:   H = w
+MARKER:  O = lua:props_marker { portal=1 }
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxccccccccccccxxxxxx
+xxDE.L$xxxwwwxxxxcccccccccccccccccccccccccccxxxxxxxxcc..p.....Ocxxxxxx
+xwEE.L$$Mwwwwxxxxc%.b..+...+..........%c***c;;xxxxx;cc.....p...cxxxxxx
+xw..OL$$Mxwwwxxxxc..6..ccccc...........c***c;;;xxx;;cc.p.p...p.cxxxxxx
+xww..L$$Mxwwwwxxxc.....cxxxc...........c***c;;;;xx;;;+.....p..pcxxxxxx
+xww..xxxMwwww;xxxc%.}.%cxxxc...........c...c;;;;xx;;cc..p.ppp..cxxxxxx
+xwww.xxxwww;;;;xxccccccccxxcc+ccc+ccccccc+cc;;;;xx;;cc.ppppp7..cxxxxxx
+xwwwxxxwwww;;;;;xxxxxxxxxxxc...c...c.......c;;;;x;;;cc..pppN..pcxxxxxx
+xwwwxxxwwwww;;5;;xxxxxxxxxxc...c...c.w.....c;;;;;;;;cc.pppppp|*cxxxxxx
+xwwwxxxwwwww;;;;;;;xxxxxxxxc...+...c.w.....+;;;;;;;;cc..ppp5.*Pcxxxxxx
+xwwwxxxwwww;;5;;;;;;;;xxx;;c...c...c.w.....c;;;;;;;;ccccccccccccxxxxxx
+xwwwxxxwww;;;;;;;;;;;;;;;;;cc+ccc+cc..w....c;;;;;;;;;;xxxxxxxxxxxxxxxx
+xwwwxxxwww;;;;;;;;;;;;;;;;;+.......+..w....cccc;;;;;;xxxxxxxxxxxxxxxxx
+xwwwwxx;ww;;;;;;;;;;;;;;;;;cccc+cccc...w...c$$c;;;;;;;;xxxxxxxxxxxxxxx
+xwwwwxx;w;;5;;;;cccc;;;;;;;c.......c...w...c$$c;;;;;;;;;;;xxxxxxxxxxwx
+xwwwwxx;;;;;;;;cccccc;;;;;;c.......c+ccwwccc+cc;;;;;;;;;;;;;xxxxxxxxwx
+xwwwwxx;;;5;;;cc*2.+;;;;;;;c.......c.c..ww....c;;;;;5;;;;;;;;xxxxxxwwx
+xxwwwwx;;;;;;;;cccccc;;;;;;c4%4%4%4c.+...ww...c;;;;;;;;;;;;;;;xxxxxwwx
+xxxwwwxx;;;;;;;;cccc;;;;;;;ccccccccc.c...ww...c;;;;;;;;;;;;;;;xxxxxwwx
+xxxwwwxx;;;;;;;;;;;;;;;;;;;c$$+....+.c....www.c;;;;;;;ccccccccxxxxxwwx
+xxxwwxx;;cccc;;;;;;;;;;;;;;c$$cccccc.c%....wwwc;;;;;;;c.....$$qrrxxwwx
+xxxwwwx;cccccc;;;;;;xx;;;;;c$$cccccc+cccccccwww;;;;;;;c.....$$xrr+wwwx
+xxxwwwxcc*2$+;;;;;;xxxx;;;;ccccccccc.....c...www;;ccccc.......xxxxxwwx
+xxxwwwxxcccccc;;;;xxxxx;;;;;;;cccccc.....+...www;;c...c.......xuuxxwwx
+xxxwwwxx;cccc;;;;xxxx*x;;;;;;;cccccc.....c...www;cc.44c.......suu+wwwx
+xxxwwwxx;;;;;;;;xxx3..c;;;;;;;cccccc.....cccwww;;;+.44+...O...xxxxxwwx
+xxxwwwxx;;;;;;;;;xx3O.c;;;;;;;;;;;;c%....c;wwww;;cc.44c.......yzzxxwwx
+xxxwwwxx;;;;;;;;;;x3..+;;;;;;;;;;;;cccccccwwww;;;;c...c.......xzz+wwwx
+xxxwwwxx;cccc;;;;xxx..c;;;;;;;;;;;;;;;;;wwwwww;;;;ccccc.......xxxxxwwx
+xxxwwwxxcccccc;;;;;xx*c;;;;;;;;;;;;;;;;wwwwwww;;;;;;;;c.....$$xKKxxwwx
+xxxwwwxcc*2$+;;;;;;xxxx;;;;;;;;;;;;;;;wwwwwwwww;;;;;;;c.....$$JKK+wwwx
+xxxwwwxxcccccc;;;;xxxwxx;;;;;;x;;;;;wwwwwwwwwww;;;;;;;ccccccccxxxxxwwx
+xxxwwwxxxcccc;;x;;;xwwxxx;;;;;xx5wwwwwwwwwwwwww;;;;;;;;;;;;;;;xwwwwwwx
+xxxwwwxxxxwww;;;;;;wwwwxw;;;;xxxwwwwwwwwwwwxxwww;;;;5;;;;;wwwwwwwwwwwx
+xxxwwwxxxxxwwwwwwwxwwwwwwwwwxxxwwwwwwwwwwwwxxxwwwwww;;wwwwwwwwwwwwwwxx
+xxxxwwwwxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxwwwwwwwwwwwwwwwwwwwwwxxx
+xxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxwwwwwwwxxxxxwwwwwwwwwwwwwwwwwwwxxxxx
+xxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxwwwwwwwwwwwwwwwwwwxxxxxxx
+xxxxxwwwwwwwwwwwwwwwwNxwwwwwwwxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxxxx
+xxxxxxwwwwwwwwwwwwwxxxxwwwwwwwwwwwwwxxx7wwwwwwwwwwxxwwwwwwwwxxxxxxxxxx
+xxxxxxxwwwwwxxxxxxxxxxwwwwwwwxxwwwwxxxxxwwwwwwwwwxxxwwxwwwwxxxxxxxxxxx
+xxxxxxxx;5;;xxx111xxxxxxwwwwxxwww1111xxxxx11wwwwwwxxxxxxxxxxxxxxxxxxxx
+xxxxxxx>;;;xxx;;;;;xx1111wwwwww;;;;;;;;xxxx11;;;;wwwwxxxxxxxxxxxxxxxxx
+xxxxxxxxx;xxxx;;;;;;;;;;;;ww;;;;;;;;;;;;;;;;;;;;;;;;wwwxxxxxxxxxxxxxxx
+xxxxxxxxxxxx;;;;1;;;;;;;;;;;;;;;;;);;;;;;1;;;;;;;;;;wwwxxxxxxxxxxxxxxx
+xxxxxxxxxxxx;;;;;;;;;;;;;;;;;;;;;[](;;;;;;;;;;;;;;;;1wxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

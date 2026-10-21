@@ -43,6 +43,21 @@ local function before(left, right)
     return left.x < right.x
 end
 
+-- Promote a deliberate landing or departure ahead of coordinate-sorted
+-- exits. The pairing order is saved once the new floor is entered.
+local function promote(points, target)
+    for index, point in ipairs(points) do
+        if point.x == target.x and point.y == target.y then
+            table.remove(points, index)
+            table.insert(points, 1, point)
+
+            return true
+        end
+    end
+
+    return false
+end
+
 -- Keep keys local to one generation call; none of this transient search state
 -- belongs in the saved Level or in a module global.
 local function key(x, y)
@@ -309,25 +324,23 @@ function stairs.pair(ctx, parent, child, selected)
     table.sort(parent_down, before)
     table.sort(child_up, before)
 
+    -- A whole-floor DES map may keep a tiny isolated authored stair. Its
+    -- largest chamber was emitted first by layout completion, so pair the
+    -- stair used for this first descent with that chamber before any side
+    -- exits receive reciprocal links.
+    if child.layout.prefer_main_entry then
+        if not promote(parent_down, selected) or
+            not promote(child_up, child.layout.stairs[1].up) then
+            error("encompassing floor lost its main arrival stair")
+        end
+    end
+
     -- A branch border-check vault can author the precise arrival cell.
     -- Keep that one first when pairing the single scheduled parent link.
     if branch_entry and child.preferred_branch_up then
-        local found
-
-        for index, point in ipairs(child_up) do
-            if point.x == child.preferred_branch_up.x and
-                point.y == child.preferred_branch_up.y then
-                found = index
-                break
-            end
-        end
-
-        if not found then
+        if not promote(child_up, child.preferred_branch_up) then
             error("authored branch arrival lost its up stair")
         end
-
-        table.remove(child_up, found)
-        table.insert(child_up, 1, child.preferred_branch_up)
     end
 
     local patches = {}

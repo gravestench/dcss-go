@@ -1,0 +1,11 @@
+# A new whole-floor map joins the same source family by its directory and
+# tag. Its small MAP keeps the fixture focused on discovery and hook routing.
+NAME: modded_depths_hall
+DEPTH: Depths:2-, !Depths:$
+WEIGHT: 7
+TAGS: uniq_d_encompass
+ORIENT: encompass
+: vault.run("configure")
+MAP
+{..}
+ENDMAP

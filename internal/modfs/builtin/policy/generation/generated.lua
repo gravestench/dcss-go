@@ -15,6 +15,7 @@ local vault_effects = require("constants.vault_effects")
 local vault_features = require("constants.vault_features")
 local vault_rules = require("constants.vault_generation_rules")
 local vault_extra = require("policy.generation.vaults.extra")
+local vault_encompass = require("policy.generation.vaults.encompass")
 local vault_primary = require("policy.generation.vaults.primary")
 local branch_schedule = require("policy.generation.branch_schedule")
 local temple_plan = require("policy.generation.temple.plan")
@@ -88,6 +89,10 @@ end
 -- Use the selected layout's declared family for every nested vault
 -- selector. Arrival helpers and later secondary maps share this rule.
 local function layout_family(layout)
+    if layout.primary_placement then
+        return "encompass"
+    end
+
     local definition = layouts.get(layout.id)
 
     for tag in pairs(definition.tags) do
@@ -303,6 +308,37 @@ local function entrance_cell(builder, start, protected)
     error("generated floor has no connected branch entrance cell")
 end
 
+-- A whole-floor map can already carry the scheduled branch gate. Use its
+-- keyed feature before looking for a spare procedural cell: every authored
+-- cell is protected, so a provisional stair cannot fit on that map.
+local function primary_branch_entry(layout, branch_id)
+    local identity = branch_id == branches.BRANCH_ZOT and
+        vault_features.ENTER_ZOT or nil
+    local found
+
+    if not identity or not layout.primary_placement then
+        return nil
+    end
+
+    for _, record in ipairs(layout.primary_placement.records) do
+        if record.kind == vault_effects.FEATURE and
+            record.identity == identity then
+            if found then
+                error("multiple authored entrances to " .. branch_id)
+            end
+
+            found = {
+                x = record.x,
+                y = record.y,
+            }
+        end
+    end
+
+    return found
+end
+
+generated.primary_branch_entry = primary_branch_entry
+
 -- Store source identity on the link while the grid uses the kernel's
 -- ordinary linked-stair feature. The branch floor is built on first entry,
 -- so its stable ID is pending while the destination coordinates are not.
@@ -315,15 +351,15 @@ local function place_branch_entrances(ctx, builder, layout, protected,
     local start = layout.stairs[1].up
 
     for _, entry in ipairs(entries) do
-        local point
-        local authored = false
+        local point = primary_branch_entry(layout, entry.branch_id)
+        local authored = point ~= nil
         local branch = register.get("branches", entry.branch_id)
         local is_temple = entry.branch_id == branches.BRANCH_TEMPLE
         local available = is_temple and
             temple_catalog.main(temple.map_id) ~= nil or
             availability.can_build(entry.branch_id, 1)
 
-        if branch_entry.supports(entry.branch_id) then
+        if not point and branch_entry.supports(entry.branch_id) then
             local placed
 
             placed, point = branch_entry.place(ctx, builder, protected,
@@ -372,6 +408,7 @@ end
 function generated.bind_authored_branch_links(builder, links, maps, protected)
     local authored_features = {
         [vault_features.ENTER_ELF] = branches.BRANCH_ELF,
+        [vault_features.ENTER_ZOT] = branches.BRANCH_ZOT,
     }
     local found = {}
 
@@ -480,16 +517,38 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
     local layout
     local arrival
     local arrival_vault
+    local scheduled_entries = {}
+
+    for _, scheduled in ipairs(branch_schedule.entries(chosen_schedule,
+        branch_id, depth)) do
+        scheduled_entries[scheduled.branch_id] = true
+    end
 
     if branch_id == branches.BRANCH_DUNGEON and depth == 1 then
         layout, arrival, arrival_vault = place_first_level(ctx, player)
     else
         local random = grid.new(ctx)
-        local definition = layouts.choose(random,
-            branch_id, depth, bottom)
+        local encompass_context = {
+            branch_id = branch_id,
+            depth = depth,
+            branch_bottom = bottom,
+            absolute_depth = absolute_depth,
+            prior_vault_ids = prior_vault_ids,
+            branch_entries = scheduled_entries,
+            family = branch.encompass_vault_family,
+        }
+        local candidates = branch.encompass_vault_family and
+            vault_encompass.candidates(encompass_context) or {}
+        local definition = vault_encompass.choose(random, candidates)
 
-        layout = layouts.execute(ctx, definition,
-            branch_id, depth, profile, prior_vault_ids)
+        if definition then
+            layout = vault_encompass.execute(ctx, definition,
+                encompass_context, profile)
+        else
+            definition = layouts.choose(random, branch_id, depth, bottom)
+            layout = layouts.execute(ctx, definition,
+                branch_id, depth, profile, prior_vault_ids)
+        end
     end
 
     local required = base_stair_points(layout)
@@ -499,13 +558,6 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
     end
 
     local protected = protected_cells(layout, arrival)
-    local scheduled_entries = {}
-
-    for _, scheduled in ipairs(branch_schedule.entries(chosen_schedule,
-        branch_id, depth)) do
-        scheduled_entries[scheduled.branch_id] = true
-    end
-
     local entry_player = {
         branch_id = branch_id,
         depth = depth,
@@ -519,10 +571,15 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
     local branch_links, entry_maps, provisional_links = place_branch_entrances(ctx,
         layout.builder, layout, protected, required, entry_player,
         chosen_schedule, branch_id, depth, temple)
-    local extra, controller, extra_ids = vault_extra.generate(
-        ctx,
-        layout.builder,
-        {
+    local extra = {}
+    local controller
+    local extra_ids = {}
+
+    -- An encompassing DES map already owns every cell. Source generation
+    -- does not run the secondary vault pass after selecting one.
+    if not layout.primary_placement then
+        extra, controller, extra_ids = vault_extra.generate(ctx,
+            layout.builder, {
             branch_id = branch_id,
             depth = depth,
             branch_bottom = bottom,
@@ -551,11 +608,21 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
                 layout_family = layout_family(layout),
                 branch_entries = scheduled_entries,
             },
-        }
-    )
+            })
+    end
+
+    local authored_maps = {}
+
+    if layout.primary_placement then
+        authored_maps[#authored_maps + 1] = layout.primary_placement
+    end
+
+    for _, map in ipairs(extra) do
+        authored_maps[#authored_maps + 1] = map
+    end
 
     generated.bind_authored_branch_links(layout.builder, branch_links,
-        extra, protected)
+        authored_maps, protected)
 
     local preferred_branch_up
 
@@ -693,6 +760,11 @@ local function level_record(ctx, floor)
 
     if arrival then
         base_exclusions = spawn_exclusions(arrival, floor.arrival_vault)
+    elseif floor.layout.primary_placement then
+        local definition = vault_catalog.get(floor.layout.id)
+
+        base_exclusions = spawn_exclusions(floor.layout.primary_placement,
+            definition)
     end
 
     -- Shop records must still own the floor cell chosen by their DES map.

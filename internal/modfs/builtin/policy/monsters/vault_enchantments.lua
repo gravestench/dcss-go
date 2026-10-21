@@ -5,6 +5,7 @@ local component = require("constants.component")
 local enchantments = require("constants.vault_monster_enchantments")
 local roll = require("policy.combat.roll")
 local streams = require("constants.rng_streams")
+local monsters = require("ids.monsters")
 
 local vault_enchantments = {}
 
@@ -107,6 +108,17 @@ local function petrified(ctx, actor)
     })
 end
 
+-- The source permanent shapeshifter enchantment is a durable polymorph
+-- owner, not a countdown status. Attach the same ECS state used by naturally
+-- shifting monsters so combat, AI, and saves take the established path.
+local function shifting(ctx, actor)
+    -- The polymorph policy imports combat enchantment rules; resolve it
+    -- only after initialization to keep the module graph acyclic.
+    local shapeshifter = require("policy.monsters.shapeshifter")
+
+    shapeshifter.attach(ctx, actor, monsters.MONS_SHAPESHIFTER)
+end
+
 local installers = {
     [enchantments.BLIND] = blind,
     [enchantments.CONFUSION] = confuse,
@@ -118,6 +130,7 @@ local installers = {
     [enchantments.PARALYSIS] = paralyze,
     [enchantments.PETRIFIED] = petrified,
     [enchantments.SLOW] = slow,
+    [enchantments.SHAPESHIFTER] = shifting,
 }
 
 -- Deduplicate source tags before attaching components. The marker survives

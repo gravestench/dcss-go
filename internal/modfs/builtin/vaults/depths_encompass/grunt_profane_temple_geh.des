@@ -1,0 +1,37 @@
+# The Gehenna temple is a fire-themed tagged child of Profane Halls. The
+# DES keeps its geometry and local monster slots; the shared Lua hook
+# supplies floor-dependent guardians at the original script position.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME: grunt_profane_temple_geh
+TAGS: grunt_profane_temple no_monster_gen
+: vault.run("shared.profane_setup")
+# Source Lua: : grunt_profane_halls_setup(_G)
+NSUBST: 4 = 8:4 / *:., 5 = 1:6 / *:5
+KMONS: 4 = hell hog / nothing
+KMONS: 5 = sun demon
+KMONS: 6 = balrug
+KFEAT: A = stone_arch
+MARKER: A = lua:props_marker { portal=1 }
+KMASK: 12345 = !no_monster_gen
+MAP
+ll...l%%%l...ll
+l....l%%%l....l
+...............
+..ll...5...ll..
+..l4..lll..4l..
+..l..lllll..l..
+..l.5lllll5.l..
+..l..lllll..l..
+..l4..lll..4l..
+..ll...5...ll..
+...............
+ ....l...l....
+ ....l4.4l....
+ ....l...l....
+  ...l4.4l...
+  ...l...l...
+   ..l4.4l..
+   ....B....
+    .:%3%:.
+     %2A2%
+ENDMAP

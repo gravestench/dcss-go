@@ -1,0 +1,28 @@
+# This Profane Halls helper carries the keyed Zot entrance. The generation
+# link binder moves the scheduled branch link onto its O feature so the
+# room's authored gate, rather than a provisional stair, owns travel.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME: grunt_zot_portal
+TAGS: grunt_zot_portal
+COLOUR: c = lightmagenta
+TILE: c = wall_zot_magenta
+COLOUR: JO.1+ = magenta
+FTILE: JO.1+ = floor_hall
+KFEAT: O = enter_zot
+KMONS: 1 = nonbase draconian / base draconian
+MARKER: J = lua:fog_machine { cloud_type = "magical condensation", \
+                              pow_min = 3, pow_max = 5, \
+                              delay_min = 5, delay_max = 15, \
+                              size = 1, walk_dist = 4, \
+                              spread_rate = 70 }
+MAP
+  cc+cc
+ cc...cc
+ccJ.1.Jcc
+c.......c
++.1.O.1.+
+c.......c
+ccJ.1.Jcc
+ cc...cc
+  cc+cc
+ENDMAP

@@ -1,0 +1,24 @@
+# This paired Crystal Crosses arm has small opening variations. The parent
+# owns where it fits; this file owns its rooms and per-copy substitutions.
+# Source: crawl-ref/source/dat/des/branches/depths_encompass.des.
+NAME:    crystal_crosses_arms_two
+DEPTH: Depths:2-, !Depths:$
+TAGS:    unrand allow_dup crystal_crosses_two
+SHUFFLE: +. / +. / .+
+SUBST:   + : ++.
+TILE:    b = wall_emerald
+MAP
+bb+bb   bbbbb
+    b   b
+    .   b
+    b   b
+    bbbb bbbb
+        b   b
+        b   .
+        b   b
+    bb.bb   bb+bb
+    b
+    +
+    b
+    b
+ENDMAP

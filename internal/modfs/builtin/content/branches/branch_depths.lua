@@ -3,6 +3,7 @@
 -- Entry and depth are catalog facts; generated levels and stair links are saved separately.
 
 local categories = require("constants.catalog")
+local families = require("constants.vault_families")
 
 local definition = {
     id = "BRANCH_DEPTHS",
@@ -11,6 +12,9 @@ local definition = {
     min_depth = 15,
     max_depth = 15,
     depth = 4,
+    -- One source encompassing map may replace the ordinary layout on a
+    -- deep floor; its run-wide uniqueness tag handles later fallbacks.
+    encompass_vault_family = families.DEPTHS_ENCOMPASS,
     absolute_depth = 22,
     flags = {
         "none",

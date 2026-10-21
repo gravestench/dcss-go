@@ -57,6 +57,12 @@ end
 
 -- Brand selection consumes its own weighted draw only when a quality roll reaches it.
 local function ordinary_brand(ctx, weights)
+    -- Content files use mod.null for an absent source brand table. It is a
+    -- truthy userdata value in Lua, so normalize it before ipairs.
+    if type(weights) ~= "table" then
+        return brands.NORMAL
+    end
+
     local total = 0
 
     for _, row in ipairs(weights) do
