@@ -248,6 +248,17 @@ local function placed_candidates(branch_id, local_depth, branch_bottom,
     return candidates, total
 end
 
+-- An end branch can require a PLACE map rather than admitting an
+-- ordinary weighted layout at its last depth. Read the effective catalog
+-- so a same-path mod override controls availability too.
+function catalog.has_explicit(branch_id, local_depth)
+    local branch = register.get(categories.BRANCHES, branch_id)
+    local _, total = placed_candidates(branch_id, local_depth,
+        branch.depth)
+
+    return total > 0
+end
+
 -- A scheduled branch can keep its source-labelled entrance even when its
 -- primary layout family has not yet been ported. Availability is derived
 -- from the effective DES catalog, including overlays, not a branch switch.
@@ -325,6 +336,10 @@ function catalog.execute(ctx, definition, branch_id, local_depth, profile,
             result.stairs = stairs.complete(result.builder, profile)
             result.rows = result.builder:rows()
             result.id = definition.id
+
+            if #definition.places > 0 then
+                result.primary_id = definition.id
+            end
 
             if run then
                 local styles = procedural_styles(definition, result.builder)

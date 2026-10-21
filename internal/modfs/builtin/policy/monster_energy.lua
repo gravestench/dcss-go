@@ -163,6 +163,13 @@ end
 -- Deduct the selected intent's cost after terrain, brand, and status modifiers.
 function energy.spend(ctx, input)
     if input.points < energy.threshold then
+        -- The selected monster was ready before its action. Polymorph and
+        -- forced movement can reset its energy during that action; their
+        -- lower value is already the resulting delay.
+        if input.was_ready then
+            return { points = input.points }
+        end
+
         error("monster lacks action energy")
     end
 

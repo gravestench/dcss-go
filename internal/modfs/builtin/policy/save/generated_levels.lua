@@ -317,6 +317,16 @@ function generated.validate(levels, by_id, chosen_schedule)
                         error("generated " .. level.branch_id ..
                             " has an invalid unavailable stair")
                     end
+                elseif level.branch_id == branches.BRANCH_VAULTS and
+                    depth == 4 and not link.pending and
+                    link.unavailable ==
+                    "Vaults:5 awaits its end vault in the Go port." and
+                    link.to_level_id == 0 and link.to_x == 0 and
+                    link.to_y == 0 and not by_id[branch_levels.id(
+                        level.branch_id, depth + 1)] then
+                    -- Saves made before Vaults:5 existed keep their exact
+                    -- visible boundary. New games always create pending
+                    -- links through the authored end layout instead.
                 elseif link.pending then
                     local next_id = branch_levels.id(level.branch_id,
                         depth + 1)

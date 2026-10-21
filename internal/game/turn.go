@@ -137,6 +137,16 @@ func (s TurnScheduler) NextReady(levelID int) (akara.Entity, bool, error) {
 
 // Spend uses the final intent after movement has turned a bump into melee.
 func (s TurnScheduler) Spend(entity akara.Entity, intent ecs.Intent) error {
+	return s.spend(entity, intent, false)
+}
+
+// SpendSelected accounts for a selected monster whose action itself changed
+// its energy below the ready threshold, such as polymorphing its own form.
+func (s TurnScheduler) SpendSelected(entity akara.Entity, intent ecs.Intent) error {
+	return s.spend(entity, intent, true)
+}
+
+func (s TurnScheduler) spend(entity akara.Entity, intent ecs.Intent, wasReady bool) error {
 	actor, found := s.actors.Get(entity)
 
 	if !found {
@@ -150,15 +160,17 @@ func (s TurnScheduler) Spend(entity akara.Entity, intent ecs.Intent) error {
 	}
 
 	result, err := s.policy("scheduler.spend", map[string]any{
-		"actor":   uint64(entity),
-		"kind_id": actor.KindID,
-		"intent":  int(intent.Kind),
-		"item_id": uint64(intent.ItemID),
-		"points":  energy.Points,
+		"actor":     uint64(entity),
+		"kind_id":   actor.KindID,
+		"intent":    int(intent.Kind),
+		"item_id":   uint64(intent.ItemID),
+		"points":    energy.Points,
+		"was_ready": wasReady,
 	})
 
 	if err != nil {
-		return fmt.Errorf("monster %d energy spend: %w", entity, err)
+		return fmt.Errorf("monster %d (%s) energy spend with %d points: %w",
+			entity, actor.KindID, energy.Points, err)
 	}
 
 	points, ok := result["points"].(int64)

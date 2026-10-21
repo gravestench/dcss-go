@@ -32,6 +32,7 @@ func (g *Game) vaultValidationLevels() []any {
 		levels = append(levels, map[string]any{
 			"id":             level.ID,
 			"branch_id":      level.BranchID,
+			"local_depth":    level.LocalDepth,
 			"vault_id":       level.VaultID(),
 			"vault_ids":      level.VaultIDs(),
 			"initial_actors": level.initialActors,

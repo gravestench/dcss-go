@@ -257,7 +257,7 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 		events = append(events, monsterEvents...)
 
 		if g.stores.MonsterEnergy.Has(actor) {
-			if err := g.scheduler.Spend(actor, ecs.Intent{
+			if err := g.scheduler.SpendSelected(actor, ecs.Intent{
 				Kind:   g.turn.ResolvedIntent,
 				ItemID: g.turn.ResolvedItemID,
 			}); err != nil {

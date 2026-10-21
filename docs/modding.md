@@ -2001,6 +2001,15 @@ checks that the method exists. The chosen layout calls the resolver from
 named hooks through the same resolver in the vault placement path. These
 paths are relative to the embedded mod root (`internal/modfs/builtin/` in
 this repository), so a layered mod can replace a handler at the same path.
+The `.des` line declares when to call a method; the actual Lua function is
+assigned to the table returned by that module.
+
+| DES declaration | When its Lua method runs |
+| --- | --- |
+| `: vault.run("method")` | At that line's position among the map's directives; it may emit more typed directives. |
+| `: vault.validate("method")` | After layout build, before stairs; for end layouts, again on restore. |
+| `: vault.veto("method")` | After a candidate map is placed; a true result rejects that candidate. |
+| `: vault.post_place("method")` | After a selected controller is placed; it may place tagged child maps. |
 
 For an ordinary vault, `: vault.run("configure")` in
 `vaults/arrival/example.des` resolves to the `configure(api)` method in
@@ -2069,7 +2078,9 @@ motif. The shared `policy/generation/layouts/vaults/build.lua` then inserts
 rooms before the ordinary stair and secondary-vault passes. A primary hook
 returns its builder, typed room records, room IDs, and protected cells;
 those IDs and records travel through population and save/restore. Vaults:5
-has a separate end-vault design and is currently an unavailable stair.
+uses the committed `vaults_vault` whole-level `PLACE: Vaults:$` map and its
+four selected quadrant helpers. Its named validator requires one silver rune
+record and one rune helper both when generated and when restored from a save.
 
 To add a Vaults room, create one `vaults/vaults_room/<name>.des` file with a
 unique `NAME`, an eligible `DEPTH`, source-style `MAP`, and one of the tags
@@ -2082,10 +2093,13 @@ declare a named hook and put its Lua handler under
 `policy/generation/vaults/vaults_room/<name>.lua`. The same hook naming and
 `api` rules described below apply.
 
-The current Vaults floor limit lives in
-`policy/generation/floor_availability.lua`. A mod that supplies a new V:5
-generator must also update that policy so the stair and save validator
-agree that the destination can be built.
+The branch definition sets `end_layout_required`, and
+`policy/generation/floor_availability.lua` admits the final floor only when
+the effective layout catalog has a positive-weight explicit `PLACE` map for
+it. A same-path mod override can replace that map and its named hook. The
+save validator calls the end map's `vault.validate` hook against its saved
+helper IDs and typed records, so the hook must also check the composition a
+modder wants to preserve.
 
 ### Authored vaults
 

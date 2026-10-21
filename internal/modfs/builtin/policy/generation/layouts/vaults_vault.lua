@@ -68,7 +68,9 @@ local function require_rune(result)
         end
     end
 
-    for _, record in ipairs(result.records or {}) do
+    -- Generation and save projection name the same typed list differently.
+    -- The source validator reads either without duplicating rune rules.
+    for _, record in ipairs(result.records or result.vault_records or {}) do
         if record.kind == effects.ITEM and record.arguments and
             record.arguments.kind_id == rune_item then
             rune_item_count = rune_item_count + 1
@@ -76,7 +78,8 @@ local function require_rune(result)
     end
 
     if rune_item_count ~= 1 or rune_helper_count ~= 1 then
-        error("Vaults end needs exactly one silver rune item and helper")
+        error(string.format("Vaults end needs exactly one silver rune item and helper (items=%d, helpers=%d)",
+            rune_item_count, rune_helper_count))
     end
 
     if quadrant_count ~= 4 then

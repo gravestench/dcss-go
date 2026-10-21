@@ -131,20 +131,30 @@ local function child_landings(floor, count)
     local start = floor.layout.stairs[1].up
     local queue = { start }
     local visited = { [key(start.x, start.y)] = true }
-    local result = {}
+    local occupied = {}
+    local ordinary = {}
+    local authored = {}
     local cursor = 1
 
-    while cursor <= #queue and #result < count do
+    -- A whole-map DES layout protects its floor from secondary vaults. That
+    -- protection does not make empty floor unsuitable for a return stair.
+    -- Keep cells carrying source effects, including the rune, untouched.
+    for _, record in ipairs(floor.records or {}) do
+        occupied[key(record.x, record.y)] = true
+    end
+
+    while cursor <= #queue do
         local point = queue[cursor]
         local position = key(point.x, point.y)
 
         cursor = cursor + 1
 
         if builder:cell(point.x, point.y) == "." and
-            not floor.protected[position] then
-            builder:set(point.x, point.y, "<")
-            floor.protected[position] = true
-            result[#result + 1] = point
+            not occupied[position] then
+            local candidates = floor.protected[position] and
+                authored or ordinary
+
+            candidates[#candidates + 1] = point
         end
 
         for _, direction in ipairs(directions) do
@@ -167,11 +177,22 @@ local function child_landings(floor, count)
         end
     end
 
-    if #result ~= count then
-        error("new Dungeon floor has too few connected up landings")
+    local result = {}
+
+    for _, candidates in ipairs({ ordinary, authored }) do
+        for _, point in ipairs(candidates) do
+            builder:set(point.x, point.y, "<")
+            floor.protected[key(point.x, point.y)] = true
+            result[#result + 1] = point
+
+            if #result == count then
+                return result
+            end
+        end
     end
 
-    return result
+    error(string.format("new floor %s:%d has %d of %d connected up landings",
+        floor.branch_id, floor.depth, #result, count))
 end
 
 -- A child source vault can bring additional up exits. Search the parent's

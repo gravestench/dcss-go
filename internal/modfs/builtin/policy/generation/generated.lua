@@ -447,6 +447,12 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
 
     local vault_ids = {}
 
+    -- Whole-map layouts can place named helper vaults before the ordinary
+    -- secondary pass. Preserve that history for uniqueness and save checks.
+    for _, id in ipairs(layout.vault_ids or {}) do
+        vault_ids[#vault_ids + 1] = id
+    end
+
     for _, map in ipairs(entry_maps) do
         vault_ids[#vault_ids + 1] = map.id
     end
@@ -525,7 +531,8 @@ local function level_record(ctx, floor)
         entry_y = entry.y,
         initial_monsters = floor.branch_id == branches.BRANCH_TEMPLE and
             0 or monster_count(ctx, floor.branch_id, floor.depth),
-        vault_id = arrival and arrival.id or floor.controller,
+        vault_id = floor.layout.primary_id or
+            (arrival and arrival.id or floor.controller),
         vault_ids = floor.vault_ids,
         vault_records = #floor.records > 0 and floor.records or nil,
         spawn_exclusions = extra_exclusions(base_exclusions, floor.extra),

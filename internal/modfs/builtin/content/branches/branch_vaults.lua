@@ -11,6 +11,8 @@ local definition = {
     min_depth = 13,
     max_depth = 14,
     depth = 5,
+    -- The last floor uses its authored PLACE map, not a V:1-4 layout.
+    end_layout_required = true,
     -- Source monster generation caps Vaults out-of-depth draws at 12.
     ood_cap = 12,
     absolute_depth = 19,
