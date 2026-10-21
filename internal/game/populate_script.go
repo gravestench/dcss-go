@@ -79,7 +79,7 @@ func (g *Game) populateStairDestination(
 
 	link, found := g.levels[position.LevelID].StairAt(position.X, position.Y)
 
-	if !found || link.Unavailable != "" {
+	if !found || link.Unavailable != "" || link.Exit {
 		return nil
 	}
 

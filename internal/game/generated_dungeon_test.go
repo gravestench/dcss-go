@@ -647,9 +647,9 @@ func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 
 	if err != nil ||
 		result.Spent != 0 ||
-		len(result.Events) != 1 ||
-		!strings.Contains(result.Events[0].Text, "unavailable") {
-		t.Fatalf("unported Dungeon exit = %+v, %v", result, err)
+		result.Confirmation == "" {
+		t.Fatalf("unconfirmed Dungeon exit: spent=%d confirmation=%q err=%v",
+			result.Spent, result.Confirmation, err)
 	}
 
 	if !reflect.DeepEqual(before.RNG, entryGame.Snapshot().RNG) {
@@ -851,8 +851,8 @@ func TestGeneratedDungeonRejectsInvalidSavedBoundaryAndBudget(t *testing.T) {
 	for index := range snapshot.Levels[0].Stairs {
 		stair := &snapshot.Levels[0].Stairs[index]
 
-		if stair.Unavailable != "" {
-			stair.Unavailable = ""
+		if stair.Exit {
+			stair.Exit = false
 
 			break
 		}

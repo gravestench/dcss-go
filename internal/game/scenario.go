@@ -295,6 +295,7 @@ func (g *Game) createPlayerActor(
 	}
 
 	g.player = player
+	g.noteEntity(player)
 
 	_, err = g.stores.Actors.Set(player, ecs.Actor{
 		KindID: "player",

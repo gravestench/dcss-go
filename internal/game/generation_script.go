@@ -390,12 +390,21 @@ func luaScenarioStair(value any) (StairLink, error) {
 	}
 
 	pending := false
+	exit := false
 
 	if raw, present := record["pending"]; present {
 		pending, ok = raw.(bool)
 
 		if !ok {
 			return StairLink{}, fmt.Errorf("stair pending state is not a boolean")
+		}
+	}
+
+	if raw, present := record["exit"]; present {
+		exit, ok = raw.(bool)
+
+		if !ok {
+			return StairLink{}, fmt.Errorf("stair exit state is not a boolean")
 		}
 	}
 
@@ -425,6 +434,7 @@ func luaScenarioStair(value any) (StairLink, error) {
 		ToX:            numbers[3],
 		ToY:            numbers[4],
 		Pending:        pending,
+		Exit:           exit,
 		Unavailable:    unavailable,
 		TargetBranchID: targetBranchID,
 		SourceFeature:  sourceFeature,

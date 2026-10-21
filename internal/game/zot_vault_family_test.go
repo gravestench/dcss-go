@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"slices"
+	"strings"
 	"testing"
 
 	"crawl/internal/vault"
@@ -16,6 +17,7 @@ func TestZotGateHallAndOrbSurviveSave(t *testing.T) {
 	descendGeneratedTo(t, g, 15)
 
 	health, _ := g.stores.Health.Get(g.player)
+
 	health.Max = 10000
 	health.Current = health.Max
 
@@ -35,6 +37,54 @@ func TestZotGateHallAndOrbSurviveSave(t *testing.T) {
 	if entry == "" || !slices.Contains(depths.VaultIDs(), entry) {
 		t.Fatalf("Depths:4 has no authored Zot gate in %v",
 			depths.VaultIDs())
+	}
+
+	var gate StairLink
+
+	for _, link := range depths.StairLinks() {
+		if link.TargetBranchID == "BRANCH_ZOT" {
+			gate = link
+			break
+		}
+	}
+
+	if gate.ToLevelID == 0 {
+		t.Fatal("Zot has no scheduled gate")
+	}
+
+	if err := depths.MoveActor(g.player, gate.X, gate.Y); err != nil {
+		t.Fatal(err)
+	}
+
+	beforeRefusal := g.Snapshot()
+	refused, err := g.Step(Command{Kind: CommandDownstairs})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if refused.Spent != 0 ||
+		len(refused.Events) == 0 ||
+		!strings.Contains(refused.Events[0].Text, "3 runes") ||
+		g.levels[gate.ToLevelID] != nil {
+		t.Fatalf("Zot rune gate: spent=%d events=%v err=%v",
+			refused.Spent, refused.Events, err)
+	}
+
+	if !reflect.DeepEqual(beforeRefusal.RNG, g.Snapshot().RNG) {
+		t.Fatal("refused Zot gate consumed gameplay randomness")
+	}
+
+	runes := g.scripts.Components()["character.runes"]
+
+	if _, err := runes.Set(g.player, map[string]any{
+		"collected": map[string]any{
+			"RUNE_SHOALS": true,
+			"RUNE_SPIDER": true,
+			"RUNE_SNAKE":  true,
+		},
+	}); err != nil {
+		t.Fatal(err)
 	}
 
 	zot := followBranch(t, g, depths, "BRANCH_ZOT")
@@ -122,5 +172,27 @@ func TestZotGateHallAndOrbSurviveSave(t *testing.T) {
 
 	if !reflect.DeepEqual(before, restored.Snapshot()) {
 		t.Fatal("Zot map or Orb record changed across restore")
+	}
+
+	// Hall geometry alone cannot prove the physical Orb survived. Removing
+	// its ECS entity from a still-exploring save must fail restoration.
+	missingOrb := before
+
+	missingOrb.Entities = nil
+
+	for _, record := range before.Entities {
+		if record.Item == nil || record.Item.KindID != "ORB_ZOT" {
+			missingOrb.Entities = append(missingOrb.Entities, record)
+		}
+	}
+
+	_, err = Restore(missingOrb)
+
+	if err == nil {
+		t.Fatal("Hall without its Orb restored successfully")
+	}
+
+	if !strings.Contains(err.Error(), "generated Hall is missing its Orb") {
+		t.Fatalf("missing Hall Orb restore error = %v", err)
 	}
 }

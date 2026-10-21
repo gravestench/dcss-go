@@ -245,6 +245,41 @@ func TestDeathTransitionAfterStep(t *testing.T) {
 	}
 }
 
+func TestOrbEscapeOutcomeScreens(t *testing.T) {
+	for _, test := range []struct {
+		outcome string
+		screen  ScreenID
+		text    string
+	}{
+		{
+			outcome: "won",
+			screen:  ScreenVictory,
+			text:    "You have escaped with the Orb of Zot!",
+		},
+
+		{
+			outcome: "left",
+			screen:  ScreenLeft,
+			text:    "You escaped without the Orb of Zot.",
+		},
+	} {
+		t.Run(test.outcome, func(t *testing.T) {
+			m := playingModel(t)
+			m.afterStep(game.StepResult{View: game.View{Outcome: test.outcome}})
+
+			if m.screen != test.screen || !strings.Contains(plainApp(m), test.text) {
+				t.Fatalf("endgame screen %d does not explain %s", m.screen, test.outcome)
+			}
+
+			m.handleKey("enter")
+
+			if m.screen != ScreenStartup || m.game != nil {
+				t.Fatal("endgame acknowledgement did not return to startup")
+			}
+		})
+	}
+}
+
 func TestStatChoiceTransitionAfterStep(t *testing.T) {
 	m := playingModel(t)
 	m.afterStep(game.StepResult{

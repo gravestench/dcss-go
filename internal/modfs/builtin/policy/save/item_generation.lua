@@ -3,6 +3,10 @@ local component = require("constants.component")
 local history = require("policy.item_generation.artefacts.history")
 local monster_history = require("policy.population.unique_history")
 local runes = require("policy.character.runes")
+local endgame = require("policy.character.endgame")
+local phases = require("constants.endgame")
+local branch_levels = require("policy.generation.branch_levels")
+local branches = require("ids.branches")
 local ids = require("ids.items")
 local item_sets = require("policy.item_generation.item_sets")
 local skills = require("ids.skills")
@@ -17,6 +21,45 @@ local function validate_player(ctx)
     history.validate(ctx:get(player, component.PLAYER_UNIQUE_HISTORY))
     monster_history.validate(ctx:get(player, component.PLAYER_UNIQUE_HISTORY))
     runes.validate(ctx:get(player, component.PLAYER_RUNES))
+    endgame.validate(ctx:get(player, component.PLAYER_ENDGAME))
+end
+
+-- The Orb is a single physical floor item until pickup changes the saved
+-- chapter. A carried Orb or a second copy could otherwise create a false win
+-- after restore, so validate its relationship to that chapter explicitly.
+local function validate_orb(ctx)
+    local phase = endgame.phase(ctx, ctx:player())
+    local count = 0
+
+    for _, entity in ipairs(ctx:query({ component.ITEM })) do
+        local item = ctx:get(entity, component.ITEM)
+
+        if item.kind_id == ids.ORB_ZOT then
+            count = count + 1
+
+            if ctx:has(entity, component.CARRIED_BY) then
+                error("Orb of Zot cannot be carried as an item")
+            end
+        end
+    end
+
+    if count > 1 or
+        (count ~= 0 and
+            (phase == phases.ESCAPING or phase == phases.WON)) then
+        error("saved Orb item conflicts with player endgame phase")
+    end
+
+    -- After Zot:5 is generated, its authored Orb must still exist until
+    -- pickup. Its disappearance during exploration is a damaged save, not
+    -- an implicit chapter transition. An Orb-less loss leaves it in place.
+    local hall_id = branch_levels.id(branches.BRANCH_ZOT, 5)
+    local hall_width = ctx:level_size(hall_id)
+
+    if hall_width and
+        (phase == phases.EXPLORING or phase == phases.LEFT) and
+        count ~= 1 then
+        error("generated Hall is missing its Orb of Zot")
+    end
 end
 
 -- A manual's skill and 2000..3000 point budget must travel with its BOOK_MANUAL item across saves.
@@ -84,6 +127,7 @@ end
 -- Example: validation.run(ctx) rejects a saved random book with an invalid spell payload.
 function validation.run(ctx)
     validate_player(ctx)
+    validate_orb(ctx)
 
     for _, entity in ipairs(ctx:query({ component.ITEM })) do
         local item = ctx:get(entity, component.ITEM)

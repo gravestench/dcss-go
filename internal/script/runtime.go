@@ -21,6 +21,7 @@ const bootstrapTimeout = 5 * time.Second
 type Services struct {
 	ActiveActor    func() akara.Entity
 	PlayerEntity   func() akara.Entity
+	EntityCreated  func(akara.Entity)
 	CurrentAut     func() int64
 	Random         func(stream string, bound int) (int, error)
 	RandomWord     func(stream string) uint64
@@ -82,10 +83,12 @@ type gridCell struct {
 }
 
 type Stair struct {
-	ToLevelID   int
-	ToX         int
-	ToY         int
-	Unavailable string
+	ToLevelID      int
+	ToX            int
+	ToY            int
+	Unavailable    string
+	Exit           bool
+	TargetBranchID string
 }
 
 // Runtime owns one Lua VM and its Akara registrations for one game session.

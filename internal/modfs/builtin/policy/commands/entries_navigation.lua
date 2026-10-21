@@ -71,7 +71,7 @@ function entries.move(ctx, player, input, position)
 end
 
 -- Match an upstairs link at the current cell before changing floors.
-function entries.upstairs(ctx, player, _, position)
+function entries.upstairs(ctx, player, input, position)
     local beholder = mesmerism.any(ctx, player)
 
     if beholder and ctx:cell(position.level_id,
@@ -82,11 +82,11 @@ function entries.upstairs(ctx, player, _, position)
         }
     end
 
-    return navigation.stairs(ctx, position, false)
+    return navigation.stairs(ctx, position, false, player, input.forced)
 end
 
 -- Match a downstairs link at the current cell before changing floors.
-function entries.downstairs(ctx, player, _, position)
+function entries.downstairs(ctx, player, input, position)
     local beholder = mesmerism.any(ctx, player)
 
     if beholder and ctx:cell(position.level_id,
@@ -97,7 +97,7 @@ function entries.downstairs(ctx, player, _, position)
         }
     end
 
-    return navigation.stairs(ctx, position, true)
+    return navigation.stairs(ctx, position, true, player, input.forced)
 end
 
 -- Select floor items before charging pickup time or changing inventory.

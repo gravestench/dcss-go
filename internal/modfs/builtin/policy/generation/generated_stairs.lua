@@ -31,7 +31,6 @@ local directions = {
     },
 }
 
-local exit_unavailable = "Leaving the Dungeon is unavailable in the Go port."
 local depths_unavailable = "The Depths are unavailable in the Go port."
 
 -- Coordinate order makes pair choice independent of source vault file order.
@@ -120,7 +119,8 @@ function stairs.first(floor)
             to_level_id = 0,
             to_x = 0,
             to_y = 0,
-            unavailable = exit_unavailable,
+            exit = true,
+            unavailable = "",
         }
     end
 

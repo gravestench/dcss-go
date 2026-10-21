@@ -45,6 +45,26 @@ function runes.has(ctx, player, kind_id)
     return state and state.collected[kind_id] or false
 end
 
+-- Zot checks the total set of distinct collected runes. Count saved player
+-- progress rather than looking for inventory stacks the source never stores.
+function runes.count(ctx, player)
+    local state = ctx:get(player, component.PLAYER_RUNES)
+
+    if not state then
+        error("player rune progress is missing")
+    end
+
+    local count = 0
+
+    for _, collected in pairs(state.collected) do
+        if collected then
+            count = count + 1
+        end
+    end
+
+    return count
+end
+
 -- Ignacio's source chance uses only the four Pan runes, not the total
 -- number collected across Dungeon Crawl's other branches.
 function runes.pan_count(ctx, player)

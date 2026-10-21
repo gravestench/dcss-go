@@ -8,7 +8,7 @@ import (
 	"crawl/internal/vault"
 )
 
-const Version = 33
+const Version = 34
 
 type Snapshot struct {
 	Version        int               `json:"version"`
@@ -19,10 +19,11 @@ type Snapshot struct {
 	RulesetChanges []string          `json:"ruleset_changes,omitempty"`
 	LuaSchemas     []LuaSchemaRecord `json:"lua_schemas,omitempty"`
 
-	PlayerID   uint64            `json:"player_id"`
-	CurrentAut int64             `json:"current_aut"`
-	Seed       uint64            `json:"seed"`
-	RNG        map[string]uint64 `json:"rng"`
+	PlayerID     uint64            `json:"player_id"`
+	EntityCursor uint64            `json:"entity_cursor"`
+	CurrentAut   int64             `json:"current_aut"`
+	Seed         uint64            `json:"seed"`
+	RNG          map[string]uint64 `json:"rng"`
 
 	Levels   []LevelRecord  `json:"levels"`
 	Entities []EntityRecord `json:"entities"`
@@ -119,6 +120,7 @@ type StairRecord struct {
 	ToX            int    `json:"to_x"`
 	ToY            int    `json:"to_y"`
 	Pending        bool   `json:"pending,omitempty"`
+	Exit           bool   `json:"exit,omitempty"`
 	Unavailable    string `json:"unavailable,omitempty"`
 	TargetBranchID string `json:"target_branch_id,omitempty"`
 	SourceFeature  string `json:"source_feature,omitempty"`

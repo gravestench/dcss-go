@@ -140,6 +140,16 @@ function help.status(input)
             { x = 0, y = 4, text = "Morgue and high scores are unavailable in the Go port.",
                 fg = colors.brown },
         }
+    elseif input.kind == "victory" then
+        writes = {
+            { x = 0, y = 0, text = "You have escaped with the Orb of Zot!", fg = colors.light_green },
+            { x = 0, y = 2, text = "Press Enter to return to startup.", fg = colors.light_grey },
+        }
+    elseif input.kind == "left" then
+        writes = {
+            { x = 0, y = 0, text = "You escaped without the Orb of Zot.", fg = colors.light_red },
+            { x = 0, y = 2, text = "Press Enter to return to startup.", fg = colors.light_grey },
+        }
     elseif input.kind == "modal_notice" then
         if input.notice and input.notice ~= "" then
             writes[1] = {

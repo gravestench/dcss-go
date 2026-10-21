@@ -6,6 +6,10 @@ local component = require("constants.component")
 local terrain = require("constants.terrain")
 local transporters = require("policy.world.transporters")
 local intent_ids = require("constants.intent")
+local branches = require("ids.branches")
+local runes = require("policy.character.runes")
+local endgame = require("policy.character.endgame")
+local phases = require("constants.endgame")
 
 -- Rooted movement is rejected before checking the destination cell.
 local function rooted(ctx)
@@ -86,7 +90,7 @@ function navigation.move(ctx, position, dx, dy)
 end
 
 -- Stair travel checks the current cell's feature before switching levels.
-function navigation.stairs(ctx, position, downstairs)
+function navigation.stairs(ctx, position, downstairs, actor, forced)
     if rooted(ctx) then
         return {
             message = "Your roots keep you in place.",
@@ -130,6 +134,29 @@ function navigation.stairs(ctx, position, downstairs)
         return {
             message = stair.unavailable,
         }
+    end
+
+    actor = actor or ctx:player()
+
+    -- Source locks Zot on first entry only. A refusal is a free command and
+    -- never asks Go to generate the unopened destination floor.
+    if downstairs and stair.target_branch_id == branches.BRANCH_ZOT then
+        local width = ctx:level_size(stair.to_level_id)
+
+        if not width and runes.count(ctx, actor) < 3 then
+            return {
+                message = "You need at least 3 runes to enter this place.",
+            }
+        end
+    end
+
+    if stair.exit then
+        if endgame.phase(ctx, actor) == phases.EXPLORING and
+            not forced then
+            return {
+                confirmation = "Are you sure you want to leave the Dungeon? This will make you lose the game!",
+            }
+        end
     end
 
     return {

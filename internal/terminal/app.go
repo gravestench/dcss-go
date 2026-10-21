@@ -36,6 +36,8 @@ const (
 	ScreenHelp
 	ScreenConfirm
 	ScreenDeath
+	ScreenVictory
+	ScreenLeft
 	ScreenQuaff
 	ScreenStatChoice
 	ScreenDrop
@@ -351,6 +353,9 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	case ScreenDeath:
 		return m.routeInput("death", key)
 
+	case ScreenVictory, ScreenLeft:
+		return m.routeInput("death", key)
+
 	case ScreenHelp:
 		return m.routeInput("help", key)
 	}
@@ -413,6 +418,12 @@ func (m *AppModel) renderCanvas() *Canvas {
 
 	case ScreenDeath:
 		m.drawStatus(canvas, "death")
+
+	case ScreenVictory:
+		m.drawStatus(canvas, "victory")
+
+	case ScreenLeft:
+		m.drawStatus(canvas, "left")
 	}
 
 	return canvas
@@ -588,11 +599,8 @@ func (m *AppModel) loadSavedRun() {
 	m.game = restored
 	m.screen = ScreenPlay
 
-	if restored.View().PendingStatLevel != 0 {
-		m.screen = ScreenStatChoice
-	} else if restored.View().PendingSkillExperience > 0 {
-		m.screen = ScreenSkills
-	}
+	view := restored.View()
+	m.afterStep(game.StepResult{View: view})
 
 	m.notice = ""
 }

@@ -60,6 +60,7 @@ type StairLink struct {
 	ToX         int
 	ToY         int
 	Pending     bool
+	Exit        bool
 	Unavailable string
 	// Source feature identity is carried beside the generic linked-stair grid
 	// cell until the renderer and branch travel policy use the exact feature.
@@ -111,6 +112,14 @@ func NewLevel(id int, cells [][]terrain.ID, positions *akara.Store[ecs.Position]
 }
 
 func validStairDestination(link StairLink) bool {
+	if link.Exit {
+		return !link.Pending &&
+			link.Unavailable == "" &&
+			link.ToLevelID == 0 &&
+			link.ToX == 0 &&
+			link.ToY == 0
+	}
+
 	if link.Pending {
 		return link.Unavailable == "" &&
 			link.ToLevelID > 0 &&
@@ -285,6 +294,10 @@ func validateStairLinks(levels map[int]*Level) error {
 		}
 
 		for _, link := range level.StairLinks() {
+			if link.Exit {
+				continue
+			}
+
 			if link.Unavailable != "" {
 				continue
 			}

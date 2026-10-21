@@ -5,6 +5,7 @@ local terrain = require("constants.terrain")
 local transporters = require("policy.world.transporters")
 local intents = require("constants.intent")
 local landing = require("policy.world.stair_landing")
+local endgame = require("policy.character.endgame")
 
 local system = {}
 
@@ -59,13 +60,23 @@ function system.update(ctx, actor, elapsed_aut)
     end
 
     -- Ordinary stair travel counts as a step for player barbs before the
-    -- level transition, unlike forced banishment and teleportation.
+    -- level transition or final exit, unlike forced banishment and teleportation.
     if actor == ctx:player() then
         barbs.moved(ctx, actor, elapsed_aut)
 
         if ctx:get(actor, component.HEALTH).current <= 0 then
             return
         end
+    end
+
+    if link.exit then
+        if actor ~= ctx:player() then
+            error("only the player can leave the Dungeon")
+        end
+
+        endgame.leave(ctx, actor)
+
+        return
     end
 
     local arrival_x, arrival_y = landing.find(ctx,

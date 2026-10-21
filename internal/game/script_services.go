@@ -58,6 +58,9 @@ func (g *Game) scriptServices() (script.Services, error) {
 		PlayerEntity: func() akara.Entity {
 			return g.player
 		},
+		EntityCreated: func(entity akara.Entity) {
+			g.noteEntity(entity)
+		},
 		CurrentAut: func() int64 {
 			return int64(g.currentAut)
 		},
@@ -195,10 +198,12 @@ func (grid scriptGrid) StairAt(levelID, x, y int) (script.Stair, bool) {
 	link, found := level.StairAt(x, y)
 
 	return script.Stair{
-		ToLevelID:   link.ToLevelID,
-		ToX:         link.ToX,
-		ToY:         link.ToY,
-		Unavailable: link.Unavailable,
+		ToLevelID:      link.ToLevelID,
+		ToX:            link.ToX,
+		ToY:            link.ToY,
+		Unavailable:    link.Unavailable,
+		Exit:           link.Exit,
+		TargetBranchID: link.TargetBranchID,
 	}, found
 }
 

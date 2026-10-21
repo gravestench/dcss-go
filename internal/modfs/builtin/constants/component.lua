@@ -46,6 +46,7 @@ local component = {
     PIKEL_BAND = "monster.pikel_band",
     BAND_ORIGIN = "monster.band_origin",
     PLAYER_RUNES = "character.runes",
+    PLAYER_ENDGAME = "character.endgame",
     ITEM_ARTEFACT = "item.artefact",
     SCROLL_ACQUIREMENT = "scroll.acquirement_offers",
     HELD = "projectile.held",

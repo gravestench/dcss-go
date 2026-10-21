@@ -292,6 +292,10 @@ func (m *AppModel) stepPlayCommand(command game.Command) tea.Cmd {
 func (m *AppModel) afterStep(result game.StepResult) {
 	if result.View.PlayerDead {
 		m.screen = ScreenDeath
+	} else if result.View.Outcome == "won" {
+		m.screen = ScreenVictory
+	} else if result.View.Outcome == "left" {
+		m.screen = ScreenLeft
 	} else if result.View.PendingStatLevel != 0 {
 		m.screen = ScreenStatChoice
 	} else if result.View.PendingSkillExperience > 0 {

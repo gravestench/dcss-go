@@ -457,6 +457,8 @@ func (r *Runtime) luaGridStairAt(state *lua.LState) int {
 	state.SetField(value, "to_x", lua.LNumber(stair.ToX))
 	state.SetField(value, "to_y", lua.LNumber(stair.ToY))
 	state.SetField(value, "unavailable", lua.LString(stair.Unavailable))
+	state.SetField(value, "exit", lua.LBool(stair.Exit))
+	state.SetField(value, "target_branch_id", lua.LString(stair.TargetBranchID))
 	state.Push(value)
 
 	return 1
@@ -1003,6 +1005,10 @@ func (r *Runtime) luaCreateEntity(state *lua.LState) int {
 		state.RaiseError("create entity: %v", err)
 
 		return 0
+	}
+
+	if r.services.EntityCreated != nil {
+		r.services.EntityCreated(entity)
 	}
 
 	r.created = append(r.created, entity)

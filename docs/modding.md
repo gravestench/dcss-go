@@ -1973,7 +1973,23 @@ receives the game context and depth and returns an ordinary loadout. The
 other imported gear specs are available to Lua but their monsters are not
 yet part of the playable population.
 
+## Orb run and escape
+
+The same-path override rule also applies to the Orb run. The saved player
+component `character.endgame` records whether the character is exploring,
+escaping with the Orb, or finished. `policy/character/endgame.lua` owns the
+Orb pickup and Dungeon exit transitions, while
+`policy/character/orb_run.lua` selects periodic defenders. A mod can override
+either policy at the same relative path. An Orb is a real floor item with
+the catalog ID `ids.items.ORB_ZOT`; picking it up consumes that entity and
+changes the saved phase instead of adding an inventory stack. The terminal
+uses the generic `session.outcome` policy to distinguish a win from leaving
+without the Orb. If a mod changes these transitions, keep its player phase
+schema, save validator, and outcome policy consistent so a restored game can
+resume the same run.
+
 ## Vault maps and Lua hooks
+
 
 The map declarations (`NAME`, `DEPTH`, `WEIGHT`, `TAGS`, `MAP`, and the
 placement directives) follow DCSS DES syntax. The `: vault.run(...)`,

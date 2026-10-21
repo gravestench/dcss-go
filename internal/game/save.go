@@ -138,6 +138,7 @@ func (g *Game) Snapshot() save.Snapshot {
 		LuaSchemas:     g.savedLuaSchemas(),
 
 		PlayerID:       uint64(g.player),
+		EntityCursor:   g.entityCursor,
 		CurrentAut:     int64(g.currentAut),
 		Seed:           g.seed,
 		RNG:            g.rng.States(),
@@ -182,6 +183,7 @@ func (g *Game) Snapshot() save.Snapshot {
 				ToX:            link.ToX,
 				ToY:            link.ToY,
 				Pending:        link.Pending,
+				Exit:           link.Exit,
 				Unavailable:    link.Unavailable,
 				TargetBranchID: link.TargetBranchID,
 				SourceFeature:  link.SourceFeature,
@@ -202,6 +204,10 @@ func (g *Game) Snapshot() save.Snapshot {
 	})
 
 	for _, entity := range g.world.Entities() {
+		if uint64(entity) > snapshot.EntityCursor {
+			snapshot.EntityCursor = uint64(entity)
+		}
+
 		snapshot.Entities = append(snapshot.Entities, save.EntityRecord{
 			ID: uint64(entity),
 
@@ -381,6 +387,10 @@ func RestoreWithRules(
 	}
 
 	if err := g.validateAndRegisterSavedEntities(snapshot); err != nil {
+		return nil, err
+	}
+
+	if err := g.restoreEntityCursor(snapshot); err != nil {
 		return nil, err
 	}
 

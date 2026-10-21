@@ -205,7 +205,13 @@ function generated.validate(levels, by_id, chosen_schedule)
 
                 seen_entries[link.target_branch_id] = true
             elseif boundary then
-                if link.unavailable == "" or link.to_level_id ~= 0 then
+                local dungeon_exit = depth == 1 and upward
+
+                if link.to_level_id ~= 0 or
+                    (dungeon_exit and
+                        (not link.exit or link.unavailable ~= "")) or
+                    (not dungeon_exit and
+                        (link.exit or link.unavailable == "")) then
                     error("generated Dungeon:" .. depth ..
                         " has an invalid boundary exit")
                 end

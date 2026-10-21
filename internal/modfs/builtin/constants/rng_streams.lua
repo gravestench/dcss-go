@@ -18,6 +18,7 @@ local streams = {
     SPELL = "spell",
     TRAPS = "traps",
     ZOT_OVERGROWN = "zot_overgrown",
+    ORB_RUN = "orb_run",
     TEMPLE_PLAN = "temple_plan",
 }
 

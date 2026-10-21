@@ -63,6 +63,7 @@ type View struct {
 	PlayerX    int
 	PlayerY    int
 	PlayerDead bool
+	Outcome    string
 	PlayerName string
 
 	PlayerHP     int
@@ -148,6 +149,14 @@ func (g *Game) View() (view View) {
 	g.fillEntityView(&view, level, position.LevelID)
 	g.fillInventoryView(&view)
 	g.fillSpellView(&view)
+
+	outcome, err := g.outcome()
+
+	if err != nil {
+		panic(err)
+	}
+
+	view.Outcome = outcome
 
 	return view
 }

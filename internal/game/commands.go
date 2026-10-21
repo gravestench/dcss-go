@@ -75,6 +75,12 @@ type TurnContext struct {
 }
 
 func (g *Game) Step(command Command) (StepResult, error) {
+	if outcome, err := g.outcome(); err != nil {
+		return StepResult{}, err
+	} else if outcome != "" {
+		return StepResult{View: g.View()}, nil
+	}
+
 	revivalEvents, err := g.resumePendingRevival()
 
 	if err != nil {
@@ -147,6 +153,24 @@ func (g *Game) Step(command Command) (StepResult, error) {
 
 	events = append(prepared.response.Events, events...)
 	events = append(revivalEvents, events...)
+
+	if outcome, err := g.outcome(); err != nil {
+		return StepResult{}, err
+	} else if outcome != "" {
+		playerTurn, found := g.stores.PlayerTurn.Get(g.player)
+
+		if !found {
+			return StepResult{}, fmt.Errorf("player has no terminal turn clock")
+		}
+
+		g.currentAut = Aut(playerTurn.NextAut)
+
+		return StepResult{
+			Spent:  cost,
+			Events: events,
+			View:   g.View(),
+		}, nil
+	}
 
 	if arrived, found := g.stores.Positions.Get(g.player); found &&
 		arrived.LevelID != position.LevelID {

@@ -22,6 +22,7 @@ type Game struct {
 	rng            *RNGStreams
 	scheduler      TurnScheduler
 	currentAut     Aut
+	entityCursor   uint64
 	branchSchedule *save.BranchScheduleRecord
 	templePlan     *save.TemplePlanRecord
 

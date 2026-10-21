@@ -3,7 +3,9 @@ local identification = require("policy.items.identification")
 local wallet = require("policy.shops.wallet")
 local catalog = require("policy.catalog")
 local classes = require("ids.object_classes")
+local item_ids = require("ids.items")
 local runes = require("policy.character.runes")
+local endgame = require("policy.character.endgame")
 local component = require("constants.component")
 
 local system = {}
@@ -53,6 +55,16 @@ function system.update(ctx, actor)
                 runes.collect(ctx, actor, item.kind_id)
                 ctx:destroy(entity)
                 ctx:emit("pickup", "You pick up " .. items.phrase(name, 1) .. ".")
+
+                return
+            end
+
+            -- The Orb is chapter progress in source DCSS, not a carried
+            -- stack. Its live floor entity is consumed exactly once.
+            if item.kind_id == item_ids.ORB_ZOT and
+                definition.class == classes.OBJ_ORBS then
+                endgame.take_orb(ctx, actor, item, position)
+                ctx:destroy(entity)
 
                 return
             end

@@ -19,6 +19,7 @@ local identification = require("policy.items.identification")
 local item_sets = require("policy.item_generation.item_sets")
 local unique_history = require("policy.item_generation.artefacts.history")
 local runes = require("policy.character.runes")
+local endgame = require("policy.character.endgame")
 
 local start = {}
 
@@ -130,6 +131,7 @@ function start.run_start(ctx, input)
     item_sets.initialise(ctx, player)
     unique_history.initialise(ctx, player)
     runes.initialise(ctx, player)
+    endgame.initialise(ctx, player)
     local generated = job.id == "JOB_WANDERER" and
         wanderer.generate(ctx, species) or nil
     local weapon_skill = gear.give(ctx, player, species, job,
