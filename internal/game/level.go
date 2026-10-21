@@ -304,6 +304,61 @@ func (l *Level) AddVaultRecord(record vault.Record) error {
 	return nil
 }
 
+// Replace exactly one typed source field after checking its prior value.
+// The level keeps authoritative vault records; Lua only requests a matched
+// change through the grid bridge, which can also undo this operation.
+func (l *Level) ReplaceVaultRecordString(
+	x, y int,
+	sourceID string,
+	kind vault.Kind,
+	identity, key, expected, replacement string,
+) error {
+	index := -1
+	argumentIndex := -1
+
+	for recordIndex := range l.vaultRecords {
+		record := &l.vaultRecords[recordIndex]
+
+		if record.Overridden ||
+			record.X != x ||
+			record.Y != y ||
+			record.SourceID != sourceID ||
+			record.Kind != kind ||
+			record.Identity != identity {
+			continue
+		}
+
+		if index >= 0 {
+			return fmt.Errorf("ambiguous vault record %s at (%d,%d)",
+				sourceID, x, y)
+		}
+
+		index = recordIndex
+
+		for candidate := range record.Arguments {
+			if record.Arguments[candidate].Name == key {
+				argumentIndex = candidate
+				break
+			}
+		}
+	}
+
+	if index < 0 || argumentIndex < 0 {
+		return fmt.Errorf("vault record %s has no %s at (%d,%d)",
+			sourceID, key, x, y)
+	}
+
+	argument := &l.vaultRecords[index].Arguments[argumentIndex]
+
+	if argument.Kind != vault.ValueString || argument.String != expected {
+		return fmt.Errorf("vault record %s argument %s changed", sourceID, key)
+	}
+
+	argument.String = replacement
+
+	return nil
+}
+
 func (l *Level) VaultRecords() []vault.Record {
 	return vault.Clone(l.vaultRecords)
 }

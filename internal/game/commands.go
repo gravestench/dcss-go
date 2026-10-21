@@ -36,6 +36,7 @@ const (
 	CommandAbility
 	CommandEvokeWand
 	CommandRead
+	CommandPray
 )
 
 const CommandCancelVampire = CommandCancelMemorise
@@ -59,11 +60,12 @@ type Event struct {
 }
 
 type StepResult struct {
-	Spent        Aut
-	Events       []Event
-	View         View
-	Confirmation string
-	Selection    *SelectionRequest
+	Spent              Aut
+	Events             []Event
+	View               View
+	Confirmation       string
+	ConfirmationTarget string
+	Selection          *SelectionRequest
 }
 
 // TurnContext is updated by Game before ordered Akara systems run.

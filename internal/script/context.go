@@ -25,6 +25,8 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "id", r.state.NewFunction(r.luaEntityID))
 	r.state.SetField(context, "cell", r.state.NewFunction(r.luaGridCell))
 	r.state.SetField(context, "records_at", r.state.NewFunction(r.luaGridRecordsAt))
+	r.state.SetField(context, "replace_record_string",
+		r.state.NewFunction(r.luaGridReplaceRecordString))
 	r.state.SetField(context, "marker_property", r.state.NewFunction(r.luaGridMarkerProperty))
 	r.state.SetField(context, "level_size", r.state.NewFunction(r.luaGridLevelSize))
 	r.state.SetField(context, "level_branch", r.state.NewFunction(r.luaGridLevelBranch))
@@ -315,6 +317,60 @@ func (r *Runtime) luaGridRecordsAt(state *lua.LState) int {
 	state.Push(converted)
 
 	return 1
+}
+
+// Stage a compare-and-replace on one saved string argument. The old value
+// and exact source identity make a confirmed action reject a changed map
+// instead of silently editing whichever record later occupies the cell.
+func (r *Runtime) luaGridReplaceRecordString(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	sourceID := state.CheckString(5)
+	kind := state.CheckString(6)
+	identity := state.CheckString(7)
+	key := state.CheckString(8)
+	expected := state.CheckString(9)
+	replacement := state.CheckString(10)
+	matches := 0
+
+	for _, record := range r.services.Grid.RecordsAt(levelID, x, y) {
+		if record.SourceID != sourceID ||
+			record.Kind != kind ||
+			record.Identity != identity {
+			continue
+		}
+
+		value, found := record.Arguments[key].(string)
+
+		if !found || value != expected {
+			state.RaiseError("record %s argument %s changed", sourceID, key)
+
+			return 0
+		}
+
+		matches++
+	}
+
+	if matches != 1 {
+		state.RaiseError("expected one record %s at (%d,%d), found %d",
+			sourceID, x, y, matches)
+
+		return 0
+	}
+
+	r.pending = append(r.pending, structuralCommand{
+		apply: func() error {
+			return r.services.Grid.ReplaceRecordString(
+				levelID, x, y, sourceID, kind, identity,
+				key, expected, replacement)
+		},
+		undo: func() error {
+			return r.services.Grid.ReplaceRecordString(
+				levelID, x, y, sourceID, kind, identity,
+				key, replacement, expected)
+		},
+	})
+
+	return 0
 }
 
 func (r *Runtime) luaGridMarkerProperty(state *lua.LState) int {

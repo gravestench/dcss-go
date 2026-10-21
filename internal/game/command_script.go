@@ -78,13 +78,16 @@ func (g *Game) prepareScriptCommand(
 			return preparedCommand{}, fmt.Errorf("Lua command has empty confirmation")
 		}
 
+		target, _ := decision["confirmation_id"].(string)
+
 		if err := g.scripts.ApplyPending(); err != nil {
 			return preparedCommand{}, err
 		}
 
 		return freeCommand(StepResult{
-			Confirmation: confirmation,
-			View:         g.View(),
+			Confirmation:       confirmation,
+			ConfirmationTarget: target,
+			View:               g.View(),
 		}), nil
 	}
 

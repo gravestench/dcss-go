@@ -161,6 +161,23 @@ func (grid scriptGrid) RecordsAt(levelID, x, y int) []script.SpatialRecord {
 	return result
 }
 
+// The grid bridge only matches a saved record and replaces one typed
+// string field. Lua decides what that field means to game rules.
+func (grid scriptGrid) ReplaceRecordString(
+	levelID, x, y int,
+	sourceID, kind, identity, key, expected, replacement string,
+) error {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return fmt.Errorf("missing level %d", levelID)
+	}
+
+	return level.ReplaceVaultRecordString(
+		x, y, sourceID, vault.Kind(kind), identity,
+		key, expected, replacement)
+}
+
 func (grid scriptGrid) MarkerProperty(levelID, x, y int, key string) (string, bool) {
 	level := grid.levels[levelID]
 

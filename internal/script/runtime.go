@@ -35,6 +35,10 @@ type Services struct {
 type Grid interface {
 	Cell(levelID, x, y int) (terrain.ID, bool)
 	RecordsAt(levelID, x, y int) []SpatialRecord
+	ReplaceRecordString(
+		levelID, x, y int,
+		sourceID, kind, identity, key, expected, replacement string,
+	) error
 	MarkerProperty(levelID, x, y int, key string) (string, bool)
 	Remembered(levelID, x, y int) (terrain.ID, bool)
 	MapCell(levelID, x, y int) error

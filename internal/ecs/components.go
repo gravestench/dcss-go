@@ -205,6 +205,7 @@ const (
 	IntentRead
 	IntentJewelleryOn
 	IntentJewelleryOff
+	IntentPrayer
 )
 
 type Intent struct {

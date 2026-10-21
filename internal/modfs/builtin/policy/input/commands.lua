@@ -29,6 +29,7 @@ local commands = {
     ability = kind.ABILITY,
     evoke_wand = kind.EVOKE_WAND,
     read = kind.READ,
+    pray = kind.PRAY,
 }
 
 return commands

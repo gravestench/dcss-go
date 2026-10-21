@@ -249,3 +249,90 @@ func TestLuaTempleAltarRecordRestores(t *testing.T) {
 			before, after)
 	}
 }
+
+// A Lua rule can replace a saved string argument only on the intended
+// source record; a failed compare leaves it unchanged through restore.
+func TestLuaReplacesOneSavedRecordArgument(t *testing.T) {
+	g, rules := newReligionRecordsGame(t, 447)
+
+	defer g.Close()
+
+	position, found := g.stores.Positions.Get(g.player)
+
+	if !found {
+		t.Fatal("player has no position")
+	}
+
+	level := g.levels[position.LevelID]
+	sourceID := level.VaultID()
+
+	if sourceID == "" {
+		t.Fatal("generated floor has no catalogued source vault")
+	}
+
+	if err := level.AddVaultRecord(vault.Record{
+		Kind:     vault.KindSourceFeature,
+		SourceID: sourceID,
+		Identity: string(terrain.Altar),
+		X:        position.X,
+		Y:        position.Y,
+		Arguments: []vault.Argument{
+			{
+				Name:   "god_id",
+				Kind:   vault.ValueString,
+				String: "GOD_ECUMENICAL",
+			},
+		},
+	}); err != nil {
+		t.Fatal(err)
+	}
+
+	input := map[string]any{
+		"level_id":    position.LevelID,
+		"x":           position.X,
+		"y":           position.Y,
+		"source_id":   sourceID,
+		"kind":        string(vault.KindSourceFeature),
+		"identity":    string(terrain.Altar),
+		"key":         "god_id",
+		"expected":    "GOD_ECUMENICAL",
+		"replacement": "GOD_ZIN",
+	}
+
+	if _, err := g.scripts.Policy("test.change_record", input); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := g.scripts.ApplyPending(); err != nil {
+		t.Fatal(err)
+	}
+
+	assertGod := func(game *Game, want string) {
+		t.Helper()
+
+		records := game.levels[position.LevelID].VaultRecords()
+		last := records[len(records)-1]
+
+		if last.Arguments[0].String != want {
+			t.Fatalf("altar god = %q, want %q", last.Arguments[0].String, want)
+		}
+	}
+
+	assertGod(g, "GOD_ZIN")
+
+	if _, err := g.scripts.Policy("test.change_record", input); err == nil {
+		t.Fatal("stale expected god changed altar twice")
+	}
+
+	assertGod(g, "GOD_ZIN")
+
+	restored, err := RestoreWithRules(g.Snapshot(), rules, RestorePolicy{})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	assertGod(restored, "GOD_ZIN")
+}

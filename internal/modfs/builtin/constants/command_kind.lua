@@ -26,6 +26,7 @@ local command_kind = {
     ABILITY = 22,
     EVOKE_WAND = 23,
     READ = 24,
+    PRAY = 25,
 }
 
 return command_kind

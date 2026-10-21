@@ -162,6 +162,7 @@ func playCommandFromDecision(decision map[string]any) (game.Command, error) {
 		game.CommandPickup,
 		game.CommandUpstairs,
 		game.CommandDownstairs,
+		game.CommandPray,
 	)
 
 	if !ok {

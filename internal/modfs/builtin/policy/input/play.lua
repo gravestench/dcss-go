@@ -53,6 +53,15 @@ local play = {}
 function play.route(input)
     local key = input.key
 
+    -- The stair keys pray when the player stands on a saved altar. The game
+    -- command rechecks the record so a stale presentation cannot convert.
+    if (key == ">" or key == "<") and input.on_altar then
+        return {
+            action = "step",
+            kind = commands.pray,
+        }
+    end
+
     -- On a shop cell, the usual down-stairs key enters the shop screen.
     if key == ">" and input.on_shop then
         return {

@@ -30,21 +30,44 @@ func (m *AppModel) handlePlayKey(key string) tea.Cmd {
 		return m.routeInput("door", key)
 	}
 
-	if key == ">" {
-		shop, err := m.game.ShopAtPlayer("type")
+	if key == ">" || key == "<" {
+		view := m.game.View()
+		onAltar := altarAtPlayer(view)
+		onShop := false
 
-		if err != nil {
-			m.notice = fmt.Sprintf("Shop failed: %v", err)
+		if key == ">" && !onAltar {
+			shop, err := m.game.ShopAtPlayer("type")
 
-			return nil
+			if err != nil {
+				m.notice = fmt.Sprintf("Shop failed: %v", err)
+
+				return nil
+			}
+
+			onShop = shop.Available
 		}
 
 		return m.routeInput("play", key, map[string]any{
-			"on_shop": shop.Available,
+			"on_altar": onAltar,
+			"on_shop":  onShop,
 		})
 	}
 
 	return m.routeInput("play", key)
+}
+
+// The view already presents saved source altar records at exact map cells.
+// Input only needs their location; Lua prayer reads the authoritative record.
+func altarAtPlayer(view game.View) bool {
+	for _, entity := range view.Entities {
+		if entity.Role == "altar" &&
+			entity.X == view.PlayerX &&
+			entity.Y == view.PlayerY {
+			return true
+		}
+	}
+
+	return false
 }
 
 var inputScreens = map[string]ScreenID{
@@ -247,6 +270,7 @@ func (m *AppModel) stepPlayCommand(command game.Command) tea.Cmd {
 	}
 
 	if result.Confirmation != "" {
+		command.TargetID = result.ConfirmationTarget
 		m.pendingAction = command
 		m.pendingActionPrompt = result.Confirmation
 		m.openScreen(ScreenActionConfirm)
