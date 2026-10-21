@@ -204,8 +204,11 @@ population. Lair and Orc first and second floors have exercised reciprocal
 entry, save, and restore. Depths also opens from its scheduled Dungeon
 entrance. Temple now opens through a source Dungeon entry vault, uses its
 saved source map and god partition, and returns through reciprocal stairs.
-Vaults entrances remain labelled but unavailable until their primary layout
-families are ported. Other branch-specific mechanics
+Vaults now opens from its scheduled Dungeon entrance and builds Vaults:1–4
+from its eleven source primary layouts and tagged DES room pools. Their
+room IDs, typed records, branch links, and terrain survive save/restore.
+Vaults:5 remains a visible unavailable stair until its separate end-vault
+builder and rune encounter are ported. Other branch-specific mechanics
 still need parity.
 The Temple content catalog includes all 53 source Dungeon entry maps and all
 90 main maps, including 47 with source Lua ported to named hooks. A

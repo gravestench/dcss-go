@@ -257,7 +257,16 @@ local function materialize_shop(ctx, level, record)
     selected.y = record.y
     selected.depth = level.id
 
-    shop_generation.place(ctx, selected)
+    local ok, reason = pcall(shop_generation.place, ctx, selected)
+
+    if not ok then
+        error(string.format("%s:%d: shop %s at %d:%d on level %d (cell %s, walkable %s): %s",
+            site.path, site.line or 0, record.identity,
+            record.x, record.y, level.id,
+            tostring(ctx:cell(level.id, record.x, record.y)),
+            tostring(ctx:walkable(level.id, record.x, record.y)),
+            tostring(reason)))
+    end
 
     return {
         level_id = level.id,

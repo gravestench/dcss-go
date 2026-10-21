@@ -6,6 +6,14 @@ local hooks = require("policy.generation.vaults.hooks")
 local history = require("policy.population.unique_history")
 local runes = require("policy.character.runes")
 
+-- The connector runs on several branch themes. Testing only rock would
+-- mistake Vaults metal or crystal walls for walkable floor.
+local function passable(glyph)
+    return glyph == "." or glyph == "+" or glyph == "~" or
+        glyph == "=" or glyph == "W" or
+        glyphs.up[glyph] or glyphs.down[glyph]
+end
+
 -- Every source exit must reach the surrounding Dungeon. The connector marks
 -- any source terrain it carves through so projection does not restore it.
 local function key(x, y)
@@ -122,7 +130,7 @@ local function reachable(builder, start)
             local id = key(x, y)
 
             if interior(builder, x, y) and not seen[id] and
-                builder:cell(x, y) ~= "#" then
+                passable(builder:cell(x, y)) then
                 seen[id] = true
                 queue[#queue + 1] = { x = x, y = y }
             end
@@ -151,7 +159,7 @@ local function bridge(builder, from, connected, carved)
 
         if connected[id] then
             while previous[id] do
-                if builder:cell(point.x, point.y) == "#" then
+                if not passable(builder:cell(point.x, point.y)) then
                     builder:set(point.x, point.y, ".")
                     carved[id] = true
                 end
@@ -169,7 +177,7 @@ local function bridge(builder, from, connected, carved)
             local next_id = key(x, y)
 
             if interior(builder, x, y) then
-                local cost = builder:cell(x, y) == "#" and 1 or 0
+                local cost = passable(builder:cell(x, y)) and 0 or 1
                 local next_distance = distance[id] + cost
 
                 if not distance[next_id] or next_distance < distance[next_id] then

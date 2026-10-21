@@ -281,16 +281,25 @@ end
 function identification.reveal_item(ctx, entity, fields)
     local state = ctx:get(entity, component.ITEM_IDENTIFICATION) or {}
     local artefact = ctx:get(entity, component.ITEM_ARTEFACT)
+    local item = ctx:get(entity, component.ITEM)
+    local kind = item and catalog.get("items", item.kind_id)
+    local equipment = kind and (kind.class == classes.OBJ_WEAPONS or
+        kind.class == classes.OBJ_ARMOUR or
+        kind.class == classes.OBJ_JEWELLERY or
+        kind.class == classes.OBJ_STAVES)
+    local manual = kind and kind.id == item_ids.BOOK_MANUAL
+    local artefact_book = kind and artefact and
+        kind.class == classes.OBJ_BOOKS
 
     if fields.type then
         state.known_type = true
     end
 
-    if fields.pluses then
+    if fields.pluses and (equipment or manual) then
         state.known_pluses = true
     end
 
-    if fields.properties then
+    if fields.properties and (equipment or manual or artefact_book) then
         state.known_properties = true
     end
 
@@ -459,9 +468,14 @@ function identification.validate(ctx, player)
             error("non-identifiable item has type knowledge")
         end
 
-        if (state.known_pluses or state.known_properties) and
-            not equipment and not manual then
-            error("non-equipment item has equipment knowledge")
+        local artefact_book = kind.class == classes.OBJ_BOOKS and
+            ctx:has(entity, component.ITEM_ARTEFACT)
+
+        if (state.known_pluses and not equipment and not manual) or
+            (state.known_properties and not equipment and not manual and
+                not artefact_book) then
+            error("non-equipment item " .. item.kind_id .. " (entity " ..
+                ctx:id(entity) .. ") has equipment knowledge")
         end
 
         if not valid_cosmetics[state.cosmetic] then

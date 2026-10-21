@@ -1993,6 +1993,15 @@ resolver. Because the map is in the `layout` family, the resolver loads
 `layout_cave_pools(api)` method. That method returns a grid builder and
 any typed records; the catalog then completes connected stairs.
 
+The implementation path is short: `policy/generation/vaults/des.lua` parses
+the `: vault.run(...)` line into a named operation;
+`policy/generation/vaults/hooks.lua` resolves its module and method and
+checks that the method exists. The chosen layout calls the resolver from
+`policy/generation/layouts/catalog.lua`. Ordinary placed vaults run their
+named hooks through the same resolver in the vault placement path. These
+paths are relative to the embedded mod root (`internal/modfs/builtin/` in
+this repository), so a layered mod can replace a handler at the same path.
+
 For an ordinary vault, `: vault.run("configure")` in
 `vaults/arrival/example.des` resolves to the `configure(api)` method in
 `policy/generation/vaults/arrival/example.lua`. A reference such as
@@ -2046,6 +2055,32 @@ layout should author its meaningful stair glyphs in its Lua builder before
 returning; the postpass preserves those glyphs and adds only missing pairs.
 For a map that must have one contiguous playable region, use the shared
 `cell_graph.keep_largest_region` operation before returning the builder.
+
+### Vaults primary layouts and rooms
+
+Vaults:1–4 use eleven primary layouts in `vaults/layout/layout_vaults_*.des`.
+Each map's named hook in `policy/generation/layouts/` paints its broad
+motif. The shared `policy/generation/layouts/vaults/build.lua` then inserts
+rooms before the ordinary stair and secondary-vault passes. A primary hook
+returns its builder, typed room records, room IDs, and protected cells;
+those IDs and records travel through population and save/restore. Vaults:5
+has a separate end-vault design and is currently an unavailable stair.
+
+To add a Vaults room, create one `vaults/vaults_room/<name>.des` file with a
+unique `NAME`, an eligible `DEPTH`, source-style `MAP`, and one of the tags
+`vaults_room`, `vaults_empty`, or `vaults_hard`. The room picker discovers
+the file, sorts candidates by ID, and applies its effective DES weight.
+The standard and hard pools have per-floor limits; an ineligible room or a
+failed fit does not replace an already placed room. Keep fixed terrain and
+entity directives in the `.des` file. If the room needs a calculated choice,
+declare a named hook and put its Lua handler under
+`policy/generation/vaults/vaults_room/<name>.lua`. The same hook naming and
+`api` rules described below apply.
+
+The current Vaults floor limit lives in
+`policy/generation/floor_availability.lua`. A mod that supplies a new V:5
+generator must also update that policy so the stair and save validator
+agree that the destination can be built.
 
 ### Authored vaults
 

@@ -378,7 +378,7 @@ end
 
 -- A monster's comma slots are ordered fallbacks at one cell. An item_list
 -- instead places every comma slot on that cell, each with its own choice.
-local function select_entities(record, vault, random, depth)
+local function select_entities(record, vault, random, depth, player)
     local parser = record.kind == effects.MONSTER and monster_specs or item_specs
     local resolver = record.kind == effects.MONSTER and resolve.monster or resolve.item
     local site = {
@@ -387,6 +387,9 @@ local function select_entities(record, vault, random, depth)
         line = record.line,
         directive = record.directive,
         glyph = record.source,
+        branch_id = player and player.branch_id,
+        local_depth = player and player.depth,
+        absolute_depth = player and player.absolute_depth,
     }
     local expression = record.identity
     local slots = parser.parse(expression, site)
@@ -548,7 +551,7 @@ end
 
 -- Match authored record targets to transformed cells before translating them to level positions.
 local function locate_records(source_records, cells, left, top, entry,
-    width_before, height_before, turns, random, vault, depth)
+    width_before, height_before, turns, random, vault, depth, player)
     local located = {}
     local shared_local = {}
 
@@ -577,7 +580,8 @@ local function locate_records(source_records, cells, left, top, entry,
                 if record.assignment_mode == ":" and shared_local[key] then
                     selected = reuse_entities(placed, shared_local[key])
                 else
-                    selected = select_entities(placed, vault, random, depth)
+                    selected = select_entities(placed, vault, random, depth,
+                        player)
 
                     if record.assignment_mode == ":" then
                         shared_local[key] = selected
@@ -609,7 +613,7 @@ local function locate_records(source_records, cells, left, top, entry,
                             if record.assignment_mode == ":" then
                                 if not shared_selection then
                                     shared_selection = select_entities(placed,
-                                        vault, random, depth)
+                                        vault, random, depth, player)
                                     selected = shared_selection
                                 else
                                     selected = reuse_entities(placed,
@@ -617,7 +621,7 @@ local function locate_records(source_records, cells, left, top, entry,
                                 end
                             else
                                 selected = select_entities(placed, vault,
-                                    random, depth)
+                                    random, depth, player)
                             end
                         end
 
@@ -677,7 +681,7 @@ function placement.place(_, builder, vault, player, options)
     local entry, exits, occupied = draw_map(vault, cells, builder,
         left, top, records, overridden)
     local intents = locate_records(source_records, cells, left, top, entry,
-        width_before, height_before, turns, builder, vault, depth)
+        width_before, height_before, turns, builder, vault, depth, player)
 
     for _, record in ipairs(intents) do
         records[#records + 1] = record
@@ -702,7 +706,7 @@ function placement.place(_, builder, vault, player, options)
             if record.implicit and (record.kind == effects.ITEM or
                 record.kind == effects.MONSTER) then
                 append_entities(filtered,
-                    select_entities(record, vault, builder, depth))
+                    select_entities(record, vault, builder, depth, player))
             else
                 filtered[#filtered + 1] = record
             end

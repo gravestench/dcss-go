@@ -11,6 +11,7 @@ local population = require("policy.population.vaults")
 local selection = require("policy.generation.vaults.selection")
 local terrain = require("constants.terrain")
 local trap_placement = require("policy.traps.placement")
+local fog = require("policy.world.fog_machine_definitions")
 local branches = require("ids.branches")
 
 local test = {}
@@ -167,6 +168,11 @@ local function check_arrival(id, index)
             else
                 error(id .. " has unresolved entity glyph " .. tostring(record.source))
             end
+        elseif record.kind == effects.MARKER and
+            fog.is_marker(record.identity) then
+            -- An authored fog machine is a live ECS component even though
+            -- its marker has no monster/item kind or VAULT_ORIGIN component.
+            expected = expected + 1
         end
     end
 
@@ -192,7 +198,9 @@ local function check_arrival(id, index)
         local record = level.vault_records[outcome.index]
 
         harness.truthy(outcome.no_spawn or origins[outcome.index] or
-            trap_placement.is_trap(record),
+            trap_placement.is_trap(record) or
+            (record.kind == effects.MARKER and
+                fog.is_marker(record.identity)),
             id .. " selected an entity without an ECS origin")
     end
 end

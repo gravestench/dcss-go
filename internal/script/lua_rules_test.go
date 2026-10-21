@@ -167,6 +167,12 @@ func runLuaRule(t *testing.T, rules modfs.Ruleset, name string) {
 	} else if name == "tests/overflow_altar_all_placement_test.lua" {
 		// Each committed overflow map fits and executes its source hooks.
 		limitDuration = 60 * time.Second
+	} else if name == "tests/vaults_primary_layouts_test.lua" {
+		// Eleven full Vaults levels each place bounded source room attempts.
+		limitDuration = 60 * time.Second
+	} else if name == "tests/worley_cave_layouts_test.lua" {
+		// Several full grids run the source noise sampler in one Lua test.
+		limitDuration = 15 * time.Second
 	}
 
 	limit, cancel := context.WithTimeout(context.Background(), limitDuration)

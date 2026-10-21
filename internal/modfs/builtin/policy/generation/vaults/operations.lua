@@ -197,8 +197,9 @@ local function array_records(vault, operation, first_slot)
     return records, first_slot + #records
 end
 
--- Resolve a helper substitute before embedding it into the source map region.
-local function helper_choice(argument, random)
+-- Parse the complete helper choice even when its source glyph is absent.
+-- This rejects malformed optional declarations without spending RNG on them.
+local function helper_options(argument)
     local source, choices = argument:match("^%s*(%S+)%s*:%s*(.-)%s*$")
 
     if not source or #source ~= 1 then
@@ -233,11 +234,16 @@ local function helper_choice(argument, random)
         }
     end
 
+    return source, options, total
+end
+
+-- Draw one source-weighted helper tag only for a glyph present in the map.
+local function helper_choice(options, total, random)
     local roll = random:roll(total)
 
     for _, option in ipairs(options) do
         if roll < option.weight then
-            return source, option.tag
+            return option.tag
         end
 
         roll = roll - option.weight
@@ -416,7 +422,24 @@ end
 
 -- A missing helper fit is a source error rather than a silently skipped decoration.
 local function apply_subvault(vault, cells, operation, random, depth, player)
-    local source, tag = helper_choice(operation.argument, random)
+    local source, options, total = helper_options(operation.argument)
+
+    -- Some source maps declare a shared set of optional helper glyphs.
+    -- Quinsquares, for example, declares C but contains only A, B, D, E.
+    -- An absent glyph has no placement site and must not draw a helper.
+    local present = false
+
+    for _, row in ipairs(cells) do
+        for _, glyph in ipairs(row) do
+            present = present or glyph == source
+        end
+    end
+
+    if not present then
+        return {}, {}
+    end
+
+    local tag = helper_choice(options, total, random)
     local helper = helper_for_tag(tag, random, player)
     local ok, result, claimed = pcall(embed_helper,
         cells, source, helper, random, depth, player)

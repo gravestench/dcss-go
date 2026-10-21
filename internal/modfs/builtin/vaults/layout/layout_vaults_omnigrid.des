@@ -1,0 +1,14 @@
+# Vaults primary layout: layout_vaults_omnigrid.
+# Source: builder/layout_vaults.des. DES metadata owns selection;
+# the named Lua hook owns the procedural shape and room placement.
+NAME: layout_vaults_omnigrid
+DEPTH: Vaults
+WEIGHT: 50
+ORIENT: encompass
+CHANCE: 100%
+TAGS: overwritable layout allow_dup unrand no_rotate no_pool_fixup
+TAGS: no_hmirror no_vmirror chance_vaults uniq_vaults_grid layout_type_vaults
+# Source procedural map script runs in the named Lua layout module.
+: vault.run("layout_vaults_omnigrid")
+MAP
+ENDMAP

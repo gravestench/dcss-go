@@ -63,7 +63,7 @@ end
 
 -- The layout chooses an exact cell and quarter turn after checking its
 -- usable wall. The shared placer still owns substitutions and typed records.
-function rooms.place(ctx, builder, id, origin, orientation, protected)
+function rooms.place(ctx, builder, id, origin, orientation, protected, player)
     local definition = catalog.get(id)
     local copy = trial(builder)
     local options = {
@@ -72,7 +72,7 @@ function rooms.place(ctx, builder, id, origin, orientation, protected)
         turns = orientation,
         protected = protected,
     }
-    local ok, placed = pcall(placement.place, ctx, copy, definition, nil,
+    local ok, placed = pcall(placement.place, ctx, copy, definition, player,
         options)
 
     if not ok then

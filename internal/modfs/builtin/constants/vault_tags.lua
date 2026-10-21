@@ -30,6 +30,9 @@ local tags = {
     AQUARIUM_VIEW = "serial_aquarium_view",
     AQUARIUM_BALCONY = "serial_aquarium_balcony",
     AQUARIUM_POOL = "serial_aquarium_pool",
+    VAULTS_ROOM = "vaults_room",
+    VAULTS_EMPTY = "vaults_empty",
+    VAULTS_HARD = "vaults_hard",
 }
 
 return tags

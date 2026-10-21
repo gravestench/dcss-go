@@ -1,6 +1,7 @@
 -- Example: authored stairs on any Dungeon floor gain paired landings nearby.
 local grid = require("policy.generation.grid")
 local layouts = require("policy.generation.layouts.catalog")
+local availability = require("policy.generation.floor_availability")
 local item_ids = require("ids.items")
 local nearest = require("policy.generation.nearest")
 local branches = require("ids.branches")
@@ -19,6 +20,7 @@ local temple_catalog = require("policy.generation.temple.catalog")
 local temple_entry = require("policy.generation.temple.entry")
 local temple_floor = require("policy.generation.temple.floor")
 local altar_catalog = require("policy.generation.altar.catalog")
+local shop_spec = require("policy.generation.vaults.shop_spec")
 
 local generated = {}
 
@@ -175,6 +177,13 @@ generated.spawn_exclusions = spawn_exclusions
 local function protected_cells(level, placed)
     local cells = {}
 
+    -- A procedural primary layout can contain its own authored rooms.
+    -- Secondary vaults must not replace those cells or leave their saved
+    -- source-feature records pointing at unrelated later terrain.
+    for key in pairs(level.protected or {}) do
+        cells[key] = true
+    end
+
     for _, point in ipairs(placed and placed.occupied or {}) do
         vault_extra.protect(cells, point)
     end
@@ -296,7 +305,7 @@ local function place_branch_entrances(ctx, builder, layout, protected,
         local is_temple = entry.branch_id == branches.BRANCH_TEMPLE
         local available = is_temple and
             temple_catalog.main(temple.map_id) ~= nil or
-            layouts.has_candidates(entry.branch_id, 1)
+            availability.can_build(entry.branch_id, 1)
 
         if is_temple then
             local placed
@@ -363,7 +372,7 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
             branch_id, depth, bottom)
 
         layout = layouts.execute(ctx, definition,
-            branch_id, depth, profile)
+            branch_id, depth, profile, prior_vault_ids)
     end
 
     local required = base_stair_points(layout)
@@ -395,6 +404,7 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
             absolute_depth = absolute_depth,
             layout_family = layout_family(layout),
             prior_vault_ids = prior_vault_ids,
+            primary_room_ids = layout.room_ids,
             overflow_schedule = temple.overflow_schedule,
             arrival_vault = arrival_vault,
             protected = protected,
@@ -493,6 +503,18 @@ local function level_record(ctx, floor)
         base_exclusions = spawn_exclusions(arrival, floor.arrival_vault)
     end
 
+    -- Shop records must still own the floor cell chosen by their DES map.
+    -- A later connector or branch stair must not leave a stale shop intent.
+    for _, record in ipairs(floor.records) do
+        if record.kind == vault_effects.FEATURE and
+            shop_spec.is_shop(record.identity) and
+            floor.layout.builder:cell(record.x, record.y) ~= "." then
+            error(string.format("%s shop at %d:%d lost its floor cell (%s)",
+                record.vault_id or "vault", record.x, record.y,
+                tostring(floor.layout.builder:cell(record.x, record.y))))
+        end
+    end
+
     return {
         id = floor.id,
         branch_id = floor.branch_id,
@@ -566,7 +588,8 @@ function generated.next(ctx, input)
     local parent = input.parent
     local level_id = branch_levels.id(branch_id, depth)
 
-    if input.level_id ~= level_id or depth > bottom then
+    if input.level_id ~= level_id or depth > bottom or
+        not availability.can_build(branch_id, depth) then
         error("next floor has invalid branch depth or ID")
     end
 

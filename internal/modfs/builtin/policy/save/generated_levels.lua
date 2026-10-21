@@ -4,7 +4,7 @@ local branches = require("ids.branches")
 local glyphs = require("constants.vault_glyphs")
 local branch_schedule = require("policy.generation.branch_schedule")
 local branch_levels = require("policy.generation.branch_levels")
-local layouts = require("policy.generation.layouts.catalog")
+local availability = require("policy.generation.floor_availability")
 local temple_catalog = require("policy.generation.temple.catalog")
 
 local up_features = {}
@@ -75,7 +75,7 @@ local function valid_branch_entry(levels, parent, link, expected)
 
     local available = expected.branch_id == branches.BRANCH_TEMPLE and
         #temple_catalog.main_ids() > 0 or
-        layouts.has_candidates(expected.branch_id, 1)
+        availability.can_build(expected.branch_id, 1)
 
     if not available then
         return not child and not link.pending and
@@ -241,14 +241,14 @@ function generated.validate(levels, by_id, chosen_schedule)
     for _, level in ipairs(levels) do
         if level.branch_id ~= branches.BRANCH_DUNGEON and
             level.id ~= abyss.level_id then
-            local branch = register.get("branches", level.branch_id)
             local depth = level.local_depth
             local scheduled = chosen_schedule.entries[level.branch_id]
 
             if not scheduled or
                 level.id ~= branch_levels.id(level.branch_id, depth) or
                 #level.cells ~= 70 or #level.cells[1] ~= 80 or
-                #level.stairs < 1 then
+                #level.stairs < 1 or
+                not availability.can_build(level.branch_id, depth) then
                 error("generated branch level has invalid identity or geometry")
             end
 
@@ -311,10 +311,11 @@ function generated.validate(levels, by_id, chosen_schedule)
                         error("generated " .. level.branch_id ..
                             " has an unpaired up stair")
                     end
-                elseif depth == branch.depth then
+                elseif not availability.can_build(level.branch_id,
+                    depth + 1) then
                     if link.unavailable == "" or link.to_level_id ~= 0 then
                         error("generated " .. level.branch_id ..
-                            " has an invalid bottom stair")
+                            " has an invalid unavailable stair")
                     end
                 elseif link.pending then
                     local next_id = branch_levels.id(level.branch_id,
@@ -340,7 +341,8 @@ function generated.validate(levels, by_id, chosen_schedule)
             end
 
             if up_count < 1 or
-                (depth < branch.depth and down_count < 3) then
+                (availability.can_build(level.branch_id,
+                    depth + 1) and down_count < 3) then
                 error("generated " .. level.branch_id ..
                     " has too few stair links")
             end

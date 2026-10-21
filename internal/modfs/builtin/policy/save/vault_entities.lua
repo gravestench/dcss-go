@@ -156,14 +156,22 @@ local function validate_origin(ctx, entity, origin, levels, seen)
     local actor = ctx:get(entity, component.ACTOR)
     local item = ctx:get(entity, component.ITEM)
     local kind_id = actor and actor.kind_id or item and item.kind_id
+    local form = actor and ctx:get(entity, component.MONSTER_POLYMORPH)
+    local source_kind = form and form.original_kind_id or kind_id
 
-    if not kind_id or kind_id ~= origin.kind_id then
-        error("entity " .. ctx:id(entity) .. " has forged vault kind ID")
+    -- A vault shapeshifter adopts a borrowed body as soon as it spawns;
+    -- later polymorph can do the same to any authored monster. The durable
+    -- polymorph source, not the current body, must match the DES selection.
+    if not kind_id or source_kind ~= origin.kind_id then
+        error("entity " .. ctx:id(entity) .. " has forged vault kind ID " ..
+            tostring(kind_id) .. " versus " .. tostring(origin.kind_id) ..
+            " from " .. tostring(record.source_id) .. ":" ..
+            tostring(origin.record_index))
     end
 
     -- One record can yield an actor, corpse, and gear, but their occurrence numbers must remain distinct.
     if origin.occurrence == 1 then
-        if (kind_id ~= arguments.kind_id and not
+        if (source_kind ~= arguments.kind_id and not
             (item and decayed_authored_corpse(ctx, entity, record,
                 arguments, item))) or
             (record.kind == effects.MONSTER and not actor) or

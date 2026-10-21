@@ -36,9 +36,14 @@ function test.run()
         end
     end
 
-    for tag, count in pairs(tagged) do
-        harness.truthy(count > 0, "room family " .. tag .. " is available")
-    end
+    harness.equal(tagged.vaults_room, 99,
+        "all source standard rooms are eligible")
+    harness.equal(tagged.vaults_hard, 58,
+        "all source hard rooms are eligible")
+    -- One empty-corpus definition is a tagged SUBVAULT helper, not an
+    -- independent room candidate. It remains in the 250-file corpus.
+    harness.equal(tagged.vaults_empty, 92,
+        "source empty rooms exclude the helper-only definition")
 
     local box = catalog.get("st_greater_box_1")
     local has_draconian = false
@@ -75,6 +80,8 @@ function test.run()
     local records = {}
     local api = {}
 
+    -- Capture the same typed feature record emitted by the production hook;
+    -- a minimal sink is enough because this test checks the hook contract.
     function api:record(kind, arguments)
         records[#records + 1] = {
             kind = kind,

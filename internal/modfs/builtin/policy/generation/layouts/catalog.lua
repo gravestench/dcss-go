@@ -247,7 +247,8 @@ end
 -- Execute a procedural hook or place an authored MAP. A source validator
 -- may reject a random shape; bounded retries consume new draws without
 -- changing layout identity. The postpass adds missing connected stairs.
-function catalog.execute(ctx, definition, branch_id, local_depth, profile)
+function catalog.execute(ctx, definition, branch_id, local_depth, profile,
+    prior_vault_ids)
     local run, validate = methods(definition)
     local branch = register.get(categories.BRANCHES, branch_id)
     local api = {
@@ -258,6 +259,7 @@ function catalog.execute(ctx, definition, branch_id, local_depth, profile)
         branch = branch.abbreviation,
         depth = local_depth,
         absolute_depth = branch.absolute_depth + local_depth - 1,
+        prior_vault_ids = prior_vault_ids,
     }
 
     -- Source layout validators can reject many draws before a connected

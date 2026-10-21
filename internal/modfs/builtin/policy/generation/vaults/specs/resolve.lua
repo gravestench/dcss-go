@@ -401,16 +401,18 @@ function resolve.monster(ctx, selected, depth, site)
     end
 
     if random_monster_names[name] then
-        kind_id = random_monsters.pick(ctx, name, source_depth(selected, depth), site)
+        kind_id = random_monsters.pick(ctx, name,
+            source_depth(selected, depth), site, selected.place)
     elseif name:match("^monster_array_[1-7]$") then
         -- Source mons_list::get_monster falls back to RANDOM_MONSTER.
-        kind_id = random_monsters.pick(ctx, name, source_depth(selected, depth), site)
+        kind_id = random_monsters.pick(ctx, name,
+            source_depth(selected, depth), site, selected.place)
     elseif blob_size then
         kind_id = monster_ids.MONS_SLIME_CREATURE
     elseif band_name then
         if random_monster_names[band_name] then
             kind_id = random_monsters.pick(ctx, band_name,
-                source_depth(selected, depth), site)
+                source_depth(selected, depth), site, selected.place)
         else
             kind_id = find_name(categories.MONSTERS, band_name, site)
         end

@@ -4,6 +4,7 @@
 local branches = require("ids.branches")
 local terrain = require("constants.terrain")
 local branch_levels = require("policy.generation.branch_levels")
+local availability = require("policy.generation.floor_availability")
 local glyphs = require("constants.vault_glyphs")
 
 local stairs = {}
@@ -337,20 +338,32 @@ function stairs.pair(ctx, parent, child, selected)
     local bottom = branch.depth
 
     for _, point in ipairs(exits(child, false)) do
-        local boundary = child.depth == bottom
+        local next_depth = child.depth + 1
+        local boundary = child.depth == bottom or
+            not availability.can_build(child.branch_id, next_depth)
+        local unavailable = ""
+
+        if boundary then
+            if child.branch_id == branches.BRANCH_DUNGEON then
+                unavailable = depths_unavailable
+            elseif child.depth == bottom then
+                unavailable = "There are no deeper floors in " ..
+                    branch.long_name .. "."
+            else
+                unavailable = availability.reason(child.branch_id,
+                    next_depth)
+            end
+        end
 
         child.links[#child.links + 1] = {
             x = point.x,
             y = point.y,
             to_level_id = boundary and 0 or branch_levels.id(
-                child.branch_id, child.depth + 1),
+                child.branch_id, next_depth),
             to_x = 0,
             to_y = 0,
             pending = not boundary,
-            unavailable = boundary and
-                (child.branch_id == branches.BRANCH_DUNGEON and
-                    depths_unavailable or
-                    "There are no deeper floors in " .. branch.long_name .. ".") or "",
+            unavailable = unavailable,
         }
     end
 

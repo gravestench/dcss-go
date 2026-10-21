@@ -194,6 +194,13 @@ function extra.generate(ctx, builder, context)
         context.used:add(context.arrival_vault)
     end
 
+    -- The primary layout may already contain tagged DES rooms. Include
+    -- their names and unique tags before secondary vault selection, and
+    -- return their IDs in the same saved placement history.
+    for _, id in ipairs(context.primary_room_ids or {}) do
+        context.used:add(catalog.get(id))
+    end
+
     for _, map in ipairs(overflow_placement.place(ctx, builder,
         context, extra.place)) do
         placed[#placed + 1] = map
