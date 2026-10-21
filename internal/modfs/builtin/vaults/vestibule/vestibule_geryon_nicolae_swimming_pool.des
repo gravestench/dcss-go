@@ -1,0 +1,27 @@
+# Ported from the pinned DCSS hell.des map vestibule_geryon_nicolae_swimming_pool.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   vestibule_geryon_nicolae_swimming_pool
+TAGS:   vestibule_geryon no_pool_fixup
+KMONS:  1 = Geryon
+NSUBST: < = { / <
+SUBST:  L = l., D : x., E : x., F : x.
+: vault.run("geryon_pool")
+MAP
+       ...
+      F...F
+     EF...FE
+    DE.....ED
+   DD.......DD
+  EE.<.LlL.<.EE
+ FF...LlllL...FF
+.....LlllllL.....
+.....lll1lll.....
+.....LlllllL.....
+ FF...LlllL...FF
+  EE.<.LlL.<.EE
+   DD.......DD
+    DE.....ED
+     EF...FE
+      F...F
+       ...
+ENDMAP

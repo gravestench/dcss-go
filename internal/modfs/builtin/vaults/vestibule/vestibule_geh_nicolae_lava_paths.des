@@ -1,0 +1,37 @@
+# Ported from the pinned DCSS hell.des map vestibule_geh_nicolae_lava_paths.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:    vestibule_geh_nicolae_lava_paths
+TAGS:    vestibule_geh
+SHUFFLE: ab/cd/ef, cd/cd/gh, ef/ef/ef/ij
+NSUBST:  a = G / H / ', b = 1:' / 2:'pp / *:p
+NSUBST:  h = 1:. / 2:.qq / *:q, j = 1:. / 2:.rr / *:r
+SUBST:   p : llXXx, q : llXXx, r : llXXx
+KFEAT:   G = enter_gehenna
+SUBST:   ce = x, d : xlllLX., f : xlllLX., gi = ....m, m = mm.
+SUBST:   L = l., X = xl
+KMONS:   H = hellion
+KMONS:   m = sun demon / smoke demon
+KMONS:   ' = hell beast / hell hog / nothing w:140
+FTILE:   AH' = floor_infernal_blank
+KMONS: ~ = patrolling molten gargoyle w:5 / patrolling smoke demon w:5
+KFEAT: ~l = l
+KMASK: l = no_monster_gen
+NSUBST: l = 6:~ / 4 = ~l / *:l
+MAP
+.........bab.........dcd.........
+ ...m..bbbabbb.....dddcddd..m...
+  ....bbaaaaabb.m.ddcccccdd....
+   ...baaaaaaab...dcccccccd...
+    ..bbaaaaabb.m.ddcccccdd..
+     ..bbaabbb.....dddccdd..
+      ..bbbb.m.fff.m.dddd..
+       ......fffefff......
+        ..m.ffeeeeeff.m..
+         ...feeeeeeef...
+          ..ffeeeeeff..
+           ..ffeeeff..
+            .mfffffm.
+             .......
+              ..m..
+               ...
+ENDMAP

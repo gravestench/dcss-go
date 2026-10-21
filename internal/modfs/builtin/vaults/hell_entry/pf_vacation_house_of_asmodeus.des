@@ -1,0 +1,30 @@
+# Ported from the pinned DCSS hell.des map pf_vacation_house_of_asmodeus.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:    pf_vacation_house_of_asmodeus
+DEPTH: Depths
+TAGS:    transparent uniq_hell_entry_geh
+WEIGHT:  4
+TILE:    c = dngn_stone_wall_red
+COLOUR:  c = red
+FTILE:  'O = floor_infernal_blank
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: O = enter_hell
+TAGS: nolayout_encompass
+MAP
+       @
+  ccccc'ccccc
+ cc'''c'c'''cc
+ c'''''''''''c
+ c''vv'''vv''c
+ c''vv'''vv''c
+ cc'''''''''cc
+@''''''O''''''@
+ cc'''''''''cc
+ c''vv'''vv''c
+ c''vv'''vv''c
+ c'''''''''''c
+ cc'''c'c'''cc
+  ccccc'ccccc
+       @
+ENDMAP

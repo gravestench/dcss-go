@@ -1,0 +1,30 @@
+# Ported from the pinned DCSS hell.des map pf_hell_entry_tar_spiral.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   pf_hell_entry_tar_spiral
+DEPTH: Depths
+TAGS:   transparent no_monster_gen uniq_hell_entry_tar
+WEIGHT: 5
+TILE:   c = wall_cobalt_stone
+COLOUR: . = magenta
+FTILE:  +.O = floor_infernal_blank
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: O = enter_hell
+TAGS: nolayout_encompass
+MAP
+    cccc
+  ccc..ccc
+ cc......cc
+ cc..cccc..c
+ c..cc..cc..
+cc.cc....cc.@
+c..c..cc.+..
+c..c..cc.ccc
+cc.cc......c
+ c..cc+c.O.c
+ cc..c.c..cc
+  cc...cccc
+   ccc....c
+     cccc.c
+         @
+ENDMAP

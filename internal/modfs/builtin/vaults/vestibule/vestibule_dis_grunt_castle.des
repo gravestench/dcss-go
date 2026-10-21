@@ -1,0 +1,27 @@
+# Ported from the pinned DCSS hell.des map vestibule_dis_grunt_castle.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME: vestibule_dis_grunt_castle
+TAGS: vestibule_dis
+MONS: war gargoyle / iron dragon, iron troll / iron golem
+MONS: rust devil
+NSUBST: D = 1:D / *:A
+KFEAT: D = enter_dis
+KFEAT: A = stone_arch
+MAP
+.......v.vvvvxxxxxxxvvvv.v.......
+ ..vv...vvD.vvxxxxxvv.Dvv...vv..
+  .3v...vv.2vvvvvvvvv2.vv...v3.
+   ....v.vvv.........vvv.v....
+    ....v.vv..1...1..vv.v....
+     ..v.vvv.........vvv.v..
+      ..vv.2vvv+++vvv2.vv..
+       .vvD.vv.....vv.Dvv.
+        .vvvv.v...v.vvvv.
+         .vv.v.3.3.v.vv.
+          ..v.v...v.v..
+           ..3.....3..
+            ..v...v..
+             .......
+              .....
+               ...
+ENDMAP

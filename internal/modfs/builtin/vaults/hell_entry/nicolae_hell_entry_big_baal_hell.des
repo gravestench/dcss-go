@@ -1,0 +1,32 @@
+# Ported from the pinned DCSS hell.des map nicolae_hell_entry_big_baal_hell.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   nicolae_hell_entry_big_baal_hell
+DEPTH: Depths
+TAGS:   transparent no_item_gen patrolling
+ORIENT: float
+WEIGHT: 2
+: vault.run("setup_shop")
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: O = enter_hell
+TAGS: nolayout_encompass
+KMONS: S = balrug band / hell knight band / jiangshi band / \
+           ancient champion band / deep troll shaman band / \
+           salamander tyrant band / wendigo band
+SUBST: L = l., ` = lx
+MAP
+  xxxx
+xxx``xxx
+x`llll`xxxx
+xllLLllll`xxx
+........lll`xx
+....T.T..Llllxx
+.....S.....Lllxx
+xll.T.T.....Ll`x
+x`l.......O.Ll`x
+xxllllllL...Ll`x
+ xx``x`llLLLllxx
+  xxxxx`lllll`x
+      xxx```xxx
+        xxxxx
+ENDMAP

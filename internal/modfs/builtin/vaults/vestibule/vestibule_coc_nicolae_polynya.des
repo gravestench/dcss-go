@@ -1,0 +1,26 @@
+# Ported from the pinned DCSS hell.des map vestibule_coc_nicolae_polynya.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:  vestibule_coc_nicolae_polynya
+TAGS:  vestibule_coc no_pool_fixup
+KMONS: D = wendigo
+KMONS: 1 = simulacrum
+KFEAT: D = enter_cocytus
+SUBST: - = w., 1 = 1.
+MAP
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+ wwwwwwww-..1.....1...-wwwwwwwww
+  wwww-....-ww...ww-....-wwwwww
+   ww-..1.Wwwww.1www-.1..-wwww
+    ww....WWDwww..www.....www
+     ww...Wwwww-..ww-....-ww
+      ww-...ww...ww..1.-www
+       www-.1..-ww...-wwww
+        wwwwwwwww.1.-wwww
+         wwwwww-...-wwww
+          wwww...-wwwww
+           ww-.1.wwwww
+            ww...-www
+             ww...ww
+              w1..w
+               ...
+ENDMAP

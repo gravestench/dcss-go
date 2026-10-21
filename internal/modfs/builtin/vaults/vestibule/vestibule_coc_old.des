@@ -1,0 +1,41 @@
+# Ported from the pinned DCSS hell.des map vestibule_coc_old.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME: vestibule_coc_old
+TAGS: vestibule_coc
+KFEAT: C = enter_cocytus
+KMONS: C = blizzard demon / ice statue
+KMONS: P = patrolling sea snake zombie w:75 / \
+           patrolling sea snake skeleton w:50 / \
+           patrolling sea snake simulacrum w:25 / \
+           patrolling alligator zombie w:60 / \
+           patrolling alligator skeleton w:40 / \
+           patrolling alligator simulacrum w:20 / \
+           patrolling anaconda zombie w:65 / \
+           patrolling anaconda skeleton w:43 / \
+           patrolling anaconda simulacrum w:21 / \
+           patrolling hydra zombie w:115 / \
+           patrolling hydra skeleton w:76 / \
+           patrolling hydra simulacrum w:38 / \
+           kraken zombie w:25 / kraken simulacrum w:12 / \
+           patrolling water elemental w:113
+KFEAT: Pw = w
+KMASK: wW = no_monster_gen
+NSUBST: w = 8:P / 4 = Pw / *:w
+MAP
+wwwwwwwwwwwwwwwwCwwwwwwwwww......
+ wwwwwwwwwwwwww....wwwwwww......
+  wwwwwwwwww.........wwww......
+   wwwwwwwww..wwwww....ww.....
+    wwwwwwwww..wwwww....ww...
+     wwwwwwww....ww......ww.
+      .wwwww..ww.....ww....
+       ...w..wwwww..wwww..
+        ....wwwwwwwwwwww.
+         .....wwwwwwww..
+          ......wwwww..
+           ...........
+            .........
+             .......
+              .....
+               ...
+ENDMAP

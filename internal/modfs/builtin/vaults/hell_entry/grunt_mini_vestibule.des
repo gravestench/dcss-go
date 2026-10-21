@@ -1,0 +1,32 @@
+# Ported from the pinned DCSS hell.des map grunt_mini_vestibule.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME: grunt_mini_vestibule
+DEPTH: Depths
+TAGS: nolayout_encompass no_monster_gen uniq_hell_entry_high transparent
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: O = enter_hell
+KMONS: O = hell beast
+MONS: quicksilver dragon simulacrum / blizzard demon / ice dragon
+MONS: iron troll / iron dragon
+MONS: hell beast / hell hog / balrug
+MONS: bone dragon / reaper / ancient champion band / soul eater w:20
+TAGS: nolayout_encompass
+TAGS: luniq_hellpanabyss_threat_entry
+MAP
+  .....@.....
+ ..ccnc+cncc..
+..cc.......cc..
+.cccc..1..cccc.
+.c.ccc...ccc.c.
+.n..ccc+ccc..n.
+.c...c...c...c.
+@+.4.+.O.+.2.+@
+.c...c...c...c.
+.n..ccc+ccc..n.
+.c.ccc...ccc.c.
+.cccc..3..cccc.
+..cc.......cc..
+ ..ccnc+cncc..
+  .....@.....
+ENDMAP

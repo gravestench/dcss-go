@@ -1,0 +1,32 @@
+# Ported from the pinned DCSS hell.des map vestibule_geh_grunt_obsidian_fortress.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME: vestibule_geh_grunt_obsidian_fortress
+TAGS: vestibule_geh
+KFEAT: G = enter_gehenna
+MONS: balrug / hellion, hell beast / hell hog
+MONS: sun demon / smoke demon / hell knight
+NSUBST: 2 = 3:2 / *:.
+NSUBST: 3 = 3:3 / *:.
+FTILE: 123+G = floor_infernal_blank
+KMONS: ~ = patrolling molten gargoyle w:5 / patrolling smoke demon w:5
+KFEAT: ~l = l
+KMASK: l = no_monster_gen
+NSUBST: l = 6:~ / 4 = ~l / *:l
+MAP
+lllllllllccccccccccccccclllllllll
+ llllllccc'''c''1''c'''cccllllll
+  llllcc3''2'+''G''+'2''3ccllll
+   lllc''''''c''1''c''''''clll
+    llc'2'2'ccccccccc'2'2'cll
+     lcc''''c'''''''c''''ccl
+      lcc''c+''2'2''+c''ccl
+       lcccc'3'''''3'ccccl
+        lllc''3'''3''clll
+         llcc'''''''ccll
+          llccc+++cccll
+           lll.....lll
+            l.l4.4l.l
+             .lllll.
+              .lll.
+               ...
+ENDMAP

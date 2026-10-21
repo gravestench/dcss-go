@@ -1,0 +1,26 @@
+# Ported from the pinned DCSS hell.des map grunt_hell_entry_dis_mu.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME: grunt_hell_entry_dis_mu
+DEPTH: Depths
+TAGS: transparent nolayout_encompass uniq_hell_entry_dis
+WEIGHT: 5
+KMONS: O = iron dragon w:5 / iron troll w:20 / nothing
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: O = enter_hell
+TAGS: nolayout_encompass
+MAP
+...................
+..vvvvvvv.vvv......
+..v$v$v$vvv$vvv....
+.vv+v+v.+.+.vvvvv..
+.v....vvv.vvv...vv.
+.v.vvvvv...v.vvv.v.
+.v.+...+...+.vO+.v.
+.v.vvvvv...v.vvv.v.
+.v....vvv+vvv...vv.
+.vv+v+vvv.vvvvvvv..
+..v$v$v.v.vvvvv....
+..vvvvv.v+v........
+.........@.........
+ENDMAP

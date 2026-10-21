@@ -1,0 +1,27 @@
+# Ported from the pinned DCSS hell.des map vestibule_geh_nicolae_tongues_of_flame.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   vestibule_geh_nicolae_tongues_of_flame
+TAGS:   vestibule_geh
+KMONS:  D = stoker
+KMONS:  E = searing wretch
+KFEAT:  D = enter_gehenna
+NSUBST: D = D / l
+SUBST:  E = E., L = l.
+MAP
+lllllllllllllllllllllllllllllllll
+ lllDllllDlllDllDlllDllll.DllDll
+  ll..Lll.Ll.Llll.l.llllL.ll.ll
+   ll.ll..lll.llL.lL.lll.Lll.l
+    lEl.LlllLEllElllElll..lE.
+     ..l..ll..ll.ll...l.L.l.
+      L..E.l..l.ll.L.l.E.l.
+       .L..l.l.Ell..l..l..
+        ..l..l..ll..l....
+         ...El.L.llEl..L
+          .L..l..ll..l.
+           ....L.lL...
+            .L.E.l...
+             ...L..L
+              L....
+               ..L
+ENDMAP

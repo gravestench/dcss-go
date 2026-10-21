@@ -1,0 +1,36 @@
+# Ported from the pinned DCSS hell.des map lightli_too_deep.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME: lightli_too_deep
+DEPTH: Depths
+TAGS: no_monster_gen nolayout_encompass uniq_hell_entry_high
+ORIENT: northeast
+MONS: balrug
+MONS: sun demon / smoke demon
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: H = enter_hell
+SUBST: y = x..
+SUBST: ; = %A.....l
+: vault.run("delayed_decay")
+KITEM: A = any weapon w:20 / chain mail w:60 / plate armour w:19 / \
+           crystal plate armour w:1
+TAGS: nolayout_encompass
+TAGS: luniq_hellpanabyss_threat_entry
+MAP
+xxxxxxxxxxxxxxx
+xxxxcccccccxxxx
+xxxxcA;H;Acxxxx
+xxxxc;;1;;cxxxx
+xxxxc;2|2;cxxxx
+xxxxc;;;;;cxxxx
+xxxxccc.cccxxxx
+xxxxxxy.yxxxxxx
+xxxxxxy.yxxxxxx
+xxxxxxy.yxxxxxx
+xxxxxxy.yxxxxxx
+xxxxxy%yxxxxxxx
+xxxxxy.yxxxxxxx
+xxxxxy.yxxxxxxx
+xxxxy...yxxxxxx
+xxxy.%...yxxxxx
+ENDMAP

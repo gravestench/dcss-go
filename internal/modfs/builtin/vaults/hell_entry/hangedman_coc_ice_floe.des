@@ -1,0 +1,30 @@
+# Ported from the pinned DCSS hell.des map hangedman_coc_ice_floe.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:    hangedman_coc_ice_floe
+DEPTH: Depths
+WEIGHT:  7
+TAGS:    transparent no_pool_fixup uniq_hell_entry_coc
+KMONS:   O = blizzard demon w:5 / nothing
+KFEAT:   A = stone_arch
+SHUFFLE: ab / ab / ba
+SUBST:   a : xww, b = x
+TILE:    x = wall_ice
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: O = enter_hell
+TAGS: nolayout_encompass
+MAP
+   ..  ..
+ .........
+...wwWww..
+..wwAxxww..
+..wxxxxxw..
+..wxxxxbw..
+ .waxxxaw.
+..wbxxxxw..
+..wxxxxxw..
+..wwxxOww..
+ ..wwWww...
+ .........
+  ..  ..
+ENDMAP

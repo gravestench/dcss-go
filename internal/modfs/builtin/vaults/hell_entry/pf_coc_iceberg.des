@@ -1,0 +1,31 @@
+# Ported from the pinned DCSS hell.des map pf_coc_iceberg.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   pf_coc_iceberg
+DEPTH: Depths
+WEIGHT: 7
+TAGS:   transparent no_pool_fixup uniq_hell_entry_coc
+TILE:   x = wall_ice
+COLOUR: x = lightcyan
+FTILE:  'O = floor_frozen
+COLOUR: ' = lightblue
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: O = enter_hell
+TAGS: nolayout_encompass
+MAP
+   ..  ..
+  .........
+ ...wwwww...
+...wwxxxww...
+...wxxxxxw...
+..wxxx'xxxw..
+..wxx'''xxw..
+..wxx'O'WxW..
+..wxx'''xWw..
+..wxxx'xxxw..
+...wxxxxxw...
+...wwxxxww...
+ ...wwwww...
+  .........
+   ..   ..
+ENDMAP

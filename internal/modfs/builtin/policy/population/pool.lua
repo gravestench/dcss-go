@@ -44,6 +44,27 @@ local function weight_at_depth(row, depth)
     error("unsupported population curve " .. tostring(row.curve))
 end
 
+-- Apply the same source rarity curves to a named roster that is not an
+-- ambient branch population, such as the shared late-game zombie bases.
+function pool.at_rows(rows, depth)
+    local choices = {}
+    local total = 0
+
+    for _, row in ipairs(rows) do
+        local weight = weight_at_depth(row, depth)
+
+        if weight > 0 then
+            choices[#choices + 1] = {
+                id = row.monster_id,
+                weight = weight,
+            }
+            total = total + weight
+        end
+    end
+
+    return choices, total
+end
+
 -- Each branch owns its source rows. Extra population definitions can add rows
 -- with a distinct ID, so a sparse mod does not need to copy a whole branch.
 -- Definition IDs are sorted by catalog.all; file discovery cannot shift draws.

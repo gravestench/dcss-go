@@ -1,0 +1,29 @@
+# Ported from the pinned DCSS hell.des map pf_dread_powers_of_hell.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   pf_dread_powers_of_hell
+DEPTH: Depths
+TAGS:   transparent uniq_hell_entry_geh
+WEIGHT: 2
+KMONS:  i = reaper ; wand of flame / balrug ; wand of flame ident:type
+TILE:   c = dngn_stone_wall_red
+COLOUR: c = red
+FTILE:  'iO = floor_infernal_blank
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: O = enter_hell
+TAGS: nolayout_encompass
+MAP
+     ........
+    ..cccccc...
+   ....cci'ccc..
+  ...l..cc'''cc..
+ ...lll..cc'''cc..
+...lllll..cc'''cc..
+..lllllll.'''O''c..
+...lllll..cc'''cc..
+ ...lll..cc'''cc..
+  ...l..cc'''cc..
+   ....cci'ccc..
+    ..cccccc...
+     ........
+ENDMAP

@@ -1,0 +1,33 @@
+# Ported from the pinned DCSS hell.des map pf_hell_entry_tar_river.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   pf_hell_entry_tar_river
+DEPTH: Depths
+TAGS:   transparent no_pool_fixup uniq_hell_entry_tar
+WEIGHT: 5
+COLOUR: . = magenta
+FTILE:  .O = floor_infernal_blank
+NSUBST: w = 2=F / 2=F. / w
+# E is tiles not adjacent to walkable space
+NSUBST: E = 2=FE / E
+KMONS:  F = spectral caustic shrike
+KFEAT:  EFw = deep_water
+KMASK:  Ww = no_monster_gen
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: O = enter_hell
+TAGS: nolayout_encompass
+MAP
+      @
+   wwWwwEE
+  EwWwwEEEE
+ EEwwWwwEEEE
+ EwwwwWwwwwE
+ wwWww.wwWww
+@WWwW.O.WwWw@
+ wwwww.wwwwW
+ EEEwWwwEEww
+ EEEwwWwEEEE
+  EEEwWwwEE
+   EEwwWwE
+      @
+ENDMAP

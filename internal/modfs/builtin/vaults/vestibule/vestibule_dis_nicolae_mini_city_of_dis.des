@@ -1,0 +1,32 @@
+# Ported from the pinned DCSS hell.des map vestibule_dis_nicolae_mini_city_of_dis.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   vestibule_dis_nicolae_mini_city_of_dis
+TAGS:   vestibule_dis
+KFEAT:  D = enter_dis
+NSUBST: E = + / v, F = + / v, q = + / v, p = + / v, \
+        B = 1:+ / 1:+vv / *:v, Z = 1:+ / 1:+v / *:v
+SUBST:  2 = 22., 3 = 33.
+KMONS:  1 = iron dragon
+KMONS:  2 = rust devil
+KMONS:  3 = war gargoyle / reaper w:5
+KFEAT:  H = G
+TILE:   GH = dngn_statue_iron_golem
+FTILE:  A'1H = floor_infernal_blank
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ ....Gv.......vHDHv.......vG....
+  ..2.E..2G...v'1'v...G2..F.2..
+   ...v.......v'''v.......v...
+    ..vvEvvvqqv'''vppvvvFvv..
+     .....Gv..v'''v..vG.....
+      ..2..v.3B'''B3.v..2..
+       ....E..vvBvv..F....
+        ...v..Z.3.Z..v...
+         ..vEvv...vvFv..
+          ..2Gv...vG2..
+           ...vZvZv...
+            ..G...G..
+             .......
+              .....
+               ...
+ENDMAP

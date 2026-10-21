@@ -5,6 +5,7 @@ local choice = require("policy.generation.vaults.specs.choice")
 local random_monsters = require("policy.generation.vaults.specs.random_monsters")
 local random_items = require("policy.generation.vaults.specs.random_items")
 local pool = require("policy.population.pool")
+local generic_late_zombie = require("policy.population.generic_late_zombie")
 local monster_ids = require("ids.monsters")
 local branch_ids = require("ids.branches")
 local item_ids = require("ids.items")
@@ -47,6 +48,20 @@ local random_undead_names = {
     [monster_requests.RANDOM_SPECTRE] = true,
     [monster_requests.RANDOM_SPECTRAL] = true,
     [monster_requests.RANDOM_SIMULACRUM] = true,
+}
+
+-- DCSS shares one late-game corpse roster across these branches. Their
+-- ambient inhabitants are not the source of random zombie bodies.
+local late_zombie_branches = {
+    [branch_ids.BRANCH_VESTIBULE] = true,
+    [branch_ids.BRANCH_DIS] = true,
+    [branch_ids.BRANCH_GEHENNA] = true,
+    [branch_ids.BRANCH_COCYTUS] = true,
+    [branch_ids.BRANCH_TARTARUS] = true,
+    [branch_ids.BRANCH_CRYPT] = true,
+    [branch_ids.BRANCH_TOMB] = true,
+    [branch_ids.BRANCH_ABYSS] = true,
+    [branch_ids.BRANCH_PANDEMONIUM] = true,
 }
 
 local random_item_names = {
@@ -278,29 +293,147 @@ local function undead_place(selected, depth, site)
             "unknown undead source branch " .. abbreviation)
     end
 
-    return site.branch_id or branch_ids.BRANCH_DUNGEON, depth
+    return site.branch_id or branch_ids.BRANCH_DUNGEON,
+        site.local_depth or depth
 end
 
--- Filter out species that cannot leave remains before choosing the saved
--- base identity for a source random spectre or simulacrum.
+-- Source mon-place.cc asks other branches when the current branch offers
+-- no zombifiable base. It keeps the strongest rarity for a species seen
+-- in multiple branches, then draws once from that combined pool. This is
+-- important in Hell: the Vestibule's ambient demons leave no usable body.
+local function keep_undead_species(row, by_species, ordered)
+    if row.id == population_sentinels.NO_MONSTER then
+        return
+    end
+
+    local monster = catalog.get(categories.MONSTERS, row.id)
+
+    if not monster.leaves_corpse then
+        return
+    end
+
+    local known = by_species[row.id]
+
+    if known then
+        known.weight = math.max(known.weight, row.weight)
+
+        return
+    end
+
+    known = {
+        id = row.id,
+        weight = row.weight,
+    }
+    by_species[row.id] = known
+    ordered[#ordered + 1] = known
+end
+
+-- Numeric source branch order keeps the fallback's first-seen species
+-- order independent of file paths and alphabetical branch names.
+local function source_branch_order(left, right)
+    return left.numeric_id < right.numeric_id
+end
+
+-- Translate source absolute depth into each branch's local population depth.
+-- A branch beyond its OOD cap contributes nothing to the fallback draw.
+local function undead_all_branches(source_branch_id, source_depth)
+    local source_branch = catalog.get(categories.BRANCHES, source_branch_id)
+    local absolute_depth = source_depth
+
+    if source_branch_id ~= branch_ids.BRANCH_DUNGEON then
+        absolute_depth = source_branch.absolute_depth + source_depth - 1
+    end
+
+    local branches = catalog.all(categories.BRANCHES)
+    local by_species = {}
+    local ordered = {}
+
+    table.sort(branches, source_branch_order)
+
+    for _, branch in ipairs(branches) do
+        local first_depth = branch.absolute_depth - 1
+
+        if branch.id == branch_ids.BRANCH_DUNGEON then
+            first_depth = 0
+        end
+
+        local local_depth = absolute_depth - first_depth
+        local maximum = branch.ood_cap or branch.depth
+
+        if local_depth >= 1 and local_depth <= maximum then
+            local rows = pool.at_depth(branch.id, local_depth)
+
+            for _, row in ipairs(rows) do
+                keep_undead_species(row, by_species, ordered)
+            end
+        end
+    end
+
+    return ordered
+end
+
+-- Source mon-place.cc raises zombie selection depth by one plus rounded
+-- absolute depth / 5. The named stream makes that rounding replayable.
+local function undead_selection_depth(ctx, branch_id, floor)
+    local branch = catalog.get(categories.BRANCHES, branch_id)
+    local absolute_depth = floor
+
+    if branch_id ~= branch_ids.BRANCH_DUNGEON then
+        absolute_depth = branch.absolute_depth + floor - 1
+    end
+
+    local quotient = math.floor(absolute_depth / 5)
+    local remainder = absolute_depth % 5
+    local rounded = quotient
+
+    if remainder > 0 and ctx:random("population", 5) < remainder then
+        rounded = rounded + 1
+    end
+
+    local maximum = late_zombie_branches[branch_id] and 15 or
+        (branch.ood_cap or branch.depth)
+
+    return math.max(1, math.min(floor + 1 + rounded, maximum))
+end
+
+-- Filter the source zombie roster to species that can supply the requested
+-- body. Late-game branches share the pinned generic pool instead of their
+-- ambient monster pool; only a failed local draw falls back to all branches.
 local function random_undead_base(ctx, selected, depth, site)
     local branch_id, floor = undead_place(selected, depth, site)
-    local rows = pool.at_depth(branch_id, floor)
+    local adjusted = undead_selection_depth(ctx, branch_id, floor)
+    local rows
+
+    if late_zombie_branches[branch_id] then
+        rows = pool.at_rows(generic_late_zombie, adjusted)
+    else
+        rows = pool.at_depth(branch_id, adjusted)
+    end
     local eligible = {}
     local total = 0
 
     for _, row in ipairs(rows) do
-        local definition = catalog.get(categories.MONSTERS, row.id)
+        if row.id ~= population_sentinels.NO_MONSTER then
+            local definition = catalog.get(categories.MONSTERS, row.id)
 
-        if definition.leaves_corpse then
-            eligible[#eligible + 1] = row
+            if definition.leaves_corpse then
+                eligible[#eligible + 1] = row
+                total = total + row.weight
+            end
+        end
+    end
+
+    if total == 0 then
+        eligible = undead_all_branches(branch_id, adjusted)
+
+        for _, row in ipairs(eligible) do
             total = total + row.weight
         end
     end
 
     if total == 0 then
         choice.fail(site, selected.source,
-            "no undead base species at " .. tostring(selected.place))
+            "no zombifiable species in any branch")
     end
 
     return pool.pick(ctx, eligible, total)

@@ -1,0 +1,51 @@
+# Ported from the pinned DCSS hell.des map grunt_hell_entry_demonic_statue.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   grunt_hell_entry_demonic_statue
+DEPTH: Depths
+WEIGHT: 6
+ORIENT: float
+TAGS:   no_monster_gen no_tele_into
+MONS:   sun demon / smoke demon / soul eater / ynoxinul / sixfirhy \
+        / neqoxec w:5 / w:50 nothing
+MONS:   blizzard demon / hell beast / cacodemon / green death / reaper \
+        / balrug / hellion w:5 / tormentor w:5 / nothing w:30
+# The source leaves slot 3 empty; an explicit empty choice preserves indexing.
+MONS: nothing
+ITEM:   skeleton
+KFEAT:  b = .
+KMONS:  A = obsidian statue
+MARKER: A = lua:fog_machine { cloud_type = "grey smoke", \
+            pow_min = 20, pow_max = 30, delay = 50, \
+            size = 1, walk_dist = 3, start_clouds = 1 }
+KMONS:  b = w:100 nothing / w:4 common demon
+KPROP:  b = nothing / w:5 bloody
+KITEM:  b = nothing / w:1 gold
+MARKER: H = lua:props_marker { stop_explore = "statue" }
+KFEAT:  HI = G
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: A = enter_hell
+TAGS: nolayout_encompass
+TAGS: luniq_hellpanabyss_threat_entry
+TAGS: uniq_hell_entry_high
+MAP
+      xxxxxxx
+    xxxbbbbbxxx
+  xxxbbbbbbbbbxxx
+  xbbbbGbbbGbbbbx
+ xxbG1bbbbbbd1Gbxx
+ xdb2bb2bGb2bb2bbx
+xxbbbbGbbbbbGbbbbxx
+xbbGb2bbd3*bb2bGbbx
+xbbbbbb%**d*bbbbdbx
+xbd1bGb%*A*%bGb1bbx
+xb%bbbb%*d*dbbbbbbx
+xbbGbbbd%b*bbbbGbbx
+xxbbbbGbbbbbGdbbbxx
+ xbb1bb2bGd2bb1bbx
+ xxbG1bbbbbbb1Gbxx
+  xbbbbG1b1Gbbbbx
+  xxxbbbbb%bbbxxx
+    xxxHdbbIxxx
+    xxxv+++vxxx
+ENDMAP

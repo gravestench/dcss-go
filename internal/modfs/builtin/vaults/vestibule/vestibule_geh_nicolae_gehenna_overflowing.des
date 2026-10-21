@@ -1,0 +1,28 @@
+# Ported from the pinned DCSS hell.des map vestibule_geh_nicolae_gehenna_overflowing.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   vestibule_geh_nicolae_gehenna_overflowing
+TAGS:   vestibule_geh
+KMONS:  D = balrug band / hell knight band / hellephant
+KMONS:  1 = sun demon / smoke demon / hell hog / creeping inferno w:5
+KFEAT:  D = enter_gehenna
+NSUBST: F = . / L, H = . / L, J = . / L, K = . / L, M = . / L, N = . / L, \
+        L = 4=1 / 4=1L / L
+SUBST:  L = l.
+MAP
+lllllL..........l...Ll...LlllllL.
+ Lll....Lll....lDl...l.....lllL.
+  .FlF....Ll..LlllL..HlH.JlJ...
+   ..llll..FlllLlLlH...lll....
+    ....Flll....l..lKllH.Ll..
+     ....l.LlL..lL..l.......
+      .LlL...lL..l..KlllK..
+       .L.......llN.....lK
+        ...MlMllM.l.Nll..
+         .Ml.l....Nll.Nl
+          l..LllL...l..
+           .....l..Ll.
+            ...LlL.l.
+             ..lll..
+              .LlL.
+               ...
+ENDMAP

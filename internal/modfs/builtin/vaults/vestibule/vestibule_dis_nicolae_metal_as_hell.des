@@ -1,0 +1,28 @@
+# Ported from the pinned DCSS hell.des map vestibule_dis_nicolae_metal_as_hell.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:    vestibule_dis_nicolae_metal_as_hell
+TAGS:    vestibule_dis patrolling
+KMONS:   D = war gargoyle / iron dragon / ancient champion
+KMONS:   1 = iron golem / rust devil / reaper / iron troll
+KMONS:   2 = hellion
+KFEAT:   D = enter_dis
+KFEAT:   - = iron_grate
+SUBST:   1 = 111., 2 = 222.
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ vvvvvv...................vvvvvv
+  vvvvv.2...1...1...1...2.vvvvv
+   vvvv...................vvvv
+    vvv...v---v.2.v---v...vvv
+     .--...--.......--...--.
+      .--...--..D..--...--.
+       .--...--...--...--.
+        .-v.1.v---v.1.v-.
+         .--.........--.
+          .--...1...--.
+           .--.....--.
+            .-v...v-.
+             .......
+              .....
+               ...
+ENDMAP

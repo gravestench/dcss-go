@@ -1,0 +1,29 @@
+# Ported from the pinned DCSS hell.des map vestibule_coc_nicolae_advancing_glacier.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   vestibule_coc_nicolae_advancing_glacier
+TAGS:   vestibule_coc no_pool_fixup
+KMONS:  D = frost giant / ice dragon / wendigo band
+KMONS:  1 = ice devil / blizzard demon
+KFEAT:  D = enter_cocytus
+KFEAT:  a = x
+SUBST:  - = aw., ` = aw, ~ = w.
+TILE:   a = wall_ice
+COLOUR: a = lightcyan
+MAP
+aaaaaaaaxxxxxxxxxxxxxxxxxaaaaaaaa
+ aaaaaaaaxxxxxxxxxxxxxxxaaaaaaaa
+  aaaaaaaaaxxxxxxxxxxxaaaaaaaaa
+   -aaaaaaaaaaxxxxxaaaaaaaaaa-
+    .-aaaaaaaaaaaaaaaaaaaaa-.
+     .-aaaaaaaaaaaaaaaaaaa-.
+      .-aaaaaaaaaaaaaaaaa-.
+       .-aaaaaaaaaaaaaaa-.
+        ..-aaaaaaaaaaa-..
+         ...w`aaaaa`w...
+          ..www`a`www..
+           .~wwwDwww~.
+            .~w~.~w~.
+             .~1.1~.
+              .....
+               ...
+ENDMAP

@@ -1,0 +1,32 @@
+# Ported from the pinned DCSS hell.des map vestibule_geh_mu.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME: vestibule_geh_mu
+TAGS: vestibule_geh
+KFEAT:  G=enter_gehenna
+SUBST:  L = l.
+KMONS:  2 = hellion
+KMONS:  3 = sun demon / smoke demon
+KMONS:  2 = reaper / balrug / hell beast
+FTILE:  x'5a2V+ = floor_infernal_blank
+KMONS: ~ = patrolling molten gargoyle w:5 / patrolling smoke demon w:5
+KFEAT: ~l = l
+KMASK: l = no_monster_gen
+NSUBST: l = 6:~ / 4 = ~l / *:l
+MAP
+lllllllllllllllllllllllllllllllll
+ Lllllllllllllllllllllllllllllll
+  LllxxxxxxxxxxxxxxxxxxxxxxxllL
+   Lllxx'''''''''''''''''xxllL
+    Lllxx''3''''G''''3''xxllL
+     Lllxx'''''''''''''xxllL
+      Lllxx''V''2''V''xxllL
+       Lllxx'''''''''xxllL
+        Lllxx'''''''xxllL
+         Lllxxx+++xxxllL
+          Lllxx...xxllL
+           Lll..3..llL
+            Lll...llL
+             Lll.llL
+              ll.ll
+               l.l
+ENDMAP

@@ -1,0 +1,27 @@
+# Ported from the pinned DCSS hell.des map vestibule_geryon_nicolae_amphitheater.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:    vestibule_geryon_nicolae_amphitheater
+TAGS:    vestibule_geryon
+MONS:    Geryon
+NSUBST:  1 = 1 / 0, < = { / <
+SHUFFLE: DE
+SUBST:   D = x, E = .
+MAP
+       ...
+      .....
+     .EDEDE.
+    xx.....xx
+   x1.......1x
+  .x...EDE...x.
+ .E...D...D...E.
+..D..E..<..E..D..
+..E..D.....D..E..
+..D..E.<.<.E..D..
+ .E...D...D...E.
+  .x...EDE...x.
+   x1.......1x
+    xx.....xx
+     .EDEDE.
+      .....
+       ...
+ENDMAP

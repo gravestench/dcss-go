@@ -1,0 +1,28 @@
+# Ported from the pinned DCSS hell.des map hangedman_geh_valley.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:    hangedman_geh_valley
+DEPTH: Depths
+WEIGHT:  4
+TAGS:    transparent uniq_hell_entry_geh
+KMONS:   O = sun demon / balrug w:1 / nothing w:5
+SHUFFLE: +- / +- / =+
+NSUBST:  - = 1:+cc / *:c
+SUBST:   = = c
+KMASK:   l = no_monster_gen
+TILE:    c = dngn_stone_wall_red
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: O = enter_hell
+TAGS: nolayout_encompass
+MAP
+  xxxxxxxxx
+xxxllcccllxxx
+xll.cc.cc.llx
+x...-.O.-...x
+....cc.cc....
+@....c+c....@
+.............
+x.llll.llll.x
+xlxxxxlxxxxlx
+xxx  xxx  xxx
+ENDMAP

@@ -1,0 +1,22 @@
+# Ported from the pinned DCSS hell.des map grunt_metal_band.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME: grunt_metal_band
+DEPTH: Depths
+TAGS: transparent
+WEIGHT: 6
+KMONS: O = Margery band / hell knight band w:4, hell knight band
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: O = enter_hell
+TAGS: nolayout_encompass
+TAGS: luniq_hellpanabyss_threat_entry
+TAGS: uniq_hell_entry_high
+MAP
+ xxxxxxx
+xx..O..xx
+x.......x
+x.......x
+@...G...@
+ .......
+   .@.
+ENDMAP

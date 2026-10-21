@@ -1,0 +1,46 @@
+# Ported from the pinned DCSS hell.des map vestibule_coc_grunt_go_with_the_floe.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME: vestibule_coc_grunt_go_with_the_floe
+TAGS: vestibule_coc no_pool_fixup
+MONS: frost giant / blizzard demon / ice statue
+MONS: blizzard demon, ice dragon / freezing wraith
+NSUBST: 3 = 3:3 / *:.
+SUBST: W = wW.
+KFEAT: A = stone_arch
+KFEAT: C = enter_cocytus
+KFEAT: W = W
+KMONS: P = patrolling sea snake zombie w:75 / \
+           patrolling sea snake skeleton w:50 / \
+           patrolling sea snake simulacrum w:25 / \
+           patrolling alligator zombie w:60 / \
+           patrolling alligator skeleton w:40 / \
+           patrolling alligator simulacrum w:20 / \
+           patrolling anaconda zombie w:65 / \
+           patrolling anaconda skeleton w:43 / \
+           patrolling anaconda simulacrum w:21 / \
+           patrolling hydra zombie w:115 / \
+           patrolling hydra skeleton w:76 / \
+           patrolling hydra simulacrum w:38 / \
+           kraken zombie w:25 / kraken simulacrum w:12 / \
+           patrolling water elemental w:113
+KFEAT: Pw = w
+KMASK: wW = no_monster_gen
+NSUBST: w = 8:P / 4 = Pw / *:w
+MAP
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+ wwwwwWWWWWWWWWWwWWWWWWWWWWwwwww
+  wwwWW...WW...WWW...WW...WWwww
+   wwW..W2....3...3....2W..Www
+    wwW.3W...W..W..W...W3.Www
+     wwW..W.WWW.3.WWW.W..Www
+      wwW.C.WwW.W.WwW.A.Www
+       wwW..WwW.W.WwW..Www
+        wwW1WwW.3.WwW1Www
+         wwWWwW.W.WwWWww
+          wwwwW.W.Wwwww
+           wwwW.3.Wwww
+            wwW.W.Www
+             wW.W.Ww
+              W.3.W
+               .W.
+ENDMAP

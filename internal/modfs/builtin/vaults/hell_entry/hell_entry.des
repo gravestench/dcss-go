@@ -1,0 +1,13 @@
+# Ported from the pinned DCSS hell.des map hell_entry.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   hell_entry
+DEPTH: Depths
+TAGS:   allow_dup overwrite_floor_cell no_exits replace_portal transparent
+TAGS:   fallback_enter_hell
+WEIGHT: 50
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: O = enter_hell
+MAP
+O
+ENDMAP

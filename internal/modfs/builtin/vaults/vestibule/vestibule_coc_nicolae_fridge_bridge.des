@@ -1,0 +1,45 @@
+# Ported from the pinned DCSS hell.des map vestibule_coc_nicolae_fridge_bridge.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:    vestibule_coc_nicolae_fridge_bridge
+TAGS:    vestibule_coc no_pool_fixup
+KFEAT:   C = enter_cocytus
+SHUFFLE: ab
+SUBST:   a = I, b : w., W = w.
+KMONS:   I = ice statue
+KMONS:   3 = blizzard demon
+KMONS:   2 = ice dragon / freezing wraith
+KMONS: P = patrolling sea snake zombie w:75 / \
+           patrolling sea snake skeleton w:50 / \
+           patrolling sea snake simulacrum w:25 / \
+           patrolling alligator zombie w:60 / \
+           patrolling alligator skeleton w:40 / \
+           patrolling alligator simulacrum w:20 / \
+           patrolling anaconda zombie w:65 / \
+           patrolling anaconda skeleton w:43 / \
+           patrolling anaconda simulacrum w:21 / \
+           patrolling hydra zombie w:115 / \
+           patrolling hydra skeleton w:76 / \
+           patrolling hydra simulacrum w:38 / \
+           kraken zombie w:25 / kraken simulacrum w:12 / \
+           patrolling water elemental w:113
+KFEAT: Pw = w
+KMASK: wW = no_monster_gen
+NSUBST: w = 8:P / 4 = Pw / *:w
+MAP
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+ WWWWwwwwwwwww.....wwwwwwwwwWWWW
+  ..WWWwwwwwww.3C3.wwwwwwwWWW..
+   ...WWwwwwww.....wwwwwwWW...
+    ...Wwwwwwwa...awwwwwwW...
+     ..WWwwwwww...wWwwwwWW..
+      ..Wwwwwww2.2wwwwwwW..
+       .WWwwwww...wwwwwWW.
+        .WWwwww...wwwwWW.
+         .WWWww2.2wwWWW.
+          ..WWW...WWW..
+           ...b...b...
+            .........
+             .......
+              .....
+               ...
+ENDMAP

@@ -1,0 +1,46 @@
+# Ported from the pinned DCSS hell.des map hellmouth_2.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   hellmouth_2
+DEPTH: Depths
+WEIGHT: 6
+ORIENT: float
+TAGS:   no_monster_gen
+MONS:   sun demon / smoke demon / soul eater / hell hog / nothing w:20
+MONS:   hellion / balrug / reaper / hell beast / hell knight
+ITEM:   good_item demon blade / good_item demon whip /\
+        good_item demon trident
+ITEM:   ring of fire ident:type / Necronomicon / \
+        grand grimoire / scroll of torment ident:type
+ITEM:   good_item demon blade / good_item demon whip /\
+        good_item demon trident / w:30 nothing
+SUBST:  d=de, ?:?.l, ?=l.
+SUBST:  b : b:30 c v .
+KMASK:  @' = !opaque
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: A = enter_hell
+TAGS: nolayout_encompass
+TAGS: luniq_hellpanabyss_threat_entry
+TAGS: uniq_hell_entry_high
+MAP
+''''''''''''''''''''''''''
+'''''''bbbbbbbbbbbb'''''''
+''''bbbb..........bbbb''''
+''bbb....llllllll....bbb''
+'bb....llllllllllll....bb'
+'b....llllllllllllll....b'
+'b....llllll??llllll....b'
+'b...?lll??.....?lll?...b'
+'b...?ll?...111...ll?...b'
+@+...?l?...11211d..l?...b'
+@+...?l?...12A21|f.l?...b'
+'b...?ll...11211d.ll?...b'
+'b...?lll?..111..lll?...b'
+'b....llll?.....llll....b'
+'b....llllll??llllll....b'
+'bb....llllllllllll....bb'
+''bbb....llllllll....bbb''
+''''bbbb..........bbbb''''
+'''''''bbbbbbbbbbbb'''''''
+''''''''''''''''''''''''''
+ENDMAP

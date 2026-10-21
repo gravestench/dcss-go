@@ -1,0 +1,31 @@
+# Ported from the pinned DCSS hell.des map vestibule_tar_nicolae_seven_gates_of_the_underworld.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:    vestibule_tar_nicolae_seven_gates_of_the_underworld
+TAGS:    vestibule_tar
+KMONS:   H = lich / halazid warlock / shadow dragon / bone dragon / revenant
+KMONS:   12 = ancient champion / skeletal warrior / phantasmal warrior / \
+              reaper / soul eater / shadow demon / shadow wraith / \
+              flayed ghost / putrid mouth
+KFEAT:   H = enter_tartarus
+SHUFFLE: DE/FH
+SUBST:   D = +, E = 1, F = c, 1 = 1 ':15, 2 = 22.
+FTILE:   +'H1 = floor_infernal_blank
+TILE:    c = dngn_stone_dark
+MAP
+ccccccccccccccccccccccccccccccccc
+ cc'''''''''+'''''''+'''''''''cc
+  cc''1'1'1'+'1'1'1'+'1'1'1''cc
+   cc'''''''+'''''''+'''''''cc
+    cc+++ccccccccccccccc+++cc
+     cc''''''c'''''+''''''cc
+      cc1'H'1c1'E'1+1'1'1cc
+       cc''''c'''''+''''cc
+        ccFFFccDDDccccccc
+         cc'''''''''''cc
+          cc''1'1'1''cc
+           cc'''''''cc
+            ccc+++ccc
+             G2.2.2G
+              .....
+               ...
+ENDMAP

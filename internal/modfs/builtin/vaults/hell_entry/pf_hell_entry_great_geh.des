@@ -1,0 +1,32 @@
+# Ported from the pinned DCSS hell.des map pf_hell_entry_great_geh.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   pf_hell_entry_great_geh
+DEPTH: Depths
+TAGS:   uniq_hell_entry_geh
+WEIGHT: 4
+KFEAT:  m = iron_grate
+TILE:   c = dngn_stone_wall_red
+COLOUR: c = red
+FTILE:  .O = floor_infernal_blank
+KMASK:  l = no_monster_gen
+KPROP:  l = no_tele_into
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: O = enter_hell
+TAGS: nolayout_encompass
+MAP
+cccc@cccc
+clm...mlc
+clm...mlc
+clm...mlc
+clm...mlc
+clm...mlc
+clm...mlc
+clm...mlc
+cccc+cccc
+ccl...lcc
+ccl.O.lcc
+ccl...lcc
+ccclllccc
+ccccccccc
+ENDMAP

@@ -1,0 +1,27 @@
+# Ported from the pinned DCSS hell.des map vestibule_dis_nicolae_girt_by_a_triple_wall.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:  vestibule_dis_nicolae_girt_by_a_triple_wall
+TAGS:  vestibule_dis no_pool_fixup
+KMONS: D = war gargoyle / iron dragon / iron giant
+KMONS: 12 = iron troll / iron golem / rust devil
+KFEAT: D = enter_dis
+SUBST: 1 = 11'
+FTILE: +'D1 = floor_infernal_blank
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ vv1''''+''''v''D''v''''+''''1vv
+  vv''''+'1''v1'''1v''1'+''''vv
+   vv'''vv'''vv'1'vv'''vv'''vv
+    vv'''vv''1v+++v1''vv'''vv
+     vv'1'vv'''''''''vv'1'vv
+      vv'''vv'''1'''vv'''vv
+       vv'''vvvvvvvvv'''vv
+        vv'''''''''''''vv
+         vv''1'''''1''vv
+          vvvvv+++vvvvv
+           wwww...wwww
+            wwww.wwww
+             .......
+              .....
+               ...
+ENDMAP

@@ -1,0 +1,30 @@
+# Ported from the pinned DCSS hell.des map vestibule_geh_nicolae_lone_tower.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:    vestibule_geh_nicolae_lone_tower
+TAGS:    vestibule_geh
+KMONS:   D = balrug band / hell beast band / hell hog band / \
+             hell knight band w:5
+KFEAT:   D = enter_gehenna
+SHUFFLE: Pp/Qq/Rr/Ss
+SUBST:   P = +, p = ., QRS = c, qrs = l, L = l.
+TILE:    c = dngn_stone_wall_red
+FTILE:   +D' = floor_infernal_blank
+COLOUR:  c = red
+MAP
+.LllllllllL.....L.LL..LllllllllL.
+ .LllllllL..LllpppllL..LllllllL.
+  ..LllL...LllccPccllL...LllL..
+   .......Lllcc'''ccllL.......
+    ......Llcc'''''cclL......
+     ......sc'''''''cq......
+      ....LsS'''D'''QqL....
+       ....sc'''''''cq....
+        ..Llcc'''''cclL..
+         .Lllcc'''ccllL.
+          .LllccRccllL.
+           .LllrrrllL.
+            .LL.L.LL.
+             .......
+              .....
+               ...
+ENDMAP

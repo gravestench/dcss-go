@@ -1,0 +1,25 @@
+# Ported from the pinned DCSS hell.des map vestibule_tar_nicolae_cwn_annwn.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   vestibule_tar_nicolae_cwn_annwn
+TAGS:   vestibule_tar patrolling
+KMONS:  1D = doom hound / nothing
+KFEAT:  D = enter_tartarus
+TILE:   c = dngn_stone_dark
+MAP
+ccccccccccccccccccccccccccccccccc
+ cccccccccccccc...cccccccccccccc
+  ccccccccccc...D...ccccccccccc
+   ccccccccc.........ccccccccc
+    ccccccc...........ccccccc
+     cccccc..1.....1..cccccc
+      cccc....c.1.c....cccc
+       ccc.1..c...c..1.ccc
+        cc...cc...cc...cc
+         cc..c.....c..cc
+          cc.c..1..c.cc
+           ..cc...cc..
+            ..cc.cc..
+             .......
+              .....
+               ...
+ENDMAP

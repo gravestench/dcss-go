@@ -1,0 +1,38 @@
+# Ported from the pinned DCSS hell.des map hellmouth_1.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:   hellmouth_1
+DEPTH: Depths
+ORIENT: float
+TAGS:   no_rotate
+MONS:   sun demon / smoke demon / soul eater / hell hog
+MONS:   hellion / balrug / reaper / hell beast / hell knight
+ITEM:   good_item demon blade / good_item demon whip / \
+        good_item demon trident
+ITEM:   ring of fire ident:type / Necronomicon / \
+        grand grimoire / scroll of torment ident:type
+SUBST:  d=de, ?:?.l, ?=l.
+TAGS: extra luniq_enter_hell chance_enter_hell
+CHANCE: 10000 (Depths)
+KFEAT: A = enter_hell
+TAGS: nolayout_encompass
+TAGS: luniq_hellpanabyss_threat_entry
+MAP
+xxxxxxxxxxxxxxxxxxx
+xxxxxxxxlllxxxxxxxx
+xxxxxxlllAlllxxxxxx
+xxxlllll.d.llll?xxx
+xlllllll121lllll?.x
+x?lllllll1llll?...x
+x.??llllllll?.....x
+x...?llllll?......x
+x....?lllll.......x
+xxx...?lll?.....xxx
+xxxx...lll?....xxxx
+xxxxx.?ll?....xxxxx
+xxxxx?lll.....xxxxx
+xxxxxxlll?...xxxxxx
+xxxxxxxlll...xxxxxx
+xxxxxxxxll?.xxxxxxx
+xxxxxxxxll?.xxxxxxx
+xxxxxxxxl?@xxxxxxxx
+ENDMAP

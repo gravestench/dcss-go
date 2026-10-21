@@ -1,0 +1,74 @@
+# Ported from the pinned DCSS hell.des map vestibule_of_hell_subvaulted.
+# Keep this DES map's geometry and directives here; its named Lua hooks own calculated choices.
+NAME:     vestibule_of_hell_subvaulted
+TAGS: layout
+PLACE:    Hell
+ORIENT:   encompass
+TAGS:     no_rotate no_dump
+SUBVAULT: A : vestibule_dis
+SUBVAULT: B : vestibule_tar
+SUBVAULT: C : vestibule_coc
+SUBVAULT: D : vestibule_geh
+SUBVAULT: E : vestibule_geryon
+SHUFFLE:  ABCD
+SUBST:    ABCDE = .
+: vault.run("murray_corridor")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAxxxxxxxxxxxx
+xxxxxxxxxxx::AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA::xxxxxxxxxxx
+xxxxxxxxxx::::AAAAAAAAAAAAAAAAAAAAAAAAAAAAA::::xxxxxxxxxx
+xxxxxxxxx::::::AAAAAAAAAAAAAAAAAAAAAAAAAAA::::::xxxxxxxxx
+xxxxxxxx::::::::AAAAAAAAAAAAAAAAAAAAAAAAA::::::::xxxxxxxx
+xxxxxxx::::::::::AAAAAAAAAAAAAAAAAAAAAAA::::::::::xxxxxxx
+xxxxxx::::::::::::AAAAAAAAAAAAAAAAAAAAA::::::::::::xxxxxx
+xxxxx::::::::::::::AAAAAAAAAAAAAAAAAAA::::::::::::::xxxxx
+xxxxC:::::::::::::::AAAAAAAAAAAAAAAAA:::::::::::::::Dxxxx
+xxxxCC:::::::::::::::AAAAAAAAAAAAAAA:::::::::::::::DDxxxx
+xxxxCCC:::::::::::::::AAAAAAAAAAAAA:::::::::::::::DDDxxxx
+xxxxCCCC:::::::::::::::AAAAAAAAAAA:::::::::::::::DDDDxxxx
+xxxxCCCCC:::::::::::::::AAAAAAAAA:::::::::::::::DDDDDxxxx
+xxxxCCCCCC:::::::::::::::AAAAAAA:::::::::::::::DDDDDDxxxx
+xxxxCCCCCCC:::::::::::::::AAAAA:::::::::::::::DDDDDDDxxxx
+xxxxCCCCCCCC:::::::::::::::AAA:::::::::::::::DDDDDDDDxxxx
+xxxxCCCCCCCCC::::::::::::::EEE::::::::::::::DDDDDDDDDxxxx
+xxxxCCCCCCCCCC::::::::::::EEEEE::::::::::::DDDDDDDDDDxxxx
+xxxxCCCCCCCCCCC::::::::::EEEEEEE::::::::::DDDDDDDDDDDxxxx
+xxxxCCCCCCCCCCCC::::::::EEEEEEEEE::::::::DDDDDDDDDDDDxxxx
+xxxxCCCCCCCCCCCCC::::::EEEEEEEEEEE::::::DDDDDDDDDDDDDxxxx
+xxxxCCCCCCCCCCCCCC::::EEEEEEEEEEEEE::::DDDDDDDDDDDDDDxxxx
+xxxxCCCCCCCCCCCCCCC::EEEEEEEEEEEEEEE::DDDDDDDDDDDDDDDxxxx
+xxxxCCCCCCCCCCCCCCCCEEEEEEEEEEEEEEEEEDDDDDDDDDDDDDDDDxxxx
+xxxxCCCCCCCCCCCCCCCCEEEEEEEEEEEEEEEEEDDDDDDDDDDDDDDDDxxxx
+xxxxCCCCCCCCCCCCCCCCEEEEEEEEEEEEEEEEEDDDDDDDDDDDDDDDDxxxx
+xxxxCCCCCCCCCCCCCCC::EEEEEEEEEEEEEEE::DDDDDDDDDDDDDDDxxxx
+xxxxCCCCCCCCCCCCCC::::EEEEEEEEEEEEE::::DDDDDDDDDDDDDDxxxx
+xxxxCCCCCCCCCCCCC::::::EEEEEEEEEEE::::::DDDDDDDDDDDDDxxxx
+xxxxCCCCCCCCCCCC::::::::EEEEEEEEE::::::::DDDDDDDDDDDDxxxx
+xxxxCCCCCCCCCCC::::::::::EEEEEEE::::::::::DDDDDDDDDDDxxxx
+xxxxCCCCCCCCCC::::::::::::EEEEE::::::::::::DDDDDDDDDDxxxx
+xxxxCCCCCCCCC::::::::::::::EEE::::::::::::::DDDDDDDDDxxxx
+xxxxCCCCCCCC:::::::::::::::BBB:::::::::::::::DDDDDDDDxxxx
+xxxxCCCCCCC:::::::::::::::BBBBB:::::::::::::::DDDDDDDxxxx
+xxxxCCCCCC:::::::::::::::BBBBBBB:::::::::::::::DDDDDDxxxx
+xxxxCCCCC:::::::::::::::BBBBBBBBB:::::::::::::::DDDDDxxxx
+xxxxCCCC:::::::::::::::BBBBBBBBBBB:::::::::::::::DDDDxxxx
+xxxxCCC:::::::::::::::BBBBBBBBBBBBB:::::::::::::::DDDxxxx
+xxxxCC:::::::::::::::BBBBBBBBBBBBBBB:::::::::::::::DDxxxx
+xxxxC:::::::::::::::BBBBBBBBBBBBBBBBB:::::::::::::::Dxxxx
+xxxxx::::::::::::::BBBBBBBBBBBBBBBBBBB::::::::::::::xxxxx
+xxxxxx::::::::::::BBBBBBBBBBBBBBBBBBBBB::::::::::::xxxxxx
+xxxxxxx::::::::::BBBBBBBBBBBBBBBBBBBBBBB::::::::::xxxxxxx
+xxxxxxxx::::::::BBBBBBBBBBBBBBBBBBBBBBBBB::::::::xxxxxxxx
+xxxxxxxxx::::::BBBBBBBBBBBBBBBBBBBBBBBBBBB::::::xxxxxxxxx
+xxxxxxxxxx::::BBBBBBBBBBBBBBBBBBBBBBBBBBBBB::::xxxxxxxxxx
+xxxxxxxxxxx::BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB::xxxxxxxxxxx
+xxxxxxxxxxxxBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
