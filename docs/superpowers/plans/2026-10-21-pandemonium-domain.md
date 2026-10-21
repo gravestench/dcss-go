@@ -95,8 +95,9 @@ the opportunity-attack scheduler. An authored Hellion Island rune now runs
 from its DES placement through pickup, repeated transit, restore, and exit;
 an uncollected authored rune is also retired with its old region. Pain brand
 uses the same live spellbook owner as casting for a Pan lord's dynamic
-`MST_GHOST` slots. All four named lord selections and source map builds now
-verify their matching real rune records. The existing replay test also compares
+`MST_GHOST` slots. All 20 named lord map variants now verify their matching
+real rune records, while one realm from each lord family runs through live
+portal entry, ECS item placement, pickup, and save. The replay test compares
 the complete next-region save after restore.
 
 The Pan game and focused Lua/terminal presentation tests pass. A package-wide

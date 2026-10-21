@@ -459,8 +459,10 @@ player-moving state that suppresses its trample. Generated
 lords now save source-style names and source colour rolls; their
 names reach combat messages and both values reach the terminal entity view.
 Source `ETC_RANDOM` now redraws visible monsters and clouds with UI-only
-nonblack IRGB draws, without changing the saved game seed. Other Pan rune
-families need a full authored-map run.
+nonblack IRGB draws, without changing the saved game seed. All 20 named lord
+map variants now resolve their matching rune through source placement. One
+selected realm from each of the four lord families also runs through a live
+Pan portal, ECS floor item, pickup, and saved player progress.
 
 Intrinsic death effects now use the actor death phase for Ball Lightning,
 Fulminant Prism, Bloated Husk, Lurking Horror, and Bennu. Construct timeout

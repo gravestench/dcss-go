@@ -11,27 +11,26 @@ import (
 	"github.com/gravestench/akara"
 )
 
-// The fixed Hellion Island primary chosen by this seed places a real rune
-// through its source DES hook. Find that live item and require its authored
-// placement record, so the travel test cannot pass with a fabricated rune.
-func authoredPanRune(t *testing.T, g *Game, level *Level) (akara.Entity, ecs.Position) {
+// Find a real rune item and its source placement record on the expected Pan
+// primary. A named realm must not pass with a rune fabricated by test setup.
+func authoredPanRune(t *testing.T, g *Game, level *Level,
+	vaultID, runeID string) (akara.Entity, ecs.Position) {
 	t.Helper()
 
-	if level.VaultID() != "lemuel_hellion_island" {
-		t.Fatalf("Pan seed selected %q, want the authored rune primary", level.VaultID())
+	if level.VaultID() != vaultID {
+		t.Fatalf("Pan selected %q, want %q", level.VaultID(), vaultID)
 	}
 
 	foundRecord := false
 
 	for _, record := range level.VaultRecords() {
-		if record.SourceID == level.VaultID() &&
-			runeRecord(record, "RUNE_DEMONIC") {
+		if record.SourceID == vaultID && runeRecord(record, runeID) {
 			foundRecord = true
 		}
 	}
 
 	if !foundRecord {
-		t.Fatal("authored Pan primary has no demonic rune record")
+		t.Fatalf("Pan primary %s has no %s record", vaultID, runeID)
 	}
 
 	for _, entity := range g.stores.Items.Entities() {
@@ -42,14 +41,103 @@ func authoredPanRune(t *testing.T, g *Game, level *Level) (akara.Entity, ecs.Pos
 			continue
 		}
 
-		if item.KindID == "RUNE_DEMONIC" {
+		if item.KindID == runeID {
 			return entity, *position
 		}
 	}
 
-	t.Fatal("authored Pan rune has no live item")
+	t.Fatalf("Pan primary %s has no live %s item", vaultID, runeID)
 
 	return 0, ecs.Position{}
+}
+
+// Pick an initial layout stream state whose source pressure and identity
+// draws select one named lord. The portal, map, population, and pickup then
+// run normally; no production selector or content declaration is replaced.
+func selectPanLord(t *testing.T, g *Game, lordIndex int) {
+	t.Helper()
+
+	for state := uint64(0); state < 1000; state++ {
+		probe := RestoreRNGStreams(g.rng.seed, map[string]uint64{
+			"layout": state,
+		})
+
+		pressure, err := probe.Intn("layout", 20)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		identity, err := probe.Intn("layout", 4)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if pressure == 0 && identity == lordIndex {
+			g.rng.states["layout"] = state
+
+			return
+		}
+	}
+
+	t.Fatalf("no layout stream state selects Pan lord index %d", lordIndex)
+}
+
+// The four source lord realms must each create their own floor rune, then
+// ordinary pickup must store that rune in the player component and save.
+func TestPanNamedLordRunesFromPortalThroughPickup(t *testing.T) {
+	cases := []struct {
+		vaultID string
+		runeID  string
+	}{
+		{
+			vaultID: "evilmike_mnoleg_eyes",
+			runeID:  "RUNE_MNOLEG",
+		},
+
+		{
+			vaultID: "lom_lobon_st",
+			runeID:  "RUNE_LOM_LOBON",
+		},
+
+		{
+			vaultID: "cerebov",
+			runeID:  "RUNE_CEREBOV",
+		},
+
+		{
+			vaultID: "evilmike_gloorx_vloq_box",
+			runeID:  "RUNE_GLOORX_VLOQ",
+		},
+	}
+
+	for index, test := range cases {
+		t.Run(test.vaultID, func(t *testing.T) {
+			g := newGeneratedTestGame(t, 7403)
+			selectPanLord(t, g, index)
+
+			health, found := g.stores.Health.Get(g.player)
+
+			if !found {
+				t.Fatal("player has no health")
+			}
+
+			health.Max = 10000
+			health.Current = health.Max
+			placePanPortal(t, g, terrain.EnterPandemonium)
+
+			if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
+				t.Fatal(err)
+			}
+
+			level := g.levels[g.panState.ActiveLevelID]
+			_, position := authoredPanRune(t, g, level,
+				test.vaultID, test.runeID)
+
+			collectRune(t, g, level, position.X, position.Y, test.runeID)
+		})
+	}
 }
 
 // A saved Pan region must carry enough history and RNG state to make the
@@ -141,7 +229,8 @@ func TestPanTransitRetiresUncollectedRune(t *testing.T) {
 
 	oldID := g.panState.ActiveLevelID
 	level := g.levels[oldID]
-	runeEntity, _ := authoredPanRune(t, g, level)
+	runeEntity, _ := authoredPanRune(t, g, level,
+		"lemuel_hellion_island", "RUNE_DEMONIC")
 
 	placePanPortal(t, g, terrain.TransitPandemonium)
 
@@ -187,7 +276,8 @@ func TestPanAuthoredRunePickupTransitsAndExit(t *testing.T) {
 	}
 
 	level := g.levels[g.panState.ActiveLevelID]
-	_, position := authoredPanRune(t, g, level)
+	_, position := authoredPanRune(t, g, level,
+		"lemuel_hellion_island", "RUNE_DEMONIC")
 
 	collectRune(t, g, level, position.X, position.Y, "RUNE_DEMONIC")
 
