@@ -309,6 +309,27 @@ function stairs.pair(ctx, parent, child, selected)
     table.sort(parent_down, before)
     table.sort(child_up, before)
 
+    -- A branch border-check vault can author the precise arrival cell.
+    -- Keep that one first when pairing the single scheduled parent link.
+    if branch_entry and child.preferred_branch_up then
+        local found
+
+        for index, point in ipairs(child_up) do
+            if point.x == child.preferred_branch_up.x and
+                point.y == child.preferred_branch_up.y then
+                found = index
+                break
+            end
+        end
+
+        if not found then
+            error("authored branch arrival lost its up stair")
+        end
+
+        table.remove(child_up, found)
+        table.insert(child_up, 1, child.preferred_branch_up)
+    end
+
     local patches = {}
     local entry
 

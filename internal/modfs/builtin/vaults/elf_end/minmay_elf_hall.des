@@ -1,0 +1,54 @@
+# minmay_elf_hall is an authored Elf:3 final hall.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    minmay_elf_hall
+TAGS: no_rotate
+TAGS:    nolayout_halls
+PLACE:   Elf:$
+ORIENT:  southwest
+# Source Lua: : elf_setup(_G)
+# Source Lua: : elf_monsters(_G)
+: vault.run("shared.elf_monsters")
+SUBST:   1=11., 2=22., 3=33., 4=44., 5=543, 6=66., 7=77.
+SHUFFLE: 12, 34, 67
+# Source Lua: : elf_loot_defenders(_G)
+: vault.run("shared.elf_loot_defenders")
+# Source Lua: : elf_loot_randomisation(_G)
+: vault.run("shared.elf_loot_randomisation")
+MAP
+xxxxxxxxxxxxxxxxxxx@xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxc.cxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxc.cxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxc.cxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxc.cxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxc.cxxxxxxxxxxxxxxxxxx
+xxxxcccccxxxxxxxxxc.cxxxxxxxxxcccccxxxx
+xxccc...cccxxxxxccc.cccxxxxxccc...cccxx
+xcc.......cccxccc.....cccxccc.......ccx
+xc3.........ccc.........ccc.........4cx
+xc....6......5...........5......6....cx
+xc3.................................4cx
+xcc......3.........7.........3......ccx
+xxcc...............n...............ccxx
+xxxc5............6nnn6............5cxxx
+xxcc...............n...............ccxx
+xcc.......4........7........4.......ccx
+xc1.................................2cx
+xc....7......5...........5......7....cx
+xc1.........ccc.........ccc.........2cx
+xcc.......cccxccc.....cccxccc.......ccx
+xxccc...cccxxxxxccc.cccxxxxxccc...cccxx
+xxxxcc+ccxxxxxxxxxc.cxxxxxxxxxcc+ccxxxx
+xxxxc$*|cxxxxxxxxxc.cxxxxxxxxxc|*$cxxxx
+xxxxc|*$cxxxxxxxxxc.cxxxxxxxxxc$*|cxxxx
+xxxxcccccxxxxxxxxxc.cxxxxxxxxxcccccxxxx
+xxxxxxxxxxxxxxxxxxc.cxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxc.cxxxxxxxxxxxxxxxxxx
+xxxxxxxxcccccxxxccc.cccxxxcccccxxxxxxxx
+xxxxxcccc|$*ccccc6...6ccccc*||ccccxxxxx
+xxxccc*|$*|$$|+....U....+|$$|*$*$cccxxx
+xxcc*$$*|$$|$$ccc7...7ccc|*|$$$||*$ccxx
+xcc$*|*|*|*|cccxcccccccxccc$*$$*$$$|ccx
+xc|*|$$|*ccccxxxxxxxxxxxxxcccc|*$||$*cx
+xcccccccccxxxxxxxxxxxxxxxxxxxcccccccccx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

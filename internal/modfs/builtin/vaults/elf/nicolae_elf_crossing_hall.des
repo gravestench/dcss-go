@@ -1,0 +1,30 @@
+# nicolae_elf_crossing_hall is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   nicolae_elf_crossing_hall
+TAGS:   transparent
+DEPTH:  Elf
+: vault.run("configure")
+# Source Lua: : if crawl.coinflip() then
+# Source Lua: KFEAT:  + = closed_clear_door
+# Source Lua: : end
+NSUBST: H = + / c++
+SUBST:  c : cxvbm, D : cxvbm., F : cxvbm., E : cvxbm0, 0 = .:15 0:5 9:1
+MAP
+       c+c
+      cc.cc
+     cc...cc
+    cc.0D0.cc
+   cc..DDD..cc
+  cc...0D0...cc
+ cc...........cc
+cc.0F0.0E0.0F0.cc
+H..FFF.EEE.FFF..H
+cc.0F0.0E0.0F0.cc
+ cc...........cc
+  cc...0D0...cc
+   cc..DDD..cc
+    cc.0D0.cc
+     cc...cc
+      cc.cc
+       cHc
+ENDMAP

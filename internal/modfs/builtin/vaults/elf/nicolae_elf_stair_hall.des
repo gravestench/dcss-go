@@ -1,0 +1,24 @@
+# nicolae_elf_stair_hall is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    nicolae_elf_stair_hall
+DEPTH:   Elf:2-
+TAGS:    extra
+SUBST:   v : vb
+SHUFFLE: {[(
+MAP
+    xxxxxxxxxxxxxxx
+  xxxcccccccccccccx
+ xxccc...........cx
+ xcc....vv..vv..ccx
+xxc....vv..vv..cccx
+xcc...vv..vv..ccccx
+xc...vv..vv.......@
+xc.{..............@
+xc...vv..vv.......@
+xcc...vv..vv..ccccx
+xxc....vv..vv..cccx
+ xcc....vv..vv..ccx
+ xxccc...........cx
+  xxxcccccccccccccx
+    xxxxxxxxxxxxxxx
+ENDMAP

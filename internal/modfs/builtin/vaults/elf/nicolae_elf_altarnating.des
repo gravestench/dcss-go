@@ -1,0 +1,22 @@
+# nicolae_elf_altarnating is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  nicolae_elf_altarnating
+TAGS:  transparent no_monster_gen no_item_gen
+DEPTH: Elf
+: vault.run("configure")
+# Source Lua: : if crawl.coinflip() then
+# Source Lua: KMONS: 1 = dancing weapon ; any weapon
+# Source Lua: KMONS: _ = dancing weapon ; any weapon good_item | any weapon randart w:5
+# Source Lua: KFEAT: _ = altar_uskayaw
+# Source Lua: : else
+# Source Lua: KMONS: 1_ = fire elemental / water elemental / air elemental / earth elemental
+# Source Lua: KFEAT: _ = altar_qazlal
+# Source Lua: : end
+SUBST: 1 = 111..
+MAP
+xxxxx
+x111x
+x1_1+
+x111x
+xxxxx
+ENDMAP

@@ -1,0 +1,32 @@
+# hangedman_elven_pyramids is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    hangedman_elven_pyramids
+TAGS:    extra transparent
+DEPTH:   Elf
+SHUFFLE: ABCD, +-_, yz / yz / zy
+SUBST:   A : ZZ., B : Z., C : Z.., D = .
+SUBST:   + : x:9 +:2 .:1, -_ : x:9 z:1
+SUBST:   Z : z:5 c:1 x:1 b:1, z : c:6 x:3 .:1
+MAP
+       ..x..
+      ..x.x..
+     ..x...x..
+    ..x..A..x..
+   ..x...y...x..
+  ..x..xz.zx..x..
+ ..x.x...y...x.x..
+..x...zy.C.yz...x..
+.x..B.yz...zy.D..x..
+x.......x.x.......x..
+xxxx+xxxx-x_xx-xxxx+xxxx
+   ..x.......x.x.......x
+    ..x..D.yz...zy.B..x.
+     ..x...zy.C.yz...x..
+      ..x.x...y...x.x..
+       ..x..xz.zx..x..
+        ..x...y...x..
+         ..x..A..x..
+          ..x...x..
+           ..x.x..
+            ..x..
+ENDMAP

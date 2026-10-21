@@ -1,0 +1,65 @@
+# elven_hall_of_blades_hangedman_original is an authored Elf:2 Hall of Blades primary.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:     elven_hall_of_blades_hangedman_original
+TAGS:     no_item_gen no_monster_gen
+PLACE:    Elf:2
+ORIENT:   north
+# Source Lua: : hall_of_blades_monsters(_G)
+: vault.run("shared.hall_of_blades_monsters")
+SHUFFLE:  CD / CD / DC / DC / DD
+SUBST:    C = c, D = ., E : c--, F : c--, c : cv
+FTILE:    - = floor_vault
+COLOUR:   - = lightgrey
+SUBST:    - = .
+# Previously for Blade: NSUBST:  . : 6:0 / 6 = 0. / 6 = 0... / *:.
+NSUBST:   . = 6=1 / 3=2 / 34 / 4=4 / 2=42 / 6=14...
+SUBVAULT: A : elf_blade_entry
+SUBST:    A : x"", ' = .
+CLEAR:    "
+MAP
+                                "
+                                "
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccx
+xcccc---cccc-cccc-cccc-cccc-F-ccccc-F-cccc-cccc-cccc-cccc---ccccx
+xccF-....cc-.-cc-.-cc-.-cc-...-ccc-...-cc-.-cc-.-cc-.-cc-...-Fccx
+xcc-.........................................................-ccx
+xc-....c............--c--................-c--............c....-cx
+xc-...ccc...........-ccc-...............-ccc-...........ccc...-cx
+xcE..ccccc..........ccccc...............ccccc..........ccccc..Ecx
+xcE..ccccc..........-ccc-...............-ccc-..........ccccc..Ecx
+xc-..4ccc...........--c--...............--c--...........ccc4..-cx
+xcE...ccc...............................................ccc...Ecx
+xcE....c.................................................c....Ecx
+xc-............................D.D............................-cx
+xc-...........CC..............DDDDD..............CC...........-cx
+xcE5..2......CCCC.............DDDDD.............CCCC......2..6Ecx
+xc-...........CC..............DDDDD..............CC...........-cx
+xc-............................D.D............................-cx
+xcE....c.................................................c....Ecx
+xcE...ccc...............................................ccc...Ecx
+xc-..4ccc...........--c--...............--c--...........ccc4..-cx
+xc-..ccccc..........-ccc-...............-ccc-..........ccccc..-cx
+xcE..ccccc..........ccccc...............ccccc..........ccccc..Ecx
+xcE...ccc...........-ccc-...............-ccc-...........ccc...Ecx
+xc-....c............--c--...............--c--............c....-cx
+xcc-.........................................................-ccx
+xccF-...-cc-.-cc-.-cc-.-cc'''''ccc'''''cc-.-cc-.-cc-.-cc-...-Fccx
+xcccc---cccc-cccc-cccc-cccc'F'++c++'F'cccc-cccc-cccc-cccc---ccccx
+xcccccccccccccccccccccccccccccc'''cccccccccccccccccccccccccccccxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=A=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                          AAAAAAAAAAAAA
+                          AAAAAAAAAAAAA
+                          AAAAAAAAAAAAA
+                          AAAAAAAAAAAAA
+                          AAAAAAAAAAAAA
+                          AAAAAAAAAAAAA
+                          AAAAAAAAAAAAA
+                          AAAAAAAAAAAAA
+                          AAAAAAAAAAAAA
+                          AAAAAAAAAAAAA
+                          AAAAAAAAAAAAA
+                          AAAAAAAAAAAAA
+                          AAAAAAAAAAAAA
+                                @
+ENDMAP

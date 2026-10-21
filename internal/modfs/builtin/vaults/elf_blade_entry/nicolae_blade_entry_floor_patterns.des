@@ -1,0 +1,26 @@
+# nicolae_blade_entry_floor_patterns is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME: nicolae_blade_entry_floor_patterns
+TAGS: elf_blade_entry no_monster_gen unrand
+TAGS: no_pool_fixup
+NSUBST: 1 = 2:1 / *:.
+SHUFFLE: :X/:w/::/ww/wX/XX
+SUBST: : = -, X = x, C : -wx
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+MAP
+      =
+xxxxx---xxxxx
+xxxxx...xxxxx
+xxCCC...CCCxx
+xxC...:...Cxx
+xxC.1:::1.Cxx
+-...::X::...-
+-..::XXX::..-
+-...::X::...-
+xxC.1:::1.Cxx
+xxC...:...Cxx
+xxCCC...CCCxx
+xxxxx...xxxxx
+xxxxx---xxxxx
+ENDMAP

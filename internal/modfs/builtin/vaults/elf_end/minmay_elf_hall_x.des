@@ -1,0 +1,49 @@
+# minmay_elf_hall_x is an authored Elf:3 final hall.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    minmay_elf_hall_x
+TAGS: no_rotate
+TAGS:    nolayout_halls
+PLACE:   Elf:$
+ORIENT:  northwest
+# Source Lua: : elf_setup(_G)
+# Source Lua: : elf_monsters(_G)
+: vault.run("shared.elf_monsters")
+SUBST:   1=11., 2=22., 3=33., 4=44., 5=543, 6=66., 7=77.
+SHUFFLE: 12, 34, 67
+# Source Lua: : elf_loot_defenders(_G)
+: vault.run("shared.elf_loot_defenders")
+# Source Lua: : elf_loot_randomisation(_G)
+: vault.run("shared.elf_loot_randomisation")
+SUBST:   n : nnnb
+MAP
+xxxxxxxxxxxxxxxxxxxxxxx
+xxccccccccccccccccccccx
+xcc||*$**cc||$|*$|*|ccx
+xc*|*|$|**cc$|$*$||$|cx
+xc$$|$*cc+ccc*$|$*$|*cx
+xc||$|cc2.54cc*$|$*||cx
+xc$*|cc...U..+*$*|*$*cx
+xc|$cc.......ccc$*|*$cx
+xc*cc3...1..cc4cc$$*$cx
+xccc...1...cc3.2cc|*$cx
+xcc.......cc.....cc$*cx
+cc...n...cc...n...cc|cx
+c...nnn..3...nnn..6cccx
+cc...n..6.....n...ccxxx
+xcc..2....1....2.ccxxxx
+xxcc............ccxxxxx
+xxxcc4...2..3..ccxxxxxx
+xxxxcc........ccxxxxxxx
+xxxcc..3..5....ccxxxxxx
+xxcc5........1..ccxxxxx
+xcc2....4......5.ccxxxx
+cc...n2...3...n.2.ccxxx
+c7..nnn......nnn..4cxxx
+cc...n...5....n...ccxxx
+xcc.....c..c4....ccxxxx
+xxcc5.3cc.2cc...ccxxxxx
+xxxcc3ccc..ccc7ccxxxxxx
+xxxxcccxc.5cxcccxxxxxxx
+xxxxxxxxc5.cxxxxxxxxxxx
+xxxxxxxxx@@xxxxxxxxxxxx
+ENDMAP

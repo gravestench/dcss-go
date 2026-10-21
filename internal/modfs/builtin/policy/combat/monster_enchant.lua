@@ -387,7 +387,8 @@ function enchant.tick(ctx, monster, elapsed_aut)
         end
     end
 
-    if value.corrosion_aut > 0 then
+    if value.corrosion_aut > 0 and not vault_enchantments.active(ctx,
+        monster, vault_enchantment_ids.CORROSION) then
         value.corrosion_aut = math.max(0,
             value.corrosion_aut - elapsed_aut)
         changed = true

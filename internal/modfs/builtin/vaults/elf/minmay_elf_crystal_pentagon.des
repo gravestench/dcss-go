@@ -1,0 +1,27 @@
+# minmay_elf_crystal_pentagon is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   minmay_elf_crystal_pentagon
+DEPTH:  Elf
+ORIENT: float
+WEIGHT: 8
+MONS:   deep elf pyromancer / deep elf zephyrmancer / nothing w:25
+MAP
+   +bbbbbbbbbbb+
+   b...........b
+   b...........b
+  bb...bbbbb...bb
+  b1..bb1.1bb..1b
+  b...b1.U.1b...b
+ bb...bb1.1bb...bb
+ b.....bb.bb.....b
+ b...............b
+bb..bb..1........bb
++...b1....bbb.....+
+bb..bbbb...1b...1bb
+ bb1..1bb..bb...bb
+  bbb...b..b1.bbb
+    bb.......bb
+     bb.....bb
+      bbb.bbb
+        b+b
+ENDMAP

@@ -63,6 +63,12 @@ local function blind(ctx, actor)
     ctx:add(actor, component.MONSTER_ENCHANT, { blind_aut = 1 })
 end
 
+-- The defective Elf dancing weapon begins corroded and stays that way
+-- until dispelled, using the same AC penalty as ordinary acid corrosion.
+local function corrosion(ctx, actor)
+    ctx:add(actor, component.MONSTER_ENCHANT, { corrosion_aut = 1 })
+end
+
 -- Backlighting is read from the same hex status as temporary Corona.
 local function corona(ctx, actor)
     ctx:add(actor, component.HEX_STATUS, { corona_aut = 1 })
@@ -105,6 +111,7 @@ local installers = {
     [enchantments.BLIND] = blind,
     [enchantments.CONFUSION] = confuse,
     [enchantments.CORONA] = corona,
+    [enchantments.CORROSION] = corrosion,
     [enchantments.DUMB] = paralyze,
     [enchantments.MAD] = confuse,
     [enchantments.MUTE] = mute,

@@ -1,0 +1,25 @@
+# nicolae_elf_archery_training is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  nicolae_elf_archery_training
+TAGS:  transparent no_item_gen
+DEPTH: Elf
+# Arrows were here. They're gone now. RIP
+KITEM: " = shortbow / longbow / shortbow good_item / longbow good_item / \
+           pair of gloves ego:hurling / pair of gloves ego:dexterity / \
+           pair of gloves plus:1 / pair of gloves plus:2 / \
+           scarf ego:repulsion / scarf w:4 / amulet of reflection / \
+           any amulet w:3 / gold good_item / manual of ranged weapons w:3
+KMONS: D = training dummy
+MONS:  deep elf archer / nothing w:5
+MONS:  deep elf master archer
+MAP
+     x@@xxx
+   xxx...'x
+ xxx1....Dx
+xx..1....'x
+x"2.1....Dx
+xx..1....'x
+ xxx1....Dx
+   xxx...'x
+     x@@xxx
+ENDMAP

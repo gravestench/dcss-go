@@ -1,11 +1,11 @@
 -- Theory of operation: a branch's source depth describes its eventual
--- topology, while the committed Lua content determines which floors this
--- engine can build now. A branch that requires an end layout opens its
--- last floor only when an effective explicit PLACE map is available.
+-- topology, while committed Lua content determines which floors this
+-- engine can build now. A branch floor that declares an authored primary
+-- opens only when its effective PLACE family has a selectable candidate.
 local categories = require("constants.catalog")
 local branches = require("ids.branches")
 local layouts = require("policy.generation.layouts.catalog")
-local end_vault = require("policy.generation.vaults.end")
+local primary = require("policy.generation.vaults.primary")
 local temple = require("policy.generation.temple.catalog")
 
 local availability = {}
@@ -27,25 +27,24 @@ function availability.can_build(branch_id, depth)
         return false
     end
 
-    if depth ~= branch.depth then
-        return true
-    end
-
-    if branch.end_layout_required and
+    if depth == branch.depth and branch.end_layout_required and
         not layouts.has_explicit(branch_id, depth) then
         return false
     end
 
-    if branch.end_vault_required then
+    local specification = primary.specification(branch, depth)
+
+    if specification then
         local context = {
             branch_id = branch_id,
             depth = depth,
             branch_bottom = branch.depth,
             absolute_depth = branch.absolute_depth + depth - 1,
-            end_vault_family = branch.end_vault_family,
+            primary_vault_family = specification.family,
+            primary_allow_dummy = specification.allow_dummy,
         }
 
-        return #end_vault.candidates(context) > 0
+        return #primary.candidates(context) > 0
     end
 
     return true
@@ -55,9 +54,9 @@ end
 function availability.reason(branch_id, depth)
     local branch = register.get(categories.BRANCHES, branch_id)
 
-    if branch.end_vault_required and depth == branch.depth then
+    if primary.specification(branch, depth) then
         return branch.abbreviation .. ":" .. depth ..
-            " awaits its authored end vault."
+            " awaits its authored primary vault."
     end
 
     if branch.end_layout_required and depth == branch.depth then

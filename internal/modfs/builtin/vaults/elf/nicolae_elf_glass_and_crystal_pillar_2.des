@@ -1,0 +1,17 @@
+# nicolae_elf_glass_and_crystal_pillar_2 is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    nicolae_elf_glass_and_crystal_pillar_2
+DEPTH:   Elf
+TAGS:    transparent extra allow_dup
+SHUFFLE: ab, bc
+SUBST:   a = m, b : mb, c = b, _ : .._
+CLEAR:   _
+MAP
+_______
+_....._
+_.aba._
+_.bcb._
+_.aba._
+_....._
+_______
+ENDMAP

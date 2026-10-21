@@ -1,0 +1,19 @@
+# nicolae_elf_martial_mastery is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  nicolae_elf_martial_mastery
+TAGS:  transparent
+DEPTH: Elf
+MONS:  deep elf blademaster / deep elf master archer
+SUBST: T : TTT., U : UUU.
+MAP
+   xxxxx
+ xxx.T.xxx
+xx.U...U.xx
+xT...1...Tx
++.........+
++.........+
+xU...1...Ux
+xx.T...T.xx
+ xxx.U.xxx
+   xxxxx
+ENDMAP

@@ -1,0 +1,23 @@
+# eino_elf_arrival_shootout is an authored Elf:1 border check or source PLACE controller.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    eino_elf_arrival_shootout
+PLACE:   Elf:1
+ORIENT:  float
+TAGS:    patrolling
+MONS:    deep elf pyromancer / deep elf zephyrmancer / nothing w:20
+MONS:    deep elf pyromancer / deep elf zephyrmancer / nothing
+MAP
+xxxxxxxx@@@xxxxxxxx
+xxxx...........xxxx
+xx.......2.......xx
+x.....1.....1.....x
+xxxx.....G.....xxxx
+xxxxxxxx...xxxxxxxx
+xxx[.....{.....(xxx
+xxxxxxxx...xxxxxxxx
+xxxx.....G.....xxxx
+x.....1.....1.....x
+xx.......2.......xx
+xxxx...........xxxx
+xxxxxxxx@@@xxxxxxxx
+ENDMAP

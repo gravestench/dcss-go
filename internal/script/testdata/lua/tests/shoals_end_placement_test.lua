@@ -4,7 +4,7 @@
 local branches = require("ids.branches")
 local categories = require("constants.catalog")
 local effects = require("constants.vault_effects")
-local end_vault = require("policy.generation.vaults.end")
+local end_vault = require("policy.generation.vaults.primary")
 local extra = require("policy.generation.vaults.extra")
 local grid = require("policy.generation.grid")
 local harness = require("tests.harness")
@@ -46,8 +46,8 @@ local function context_for(id)
         depth = 4,
         branch_bottom = 4,
         absolute_depth = 18,
-        end_vault_family = "shoals_end",
-        end_choice = { id = id },
+        primary_vault_family = "shoals_end",
+        primary_choice = { id = id },
         protected = {},
         required = {},
         used = used.new({}),
@@ -177,7 +177,8 @@ function test.run()
     local branch = register.get(categories.BRANCHES, branches.BRANCH_SHOALS)
     local candidates = end_vault.candidates(context_for(nil))
 
-    harness.truthy(branch.end_vault_required, "Shoals end is mandatory")
+    harness.truthy(end_vault.specification(branch, branch.depth),
+        "Shoals end is mandatory")
     harness.equal(#candidates, 6, "all six source finales are selectable")
 
     for index, candidate in ipairs(candidates) do

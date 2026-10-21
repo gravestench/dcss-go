@@ -1,0 +1,28 @@
+# guppyfry_elf_garden is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  guppyfry_elf_garden
+TAGS:  transparent
+DEPTH: Elf:2-
+MONS:  deep elf pyromancer / deep elf zephyrmancer
+MONS:  deep elf blademaster / deep elf master archer / deep elf sorcerer
+MONS:  plant
+SUBST: - = WW333..%
+SUBST: ' = wwWW333ttt..%
+MAP
+................
+................
+..mmmmT..Tmmmm..
+..m'---..---'m..
+..m-'--..--'-m..
+..m--'-..-'--m..
+..3---t..t---3..
+.......21.......
+.......11.......
+..3---t..t---3..
+..m--'-..-'--m..
+..m-'--..--'-m..
+..m'---..---'m..
+..mmmmT..Tmmmm..
+................
+................
+ENDMAP

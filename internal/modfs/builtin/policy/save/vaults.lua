@@ -8,6 +8,7 @@ local depth_rules = require("policy.generation.vaults.depth")
 local temple = require("policy.generation.temple.catalog")
 local altar = require("policy.generation.altar.catalog")
 local slime_seal = require("policy.save.slime_seal")
+local primary = require("policy.generation.vaults.primary")
 local tags = require("constants.vault_tags")
 
 local vaults = {}
@@ -57,18 +58,85 @@ local function rune_owner_selected(selected, selected_ids, source_id)
     return false
 end
 
--- The selected last-floor vault and its historical rune intent must agree.
+-- A primary's SUBVAULT regions are actual placements, not just decorative
+-- text. Match each requested region to one saved helper occurrence. The
+-- matching also handles alternative tags without depending on file order.
+local function validate_subvault_history(level, selected, label)
+    local requests = {}
+
+    for _, operation in ipairs(selected.operations) do
+        if operation.kind == directives.SUBVAULT then
+            local choices = operation.argument:match(
+                "^%s*%S+%s*:%s*(.-)%s*$")
+            local allowed = {}
+
+            for choice in ((choices or "") .. "/"):gmatch("(.-)/") do
+                local tag = choice:match("^%s*([%w_]+)")
+
+                if tag then
+                    allowed[tag] = true
+                end
+            end
+
+            requests[#requests + 1] = allowed
+        end
+    end
+
+    local helpers = {}
+
+    for _, id in ipairs(level.vault_ids or {}) do
+        if id ~= selected.id then
+            helpers[#helpers + 1] = catalog.get(id)
+        end
+    end
+
+    local assigned = {}
+
+    -- Reassign an earlier match when a later region has fewer valid helpers.
+    local function match(request_index, seen)
+        for index, helper in ipairs(helpers) do
+            if not seen[index] then
+                for tag in pairs(requests[request_index]) do
+                    if helper.tags[tag] then
+                        seen[index] = true
+
+                        if not assigned[index] or
+                            match(assigned[index], seen) then
+                            assigned[index] = request_index
+                            return true
+                        end
+                    end
+                end
+            end
+        end
+
+        return false
+    end
+
+    for index in ipairs(requests) do
+        if not match(index, {}) then
+            error(label .. " needs its selected SUBVAULT helpers")
+        end
+    end
+end
+
+-- The selected floor-primary vault and its historical rune intent must agree.
 -- A collected rune may no longer have a floor entity, so validation reads
 -- the saved source record rather than requiring the item to remain present.
-local function validate_end_vault(level, branch)
+local function validate_primary_vault(level, branch, specification)
     local okay, selected = pcall(catalog.get, level.vault_id)
-    local label = branch.abbreviation .. " end"
+    local label = branch.abbreviation .. ":" .. level.local_depth ..
+        " primary"
 
-    if not okay or selected.family ~= branch.end_vault_family or
+    if level.local_depth == branch.depth then
+        label = branch.abbreviation .. " end"
+    end
+
+    if not okay or selected.family ~= specification.family or
         #selected.places == 0 or
         not depth_rules.eligible({ depths = selected.places },
             level.branch_id, level.local_depth, branch.depth) then
-        error(label .. " needs a matching end vault")
+        error(label .. " needs a matching vault")
     end
 
     local selected_ids = {}
@@ -78,7 +146,15 @@ local function validate_end_vault(level, branch)
     end
 
     if not selected_ids[selected.id] then
-        error(label .. " needs its selected end vault in history")
+        error(label .. " needs its selected vault in history")
+    end
+
+    if selected.tags.dummy then
+        if not specification.allow_dummy then
+            error(label .. " does not permit a dummy")
+        end
+
+        return
     end
 
     if #selected.rows == 0 then
@@ -98,6 +174,8 @@ local function validate_end_vault(level, branch)
         hooks.run(selected, validator, level)
         return
     end
+
+    validate_subvault_history(level, selected, label)
 
     -- A required finale can be rune-free, as on Lair:5. mod.null is the
     -- catalog's absent-runes value and is not a Lua sequence.
@@ -135,7 +213,7 @@ local function validate_end_vault(level, branch)
             if id ~= selected.id then
                 local definition = catalog.get(id)
 
-                if definition.family == branch.end_vault_family and
+                if definition.family == specification.family and
                     definition.tags[tags.LAIR_END_SMALL] then
                     partners = partners + 1
                 end
@@ -175,9 +253,11 @@ function vaults.validate(ctx, input)
 
         local branch = register.get(categories.BRANCHES, level.branch_id)
 
-        if branch.end_vault_required and
-            level.local_depth == branch.depth then
-            validate_end_vault(level, branch)
+        local primary_spec = primary.specification(branch,
+            level.local_depth)
+
+        if primary_spec then
+            validate_primary_vault(level, branch, primary_spec)
         end
 
         if branch.end_layout_required and

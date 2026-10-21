@@ -2,6 +2,7 @@
 -- Entry and depth are catalog facts; generated levels and stair links are saved separately.
 
 local categories = require("constants.catalog")
+local families = require("constants.vault_families")
 
 local definition = {
     id = "BRANCH_SPIDER",
@@ -10,8 +11,12 @@ local definition = {
     min_depth = 2,
     max_depth = 3,
     depth = 4,
-    end_vault_family = "spider_end",
-    end_vault_required = true,
+    primary_vaults = {
+        {
+            depth = 4,
+            family = families.SPIDER_END,
+        },
+    },
     absolute_depth = 15,
     -- Source branch_ood_cap bounds depth requests from end-map MONS rules.
     ood_cap = 7,

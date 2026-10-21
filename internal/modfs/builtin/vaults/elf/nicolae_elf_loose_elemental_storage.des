@@ -1,0 +1,37 @@
+# nicolae_elf_loose_elemental_storage is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    nicolae_elf_loose_elemental_storage
+TAGS:    transparent no_trap_gen no_monster_gen no_item_gen
+DEPTH:   Elf
+KITEM:   P = staff of fire / randbook disc:fire / wand of flame \
+         / ring of fire / ring of protection from fire \
+         / any weapon ego:flaming / any armour ego:fire_resistance \
+         / scroll of immolation
+KITEM:   Q = staff of earth / randbook disc:earth / wand of digging \
+         /  ring of protection / tin of tremorstones \
+         / any weapon ego:protection / any weapon ego:vorpal
+KITEM:   R = staff of cold / randbook disc:ice / wand of iceblast \
+         / ring of ice / ring of protection from cold / phial of floods \
+         / any weapon ego:freezing / any armour ego:cold_resistance
+KITEM:   S = staff of air / randbook disc:air / ring of flight \
+         / ring of evasion / condenser vane / lightning rod \
+         / any weapon ego:electrocution
+KMONS:   1P = fire elemental
+KMONS:   2Q = earth elemental
+KMONS:   3R = water elemental
+KMONS:   4S = air elemental
+SHUFFLE: DE, FH, JKL, P1 / R3, Q2 / S4
+SUBST:   1 = 1., 2 = 2., 3 = 3., 4 = 4., DF = +, EHJ = m, KL = x
+MAP
+@...xxx...@
+.x++xxxDDx.
+.m111L222E.
+.m111K222E.
+xx11PJQ22xx
+xxJKLxLKJxx
+xx44SJR33xx
+.m444K333F.
+.m444L333F.
+.x++xxxHHx.
+@...xxx...@
+ENDMAP

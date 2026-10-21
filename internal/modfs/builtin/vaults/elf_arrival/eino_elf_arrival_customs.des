@@ -1,0 +1,21 @@
+# eino_elf_arrival_customs is an authored Elf:1 border check or source PLACE controller.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    eino_elf_arrival_customs
+ORIENT:  southwest
+PLACE:   Elf:1
+TAGS:    patrolling
+MONS:    deep elf pyromancer / deep elf zephyrmancer
+MONS:    deep elf pyromancer / deep elf zephyrmancer / nothing w:20
+MAP
+xxxxxxxxx
+x.+.....x
+x.x..x..x
+x.m.xxx.x
+x.x..x..x
+x.m1..1.x
+x.x.2x..x
+x.m1xxx.x
+x.x.1x..x
+x{m...2.+
+xxxxxxxxx
+ENDMAP

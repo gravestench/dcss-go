@@ -1,0 +1,12 @@
+# A new Elf:3 ending joins the floor-primary weighted pool by discovery.
+NAME: modded_elf_finale
+PLACE: Elf:$
+WEIGHT: 3
+ORIENT: float
+MAP
+xxxxxxx
+x.....x
+x..+..x
+x.....x
+xxxxxxx
+ENDMAP

@@ -3,7 +3,7 @@
 local branches = require("ids.branches")
 local categories = require("constants.catalog")
 local entry = require("policy.generation.vaults.branch_entry")
-local endings = require("policy.generation.vaults.end")
+local endings = require("policy.generation.vaults.primary")
 local extra = require("policy.generation.vaults.extra")
 local effects = require("constants.vault_effects")
 local directives = require("constants.vault_directives")
@@ -109,7 +109,7 @@ local function selection_contract()
         depth = 5,
         branch_bottom = 5,
         absolute_depth = 14,
-        end_vault_family = families.LAIR_END,
+        primary_vault_family = families.LAIR_END,
     })
 
     harness.equal(#last_floor, 14, "mandatory Lair:5 ending pool")
@@ -245,8 +245,8 @@ local function ending_context(id)
         depth = player.depth,
         branch_bottom = player.branch_bottom,
         absolute_depth = player.absolute_depth,
-        end_vault_family = families.LAIR_END,
-        end_choice = { id = id },
+        primary_vault_family = families.LAIR_END,
+        primary_choice = { id = id },
         protected = {},
         required = {},
         player = player,

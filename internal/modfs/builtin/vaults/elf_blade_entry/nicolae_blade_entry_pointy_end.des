@@ -1,0 +1,23 @@
+# nicolae_blade_entry_pointy_end is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME: nicolae_blade_entry_pointy_end
+TAGS: elf_blade_entry no_monster_gen unrand
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+NSUBST: 1 = 2:1 / *:.
+MAP
+      =
+vvvvvx-xvvvvv
+v1vvvx-xvvv1v
+v...vx-xv...v
+vv.........vv
+ v.1.....1.v
+ vv.......vv
+  v.......v
+  vv.1.1.vv
+   v.....v
+   vv...vv
+    v...v
+    vv.vv
+     v.v
+ENDMAP

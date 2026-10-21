@@ -1,0 +1,26 @@
+# nicolae_blade_entry_sentries_behind_glass is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME: nicolae_blade_entry_sentries_behind_glass
+TAGS: elf_blade_entry no_monster_gen unrand
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+SUBST: 1 = 1..
+KMONS: 2 = dancing weapon
+FTILE: 2m = floor_vault
+COLOUR: 2 = lightgrey
+MAP
+      =
+cccc2m-m2cccc
+c.-mmm-mmm-.c
+c.---------.c
+c...1.c.1...c
+..c.......c..
+.ccc.....ccc.
+..c...c...c..
+.....ccc.....
+ .1.ccccc.1.
+ ....ccc....
+  ....c....
+   .......
+     ...
+ENDMAP

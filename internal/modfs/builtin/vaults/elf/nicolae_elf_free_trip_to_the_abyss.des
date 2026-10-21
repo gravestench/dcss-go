@@ -1,0 +1,26 @@
+# nicolae_elf_free_trip_to_the_abyss is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  nicolae_elf_free_trip_to_the_abyss
+TAGS:  transparent
+DEPTH: Elf
+MONS:  chaos spawn / nothing
+MONS:  patrolling dancing weapon ; short sword ego:distortion \
+           | falchion ego:distortion | hand axe ego:distortion \
+           | whip ego:distortion | spear ego:distortion
+MONS:  deep elf sorcerer / deep elf demonologist
+KFEAT: E = enter_abyss
+KFEAT: - = x
+FTILE: DE'- = floor_nerves
+TILE:  - = wall_abyss
+MAP
+   ...x
+   ....x
+  ...11.x
+....1'''-x
+...1'''2-x
+..1'''''-x
+x.1'''3--x
+ x.'2'--xx
+  x----xx
+   xxxxx
+ENDMAP

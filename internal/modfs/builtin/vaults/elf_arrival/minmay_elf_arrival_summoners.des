@@ -1,0 +1,22 @@
+# minmay_elf_arrival_summoners is an authored Elf:1 border check or source PLACE controller.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   minmay_elf_arrival_summoners
+TAGS:   patrolling
+ORIENT: float
+PLACE:  Elf:1
+MONS:   deep elf pyromancer / deep elf zephyrmancer
+KFEAT:  m = iron_grate
+MAP
+  xxxxxxx
+  x.....x
+  x.({[.x
+xxx.....xxx
++1m.....m1+
+xxx.....xxx
++1m.....m1+
+xxx.....xxx
++1m.....m1+
+xxx.....xxx
+  x.....x
+  x@...@x
+ENDMAP

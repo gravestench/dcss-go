@@ -94,7 +94,7 @@ local function themed_spells(ctx, request)
     local count = request.numspells or source.average(ctx, 4, 3) + 2
     local first = request.disc or
         school_order[ctx:random(streams.ITEM_GENERATION, #school_order) + 1]
-    local second = request.disc or
+    local second = request.disc2 or request.disc or
         school_order[ctx:random(streams.ITEM_GENERATION, #school_order) + 1]
     local spells = {}
     local used = {}

@@ -1,0 +1,24 @@
+# grunt_blade_entry_basic is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:     grunt_blade_entry_basic
+TAGS: elf_blade_entry no_monster_gen unrand
+TAGS:     no_item_gen
+NSUBST:   1 = 2:1 / *:.
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+MAP
+      =
+....c---c....
+....c...c....
+..ccc...ccc..
+..c.......c..
+..c.1...1.c..
+..c.......c..
+..+.......+..
+..c.......c..
+..c.1...1.c..
+..c.......c..
+..cccc+cccc..
+.............
+.............
+ENDMAP

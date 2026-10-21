@@ -1,0 +1,30 @@
+# minmay_elf_blademastery is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    minmay_elf_blademastery
+DEPTH:   Elf:$
+ORIENT:  float
+MONS:    deep elf knight / nothing
+MONS:    deep elf blademaster
+MONS:    training dummy tile:mons_training_dummy
+KITEM:   d = long sword, long sword / nothing, \
+             long sword / nothing, long sword / nothing
+KITEM:   e = falchion, falchion / nothing, \
+             falchion / nothing, falchion / nothing
+KITEM:   f = scimitar, scimitar / nothing, \
+             scimitar / nothing, scimitar / nothing
+KITEM:   g = rapier, rapier / nothing, \
+             rapier / nothing, rapier / nothing
+SHUFFLE: defg
+MAP
+xxxxxxxxxx+xxx
+x.1..........+
+x3..31.31....x
+x............x
+x..........2.x
+x3.13..3.....x
+x1.....1...x+x
+x..........xdx
+x31.31.3...xex
+x.......1..xfx
+xxxxxxxxxx+xxx
+ENDMAP

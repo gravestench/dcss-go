@@ -1,0 +1,33 @@
+# nicolae_elf_theology_debate is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  nicolae_elf_theology_debate
+TAGS:  transparent
+DEPTH: Elf
+MONS:  orc knight
+MONS:  deep elf knight
+: vault.run("configure")
+# Source Lua: : if crawl.coinflip() then
+# Source Lua: KMONS: 3 = orc high priest
+# Source Lua: KMONS: 4 = deep elf high priest
+# Source Lua: KFEAT: 4 = altar_vehumet / altar_makhleb / altar_sif_muna
+# Source Lua: : else
+# Source Lua: KMONS: 3 = orc sorcerer
+# Source Lua: KMONS: 4 = deep elf sorcerer
+# Source Lua: KFEAT: 4 = altar_lugonu
+# Source Lua: : end
+KFEAT: 3 = altar_beogh
+SUBST: % = %%*, * = **|, S = 12, 1 = 11., 2 = 22.
+MAP
+xxxxxxxxxxxxxxxxx
+xx...xx...xx...xx
+x..2....S....1..x
+x.2G2..SGS..1G1.x
+x..2....S....1..x
+xx...xx+++xx...xx
+xx.2.xx...xx.1.xx
+xU...Ux.S.xI...Ix
+x..4..xS.Sx..3..x
+xU...Ux...xI...Ix
+xx%*%xx...xx%*%xx
+xxxxxxx@@@xxxxxxx
+ENDMAP

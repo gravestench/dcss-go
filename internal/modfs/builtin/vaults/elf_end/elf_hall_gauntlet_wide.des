@@ -1,0 +1,51 @@
+# elf_hall_gauntlet_wide is an authored Elf:3 final hall.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    elf_hall_gauntlet_wide
+TAGS: no_rotate
+TAGS:    nolayout_halls
+PLACE:   Elf:$
+ORIENT:  float
+TAGS:    no_pool_fixup
+# Source Lua: : elf_setup(_G)
+# Source Lua: : elf_monsters(_G)
+: vault.run("shared.elf_monsters")
+SHUFFLE: 345
+SUBST:   4=4., 2=2., 5=5., 3=3.
+KMONS:   $ = weight:115 nothing / deep elf annihilator
+KMONS:   * = weight:105 nothing / deep elf death mage
+KMONS:   | = weight:290 nothing / deep elf sorcerer
+KFEAT:   $ = $
+KFEAT:   * = *
+KFEAT:   | = |
+SUBST:   | = | *:2
+SUBST:   * = * |:3
+KMONS:   A = deep elf master archer
+KFEAT:   A = |
+KMONS:   B = deep elf blademaster
+KFEAT:   B = |
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xccccccccccccccccccccccccccx
+xc2ccccccc........cccccccccx
+xc.cccc2...5....5...2ccccccx
+xc.cc..................ccccx
+xc.c....3....45....3....c3cx
+xc.+........U..U........+.cx
+xc.c......2.2..2.2......c.cx
+xc.cc......3....4......cc.cx
+xc.ccc4cccccc..cccccc.cc..cx
+xc2ccc.c.3.ww..ww.4.ccc...cx
+xc.ccc..3..ww..ww..5......cx
+xc$$$ccc...ww..ww...ccccc.cx
+xc$$$ccc.1.ww..ww.5.ccccc.cx
+xc$$$cccccccc2.cccccc1262.cx
+xccc+cccccccc..cccccccccc.cx
+xcB*|*|**|*cc..cc$|$*$|$|.cx
+xc**|*|||||cc..cc|$|$*$*$.cx
+xc*|*|||**|cc..cc$*$*$*$|.cx
+xc|**|*|||Acc..ccA$|$|$|$2cx
+xccccccccccccWWccccccccccccx
+xccccccccccccWWccccccccccccx
+xccccccccccccWWccccccccccccx
+xxxxxxxxxxxxx@@xxxxxxxxxxxxx
+ENDMAP

@@ -13,6 +13,7 @@ local weapon_brands = require("constants.weapon_brands")
 local armour_egos = require("constants.armour_egos")
 local missile_brands = require("constants.missile_brands")
 local item_quality = require("constants.vault_item_quality")
+local manual_skill = require("policy.item_generation.manual_skill")
 local colours = require("constants.vault_colours")
 local monster_flags = require("constants.monster_flags")
 local schools = require("constants.spell_schools")
@@ -355,6 +356,11 @@ function resolve.validate_item(selected, site)
             "unknown book discipline " .. selected.disc)
     end
 
+    if not valid_discipline(selected.disc2) then
+        choice.fail(site, selected.source,
+            "unknown second book discipline " .. selected.disc2)
+    end
+
     if selected.no_spawn or random_item_names[name] or
         name == "randbook" or name == "any randbook" or
         name:match("^item_array_[1-8]$") then
@@ -367,6 +373,10 @@ function resolve.validate_item(selected, site)
     if base_name then
         named_corpse_species(base_name,
             name:match(" skeleton$") ~= nil, site)
+    elseif name:match("^manual of ") then
+        manual_skill.from_name(
+            name:sub(#"manual of " + 1), site)
+        return
     elseif named_artefact(name) then
         return
     else
@@ -584,10 +594,15 @@ function resolve.item(ctx, selected, depth, site)
         (selected.good_item and item_quality.GOOD) or
         item_quality.ORDINARY
     local generation_depth = selected.level or source_depth(selected, depth)
+    local manual_skill_id
     local request
 
     if name == "randbook" or name == "any randbook" then
         kind_id = item_ids.BOOK_RANDART_THEME
+    elseif name:match("^manual of ") then
+        kind_id = item_ids.BOOK_MANUAL
+        manual_skill_id = manual_skill.from_name(
+            name:sub(#"manual of " + 1), site)
     elseif random_item_names[name] then
         request = name
         local described = random_items.describe(name, generation_depth)
@@ -634,6 +649,8 @@ function resolve.item(ctx, selected, depth, site)
         request = request,
         generation_depth = generation_depth,
         disc = selected.disc,
+        disc2 = selected.disc2,
+        manual_skill_id = manual_skill_id,
         numspells = selected.numspells,
         slevels = selected.slevels,
         spells = selected.spells,

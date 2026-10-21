@@ -1,0 +1,51 @@
+# minmay_elf_hall_quartered_circle is an authored Elf:3 final hall.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    minmay_elf_hall_quartered_circle
+TAGS: no_rotate
+TAGS:    nolayout_halls
+PLACE:   Elf:$
+ORIENT:  northwest
+# Source Lua: : elf_setup(_G)
+# Source Lua: : elf_monsters(_G)
+: vault.run("shared.elf_monsters")
+SUBST:   1=11., 2=22., 3=33., 4=44., 5=543, 6=66., 7=77.
+SHUFFLE: 12, 34, 67
+# Source Lua: : elf_loot_defenders(_G)
+: vault.run("shared.elf_loot_defenders")
+# Source Lua: : elf_loot_randomisation(_G)
+: vault.run("shared.elf_loot_randomisation")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxcccccccccccxxxxxxxxxxx
+xxxxxxxxxccc*|*|+...1cccxxxxxxxxx
+xxxxxxxccc*$|*||c.....6cccxxxxxxx
+xxxxxxcc$*|*|cccc........ccxxxxxx
+xxxxxcc*|$|ccc*|c....3....ccxxxxx
+xxxxcc|$*ccc|$*$+......5...ccxxxx
+xxxcc$||cc*$*|$*c..6........ccxxx
+xxxc|$$cc*$**cccc............cxxx
+xxcc$*cc$**ccc1....3...U.....ccxx
+xxc$||c*|$cc.................2cxx
+xcc*|cc**cc...5bbb7.......4...ccx
+xc$|*c|**c..1bbbbbbb..........2cx
+xc|$cc*|cc..bbbbbbbbb..4.......cx
+xc*|c|**c..6bbbbbbbbb..........cx
+xc|*c$$|c..bbbbbbbbbbb..........@
+xc+ccc+cc6.bbbbbbbbbbb...1..3cccx
+xc..1......bbbbbbbbbbb......2cxxx
+xc..........bbbbbbbbb.......ccxxx
+xc.7..5....4bbbbbbbbb.......cxxxx
+xc...........bbbbbbb...5...1cxxxx
+xcc.5.........5bbb..3.......cxxxx
+xxc........2.............1.ccxxxx
+xxcc..3..U...........5....ccxxxxx
+xxxc........4.............cxxxxxx
+xxxcc.............5......ccxxxxxx
+xxxxcc.................cccxxxxxxx
+xxxxxcc......1........ccxxxxxxxxx
+xxxxxxcc3........3cccccxxxxxxxxxx
+xxxxxxxccc......cccxxxxxxxxxxxxxx
+xxxxxxxxxccc3...cxxxxxxxxxxxxxxxx
+xxxxxxxxxxxcccc.cxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxx@xxxxxxxxxxxxxxxxx
+ENDMAP

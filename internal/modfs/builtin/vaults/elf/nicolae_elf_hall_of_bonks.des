@@ -1,0 +1,25 @@
+# nicolae_elf_hall_of_bonks is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  nicolae_elf_hall_of_bonks
+TAGS:  transparent no_monster_gen
+DEPTH: Elf
+MONS:  dancing weapon ; whip | club | mace | flail | morningstar \
+           | demon whip | dire flail | eveningstar | great mace | giant club \
+           | giant spiked club | any magical staff | quarterstaff
+MONS:  dancing weapon ; morningstar good_item | demon whip good_item \
+           | dire flail good_item | eveningstar good_item \
+           | great mace good_item | giant club good_item \
+           | giant spiked club good_item | any magical staff good_item \
+           | quarterstaff good_item
+SUBST: 1 = 1. 2:1
+MAP
+  ccccccc
+ cc.....cc
+ c.1.1.1.c
+.=..1n1..c
+.=.1nnn2.c
+.=..1n1..c
+ c.1.1.1.c
+ cc.....cc
+  ccccccc
+ENDMAP

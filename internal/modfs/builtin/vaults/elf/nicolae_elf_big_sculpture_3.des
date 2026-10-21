@@ -1,0 +1,35 @@
+# nicolae_elf_big_sculpture_3 is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    nicolae_elf_big_sculpture_3
+TAGS:    transparent extra allow_dup luniq
+DEPTH:   Elf
+: vault.run("configure")
+# Source Lua: : if crawl.coinflip() then
+# Source Lua: SHUFFLE: bcegh
+# Source Lua: SUBST:   b = .
+# Source Lua: SHUFFLE: acdefghi
+# Source Lua: : else
+# Source Lua: SUBST:   f = v
+# Source Lua: SHUFFLE: abcdeghi
+# Source Lua: : end
+SUBST:   acd = v, b : .v, e : .v, f : .v, g : .v, h : .v, i : .v
+SUBST:   j : .v, v : vbcx
+MAP
+        .
+       ...
+      ..a..
+     ..bcb..
+    ..defed..
+   ....ghg....
+  ..d...i...d..
+ ..beg.....geb..
+..acfhi.j.ihfca..
+ ..beg.....geb..
+  ..d...i...d..
+   ....ghg....
+    ..defed..
+     ..bcb..
+      ..a..
+       ...
+        .
+ENDMAP

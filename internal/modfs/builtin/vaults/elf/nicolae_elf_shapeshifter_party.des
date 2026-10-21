@@ -1,0 +1,28 @@
+# nicolae_elf_shapeshifter_party is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   nicolae_elf_shapeshifter_party
+TAGS:   transparent patrolling no_monster_gen
+DEPTH:  Elf
+ITEM:   potion of mutation / potion of lignification / wand of polymorph \
+        / randbook disc:transmutation / any potion / any wand / randbook \
+        / any good_item w:30
+MONS:   shapeshifter / glowing shapeshifter w:5
+SUBST:  Z = x., z = ddFFx, E = Fx, . = 1 .:90
+MARKER: F = lua:fog_machine { cloud_type = "mutagenic fog", pow_min = 5, \
+        pow_max = 15, delay = 30, size = 1, walk_dist = 0, start_clouds = 0, \
+        spread_rate = 0, excl_rad = 0 }
+MAP
+    xxxxx
+   xxzdzxx
+  xxZ...Zxx
+ xxZ.....Zxx
+xxZ.......Zxx
+xZ....E....Zx
++....EEE....+
+xZ....E....Zx
+xxZ.......Zxx
+ xxZ.....Zxx
+  xxZ...Zxx
+   xxzdzxx
+    xxxxx
+ENDMAP

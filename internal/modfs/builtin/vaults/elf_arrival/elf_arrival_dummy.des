@@ -1,0 +1,10 @@
+# elf_arrival_dummy is an authored Elf:1 border check or source PLACE controller.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   elf_arrival_dummy
+TAGS:   dummy
+PLACE:  Elf:1
+WEIGHT: 50
+ORIENT: float
+MAP
+{
+ENDMAP

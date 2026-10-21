@@ -461,6 +461,8 @@ local function select_entities(record, vault, random, depth, player)
         arguments.request = resolved.request or ""
         arguments.generation_depth = resolved.generation_depth or 1
         arguments.disc = resolved.disc or ""
+        arguments.disc2 = resolved.disc2 or ""
+        arguments.manual_skill_id = resolved.manual_skill_id or ""
         arguments.numspells = resolved.numspells or 0
         arguments.slevels = resolved.slevels or 0
         arguments.owner = resolved.owner or ""

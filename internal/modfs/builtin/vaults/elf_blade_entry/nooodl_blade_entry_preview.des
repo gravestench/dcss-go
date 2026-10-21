@@ -1,0 +1,26 @@
+# nooodl_blade_entry_preview is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   nooodl_blade_entry_preview
+TAGS: elf_blade_entry no_monster_gen unrand
+TAGS:   no_item_gen
+SUBST:  C : cc.
+NSUBST: 1 = 2:1 / *:.
+FTILE:  . = floor_vault
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+MAP
+      =
+ xcC-----Ccx
+ xcC.c.c.Ccx
+ xcC.1.1.Ccx
+ xcC.....Ccx
+ xcC.c.c.Ccx
+ xcC.1.1.Ccx
+xxcC.....Ccxx
+ xcC.1.1.Ccx
+ xcC.c.c.Ccx
+ xcC.....Ccx
+ xcC.1.1.Ccx
+ xcC.c.c.Ccx
+ xcc.....ccx
+ENDMAP

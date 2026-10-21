@@ -1,0 +1,19 @@
+# nicolae_elf_arrival_dilemma is an authored Elf:1 border check or source PLACE controller.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   nicolae_elf_arrival_dilemma
+TAGS:   no_item_gen no_monster_gen patrolling transparent
+PLACE:  Elf:1
+WEIGHT: 5
+ORIENT: float
+MONS:   deep elf annihilator / deep elf sorcerer
+MONS:   deep elf pyromancer / deep elf zephyrmancer
+SUBST:  T : TG
+MAP
+xxxxxxxxxxxxxxxxx
+x..*..xxTxx.....x
+x..1..=...=..2..x
+=.....=.{.=.2%2.=
+x..1..=...=..2..x
+x..|..xxTxx.....x
+xxxxxxxxxxxxxxxxx
+ENDMAP

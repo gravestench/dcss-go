@@ -4,7 +4,7 @@ local quality = require("constants.vault_item_quality")
 local resolve = require("policy.generation.vaults.specs.resolve")
 local schools = require("constants.spell_schools")
 local sets = require("constants.item_sets")
-local skills = require("ids.skills")
+local manual_skill = require("policy.item_generation.manual_skill")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local armour_egos = require("constants.armour_egos")
@@ -45,19 +45,6 @@ local function unsupported(selected, site)
     error(string.format("%s:%d: vault %s: unsupported shop stock %s",
         site.path, site.line or 0, site.vault_id,
         selected.source))
-end
-
--- A manual request needs a trainable skill before item generation can materialize it.
-local function manual_skill(name, site)
-    local key = "SK_" .. name:upper():gsub("&", ""):gsub("[^%w]+", "_")
-    local id = skills[key]
-
-    if id then
-        return id
-    end
-
-    error(string.format("%s:%d: vault %s: unknown manual skill %s",
-        site.path, site.line or 0, site.vault_id, name))
 end
 
 -- DES stock accepts the displayed name, an apostrophe-free form, or the unrand ID suffix.
@@ -162,7 +149,7 @@ function stock_request.apply(ctx, request, selected, site)
         request.kind_id = item_ids.BOOK_MANUAL
     elseif selected.name:match("^manual of ") then
         request.kind_id = item_ids.BOOK_MANUAL
-        request.manual_skill_id = manual_skill(
+        request.manual_skill_id = manual_skill.from_name(
             selected.name:sub(#"manual of " + 1), site)
     else
         local artefact = unique_artefact(selected.name)

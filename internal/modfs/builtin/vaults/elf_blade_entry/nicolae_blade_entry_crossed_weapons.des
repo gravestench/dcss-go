@@ -1,0 +1,22 @@
+# nicolae_blade_entry_crossed_weapons is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  nicolae_blade_entry_crossed_weapons
+TAGS: elf_blade_entry no_monster_gen unrand
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+MAP
+      =
+v.v..---..v.v
+.v...v-v...v.
+v.v..vvv..v.v
+...v..c..v...
+....1.c.1....
+.vv...c...vv.
+..vcccccccv..
+.vv...c...vv.
+....1.c.1....
+...v..c..v...
+v.v..vvv..v.v
+.v...v.v...v.
+v.v.......v.v
+ENDMAP

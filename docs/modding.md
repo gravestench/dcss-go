@@ -2276,23 +2276,25 @@ different map. A new callback with a different spawn rule needs a matching
 origin and validation rule; simply calling `factory.spawn` creates a live
 actor but does not establish its save provenance.
 
-### Branch end vaults
+### Branch floor primary vaults
 
-A branch ending that fits inside an ordinary generated floor uses an end
-vault family. Lair, Orc, Snake, Swamp, Spider, and Shoals declare
-`end_vault_required = true` and name their matching `*_end` family in the
-branch file. The fourteen Lair, sixteen Orc, nine Snake, eleven Swamp,
-nine Spider, and 26 Shoals source
+A branch floor with one required authored map declares a `primary_vaults`
+entry in its `content/branches/` file. Each entry names its local `depth`
+and vault `family`; `allow_dummy = true` permits a weighted choice that
+leaves the procedural floor intact. Lair, Orc, Snake, Swamp, Spider, and
+Shoals declare one final-floor entry. Elf declares three entries, for its
+border check, Hall of Blades, and final hall. The fourteen Lair, sixteen
+Orc, nine Snake, eleven Swamp, nine Spider, and 26 Shoals source
 definitions live in matching `vaults/` subdirectories. Every file keeps
 its `NAME`, final-floor `PLACE` when it is a selectable ending, and its
 authored directives and MAP rows. Shoals also has four mapless controllers
 that select child maps through source tags.
 
-The end selector discovers all effective files in the declared family,
+The primary selector discovers all effective files in the declared family,
 sorts candidates by `NAME`, and makes a weighted draw before optional
 CHANCE, PLACE, and minivault stages. A geometric floor redraw keeps that
 same selected ending; it does not reroll the weighted pool. If no positive
-weight end map exists, the final-floor stair is unavailable rather than
+weight primary map exists, that floor's stair is unavailable rather than
 substituting an ordinary floor.
 
 To add an ending, put one source-format `.des` file at
@@ -2367,7 +2369,34 @@ emitting the `enter_elven_halls` feature. The floor then moves the one
 scheduled Elf stair link to that authored cell. Do not infer the gate from
 the current hardcoded branch depth; a mod may change the schedule.
 
-The successful end map becomes the floor's primary vault ID and remains in
+Elf uses the same hook lookup on three different primary floors. The Elf
+branch definition selects one `elf_arrival` map on Elf:1, one `elf_blades`
+map on Elf:2, and one `elf_end` map on Elf:3. Add a file under the matching
+`vaults/<family>/` directory with `PLACE: Elf:1`, `PLACE: Elf:2`, or
+`PLACE: Elf:$` to join that floor's weighted choice. The Elf:1 dummy is a
+real choice: it leaves the procedural floor and its ordinary return stair.
+Other arrival maps may author a `{` landing, which becomes the scheduled
+return to Orc. The Hall of Blades maps request tagged `elf_blade_entry`
+helpers through `SUBVAULT`; an added helper needs that tag and its own DES
+file, but no registration list.
+
+For a concrete Elf hook, `vaults/elf_blades/nicolae_elf_blades_crystal_corner.des`
+declares `: vault.run("shared.hall_of_blades_monsters")`. The resolver loads
+`policy/generation/vaults/elf_blades/shared.lua` and calls its
+`hall_of_blades_monsters(api)` method at that exact declaration position.
+The shared method emits the source monster slots and two separately chosen
+dancing weapons; the `.des` file still owns the map and its ordinary
+directives. A method named without `shared.`, such as
+`: vault.run("configure")`, resolves to a method in the Lua file named
+after that map's `NAME`. For example, the crystal corner's `configure(api)`
+method lives in `policy/generation/vaults/elf_blades/nicolae_elf_blades_crystal_corner.lua`.
+The original DCSS inline script is retained as nearby DES comments to
+explain why the hook is at that position; comments do not execute. See the
+vault hook table above for the timing of `run`, `validate`, and
+`post_place`, and the hook API table below for the available random draws
+and directive methods.
+
+The successful primary map becomes the floor's primary vault ID and remains in
 `vault_ids`. Its typed rune record is historical: picking up the ECS item
 does not erase it. Restore checks the selected map's family and `PLACE`
 rule, that ID in history, and exactly one matching rune record owned by the
@@ -2798,8 +2827,10 @@ population attaches both a live ECS status and a permanent marker to that
 monster. Ordinary AI, vision, and combat rules read the live status; its
 clock skips only the authored effect. Import the names from
 `constants.vault_monster_enchantments` in Lua code. The supported source
-names are `blind`, `confusion`, `corona`, `dumb`, `mad`, `mute`, `paralysis`,
-and `slow`; `dumb` follows paralysis and `mad` follows confusion. A magical
+names are `blind`, `confusion`, `corona`, `corrosion`, `dumb`, `mad`, `mute`,
+`paralysis`, and `slow`; `dumb` follows paralysis and `mad` follows
+confusion. The Elf defective-weapon vault retains source `corrosion` as a
+permanent status; its full equipment penalty is still a gameplay gap. A magical
 dispel removes the marker along with any status it removes, so a later
 temporary application still has a normal lifetime. The actor's marker is
 saved and checked against its selected `.des` expression on restore.

@@ -115,6 +115,9 @@ local function item_selection(record)
         request = arguments.request ~= "" and arguments.request or nil,
         generation_depth = arguments.generation_depth or 1,
         disc = arguments.disc ~= "" and arguments.disc or nil,
+        disc2 = arguments.disc2 ~= "" and arguments.disc2 or nil,
+        manual_skill_id = arguments.manual_skill_id ~= "" and
+            arguments.manual_skill_id or nil,
         numspells = arguments.numspells ~= 0 and arguments.numspells or nil,
         slevels = arguments.slevels ~= 0 and arguments.slevels or nil,
         spells = selected.spells,

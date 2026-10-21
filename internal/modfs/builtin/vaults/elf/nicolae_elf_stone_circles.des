@@ -1,0 +1,28 @@
+# nicolae_elf_stone_circles is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    nicolae_elf_stone_circles
+DEPTH:   Elf
+TAGS:    transparent extra allow_dup luniq
+SHUFFLE: za, bd
+SUBST:   a = A, b = B, zd = c
+SHUFFLE: AB, DEFG
+SUBST:   AD : +, BEFG = c, Z : GT. U:3, c : cx
+MAP
+      ccFcc
+    Ecc...ccG
+   cc.......cc
+  Dc.....cczacc
+ cc.....cc...ccc
+ cdbc..cc.....cc
+ccc.cccc.......cc
+cc...cc.........c
+A..Z..+....Z....B
+cc...cc.........c
+ccc.cccc.......cc
+ cdbc..cc.....cc
+ cc.....cc...ccc
+  Dc.....cczacc
+   cc.......cc
+    Ecc...ccG
+      ccFcc
+ENDMAP

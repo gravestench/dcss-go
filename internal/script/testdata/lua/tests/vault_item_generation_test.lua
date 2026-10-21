@@ -65,6 +65,24 @@ local function weighted_item_markers_keep_source_weights()
     harness.equal(options[3].weight, 5, "third marker source weight")
 end
 
+-- Elf's source book requests a mixed Conjurations/Summoning theme. Keep
+-- both schools so the generated book can draw from either spell pool.
+local function second_book_discipline_survives_request()
+    local site = {
+        path = "vaults/elf/minmay_elf_sorcery.des",
+        vault_id = "minmay_elf_sorcery",
+        line = 8,
+        directive = "KITEM",
+        glyph = "2",
+    }
+    local selected = item_specs.term(
+        "randbook disc:conjuration disc2:summoning slevels:16", site)
+    local resolved = resolve.item({}, selected, 16, site)
+
+    harness.equal(resolved.disc, "conjuration", "first book school")
+    harness.equal(resolved.disc2, "summoning", "second book school")
+end
+
 -- Source Snake requests specify jewellery class and sometimes its ring or
 -- amulet half. The later item roller must receive that class, not a name.
 local function jewellery_descriptors_preserve_class()
@@ -91,6 +109,7 @@ function test.run()
     jewellery_descriptors_preserve_class()
     source_good_item_keeps_quality()
     weighted_item_markers_keep_source_weights()
+    second_book_discipline_survives_request()
 end
 
 return test

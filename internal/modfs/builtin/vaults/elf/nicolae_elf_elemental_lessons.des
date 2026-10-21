@@ -1,0 +1,32 @@
+# nicolae_elf_elemental_lessons is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    nicolae_elf_elemental_lessons
+TAGS:    transparent
+DEPTH:   Elf
+KITEM:   P = randbook disc:fire slevels:5
+KITEM:   Q = randbook disc:earth slevels:5
+KITEM:   R = randbook disc:ice slevels:5
+KITEM:   S = randbook disc:air slevels:5
+MONS:    deep elf zephyrmancer / deep elf pyromancer
+MONS:    deep elf elementalist
+# A small chance of an elementalist transfer student:
+MONS:    spriggan air mage / deep troll earth mage / merfolk aquamancer \
+         / salamander tyrant
+KMONS:   P = fire elemental
+KMONS:   Q = earth elemental
+KMONS:   R = water elemental
+KMONS:   S = air elemental
+SHUFFLE: PQRS
+SUBST:   1 = 1. 3:2
+MAP
+    ..@..
+ccccnc+cncccc
+ccc.......ccc
+cP+.1.1.1.+Qc
+cnc..1.1..cnc
+@.n.1.1.1.n.@
+cnc..1.1..cnc
+cR+.......+Sc
+ccc...2...ccc
+ccccccccccccc
+ENDMAP

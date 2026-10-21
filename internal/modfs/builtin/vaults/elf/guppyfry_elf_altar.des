@@ -1,0 +1,24 @@
+# guppyfry_elf_altar is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  guppyfry_elf_altar
+DEPTH: Elf:2-
+MONS:  deep elf knight / deep elf archer / \
+       deep elf pyromancer / deep elf zephyrmancer
+MONS:  deep elf high priest
+SUBST: F = G:6 F:1
+KMONS: F = orange crystal statue / obsidian statue / ice statue
+SUBST: ? = .1$%*
+MAP
+xxxxxxxxxxx
+xC?1.m....+
+x??1Fm....+
+x112.m....x
+x.F..F..xxx
+x.........x
+x..F..F...x
+x.........x
+x...F..F..x
+x.........x
+x...T..T..x
+xxxxx++xxxx
+ENDMAP

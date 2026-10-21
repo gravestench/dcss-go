@@ -2,7 +2,7 @@
 -- bundled Orc family; no Go or Lua registry list needs a new entry.
 local branches = require("ids.branches")
 local entry = require("policy.generation.vaults.branch_entry")
-local endings = require("policy.generation.vaults.end")
+local endings = require("policy.generation.vaults.primary")
 local families = require("constants.vault_families")
 local harness = require("tests.harness")
 local regular = require("policy.generation.vaults.regular")
@@ -42,7 +42,7 @@ function test.run()
 
     context.depth = 2
     context.absolute_depth = 11
-    context.end_vault_family = families.ORC_END
+    context.primary_vault_family = families.ORC_END
 
     local found_end = false
 

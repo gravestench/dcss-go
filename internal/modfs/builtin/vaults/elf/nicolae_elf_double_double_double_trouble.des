@@ -1,0 +1,24 @@
+# nicolae_elf_double_double_double_trouble is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  nicolae_elf_double_double_double_trouble
+TAGS:  transparent
+DEPTH: Elf
+KMASK: 1*%- = opaque
+KMASK: = = opaque
+KMASK: 1*%- = no_monster_gen
+# Each blademaster has one good_item or randart double sword.
+KMONS: 1 = deep elf blademaster ; double sword good_item \
+               | double sword randart  . double sword
+KFEAT: 1 = T
+MAP
+cccccc
+c*%--c..@
+c%1--c.T.
+c----=...
+c---===ccc
+ccc===---c
+ ...=----c
+ .T.c--1%c
+ @..c--%*c
+    cccccc
+ENDMAP

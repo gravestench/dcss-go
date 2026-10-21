@@ -38,6 +38,8 @@ local function request_from(resolved, level_id, origin)
         quantity = resolved.quantity,
         base_id = resolved.base_id,
         disc = resolved.disc,
+        disc2 = resolved.disc2,
+        manual_skill_id = resolved.manual_skill_id,
         numspells = resolved.numspells,
         slevels = resolved.slevels,
         included_spells = resolved.spells,

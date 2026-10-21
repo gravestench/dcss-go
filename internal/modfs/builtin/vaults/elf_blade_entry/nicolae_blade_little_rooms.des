@@ -1,0 +1,28 @@
+# nicolae_blade_little_rooms is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    nicolae_blade_little_rooms
+TAGS: elf_blade_entry no_monster_gen unrand
+KMONS:   2 = patrolling dancing weapon ; dagger good_item \
+         | mundane falchion w:6
+SHUFFLE: EFH
+SUBST:   1 = 1--, 2 = 2.., D : xxm, EF : x, H : xmm
+FTILE:   1m = floor_vault
+COLOUR:  1m = lightgrey
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+MAP
+      =
+xxxxx...xxxxx
+x-1-D.2.D-1-x
+x---D...D---x
+x+x+x+x+x+x+x
+x.E---F---E.x
+x.E-1-F-1-E.x
+x2xHHHxHHHx2x
+x.E-1-F-1-E.x
+x.E---F---E.x
+x+x+x+x+x+x+x
+x---D...D---x
+x-1-D.2.D-1-x
+xxxxx...xxxxx
+ENDMAP

@@ -1,0 +1,22 @@
+# hangedman_elf_targetted_burst is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    hangedman_elf_targetted_burst
+TAGS:    transparent extra
+DEPTH:   Elf
+SUBST:   x : xxc, Y : yycvb, y : xxcbv, z : cbv, Z = cbvwl
+MAP
+        x
+   .x...y...x
+   ..Y.xxx.Y.
+   ...x...x..
+   ..x.....x.
+  xxyx..Z..xyx
+ ....x.....x.
+ .....z...x..
+ ...xz.xxx.Y.
+ ...zx..y...x
+..xz....x....
+..zx....x
+xz......
+zx..
+ENDMAP

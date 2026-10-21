@@ -1,0 +1,21 @@
+# elf_arrival_002 is an authored Elf:1 border check or source PLACE controller.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    elf_arrival_002
+PLACE:   Elf:1
+ORIENT:  south
+TAGS:    patrolling
+MONS:    deep elf pyromancer / deep elf zephyrmancer
+MAP
+xxxxx@xxx@xxx@xxxxx
+xxxx...........xxxx
+xx....G..1..G....xx
+x...1.........1...x
+x.G.............G.x
+x.................x
+x.......G.G.......x
+x........[........x
+x.....G.....G.....x
+xx.1.....{.....1.xx
+xxxx...........xxxx
+xxxxxxxxxxxxxxxxxxx
+ENDMAP

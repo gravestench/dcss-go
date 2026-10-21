@@ -1,7 +1,7 @@
 -- A new effective DES path joins the Spider end pool in stable NAME order.
 -- No branch edit or special Go loader path is needed for a sparse mod.
 local branches = require("ids.branches")
-local end_vault = require("policy.generation.vaults.end")
+local end_vault = require("policy.generation.vaults.primary")
 local harness = require("tests.harness")
 
 local test = {}
@@ -13,7 +13,7 @@ function test.run()
         depth = 4,
         branch_bottom = 4,
         absolute_depth = 18,
-        end_vault_family = "spider_end",
+        primary_vault_family = "spider_end",
     }
     local candidates = end_vault.candidates(context)
     local random = {}

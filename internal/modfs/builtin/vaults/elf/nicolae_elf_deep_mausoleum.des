@@ -1,0 +1,32 @@
+# nicolae_elf_deep_mausoleum is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  nicolae_elf_deep_mausoleum
+TAGS:  transparent patrolling no_monster_gen
+DEPTH: Elf
+KITEM: S = large rock q:1 / stone
+KITEM: % = % / * w:5
+KITEM: * = * / | w:5
+KMONS: 1 = deep elf death mage
+KMONS: V = deep elf death mage / nothing
+KMONS: 2 = flayed ghost / shadow wraith / phantasmal warrior / curse skull / \
+           eidolon / ghoul / skeletal warrior / ancient champion / \
+           vampire / vampire mage / vampire knight / jiangshi
+KMONS: 3 = lost soul / flying skull / spectral deep elf blademaster / \
+           deep elf blademaster simulacrum / spectral deep elf knight / \
+           deep elf knight simulacrum
+KFEAT: 1V = V
+SUBST: 2 = 22., 3 = 33., D = 32., G = G:90 S
+TILE:  G = dngn_gravestone
+# Source Lua: : set_feature_name("granite_statue", "a gravestone")
+: vault.run("rename_gravestone")
+MAP
+cccccccccccccccccccccc
+ccccG*GcccG%GcccG%Gccc
+ccc.2.2.c.D.D.c.3.3.cc
+ccG2...2GD...DG3...3Gc
+cc*..1.....V.....V...+
+ccG2...2GD...DG3...3Gc
+ccc.2.2.c.D.D.c.3.3.cc
+ccccG*GcccG%GcccG%Gccc
+cccccccccccccccccccccc
+ENDMAP

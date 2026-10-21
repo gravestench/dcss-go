@@ -1,0 +1,18 @@
+# minmay_elf_archery is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   minmay_elf_archery
+DEPTH:  Elf:2-
+ORIENT: float
+MONS:   deep elf archer / nothing, deep elf master archer
+MONS:   training dummy tile:mons_training_dummy
+MAP
+x+xxxxxxxxxxxxxx
+x...1.........%x
+x.1....1......3x
+.....1.........x
+@2............3x
+...1...........x
+x1....1.......3x
+x...1.........%x
+x+xxxxxxxxxxxxxx
+ENDMAP

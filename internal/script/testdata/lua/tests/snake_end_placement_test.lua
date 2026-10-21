@@ -135,7 +135,7 @@ function test.run()
         depth = 4,
         branch_bottom = 4,
         absolute_depth = 18,
-        end_vault_family = "snake_end",
+        primary_vault_family = "snake_end",
         layout_family = "rooms",
         protected = {},
         required = {},

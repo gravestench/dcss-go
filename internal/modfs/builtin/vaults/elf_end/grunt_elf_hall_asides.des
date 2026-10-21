@@ -1,0 +1,60 @@
+# grunt_elf_hall_asides is an authored Elf:3 final hall.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   grunt_elf_hall_asides
+TAGS: no_rotate
+TAGS:   nolayout_halls
+PLACE:  Elf:$
+ORIENT: northeast
+# Source Lua: : elf_setup(_G)
+# Source Lua: : elf_monsters(_G)
+: vault.run("shared.elf_monsters")
+SUBST:   1=1., 2=2., 3=3., 4=4., 5=5.
+SHUFFLE: 23, 45, 67
+SHUFFLE: AB, CD, EFGH, IJKL, MNOP
+SUBST:   ACEFIJ = ., BDGH = c, KLP = b, MNO = $
+# Source Lua: : elf_loot_defenders(_G)
+: vault.run("shared.elf_loot_defenders")
+# Source Lua: : elf_loot_randomisation(_G)
+: vault.run("shared.elf_loot_randomisation")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxcccccxxxxxxxxxxx
+xxxxxxxxcc|*|ccxxxxxxxxxx
+xxxxxxxcc|*|*|ccxxxxxxxxx
+xxxxxxccO*|*|*Pccxxxxxxxx
+xxxxxccOOO*|*PPPccxxxxxxx
+xxxxcc|*OOO*PPP*|ccxxxxxx
+xxxxc|*|*OObPP*|*|cxxxxxx
+xxxxc*|*|*bbb*|*|*cxxxxxx
+xxxxc|*|*MMbNN*|*|cxxxxxx
+xxxxcc|*MMM.NNN*|ccxxxxxx
+xxxxxccMMM3U2NNNccxxxxxxx
+xxxxxxccM.4L5.Nccxxxxxxxx
+xxxxxccH2.KbK.3Gccxxxxxxx
+xxxxccHH..5L4..GGccxxxxxx
+xxxccHH.3..1..2.GGccxxxxx
+xxcc...7.HH|GG.6...ccxxxx
+xcc.....HHbbbGG.....ccxxx
+xc3.5J4.HbbbbbG.5J4.2cxxx
+xcU.IbI1|bbbbb|1IbI.Ucxxx
+xc2.3J2.EbbbbbF.3J2.3cxxx
+xcc.....EEbbbFF.....ccxxx
+xxcc...6.EE|FF.7...ccxxxx
+xxxccEE.3..1..2.FFccxxxxx
+xxxxccEE..4L5..FFccxxxxxx
+xxxxxccE..KbK..Fccxxxxxxx
+xxxxxxcc..5L4..ccxxxxxxxx
+xxxxxcc.2.....3.ccxxxxxxx
+xxxxcc...CC.DD...ccxxxxxx
+xxxxc.3.CCC2DDD.2.cxxxxxx
+xxxxc4.CCC3.5DDD.5cxxxxxx
+xxxxc.CCC..4..DDD.cxxxxxx
+xxxxccCC...c...DDccxxxxxx
+xxxxxcc.3.ccc.2.ccxxxxxxx
+xxxxxxcc.AAcBB.ccxxxxxxxx
+xxxxxxxccAA.BBccxxxxxxxxx
+xxxxxxxxcc...ccxxxxxxxxxx
+xxxxxxxxxcc@ccxxxxxxxxxxx
+ENDMAP

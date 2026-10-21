@@ -1,0 +1,55 @@
+# nicolae_elf_blades_splatter_lattice is an authored Elf:2 Hall of Blades primary.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:     nicolae_elf_blades_splatter_lattice
+TAGS:     no_item_gen no_monster_gen
+PLACE:    Elf:2
+ORIENT:   north
+# Source Lua: : hall_of_blades_monsters(_G)
+: vault.run("shared.hall_of_blades_monsters")
+KMONS:    E = dancing weapon
+SUBVAULT: D : elf_blade_entry
+# 1/4 chance each of the scalloped edges being 0/1/2/3 tiles around.
+SUBST:    P : Q-, Q : RR-, R : ccc-
+FTILE:    E- = floor_vault
+COLOUR:   E- = lightgrey
+SUBST:    - = .
+NSUBST:   . = 6=1 / 3=2 / 34 / 4=4 / 2=42 / 6=14...
+SHUFFLE:  MN
+SUBST:    D : x, M : b, N : cccb, v : vvvn
+CLEAR:    "
+MAP
+                             "
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xcccccccccccccccccccccccccccccccccccccccccccccccx
+xcRQP---MMM---PQRRQP---MMM---PQRRQP---MMM---PQRcx
+xcQP---v...v---PQQP---v...v---PQQP---v...v---PQcx
+xcP---v.....v---PP---v.....v---PP---v.....v---Pcx
+xc---v.......v------v.......v------v.......v---cx
+xc--v.5.......v----v.........v----v.........v--cx
+xc-v...........v--v...........v--v...........v-cx
+xcN.....2....4..NN.............NN.............Ncx
+xcN.............NN.............NN.............Ncx
+xc-v...........v--v...........v--v...........v-cxDDDDDDDDDDDDD
+xc--v.........v----v.........v----v.........v--cxDDDDDDDDDDDDD
+xc---v...4...v------v.......v------v.......v---cxDDDDDDDDDDDDD
+xcP---v.....v--------v.....v--------v.....v-E--cxDDDDDDDDDDDDD
+xcQP---v...v----------v...v----------v...v-----cxDDDDDDDDDDDDD
+xcRQP---MMM------------MMM------------MMM-------=DDDDDDDDDDDDD@
+xcRQP---MMM------------MMM------------MMM---E---DDDDDDDDDDDDDD@
+xcRQP---MMM------------MMM------------MMM-------=DDDDDDDDDDDDD@
+xcQP---v...v----------v...v----------v...v-----cxDDDDDDDDDDDDD
+xcP---v.....v--------v.....v--------v.....v-E--cxDDDDDDDDDDDDD
+xc---v...4...v------v.......v------v.......v---cxDDDDDDDDDDDDD
+xc--v.........v----v.........v----v.........v--cxDDDDDDDDDDDDD
+xc-v...........v--v...........v--v...........v-cxDDDDDDDDDDDDD
+xcN.............NN.............NN.............Ncx
+xcN.....2....4..NN.............NN.............Ncx
+xc-v...........v--v...........v--v...........v-cx
+xc--v.6.......v----v.........v----v.........v--cx
+xc---v.......v------v.......v------v.......v---cx
+xcP---v.....v---PP---v.....v---PP---v.....v---Pcx
+xcQP---v...v---PQQP---v...v---PQQP---v...v---PQcx
+xcRQP---MMM---PQRRQP---MMM---PQRRQP---MMM---PQRcx
+xcccccccccccccccccccccccccccccccccccccccccccccccx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

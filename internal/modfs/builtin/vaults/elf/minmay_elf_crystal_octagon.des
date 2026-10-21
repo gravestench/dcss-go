@@ -1,0 +1,27 @@
+# minmay_elf_crystal_octagon is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   minmay_elf_crystal_octagon
+DEPTH:  Elf
+ORIENT: float
+WEIGHT: 2
+MONS:   deep elf pyromancer w:15 / deep elf zephyrmancer w:15 / \
+        deep elf death mage / deep elf sorcerer / nothing w:100
+MAP
+     +bbbbb+
+    bb.....bb
+   bb..bb...bb
+  bb...1.1...bb
+ bb...bbbbb...bb
++b....b111b...1b+
+b...bb.1b1.bb...b
+b..1b11...11b1b.b
+b...b1b.U.b1b.b.b
+b.b1b11...11b1b.b
+b...bb.1b1.bb...b
++b....b111b....b+
+ bb...bbbbb...bb
+  bb1..1.1...bb
+   bb..b.b..bb
+    bb.....bb
+     +bbbbb+
+ENDMAP

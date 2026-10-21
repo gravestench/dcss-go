@@ -1,0 +1,62 @@
+# minmay_elf_hall_hex is an authored Elf:3 final hall.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    minmay_elf_hall_hex
+TAGS: no_rotate
+TAGS:    nolayout_halls
+PLACE:   Elf:$
+ORIENT:  northwest
+# Source Lua: : elf_setup(_G)
+# Source Lua: : elf_monsters(_G)
+: vault.run("shared.elf_monsters")
+SUBST:   1=11., 2=22., 3=33., 4=44., 5=543, 6=66., 7=77.
+SHUFFLE: 12, 34, 67
+# Source Lua: : elf_loot_defenders(_G)
+: vault.run("shared.elf_loot_defenders")
+SUBST:   v = v .:2
+SUBST:   v : xvb
+# Source Lua: : elf_loot_randomisation(_G)
+: vault.run("shared.elf_loot_randomisation")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxcccxxxxxxxxxxcccxxxxxxxxxxcccxxxxxx
+xxxxccc*cccxxxxxxccc.cccxxxxxxccc$cccxxxx
+xxxcc*****ccxxxxcc.....ccxxxxcc|$|$|ccxxx
+xccc**ccc$|cccccc....5..cccccc|$ccc$|cccx
+xc***ccccc$|$c.............c$|$ccccc$|$cx
+xc*ccccccccc|c.............c|ccccccccc|cx
+xc*ccccccccc$c..........2..c$ccccccccc$cx
+xc*|ccccccc$|+.....2U......+|$ccccccc||cx
+xc*ccccccccc$c.............c$ccccccccc$cx
+xc*ccccccccc|c..5.......3..c|ccccccccc|cx
+xc***ccccc$|$cccc.......cccc$|$ccccc$|$cx
+xccc**ccc$|ccc..cc..4..cc5.ccc|$ccc$|cccx
+xxxcc*****cc.....ccc.ccc....2cc|$|$|ccxxx
+xxxxccc*ccc....3.....7........ccc$cccxxxx
+xxxxxxccc........6..............cccxxxxxx
+xxxxxxxc.4.............2.........cxxxxxxx
+xxxxxxxc......2..............3...cxxxxxxx
+xxxxxxxc..........4.........2....cxxxxxxx
+xxxxxxxc...5......v...v..........cxxxxxxx
+xxxxxxxc.......3vvv...vvv3...6...cxxxxxxx
+xxxxxxxc.......vvvv...vvvv......4cxxxxxxx
+xxxxxxxc...3.vvvv.......vvvv3....cxxxxxxx
+xxxxxxxc...vvvvv.........vvvvv...cxxxxxxx
+xxxxxxxc...vvv.............vvv...cxxxxxxx
+xxxxxxxc..........1...12.........cxxxxxxx
+xxxxxxcc..6......................ccxxxxxx
+xxxxccc...........................cccxxxx
+xxxcc.......2...1ccc.ccc1...........ccxxx
+xccc............cc.....cc...3...2....cccx
+xc...2....4..3ccc.......ccc............cx
+xc...........cc...........cc.....5..2..cx
+xc.....v.....cc...........cc...4.v.....cx
+xc..5.vvv....cc...........cc....vvv....cx
+xc.....v.....cc...........cc.....v.5...cx
+xc3..7.....5.cc...........cc...........cx
+xc...........cc...........cc...2....6..cx
+xccc...2...cccccc.......cccccc...5...cccx
+xxxcc.....ccxxxxcc.....ccxxxxcc.....ccxxx
+xxxxccc.cccxxxxxxccc.cccxxxxxxccc.cccxxxx
+xxxxxxcccxxxxxxxxxxc.cxxxxxxxxxxcccxxxxxx
+xxxxxxxxxxxxxxxxxxxx@xxxxxxxxxxxxxxxxxxxx
+ENDMAP

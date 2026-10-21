@@ -1,0 +1,20 @@
+# minmay_elf_necromancy is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  minmay_elf_necromancy
+TAGS:  misc_elf_vault
+DEPTH: Elf
+MONS:  elf zombie w:4 / large abomination w:4 / \
+       necromancer w:3 / nothing
+KMONS: 2 = deep elf death mage
+KITEM: 2 = randbook disc:necromancy slevels:16
+MAP
+xxxxxxxxxxx
+xxx1..x112x
+xxx..1+111x
+x.1.1.xxxxx
++......1..x
+x..1.1....+
+x.Y.....xxx
+x11...1xxxx
+xxxxxxxxxxx
+ENDMAP

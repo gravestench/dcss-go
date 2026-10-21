@@ -1,0 +1,24 @@
+# nicolae_elf_vaults_five_recruitment_drive is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  nicolae_elf_vaults_five_recruitment_drive
+TAGS:  patrolling transparent no_item_gen no_monster_gen
+DEPTH: Elf
+KITEM: 2 = $ / % / nothing w:40
+KMONS: 1 = deep elf high priest / deep elf death mage / deep elf annihilator / \
+           deep elf demonologist / deep elf sorcerer
+KMONS: 2 = vault guard / nothing w:2
+KMONS: 3 = deep elf archer / deep elf pyromancer / deep elf zephyrmancer / \
+           deep elf knight / vault sentinel w:5
+MAP
+          x
+        xxxxx
+      xxx$x3xxx.@
+    xxx'2$x...+xx
+  xxx%''2'x.3...xxx
+xxxG*%1'2'+...3.3Gxxx
+  xxx%''2'x.3...xxx
+    xxx'2$x...+xx
+      xxx$x3xxx.@
+        xxxxx
+          x
+ENDMAP

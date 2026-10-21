@@ -1,0 +1,25 @@
+# guppyfry_elf_castle is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  guppyfry_elf_castle
+TAGS:  transparent
+DEPTH: Elf:2-
+MONS:  deep elf pyromancer w:5 / deep elf zephyrmancer w:5 / \
+       deep elf knight / deep elf archer
+MONS:  deep elf blademaster / deep elf death mage / deep elf sorcerer
+MONS:  plant
+SUBST: - = .%*3$
+SUBST: ? = .12$
+MAP
+..............
+.xxmxx..xxmxx.
+.x1-1x..x1*1x.
+.x.?.x..x.2.x.
+.xx.xx..xx.xx.
+.x...x..x...x.
+.x...x..x...x.
+.xxx+x++x+xxx.
+.x.2......?.x.
+.x.*1....1-.x.
+.xxmxx++xxmxx.
+..............
+ENDMAP

@@ -1,0 +1,24 @@
+# nicolae_elf_m_pinch is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   nicolae_elf_m_pinch
+TAGS:   transparent extra allow_dup luniq_pinch
+DEPTH:  Elf
+SUBST:  b : bc
+NSUBST: L = @ / ., R = @ / .
+MAP
+xxxxxxxxxxxxxxxxx
+xxxbbbxxxxxbbbxxx
+xxbb.bbxxxbb.bbxx
+xbb...bbxbb...bbx
+bb.....bbb.....bb
+b.......b.......b
+L...............R
+L...............R
+L...............R
+b.......b.......b
+bb.....bbb.....bb
+xbb...bbxbb...bbx
+xxbb.bbxxxbb.bbxx
+xxxbbbxxxxxbbbxxx
+xxxxxxxxxxxxxxxxx
+ENDMAP

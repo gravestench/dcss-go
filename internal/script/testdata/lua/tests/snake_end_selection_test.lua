@@ -3,7 +3,7 @@
 local branches = require("ids.branches")
 local categories = require("constants.catalog")
 local harness = require("tests.harness")
-local end_vault = require("policy.generation.vaults.end")
+local end_vault = require("policy.generation.vaults.primary")
 local availability = require("policy.generation.floor_availability")
 local used = require("policy.generation.vaults.used")
 
@@ -17,7 +17,7 @@ local function snake_context()
         depth = 4,
         branch_bottom = 4,
         absolute_depth = 18,
-        end_vault_family = "snake_end",
+        primary_vault_family = "snake_end",
     }
 end
 
@@ -101,7 +101,7 @@ function test.run()
     local retry_context = snake_context()
 
     retry_context.used = used.new({})
-    retry_context.end_choice = retry_choice
+    retry_context.primary_choice = retry_choice
 
     local retry_random = { draws = 0 }
 
@@ -141,9 +141,10 @@ function test.run()
     harness.equal(retry_random.draws, 1,
         "retry does not spend a second weighted draw")
 
-    harness.equal(branch.end_vault_family, "snake_end",
+    harness.equal(end_vault.specification(branch, branch.depth).family,
+        "snake_end",
         "Snake declares its end family")
-    harness.truthy(branch.end_vault_required,
+    harness.truthy(end_vault.specification(branch, branch.depth),
         "Snake requires its end encounter")
     harness.truthy(availability.can_build(branches.BRANCH_SNAKE, 4),
         "source end pool opens Snake:4")
@@ -157,7 +158,8 @@ function test.run()
 
         if category == categories.BRANCHES and
             id == branches.BRANCH_SNAKE then
-            definition.end_vault_family = "missing_end_family"
+            end_vault.specification(definition, definition.depth).family =
+                "missing_end_family"
         end
 
         return definition

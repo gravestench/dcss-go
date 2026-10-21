@@ -1,0 +1,30 @@
+# nicolae_elf_glassroom_feature is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    nicolae_elf_glassroom_feature
+TAGS:    transparent
+DEPTH:   Elf
+KFEAT:   O = any shop
+SHUFFLE: x_/m-
+SUBST:   S = GTOSSS
+: vault.run("configure")
+# Source Lua: : if you.depth() == 1 then
+# Source Lua: SUBST:   S = )}]
+# Source Lua: : elseif you.depth_fraction() < 1 then
+# Source Lua: SUBST:   S = (){}[]
+# Source Lua: : else
+# Source Lua: SUBST:   S = ({[
+# Source Lua: : end
+CLEAR:   _
+MAP
+---__.__---
+-mmxx.xxmm-
+-m.......m-
+_x..mxm..x_
+_x.m...m.x_
+...x.S.x...
+_x.m...m.x_
+_x..mxm..x_
+-m.......m-
+-mmxx.xxmm-
+---__.__---
+ENDMAP

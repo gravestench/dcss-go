@@ -1,0 +1,29 @@
+# minmay_elf_arrival_circle is an authored Elf:1 border check or source PLACE controller.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   minmay_elf_arrival_circle
+ORIENT: float
+PLACE:  Elf:1
+TAGS:   patrolling
+MONS:   deep elf pyromancer / deep elf zephyrmancer
+SUBST:  B : b.
+MAP
+       xx+xx
+    xxxx...xxxx
+   xx....1....xx
+  xx...........xx
+ xx.............xx
+ x...BbB...BbB...x
+ x...bbb...bbb...x
+xx...BbB...BbB...xx
+x.................x
++.1......{......1.+
+x.................x
+xx...BbB...BbB...xx
+ x...bbb...bbb...x
+ x...BbB...BbB...x
+ xx.............xx
+  xx...........xx
+   xx....1....xx
+    xxxx...xxxx
+       xx+xx
+ENDMAP

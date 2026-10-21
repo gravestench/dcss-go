@@ -1,0 +1,49 @@
+# grunt_elf_hall_spiral is an authored Elf:3 final hall.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   grunt_elf_hall_spiral
+TAGS: no_rotate
+PLACE:  Elf:$
+ORIENT: centre
+# Source Lua: : elf_setup(_G)
+# Source Lua: : elf_monsters(_G)
+: vault.run("shared.elf_monsters")
+SUBST:   1=1., 2=2., 3=3., 4=4., 5=5.
+SHUFFLE: 23, 45, 67
+# Source Lua: : elf_loot_defenders(_G)
+: vault.run("shared.elf_loot_defenders")
+# Source Lua: : elf_loot_randomisation(_G)
+: vault.run("shared.elf_loot_randomisation")
+MAP
+          xxxxc@cxxxxx
+        xxxcccc.cccccxxx
+      xxxccc........cccxxx
+     xxccc............cccxx
+    xxcc.....3.....2....ccxx
+   xxcc....2.....5...3...ccxx
+  xxcc.......bbb..........ccxx
+  xcc....3..bbb4..1........ccx
+ xxc.......bb$+..U..4.2.....cxx
+ xcc....2.bb*|b57.......3...ccx
+xxc..2....b|$$bbbbbbbbb......cxx
+xcc.....4.b$|*bb|*$|$|bb..2..ccx
+xc..3.....b|*bbb+bb*|$*bb.....cx
+xc.....1..b$bb|*$|bb*$|$bb.3..cx
+xc...5..U.b*b*$|*$|bbbb+bb....cc
+cc.......6b|+$|*$|*bbb5.4b.....@
+@.....b4.5bbb|*$|*$+|b6.......cc
+cc....bb+bbbb*$|*|$b*b.U..5...cx
+xc..3.bb$|$*bb$*|$bb$b..1.....cx
+xc.....bb*$|*bb+bbb*|b.....3..cx
+xcc..2..bb|$|$*|bb*|$b.4.....ccx
+xxc......bbbbbbbbb$$|b....2..cxx
+ xcc...3.......75b|*bb.2....ccx
+ xxc.....2.4..U..+$bb.......cxx
+  xcc........1..4bbb..3....ccx
+  xxcc..........bbb.......ccxx
+   xxcc...3...5.....2....ccxx
+    xxcc....2.....3.....ccxx
+     xxccc............cccxx
+      xxxccc........cccxxx
+        xxxccccc.ccccxxx
+          xxxxxx@xxxxx
+ENDMAP

@@ -1,14 +1,13 @@
--- Theory of operation: an encompass finale is the floor's main authored
--- feature. The generic layout pass may have already completed its missing
--- stairs or scheduled a branch entrance in that footprint. Move these
--- provisional stairs outside the fixed map before testing its fit.
+-- Theory of operation: a fixed primary vault is the floor's main authored
+-- feature. The generic layout may have completed stairs or a branch entrance
+-- in its footprint. Move those provisional stairs before testing its fit.
 local glyphs = require("constants.vault_glyphs")
 local grid = require("policy.generation.grid")
 
-local end_stairs = {}
+local primary_stairs = {}
 
--- The fixed encompass origin is centered by the same placement rule used
--- for DES MAPs. Transparent padding still belongs to its protected bounds.
+-- Match placement.preferred_origin for each fixed orientation. Transparent
+-- padding is included because placement protects the complete MAP rectangle.
 local function footprint(vault)
     local width = 0
 
@@ -18,9 +17,25 @@ local function footprint(vault)
 
     local height = #vault.rows
 
+    local left = math.floor((grid.width - width) / 2)
+    local top = math.floor((grid.height - height) / 2)
+    local side = vault.orientation
+
+    if side:find("west", 1, true) then
+        left = 2
+    elseif side:find("east", 1, true) then
+        left = grid.width - width - 2
+    end
+
+    if side:find("north", 1, true) then
+        top = 2
+    elseif side:find("south", 1, true) then
+        top = grid.height - height - 2
+    end
+
     return {
-        left = math.floor((grid.width - width) / 2),
-        top = math.floor((grid.height - height) / 2),
+        left = left,
+        top = top,
         width = width,
         height = height,
     }
@@ -74,13 +89,13 @@ local function relocate_point(builder, bounds, protected, point)
     local glyph = builder:cell(point.x, point.y)
 
     if not glyphs.up[glyph] and not glyphs.down[glyph] then
-        error("end vault provisional stair lost its source glyph")
+        error("primary vault provisional stair lost its source glyph")
     end
 
     local next_point = destination(builder, bounds, protected, point)
 
     if not next_point then
-        error("encompass end vault has no outside stair landing")
+        error("fixed primary vault has no outside stair landing")
     end
 
     protected[point.x .. ":" .. point.y] = nil
@@ -91,10 +106,10 @@ local function relocate_point(builder, bounds, protected, point)
     protected[point.x .. ":" .. point.y] = true
 end
 
--- Authored entrance maps have their own placed records, so only the
--- scheduler's temporary lone stairs can move with a whole-floor ending.
-function end_stairs.relocate(builder, vault, context)
-    if vault.orientation ~= "encompass" then
+-- Authored entrance maps have their own placed records. Only generated
+-- temporary stairs move with a fixed primary map; a floating map can retry.
+function primary_stairs.relocate(builder, vault, context)
+    if vault.orientation == "float" then
         return
     end
 
@@ -110,4 +125,4 @@ function end_stairs.relocate(builder, vault, context)
     end
 end
 
-return end_stairs
+return primary_stairs

@@ -1,0 +1,23 @@
+# nicolae_blade_entry_antechamber is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME: nicolae_blade_entry_antechamber
+TAGS: elf_blade_entry no_monster_gen unrand
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+NSUBST: A = 2:1 / *:.
+MAP
+      =
+xxxxx---xxxxx
+xxxxx---xxxxx
+xxxxx---xxxxx
+xxxx.....xxxx
+xx....A....xx
+x..A.....A..x
+x...xbmbx...x
+...xx...xx...
+.A.b.....b.A.
+...m..1..m...
+...b.....b...
+...xx...xx...
+@...xb+bx...@
+ENDMAP

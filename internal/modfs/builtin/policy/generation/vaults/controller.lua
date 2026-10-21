@@ -82,6 +82,7 @@ function controller.place_maps(api, tag, count, options)
     end
 
     local placed_count = 0
+    local placed_ids = {}
 
     options = options or {}
 
@@ -122,7 +123,7 @@ function controller.place_maps(api, tag, count, options)
             local selected = selection.choose_tag(api.builder, tag, child)
 
             if not selected then
-                return placed_count
+                return placed_count, placed_ids
             end
 
             local vault = catalog.get(selected.id)
@@ -132,6 +133,7 @@ function controller.place_maps(api, tag, count, options)
                 api.placed[#api.placed + 1] = map
                 api.context.used:add_map(vault, map)
                 placed_count = placed_count + 1
+                placed_ids[#placed_ids + 1] = vault.id
                 break
             end
 
@@ -139,7 +141,7 @@ function controller.place_maps(api, tag, count, options)
         end
     end
 
-    return placed_count
+    return placed_count, placed_ids
 end
 
 -- Preserve source whole-level tile choices as a saved, typed controller

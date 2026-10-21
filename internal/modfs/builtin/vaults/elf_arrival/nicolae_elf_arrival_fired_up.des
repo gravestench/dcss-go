@@ -1,0 +1,21 @@
+# nicolae_elf_arrival_fired_up is an authored Elf:1 border check or source PLACE controller.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   nicolae_elf_arrival_fired_up
+TAGS:   patrolling transparent
+PLACE:  Elf:1
+ORIENT: float
+KMONS:  12 = deep elf pyromancer
+KFEAT:  2 = T
+MAP
+        .@.
+bbbbbbbbnnnbb
+b...........b
+b..T..b..2..b
+b.....n.....n.
+b..{..n..1..+@
+b.....n.....n.
+b..T..b..2..b
+b...........b
+bbbbbbbbnnnbb
+        .@.
+ENDMAP

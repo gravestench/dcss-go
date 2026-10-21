@@ -15,6 +15,7 @@ local vault_effects = require("constants.vault_effects")
 local vault_features = require("constants.vault_features")
 local vault_rules = require("constants.vault_generation_rules")
 local vault_extra = require("policy.generation.vaults.extra")
+local vault_primary = require("policy.generation.vaults.primary")
 local branch_schedule = require("policy.generation.branch_schedule")
 local temple_plan = require("policy.generation.temple.plan")
 local branch_levels = require("policy.generation.branch_levels")
@@ -419,16 +420,51 @@ function generated.bind_authored_branch_links(builder, links, maps, protected)
     end
 end
 
+-- An Elf:1 border-check map has its own `{` arrival beside the guards.
+-- Remove the procedural branch up stair after the primary fits so the
+-- reciprocal Orc link lands at that authored entrance, not elsewhere.
+function generated.prefer_authored_branch_up(layout, maps, primary_id,
+    protected)
+    local authored
+
+    for _, map in ipairs(maps) do
+        if map.id == primary_id then
+            for _, exit in ipairs(map.exits or {}) do
+                if vault_glyphs.up[exit.source] then
+                    authored = exit
+                    break
+                end
+            end
+        end
+    end
+
+    if not authored then
+        return nil
+    end
+
+    for _, pair in ipairs(layout.stairs) do
+        local old = pair.up
+
+        if old and (old.x ~= authored.x or old.y ~= authored.y) then
+            layout.builder:set(old.x, old.y, ".")
+            protected[old.x .. ":" .. old.y] = nil
+        end
+    end
+
+    return authored
+end
+
 -- Generate one floor before pairing its stairs with neighboring floors.
 -- The arrival only belongs to D:1; supplemental vaults use actual depth.
 local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
-    chosen_schedule, temple, end_choice)
+    chosen_schedule, temple, primary_choice)
     if branch_id == branches.BRANCH_TEMPLE then
         return temple_floor.build(ctx, temple, player)
     end
 
     local branch = register.get("branches", branch_id)
     local bottom = branch.depth
+    local primary_spec = vault_primary.specification(branch, depth)
     local absolute_depth = branch.absolute_depth + depth - 1
 
     -- Source Dungeon stores zero as its branch offset, while item and
@@ -491,9 +527,10 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
             depth = depth,
             branch_bottom = bottom,
             absolute_depth = absolute_depth,
-            end_vault_family = branch.end_vault_required and
-                depth == bottom and branch.end_vault_family or nil,
-            end_choice = end_choice,
+            primary_vault_family = primary_spec and primary_spec.family,
+            primary_allow_dummy = primary_spec and
+                primary_spec.allow_dummy or false,
+            primary_choice = primary_choice,
             layout_family = layout_family(layout),
             branch_vault_family = branch.abbreviation:lower(),
             prior_vault_ids = prior_vault_ids,
@@ -519,6 +556,13 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
 
     generated.bind_authored_branch_links(layout.builder, branch_links,
         extra, protected)
+
+    local preferred_branch_up
+
+    if depth == 1 and branch_id ~= branches.BRANCH_DUNGEON then
+        preferred_branch_up = generated.prefer_authored_branch_up(
+            layout, extra, controller, protected)
+    end
 
     local records = {}
     local source_up = {}
@@ -572,14 +616,14 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
         arrival_vault = arrival_vault,
         extra = extra,
         controller = controller,
-        end_vault_id = branch.end_vault_required and
-            depth == bottom and controller or nil,
+        primary_vault_id = primary_spec and controller or nil,
         vault_ids = vault_ids,
         records = records,
         protected = protected,
         source_up = source_up,
         source_down = source_down,
         links = branch_links,
+        preferred_branch_up = preferred_branch_up,
     }
 end
 
@@ -589,27 +633,27 @@ end
 local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
     chosen_schedule, temple)
     local branch = register.get("branches", branch_id)
-    local required_end = branch.end_vault_required and depth == branch.depth
+    local primary_spec = vault_primary.specification(branch, depth)
 
-    if not required_end then
+    if not primary_spec then
         return build_floor_once(ctx, player, branch_id, depth,
             prior_vault_ids, chosen_schedule, temple)
     end
 
     local last_fit_error
-    local end_choice = {}
+    local primary_choice = {}
 
     for _ = 1, 32 do
         local okay, result = pcall(build_floor_once, ctx, player,
             branch_id, depth, prior_vault_ids, chosen_schedule,
-            temple, end_choice)
+            temple, primary_choice)
 
         if okay then
             return result
         end
 
         local failed_fit = tostring(result):find(
-            "end vault could not fit on base layout:", 1, true)
+            "primary vault could not fit on base layout:", 1, true)
         local invalid_rune = tostring(result):find(
             "end vault rejected rune selection:", 1, true)
 
@@ -621,7 +665,7 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
     end
 
     error(branch.abbreviation .. ":" .. depth ..
-        " could not fit an end vault after 32 layouts: " ..
+        " could not fit a primary vault after 32 layouts: " ..
         tostring(last_fit_error))
 end
 
@@ -674,7 +718,7 @@ local function level_record(ctx, floor)
         entry_y = entry.y,
         initial_monsters = floor.branch_id == branches.BRANCH_TEMPLE and
             0 or monster_count(ctx, floor.branch_id, floor.depth),
-        vault_id = floor.end_vault_id or floor.layout.primary_id or
+        vault_id = floor.primary_vault_id or floor.layout.primary_id or
             (arrival and arrival.id or floor.controller),
         vault_ids = floor.vault_ids,
         vault_records = #floor.records > 0 and floor.records or nil,

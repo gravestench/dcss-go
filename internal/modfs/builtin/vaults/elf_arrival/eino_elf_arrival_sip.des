@@ -1,0 +1,22 @@
+# eino_elf_arrival_sip is an authored Elf:1 border check or source PLACE controller.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   eino_elf_arrival_sip
+PLACE:  Elf:1
+ORIENT: south
+TAGS:   patrolling
+TAGS:   no_monster_gen
+KMONS:  Z = deep elf pyromancer / deep elf zephyrmancer / nothing
+KFEAT:  Z = W
+MAP
+ .........
+x..WWWWW..x
+xWWWZWZWWWx
+xWWZWZWZWWx
+xWWWWWWWWWx
+x..WWWWW..x
+x.........x
+x....[....x
+xx...{...xx
+xxx.....xxx
+xxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,24 @@
+# nicolae_elf_deep_friendship is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   nicolae_elf_deep_friendship
+TAGS:   transparent
+DEPTH:  Elf
+KMONS:  1 = deep troll earth mage
+KMONS:  2 = deep troll
+KMONS:  3 = deep elf knight
+SUBST:  % = *%%
+NSUBST: E = 1 / 1DDDD, D = 2=2 / 2=3 / 23..
+MAP
+     cccccccccccc
+     cbb......bbc
+     cb..E..D..bc
+cccccc....bb....ccccc
+cb%%..E..xxxx..D....c
+cb%%E...bxxxxb...D..+
+cb%%E...bxxxxb...D..+
+cb%%..E..xxxx..D....c
+cccccc....bb....ccccc
+     cb..E..D..bc
+     cbb......bbc
+     cccccccccccc
+ENDMAP

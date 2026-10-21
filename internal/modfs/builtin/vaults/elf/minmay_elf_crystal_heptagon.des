@@ -1,0 +1,28 @@
+# minmay_elf_crystal_heptagon is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   minmay_elf_crystal_heptagon
+TAGS:   misc_elf_vault
+DEPTH:  Elf
+ORIENT: float
+WEIGHT: 4
+MONS:   deep elf pyromancer w:15 / deep elf zephyrmancer w:15 / \
+        deep elf death mage / nothing w:70
+MAP
+    +bbbbbbb+
+   bb.......bb
+   b.........b
+  bb..bbbbb..bb
+ bb...b.1.b...bb
+bb...bb1.1bb...bb
++....b1.U.1b.1..+
+b.b1.b1.1.1b1bb.b
+b.bb1bb1.1bb.1b.b
+b1....bb.bb1....b
+bb..1.....11b..bb
+ b.bb1....bbb..b
+ b..b.1b11.....b
+ +b1...bbb....b+
+  bbb.......bbb
+    bbb...bbb
+      bb+bb
+ENDMAP

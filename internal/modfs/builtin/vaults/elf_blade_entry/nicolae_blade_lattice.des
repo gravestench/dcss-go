@@ -1,0 +1,23 @@
+# nicolae_blade_lattice is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  nicolae_blade_lattice
+TAGS: elf_blade_entry no_monster_gen unrand
+SUBST: 1 = 1., b : bbbc, v : vvvm
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+MAP
+      =
+...b.....b...
+.1v-v...v-v1.
+.v---v1v---v.
+b-----b-----b
+.v---v.v---v.
+..v-v...v-v..
+..1b..1..b1..
+..v-v...v-v..
+.v---v.v---v.
+b-----b-----b
+.v---v1v---v.
+.1v-v...v-v1.
+...b.....b...
+ENDMAP

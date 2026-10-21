@@ -1,0 +1,26 @@
+# nicolae_vaults_blade_armed_guards is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME: nicolae_vaults_blade_armed_guards
+TAGS: elf_blade_entry no_monster_gen unrand
+KMONS: 2 = deep elf knight ; battleaxe | broad axe | flail | glaive | great mace | \
+   halberd | hand axe | long sword | morningstar | scimitar | short sword | \
+   trident | war axe . chain mail | plate armour . \
+   kite shield | buckler w:20 | nothing w:60
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+MAP
+      =
+    xx-xx
+    x---x
+  xxx...xxx
+  x...c...x
+  x.c.c.c.x
+ ....2.2....
+...cc...cc...
+ ....2.2....
+  x.c.c.c.x
+  x...c...x
+  xxx...xxx
+     ...
+     ...
+ENDMAP

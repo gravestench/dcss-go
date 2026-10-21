@@ -1,0 +1,26 @@
+# hangedman_elf_represent is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    hangedman_elf_represent
+TAGS:    no_monster_gen misc_elf_vault transparent
+DEPTH:   Elf
+# Place two pairings of obvious descendents / ascendents.
+MONS:    deep elf pyromancer / deep elf zephyrmancer, deep elf sorcerer
+MONS:    deep elf pyromancer / deep elf zephyrmancer, deep elf high priest
+MONS:    deep elf annihilator, deep elf demonologist
+NSUBST:  1 = 2 = 111.. / 1:. / 2:1, 3 = 2 = 333.. / 1:. / 2:3
+SHUFFLE: 12 / 34 / 15 / 16
+SUBST:   ' : x., " : x., - : x++
+MAP
+xxxxxxxxxxx'........
+xxx%.xxxxxx'x.x.x.x.
+xx2..1xx1...x.x.x.x.
+x%.....-............
+x......+.."...xxxxxx
+xx1..1xx....3xx..xxx
+xxx..xx.....xx3..3xx
+xxxxxx1.."..+......x
+............-.....%x
+.x.x.x.x...3xx3..4xx
+.x.x.x.x'xxxxxx.%xxx
+........'xxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,24 @@
+# eino_elf_arrival_altar is an authored Elf:1 border check or source PLACE controller.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    eino_elf_arrival_altar
+TAGS:    patrolling
+ORIENT:  west
+PLACE:   Elf:1
+SHUFFLE: 12
+KFEAT:   C = altar_vehumet
+MONS:    deep elf pyromancer / deep elf zephyrmancer
+MAP
+xxxxxxxxxxxxxxxxxxxxxxx@@@xxxx
+xxxxxxxxxxxxx...xxxxxx.....xxx
+xxxxxxxxxxx.11x...xx.........x
+xxxxxxxxx...xxxxx.x..........x
+x...xxxxx.xxxxxxx.m..........x
+x.[.......xxxxxx....1..GmG...@
+x....xxxxxxxxxxx..m..C1mbm...@
+x.{.......xxxxxx....1..GmG...@
+x...xxxxx.xxxxxxx.m..........x
+xxxxxxxxx...xxxxx.x..........x
+xxxxxxxxxxx.11x...xx.........x
+xxxxxxxxxxxxx...xxxxxx.....xxx
+xxxxxxxxxxxxxxxxxxxxxxx@@@xxxx
+ENDMAP

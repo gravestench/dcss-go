@@ -1,0 +1,31 @@
+# nicolae_elf_blasts_and_bolts is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   nicolae_elf_blasts_and_bolts
+TAGS:   transparent
+DEPTH:  Elf
+MONS:   deep elf knight / deep elf pyromancer / deep elf zephyrmancer
+MONS:   deep elf annihilator, deep elf elementalist
+NSUBST: D = 2 / 3 / * = 1:60 .:60 1 2
+SUBST:  E = 1:140 .:140 1 2, % = %%%*.
+MAP
+ccc..............ccc
+ccc..cc..cc..cc..ccc
+ccc..cc..cc..cc..ccc
+...E......E.....E...
+....................
+.cc..xxx.D..xxx..cc.
+.cc..xxx....xxx..cc.
+.....xxxx%%xxxx.....
+.......xxxxxx.......
+.ccE...%xxxx%.D..cc.
+.cc..D.%xxxx%...Ecc.
+.......xxxxxx.......
+.....xxxx%%xxxx.....
+.cc..xxx....xxx..cc.
+.cc..xxx..D.xxx..cc.
+....................
+...E.....E......E...
+ccc..cc..cc..cc..ccc
+ccc..cc..cc..cc..ccc
+ccc..............ccc
+ENDMAP

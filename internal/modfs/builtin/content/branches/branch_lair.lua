@@ -32,8 +32,12 @@ local definition = {
     ood_cap = 12,
     -- Lair's fifth floor always has an authored source ending, even though
     -- it does not grant a rune. Small endings may add a paired second map.
-    end_vault_family = families.LAIR_END,
-    end_vault_required = true,
+    primary_vaults = {
+        {
+            depth = 5,
+            family = families.LAIR_END,
+        },
+    },
 }
 
 register.definition(categories.BRANCHES, definition)

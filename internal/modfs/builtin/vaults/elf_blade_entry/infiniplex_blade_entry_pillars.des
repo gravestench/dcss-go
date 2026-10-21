@@ -1,0 +1,24 @@
+# infiniplex_blade_entry_pillars is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:     infiniplex_blade_entry_pillars
+TAGS: elf_blade_entry no_monster_gen unrand
+SUBST:    y : x...
+SUBST:    1 = 1.
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+MAP
+      =
+   xy---yx
+   y..c..y
+.  ..1.1..  .
+....c...c....
+.  ..1.1..  .
+   y..c..y
+   xy...yx
+      .
+      .
+      .
+      .
+      .
+     ...
+ENDMAP

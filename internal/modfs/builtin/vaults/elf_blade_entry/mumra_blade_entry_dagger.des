@@ -1,0 +1,26 @@
+# mumra_blade_entry_dagger is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:     mumra_blade_entry_dagger
+TAGS: elf_blade_entry no_monster_gen unrand
+TAGS:     no_item_gen
+SUBST:    ' : ll.
+FTILE:    1 = floor_vault
+SUBST:    . : ..W, @ : @xx
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+MAP
+      =
+    xx-xx
+   xx'-'xx
+   xx'-'xx
+   xx'-'xx
+   x''-''x
+   x''-''x
+xxxx''-''xxxx
+.-----1-----.
+xx....-....xx
+xxxxx.-.xxxxx
+   xx.-.xx
+   xx.-.xx
+   xxx-xxx
+ENDMAP

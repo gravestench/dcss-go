@@ -1,0 +1,39 @@
+# elf_orc_summit_meeting is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:     elf_orc_summit_meeting
+TAGS:     misc_elf_vault
+DEPTH:    Elf:$
+SHUFFLE: 12 , 45
+NSUBST:  7= 1=7 / *= 7:1 .
+NSUBST:  6= 1=6 D:1 / *= 6 .:1
+SUBST:   3 = 3 .:1
+# the deep elf delegation:
+MONS:    deep elf blademaster / deep elf master archer
+MONS:    deep elf annihilator / deep elf sorcerer / deep elf death mage
+MONS:    deep elf knight w:5 / deep elf archer w:5 / \
+         w:1 deep elf high priest / w:1 deep elf demonologist
+# the orcish delegation:
+MONS:    orc warlord / iron troll / w:1 fire giant / w:1 frost giant / \
+         w:1 stone giant / w:1 ettin
+MONS:    orc sorcerer / orc high priest / w:5 ogre mage
+MONS:    orc knight / deep troll / w:1 orc sorcerer / w:1 orc high priest
+# the arbiter(s):
+MONS:    great orb of eyes / sphinx
+# The orcs might have a unique with them. He or she will likely be outclassed
+# by the others in attendance, but perhaps has some special testimony to
+# present. None of the uniques really fits in with the deep elves...
+KMONS:   D = Ijyb / Blork the orc / Urug / Erolcha / Snorg
+MAP
+     xxxx
+    xxGGxx
+ xxxx3776xxxx
+.GxT33..66TxG.
+.xxx3x..x6xxx.
+@+3+331466+6+@
+@+3+332566+6+@
+.xxx3x..x.xxx.
+.GxT33..66TxG.
+ xxxx3776xxxx
+    xxGGxx
+     xxxx
+ENDMAP

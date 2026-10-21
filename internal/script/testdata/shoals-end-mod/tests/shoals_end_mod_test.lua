@@ -1,7 +1,7 @@
 -- A new effective DES path joins Shoals' mandatory end pool in stable
 -- NAME order. A mod need not edit the branch or any Go registration table.
 local branches = require("ids.branches")
-local end_vault = require("policy.generation.vaults.end")
+local end_vault = require("policy.generation.vaults.primary")
 local harness = require("tests.harness")
 
 local test = {}
@@ -13,7 +13,7 @@ function test.run()
         depth = 4,
         branch_bottom = 4,
         absolute_depth = 18,
-        end_vault_family = "shoals_end",
+        primary_vault_family = "shoals_end",
     }
     local candidates = end_vault.candidates(context)
     local random = {}

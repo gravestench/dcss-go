@@ -4,6 +4,7 @@ local enchantments = {
     BLIND = "blind",
     CONFUSION = "confusion",
     CORONA = "corona",
+    CORROSION = "corrosion",
     DUMB = "dumb",
     MAD = "mad",
     MUTE = "mute",

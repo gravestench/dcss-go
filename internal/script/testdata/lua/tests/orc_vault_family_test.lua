@@ -4,7 +4,7 @@
 local branches = require("ids.branches")
 local categories = require("constants.catalog")
 local entry = require("policy.generation.vaults.branch_entry")
-local endings = require("policy.generation.vaults.end")
+local endings = require("policy.generation.vaults.primary")
 local effects = require("constants.vault_effects")
 local extra = require("policy.generation.vaults.extra")
 local features = require("constants.vault_features")
@@ -149,8 +149,8 @@ local function place_all_endings()
                 depth = player.depth,
                 branch_bottom = player.branch_bottom,
                 absolute_depth = player.absolute_depth,
-                end_vault_family = families.ORC_END,
-                end_choice = { id = id },
+                primary_vault_family = families.ORC_END,
+                primary_choice = { id = id },
                 protected = {},
                 required = {},
                 player = player,
@@ -293,8 +293,8 @@ local function pubby_full_floor_link()
         depth = player.depth,
         branch_bottom = player.branch_bottom,
         absolute_depth = player.absolute_depth,
-        end_vault_family = families.ORC_END,
-        end_choice = { id = "pubby_orc_utopia" },
+        primary_vault_family = families.ORC_END,
+        primary_choice = { id = "pubby_orc_utopia" },
         protected = protected,
         required = {},
         provisional_links = { link },
@@ -471,7 +471,7 @@ function test.run()
         depth = 2,
         branch_bottom = 2,
         absolute_depth = 11,
-        end_vault_family = families.ORC_END,
+        primary_vault_family = families.ORC_END,
     }
 
     harness.equal(#endings.candidates(end_context), 16,

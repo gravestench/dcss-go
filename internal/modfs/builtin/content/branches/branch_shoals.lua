@@ -2,6 +2,7 @@
 -- Entry and depth are catalog facts; generated levels and stair links are saved separately.
 
 local categories = require("constants.catalog")
+local families = require("constants.vault_families")
 
 local definition = {
     id = "BRANCH_SHOALS",
@@ -29,8 +30,12 @@ local definition = {
     runes = {
         "RUNE_SHOALS",
     },
-    end_vault_family = "shoals_end",
-    end_vault_required = true,
+    primary_vaults = {
+        {
+            depth = 4,
+            family = families.SHOALS_END,
+        },
+    },
     ambient_noise = "loud",
     mon_die_size_expr = "DEFAULT_MON_DIE_SIZE",
 }

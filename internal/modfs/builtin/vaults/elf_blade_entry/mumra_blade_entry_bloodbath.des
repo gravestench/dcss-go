@@ -1,0 +1,28 @@
+# mumra_blade_entry_bloodbath is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   mumra_blade_entry_bloodbath
+TAGS: elf_blade_entry no_monster_gen unrand
+TAGS:   no_item_gen
+SUBST:  d = ..', e = .'', f = .'''
+KPROP:  ' = bloody
+SUBST:  ' = ...'
+KITEM:  ' = short sword / long sword / morningstar / mace / \
+            scimitar / dagger / bardiche / battleaxe / war axe
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+MAP
+      =
+xx.1.x-xd1.xx
+x.d...xdd...x
+..dd..ded....
+..deeeeee..dd
+...eefffeeed.
+x..efffffee.x
+.xeeffGffe.x.
+xdeefffffe..x
+dddeefffeee..
+....eee.edd..
+....dd...dd..
+x...d.x...ddx
+xx..dx.x..dxx
+ENDMAP

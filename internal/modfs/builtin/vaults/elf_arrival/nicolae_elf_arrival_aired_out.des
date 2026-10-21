@@ -1,0 +1,21 @@
+# nicolae_elf_arrival_aired_out is an authored Elf:1 border check or source PLACE controller.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    nicolae_elf_arrival_aired_out
+TAGS:    patrolling transparent
+PLACE:   Elf:1
+ORIENT:  float
+MONS:    deep elf zephyrmancer / air elemental w:6 / nothing w:16
+SHUFFLE: DEFH / JKLM
+SUBST:   DM = m, E = {, F = T, H = +, JKL = .
+MAP
+          ..
+xxxxxxxxxxHHx
+x.ED..J.1D1.x
+x..D..J.1D1.x
+x.KJ..D.1J1.M.
+x.LJ..D.1J1.M.
+x..D..J.1D1.x
+x.FD..J.1D1.x
+xxxxxxxxxxHHx
+          ..
+ENDMAP

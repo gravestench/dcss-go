@@ -1,0 +1,25 @@
+# nicolae_elf_big_sculpture_2 is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    nicolae_elf_big_sculpture_2
+TAGS:    transparent extra allow_dup luniq
+DEPTH:   Elf
+SHUFFLE: mlk/mkl/nnn, abcdefghij
+SUBST:   ka = ., nbcd = v, e : .v, f : .v, g : .v, h : .v, i : .v, j : .v
+SUBST:   l : .v, m : .v, v : vbcx
+MAP
+  ...........
+  .abcd.dcba.
+....efg.gfe....
+.a...hi.ih...a.
+.be...j.j...eb.
+.cfh.......hfc.
+.dgij.klk.jigd.
+......lml......
+.dgij.klk.jigd.
+.cfh.......hfc.
+.be...j.j...eb.
+.a...hi.ih...a.
+....efg.gfe....
+  .abcd.dcba.
+  ...........
+ENDMAP

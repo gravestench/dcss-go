@@ -1,0 +1,25 @@
+# nicolae_elf_arrival_no_cutting_in_line is an authored Elf:1 border check or source PLACE controller.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   nicolae_elf_arrival_no_cutting_in_line
+TAGS:   patrolling
+PLACE:  Elf:1
+ORIENT: float
+MONS:   orc high priest / orc sorcerer
+MONS:   deep elf pyromancer / deep elf zephyrmancer
+NSUBST: 1 = 2=1 / 1..., 2 = 2=2 / 2...
+MAP
+x@@@xxxxxxxxxxx
+x.............x
+x.T.........T.x
+x.............x
+xxxxxmmmmmx...x
+x...x11.22x...x
+x....11.22....x
+x....11.22....x
+x...x11.22x...x
+x...xmmmmmxxxxx
+x.............x
+x.T.........{.x
+x.............x
+xxxxxxxxxxxxxxx
+ENDMAP

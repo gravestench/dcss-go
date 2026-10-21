@@ -1,0 +1,27 @@
+# minmay_elf_crystal_hexagon is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   minmay_elf_crystal_hexagon
+TAGS:   misc_elf_vault
+DEPTH:  Elf
+ORIENT: float
+WEIGHT: 6
+MONS:   deep elf zephyrmancer / deep elf pyromancer / nothing w:40
+MAP
+    +bbbbbbbbb+
+    b...1b1...b
+   bb...1b1...bb
+   b....bbbb...b
+  bb...bb.1....bb
+  b....b.1......b
+ bb....b...bb...bb
+bb.....b.1..bb...bb
++.......1.1..bb...+
+bb...bb1.U.1bb...bb
+ bb...bb1.1bb1..bb
+  b...1bb1bb....b
+  bb...1bbb....bb
+   b..1.1b1....b
+   bb.bbbb....bb
+    b.........b
+    +bbbbbbbbb+
+ENDMAP

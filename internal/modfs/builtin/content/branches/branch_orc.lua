@@ -28,8 +28,12 @@ local definition = {
     ambient_noise = "normal",
     mon_die_size_expr = "DEFAULT_MON_DIE_SIZE",
     -- Orc:2 is a required source ending, with shops instead of a rune.
-    end_vault_family = families.ORC_END,
-    end_vault_required = true,
+    primary_vaults = {
+        {
+            depth = 2,
+            family = families.ORC_END,
+        },
+    },
 }
 
 register.definition(categories.BRANCHES, definition)

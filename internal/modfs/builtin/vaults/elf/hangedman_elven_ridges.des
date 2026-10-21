@@ -1,0 +1,33 @@
+# hangedman_elven_ridges is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    hangedman_elven_ridges
+TAGS:    extra transparent
+DEPTH:   Elf
+MONS:    fungus
+SHUFFLE: ABCD, EF, GHIJKLMN
+SUBST:   A : x.., B : xx., CD = x, E : x.., F : x..
+SUBST:   G : xxx., H : xxx., I : x., J : x., K : x:1 .:9, L : x:1 .:9
+SUBST:   MN = ., c : c:16 b:2 v:1 1:1
+MAP
+   .cxBxc.
+   .H...G.
+   ...x......
+......x......
+cH..F.x.xxCxx
+x.......J...I
+A.xxx.c...x......
+x.........x......
+cG..xJ..E.x.xxDxx
+....x.......L...K
+  ..D.xxx.c...x..
+  ..x.........x......
+  ..xI..xL..F.x.xxAxc
+      ..x.......N...M
+      ..C.xxx.c...x..
+      ..x.........x.
+      ..xK..xN..E.x.
+          ..x.......
+          ..B.xxx.c.
+          ..x.......
+          ..cM.
+ENDMAP

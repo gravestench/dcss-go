@@ -3,7 +3,7 @@
 local branches = require("ids.branches")
 local categories = require("constants.catalog")
 local effects = require("constants.vault_effects")
-local end_vault = require("policy.generation.vaults.end")
+local end_vault = require("policy.generation.vaults.primary")
 local extra = require("policy.generation.vaults.extra")
 local availability = require("policy.generation.floor_availability")
 local grid = require("policy.generation.grid")
@@ -61,9 +61,10 @@ function test.run()
     local branch = register.get(categories.BRANCHES, branches.BRANCH_SPIDER)
     local count = 0
 
-    harness.equal(branch.end_vault_family, "spider_end",
+    harness.equal(end_vault.specification(branch, branch.depth).family,
+        "spider_end",
         "Spider declares its end family")
-    harness.truthy(branch.end_vault_required,
+    harness.truthy(end_vault.specification(branch, branch.depth),
         "Spider requires its authored ending")
     harness.truthy(availability.can_build(branches.BRANCH_SPIDER, 4),
         "source end pool opens Spider:4")
@@ -73,7 +74,7 @@ function test.run()
         depth = 4,
         branch_bottom = 4,
         absolute_depth = 18,
-        end_vault_family = "spider_end",
+        primary_vault_family = "spider_end",
     })
 
     harness.equal(#candidates, 9,

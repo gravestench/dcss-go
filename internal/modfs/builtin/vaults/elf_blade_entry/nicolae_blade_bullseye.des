@@ -1,0 +1,25 @@
+# nicolae_blade_bullseye is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  nicolae_blade_bullseye
+TAGS: elf_blade_entry no_monster_gen unrand
+TAGS:  no_item_gen
+KMONS: 2 = patrolling dancing weapon ; sling | shortbow | longbow w:5 | \
+           hand crossbow w:5 | arbalest | triple crossbow w:5
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+MAP
+      =
+xxxx-----xxxx
+xx---...---xx
+x--.......--x
+x-...---...-x
+--..--2--..--
+-..--...--..-
+-..-2.-.2-..-
+-..--...--..-
+--..--2--..--
+x-...---...-x
+x--.......--x
+xx---...---xx
+xxxx-----xxxx
+ENDMAP

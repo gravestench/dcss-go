@@ -1,0 +1,25 @@
+# nicolae_blade_entry_splitting_headache is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME: nicolae_blade_entry_splitting_headache
+TAGS: elf_blade_entry no_monster_gen unrand
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+SHUFFLE: AB, CD
+NSUBST: I = 2:1 / *:., i = 2:1 / *:.
+SUBST: AC = x, BD = b
+MAP
+      B
+xxxx--A--xxxx
+xDC...B...CDx
+xC....A....Cx
+x..I.ABA.i..x
+x....BxB....x
+A...BAxAB...A
+B.I.AxxxA.i.B
+A...BAxAB...A
+x....BxB....x
+x..I.ABA.i..x
+xC....A....Cx
+xDC...B...CDx
+xxxxB.A.Bxxxx
+ENDMAP

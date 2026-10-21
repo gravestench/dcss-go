@@ -1,0 +1,25 @@
+# nicolae_elf_variegated_diamond is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    nicolae_elf_variegated_diamond
+TAGS:    transparent
+DEPTH:   Elf
+KFEAT:   q = closed_clear_door
+SHUFFLE: +cb/+cv/+cn/+cx/+bc/+bv/+bx/+bn/+vc/+vb/+vx/+vn/+xc/+xb/+xv/+xn/\
+         qnc/qnb/qnv/qnx
+MAP
+.......b.......
+.cb...bcb...cb.
+.bc..bcbcb..bc.
+....bcb.bcb....
+...b+b...b+b...
+..bcb.....bcb..
+.bcb...c...bcb.
+bcb...cbc...bcb
+.bcb...c...bcb.
+..bcb.....bcb..
+...b+b...b+b...
+....bcb.bcb....
+.cb..bcbcb..cb.
+.bc...bcb...bc.
+.......b.......
+ENDMAP

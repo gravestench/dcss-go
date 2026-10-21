@@ -1,7 +1,7 @@
 -- A sparse layered mod adds one weighted ending without replacing the base
 -- family or changing the branch's Lua definition.
 local branches = require("ids.branches")
-local end_vault = require("policy.generation.vaults.end")
+local end_vault = require("policy.generation.vaults.primary")
 local harness = require("tests.harness")
 
 local test = {}
@@ -14,7 +14,7 @@ function test.run()
         depth = 4,
         branch_bottom = 4,
         absolute_depth = 18,
-        end_vault_family = "swamp_end",
+        primary_vault_family = "swamp_end",
     }
     local candidates = end_vault.candidates(context)
     local random = {}

@@ -1,0 +1,31 @@
+# minmay_elf_demonology is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  minmay_elf_demonology
+TAGS:  misc_elf_vault transparent
+DEPTH: Elf
+MONS:  deep elf pyromancer / deep elf zephyrmancer / nothing w:20
+KMONS: 2 = deep elf demonologist w:90 / deep elf sorcerer / deep elf high priest
+KITEM: 2 = randbook disc:summoning slevels:16
+MAP
+        ..
+       ....
+      ......
+     ..1xx...
+    ...xxxx...
+   ....xxxx1.1.
+  ...1..xx......
+ ..xx.....1..xx1.
+..xxxx..xx..xxxx..
+..xxxx1x.2x.xxxx..
+ ..xx..x%.x..xx..
+  ..1...xx....1.
+   ..xx....xx1.
+   .xxxx..xxxx.
+   .xxxx1.xxxx.
+   ..xx...1xx..
+    ..1.......
+     ........
+      ......
+       ....
+        ..
+ENDMAP

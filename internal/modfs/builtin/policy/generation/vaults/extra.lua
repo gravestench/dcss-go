@@ -4,7 +4,7 @@ local chance = require("policy.generation.vaults.chance")
 local controller = require("policy.generation.vaults.controller")
 local directives = require("constants.vault_directives")
 local effects = require("constants.vault_effects")
-local end_vault = require("policy.generation.vaults.end")
+local floor_primary = require("policy.generation.vaults.primary")
 local hooks = require("policy.generation.vaults.hooks")
 local minivault = require("policy.generation.vaults.minivault")
 local placement = require("policy.generation.vaults.placement")
@@ -209,9 +209,9 @@ function extra.generate(ctx, builder, context)
         context.used:add(catalog.get(id))
     end
 
-    -- An authored branch ending owns its floor before optional maps spend
-    -- draws or reserve cells. Its occupied region joins the protected set.
-    local end_primary = end_vault.place(ctx, builder, context,
+    -- An authored floor primary owns its region before optional maps spend
+    -- draws or reserve cells. This covers early Elf maps and branch ends.
+    local selected_primary = floor_primary.place(ctx, builder, context,
         placed, extra.place)
 
     for _, map in ipairs(overflow_placement.place(ctx, builder,
@@ -219,7 +219,7 @@ function extra.generate(ctx, builder, context)
         placed[#placed + 1] = map
     end
 
-    local primary = place_chance_stage(ctx, builder, context, placed)
+    local chance_primary = place_chance_stage(ctx, builder, context, placed)
     local explicit = place.place(ctx, builder, context, placed,
         extra.place, place_chance_map)
     local branch_regular = regular.place(ctx, builder, context,
@@ -257,7 +257,7 @@ function extra.generate(ctx, builder, context)
         end
     end
 
-    return placed, end_primary or primary or explicit or
+    return placed, selected_primary or chance_primary or explicit or
         branch_regular or ordinary,
         context.used:ids()
 end

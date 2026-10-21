@@ -1,0 +1,41 @@
+# nicolae_gammafunk_elf_defective_weapons_storage is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:  nicolae_gammafunk_elf_defective_weapons_storage
+TAGS:  transparent no_monster_gen
+DEPTH: Elf
+KITEM: 123 = % w:20 / scroll of enchant weapon ident:type w:5 \
+       / scroll of brand weapon ident:type w:5
+: vault.run("choose_weapons")
+# Source Lua: {{
+# Source Lua: -- Fast dancing weapons. This will have chaos, but will be nerfed a lot by
+# Source Lua: -- confusion
+# Source Lua: local chaos_types = { ["spear"] = 2, ["trident"] = 2, ["mace"] = 2,
+# Source Lua:     ["flail"] = 2, ["dire flail"] = 2, ["quarterstaff"] = 2,
+# Source Lua:     ["long sword"] = 2, ["scimitar"] = 2, ["short sword"] = 2, ["dagger"] = 2,
+# Source Lua:     ["rapier"] = 2, ["quick blade"] = 1, ["hand axe"] = 2, ["war axe"] = 2 }
+# Source Lua: -- Slower weapons that will get distortion and become less than normal speed
+# Source Lua: -- with slowness
+# Source Lua: local disto_types = { ["halberd"] = 1, ["morningstar"] = 1, ["great mace"] = 1,
+# Source Lua:     ["giant club"] = 1, ["great sword"] = 1, ["battleaxe"] = 1}
+# Source Lua: -- Highest quality types we'll degrade and will have venom.
+# Source Lua: local venom_types = { ["demon trident"] = 1, ["bardiche"] = 2,
+# Source Lua:     ["giant spiked club"] = 2, ["lajatang"] = 1, ["double sword"] = 1,
+# Source Lua:     ["triple sword"] = 1, ["broad axe"] = 1, ["battleaxe"] = 2,
+# Source Lua:     ["executioner's axe"] = 1 }
+# Source Lua: kmons("1 = dancing weapon perm_ench:blind ; " ..
+# Source Lua:     dgn.random_item_def(chaos_types, "chaos", nil, "|"))
+# Source Lua: kmons("2 = dancing weapon perm_ench:slow ; " ..
+# Source Lua:     dgn.random_item_def(disto_types, "distortion", nil, "|"))
+# Source Lua: kmons("3 = dancing weapon perm_ench:corrosion ; " ..
+# Source Lua:     dgn.random_item_def(venom_types, "venom", "damaged", "|"))
+# Source Lua: }}
+NSUBST: 1 = 2=1 / 2=2 / 3 / * = 1 2 3:5 .:50
+MAP
+ccc===ccc
+c1..1..1c
+c1.111.1c
+c1..1..1c
+ccc...ccc
+  c111c
+  ccccc
+ENDMAP

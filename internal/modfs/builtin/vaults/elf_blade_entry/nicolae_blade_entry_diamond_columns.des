@@ -1,0 +1,23 @@
+# nicolae_blade_entry_diamond_columns is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME: nicolae_blade_entry_diamond_columns
+TAGS: elf_blade_entry no_monster_gen unrand
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+SUBST: 1 = 1.., c : cv
+MAP
+      =
+...-------...
+...c-----c...
+..ccc---ccc..
+.ccccc-ccccc.
+..ccc.1.ccc..
+...c.....c...
+....1.1.1....
+...c.....c...
+..ccc.1.ccc..
+.ccccc.ccccc.
+..ccc...ccc..
+...c.....c...
+.............
+ENDMAP

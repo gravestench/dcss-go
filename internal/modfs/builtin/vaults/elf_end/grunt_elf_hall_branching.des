@@ -1,0 +1,47 @@
+# grunt_elf_hall_branching is an authored Elf:3 final hall.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   grunt_elf_hall_branching
+TAGS: no_rotate
+TAGS:   nolayout_halls
+PLACE:  Elf:$
+ORIENT: north
+# Source Lua: : elf_setup(_G)
+# Source Lua: : elf_monsters(_G)
+: vault.run("shared.elf_monsters")
+SUBST:   1=1., 2=2., 3=3., 4=4., 5=5.
+SHUFFLE: 23, 45, 67
+# Source Lua: : elf_loot_defenders(_G)
+: vault.run("shared.elf_loot_defenders")
+# Source Lua: : elf_loot_randomisation(_G)
+: vault.run("shared.elf_loot_randomisation")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxcccccccccxxxxxxxxxxx
+xxxxxxxxxxcc$|*|*|$ccxxxxxxxxxx
+xxxxxxxxxxc$|*|*|*|$cxxxxxxxxxx
+xxxxxxxxxxc$.|*|*|.$cxxxxxxxxxx
+xxxxxxxxxxcc+ccccc+ccxxxxxxxxxx
+xxxxxxxxxxc2.3ccc2.3cxxxxxxxxxx
+xxxxxxxxxxc...ccc...cxxxxxxxxxx
+xxccccccxxc...ccc...cxxccccccxx
+xcc|*$$cxxcc.5...4.ccxxc$$*|ccx
+cc|*$*.cxxxc...b...cxxxc.*$*|cc
+c|*|cc+cxxxcc..b..ccxxxc+cc|*|c
+c*$cc3.ccccxc.4b5.cxcccc.2cc$*c
+c$*c261.5.cccc...cccc.4.173c*$c
+c$.+...4U....c.2.c....U5...+.$c
+ccccccc...5..3...3..4...ccccccc
+c..............b..............c
+@.bbb.2..3..2.bbb.2..2..3.bbb.@
+c..............b..............c
+ccccccc...4..3...3..5...ccccccc
+c$.+...5U....c.2.c....U4...+.$c
+c$*c371.4.cccc...cccc.5.162c*$c
+c*$cc2.ccccxxc.b.cxxcccc.3cc$*c
+c|*|cc+cxxxxxc.b.cxxxxxc+cc|*|c
+cc|*$*.cxxxxxc.b.cxxxxxc.*$*|cc
+ cc|*$$cxxxxxc...cxxxxxc$$*|cc
+  ccccccxxxxxcc@ccxxxxxcccccc
+ENDMAP

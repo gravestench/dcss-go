@@ -1,0 +1,25 @@
+# minmay_elf_crystal_square is an authored ordinary Elven Halls room or helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:   minmay_elf_crystal_square
+DEPTH:  Elf
+ORIENT: float
+MONS:   deep elf pyromancer / deep elf zephyrmancer / nothing w:20
+MAP
++bbbbbbbbbbbbbbb+
+b...............b
+b.bbbb..bbbbbb..b
+b.b1....b..11b..b
+b.bb....b..bbb..b
+b.b1............b
+b.b...bbbbb..b..b
+b....bb......b..b
+b...bb....1..b..b
+b..bb...b....b..b
+b..b.1..bb..1b..b
+b..b.....bb..b..b
+b..b1U.1..b..b..b
+b..b.......1.b..b
+b..bbbbbbbbbbb..b
+b...............b
++bbbbbbbbbbbbbbb+
+ENDMAP

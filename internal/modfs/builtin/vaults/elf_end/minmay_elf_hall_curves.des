@@ -1,0 +1,51 @@
+# minmay_elf_hall_curves is an authored Elf:3 final hall.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    minmay_elf_hall_curves
+TAGS: no_rotate
+PLACE:   Elf:$
+ORIENT:  northwest
+# Source Lua: : elf_setup(_G)
+# Source Lua: : elf_monsters(_G)
+: vault.run("shared.elf_monsters")
+SUBST:   1=11., 2=22., 3=33., 4=44., 5=543, 6=66., 7=77.
+SHUFFLE: 12, 34, 67
+# Source Lua: : elf_loot_defenders(_G)
+: vault.run("shared.elf_loot_defenders")
+SUBST:   v = v .:2
+SUBST:   v : xvb
+# Source Lua: : elf_loot_randomisation(_G)
+: vault.run("shared.elf_loot_randomisation")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxcccccccccccccccxxxxxxxx
+xxxxxxcccc........1....ccccxxxxx
+xxxxccc....vvv.4.5........cccxxx
+xxxcc....vvv2.......1.......ccxx
+xxxc..2.vv.....ccccc...v.....cxx
+xxcc....v...cccc...c..vvv..3.ccx
+xxc.......ccc......c...vvv....cx
+xxc2.vv............c....vv....cx
+xcc.vv..2.......1..cc...vvv.5.cc
+xc..v..c............c..2.vv....c
+xc.vv..c....bbbb..3.c....vvv...c
+xc.v5.cc...bbbbbb...cc....vvv..c
+xc.v..c....bbbbbb....c..3..v...c
+xc....c..3.bbbbbb....cc......5.c
+xc.5.cc....bbbbbb.....ccc......c
+xc...c......bbbb..2.....cccc...@
+xc...c................6...7ccccc
+xc.1.c......1...4..bbbb..U.+||*c
+xc...ccccc........bbbbbb.3.c**|c
+xc.......cccc..3..bbbbbb...c|*|c
+xc...5.4....ccc...bbbbbb...c**|c
+xc....v.....5.cc..bbbbbb.2cc||*c
+xcc..vvv.......c.6.bbbb...c||*cc
+xxc...vvvv.2...cc........cc**|cx
+xxc....vvvvv....c.U...4.cc||*|cx
+xxcc.....vvvv...c..3.7ccc***|ccx
+xxxc..5....vvv..cc+cccc|*||**cxx
+xxxcc.......v....c**||**|*|*ccxx
+xxxxccc..1....3..c|**|*|||cccxxx
+xxxxxxcccc.......c|||*|ccccxxxxx
+xxxxxxxxxccccccc@cccccccxxxxxxxx
+ENDMAP

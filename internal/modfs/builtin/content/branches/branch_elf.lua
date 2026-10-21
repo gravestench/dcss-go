@@ -2,6 +2,7 @@
 -- Entry and depth are catalog facts; generated levels and stair links are saved separately.
 
 local categories = require("constants.catalog")
+local families = require("constants.vault_families")
 
 local definition = {
     id = "BRANCH_ELF",
@@ -10,6 +11,23 @@ local definition = {
     min_depth = 2,
     max_depth = 2,
     depth = 3,
+    -- The source chooses one border check, Hall of Blades, and final hall.
+    -- The Elf:1 dummy deliberately keeps an ordinary procedural floor.
+    primary_vaults = {
+        {
+            depth = 1,
+            family = families.ELF_ARRIVAL,
+            allow_dummy = true,
+        },
+        {
+            depth = 2,
+            family = families.ELF_BLADES,
+        },
+        {
+            depth = 3,
+            family = families.ELF_END,
+        },
+    },
     absolute_depth = 15,
     flags = {
         "dangerous_end",

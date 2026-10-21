@@ -1,0 +1,13 @@
+# elven_spread is an authored Elf:1 border check or source PLACE controller.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    elven_spread
+TAGS:    no_dump extra allow_dup nolayout_encompass luniq
+PLACE:   Elf:1
+: vault.post_place("place")
+: vault.validate("validate")
+# Source Lua: {{
+# Source Lua:   local c = 1
+# Source Lua:   hook("post_place", function()
+# Source Lua:     dgn.place_maps{tag="misc_elf_vault", count=c}
+# Source Lua:   end)
+# Source Lua: }}

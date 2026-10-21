@@ -1,0 +1,10 @@
+# A sparse mod adds this room without editing any bundled catalog list.
+NAME: modded_elf_archive
+DEPTH: Elf
+WEIGHT: 7
+ORIENT: float
+MAP
+.....
+..+..
+.....
+ENDMAP

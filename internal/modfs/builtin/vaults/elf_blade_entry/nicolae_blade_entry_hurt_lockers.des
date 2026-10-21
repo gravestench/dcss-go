@@ -1,0 +1,24 @@
+# nicolae_blade_entry_hurt_lockers is an authored Hall of Blades entry helper.
+# Source: crawl-ref/source/dat/des/branches/elf.des.
+NAME:    nicolae_blade_entry_hurt_lockers
+TAGS: elf_blade_entry no_monster_gen unrand
+SHUFFLE: Aa/Bb/Dd, TG
+SUBST:   BD = x, bd = 1, A = +, a = ., T : T., G : G.
+# Source Lua: : elven_blade_entry(_G)
+: vault.run("shared.elven_blade_entry")
+MAP
+      =
+ xccc---cccx
+ xc-------cx
+ xc-------cx
+ xcAxxBxxDcx
+xxcaxxbxxdcxx
+xxc+xx+xx+cxx
+xxc.GT.TG.cxx
+ xc.......cx
+ xcc.....ccx
+ xccc...cccx
+ xxxxx+xxxxx
+.............
+     ...
+ENDMAP
