@@ -4,8 +4,27 @@ local choice = require("policy.generation.vaults.specs.choice")
 local branches = require("ids.branches")
 local tiers = require("data.demon_tiers")
 local requests = require("constants.vault_monster_requests")
+local monsters = require("ids.monsters")
 
 local random_monsters = {}
+
+-- DCSS's RANDOM_BASE_DRACONIAN draws an unspecialised colour. The removed
+-- mottled draconian has no active combat profile and is deliberately absent.
+local function base_draconian(ctx)
+    -- Resolve the generated IDs at draw time, after catalog registration.
+    local choices = {
+        monsters.MONS_BLACK_DRACONIAN,
+        monsters.MONS_GREEN_DRACONIAN,
+        monsters.MONS_GREY_DRACONIAN,
+        monsters.MONS_PALE_DRACONIAN,
+        monsters.MONS_PURPLE_DRACONIAN,
+        monsters.MONS_RED_DRACONIAN,
+        monsters.MONS_WHITE_DRACONIAN,
+        monsters.MONS_YELLOW_DRACONIAN,
+    }
+
+    return choices[ctx:random("vault_monster", #choices) + 1]
+end
 
 -- Source summon_any_demon chooses lesser, common, or greater with equal
 -- chance, then applies the source sixty/forty split inside the latter two.
@@ -57,6 +76,9 @@ end
 
 -- Use the adjusted source depth to build a live pool before one weighted draw.
 function random_monsters.pick(ctx, request, depth, site)
+    if request == requests.BASE_DRACONIAN then
+        return base_draconian(ctx)
+    end
     if request == requests.ANY_DEMON then
         return any_demon(ctx)
     end

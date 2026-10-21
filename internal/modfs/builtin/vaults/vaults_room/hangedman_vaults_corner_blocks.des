@@ -1,0 +1,22 @@
+# Vaults empty room: hangedman_vaults_corner_blocks.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    hangedman_vaults_corner_blocks
+TAGS:    vaults_empty allow_dup
+SHUFFLE: GH, IJ
+SUBST:   A : xx., B : xx., C : xx., D : xx., E : x..
+SUBST:   F = x..., G : xx., H : x., I : xx., J : x., K : x...
+MAP
+xxxxxx.....x
+xxCBA.....Gx
+xCD...E..HHx
+xB.(....GHxx
+xA.....xxxxx
+x....F.xIJIx
+..E...F.....
+....xx.F..K.
+...GxI......
+..HHxJ......
+.GHxxI.K..(x
+xxxxxx....xx
+ENDMAP

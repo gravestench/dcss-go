@@ -1,0 +1,21 @@
+# Vaults empty room: ontoclasm_vaults_claustrophobia.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_claustrophobia
+TAGS: vaults_empty
+SUBST: G : GGGT.
+MAP
+.x..x...x..x.
+x+xx+xxxxxx+x
+.x..x...x..x.
+.x..x...x..x.
+xxxxxxxx+xxx+
+.x.........x.
+.x.G..(..G.x.
+.x.........x.
++xxx+xxxxxxxx
+.x..x...x..x.
+.x..x...x..x.
+x+xxxxxx+xx+x
+.x..x...x..x.
+ENDMAP

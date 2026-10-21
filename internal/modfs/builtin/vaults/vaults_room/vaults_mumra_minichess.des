@@ -1,0 +1,18 @@
+# Vaults standard room: vaults_mumra_minichess.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_mumra_minichess
+TAGS:     vaults_room
+NSUBST:   . = 12 = 0. / *:.
+MAP
+  ..xx..
+  ..xx..
+..xx..xx..
+..xx..xx..
+xx..xx..xx
+xx..xx..xx
+..xx..xx..
+..xx..xx..
+  ..xx..
+  ..xx..
+ENDMAP

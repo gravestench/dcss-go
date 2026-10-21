@@ -1,0 +1,23 @@
+# Vaults empty room: nicolae_vaults_hallways_thing.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_hallways_thing
+TAGS: vaults_empty
+SUBST: a : x.
+MAP
+aaxx..xxx..xxaa
+aaax..xxx..xaaa
+xaaa..xxx..aaax
+xxaa..xxx..aaxx
+....(.xxx.(....
+.......x.......
+xxxxx.....xxxxx
+xxxxxx.(.xxxxxx
+xxxxx.....xxxxx
+.......x.......
+....(.xxx.(....
+xxaa..xxx..aaxx
+xaaa..xxx..aaax
+aaax..xxx..xaaa
+aaxx..xxx..xxaa
+ENDMAP

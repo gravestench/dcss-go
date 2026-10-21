@@ -1,0 +1,26 @@
+# Vaults standard room: v_misc_18.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    v_misc_18
+TAGS:    allow_dup
+SUBST:   y : .+
+# The source room setup marks this map for Vaults room selection.
+TAGS: vaults_room
+# Its default monster band applies only where the MAP uses monster slots.
+MONS: 0 band
+# Sparse replacement keeps this room populated without filling every cell.
+NSUBST: . = 1:1 / 2 = 1.. / *:.
+NSUBST:  . = 1:( / *:.
+MAP
+...x...x...
+...x...x...
+...xxyxx...
+xxx.....xxx
+..x.....x..
+..y.....y..
+..x.....x..
+xxx.....xxx
+...xxyxx...
+...x...x...
+...x...x...
+ENDMAP

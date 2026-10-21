@@ -1,0 +1,16 @@
+# Vaults empty room: vaults_room_stairs_pillars.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_stairs_pillars
+TAGS:     vaults_empty allow_dup
+SHUFFLE:  GI
+SUBST:    I = ., G = x
+MAP
+.......
+.G.I.G.
+.......
+.I.(.I.
+.......
+.G.I.G.
+.......
+ENDMAP

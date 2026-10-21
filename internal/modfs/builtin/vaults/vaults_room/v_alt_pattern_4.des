@@ -1,0 +1,22 @@
+# Vaults empty room: v_alt_pattern_4.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    v_alt_pattern_4
+TAGS:    allow_dup vaults_empty
+SUBST:   y : x.
+NSUBST:  . = 1:( / *:.
+MAP
+.............
+.............
+..xxxx.xxxx..
+..x.......x..
+..x.......x..
+..x..yxy..x..
+.....xxx.....
+..x..yxy..x..
+..x.......x..
+..x.......x..
+..xxxx.xxxx..
+.............
+.............
+ENDMAP

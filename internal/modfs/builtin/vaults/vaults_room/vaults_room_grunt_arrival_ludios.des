@@ -1,0 +1,18 @@
+# Vaults standard room: vaults_room_grunt_arrival_ludios.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_grunt_arrival_ludios
+WEIGHT:   15 (Vaults:1), 3
+TAGS:     vaults_room vaults_orient_e
+SUBST:    0 = 00.
+SHUFFLE:  {([<
+MAP
+xxxxxx..
+.0.0.x..
+0.0.0+..
+.0.0.x..
+0.0.0x..
+..x+xxxx
+..x...(x
+..x..{[x
+ENDMAP

@@ -1,0 +1,24 @@
+# Vaults standard room: nicolae_vaults_stairing_the_circle.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_stairing_the_circle
+TAGS: vaults_room
+NSUBST: ( = 1:0 / 2:0( / 2:0(( / *:(.
+KMONS: 0 = 0 band
+MAP
+  xxx.....xxx
+ xx....(....xx
+xx..(.....(..xx
+x.....xxx.....x
+x.(.xxxxxxx.(.x
+....xxxxxxx....
+...xxxxxxxxx...
+.(.xxxxxxxxx.(.
+...xxxxxxxxx...
+....xxxxxxx....
+x.(.xxxxxxx.(.x
+x.....xxx.....x
+xx..(.....(..xx
+ xx....(....xx
+  xxx.....xxx
+ENDMAP

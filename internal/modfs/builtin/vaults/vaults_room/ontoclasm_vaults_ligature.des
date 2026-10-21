@@ -1,0 +1,16 @@
+# Vaults empty room: ontoclasm_vaults_ligature.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_ligature
+TAGS: vaults_empty
+MAP
+....b.....
+.bbbb.....
+.b........
+.b.....bb.
+..b....b..
+.bb.....b.
+........b.
+.....bbbb.
+.....b....
+ENDMAP

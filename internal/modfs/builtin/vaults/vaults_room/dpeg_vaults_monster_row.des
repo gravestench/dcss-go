@@ -1,0 +1,13 @@
+# Vaults standard room: dpeg_vaults_monster_row.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:   dpeg_vaults_monster_row
+TAGS:   vaults_room
+SUBST:  0 : 0000000z, z : z., 0 = 0009..
+KMONS:  z = human skeleton
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+xx00xx00xx00xx00xx00xx00xx
+xx..xx..xx..xx..xx..xx..xx
+..........................
+ENDMAP

@@ -1,0 +1,17 @@
+# Vaults hard room: st_hourglassy.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    st_hourglassy
+TAGS:    vaults_hard
+TAGS:    vaults_orient_n vaults_orient_s
+MAP
+xxxxxxx...xxxxxxx
+xxxxxx.....xxxxxx
+xxxx.........xxxx
+xx0...........0xx
+x|9....9.9....9|x
+xx0...........0xx
+xxxx.........xxxx
+xxxxxx.....xxxxxx
+xxxxxxx...xxxxxxx
+ENDMAP

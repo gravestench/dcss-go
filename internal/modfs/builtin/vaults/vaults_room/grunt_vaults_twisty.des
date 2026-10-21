@@ -1,0 +1,29 @@
+# Vaults standard room: grunt_vaults_twisty.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: grunt_vaults_twisty
+TAGS: vaults_room
+SHUFFLE: ABCD
+SHUFFLE: Aa, Bb, Cc, Dd
+NSUBST: A = 1:+ / *:x
+NSUBST: B = 1:+ / *:x
+NSUBST: C = 1:+ / *:x
+NSUBST: D = 1:+ / *:x
+SUBST: abcd = .
+NSUBST: 0 = 2:0 / *:.
+KMONS: 0 = 0 band
+MAP
+ xx....xx
+xx..xx..xx
+x0.xxxx0.x
+x0.xxxxx..
+xx..xxxxx.
+xxx..xxxxx
+xxxx00xxxx
+xxxxx..xxx
+.xxxxx..xx
+..xxxxx.0x
+x..xxxx.0x
+xx0.xx..xx
+ xx....xx
+ENDMAP

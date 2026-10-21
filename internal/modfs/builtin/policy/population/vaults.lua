@@ -119,6 +119,8 @@ local function item_selection(record)
         plus = arguments.has_plus and arguments.plus or nil,
         ego = arguments.has_ego and arguments.ego or nil,
         allow_uniques = arguments.allow_uniques,
+        unique_id = arguments.unique_id ~= "" and arguments.unique_id or nil,
+        no_pickup = arguments.no_pickup or false,
         ident = arguments.ident ~= "" and arguments.ident or nil,
         tile = arguments.tile ~= "" and arguments.tile or nil,
         weapon_tile = arguments.weapon_tile ~= "" and

@@ -1,0 +1,12 @@
+# Vaults empty room: vaults_room_hallway.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_hallway
+TAGS:     vaults_empty allow_dup
+MAP
+x.x.x.x.x.x
+...........
+.....(.....
+...........
+x.x.x.x.x.x
+ENDMAP

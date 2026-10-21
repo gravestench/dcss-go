@@ -1,0 +1,42 @@
+# Vaults hard room: st_greater_box_3.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     st_greater_box_3
+TAGS:     vaults_hard vaults_orient_s
+NSUBST:   ' = 12:9 / *:.
+NSUBST:   " = 10:9 / *:.
+# Greater-box rooms suppress incidental items and share their authored threats.
+TAGS: no_item_gen
+SUBST: % = %%%**|$
+KMONS: 7 = patrolling vault guard
+KMONS: Z = frost giant / fire giant / titan w:5 / ettin / shadow dragon / golden dragon w:5 / \
+    storm dragon / quicksilver dragon w:2 / iron dragon w:2 / swamp dragon / fire dragon / \
+    ice dragon / catoblepas / moth of wrath w:1 / ghost moth / floating eye / eye of devastation / \
+    glowing orange brain / nagaraja / guardian serpent / vampire knight / vampire mage / \
+    deep elf sorcerer / deep elf death mage / deep elf demonologist / deep elf annihilator / \
+    deep elf high priest / orc warlord / base draconian w:15 / sphinx / shapeshifter / \
+    glowing shapeshifter
+SUBST: 0 = 0:9 Z:1
+SUBST: 9 = 9:3 Z:1
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+vv''''vv''''vv77vv..9..9..vv"v
+v''''vv''''vv....vv......vv""v
+v...vv''''vv......vv....vv"""v
+v...v....vv........vv++vv""""v
+v...+....+7...vv...7+..+"""""v
+v...+....+7...vv...7+..+"""""v
+v...v....vv........vv++vv""""v
+v...vv''''vv......vv""""vv"""v
+v''''vv''''vv....vv""""""vv""v
+vv''''vv''''vv77vv""""""""vv+v
+vvv''''vv''''v++v""""""""""+8v
+v%vv''''vv''vv..vv""""""""vv+v
+v%%vv''''vvvv....vv""""""vv$$v
+v%%%vv''''vv......vv""""vv$%%v
+v%%%%vv'''v0......0vv++vv%%%%v
+v%%$%$vv++vv......vv$%%$vv%%%v
+v%%%$+v....vv....vv$%%%%$vv%%v
+v%%$vv.....8vv..vv$%%%%%%$vv%v
+vvvvvvvvvvvvvv..vvvvvvvvvvvvvv
+ENDMAP

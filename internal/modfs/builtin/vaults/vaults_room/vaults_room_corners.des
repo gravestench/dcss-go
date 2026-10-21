@@ -1,0 +1,19 @@
+# Vaults standard room: vaults_room_corners.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_corners
+TAGS:     allow_dup no_monster_gen
+SUBST:    G : xxxxG..........
+# The source room setup marks this map for Vaults room selection.
+TAGS: vaults_room
+# Its default monster band applies only where the MAP uses monster slots.
+MONS: 0 band
+MAP
+xx...xx
+xxG.Gxx
+.G...G.
+...1...
+.G...G.
+xxG.Gxx
+xx...xx
+ENDMAP

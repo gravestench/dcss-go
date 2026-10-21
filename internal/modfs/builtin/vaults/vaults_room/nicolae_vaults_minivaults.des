@@ -1,0 +1,28 @@
+# Vaults hard room: nicolae_vaults_minivaults.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_minivaults
+TAGS: vaults_hard
+NSUBST: P = 1:P / *:9
+SHUFFLE: abc, def, ghi, jkl
+KITEM: P = superb_item
+SUBST: adgj : x
+SUBST: bcefhikl : .
+MAP
+................
+.xxxxxx..xxxxxx.
+.xP.cbx..xefePx.
+.x.abax..x.ddex.
+.xcbc.x..xfddfx.
+.xba...00..f.ex.
+.xxxx.0..0.xxxx.
+.....0.<<.0.....
+.....0.<<.0.....
+.xxxx.0..0.xxxx.
+.x.gi..00..jllx.
+.xhghix..xjkkjx.
+.xihggx..xlkj.x.
+.xPih.x..xlj.Px.
+.xxxxxx..xxxxxx.
+................
+ENDMAP

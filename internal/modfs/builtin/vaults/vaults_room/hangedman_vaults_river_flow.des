@@ -1,0 +1,27 @@
+# Vaults standard room: hangedman_vaults_river_flow.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    hangedman_vaults_river_flow
+SHUFFLE: abcdefghij
+SUBST:   ab = x, c : xx., d : x., e : x:1 .:9, fghij = .
+# The source room setup marks this map for Vaults room selection.
+TAGS: vaults_room
+# Its default monster band applies only where the MAP uses monster slots.
+MONS: 0 band
+# Sparse replacement keeps this room populated without filling every cell.
+NSUBST: 0 = 1:1 / 2 = 1.. / *:.
+MAP
+      x.......x
+      xfee....x
+      x....ffex
+xxxxxxx.......x
+.........gh....
+.ab.0.cd....gh.
+....ab.0.cd....
+.gh....ab.0.cd.
+....gh.........
+x.......xxxxxxx
+xeef....x
+x....effx
+x.......x
+ENDMAP

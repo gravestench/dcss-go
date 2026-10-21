@@ -1,0 +1,22 @@
+# Vaults standard room: grunt_vaults_swirl.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: grunt_vaults_swirl
+TAGS: vaults_room
+KMONS: 0 = 0 band
+NSUBST: 0 = 2:0 / *:.
+MAP
+ xx.......xx
+xx....xxxx.xx
+x...xxx.0xx.x
+...xxx+xx.xx.
+...xx...xx.x.
+..xx..0..xx..
+..xx.0(0.xx..
+..xx..0..xx..
+.x.xx...xx...
+.xx.xx+xxx...
+x.xx0.xxx0..x
+xx.xxxx....xx
+ xx.......xx
+ENDMAP

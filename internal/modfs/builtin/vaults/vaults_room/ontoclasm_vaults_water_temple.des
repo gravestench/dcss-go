@@ -1,0 +1,26 @@
+# Vaults hard room: ontoclasm_vaults_water_temple.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_water_temple
+WEIGHT: 3
+TAGS: vaults_hard no_pool_fixup
+KMASK: wW = no_monster_gen
+NSUBST: 0 = 1:9 / *:0
+KMONS: 0 = 0 band
+SUBST: G : GU, % = %%%%*.
+MAP
+     ........
+     ........
+      wx++xw
+   xxxxxWWxxxxx
+   xwwwxWWxwwwx
+.. xw0.x++x.0wx ..
+..wxw%W....W%wxw..
+..xxxx.G..G.xxxx..
+..+WW+..WW..+WW+..
+..+WW+..WW..+WW+..
+..xxxx.G..G.xxxx..
+..wxw%WWwwWW%wxw..
+.. xw0.wwww.0wx ..
+   xwwwxxxxwwwx
+ENDMAP

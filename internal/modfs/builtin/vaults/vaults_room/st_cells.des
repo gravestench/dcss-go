@@ -1,0 +1,15 @@
+# Vaults hard room: st_cells.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    st_cells
+TAGS:    vaults_hard allow_dup
+MAP
+...x....x...
+...x....x...
+xxx+xxxx+xxx
+$0.x%09*x.0$
+$0.x*90%x.0$
+xxx+xxxx+xxx
+...x....x...
+...x....x...
+ENDMAP

@@ -1,0 +1,19 @@
+# Vaults standard room: nicolae_vaults_sealed_display.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_sealed_display
+WEIGHT: 5
+TAGS: vaults_room no_windows
+KMASK: >* = no_monster_gen
+KMONS: 0 = 0 band / 0
+MAP
+xxxxxxx
+x..%x>x
+x+xxx+x
+x..x**x
+x.0x**x
+x..xmmx
+x.....x
+x.....x
+xxxx..x
+ENDMAP

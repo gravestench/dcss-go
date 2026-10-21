@@ -1,0 +1,17 @@
+# Vaults hard room: nicolae_vaults_murderbox.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_murderbox
+TAGS: vaults_hard
+SUBST: m : mx
+MAP
+xx.....xx
+xmm.0.mmx
+.mxx+xxm.
+..x...x..
+.0+.8.+0.
+..x...x..
+.mxx+xxm.
+xmm.0.mmx
+xx.....xx
+ENDMAP

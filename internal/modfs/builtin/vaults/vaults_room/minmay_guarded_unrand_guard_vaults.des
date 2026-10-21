@@ -1,0 +1,26 @@
+# Vaults hard room: minmay_guarded_unrand_guard_vaults.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    minmay_guarded_unrand_guard_vaults
+TAGS:    vaults_hard vaults_orient_n
+WEIGHT:  3
+ITEM:    glaive_of_the_guard no_pickup
+SUBST:   b : bxcmG.T
+NSUBST:  3:9 / 4=9. / ., 8 = 2:8 / 6=8.. / .
+MAP
+vvvvvvv@vvvvvvv
+v...v*v.v*v...v
+v8b8.*n.n*.8b8v
+v.8.v*v.v*v.8.v
+vv.vvvv.vvvv.vv
+v.9.vv.9.vv.9.v
+v.b9..9b9..9b.v
+v.9.vv...vv.9.v
+vv.vvvvnvvvv.vv
+vv.vvv...vvv.vv
+v.8.v..*..v.8.v
+v8b8..*d*..8b8v
+v...v..*..v...v
+vGvGvv...vvGvGv
+vvvvvvvvvvvvvvv
+ENDMAP

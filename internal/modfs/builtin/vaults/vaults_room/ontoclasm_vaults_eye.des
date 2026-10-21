@@ -1,0 +1,22 @@
+# Vaults standard room: ontoclasm_vaults_eye.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_eye
+# The source room setup marks this map for Vaults room selection.
+TAGS: vaults_room
+# Its default monster band applies only where the MAP uses monster slots.
+MONS: 0 band
+# Sparse replacement keeps this room populated without filling every cell.
+NSUBST: 0 = 1:1 / 2 = 1.. / *:.
+SUBST: ( = ((0.
+MAP
+  .....
+ ..xxx..
+..xxxxx..
+...0.0xx.
+.x..(..x.
+.xx0.0...
+..xxxxx..
+ ..xxx..
+  .....
+ENDMAP

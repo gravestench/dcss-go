@@ -1,0 +1,25 @@
+# Vaults standard room: v_misc_31.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    v_misc_31
+TAGS:    vaults_room luniq_cells
+WEIGHT:  5
+SUBST:   0 = 0009..
+NSUBST:  y = 1:+ / *:x
+NSUBST:  z = 1:+ / *:x
+NSUBST:  w = 1:+ / *:x
+NSUBST:  u = 1:+ / *:x
+NSUBST:  . = 1:( / *:.
+MAP
+...........
+...........
+..xux+xzx..
+..u0x0x0z..
+..xxxxxxx..
+..+0xxx0+..
+..xxxxxxx..
+..y0x0x0w..
+..xyx+xwx..
+...........
+...........
+ENDMAP

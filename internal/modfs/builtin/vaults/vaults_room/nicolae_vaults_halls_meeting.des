@@ -1,0 +1,24 @@
+# Vaults hard room: nicolae_vaults_halls_meeting.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_halls_meeting
+TAGS: vaults_hard
+SUBST: 9 = 9998, 0 = 00.
+MAP
+xxxx..xxxx..xxxx
+x9.xx...0..xx.9x
+x...xx....xx...x
+xx...xx++xx...xx
+.xx...x..x...xx.
+..xx..+0.+..xx..
+x..xx+x..x+xx..x
+x0.+...xx.0.+..x
+x..+.0.xx...+.0x
+x..xx+x..x+xx..x
+..xx..+.0+..xx..
+.xx...x..x...xx.
+xx...xx++xx...xx
+x...xx....xx...x
+x9.xx..0...xx.9x
+xxxx..xxxx..xxxx
+ENDMAP

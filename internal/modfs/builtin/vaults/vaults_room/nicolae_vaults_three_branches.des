@@ -1,0 +1,19 @@
+# Vaults standard room: nicolae_vaults_three_branches.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_three_branches
+TAGS: vaults_room
+SHUFFLE: (%
+MONS: 0 band
+NSUBST: 0 = 1:1 / 2 = 0.. / *:.
+MAP
+xxxxxx...
+x.%xxx.(.
+x%%.xxx..
+xx.00xxx.
+xxx00.xx.
+xxxx...x.
+..xxx.x..
+.(.xxx.(.
+.........
+ENDMAP

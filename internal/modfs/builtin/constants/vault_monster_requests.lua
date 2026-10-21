@@ -5,6 +5,7 @@ local requests = {
     COMMON_DEMON = "common demon",
     ANY_COMMON_DEMON = "any common demon",
     RANDOM = "random",
+    BASE_DRACONIAN = "base draconian",
 }
 
 return requests

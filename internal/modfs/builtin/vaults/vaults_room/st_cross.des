@@ -1,0 +1,21 @@
+# Vaults hard room: st_cross.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    st_cross
+TAGS:    vaults_hard
+KMONS:   8 = 8
+KITEM:   8 = |, *
+SUBST:   8 = 98, 0 = 09
+MAP
+xxxxx.xxxxx
+xxxx.0.xxxx
+xxxxx.xxxxx
+xxx.....xxx
+x.x.x+x.x.x
+.0..+8+..0.
+x.x.x+x.x.x
+xxx.....xxx
+xxxxx.xxxxx
+xxxx.0.xxxx
+xxxxx.xxxxx
+ENDMAP

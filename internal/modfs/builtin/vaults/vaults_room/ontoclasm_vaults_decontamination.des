@@ -1,0 +1,14 @@
+# Vaults empty room: ontoclasm_vaults_decontamination.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_decontamination
+TAGS: vaults_empty
+KMASK: W = no_monster_gen
+MAP
+...  ...
+..xxxx..
+..+WW+..
+..+WW+..
+..xxxx..
+...  ...
+ENDMAP

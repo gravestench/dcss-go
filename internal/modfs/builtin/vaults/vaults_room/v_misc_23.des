@@ -1,0 +1,20 @@
+# Vaults empty room: v_misc_23.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    v_misc_23
+TAGS:    vaults_empty allow_dup
+SUBST:   y:+.
+NSUBST:  . = 1:( / *:.
+MAP
+xx..y.y..xx
+xx..xxx..xx
+...xxxxx...
+..xxxxxxx..
+yxxxxxxxxxy
+.xxxxxxxxx.
+yxxxxxxxxxy
+..xxxxxxx..
+...xxxxx...
+xx..xxx..xx
+xx..y.y..xx
+ENDMAP

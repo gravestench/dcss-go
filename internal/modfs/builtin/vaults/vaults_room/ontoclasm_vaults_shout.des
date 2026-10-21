@@ -1,0 +1,18 @@
+# Vaults hard room: ontoclasm_vaults_shout.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_shout
+TAGS: vaults_hard
+KMONS: 0 = 0 band
+MAP
+..xxxxxxx
+..x.9...xx
+..x%.9...x
+..xxxxx..x
+.....+..0x
+.....+..0x
+..xxxxx..x
+..x%.9...x
+..x.9...xx
+..xxxxxxx
+ENDMAP

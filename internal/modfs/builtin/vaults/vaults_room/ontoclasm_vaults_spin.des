@@ -1,0 +1,21 @@
+# Vaults empty room: ontoclasm_vaults_spin.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_spin
+TAGS: vaults_room
+SHUFFLE: ab
+SUBST: a : x, b : .
+KMONS: 0 = 0 band
+MAP
+aa....x@...
+abbxx.xxxx.
+.bxxx....x.
+.xxxxxxx.x.
+.x...0.x.x.
+.x.x.(.x.x.
+.x.x.0...x.
+.x.xxxxxxx.
+.x....xxxb.
+.xxxx.xxbba
+...@x....aa
+ENDMAP

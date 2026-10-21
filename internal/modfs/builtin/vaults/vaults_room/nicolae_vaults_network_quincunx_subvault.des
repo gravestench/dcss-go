@@ -1,0 +1,17 @@
+# Vaults standard room: nicolae_vaults_network_quincunx_subvault.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_network_quincunx_subvault
+TAGS: unrand nico_quincunx allow_dup
+SUBST: % = ....%0
+NSUBST: BDF = 1:x, ABHI = 1:., KFJE = 1:., CDIJ = 1:.
+SUBST: ABCDEFGHIJK = x
+KITEM: 0 = nothing / any w:5
+KMONS: 0 = 0 / 0 band w:5
+MAP
+ .xA
+G%H%B
+xKxIx
+F%J%C
+ ExD
+ENDMAP

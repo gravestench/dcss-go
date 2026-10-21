@@ -1,0 +1,21 @@
+# Vaults hard room: ontoclasm_vaults_echo.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_echo
+WEIGHT: 3
+TAGS: vaults_hard no_rotate vaults_orient_s
+NSUBST: % = 2=% / 1=* / *=.
+SUBST: G : GGGTUY
+MAP
+x%..x.x..%x
+..8..|..8..
+....x.x....
+x.xxxxxxx.x
+%....x....%
+.9.x...x.9.
+...x...x...
+x.%x...x%.x
+xxxxx.xxxxx
+...G...G...
+...........
+ENDMAP

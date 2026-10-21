@@ -1,0 +1,15 @@
+# Vaults hard room: vaults_room_hangedman_quadrants.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_hangedman_quadrants
+TAGS:     vaults_hard no_monster_gen
+SUBST:    $ = $%., * = *|, = : -., - : +:4 $:1
+MAP
+xx.x.xx
+x9$x$9x
+.$*-*$.
+xx=x=xx
+.$*-*$.
+x9$x$9x
+xx.x.xx
+ENDMAP

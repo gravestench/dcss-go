@@ -1,0 +1,29 @@
+# Vaults standard room: vaults_standard_mumra_lines.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_standard_mumra_lines
+TAGS:     vaults_orient_e vaults_orient_w
+SUBST:    ( = .:2 (:1
+# The source room setup marks this map for Vaults room selection.
+TAGS: vaults_room
+# Its default monster band applies only where the MAP uses monster slots.
+MONS: 0 band
+# Sparse replacement keeps this room populated without filling every cell.
+NSUBST: . = 2:1 / 2 = 1. / *:.
+MAP
+....xx.(...
+.....xx....
+......xx...
+.......xx..
+.....x.....
+....xx.....
+...xx......
+..xx..xx...
+.xx....xx..
+xx......xx.
+x..xx....xx
+....xx....x
+.....xx....
+...(..xx.(.
+.......xx..
+ENDMAP

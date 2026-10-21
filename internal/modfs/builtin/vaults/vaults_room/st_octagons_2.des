@@ -1,0 +1,23 @@
+# Vaults hard room: st_octagons_2.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    st_octagons_2
+TAGS:    vaults_hard
+NSUBST:  ^ = 3:* / *:%$
+MAP
+....^x..x^......^x^..
+.9..^x..x...90...x.0.
+....xx..xx......xx.0.
+...xx...%xxx..xxxx...
+x++x....|x.x++x..xx..
+x.....9.%x........x++
+xx..9...xx...........
+.xx....xx............
+..x+xx+x.............
+.................xx+x
+......xx+xx.....xx...
+x++x.xx...xx...xx....
+x..xxx.....xx+xx^.0..
+.00.xx..9..x...x^.9..
+....xx^...^x.0.x.....
+ENDMAP

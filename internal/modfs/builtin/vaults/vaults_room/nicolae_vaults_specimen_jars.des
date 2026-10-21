@@ -1,0 +1,19 @@
+# Vaults empty room: nicolae_vaults_specimen_jars.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_specimen_jars
+TAGS: vaults_empty
+KPROP: S = no_tele_into
+KMASK: S = opaque
+KMASK: S = no_trap_gen
+KMASK: S = no_item_gen
+# the W is because they're floating in solution in the jars, you see
+KFEAT: S = W
+KMONS: S = 0 / 9 / 8
+MAP
+.............
+.nnn.nnn.nnn.
+.nSn.nSn.nSn.
+.nnn.nnn.nnn.
+.............
+ENDMAP

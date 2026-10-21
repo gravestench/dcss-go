@@ -1,0 +1,30 @@
+# Vaults standard room: nicolae_vaults_arrows.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_arrows
+TAGS: vaults_room
+SUBST: $ = $:27 %:9 *:3 |:1
+KMONS: 0 = 0 band
+MAP
+xxxxxxxxx...xxxxxxxxx
+x......$n...n$......x
+x.0.xxxxx...xxxxx.0.x
+x....xx...0...xx....x
+x.x...xx.....xx...x.x
+x.xx...xx...xx...xx.x
+x.xxx...xx.xx...xxx.x
+x$x.xx...x+x...xx.x$x
+xnx..xx.......xx..xnx
+......xx.....xx......
+...0...+..0..+...0...
+......xx.....xx......
+xnx..xx.......xx..xnx
+x$x.xx...x+x...xx.x$x
+x.xxx...xx.xx...xxx.x
+x.xx...xx...xx...xx.x
+x.x...xx.....xx...x.x
+x....xx...0...xx....x
+x.0.xxxxx...xxxxx.0.x
+x......$n...n$......x
+xxxxxxxxx...xxxxxxxxx
+ENDMAP

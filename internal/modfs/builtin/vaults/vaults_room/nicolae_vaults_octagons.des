@@ -1,0 +1,28 @@
+# Vaults hard room: nicolae_vaults_octagons.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_octagons
+TAGS: vaults_hard
+SHUFFLE: abcdefgh, ijklmnop
+SUBST: abcdefgijklmno = x, hp = ., 0 = 009.
+KMONS: 0 = 0 band
+KMONS: 9 = 9 band
+MAP
+      .....
+     ...0...
+    ..iiiii..
+   ..pp...jj..
+  ..pp..0..jj..
+ ..pp..aaa..jj..
+..op..hh.bb..jk..
+..o..gh...bc..k..
+.0o.0g..9..c0.k0.
+..o..gf...dc..k..
+..on..ff.dd..lk..
+ ..nn..eee..ll..
+  ..nn..0..ll..
+   ..nn...ll..
+    ..mmmmm..
+     ...0...
+      .....
+ENDMAP

@@ -1,0 +1,19 @@
+# Vaults empty room: vaults_dpeg_spiral.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:  vaults_dpeg_spiral
+TAGS:  vaults_empty
+SUBST: $ : $$$(()
+MAP
+    xxxxxxxx
+   xxxx...xxx
+  xx........xx
+ xx...xxxx...xx
+xx...xxxxxx..xx
+xx...x...xxx..x
+xx...x.$.xxx..x
+xx...x...xx..xx
+xx...xx......xx
+xx....xxx..xxx
+xx.....xxxxxx
+ENDMAP

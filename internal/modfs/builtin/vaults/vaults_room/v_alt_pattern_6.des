@@ -1,0 +1,27 @@
+# Vaults standard room: v_alt_pattern_6.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    v_alt_pattern_6
+TAGS:    allow_dup
+SHUFFLE: wyux
+SUBST:   w:., y:., u:.
+# The source room setup marks this map for Vaults room selection.
+TAGS: vaults_room
+# Its default monster band applies only where the MAP uses monster slots.
+MONS: 0 band
+# Sparse replacement keeps this room populated without filling every cell.
+NSUBST: . = 1:1 / 2 = 1.. / *:.
+NSUBST:  . = 1:( / *:.
+MAP
+...........
+.x.x.x.x.x.
+.w.w.w.w.w.
+.y.y.y.y.y.
+.u.u.u.u.u.
+...........
+.u.u.u.u.u.
+.y.y.y.y.y.
+.w.w.w.w.w.
+.x.x.x.x.x.
+...........
+ENDMAP

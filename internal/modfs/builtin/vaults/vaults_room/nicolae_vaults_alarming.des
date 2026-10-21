@@ -1,0 +1,18 @@
+# Vaults standard room: nicolae_vaults_alarming.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_alarming
+TAGS: vaults_room
+NSUBST: s = 1:S / *:.
+KITEM: i = any
+KMONS: S = vault sentinel
+KFEAT: i = alarm trap / .
+MAP
+xxsxsxx
+xi...ix
+s.....s
+x..(..x
+s.....s
+xi...ix
+xxsxsxx
+ENDMAP

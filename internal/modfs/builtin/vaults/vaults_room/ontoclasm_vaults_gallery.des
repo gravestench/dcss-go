@@ -1,0 +1,15 @@
+# Vaults hard room: ontoclasm_vaults_gallery.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_gallery
+TAGS: vaults_hard
+NSUBST: 9 = 1:0 / 1=8 / *:9
+MAP
+G...........G
+..x.......x..
+..xx..%..xx..
+..x.GGGGG.x..
+..xx..9..xx..
+..x*9.9.9*x..
+..xxxxxxxxx..
+ENDMAP

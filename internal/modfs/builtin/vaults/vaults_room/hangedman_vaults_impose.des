@@ -1,0 +1,21 @@
+# Vaults empty room: hangedman_vaults_impose.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    hangedman_vaults_impose
+TAGS:    vaults_empty allow_dup
+SHUFFLE: ABC, DEF
+SUBST:   A : x.., B : x.., D : x.., E : x.., CF = .
+SUBST:   G = Gx..., H : xxx., I : xx.
+MAP
+ABC.....FED
+B.........E
+D.G..xH...F
+...(IxxH...
+...IxxxxH..
+..xxxxxxxx.
+..Hxxxxxxxx
+...Hxxx
+F...Hxx
+E....xx
+DEF...x
+ENDMAP

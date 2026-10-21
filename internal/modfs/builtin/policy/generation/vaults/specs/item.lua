@@ -111,6 +111,9 @@ local function parse_term(text, expression, site)
             result.good_item = true
         elseif token == "randart" then
             result.randart = true
+        elseif token == "no_pickup" then
+            -- Authored display items can be seen but cannot be taken.
+            result.no_pickup = true
         elseif key then
             choice.fail(site, expression, "unknown item modifier " .. key)
         else

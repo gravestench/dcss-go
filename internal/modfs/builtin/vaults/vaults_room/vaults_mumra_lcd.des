@@ -1,0 +1,20 @@
+# Vaults empty room: vaults_mumra_lcd.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_mumra_lcd
+TAGS:     vaults_empty
+MAP
+  .....
+ .......
+.x.....x.
+..xxxxx..
+..xxxxx..
+.x.....x.
+x...(...x
+.x.....x.
+..xxxxx..
+..xxxxx..
+.x.....x.
+ .......
+  .....
+ENDMAP

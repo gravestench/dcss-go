@@ -1,0 +1,17 @@
+# Vaults empty room: grunt_vaults_diagonal.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: grunt_vaults_diagonal
+TAGS: vaults_empty
+MAP
+xx........
+xxx.......
+.xxx...(..
+..xxx.....
+...xxx....
+....x+x...
+.....xxx..
+..(...xxx.
+.......xxx
+........xx
+ENDMAP

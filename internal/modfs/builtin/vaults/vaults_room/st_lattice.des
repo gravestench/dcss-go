@@ -1,0 +1,15 @@
+# Vaults hard room: st_lattice.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    st_lattice
+TAGS:    vaults_hard
+MAP
+.x.x.x.x.
+.x0x.x0x.
+x.x.x.x.x
+x%x9x*x.x
+.x*x9x%x.
+.x.x.x.x.
+x0x.x.x0x
+x.x.x.x.x
+ENDMAP

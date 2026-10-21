@@ -1,0 +1,17 @@
+# Vaults standard room: grunt_vaults_trifunnel.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: grunt_vaults_trifunnel
+TAGS: vaults_room
+KMONS: 0 = 0 band
+MAP
+    xxx.xxxxxxx.xxxxxxx.x
+  xxx...xxxxx...xxxxx...x
+ xx.....xxx.....xxx.....x
+......xxx.....xxx.....xxx
+....0.+...(.0.+.....0....
+......xxx.....xxx.....xxx
+ xx.....xxx.....xxx.....x
+  xxx...xxxxx...xxxxx...x
+    xxx.xxxxxxx.xxxxxxx.x
+ENDMAP

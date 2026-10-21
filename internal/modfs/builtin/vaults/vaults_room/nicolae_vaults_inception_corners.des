@@ -1,0 +1,30 @@
+# Vaults standard room: nicolae_vaults_inception_corners.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_inception_corners
+TAGS: vaults_room
+WEIGHT: 3
+SHUFFLE: abcdef
+SUBST: a = +, bcdef = x, ) = )00. %:5, % = %., 0 = 0.
+MAP
+......fx....xf......
+.)...de......ed...).
+...%bc..)..)..cb%...
+..%xa..........ax%..
+..ba            ab..
+.dc.            .cd.
+fe..            ..ef
+x...            ...x
+..).            .)..
+....            ....
+....            ....
+..).            .)..
+x...            ...x
+fe..            ..ef
+.dc.            .cd.
+..ba            ab..
+..%xa..........ax%..
+...%bc..)..)..cb%...
+.)...de......ed...).
+......fx....xf......
+ENDMAP

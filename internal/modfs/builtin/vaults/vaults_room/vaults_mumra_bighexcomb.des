@@ -1,0 +1,20 @@
+# Vaults hard room: vaults_mumra_bighexcomb.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_mumra_bighexcomb
+TAGS:     vaults_hard
+SUBST:    0 = 0.
+NSUBST:   0 = 1:9 / *:0
+MAP
+      ...
+     .000.
+ ...xx...xx...
+.000.xx+xx.000.
+x...x+...+x...x
+xxxxx..(..xxxxx
+x...x+...+x...x
+.000.xx+xx.000.
+ ...xx...xx...
+     .000.
+      ...
+ENDMAP

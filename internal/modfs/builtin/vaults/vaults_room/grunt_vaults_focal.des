@@ -1,0 +1,24 @@
+# Vaults empty room: grunt_vaults_focal.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: grunt_vaults_focal
+TAGS: vaults_empty
+SHUFFLE: ABCD
+SHUFFLE: Aa, Bb, Cc, Dd
+NSUBST: A = 1:+ / *:x
+NSUBST: B = 1:+ / *:x
+NSUBST: C = 1:+ / *:x
+NSUBST: D = 1:+ / *:x
+SUBST: abcd = .
+MAP
+xx......xx
+xxx....xxx
+.xxx..xxx.
+..xxAAxxx.
+...B..D...
+...B..D...
+..xxCCxx..
+.xxx..xxx.
+xxx....xxx
+xx......xx
+ENDMAP

@@ -1,0 +1,26 @@
+# Vaults standard room: hangedman_vaults_restitches.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    hangedman_vaults_restitches
+TAGS:    allow_dup
+SHUFFLE: aAeE / aAeE / AaEa, bBfF / bBfF / BbFf
+SHUFFLE: cCgG / cCgG / CcGg, dDhH / dDhH / DdHh
+SHUFFLE: eEfFgGhH / eEfFgGhH / gGhHeEfF / hHgGfFeE
+SUBST:   ae : x:5 .:3, bf : x:5 .:3, cg : x:5 .:3, dh : x:5 .:3
+SUBST:   AE : x:7 .:3, BF : x:7 .:3, CG : x:7 .:3, DH : x:7 .:3
+# The source room setup marks this map for Vaults room selection.
+TAGS: vaults_room
+# Its default monster band applies only where the MAP uses monster slots.
+MONS: 0 band
+# Sparse replacement keeps this room populated without filling every cell.
+NSUBST: 0 = 1:1 / 2 = 1.. / *:.
+MAP
+..............
+.....B.....H..
+.AaA.b0GgG0h..
+.....B.....H..
+..D.....F.....
+..d0CcC0f.EeE.
+..D.....F.....
+..............
+ENDMAP

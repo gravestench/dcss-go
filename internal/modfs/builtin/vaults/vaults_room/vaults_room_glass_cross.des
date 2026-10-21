@@ -1,0 +1,22 @@
+# Vaults hard room: vaults_room_glass_cross.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_glass_cross
+TAGS:     vaults_hard
+NSUBST:   y = 1:+ / *:x
+SUBST:    w : ....x, m : mmmx, * = *%
+KITEM:    8 = $
+NSUBST:   9 = 1:9 / *:000009
+NSUBST:   8 = 1:9 / *=09
+MAP
+ww......ww
+ww......ww
+..9xmmx9..
+..xy.8yx..
+..m.*%.m..
+..m.%*.m..
+..xy8.yx..
+..9xmmx9..
+ww......ww
+ww......ww
+ENDMAP

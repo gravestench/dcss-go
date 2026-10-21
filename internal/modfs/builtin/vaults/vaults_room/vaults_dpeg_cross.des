@@ -1,0 +1,18 @@
+# Vaults empty room: vaults_dpeg_cross.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:  vaults_dpeg_cross
+TAGS:  vaults_empty
+SUBST: _ : xxxxx...TG, T : TUt, t = TU
+MAP
+   x..x
+  xx..xx
+ xxx..xxx
+xxx_.._xxx
+..........
+..........
+xxx_.._xxx
+ xxx..xxx
+  xx..xx
+   x..x
+ENDMAP

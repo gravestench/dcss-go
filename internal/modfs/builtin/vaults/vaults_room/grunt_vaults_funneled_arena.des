@@ -1,0 +1,40 @@
+# Vaults hard room: grunt_vaults_funneled_arena.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: grunt_vaults_funneled_arena
+TAGS: vaults_hard
+NSUBST: 9 = 1:8 / *:9
+SUBST: 0 = 90000000
+KMONS: 0 = 0 band
+SUBST: $ = |***$$$$
+MAP
+  x.....xxxxx...xxxxx.....x
+ xx......xxxxx.xxxxx......xx
+xx.......+...x.x...+.......xx
+.........xx..x.x..xx.........
+....0...xxx.......xxx....0...
+.......xxxxx..0..xxxxx.......
+......xxxxxx.....xxxxxx......
+.....xxxxxxxx...xxxxxxxx.....
+x...xxxxxxxxx...xxxxxxxxx...x
+xx+xxxxxxxxxxx.xxxxxxxxxxx+xx
+xx.xxxxxxxxxxx.xxxxxxxxxxx.xx
+xx...xxxxxxxxx+xxxxxxxxx...xx
+xx.....xxxxxx$$$xxxxxx.....xx
+.xxx.....xxx$9$9$xxx.....xxx.
+.....0.....+$$G$$+....0......
+.xxx.....xxx$9$9$xxx.....xxx.
+xx.....xxxxxx$$$xxxxxx.....xx
+xx...xxxxxxxxx+xxxxxxxxx...xx
+xx.xxxxxxxxxxx.xxxxxxxxxxx.xx
+xx+xxxxxxxxxxx.xxxxxxxxxxx+xx
+x...xxxxxxxxx...xxxxxxxxx...x
+.....xxxxxxxx...xxxxxxxx.....
+......xxxxxx.....xxxxxx......
+.......xxxxx..0..xxxxx.......
+........xxx.......xxx........
+....0....xx..x.x..xx....0....
+xx.......+...x.x...+.......xx
+ xx......xxxxx.xxxxx......xx
+  x.....xxxxx...xxxxx.....x
+ENDMAP

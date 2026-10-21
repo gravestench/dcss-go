@@ -1,0 +1,16 @@
+# Vaults hard room: nicolae_vaults_display_case.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_display_case
+TAGS: vaults_hard vaults_orient_w no_monster_gen
+MAP
+.........
+.........
+..xxxxxx+
+..m*x.0..
+..m*+090.
+..m*x.0..
+..xxxxxx+
+.........
+.........
+ENDMAP

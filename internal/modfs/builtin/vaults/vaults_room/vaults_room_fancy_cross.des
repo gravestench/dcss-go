@@ -1,0 +1,22 @@
+# Vaults empty room: vaults_room_fancy_cross.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_fancy_cross
+TAGS:     allow_dup vaults_empty
+SHUFFLE:  SPQR / spqr
+SUBST:    S=+, P=+, Q=+, R=+, s=., p=., q=., r=.
+NSUBST:   . = 1:( / *:.
+MAP
+....x..x....
+....x..x....
+..xSx..xPx..
+..S.s..p.P..
+xxxsx..xpxxx
+............
+............
+xxxrx..xqxxx
+..R.r..q.Q..
+..xRx..xQx..
+....x..x....
+....x..x....
+ENDMAP

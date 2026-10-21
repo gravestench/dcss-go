@@ -1,0 +1,15 @@
+# Vaults empty room: vaults_room_pool.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_pool
+TAGS:     vaults_empty allow_dup no_pool_fixup
+SUBST:    w : xW
+MAP
+.......
+.......
+..www..
+..www..
+..www..
+.......
+.......
+ENDMAP

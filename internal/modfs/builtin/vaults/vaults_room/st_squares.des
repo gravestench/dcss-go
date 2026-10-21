@@ -1,0 +1,21 @@
+# Vaults hard room: st_squares.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    st_squares
+TAGS:    vaults_hard
+MAP
+..............
+....0....0....
+..xxxx++xxxx..
+..x........x..
+..x...00...x..
+..x..xxxx..x..
+..x..x*%x..x..
+..x..x*%x..x..
+..x..x++x..x..
+..x........x..
+..x0..99..0x..
+..xxxxxxxxxx..
+..............
+..............
+ENDMAP

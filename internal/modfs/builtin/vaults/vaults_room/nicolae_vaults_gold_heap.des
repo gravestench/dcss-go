@@ -1,0 +1,14 @@
+# Vaults empty room: nicolae_vaults_gold_heap.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_gold_heap
+TAGS: vaults_empty no_item_gen
+WEIGHT: 3
+ITEM: gold q:1, gold q:2, gold q:4, gold q:8, gold q:16
+MAP
+defed
+efgfe
+fghgf
+efgfe
+defed
+ENDMAP

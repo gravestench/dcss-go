@@ -1,0 +1,24 @@
+# Vaults hard room: dpeg_vaults_hating_casters.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:   dpeg_vaults_hating_casters
+TAGS:   vaults_hard
+MONS:   ghost moth
+SUBST:  % = %%%$* , * = **|
+NSUBST: . = 6:0 / *:.
+SUBST:  0 = 00009, 8 = 889
+SUBST:  _ : x. , + : +==
+NSUBST: = = 1:+ / *=+x
+KPROP:  1 = no_tele_into
+MAP
+    @@@
+xxxx+++xxxx
+x%%.....%%x
+x%..000..%x
+x_..mmm.._x
+x_..m1m.._x
+x_..mmm.._x
+x...***...x
+x8.......8x
+xxxxxxxxxxx
+ENDMAP

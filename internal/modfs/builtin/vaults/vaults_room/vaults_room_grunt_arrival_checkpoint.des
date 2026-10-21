@@ -1,0 +1,18 @@
+# Vaults standard room: vaults_room_grunt_arrival_checkpoint.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_grunt_arrival_checkpoint
+TAGS:     vaults_room vaults_orient_e no_monster_gen no_item_gen no_trap_gen
+WEIGHT:   5 (Vaults:1), 3
+MONS:     vault guard
+MAP
+xxxxxxxxxx
+xxxx.T.xxx
+xxxx...xxx
+x..n1.1n..
+x(.+...+..
+x..n1.1n..
+xxxx...xxx
+xxxx.T.xxx
+xxxxxxxxxx
+ENDMAP

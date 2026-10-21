@@ -1,0 +1,25 @@
+# Vaults hard room: nicolae_vaults_know_your_exits.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_know_your_exits
+TAGS: vaults_hard no_windows vaults_orient_s
+SHUFFLE: pqrstu/PQRSTU
+SUBST: pqRT = %, rsPU = x, tuQS = ., 0 = 0.
+KMONS: 0 = 0 band
+KMONS: 9 = 9 band
+KITEM: % = any / gold
+KMONS: % = nothing w:11 / 0 w:1
+MAP
+      .
+    ..9..
+  .........
+...xpxqxpx...
+...rxrsrxr...
+.0.xpxqxpx.0.
+ ..tut0tut..
+ ..xpxqxpx..
+ ..rxrsrxr..
+  .xpxqxpx.
+  .........
+  .........
+ENDMAP

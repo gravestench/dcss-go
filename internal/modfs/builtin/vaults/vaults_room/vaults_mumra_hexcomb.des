@@ -1,0 +1,15 @@
+# Vaults standard room: vaults_mumra_hexcomb.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_mumra_hexcomb
+TAGS:     vaults_room
+SUBST:    0 = 0..
+MAP
+     ...
+   x.000.x
+ ...x...x...
+0.(.0xxx0.(.0
+ ...x...x...
+   x.000.x
+     ...
+ENDMAP

@@ -1,0 +1,18 @@
+# Vaults empty room: ontoclasm_vaults_loading_screen.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_loading_screen
+TAGS: vaults_empty allow_dup
+SUBST: a : x... , b : x....., c : x.....
+SUBST: x : xxxxxm
+MAP
+ .....
+ .ccc.
+ .bxb.
+@.axa.@
+(.axa.(
+@.axa.@
+ .bxb.
+ .ccc.
+ .....
+ENDMAP

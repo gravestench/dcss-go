@@ -1,0 +1,22 @@
+# Vaults hard room: st_quartered_hall.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    st_quartered_hall
+TAGS:    vaults_hard
+NSUBST:  0 = 4=998 / 8:0 / *:.
+MAP
+xxxxxxx..xxxxxxx
+x*00*x....x*00*x
+xx..xx....xx..xx
+xxx+x.0..0.x+xxx
+xxx...x..x...xxx
+x..0x......x0..x
+.......09.......
+.......90.......
+x..0x......x0..x
+xxx...x..x...xxx
+xxx+x.0..0.x+xxx
+xx..xx....xx..xx
+x*00|x....x*00*x
+xxxxxxx..xxxxxxx
+ENDMAP

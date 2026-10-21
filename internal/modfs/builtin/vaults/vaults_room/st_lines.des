@@ -1,0 +1,17 @@
+# Vaults hard room: st_lines.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    st_lines
+TAGS:    vaults_hard
+SHUFFLE: 90
+SUBST:   1 = 00.
+MAP
+%............9
+0............*
+xxxxxx++xxxxxx
+.....+11+.....
+.....+11+.....
+xxxxxx++xxxxxx
+9............%
+*............0
+ENDMAP

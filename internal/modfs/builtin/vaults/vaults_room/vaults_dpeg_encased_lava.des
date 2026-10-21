@@ -1,0 +1,14 @@
+# Vaults empty room: vaults_dpeg_encased_lava.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:  vaults_dpeg_encased_lava
+TAGS:  vaults_empty
+KPROP: l = no_tele_into
+MAP
+.......
+.nnnnn.
+.nllln.
+.nllln.
+.nnnnn.
+.......
+ENDMAP

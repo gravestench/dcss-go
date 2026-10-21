@@ -1,0 +1,16 @@
+# Vaults hard room: vaults_room_guarded_vault.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_guarded_vault
+TAGS:     vaults_hard vaults_orient_e
+MONS:     vault guard
+SUBST:    0 = 00.
+MAP
+%....*x11
+..00..x..
+......n..
+0.99.0+..
+......n..
+..00..x..
+*....%x11
+ENDMAP

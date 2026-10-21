@@ -1,0 +1,17 @@
+# Vaults empty room: vaults_dpeg_doors.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    vaults_dpeg_doors
+TAGS:    vaults_empty
+SHUFFLE: _+
+SUBST:   _ : ...+
+MAP
+xxxxxxxxxxxxxxxxxxxxx
+..xxxxxxxxxxxxxxxxx..
+...._..xxxxxxx..._...
+...._.....+......_...
+...._.....+......_...
+...._..xxxxxxx..._...
+..xxxxxxxxxxxxxxxxx..
+xxxxxxxxxxxxxxxxxxxxx
+ENDMAP

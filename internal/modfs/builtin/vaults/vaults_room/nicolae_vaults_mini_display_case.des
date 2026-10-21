@@ -1,0 +1,14 @@
+# Vaults standard room: nicolae_vaults_mini_display_case.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_mini_display_case
+TAGS: vaults_room vaults_orient_w no_monster_gen
+SUBST: % = %%$*
+MAP
+......
+.xxxx+
+.m%+.0
+.m%x0.
+.xxxx+
+......
+ENDMAP

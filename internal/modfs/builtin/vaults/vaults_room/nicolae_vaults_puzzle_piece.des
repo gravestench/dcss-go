@@ -1,0 +1,29 @@
+# Vaults standard room: nicolae_vaults_puzzle_piece.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_puzzle_piece
+TAGS: vaults_room allow_dup
+SUBST: A : ._, B : ._, C : ._, D : ._, ) = )))0
+KMONS: 0 = 0 band
+CLEAR: _
+MAP
+        AAA
+       AAAAA
+       AAAAA
+   ....AAAAA....
+   ....AAAAA....
+   ..)..AAA..)..
+   .............
+ DDDD.........BBBB
+DDDDDD.......BBBBBB
+DDDDDD...)...BBBBBB
+DDDDDD.......BBBBBB
+ DDDD.........BBBB
+   .............
+   ..)..CCC..)..
+   ....CCCCC....
+   ....CCCCC....
+       CCCCC
+       CCCCC
+        CCC
+ENDMAP

@@ -35,6 +35,7 @@ local random_monster_names = {
     random_monster = true,
     super_out_of_depth_monster = true,
     moderate_out_of_depth_monster = true,
+    [monster_requests.BASE_DRACONIAN] = true,
 }
 
 local random_item_names = {
@@ -196,6 +197,19 @@ local function find_name(category, name, site)
     return ids[1]
 end
 
+-- DES names some unrand artefacts by their source tile token rather than
+-- their displayed title. Resolve those tokens through the same catalog
+-- used by item generation, so no room owns a private artefact name table.
+local function named_artefact(name)
+    for _, definition in ipairs(catalog.all(categories.ARTEFACTS)) do
+        if active(definition) and
+            (definition.tile_equipment == name or
+                definition.name:lower():gsub("[^a-z0-9]+", "_") == name) then
+            return definition
+        end
+    end
+end
+
 -- A DES D:N place overrides the current floor for this resolver request.
 local function source_depth(selected, depth)
     local value = selected.place and selected.place:match("^D:(%d+)$")
@@ -286,6 +300,12 @@ function resolve.validate_monster(selected, site)
 
     if name:match(" band$") then
         base_name = name:match("^(.-) band$")
+
+        -- Source Vaults rooms use "0 band" for a depth-selected monster
+        -- with its ordinary band, not for a species literally named 0.
+        if random_monster_names[base_name] then
+            return
+        end
     end
 
     if slime_blob.size_for_name(name) then
@@ -316,6 +336,8 @@ function resolve.validate_item(selected, site)
     if base_name then
         named_corpse_species(base_name,
             name:match(" skeleton$") ~= nil, site)
+    elseif named_artefact(name) then
+        return
     else
         find_name(categories.ITEMS, name, site)
     end
@@ -386,7 +408,12 @@ function resolve.monster(ctx, selected, depth, site)
     elseif blob_size then
         kind_id = monster_ids.MONS_SLIME_CREATURE
     elseif band_name then
-        kind_id = find_name(categories.MONSTERS, band_name, site)
+        if random_monster_names[band_name] then
+            kind_id = random_monsters.pick(ctx, band_name,
+                source_depth(selected, depth), site)
+        else
+            kind_id = find_name(categories.MONSTERS, band_name, site)
+        end
     elseif base_name then
         if variant == "zombie" then
             kind_id = monster_ids.MONS_ZOMBIE
@@ -493,6 +520,7 @@ function resolve.item(ctx, selected, depth, site)
     local kind_id
     local class_id
     local base_id
+    local unique_id
     local quality = selected.quality or item_quality.ORDINARY
     local generation_depth = selected.level or source_depth(selected, depth)
     local request
@@ -522,12 +550,19 @@ function resolve.item(ctx, selected, depth, site)
         if legacy_fault then
             return { no_spawn = true }
         end
+    elseif named_artefact(name) then
+        local artefact = named_artefact(name)
+
+        kind_id = artefact.kind_id
+        class_id = artefact.class
+        unique_id = artefact.id
     else
         kind_id = find_name(categories.ITEMS, name, site)
     end
 
     return {
         kind_id = kind_id,
+        unique_id = unique_id,
         class_id = class_id,
         base_id = base_id,
         variant = variant,
@@ -547,6 +582,7 @@ function resolve.item(ctx, selected, depth, site)
         tile = selected.tile,
         weapon_tile = selected.wtile,
         item_name = selected.itemname,
+        no_pickup = selected.no_pickup,
     }
 end
 

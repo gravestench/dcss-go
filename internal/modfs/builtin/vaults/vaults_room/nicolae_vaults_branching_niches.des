@@ -1,0 +1,24 @@
+# Vaults hard room: nicolae_vaults_branching_niches.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_branching_niches
+TAGS: vaults_hard vaults_orient_s no_monster_gen no_item_gen
+SUBST: + : +.
+KMONS: m = 0 band w:12 / 9 w:3 / 8 w:1 / nothing w:6
+KITEM: m = nothing / % / $ / * w:5 / | w:1
+MAP
+xmxxxmxxxmxxxmx
+x+xxx+xxx+xxx+x
+x.....xxx.....x
+x+x.x+xxx+x.x+x
+xmx.xmxxxmx.xmx
+xxx.xxxxxxx.xxx
+xxx.........xxx
+xxx.xxx.xxx.xxx
+xmx.xmx.xmx.xmx
+x+x.x+x.x+x.x+x
+x.....x.x.....x
+x+xxx+x.x+xxx+x
+xmxxxmx.xmxxxmx
+xxxxxxx.xxxxxxx
+ENDMAP

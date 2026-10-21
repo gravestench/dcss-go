@@ -1,0 +1,22 @@
+# Vaults empty room: nicolae_vaults_big_angled_halls.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_big_angled_halls
+TAGS: vaults_empty allow_dup
+MAP
+xxxx.......xxxx
+xxx.......xxxxx
+xx.......xxxxxx
+x..(....xxxxxxx
+.......xxxxxxx.
+........xxxxx..
+.........xxx...
+....x..(..x....
+...xxx.........
+..xxxxx........
+.xxxxxxx.......
+xxxxxxx....(..x
+xxxxxx.......xx
+xxxxx.......xxx
+xxxx.......xxxx
+ENDMAP

@@ -1,0 +1,21 @@
+# Vaults empty room: vaults_room_mumra_shop_pool.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_mumra_shop_pool
+TAGS:     vaults_empty vaults_orient_s
+WEIGHT:   2
+SUBST:    w = w:10 2:1, G : G.
+MONS:     plant
+KFEAT:    s = any shop
+FTILE:    _1s = floor_swamp
+MAP
+.........
+.G.www.G.
+..wwwww..
+.wwwswww.
+.ww1_1ww.
+.www_www.
+..ww_ww..
+.G.w_w.G.
+...._....
+ENDMAP

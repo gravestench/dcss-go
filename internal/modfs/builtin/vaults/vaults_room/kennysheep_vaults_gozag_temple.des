@@ -1,0 +1,39 @@
+# Vaults hard room: kennysheep_vaults_gozag_temple.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:   kennysheep_vaults_gozag_temple
+TAGS:   vaults_hard no_item_gen uniq_kennysheep_gozag_temple
+WEIGHT: 5
+KMONS:  1 = ironbound preserver
+KMONS:  2 = vault warden
+KITEM:  | = gold good_item
+KITEM:  12 = gold
+KFEAT:  B = altar_gozag
+KFEAT:  D = granite_statue
+TILE:   GD = dngn_golden_statue
+# Name the source statue art without changing its granite terrain feature.
+: vault.run("features.golden_statue")
+COLOUR: cGD = yellow
+FTILE:  $|B}+nc12-D = floor_limestone
+FTILE:  " = floor_hall
+KFEAT:  _ = antiques shop name:Gozag greed:100 /\
+            antique weapon shop name:Gozag greed:100 /\
+            antique armour shop name:Gozag greed:100
+MAP
+...............
+.G.""c+++c"".G.
+..""cc---cc""..
+..""cD---Dc""..
+.9""cc+++cc""9.
+.""Gcc$$$ccG"".
+.""cc$$$$$cc"".
+.""n$$2|1$$n"".
+."_n$$|B|$$n_".
+9""n$$1|2$$n""9
+.""cc$$$$$cc"".
+.""Gcc$$$ccG"".
+."""0cnnnc0""".
+.."""""_"""""..
+.G.""""""""".G.
+...............
+ENDMAP

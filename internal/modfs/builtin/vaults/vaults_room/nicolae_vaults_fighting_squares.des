@@ -1,0 +1,27 @@
+# Vaults hard room: nicolae_vaults_fighting_squares.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_fighting_squares
+TAGS: vaults_hard
+SHUFFLE: ABCDEFGHabcdefgh%/IJKLMNOPijklmnop!
+NSUBST: 0 = 1:9 / * = 0009., ABCDEFGH = x / +, abcdefgh = + / x, \
+        PI = + / x, JK = + / x, LM = + / x, NO = + / x, \
+        ij = + / x, kl = + / x, mn = + / x, op = + / x
+SUBST: ! = .
+KMONS: 9 = 9 band
+MAP
+xxxxxx..xxxxxx
+x!...x..x...!x
+x.0..B..C..0.x
+x..xbxxxxcx..x
+x..a......d..x
+xxAx.0..0.xDxx
+...x..%%..x...
+...x..%%..x...
+xxHx.0..0.xExx
+x..h......e..x
+x..xgxxxxfx..x
+x.0..G..F..0.x
+x!...x..x...!x
+xxxxxx..xxxxxx
+ENDMAP

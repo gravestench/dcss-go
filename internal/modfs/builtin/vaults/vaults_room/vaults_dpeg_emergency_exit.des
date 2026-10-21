@@ -1,0 +1,14 @@
+# Vaults empty room: vaults_dpeg_emergency_exit.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:  vaults_dpeg_emergency_exit
+TAGS:  vaults_empty no_tele_into
+DEPTH: Vaults:1-3
+KFEAT: ^ = shaft trap
+MAP
+.....
+.mmm.
+.m^m.
+.mmm.
+.....
+ENDMAP

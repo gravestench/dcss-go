@@ -1,0 +1,22 @@
+# Vaults standard room: nicolae_vaults_windows_and_doors_thing.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_windows_and_doors_thing
+TAGS: vaults_room no_monster_gen
+SHUFFLE: AC/BD, EF
+SUBST: B = m, C = 0, D = %, E = +, F : xxxm
+NSUBST: A = 1:+ / *:x
+KMONS: 0 = 0 band
+MAP
+...........
+.xAxBxxxxx.
+.x.xDFC..A.
+.x.E.xxExx.
+.xCx....DB.
+.xFx.(.xFx.
+.BD....xCx.
+.xxExx.E.x.
+.A..CFDx.x.
+.xxxxxBxAx.
+...........
+ENDMAP

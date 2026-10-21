@@ -1,0 +1,16 @@
+# Vaults empty room: nicolae_vaults_theta.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_theta
+TAGS: vaults_empty allow_dup
+SHUFFLE: AB
+SUBST: A : ., B : x
+MAP
+xxx.....xxx
+x..xxAxx..x
+.xxxxAxxxx.
+.BBBB.BBBB.
+.xxxxAxxxx.
+x..xxAxx..x
+xxx.....xxx
+ENDMAP

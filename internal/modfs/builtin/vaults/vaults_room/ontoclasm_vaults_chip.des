@@ -1,0 +1,16 @@
+# Vaults standard room: ontoclasm_vaults_chip.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_chip
+TAGS: vaults_room allow_dup
+SUBST: P = 0. , G : ...G
+KMONS: 0 = 0 band
+MAP
+.x...x.
+.xx.xx.
+..G.G..
+.P.0.P.
+..G.G..
+.xx.xx.
+.x...x.
+ENDMAP

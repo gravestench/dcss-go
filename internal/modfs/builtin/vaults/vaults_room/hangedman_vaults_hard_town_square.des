@@ -1,0 +1,27 @@
+# Vaults hard room: hangedman_vaults_hard_town_square.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    hangedman_vaults_hard_town_square
+TAGS:    vaults_hard
+KFEAT:   d = any shop
+SHUFFLE: abc, de, d*, AB
+SUBST:   a : x., b : x.., c = ., e = %%$, * = %:3 *:7
+SUBST:   A : x.., B : xx., C : xGT
+SUBST:   1 = 9:3 0:7, 2 = 9:7 0:3
+MAP
+xxxxxx...xxxxxx
+xe.2xx.C.xx1.ex
+x.A..x...x..A.x
+x1.d.xx.xx.d.2x
+xx...........xx
+xxxx.B.c.B.xxxx
+...x..aba..x...
+.C...cbGbc...C.
+...x..aba..x...
+xxxx.B.c.B.xxxx
+xx...........xx
+x2.e.xx.xx...1x
+x.A..x...x..A%x
+xd.1xx.C.xx2%%x
+xxxxxx...xxxxxx
+ENDMAP

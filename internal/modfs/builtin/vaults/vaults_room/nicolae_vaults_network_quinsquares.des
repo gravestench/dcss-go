@@ -1,0 +1,26 @@
+# Vaults standard room: nicolae_vaults_network_quinsquares.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_network_quinsquares
+TAGS: vaults_room
+SUBVAULT: A : nico_quincunx
+SUBVAULT: B : nico_quincunx
+SUBVAULT: C : nico_quincunx
+SUBVAULT: D : nico_quincunx
+SUBVAULT: E : nico_quincunx
+NSUBST: a = x / ., b = x / ., c = x / .
+MAP
+.............
+.xAAAxaxBBBx.
+.AAAAA.BBBBB.
+.AAAAAaBBBBB.
+.AAAAA.BBBBB.
+.xAAAxaxBBBx.
+.b.b.b.......
+.xDDDxcxEEEx.
+.DDDDD.EEEEE.
+.DDDDDcEEEEE.
+.DDDDD.EEEEE.
+.xDDDxcxEEEx.
+.............
+ENDMAP

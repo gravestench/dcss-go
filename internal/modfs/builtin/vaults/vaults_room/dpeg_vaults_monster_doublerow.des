@@ -1,0 +1,17 @@
+# Vaults hard room: dpeg_vaults_monster_doublerow.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:   dpeg_vaults_monster_doublerow
+TAGS:   vaults_hard
+WEIGHT: 1
+SUBST:  0 : 0000000z, z : z., 0 = 0009..
+KMONS:  z = human skeleton
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+xx00xx00xx00xx00xx00xx00xx
+xx..xx..xx..xx..xx..xx..xx
+x........................x
+x.xx..xx..xx..xx..xx..xx.x
+..xx00xx00xx00xx00xx00xx..
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

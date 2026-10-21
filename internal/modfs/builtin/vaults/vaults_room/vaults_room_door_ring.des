@@ -1,0 +1,18 @@
+# Vaults empty room: vaults_room_door_ring.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_door_ring
+TAGS:     vaults_empty allow_dup
+SHUFFLE:  abcdefghijklm
+SUBST:    abcdefg = +
+SUBST:    hijklm = .
+MAP
+..b..c..
+..b..c..
+aaxxxxdd
+..xxxx..
+..xxxx..
+hhxxxxee
+..g..f..
+..g..f..
+ENDMAP

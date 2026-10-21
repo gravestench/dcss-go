@@ -1,0 +1,27 @@
+# Vaults hard room: minmay_guarded_unrand_secular_launcher.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    minmay_guarded_unrand_secular_launcher
+TAGS:    vaults_hard vaults_orient_s
+WEIGHT:  3
+# n.b. if one of these has generated, this may fall back on a randart. If both
+# have generated, it is guaranteed to.
+ITEM:    storm_bow no_pickup / sniper no_pickup
+NSUBST:  3:9 / 6=9. / ., 8 = 2:8 / 6=8.. / .
+MAP
+     vvvvv
+   vvv999vvv
+  vv.......vv
+ vv..cc.cc..vv
+ v..cc888cc..v
+vv.cc|...|cc.vv
+v9.c8.bbb.8c.9v
+v9.c8.bdb.8c.9v
+v9.c8.b.b.8c.9v
+vv.cc|...|cc.vv
+ v..cc888cc..v
+ vv..ccncc..vv
+  vv.......vv
+   vvv999vvv
+     vv.vv
+ENDMAP

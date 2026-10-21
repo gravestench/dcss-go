@@ -1,0 +1,25 @@
+# Vaults hard room: nicolae_vaults_c_with_doors.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_c_with_doors
+TAGS: vaults_hard vaults_orient_e no_monster_gen no_item_gen
+NSUBST: A = 1:+ / *:x
+SUBST: $ = $$%, B = 0., 0 = 900
+KMONS: 0 = 0 band
+MAP
+xxxxxxxxxxx
+xB.B...B..x
+x.$$xAxAxAx
+xB$$xBxBxBx
+x.xxx+x+x+x
+x.AB+......
+xBxxx.(..(.
+x.AB+.(..(.
+xBxxx.(..(.
+x.AB+......
+x.xxx+x+x+x
+xB$$xBxBxBx
+x.$$xAxAxAx
+xB.B...B..x
+xxxxxxxxxxx
+ENDMAP

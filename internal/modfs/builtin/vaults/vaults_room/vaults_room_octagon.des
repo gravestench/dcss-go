@@ -1,0 +1,27 @@
+# Vaults empty room: vaults_room_octagon.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_octagon
+TAGS:     allow_dup vaults_empty
+SHUFFLE:  pq/rs
+SUBST:    q : xx.
+SUBST:    s : xx.
+SUBST:    r : xx.
+SUBST:    p : x
+MAP
+xxxx.......xxxx
+xxx...srs...xxx
+xx....rrr....xx
+x.....srs.....x
+...............
+...............
+.srs..qpq..srs.
+.rrr..ppp..rrr.
+.srs..qpq..srs.
+...............
+...............
+x.....srs.....x
+xx....rrr....xx
+xxx...srs...xxx
+xxxx.......xxxx
+ENDMAP

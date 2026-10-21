@@ -1,0 +1,17 @@
+# Vaults hard room: st_check.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    st_check
+TAGS:    vaults_hard
+WEIGHT:  5
+KMONS:   8 = 8
+KITEM:   8 = |
+KMONS:   9 = 9
+KITEM:   9 = *
+MAP
+.................
+.xxxxxxxxxxxxxxx.
+.x98990+9+9+0+0+.
+.xxxxxxxxxxxxxxx.
+.................
+ENDMAP

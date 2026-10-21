@@ -1,0 +1,25 @@
+# Vaults standard room: v_pattern_2.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    v_pattern_2
+TAGS:    luniq_lattice
+# The source room setup marks this map for Vaults room selection.
+TAGS: vaults_room
+# Its default monster band applies only where the MAP uses monster slots.
+MONS: 0 band
+# Sparse replacement keeps this room populated without filling every cell.
+NSUBST: . = 1:1 / 2 = 1.. / *:.
+NSUBST:  . = 1:( / *:.
+MAP
+.x.x...x.x.
+x.x.x.x.x.x
+.x.x.x.x.x.
+x.x.....x.x
+.x.......x.
+..x..0..x..
+.x.......x.
+x.x.....x.x
+.x.x.x.x.x.
+x.x.x.x.x.x
+.x.x...x.x.
+ENDMAP

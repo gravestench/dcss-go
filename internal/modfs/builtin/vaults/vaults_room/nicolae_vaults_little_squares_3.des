@@ -1,0 +1,17 @@
+# Vaults empty room: nicolae_vaults_little_squares_3.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_little_squares_3
+TAGS: vaults_empty allow_dup
+SHUFFLE: Aa, Bb, Cc, Dd
+SUBST: ABCD : x, abcd : +
+MAP
+..xxx...
+..A.x...
+..aAxbBx
+xxx..B.x
+x.D..xxx
+xDdxCc..
+...x.C..
+...xxx..
+ENDMAP

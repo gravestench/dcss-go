@@ -1,0 +1,36 @@
+# Vaults standard room: nicolae_vaults_big_ls.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_big_ls
+TAGS: vaults_room
+SUBST: g : xg
+NSUBST: a = 1:+ / *:x
+NSUBST: b = 1:+ / *:x
+NSUBST: c = 1:+ / *:x
+NSUBST: d = 1:+ / *:x
+NSUBST: e = 1:+ / *:x
+NSUBST: f = 1:+ / *:x
+NSUBST: g = 1:+ / *:x
+NSUBST: h = 1:+ / *:x
+NSUBST: i = 1:+ / *:x
+NSUBST: j = 1:+ / *:x
+NSUBST: k = 1:+ / *:x
+NSUBST: l = 1:+ / *:x
+SUBST: x = x:80 n:10 +:5
+SUBST: . = .:75 %:5 0:5
+KMONS: 0 = 0 band
+MAP
+x.a.b.c.d.e.x
+..a.b.c.d.e..
+aaa.b.c.d.eee
+....b.c.d....
+bbbbb.c.ddddd
+......c......
+ffffffxgggggg
+......j......
+hhhhh.j.kkkkk
+....h.j.k....
+iii.h.j.k.lll
+..i.h.j.k.l..
+x.i.h.j.k.l.x
+ENDMAP

@@ -1,0 +1,16 @@
+# Vaults standard room: nicolae_vaults_yaktaur_gun_rack.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_yaktaur_gun_rack
+TAGS: vaults_room no_monster_gen no_item_gen
+MONS: yaktaur w:8 / yaktaur band w:4 / yaktaur captain w:2 / yaktaur captain band w:1
+KITEM: c = arbalest w:8 / arbalest good_item w:1 / triple crossbow w:1
+MAP
+xxxxxxx
+xc.c.cx
+x......
+x.1....
+x......
+x.c.c.x
+xxxxxxx
+ENDMAP

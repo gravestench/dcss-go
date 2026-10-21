@@ -1,0 +1,13 @@
+# Vaults empty room: grunt_vaults_hallway_short.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: grunt_vaults_hallway_short
+TAGS: vaults_empty allow_dup
+SHUFFLE: G = GT
+MAP
+.xx.xx.xx.
+..........
+...G..G...
+..........
+.xx.xx.xx.
+ENDMAP

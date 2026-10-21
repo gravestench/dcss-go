@@ -1,0 +1,38 @@
+# Vaults empty room: grunt_vaults_bifocal.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: grunt_vaults_bifocal
+TAGS: vaults_empty
+SHUFFLE: ABCD, EFGH
+SHUFFLE: Aa, Bb, Cc, Dd, Ee, Ff, Gg, Hh
+NSUBST: A = 1:+ / *:x
+NSUBST: B = 1:+ / *:x
+NSUBST: C = 1:+ / *:x
+NSUBST: D = 1:+ / *:x
+NSUBST: E = 1:+ / *:x
+NSUBST: F = 1:+ / *:x
+NSUBST: G = 1:+ / *:x
+NSUBST: H = 1:+ / *:x
+SUBST: abcdefgh = .
+MAP
+xx......xx
+xxx....xxx
+.xxx..xxx.
+..xxAAxxx.
+...B..D...
+...B..D...
+..xxCCxx..
+.xxx..xxx.
+xxx....xxx
+xx..(...xx
+xx...(..xx
+xxx....xxx
+.xxx..xxx.
+..xxEExxx.
+...F..H...
+...F..H...
+..xxGGxx..
+.xxx..xxx.
+xxx....xxx
+xx......xx
+ENDMAP

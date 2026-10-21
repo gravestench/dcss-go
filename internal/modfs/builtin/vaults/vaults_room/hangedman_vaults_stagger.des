@@ -1,0 +1,24 @@
+# Vaults standard room: hangedman_vaults_stagger.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    hangedman_vaults_stagger
+# The source room setup marks this map for Vaults room selection.
+TAGS: vaults_room
+# Its default monster band applies only where the MAP uses monster slots.
+MONS: 0 band
+SHUFFLE: abc, ABC, de / de / ed, DE / DE / ED
+NSUBST:  a = 1:1 / 1:0 / *:.
+SUBST:   A = 0.., bBcC = ., dD = +, eE = x
+MAP
+.........xxxx
+.........xa.x
+..xxeddexx..x
+..xc........xxxx
+xxx.....bb.cxA.x
+  x..xxDEEDxx..x
+  x.axC.BB.....xxx
+  xxxx........Cx..
+     x..xxeddexx..
+     x.Ax.........
+     xxxx.........
+ENDMAP

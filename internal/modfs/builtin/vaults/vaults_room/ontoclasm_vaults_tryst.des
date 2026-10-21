@@ -1,0 +1,19 @@
+# Vaults empty room: ontoclasm_vaults_tryst.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_tryst
+TAGS: vaults_empty
+SUBST: T : TTG.
+MAP
+....xxxxxxxxx..
+....x......xx..
+....xxx+xx..x..
+....xx...xx....
+x.xxx.....x.xxx
+x...x..T..x...x
+xxx.x.....xxx.x
+....xx...xx....
+..x..xx+xxx....
+..xx......x....
+..xxxxxxxxx....
+ENDMAP

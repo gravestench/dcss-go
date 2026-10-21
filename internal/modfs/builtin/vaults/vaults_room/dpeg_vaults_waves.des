@@ -1,0 +1,20 @@
+# Vaults hard room: dpeg_vaults_waves.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:   dpeg_vaults_waves
+TAGS:   vaults_hard
+SUBST:  = = +x
+SUBST:  ^ : .x , - : .xx
+SUBST:  * = **% , | = ||*
+SUBST:  8 = 89
+MAP
+xxxxxx
+x8..|x
+x-..^xxxxxxxxxxxxxx
+x8...+*.9...x%.....
+x-...=..9...+..000@
+x8...+*.9...x%.....
+x-..^xxxxxxxxxxxxxx
+x8..|x
+xxxxxx
+ENDMAP

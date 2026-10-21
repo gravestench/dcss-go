@@ -1,0 +1,24 @@
+# Vaults hard room: nicolae_vaults_meeting.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_meeting
+TAGS: vaults_hard vaults_orient_s patrolling no_monster_gen
+KMONS: S = vault sentinel
+KMONS: G = vault guard
+KMONS: W = vault warden
+KMONS: P = ironbound preserver
+KMONS: C = ironbound convoker
+SUBST: | = ||*
+MAP
+   xxxxxxx
+ xxx%*|*%xxx
+xxG+..S..+Gxx
+x..xnnnnnx..x
+x.P...C...P.x
+x...........x
+x..W.....W..x
+xx...GGG...xx
+ xxxx+++xxxx
+   xx...xx
+    x...x
+ENDMAP

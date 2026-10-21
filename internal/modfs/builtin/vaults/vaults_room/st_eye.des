@@ -1,0 +1,23 @@
+# Vaults hard room: st_eye.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    st_eye
+TAGS:    vaults_hard
+TAGS:    vaults_orient_n vaults_orient_s
+NSUBST:  9 = 1:8 / *:9
+MAP
+xxxxxxxxx..xxxxxxxxx
+xx%**xxxx..xxxx%*%xx
+x.9...xx....xx...9.x
+x...0.xx....xx.0...x
+x....xx0....0xx....x
+x.0.xx..x..x..xx.0.x
+x.........9........x
+x........9.........x
+x.0.xx..x..x..xx.0.x
+x....xx0....0xx....x
+x...0.xx....xx.0...x
+x.9...xx....xx...9.x
+xx|*%xxxx..xxxx%**xx
+xxxxxxxxx..xxxxxxxxx
+ENDMAP

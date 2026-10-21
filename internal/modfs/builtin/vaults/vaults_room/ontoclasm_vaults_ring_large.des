@@ -1,0 +1,28 @@
+# Vaults empty room: ontoclasm_vaults_ring_large.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_ring_large
+TAGS: vaults_empty allow_dup
+SHUFFLE: abcdefghi / o'''''ooo / oo''''ooo / ooo'''ooo / \
+         ''''''ooo / o'''''ooo / oo''''ooo / ooo'''ooo / \
+         o''o''''o / oo'oo'''o / oooooo''o / ''o''o''o / \
+         ''''''''o / '''''''o' / o''o'''o' / oo'oo''o' / \
+         ''o''o'o' / oooooo'o'
+SUBST: abcdef' = .
+SUBST: ghio = x
+MAP
+    cc....
+  accc......
+ aaacxiix....
+ baxxxiixhh..
+bbbxxxiihhh...
+bbxxxxighhxx..
+..xxxxgghxxx..
+..xxxhggxxxx..
+..xxhhgixxxxee
+...hhhiixxxeee
+ ..hhxiixxxde
+ ....xiixfddd
+  ......fffd
+    ....ff
+ENDMAP

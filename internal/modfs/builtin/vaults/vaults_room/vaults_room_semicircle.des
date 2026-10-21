@@ -1,0 +1,14 @@
+# Vaults empty room: vaults_room_semicircle.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:     vaults_room_semicircle
+TAGS:     allow_dup vaults_empty vaults_orient_e
+MAP
+.....xx
+......x
+.......
+.(.....
+.......
+......x
+.....xx
+ENDMAP

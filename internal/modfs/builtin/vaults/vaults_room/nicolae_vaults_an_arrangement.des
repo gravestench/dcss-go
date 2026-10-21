@@ -1,0 +1,22 @@
+# Vaults hard room: nicolae_vaults_an_arrangement.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_an_arrangement
+TAGS: vaults_hard
+SUBST: 0 = 00.
+KMONS: 9 = 9 band
+MAP
+x.x.x.x.x.x.x
+.............
+x.0...0...0.x
+...x..x..x...
+x...........x
+.....x.x.....
+x.0x..9..x0.x
+.....x.x.....
+x...........x
+...x..x..x...
+x.0...0...0.x
+.............
+x.x.x.x.x.x.x
+ENDMAP

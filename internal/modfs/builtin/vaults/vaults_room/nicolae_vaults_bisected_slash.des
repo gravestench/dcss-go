@@ -1,0 +1,19 @@
+# Vaults empty room: nicolae_vaults_bisected_slash.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_bisected_slash
+TAGS: vaults_empty opaque no_tele_into
+WEIGHT: 2
+SHUFFLE: mx
+SUBST: x : mxx
+MAP
+.......mx
+......mxm
+..(..mxm.
+....mxm..
+...mxm...
+..mxm....
+.mxm..(..
+mxm......
+xm.......
+ENDMAP

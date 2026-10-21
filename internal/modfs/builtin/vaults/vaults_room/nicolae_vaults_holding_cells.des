@@ -1,0 +1,30 @@
+# Vaults hard room: nicolae_vaults_holding_cells.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_holding_cells
+TAGS: vaults_hard
+WEIGHT: 5
+KMONS: P = human ; nothing / orc ; nothing / elf ; nothing / troll ; nothing / \
+       centaur ; nothing / kobold ; nothing
+KFEAT: g = iron_grate
+KFEAT: ^ = alarm trap
+KMONS: 1 = vault guard
+KMONS: 2 = vault warden
+KMONS: 3 = ironbound preserver / ironbound convoker
+NSUBST: 1 = 4:1 / 1:2 / 1:3 / *:., . = 2:^ / *:.
+SUBST: ' = .
+KPROP: P = no_tele_into
+KMASK: P = opaque
+KMASK: P = no_trap_gen
+KMASK: P = no_item_gen
+MAP
+xxxxxxxxx
+xPg..1xxx
+xxx1...xx
+xPg....1x
+xxx1.1..'
+xPg....1x
+xxx1...xx
+xPg..1xxx
+xxxxxxxxx
+ENDMAP

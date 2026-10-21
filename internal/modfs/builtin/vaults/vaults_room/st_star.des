@@ -1,0 +1,19 @@
+# Vaults hard room: st_star.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:    st_star
+TAGS:    vaults_hard
+TAGS:    vaults_orient_n vaults_orient_s
+NSUBST:  0 = 2=998 / 6:0 / *:.
+MAP
+xxxxxxxxxxxx..xxxxxxxxxxxx
+x%*xxxxxxx......xxxxxxx%*x
+x*9..xxx...0..0...xxx..9%x
+xx.......0..xx..0.......xx
+xxxx..0....xxxx....0..xxxx
+xxxx..0....xxxx....0..xxxx
+xx.......0..xx..0.......xx
+x%9..xxx...0..0...xxx..9*x
+x*%xxxxxxx......xxxxxxx*%x
+xxxxxxxxxxxx..xxxxxxxxxxxx
+ENDMAP

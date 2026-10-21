@@ -1,0 +1,18 @@
+# Vaults standard room: nicolae_vaults_border_crossing.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_border_crossing
+TAGS: vaults_room
+SHUFFLE: AB
+KMONS: W = vault warden
+SUBST: G : xxx...GTb, A : +, B : +x
+KMONS: 1 = 0 band
+MAP
+x.1.0.x
+xx...xx
+xG.W.Gx
+xxABAxx
+xG.W.Gx
+xx...xx
+x.0.1.x
+ENDMAP

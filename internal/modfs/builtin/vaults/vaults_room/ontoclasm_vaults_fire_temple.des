@@ -1,0 +1,26 @@
+# Vaults hard room: ontoclasm_vaults_fire_temple.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_fire_temple
+WEIGHT: 3
+TAGS: vaults_hard
+KMASK: l = no_monster_gen
+NSUBST: 0 = 1:9 / *:0
+KMONS: 0 = 0 band
+SUBST: G : GY, % = %%%%*.
+MAP
+     ........
+     ........
+      lx++xl
+   xxxxx..xxxxx
+   xlllx..xlllx
+.. xl0.x++x.0lx ..
+..lxl%......%lxl..
+..xxxx.llll.xxxx..
+..+..+.lGGl.+..+..
+..+..+......+..+..
+..xxxx.lGGl.xxxx..
+..lxl%.llll.%lxl..
+.. xl0.llll.0lx ..
+   xlllxxxxlllx
+ENDMAP

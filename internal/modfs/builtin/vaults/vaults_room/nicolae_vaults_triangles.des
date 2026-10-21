@@ -1,0 +1,23 @@
+# Vaults standard room: nicolae_vaults_triangles.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_triangles
+TAGS: vaults_room
+SUBST: 0 = 0..., ( = (((0
+MAP
+xxxxxxx.xxxxxxx
+x....x.(.x....x
+x.(.x.....x.(.x
+x..xxxx+xxxx..x
+x.xxx0...0xxx.x
+xx.x0x.0.x0x.xx
+x..x..x.x..x..x
+.(.+.0.x.0.+.(.
+x..x..x.x..x..x
+xx.x0x.0.x0x.xx
+x.xxx0...0xxx.x
+x..xxxx+xxxx..x
+x.(.x.....x.(.x
+x....x.(.x....x
+xxxxxxx.xxxxxxx
+ENDMAP

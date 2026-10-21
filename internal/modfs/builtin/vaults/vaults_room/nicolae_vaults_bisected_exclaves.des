@@ -1,0 +1,21 @@
+# Vaults standard room: nicolae_vaults_bisected_exclaves.
+# Imported from branches/vaults_rooms_standard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_bisected_exclaves
+TAGS: vaults_room opaque no_tele_into
+WEIGHT: 2
+SHUFFLE: abcdefghijk
+SUBST: abcd = m, e : xm, f : xm, ghijk = x, % = %%0
+MAP
+.....a.....
+.xex.x..)..
+.f%d.b.....
+.x.xcx.xix.
+.g...0.j%h.
+.x.xkxkx.x.
+.h%j.0...g.
+.xix.xcx.x.
+.....b.d%f.
+..)..x.xex.
+.....a.....
+ENDMAP

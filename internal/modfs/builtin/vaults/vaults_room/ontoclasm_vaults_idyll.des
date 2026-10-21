@@ -1,0 +1,23 @@
+# Vaults empty room: ontoclasm_vaults_idyll.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: ontoclasm_vaults_idyll
+TAGS: vaults_empty vaults_orient_n vaults_orient_s allow_dup
+SUBST: j : jjj. , m : mmm. , g : ggg. , e : eee. , l : lll.
+SUBST: n : nnn. , a : aaa. , o : ooo. , b : bbb.
+SHUFFLE: abcdefghijklmnopqrstuv
+SUBST: abcdefghijklm = w , nopqrstuv = W , T = TU
+KMASK: wW = no_monster_gen
+MAP
+.........
+ .......
+..jjmjj..
+.glhkhlg.
+.gpihipg.
+.eefTfee.
+.nncdcnn.
+.acodoca.
+..obbbo..
+ .......
+.........
+ENDMAP

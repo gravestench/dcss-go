@@ -1,0 +1,16 @@
+# Vaults empty room: nicolae_vaults_asterisk.
+# Imported from branches/vaults_rooms_empty.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME: nicolae_vaults_asterisk
+TAGS: vaults_empty allow_dup
+MAP
+xxx.xxx
+.xx.xx.
+..x.x..
+x.....x
+xx.(.xx
+x.....x
+..x.x..
+.xx.xx.
+xxx.xxx
+ENDMAP

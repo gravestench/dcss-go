@@ -1,0 +1,21 @@
+# Vaults hard room: dpeg_vaults_pockets_of_resistance.
+# Imported from branches/vaults_rooms_hard.des; this MAP and its
+# declarations are runtime content. Shared source setup is expanded in place.
+NAME:   dpeg_vaults_pockets_of_resistance
+TAGS:   vaults_hard
+NSUBST: 0 = 3 = 899 / 12 = 099 / * = 0
+MAP
+  xxx......
+ xxxxx....xxx
+xx000xx..xxxxx
+xx000xx..x000xx
+xx000....x000xx
+.xx.......000xx
+...........xxx.
+...............
+...xx000xx.....
+.  xx000xx  ...
+   xx000xx    .
+    xxxxx
+     xxx
+ENDMAP
