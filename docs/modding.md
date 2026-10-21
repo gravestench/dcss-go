@@ -2119,8 +2119,8 @@ there is no global `vault.run` Lua function to call yourself. When the
 layout selector chooses that map, the layout catalog invokes the hook
 resolver. Because the map is in the `layout` family, the resolver loads
 `policy/generation/layouts/layout_cave_pools.lua` and calls its exported
-`layout_cave_pools(api)` method. That method returns a grid builder and
-any typed records; the catalog then completes connected stairs.
+`layout_cave_pools(api)` method. That method returns the painted rows and
+generation metadata; the catalog then completes connected stairs.
 
 The implementation path is short: `policy/generation/vaults/des.lua` parses
 the `: vault.run(...)` line into a named operation;
