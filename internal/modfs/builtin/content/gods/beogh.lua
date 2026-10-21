@@ -1,0 +1,20 @@
+-- Beogh accepts only Hill Orcs and needs followers, so No Love also prevents joining.
+-- Its file registers one stable ID; the resolved catalog can replace this
+-- definition from a later mod layer without changing the engine.
+local categories = require("constants.catalog")
+local gods = require("constants.gods")
+local modes = require("constants.god_piety_modes")
+
+local definition = {
+    id = gods.BEOGH,
+    name = "Beogh",
+    temple_eligible = false,
+    starting_piety = 15,
+    piety_mode = modes.ORDINARY,
+    requires_orc = true,
+    requires_love = true,
+}
+
+register.definition(categories.GODS, definition)
+
+return definition

@@ -532,6 +532,7 @@ without changing its effective Lua files does not change that identity.
 | Magical staff | `content/items/<name>.lua` | Its proc needs a new rule. |
 | Ring or amulet | `content/items/<name>.lua` | It needs a new effect capability. |
 | Job | `content/jobs/<name>.lua` | It needs a new starting-gear rule or other behavior. |
+| God | `content/gods/<name>.lua` | It needs a focused join, leave, or piety behavior rule. |
 | Item class | An item file with a new `class` ID | It needs class-specific rules or UI. |
 | Mutation | `content/mutations/<name>.lua` | It needs an effect under `policy/mutations/effects/`. |
 | Branch, cloud, trap, or shop | `content/<category>/<name>.lua` | It needs a new selection or effect rule. |
@@ -547,6 +548,15 @@ Completed content and behavior files register themselves when discovered.
 There is no central switch to edit for each new monster, spell, item,
 component, or system. The loader
 rejects duplicate IDs and invalid definitions with their source paths.
+For a god, import `constants.catalog`, `constants.gods` for bundled IDs,
+and `constants.god_piety_modes`. A new god can declare its own stable ID in
+its definition file. Define `name`, `starting_piety`, `piety_mode`, and
+`temple_eligible`; add `good`, `rejects_innate_caster`, `requires_orc`, or
+`requires_love` only when the restriction applies. The effective god
+catalog supplies Temple membership and display names through
+`policy.religion.names`. The special `GOD_NO_GOD` and `GOD_ECUMENICAL` IDs
+are engine sentinels, not god definitions. A same-path mod file replaces a
+bundled god's facts; a new path adds a god without editing a central list.
 
 Write comments for the next human reader. Give each Lua file its own purpose
 and explain each function's reason for existing and how it implements the
@@ -2061,7 +2071,21 @@ named hooks through the same resolver in the vault placement path. These
 paths are relative to the embedded mod root (`internal/modfs/builtin/` in
 this repository), so a layered mod can replace a handler at the same path.
 The `.des` line declares when to call a method; the actual Lua function is
-assigned to the table returned by that module.
+assigned to the table returned by that module. To locate or add a hook, use
+this map from the `.des` file's family and hook argument:
+
+| `.des` family and argument | Lua module | Function to export |
+| --- | --- | --- |
+| `layout/layout_cave_pools.des`, `layout_cave_pools` | `policy/generation/layouts/layout_cave_pools.lua` | `layout_cave_pools(api)` |
+| `arrival/dpeg_arrival_water_fire.des`, `choose_water_fire_layout` | `policy/generation/vaults/arrival/dpeg_arrival_water_fire.lua` | `choose_water_fire_layout(api)` |
+| `coc_end/coc_grunt.des`, `shared.serpent_of_hell` | `policy/generation/vaults/coc_end/shared.lua` | `serpent_of_hell(api)` |
+
+These are paths inside the mod root. The first path segment of a dotted
+argument selects a different module in the same family; the second names its
+method. `hooks.validate` reports a missing module or method before placement,
+and `hooks.run` calls the selected function when the map reaches that hook.
+The `api` is the vault generation context described below, not the game
+`ctx`; it provides bounded random draws and typed map operations.
 
 A procedural map can leave `MAP` empty and put `procedural_map` in its
 `TAGS`. Its named run hook calls `api:resize(width, height, fill)` to create
@@ -2760,7 +2784,7 @@ Temple's generic `B` altars receive stable god IDs from the saved plan;
 do not hardcode a god name into a generic altar or use a module-level draw.
 The grid owns the walkable `_` feature, while
 `policy/presentation/view.lua` names an altar from its saved god ID using
-`constants.god_names`. Worship rules are a separate domain.
+`policy.religion.names`. Worship rules are a separate domain.
 
 The source Dungeon overflow maps live under `vaults/altar/`. The dedicated
 `policy.generation.altar.catalog` discovers added or replaced `.des` files
@@ -2779,7 +2803,7 @@ named Lua hook reshapes its `B` cells to match. For example,
 five gods. A map for named gods uses `temple_overflow_N` plus one
 `temple_overflow_<god_name>` tag for each supported god. God tag names use
 lowercase display names with spaces replaced by underscores; import
-`constants.god_names` in a Lua hook instead of duplicating names there.
+`policy.religion.names` in a Lua hook instead of duplicating names there.
 The map also needs an eligible `DEPTH`, positive source weight, and terrain
 that can fit on the floor. If a scheduled group has no eligible map or cannot
 be placed, generation reports the error rather than dropping its gods.

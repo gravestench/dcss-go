@@ -4,7 +4,7 @@
 -- Dungeon depth from D:3-10. The selected DES map is drawn when that floor
 -- is generated, but this god/depth allocation is durable run state.
 local source_catalog = require("policy.generation.altar.catalog")
-local god_names = require("constants.god_names")
+local god_names = require("policy.religion.names")
 local limits = require("constants.overflow_altars")
 local streams = require("constants.rng_streams")
 local branches = require("ids.branches")

@@ -7,7 +7,7 @@ local colors = require("policy.presentation.colors")
 local clouds = require("policy.presentation.clouds")
 local identification = require("policy.items.identification")
 local component = require("constants.component")
-local god_names = require("constants.god_names")
+local god_names = require("policy.religion.names")
 local monster_display = require("policy.combat.monster_support.display")
 
 local view = {}

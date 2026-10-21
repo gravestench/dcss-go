@@ -3,16 +3,25 @@
 local component = require("constants.component")
 local gods = require("constants.gods")
 local limits = require("constants.piety")
+local categories = require("constants.catalog")
 
 local validation = {}
-local known = {}
+-- Resolve current IDs at the boundary so a mod's added god is valid in a
+-- restored run, while the temporary ecumenical altar can never be worshipped.
+local function known_gods()
+    local known = {
+        [gods.NO_GOD] = true,
+    }
 
-for _, id in pairs(gods) do
-    known[id] = true
+    for _, id in ipairs(register.ids(categories.GODS)) do
+        known[id] = true
+    end
+
+    return known
 end
 
 -- Check a per-god counter map without assuming every god has an entry.
-local function history(name, values, maximum)
+local function history(name, values, maximum, known)
     for id, value in pairs(values) do
         if not known[id] or value < 0 or
             (maximum and value > maximum) then
@@ -25,6 +34,7 @@ end
 -- restored. God-specific effects will use this same checked record.
 function validation.check(ctx, player)
     local state = ctx:get(player, component.RELIGION_WORSHIP)
+    local known = known_gods()
 
     if not state then
         error("player lacks religion worship")
@@ -54,9 +64,9 @@ function validation.check(ctx, player)
         error("godless player has piety")
     end
 
-    history("penance", state.penance)
-    history("worshipped", state.worshipped, 100)
-    history("piety maximum", state.piety_max, limits.MAX)
+    history("penance", state.penance, nil, known)
+    history("worshipped", state.worshipped, 100, known)
+    history("piety maximum", state.piety_max, limits.MAX, known)
 
     return state
 end

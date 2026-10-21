@@ -1,38 +1,29 @@
 -- One run chooses its Temple map, altar count, and god partition before
 -- the first Dungeon floor. All later Temple work consumes this saved plan.
-local gods = require("constants.gods")
+local categories = require("constants.catalog")
 local streams = require("constants.rng_streams")
 local default_catalog = require("policy.generation.temple.catalog")
 local overflow_schedule = require("policy.generation.altar.schedule")
 
 local plan = {}
 
-local excluded = {
-    [gods.NO_GOD] = true,
-    [gods.LUGONU] = true,
-    [gods.BEOGH] = true,
-    [gods.JIYVA] = true,
-    [gods.IGNIS] = true,
-}
-
--- The current source god IDs are Lua constants. Sorting them removes Lua
--- table iteration order from the seeded shuffle and saved partition.
+-- The effective god definition owns Temple eligibility. Register IDs are
+-- sorted, so adding or renaming a mod file cannot alter the seeded shuffle.
 local function temple_gods()
     local result = {}
 
-    for _, id in pairs(gods) do
-        if not excluded[id] then
+    for _, id in ipairs(register.ids(categories.GODS)) do
+        local definition = register.get(categories.GODS, id)
+
+        if definition.temple_eligible then
             result[#result + 1] = id
         end
     end
 
-    table.sort(result)
-
     return result
 end
 
--- Expose the effective source pool for Temple placement and tests without
--- declaring a second list of god IDs in either caller.
+-- Expose the same source pool used by placement without a second ID list.
 function plan.god_ids()
     return temple_gods()
 end

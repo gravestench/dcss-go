@@ -5,6 +5,7 @@ local catalog = {
     ARTEFACTS = "artefacts",
     BRANCHES = "branches",
     CLOUDS = "clouds",
+    GODS = "gods",
     ITEMS = "items",
     JOBS = "jobs",
     LAYOUTS = "layouts",

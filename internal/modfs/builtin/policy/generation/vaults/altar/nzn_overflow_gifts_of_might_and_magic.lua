@@ -6,7 +6,7 @@
 -- depending on Lua table iteration order or a legacy DES global.
 local catalog = require("policy.catalog")
 local directives = require("constants.vault_directives")
-local god_names = require("constants.god_names")
+local god_names = require("policy.religion.names")
 local gods = require("constants.gods")
 local items = require("ids.items")
 

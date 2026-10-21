@@ -5,6 +5,8 @@
 -- mistake until the affected game rule runs.
 local validation = {}
 local categories = require("constants.catalog")
+local gods = require("constants.gods")
+local piety_limits = require("constants.piety")
 local books = require("ids.monster_spellbooks")
 local skill_ids = require("ids.skills")
 local spell_scopes = require("constants.spell_scopes")
@@ -780,6 +782,48 @@ local function validate_mutation(mutation)
     end
 end
 
+-- A god file owns its identity and ordinary join facts. Validate the
+-- effective overlay before game rules or altar planners consume those facts.
+local function validate_god(definition)
+    local category = categories.GODS
+    local id = definition.id
+
+    if not id:match("^GOD_[A-Z0-9_]+$") then
+        fail(category, id, "has an invalid god ID")
+    end
+
+    if id == gods.NO_GOD or id == gods.ECUMENICAL then
+        fail(category, id, "is a sentinel, not a worshipper god")
+    end
+
+    if required(category, definition, "name", "string") == "" then
+        fail(category, id, "has an empty name")
+    end
+
+    local amount = required(category, definition, "starting_piety", "number")
+
+    if amount < 0 or amount > piety_limits.MAX or amount % 1 ~= 0 then
+        fail(category, id, "has invalid starting_piety")
+    end
+
+    local modes = require("constants.god_piety_modes")
+    local mode = required(category, definition, "piety_mode", "string")
+
+    if mode ~= modes.ORDINARY and mode ~= modes.XOM and mode ~= modes.NONE then
+        fail(category, id, "has invalid piety_mode")
+    end
+
+    required(category, definition, "temple_eligible", "boolean")
+
+    for _, field in ipairs({
+        "good", "rejects_innate_caster", "requires_orc", "requires_love",
+    }) do
+        if definition[field] ~= nil and type(definition[field]) ~= "boolean" then
+            fail(category, id, field .. " must be boolean")
+        end
+    end
+end
+
 -- Cross-check references after every overlay has replaced its definitions.
 local function validate_registered_catalogs()
     local monsters = {}
@@ -793,6 +837,10 @@ local function validate_registered_catalogs()
 
     for _, monster in ipairs(monsters) do
         validate_band(monster)
+    end
+
+    for _, id in ipairs(register.ids(categories.GODS)) do
+        validate_god(register.get(categories.GODS, id))
     end
 
     for _, id in ipairs(register.ids(categories.MUTATIONS)) do

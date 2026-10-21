@@ -2,6 +2,7 @@
 
 local gods = {
     NO_GOD = "GOD_NO_GOD",
+    ECUMENICAL = "GOD_ECUMENICAL", -- A temporary altar choice, never a patron.
     ZIN = "GOD_ZIN",
     SHINING_ONE = "GOD_SHINING_ONE",
     KIKUBAAQUDGHA = "GOD_KIKUBAAQUDGHA",
