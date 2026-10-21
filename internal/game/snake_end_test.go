@@ -220,26 +220,37 @@ func collectRune(t *testing.T, g *Game, end *Level, x, y int, runeID string) {
 	health.Max = 10000
 	health.Current = health.Max
 
-	if _, err := g.Step(Command{Kind: CommandPickup}); err != nil {
-		t.Fatal(err)
+	// Some endings put an ambrosia potion on top of their rune. Pick up
+	// each item on this one source cell until the rune enters saved progress.
+	collectedRune := false
+
+	for attempt := 0; attempt < 8; attempt++ {
+		if _, err := g.Step(Command{Kind: CommandPickup}); err != nil {
+			t.Fatal(err)
+		}
+
+		progress, found := g.scripts.Components()["character.runes"].Get(g.player)
+
+		if !found {
+			t.Fatal("player lost rune progress")
+		}
+
+		collected, err := progress.Get("collected")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		values, okay := collected.(map[string]any)
+
+		if okay && values[runeID] == true {
+			collectedRune = true
+			break
+		}
 	}
 
-	progress, found := g.scripts.Components()["character.runes"].Get(g.player)
-
-	if !found {
-		t.Fatal("player lost rune progress")
-	}
-
-	collected, err := progress.Get("collected")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	values, okay := collected.(map[string]any)
-
-	if !okay || values[runeID] != true {
-		t.Fatalf("%s was not collected: %#v", runeID, collected)
+	if !collectedRune {
+		t.Fatalf("%s was not collected from its source cell", runeID)
 	}
 
 	health.Max = 18

@@ -289,7 +289,8 @@ function resolve.validate_monster(selected, site)
     local spectral_base = name:match("^spectral (.+)$")
     local base_name = name:match("^(.-) zombie$") or
         name:match("^(.-) skeleton$") or
-        name:match("^(.-) simulacrum$")
+        name:match("^(.-) simulacrum$") or
+        name:match("^(.-) spectre$")
 
     -- Source vaults can request a spectral form of an ordinary species.
     -- Keep literal catalog monsters such as spectral thing as themselves.
@@ -378,10 +379,18 @@ function resolve.monster(ctx, selected, depth, site)
     local spectral_base = name:match("^spectral (.+)$")
     local base_name = name:match("^(.-) zombie$") or
         name:match("^(.-) skeleton$") or
-        name:match("^(.-) simulacrum$")
+        name:match("^(.-) simulacrum$") or
+        name:match("^(.-) spectre$")
     local variant = name:match(" (zombie)$") or
         name:match(" (skeleton)$") or
-        name:match(" (simulacrum)$")
+        name:match(" (simulacrum)$") or
+        name:match(" (spectre)$")
+
+    -- DCSS accepts both "spectral goblin" and "goblin spectre" for the
+    -- same derived monster; downstream identity uses one variant name.
+    if variant == "spectre" then
+        variant = "spectral"
+    end
 
     -- A named spectral form uses the generic spectral monster's behavior
     -- while retaining its base species for rendering and future corpse rules.

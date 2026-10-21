@@ -1,0 +1,12 @@
+# A sparse mod can add one Spider ending by path, without Go registration.
+# Its one keyed rune is historical save intent as well as an ECS item.
+NAME:   zz_silk_court
+PLACE:  Spider:$
+WEIGHT: 1
+ORIENT: north
+KITEM:  O = gossamer rune of Zot
+MAP
+ccccccccc
+c@.....Oc
+ccccccccc
+ENDMAP

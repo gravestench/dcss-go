@@ -1,0 +1,53 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/spider.des
+# Parallel webbed approaches lead to a variable rune chamber.
+NAME:   grunt_spider_rune_parallel
+PLACE:  Spider:$
+ORIENT: east
+NSUBST: O = 1:O / *:d
+KITEM:  O = gossamer rune of Zot
+MONS:   ghost moth, moth of wrath
+MONS:   emperor scorpion / w:5 spark wasp / w:5 radroach / w:5 broodmother
+MONS:   wolf spider / redback / tarantella / jumping spider / culicivora
+MONS:   meliai / steelbarb worm / orb spider, redback
+NSUBST: 1 = 2:1 / 1:1.. / *:4
+NSUBST: d = 3:d / 3:e / *:f
+SUBST:  2 = 12, 4 = 44..., 5 = 55. " = ^^...6, - = .....w^^
+SUBST:  6 = 6.
+KFEAT:  ^ = web trap
+SUBST:  C : cx
+TILE:   c = wall_brick_gray
+KMASK:  w = no_monster_gen
+# The source shared loot helper runs at this position.
+: vault.run("shared.loot")
+MAP
+                      xxxxxxxxxxx
+              xxxxxxxxxxxxxxxxxxxxxxxx
+   xxxxxxxxxxxxxxxxxxxCCCCCCCCCCxxxxxxxx
+xxxxxxxxxxxxxxxCCCCCCCC--------CCCCCcxxxxxx
+xxxxxCCCCCCCCCCC--C-----...4..------cccccxxxxx
+CCCCCC-----------.C......5.4.4.4...----cccxxxxx
+-------...........C.""""...1.4.4...."""---cccxxxx
+."""........4.4...CCP"""..5.4.4.4.."""...---ccxxxx
+@"""5......4.4.....C"""".-------.4.""".....--ccxxx
+@..........4..4....CC..---ccccc-.----...3.4.--ccxx
+@-------------......CC--ccc---cc--cc-..4..4..--cxx
+@-ccccccccccc--------cccc---.--cc----.4..44.dd-cxx
+@--------------cccccccc---.4.4----.......4..dOdcxx
+@"".......4...----------....4.4........3.4.412Ocxx
+@""5.....4.4....""""".5x.4.4.4.5.........4..dO-cxx
+@"".....4.4.....""""".1...4...4...----4..44.dd-cxx
+@---------.4..."""""..5x...4-------cc-.4..4.--ccxx
+@-ccccccc-----..""""".-------ccccc----..3..--ccxxx
+@-------ccccc---------cccccccc-----."""""---ccxxx
+@"""5..--------ccccccccc-------4....."""--cccxxxx
+.""".....4....--------C--..4.4.4....."--ccxxxxxx
+------....4.4.4......CC...5..4.4.....---ccxxxxxx
+CCCCC-----.4.4......CC""""..4.4....---cccxxxxxxx
+xxxxCCCCC-----.....CCP"""".1.4.4..--CCCxxxxxxxx
+xxxxxxxxCCCCC---...C.."""".......--CCxxxxxxxxx
+ xxxxxxxxxxxCCC---.C---....-------CCxxxxxxxxx
+    xxxxxxxxxxCCCCCCC-------CCCCCCCxxxxxxx
+         xxxxxxxxxxxCCCCCCCCCxxxxxxxxx
+             xxxxxxxxxxxxxxxxxxxxxxx
+                xxxxxxxxxxxxxxxxx
+ENDMAP

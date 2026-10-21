@@ -2105,11 +2105,11 @@ modder wants to preserve.
 ### Branch end vaults
 
 A branch ending that fits inside an ordinary generated floor uses an end
-vault family. Snake and Swamp declare `end_vault_required = true` and name
-`snake_end` or `swamp_end` as their `end_vault_family` in their branch files.
-The nine Snake and eleven Swamp source maps live in matching `vaults/`
-subdirectories. Every file keeps its own `NAME`, final-floor `PLACE`,
-`ORIENT`, keyed entity directives, and `MAP`.
+vault family. Snake, Swamp, and Spider declare `end_vault_required = true`
+and name `snake_end`, `swamp_end`, or `spider_end` in their branch files.
+The nine Snake, eleven Swamp, and nine Spider source maps live in matching
+`vaults/` subdirectories. Every file keeps its own `NAME`, final-floor
+`PLACE`, `ORIENT`, keyed entity directives, and `MAP`.
 
 The end selector discovers all effective files in the declared family,
 sorts candidates by `NAME`, and makes a weighted draw before optional
@@ -2126,7 +2126,9 @@ a bundled map; a new filename adds a weighted candidate. If the map needs
 a computed choice, put a named hook at
 `policy/generation/vaults/<family>/<name>.lua` and reference its method
 from `: vault.run("method")` at the intended source position. Swamp's
-standard ending uses this for its one-in-eleven guardian choice. A placed
+standard ending uses this for its one-in-eleven guardian choice. Every
+Spider ending calls `shared.loot` to add the source reward requests; the
+handler is at `policy/generation/vaults/spider_end/shared.lua`. A placed
 map's `: vault.validate("method")` receives `api.cells`, the final DES
 matrix before it touches the level grid. Return `true` to accept or `false`
 to redraw the map; Snake Hunt uses this to keep its rune connected.

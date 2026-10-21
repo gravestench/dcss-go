@@ -81,6 +81,15 @@ local function spectral_species_identity()
     harness.equal(resolved.base_id, monster_ids.MONS_GOBLIN)
     harness.equal(resolved.variant, "spectral")
 
+    local suffix = monster.parse("goblin spectre", site)[1][1]
+    resolve.validate_monster(suffix, site)
+
+    local suffix_result = resolve.monster(ctx, suffix, 5, site)
+
+    harness.equal(suffix_result.kind_id, monster_ids.MONS_SPECTRAL_THING)
+    harness.equal(suffix_result.base_id, monster_ids.MONS_GOBLIN)
+    harness.equal(suffix_result.variant, "spectral")
+
     local literal = monster.parse("spectral thing", site)[1][1]
     local thing = resolve.monster(ctx, literal, 5, site)
 
