@@ -1,0 +1,35 @@
+# about 21 |, 29 *
+
+NAME:   vaults_end_mu_corners
+TAGS:   vaults_end_quadrant_prize unrand
+SUBST:  9 = 8 9 .
+NSUBST: $ = 1:O / *:$
+SUBST:  $ = | *:15 $:5
+SUBST:  a = x.
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ....x.......x99...x......
+x....x.......x99...x..x...x
+x....x..xxx..x..x..x..x...x
+x.xxxx..xxx..x..x..x..x...x
+x.......xxx..x..x..x..xxxxx
+x.......xxx.....x99.......x
+xxxxxx..xxx.....x99.......x
+x.......xxxxx+xxxxxxxxxx..x
+x.......x99x$$$$$$x99.....x
+x..xxxxxx99x$$$$$$x99.....x
+x99........x$$$$$$x..xxxxxx
+x99........x$$$$$$x.......x
+xxxxxx..x..x$$$$$$x.......x
+x.......x..xxxxxxxxxxxxx..x
+x.......x...............99x
+x..xxxxxx...............99x
+x99.....x..xxxx+xxxx..xxxxx
+x99.....x..x$$$$$$$x..x...x
+xxxxxx..x..x$$$$$$$x..x...x
+a.......x99x$$$$$$$x..x...x
+ .......x99x$$$$$$$x......
+  axxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

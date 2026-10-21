@@ -1,0 +1,86 @@
+# Vaults:$ is the branch's authored end floor; x cells are source rock walls.
+# This map traditionally allows controlled teleports. Even with the now
+# random placement of the rune, this seems fine: some of the spots are
+# awkward to reach via teleport, and there is now always a monster on the
+# rune.
+# Vaults:$ extensively uses subvaults. To provide another Vaults:$ quadrant
+# variation, create a map tagged vaults_end_quadrant that is 27x23. It should
+# have three blank cells on one corner (see any existing quadrant for an
+# example), which will be used to orient that corner towards the middle of
+# the map. Each quadrant must be capable of generating a rune, which
+# uses an O slot and the named shared.rune hook for the single silver rune.
+# There is a lot of variance among the possible quadrants but we do ensure
+# that (exactly) one quadrant with rich loot is generated. Those are tagged
+# vaults_end_quadrant_prize and come in their own section below.
+# The main vault for Vaults:$.
+
+NAME:     vaults_vault
+PLACE:    Vaults:$
+ORIENT:   encompass
+TAGS:     no_rotate no_dump
+TAGS: layout layout_type_vaults_end
+SHUFFLE:  ABCD
+: vault.run("choose_quadrants")
+SUBST:    ABCD = .
+MONS: vault guard
+: vault.run("wall_names")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xx9..............................0.............................9xx
+xx..............................................................xx
+xx....AAAAAAAAAAAAAAAAAAAAAAA........BBBBBBBBBBBBBBBBBBBBBBB....xx
+xx...AAAAAAAAAAAAAAAAAAAAAAAAA......BBBBBBBBBBBBBBBBBBBBBBBBB...xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA....BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx..AAAAAAAAAAAAAAAAAAAAAAAAAAA.11.BBBBBBBBBBBBBBBBBBBBBBBBBBB..xx
+xx...AAAAAAAAAAAAAAAAAAAAAAAA..1111..BBBBBBBBBBBBBBBBBBBBBBBB...xx
+xx....AAAAAAAAAAAAAAAAAAAAAAA.1....1.BBBBBBBBBBBBBBBBBBBBBBB....xx
+xx...........................1..(<..1...........................xx
+xx0.........................11.[..{.11..........................xx
+xx...........................1..<<..1..........................0xx
+xx............................1....1............................xx
+xx....CCCCCCCCCCCCCCCCCCCCCCC..1111..DDDDDDDDDDDDDDDDDDDDDDD....xx
+xx...CCCCCCCCCCCCCCCCCCCCCCCC...11...DDDDDDDDDDDDDDDDDDDDDDDD...xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx..CCCCCCCCCCCCCCCCCCCCCCCCCCC....DDDDDDDDDDDDDDDDDDDDDDDDDDD..xx
+xx...CCCCCCCCCCCCCCCCCCCCCCCCC......DDDDDDDDDDDDDDDDDDDDDDDDD...xx
+xx....CCCCCCCCCCCCCCCCCCCCCCC........DDDDDDDDDDDDDDDDDDDDDDD....xx
+xx..............................................................xx
+xx9.............................0..............................9xx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

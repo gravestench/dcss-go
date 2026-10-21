@@ -1,0 +1,33 @@
+# 18 |, 12 *, 21 monsters
+
+NAME:   vaults_end_minmay_slanted
+TAGS:   vaults_end_quadrant_prize unrand
+SUBST:  9 = 8 9 .:20
+NSUBST: O = 1:O / *:|
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ...............9..**|xxxx
+x......xxxx..9..9..xxxx....
+x...xxxx..9..9..xxxx......x
+xxxxx.....9..xxxx.........x
+x.........xxxx..9.........x
+x......xxxx..9..9..xxxx999x
+x999xxxx..9..9..xxxx......x
+x.........9..xxxx.........x
+x.........xxxx||......xxxxx
+x|.....xxxx||O||999xxxx***x
+x***xxxx999||O||xxxx.....|x
+xxxxx......||xxxx.........x
+x.........xxxx..9.........x
+x......xxxx..9..9..xxxx999x
+x999xxxx..9..9..xxxx......x
+x.........9..xxxx.........x
+x.........xxxx..9.....xxx.x
+x|.....xxxx..9..9..xxxx...x
+x***xxxx..9..9..xxxx......x
+xxxxx.....9..xxxx.........x
+ .........xxxx|**.........
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,11 @@
+# Vaults:$ - the subvault used for potential rune locations that do not
+# contain the real rune.
+# The shared.rune hook selects this reward after another slot won the rune.
+
+NAME:  vaults_end_norune
+TAGS:  vaults_end_norune allow_dup unrand
+KMONS: o = 8 / 9
+: vault.run("choose_reward")
+MAP
+o
+ENDMAP

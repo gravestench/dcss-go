@@ -1,0 +1,33 @@
+# 11 |, 18 *, 20 monsters
+
+NAME:   vaults_end_minmay_30_sandwiches
+TAGS:   vaults_end_quadrant_prize unrand
+SUBST:  9 = 8 9 .:20
+NSUBST: | = 1:O / *:|
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ 9...9...9...9...9...9...
+x.x.x.xxx.x.x.xxx.x.x.xxx.x
+x.x*x..*..x*x..*..x*x..*..x
+x.x.x.xxx.x.x.xxx.x.x.xxx.x
+x9...9...9...9...9...9...9x
+x.xxx.x.x.xxx.x.x.xxx.x.x.x
+x..*..x|x..|..x|x..|..x*x.x
+x.xxx.x.x.xxx.x.x.xxx.x.x.x
+x9...9...9...9...9...9...9x
+x.x.x.xxx.x.x.xxx.x.x.xxx.x
+x.x*x..|..x|x..|..x|x..*..x
+x.x.x.xxx.x.x.xxx.x.x.xxx.x
+x9...9...9...9...9...9...9x
+x.xxx.x.x.xxx.x.x.xxx.x.x.x
+x..*..x|x..|..x|x..|..x*x.x
+x.xxx.x.x.xxx.x.x.xxx.x.x.x
+x9...9...9...9...9...9...9x
+x.x.x.xxx.x.x.xxx.x.x.xxx.x
+x.x*x..*..x*x..*..x*x..*..x
+x.x.x.xxx.x.x.xxx.x.x.xxx.x
+ ....9...9...9...9...9...9
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

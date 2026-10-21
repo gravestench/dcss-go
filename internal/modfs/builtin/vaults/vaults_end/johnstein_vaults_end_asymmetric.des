@@ -1,0 +1,32 @@
+# 18 *, 8 | (11 total), 20 monsters, 8 $
+
+NAME:   johnstein_vaults_end_asymmetric
+TAGS:   vaults_end_quadrant_prize unrand
+SUBST:  9 = 8 9 *:10
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ........................
+x........9.........9......x
+x..xxxxx...xxxxxxx...xxx..x
+x...xxxxx...xxxxx...xxx...x
+x.9..xxxxx...xxx...xxx..9.x
+x.....xxxxx...xx..xxx.....x
+x..x...xxxxx*9999*xx...x..x
+x..xx...xxxxx$99$xx...xx..x
+x..xxx...xxxxx||xxx...xx..x
+x...xx...xxxx9*9xxxx...x..x
+x......9*9$|9O99|$9*9.....x
+x...xx...xxx9*9xxxxx...x..x
+x..xx...xx||||xxxxx...xx..x
+x..x...xx$99$xxxxx...xxx..x
+x.....xx*99*xxxxx...xxx...x
+x.9..xx..9xxxxxx...xxx..9.x
+x...xx...xxxxxx...xxx.....x
+x..xxx...xxxxx...xxx...x..x
+x..xxx...xxxx...xxx...xx..x
+x......9............9.....x
+ .........................
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,16 @@
+# Vaults:$ - Rooms Quadrant - Rune Subvault
+#            Potentially contains the rune.
+
+NAME: vaults_end_room_rune
+TAGS: vaults_end_room_rune
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+......
+......
+..||..
+..O|..
+..||..
+......
+......
+ENDMAP

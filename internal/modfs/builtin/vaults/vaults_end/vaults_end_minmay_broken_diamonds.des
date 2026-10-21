@@ -1,0 +1,33 @@
+# 14 *, 9 monsters
+
+NAME:   vaults_end_minmay_broken_diamonds
+TAGS:   vaults_end_quadrant unrand
+SUBST:  9 = 8 9 .:20
+NSUBST: * = 1:O / 14:* / *:.
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ..xx....9xx...xx9....xx..
+x........xx.....xx........x
+xx......xx...x...xx......xx
+xxx....xx....xx...xx....xxx
+x9xx...x......xx...x...xx9x
+x..xx........**xx.....xx..x
+x...xx...xx.***9xx........x
+x.........xx**9xx...x....xx
+x......x...xx9xx...xxx...xx
+xx....xxx...xxx...xx9xx...x
+xx...xx9xx...x...xx9**xx..x
+x...xx**9xx.......xx**....x
+x..xx.***9xx...x...xx....xx
+x9.....**xx....xx...x...xxx
+xx......xx....**xx.....xx9x
+xxx....xx...xx**9xx...xx..x
+x.xx...x.....xx9xx........x
+x..xx.....x...xxx...x....xx
+x...xx...xx....x....xx...xx
+x.......xx...........xx...x
+ ......xx9..xx...xx..9xx..
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,45 @@
+# about 11 |
+
+NAME:    vaults_end_mu_boxes
+TAGS:    vaults_end_quadrant unrand
+NSUBST:  a = 1:+ / *:x
+NSUBST:  b = 1:+ / *:x
+NSUBST:  c = 1:+ / *:x
+NSUBST:  d = 1:+ / *:x
+NSUBST:  e = 1:+ / *:x
+NSUBST:  f = 1:+ / *:x
+NSUBST:  g = 1:+ / *:x
+SHUFFLE: ABCDEFG
+SUBST:   ABC = 9
+SUBST:   D = |*$9
+SUBST:   E = |
+SUBST:   F = *
+NSUBST:  G = 1:O / *:9
+SUBST:   9 = 8 9 .:20
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ........................
+x..........xxbxx..........x
+x..........xBBBx..........x
+x..xxaxx...bBBBb...xxcxx..x
+x..xAAAx...xBBBx...xCCCx..x
+x..aAAAa...xxbxx...cCCCc..x
+x..xAAAx...........xCCCx..x
+x..xxaxx...........xxcxx..x
+x..........xxdxx..........x
+x..........xDDDx..........x
+x....9.....dDDDd.....9....x
+x..........xDDDx..........x
+x..........xxdxx..........x
+x..xxfxx...........xxgxx..x
+x..xFFFx...........xGGGx..x
+x..fFFFf...xxexx...gGGGg..x
+x..xFFFx...xEEEx...xGGGx..x
+x..xxfxx...eEEEe...xxgxx..x
+x..........xEEEx..........x
+x..........xxexx..........x
+ .........................
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

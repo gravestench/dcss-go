@@ -1,0 +1,10 @@
+# Vaults:$ - Rooms Quadrant - Traps and Loot Subvault
+#            Replace each square with traps or loot, but mostly floor.
+
+NAME: vaults_end_room_traps_and_loot
+TAGS: vaults_end_room
+: vault.run("paint")
+SUBST: . = ?
+: vault.run("shared.loot")
+MAP
+ENDMAP

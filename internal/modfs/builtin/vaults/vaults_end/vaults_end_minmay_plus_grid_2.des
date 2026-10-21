@@ -1,0 +1,34 @@
+# 7 |, 18 *, 20 monsters
+
+NAME:   vaults_end_minmay_plus_grid_2
+TAGS:   vaults_end_quadrant_prize unrand
+SUBST:  9 = 8 9 .:20
+NSUBST: O = 1:O / *:|
+SUBST:  X : x., Y : x.
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+ .xxxxxxxxxxxxxxxxxxxxxxx
+.....x.9.x.9.x.9.x.9.x.9.
+x.x.x.x.x.x.x*x.x.x.x.x.x.x
+x..x.9.x.9.x*O*x.9.x.9.x.9x
+x.x.x.x.x.xYx*xYx.x.x.x.x.x
+xx.9.x.9.xYYYxYYYx.9.x.9.xx
+x.x.x.x|xXxYxYxYxXx*x.x.x.x
+x9.x.9|xXXXxYYYxXXXx.9.x.9x
+x.x.x.xYxXxXxYxXxXxYx.x.x.x
+xx.9.xYYYxXXXxXXXxYYYx.9.xx
+x*x*xXxYxYxXxXxXxYxYxXx*x*x
+x9OxXXXxYYYxXXXxYYYxXXXxO9x
+x*x*xXxYxYxXxXxXxYxYxXx*x*x
+xx.9.xYYYxXXXxXXXxYYYx.9.xx
+x.x.x.xYxXxXxYxXxXxYx.x.x.x
+x9.x.9.xXXXxYYYxXXXx|9.x.9x
+x.x.x.x*xXxYxYxYxXx|x.x.x.x
+xx.9.x.9.xYYYxYYYx.9.x.9.xx
+x.x.x.x.x.xYx*xYx.x.x.x.x.x
+x..x.9.x.9.x*O*x.9.x.9.x..x
+x.x.x.x.x.x.x*x.x.x.x.x.x.x
+ ....x.9.x.9.x.9.x.9.x....
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

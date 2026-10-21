@@ -1,0 +1,33 @@
+# 14 *, 12 monsters
+
+NAME:   vaults_end_minmay_curved1
+TAGS:   vaults_end_quadrant unrand
+SUBST:  9 = 8 9 .:20
+NSUBST: O = 1:O / *:*
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  x.x.xxxxxxxxxxxxxxxxxxx
+ .................xxxxxx.
+x.xxxx....xxxx.......xx...x
+....9xxx....9xxx.........xx
+x.....9xx.....9xx.......xxx
+x......9x......9x.......xxx
+x.......xx......xx.......xx
+x.......9x......9x.......xx
+x........x.......x9......xx
+x.xxxx...xxxxx***xx.......x
+x...9xxx.*xxxxxxO*x9......x
+x.....9xx*xxxxxxx*xx9.....x
+x......9x*Oxxxxxx*.xxx9...x
+x.......xx***xxxxx...xxxx.x
+xx......9x.......x........x
+xx.......x9......x9.......x
+xx.......xx......xx.......x
+xxx.......x9......x9......x
+xxx.......xx9.....xx9.....x
+xx.........xxx9....xxx9....
+x...xx.......xxxx....xxxx.x
+ ..xxxxxx.................
+  xxxxxxxxxxxxxxxxxxx.x.x
+ENDMAP

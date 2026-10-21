@@ -50,8 +50,9 @@ local function source_catalog()
     local active = 0
     local disabled = 0
     local branch_only = 0
+    local explicitly_placed = 0
 
-    harness.equal(#ids, 57, "effective source layout count")
+    harness.equal(#ids, 58, "effective source layout count")
 
     for _, id in ipairs(ids) do
         local definition = catalog.get(id)
@@ -65,7 +66,9 @@ local function source_catalog()
                 branches.BRANCH_DUNGEON, level, 15)
         end
 
-        if not dungeon then
+        if #definition.places > 0 then
+            explicitly_placed = explicitly_placed + 1
+        elseif not dungeon then
             branch_only = branch_only + 1
         elseif dungeon_weight > 0 then
             active = active + 1
@@ -77,6 +80,7 @@ local function source_catalog()
     harness.equal(active, 17, "active source layouts")
     harness.equal(disabled, 4, "registered disabled layouts")
     harness.equal(branch_only, 36, "registered branch-only layouts")
+    harness.equal(explicitly_placed, 1, "explicit end layout")
 end
 
 -- Boundary depths change the candidate set while the selected result
@@ -147,7 +151,7 @@ local function execute_active_layouts()
             end
         end
 
-        if first_depth and
+        if first_depth and #definition.places == 0 and
             weight.for_branch(definition, branches.BRANCH_DUNGEON) > 0 then
             for _, level in ipairs({ first_depth, last_depth }) do
                 local result = catalog.execute(context_for(47), definition,

@@ -1,0 +1,35 @@
+# about 4 |
+
+NAME:    vaults_end_classical_diamond
+TAGS:    vaults_end_quadrant unrand
+SHUFFLE: !_
+SUBST:   ! = | * .:20
+SUBST:   _ = 8 9 .:20
+SUBST:   a : x .
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  a.xxxxxxxxxxxxxxxxxxx.a
+ a!x.x.x!x.x.x.x.x.x.x.x.
+a.x.x.x.x.x.x.x!x.x.x_x.x.a
+.x.x!x.x.x.x.x.x.x.x!x.x.x.
+x.x.x.x.x_x.x.x_x.x.x.x.x.x
+xx.x.x.x.x.x.x.x.x.x.x.x_xx
+x.x.x!x.x.x.x.x.x.x!x.x.x.x
+xx.x_x.x.x!x.x.x.x.x.x.x.xx
+x.x.x.x.x_x.x.x.x.x.x.x.x.x
+xx.x.x.x.x.x.x.x.x.x.x.x!xx
+x_x.x!x.x.x.x.x.x!x.x_x.x.x
+xx.x.x.x.x.x.O.x.x.x.x.x.xx
+x.x.x_x.x.x.x.x.x.x.x.x_x.x
+xx.x.x.x.x.x.x_x.x.x.x.x.xx
+x!x.x.x.x!x.x.x.x.x.x.x.x.x
+xx.x.x.x.x.x.x!x.x.x.x.x.xx
+x.x.x.x.x.x.x.x.x.x_x.x.x.x
+xx.x_x.x.x.x.x.x.x.x.x.x_xx
+x.x!x.x.x.x.x.x.x!x.x.x.x.x
+.x.x.x.x.x.x.x_x.x.x.x.x.x.
+a.x.x.x.x.x_x.x.x.x.x.x.x.a
+ a.x.x_x.x.x!x.x.x.x.x!x_a
+  a.xxxxxxxxxxxxxxxxxxx.a
+ENDMAP

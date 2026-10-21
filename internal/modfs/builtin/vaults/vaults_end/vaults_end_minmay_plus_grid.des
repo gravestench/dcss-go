@@ -1,0 +1,33 @@
+# 20 *, 20 monsters
+
+NAME:   vaults_end_minmay_plus_grid
+TAGS:   vaults_end_quadrant unrand
+NSUBST: * = 1:O / *:*
+SUBST:  * = 9 8 *:20 .
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ xxx.x.*.x.xxx.x.*.x.xxx.
+x.x.*.x.xxx.x.*.x.xxx.x...x
+.*.x.xxx.x.*.x.xxx.x.*.x.xx
+x.xxx.x.*.x.xxx.x.*.x.xxx.x
+xx.x.*.x.xxx.x.*.x.xxx.x.*x
+x.*.x.xxx.x.*.x.xxx.x.*.x.x
+xx.xxx.x.*.x.xxx.x.*.x.xxxx
+xxx.x.*.x.xxx.x.*.x.xxx.x.x
+xx.*.x.xxx.x.*.x.xxx.x.*.xx
+x.x.xxx.x.*.x.xxx.x.*.x.xxx
+xxxx.x.*.x.xxx.x.*.x.xxx.xx
+x.x.*.x.xxx.x.*.x.xxx.x.*.x
+x*.x.xxx.x.*.x.xxx.x.*.x.xx
+x.xxx.x.*.x.xxx.x.*.x.xxx.x
+xx.x.*.x.xxx.x.*.x.xxx.x.*x
+x.*.x.xxx.x.*.x.xxx.x.*.x.x
+xx.xxx.x.*.x.xxx.x.*.x.xxxx
+xxx.x.*.x.xxx.x.*.x.xxx.x.x
+xx.*.x.xxx.x.*.x.xxx.x.*.xx
+..x.xxx.x.*.x.xxx.x.*.x.xxx
+ xxx.x.*.x.xxx.x.*.x.xxx.x
+  xxxxxxxxxxxxxxxxxxxxx..
+ENDMAP

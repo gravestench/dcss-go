@@ -1,0 +1,32 @@
+# 20 *, 14 monsters
+
+NAME:   vaults_end_minmay_outlined_triangles
+TAGS:   vaults_end_quadrant unrand
+SUBST:  9 = 8 9 .:20
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ........................
+x...x.x.x..x.x.x..x.x.x...x
+x....9.9....9.9....9.9....x
+x...x.x.....x.x.....x.x...x
+x....9.......9.......9....x
+x...x........x........x...x
+x.........................x
+x.........xxx9xxx.........x
+x...x.....xx***xx.....x...x
+x....9x...x*****x...x9....x
+x...x..9x.9**O**9.x9..x...x
+x....9x...x*****x...x9....x
+x...x.....xx***xx.....x...x
+x.........xxx9xxx.........x
+x.........................x
+x...x........x........x...x
+x....9.......9.......9....x
+x...x.x.....x.x.....x.x...x
+x....9.9....9.9....9.9....x
+x...x.x.x..x.x.x..x.x.x...x
+ .........................
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

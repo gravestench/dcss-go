@@ -1,0 +1,32 @@
+# 16 *, 8 |, 16 monsters
+
+NAME:   vaults_end_minmay_odd_hourglass
+TAGS:   vaults_end_quadrant_prize unrand
+SUBST:  9 = 8 9 .:20
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ....9x.................x
+x....x.x...............x9xx
+x....xx9x.............x.xxx
+x...x.xx.x...........x9xx.x
+x...9..xx9x.........x.xx..x
+x...x...xx.x.......x9xx...x
+x........xx9x.....x.xx..x9x
+x...x.....xx.x...x9xx..xx9x
+x...9......xxxxxxxxx..xx*.x
+x...x......9.9..9.9..xx**.x
+x...................xx|**.x
+x...x......9.9..9.9xx||**.x
+x...9......xxxxxxxxxO||**.x
+x...x.....xx9x...x.xx||**.x
+x........xx.x.....x9xx|**.x
+x...x...xx9x.......x.xx**.x
+x...9..xx.x.........x9xx*9x
+x...x.xx9x...........x.xx9x
+x....xx.x.............x9xxx
+x....x9x...............x.xx
+ .....x.................x9
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

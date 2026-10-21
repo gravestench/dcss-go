@@ -1,0 +1,34 @@
+# 19 *, 14 monsters
+
+NAME:   vaults_end_minmay_circular_pillars
+TAGS:   vaults_end_quadrant unrand
+NSUBST: a = 1:+ / *:x, b = 1:+ / *:x, c = 1:+ / *:x, d = 1:+ / *:x
+NSUBST: O = 1:O / *:*
+SUBST:  9 = 8 9 .:20
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ..9..9xxxx9...9xxxx9....
+x.......xx.......xx.......x
+x9..xx......xbx......xx...x
+x..xxxx....xx*xx....xxxx..x
+x..xxxx....b*O*b....xxxx..x
+x9..xx9....xx*xx....9xx..9x
+xx..........xbx..........xx
+xxx.....................xxx
+xxx..xax...9...9...xcx..xxx
+xx..xx*xx.........xx*xx..xx
+x9..a*O*a.........c*O*c..9x
+xx..xx*xx.........xx*xx..xx
+xxx..xax...9...9...xcx..xxx
+xxx.....................xxx
+xx..........xdx..........xx
+x9..xx9....xx*xx....9xx..9x
+x..xxxx....d*O*d....xxxx..x
+x..xxxx....xx*xx....xxxx..x
+x9..xx......xdx......xx..9x
+x.......xx.......xx.......x
+ ..9..9xxxx9...9xxxx9..9..
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

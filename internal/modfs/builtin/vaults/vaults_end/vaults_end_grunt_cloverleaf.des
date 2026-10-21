@@ -1,0 +1,32 @@
+# 17 *, 12 monsters
+
+NAME:   vaults_end_grunt_cloverleaf
+TAGS:   vaults_end_quadrant unrand
+SUBST:  9 = 8 9 .:20
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ...+xxxxxxxxxxxxxxxxx+..
+x.xxx....xxxxxxxxx....xxx.x
+x+x....9..*xxxxx*..9....x+x
+xx...9.....xxxxx.....9...xx
+xx.........*xxx*.........xx
+xx.9........xxx........9.xx
+xx........9..x..9........xx
+xxx*.........+.........*xxx
+xxxxx*...9.+xxx+.9...*xxxxx
+xxxxxxxx...x.9.x...xxxxxxxx
+xxxxxxxxx+xx9O9xx+xxxxxxxxx
+xxxxxxxx...x*9.x...xxxxxxxx
+xxxxx*...9.+xxx+.9...*xxxxx
+xxx*.........+.........*xxx
+xx........9..x..9........xx
+xx.9........xxx........9.xx
+xx..........xxx..........xx
+xx...9.....*xxx*.....9...xx
+x+x....9..*xxxxx*..9....x+x
+x.xxx....xxxxxxxxx....xxx.x
+ ...+xxxxxxxxxxxxxxxxx+...
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

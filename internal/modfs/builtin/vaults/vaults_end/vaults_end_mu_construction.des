@@ -1,0 +1,40 @@
+# about 21 |
+
+NAME:   vaults_end_mu_construction
+TAGS:   vaults_end_quadrant_prize unrand
+NSUBST: $ = 1:O / *:$
+SUBST:  $ = |*$.
+SUBST:  c = xn9.
+SUBST:  9 = 8 9 .
+NSUBST: D = 1:+ / *:x
+NSUBST: E = 1:+ / *:x
+NSUBST: F = 1:+ / *:x
+NSUBST: G = 1:+ / *:x
+SUBST:  a = xn..
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  axxxxxxxxxxxxxxxxxxxxxa
+  .c.c.c..x$$$$$x..c.c.c..
+a.c.c.c.c.+$$$$$+.c.c.c.c.a
+xc.c.c.c..x$$$$$x..c.c.c.cx
+x.c.c.c.c.xxxxxxx.c.c.c.c.x
+xc.c.c.c.cx$$$$$xc.c.c.c.cx
+x.c.c.c.c.x$$$$$x.c.c.c.c.x
+xc.c.c.c.cx$$$$$xc.c.c.c.cx
+x.c.c.c.c.x$$$$$x.c.c.c.c.x
+xDxDxDxDxDxxx+xxxExExExExEx
+x.........x$$$$$x.........x
+x.x9.x..x.+$$9$$+.x..x.9x.x
+x.........x$$$$$x.........x
+xFxFxFxFxFxxx+xxxGxGxGxGxGx
+x.c.c.c.c.x$$$$$x.c.c.c.c.x
+xc.c.c.c.cx$$$$$xc.c.c.c.cx
+x.c.c.c.c.x$$$$$x.c.c.c.c.x
+xc.c.c.c.cx$$$$$xc.c.c.c.cx
+x.c.c.c.c.xxxxxxx.c.c.c.c.x
+xc.c.c.c..x$$$$$x..c.c.c.cx
+a.c.c.c.c.+$$$$$+.c.c.c.c.a
+ ..c.c.c..x$$$$$x..c.c.c..
+  axxxxxxxxxxxxxxxxxxxxxa
+ENDMAP

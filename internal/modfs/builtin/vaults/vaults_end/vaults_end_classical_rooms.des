@@ -1,0 +1,44 @@
+# Vaults:$ - Rooms Quadrant
+# This quadrant uses a subvault for each room. Any subvault tagged
+# vaults_end_room_rune should be guaranteed to provide a rune. Any subvault
+# tagged vaults_end_room should just provide loot. Note that the rooms
+# are not all the same sizes.
+# about 24 |
+
+NAME:     vaults_end_classical_rooms
+TAGS:     vaults_end_quadrant_prize unrand
+SHUFFLE:  AC/BD, EG/FH, IKN/MJL
+SUBST:    A=., B=xx+, C=+, D=x, E=+, F=xx+, G=., H=x
+SUBST:    I=., M=xx+, J=x, K=+, N=+, L=xx+
+SUBST:    a:x.
+SHUFFLE:  VXYZ
+SUBVAULT: V : vaults_end_room_rune
+SUBVAULT: X : vaults_end_room
+SUBVAULT: Y : vaults_end_room
+SUBVAULT: Z : vaults_end_room
+SUBST:    VXYZ = .
+MAP
+  axxxxxxxxxxxxxxxxxxxxxa
+ ............99...........
+a.xxxxxxxxxxx..xxxxxxxxJxIa
+x.xVVVVVVVVVx..xXXXXXXXXx.x
+x.xVVVVVVVVVx..xXXXXXXXXx.x
+x.xVVVVVVVVVx..xXXXXXXXXx.x
+x.xVVVVVVVVVx..xXXXXXXXXx.x
+x.xVVVVVVVVVx..xXXXXXXXXx.x
+x.xVVVVVVVVVx..xXXXXXXXXx.x
+x.NVVVVVVVVVL..KXXXXXXXXx.x
+xMxxxxxxxxxxxxxxxxxxxxxxx.x
+x.9.........G998........A.x
+x.9.........G998........x.x
+x.xxxxxxxxxFx88xxxxxxxxDx.x
+x.xYYYYYYYYYx..xZZZZZZZZx.x
+x.xYYYYYYYYYx..xZZZZZZZZx.x
+x.xYYYYYYYYYx..xZZZZZZZZx.x
+x.xYYYYYYYYYx..xZZZZZZZZx.x
+x.xYYYYYYYYYx..xZZZZZZZZx.x
+x.xYYYYYYYYYx..CZZZZZZZZx.x
+a.xxxxxxxxxEx..xxxxxxxxxx.a
+ ...........H..B.........
+  axxxxxxxxxxxxxxxxxxxxxa
+ENDMAP

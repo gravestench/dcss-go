@@ -1,0 +1,33 @@
+# 14 *, 8 monsters
+
+NAME:   vaults_end_minmay_triangle_fans
+TAGS:   vaults_end_quadrant unrand
+SUBST:  9 = 8 9 .:20
+NSUBST: O = 1:O / *:*
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  ...xxxxxxxxxxxxxxxxxxxx
+ xxxx.....9xxxx.....9xxxx
+.xxx..x....xxx..x....xxx..x
+.xx...xx...xx...xx...xx...x
+.x....xxx..x....xxx..x....x
+x....9xxxx.....9xxxx......x
+x.xxxx9.....xxxx9.....xxxxx
+x..xxx...*x.*xxx...*x..xxxx
+x...xx...xx..Oxx...xx...xxx
+x....x.*xxx...*x.*xxx....xx
+x......xxxx9.....xxxx9....x
+x.........................x
+xxxxx.....9xxxx.....9xxxx.x
+xxxx..x*...xxx*.x*...xxx..x
+xxx...xx...xxO..xx...xx...x
+xx....xxx*.x*...xxx*.x....x
+x....9xxxx.....9xxxx......x
+x.xxxx9.....xxxx9.....xxxxx
+x..xxx....x..xxx....x..xxxx
+x...xx...xx...xx...xx...xxx
+x....x..xxx....x..xxx....xx
+ ......xxxx9.....xxxx9....
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,34 @@
+# 82 $, 16 monsters
+
+NAME:    vaults_end_minmay_loops
+TAGS:    vaults_end_quadrant vaults_end_quadrant_mall unrand
+SHUFFLE: ae / bf / cg / dh
+SUBST:   a = +, e = ., bcdfgh = x
+SUBST:   9 = 8 9 .:20
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ..xxxxxx$$$$$$$$$xxxxx..
+x......xxx$$$$$$$xxx......x
+xx.9xx9.xxx$$$$$xxx.9xx9.xx
+xx.xxxx.xxxx$$$xxxx.xxxx.xx
+xx.xxxx.xxxxx$xxxxx.xxxx.xx
+xx.9xx9..xxxx+xxxx..9xx9.xx
+xxx......9xx9.9xx9......xxx
+x$xxxx9.............9xxxx$x
+x$$xxxx....9xax9....xxxx$$x
+x$$$xxx....xxexx....xxx$$$x
+x$$$$+.....dhOfb.....+$$$$x
+x$$$xxx....xxgxx....xxx$$$x
+x$$xxxx....9xcx9....xxxx$$x
+x$xxxx9.............9xxxx$x
+xxx......9xx9.9xx9......xxx
+xx.9xx9..xxxx+xxxx..9xx9.xx
+xx.xxxx.xxxxx$xxxxx.xxxx.xx
+xx.xxxx.xxxx$$$xxxx.xxxx.xx
+xx.9xx9.xxx$$$$$xxx.9xx9.xx
+x......xxx$$$$$$$xxx......x
+ ..xxxxxx$$$$$$$$$xxxxxx..
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

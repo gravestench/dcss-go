@@ -1,0 +1,33 @@
+# 16 * (2.667 |), 10 monsters, 8 $
+
+NAME:   johnstein_vaults_end_maze
+TAGS:   vaults_end_quadrant unrand
+SUBST:  9 = 8 9 .:20
+NSUBST: O = 1:O / *:*
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ........................
+x.xxx.................xxx.x
+x.x*xxxxxxx.....xxxxxxx*x.x
+x.xx*$9...xx.9.xx...9$*xx.x
+x..x$.................$x..x
+x..x9...xxx..9..xxx...9x..x
+x..xx...xOxxx.xxxOx...xx..x
+x...xx..xx..xxx..xx..xx...x
+x....x..x..x.9.x..x..x....x
+x.......x.x9*x*9x.x.......x
+x....9....x.xOx.x....9....x
+x.......x.x9*x*9x.x.......x
+x....x..x..x.9.x..x..x....x
+x...xx..xx..xxx..xx..xx...x
+x..xx...xOxxx.xxxOx...xx..x
+x..x9...xxx..9..xxx...9x..x
+x..x$.................$x..x
+x.xx*$9...xx.9.xx...9$*xx.x
+x.x*xxxxxxx.....xxxxxxx*x.x
+x.xxx.................xxx.x
+ .........................
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

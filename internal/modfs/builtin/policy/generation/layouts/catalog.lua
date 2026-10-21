@@ -66,19 +66,23 @@ local function procedural_styles(definition, builder)
     return records
 end
 
--- A procedural layout needs one run hook; an authored MAP needs none.
+-- A procedural layout needs one builder hook. An authored MAP can use
+-- several run hooks as source-position operations inside placement.
 -- Source validators run before stairs alter the open-area measurement.
 local function methods(definition)
     local run
     local validate
+    local authored_map = #definition.rows > 0
 
     for _, operation in ipairs(definition.operations) do
         if operation.kind == directives.HOOK_RUN then
-            if run then
-                error("layout " .. definition.id .. " has multiple run hooks")
-            end
+            if not authored_map then
+                if run then
+                    error("layout " .. definition.id .. " has multiple run hooks")
+                end
 
-            run = operation.argument
+                run = operation.argument
+            end
         elseif operation.kind == directives.HOOK_VALIDATE then
             if validate then
                 error("layout " .. definition.id .. " has multiple validators")
@@ -88,7 +92,7 @@ local function methods(definition)
         end
     end
 
-    if not run and #definition.rows == 0 then
+    if not run and not authored_map then
         error("layout " .. definition.id ..
             " has neither an authored MAP nor a run hook")
     end

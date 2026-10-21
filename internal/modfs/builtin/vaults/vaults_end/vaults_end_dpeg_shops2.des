@@ -1,0 +1,40 @@
+# Consumable shops (scrolls, potions).
+# Monsters in rooms.
+
+NAME:    vaults_end_dpeg_shops2
+TAGS:    vaults_end_quadrant vaults_end_quadrant_mall unrand
+NSUBST:  A = 1:+ / *:x+
+NSUBST:  B = 1:+ / *:x+
+NSUBST:  C = 1:+ / *:x+
+NSUBST:  S = 3:S / 1:O / *:S99
+KFEAT:   S = scroll shop / distillery shop / abandoned_shop
+NSUBST:  ' = 20:9 / *:.
+NSUBST:  . = 5:9 / *:.
+SUBST:   9 = 8 9 .:20
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ .........................
+x.........................x
+x...xxxxx..xxxxx..xxxxx...x
+x...x'S'x..x'S'x..x'S'x...x
+x...x'''x..x'''x..x'''x...x
+x...xx+xx..xx+xx..xx+xx...x
+x.........................x
+x.........................x
+x...xxAxx..xxBxx..xxCxx...x
+x...x'''x..x'''x..x'''x...x
+x...x'S'x..x'S'x..x'S'x...x
+x...x'''x..x'''x..x'''x...x
+x...xxAxx..xxBxx..xxCxx...x
+x.........................x
+x.........................x
+x...xx+xx..xx+xx..xx+xx...x
+x...x'''x..x'''x..x'''x...x
+x...x'S'x..x'S'x..x'S'x...x
+x...xxxxx..xxxxx..xxxxx...x
+x.........................x
+ .........................
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

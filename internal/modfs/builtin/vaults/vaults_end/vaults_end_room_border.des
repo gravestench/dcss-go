@@ -1,0 +1,9 @@
+# Vaults:$ - Rooms Quadrant - Border Subvault
+#            Fill the room with loot, but leave an empty border.
+
+NAME: vaults_end_room_border
+TAGS: vaults_end_room
+: vault.run("paint")
+: vault.run("shared.loot")
+MAP
+ENDMAP

@@ -33,6 +33,14 @@ local tags = {
     VAULTS_ROOM = "vaults_room",
     VAULTS_EMPTY = "vaults_empty",
     VAULTS_HARD = "vaults_hard",
+    VAULTS_END_RUNE = "vaults_end_rune",
+    VAULTS_END_NORUNE = "vaults_end_norune",
+    VAULTS_END_QUADRANT = "vaults_end_quadrant",
+    VAULTS_END_QUADRANT_PRIZE = "vaults_end_quadrant_prize",
+    VAULTS_END_QUADRANT_MALL = "vaults_end_quadrant_mall",
+    VAULTS_END_QUADRANT_PRIZE_MALL = "vaults_end_quadrant_prize_mall",
+    VAULTS_END_ROOM = "vaults_end_room",
+    VAULTS_END_ROOM_RUNE = "vaults_end_room_rune",
 }
 
 return tags

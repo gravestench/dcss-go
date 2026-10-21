@@ -1,0 +1,39 @@
+# about 21 |
+
+NAME:   vaults_end_mu_flips
+TAGS:   vaults_end_quadrant_prize unrand
+NSUBST: ; = 3=D / 3=E / 3=F / .
+SUBST:  9 = 8 9
+SUBST:  $ = | * $
+KFEAT:  D = teleport trap / dispersal trap
+KFEAT:  E = zot trap
+KFEAT:  F = alarm trap
+SUBST:  s = x:250 +:1
+SUBST:  a = x.
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ........................
+x.99xxxxxxxxxxxxxxxxxxxxs.x
+x.9999..................x.x
+x.x9xxxxxxxxxxxxxxxxxxs.x.x
+x.x9x999..............x.x.x
+x.x.x999xxxxxxxxxxxxs.x.x.x
+x.x.x999;;;;;;;;$$$$x.x.x.x
+x.x.x.x;;;;;;;;;$$$$x.x.x.x
+x.x.x.x;;;;;;;;;$$$$x.x.x.x
+x.x.x.x;;;;;;;;;$$$$x.x.x.x
+x.x.x.x;;;;;;;;;$$$$x.x.x.x
+x.x.x.x;;;;;;;;;$$$$x.x.x.x
+x.x.x.x$$$$$$$$$$$$$x.x.x.x
+x.x.x.x$$$$$$$$$$$$$x.x.x.x
+x.x.x.x$$$$$$$$$$$$Ox.x.x.x
+x.x.x.sxxxxxxxxxxxxxx.x.x.x
+x.x.x................999x.x
+x.x.sxxxxxxxxxxxxxxxx999x.x
+x.x..................999x.x
+x.sxxxxxxxxxxxxxxxxxxxxxx.a
+ ........................
+  xxxxxxxxxxxxxxxxxxxxxxa
+ENDMAP

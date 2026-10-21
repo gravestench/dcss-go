@@ -1,0 +1,32 @@
+# 14 |, 6 *, 20 monsters
+
+NAME:   vaults_end_minmay_odd_checkers
+TAGS:   vaults_end_quadrant_prize unrand
+SUBST:  9 = 8 9 .:20
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ .999x......xx......xx...
+x....x......xx......xx....x
+x....9..xx...9..xx....9...x
+x....9..xx...9..xx.....9..x
+x....x......xx..........xxx
+x....x......xx..9.......xxx
+x.99.x..xx.......9..xx....x
+x....x*.xx..........xx....x
+x....x*...9.....xx..9...xxx
+x....x|....9....xx..9...xxx
+x...9x|.....xx......xx....x
+x..9.x|99...xx......xx....x
+x.9..x|9xx......xx......xxx
+x9...x||xx9.....xx......xxx
+x....x|*|99.....9........9x
+x....xO||||||**.9........9x
+xxxx.xxxxxxxxxxxxxxxxx..xxx
+x..........9.............9x
+x....x....9..........9...9x
+x....x...9...........9...9x
+ ....x..9.................
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

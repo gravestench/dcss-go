@@ -1,0 +1,35 @@
+# Vaults:$ quadrants
+# about 2 |
+
+NAME: vaults_end_classical_cross
+TAGS: vaults_end_quadrant unrand
+NSUBST:  U = 1:. / *:xxxx.
+NSUBST:  V = 1:. / *:xxxx.
+SUBST:   - = 8 9 .:20
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  ..xxxxxxxxxxxxxxxxxxx..
+ ...xxxxxxxxxxxxxxxxxxx..
+....xx...............xx....
+xxx.......-.....-.......xxx
+xxx...-.............-...xxx
+xx.......................xx
+xx.-....xxxxxxxxxxx....-.xx
+xx......x.........x......xx
+xx....xxU.........Uxx....xx
+xx..-.x....xxxxx....x....xx
+xx....x.-.Vx$$$xx...x.-..xx
+xx....x..xx$***$xx..x....xx
+xx.-..x..x$$*O*$$x-.x....xx
+xx....x..xx$***$xx..x....xx
+xx....x...Vx$$$xV...x..-.xx
+xx..-.xxx-.xxxxx..Uxx....xx
+xx......x.........x......xx
+xx......xxxxxxxxxxx.-....xx
+xxx...-.................xxx
+xxx........-....-.......xxx
+....xx...............xx....
+ ...xxxxxxxxxxxxxxxxxxx...
+  ..xxxxxxxxxxxxxxxxxxx..
+ENDMAP

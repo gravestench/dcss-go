@@ -1,0 +1,32 @@
+# 18 *, 12 monsters
+
+NAME:  vaults_end_grunt_zigzag
+TAGS:  vaults_end_quadrant unrand
+SUBST: 9 = 8 9 .:20
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxx.
+ ..9...9xxx9***9xxx....9..
+x....9.xxx.....*xx..xxxx9..
+x.....xx...xx..xx..xx*Ox.9x
+x....xx..xxx..xx..xx***x..x
+x.x.xx..xx...xx..xx9**xx..x
+x.x....xx..xxx..xx.9xxx...x
+x.x9.xxx..xx...xx..xx...xxx
+x.x.xx...xx..xxx..xx..xxx9x
+x.xxx..xxx..xx...xx..xx.**x
+x.xx..xx...xx..xxx..xx...*x
+x.x..xx..xxx9.xx...xx..x.*x
+x.x.xx..xx...xx..xxx..xx.9x
+x.x....xx..xxx..xx...xx..xx
+x.x.9.xx..xx...xx..xxx..xxx
+x.xx...9.xx..xxx..xx...xxxx
+x9*xxx...x..xx...xx..xxx.9x
+x..*xxxx...xx..xxx..xx....x
+xx..9xxx..xx..xx...xx...9.x
+xx...*xx.9...xx..9....xx..x
+x.....*xxxxxxxxxxxxxxxx..9x
+ ..xx.9...................
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

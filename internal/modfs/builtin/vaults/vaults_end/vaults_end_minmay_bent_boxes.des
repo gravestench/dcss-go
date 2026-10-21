@@ -1,0 +1,33 @@
+# 26 *, 16 monsters
+
+NAME:   vaults_end_minmay_bent_boxes
+TAGS:   vaults_end_quadrant_prize unrand
+SUBST:  9 = 8 9 .:20
+NSUBST: O = 1:O / *:|
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ .....9............9.....
+x.....9............9......x
+x.....xxxxxxxxxxxxxx......x
+x................9.xx.....x
+x................9..xx....x
+x99x.....xxxxxxxxx...xx...x
+x..x....xx.9..........xx99x
+x..x...xx*.9...........x..x
+x..x..xx**.xxxxxxx..x99x..x
+x..x..x...*******x..x..x..x
+x..x..x99x***O***x99x..x..x
+x..x..x..x*******...x..x..x
+x..x99x..xxxxxxx.**xx..x..x
+x..x...........9.*xx...x..x
+x99xx..........9.xx....x..x
+x...xx...xxxxxxxxx.....x99x
+x....xx..9................x
+x.....xx.9................x
+x......xxxxxxxxxxxxxx.....x
+x......9............9.....x
+ ......9............9.....
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

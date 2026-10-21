@@ -15,6 +15,8 @@ local names = {
     CHESS_PIECE_STATUE = "a statue of a chess piece",
     RUNE_CARVED_STONE_WALL = "rune-carved stone wall",
     DEFACED_CARVED_STONE_WALL = "defaced carved stone wall",
+    HEAVILY_ETCHED_METAL_WALL = "heavily etched metal wall",
+    HEAVILY_ETCHED_CRYSTAL_WALL = "heavily etched crystal wall",
 }
 
 return names

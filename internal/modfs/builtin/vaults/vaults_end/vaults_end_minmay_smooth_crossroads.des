@@ -1,0 +1,33 @@
+# 17 *, 10 monsters
+
+NAME:   vaults_end_minmay_smooth_crossroads
+TAGS:   vaults_end_quadrant unrand
+SUBST:  9 = 8 9 .:20
+NSUBST: O = 1:O / *:.
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ 9.....x9.....9x9........
+x......x.......x...x....9.x
+x.....xx...x...x...xx.....x
+x.....x....x...x....x.....x
+x....xx....x...x....xx....x
+x..xxx....xx...xx....xxx..x
+x.xx......x*...*x......xxxx
+x........xx*...*xx.......9x
+x9.....xxxO.....Oxxx......x
+xxxxxxxx**...9...**xxxx...x
+x9..........9x9..........9x
+x...xxxx**...9...**xxxxxxxx
+x......xxxO.....Oxxx.....9x
+x9.......xx*...*xx........x
+xxxx......x*...*x......xx.x
+x..xxx....xx...xx....xxx..x
+x....xx....x...x....xx....x
+x.....x....x...x....x.....x
+x.....xx...x...x...xx.....x
+x......x...x.......x......x
+ 9........9x9.....9x.....9
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

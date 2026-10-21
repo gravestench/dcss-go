@@ -1,0 +1,34 @@
+# 16 *, 12 monsters
+
+NAME:    vaults_end_minmay_surrounding_squares
+TAGS:    vaults_end_quadrant unrand
+SHUFFLE: AB
+SUBST:   9 = 8 9 .:20
+SUBST:   A = ., B = x
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ 9......................9
+x.9xx.xxx.xxx.xxx.xxx.xx.9x
+x.xxx.xxx.xxx.xxx.xxx.xxx.x
+x.xxx.xxx.xxx.xxx.xxx.xxx.x
+x.........................x
+x.xxx.9xxxxxxAxxxxxx9.xxx.x
+x.xxx.xx...........xx.xxx.x
+x.xxx.x.9xxxxBxxxx9.x.xxx.x
+x.....x.xx9.....9xx.x.....x
+x.xxx.x.x9.*****.9x.x.xxx.x
+x.xxx.B.A.***O***.A.B.xxx.x
+x.xxx.x.x9.*****.9x.x.xxx.x
+x.....x.xx9.....9xx.x.....x
+x.xxx.x.9xxxxBxxxx9.x.xxx.x
+x.xxx.xx...........xx.xxx.x
+x.xxx.9xxxxxxAxxxxxx9.xxx.x
+x.........................x
+x.xxx.xxx.xxx.xxx.xxx.xxx.x
+x.xxx.xxx.xxx.xxx.xxx.xxx.x
+x.9xx.xxx.xxx.xxx.xxx.xx9.x
+ 9.......................9
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

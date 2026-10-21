@@ -1,0 +1,10 @@
+# Vaults:$ - the subvault used to place the rune.
+# The shared.rune hook selects this one-cell real-rune helper once.
+
+NAME:  vaults_end_rune
+TAGS:  vaults_end_rune
+KMONS: O = 8 / 9
+KITEM: O = silver rune of Zot
+MAP
+O
+ENDMAP

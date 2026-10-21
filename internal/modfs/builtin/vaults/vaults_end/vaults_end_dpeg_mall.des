@@ -1,0 +1,42 @@
+# Two guaranteed good shops. Perhaps more shops.
+# Almost all monsters are in the rooms.
+
+NAME:    vaults_end_dpeg_mall
+TAGS:    vaults_end_quadrant_prize vaults_end_quadrant_prize_mall unrand
+SHUFFLE: AB, CD
+SUBST:   A=+, B:xx+, C:xxx+, D:xxxx+
+NSUBST:  S = 2:S / 1:O / *:RRU9
+KFEAT:   S = jewellery shop / antique armour shop / distillery shop
+KFEAT:   R = general shop / book shop / scroll shop / antique weapon shop / distillery shop
+KFEAT:   U = stone_arch
+NSUBST:  ' = 22:9 / *:.
+NSUBST:  . = 2:9 / *:.
+SUBST:   9 = 8 9
+SUBST:   a : x.
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  aaxxxxxxxxxxxxxxxxxxxaa
+ .........................
+a.........................a
+a..................xxx....a
+x..............x+++xxx....x
+x..........x+++x'''xxx....x
+x..........x'''D'S'xx.....x
+x..........x'S'D'''xx.....x
+x........xxx'''xxxxxx.....x
+x........xxxBBBxxxxxx.....x
+x........xx''''xx.........x
+x......T.xx'ST'xx.T.......x
+x........xx''''xx.........x
+x....xxxxxxAAAxxx.........x
+x....xxxxxx'''xxx.........x
+x....xx'''C'S'x...........x
+x....xx'S'C'''x...........x
+x...xxx'''x+++x...........x
+x...xxx+++x...............x
+a...xxx...................a
+a.........................a
+ ........................
+  aaxxxxxxxxxxxxxxxxxxxaa
+ENDMAP

@@ -1,0 +1,9 @@
+# Vaults:$ - Rooms Quadrant - Diamond Subvault
+#            Fill the room with money in a diamond pattern.
+
+NAME: vaults_end_room_diamond
+TAGS: vaults_end_room
+: vault.run("paint")
+: vault.run("shared.loot")
+MAP
+ENDMAP

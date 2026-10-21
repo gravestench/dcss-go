@@ -4,6 +4,7 @@ local requests = {
     ANY_WEAPON = "any weapon",
     ANY_BOOK = "any book",
     ANY_SCROLL = "any scroll",
+    ANY_GOOD_ITEM = "any good_item",
 }
 
 return requests

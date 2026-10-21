@@ -1,0 +1,34 @@
+# One shop, 16 monsters
+
+NAME:    vaults_end_dpeg_shops1
+TAGS:    vaults_end_quadrant vaults_end_quadrant_mall unrand
+KFEAT:   S = any shop
+: vault.run("choose_shop_pattern")
+SUBST:   9 = 8 9 .:20
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ..xxxxxxxxxx.....xxxx...
+x...xxxxx.................x
+xx........................x
+xxx......................xx
+xxxx.....................xx
+xxxx.....................xx
+xxx......9xxxxxxx........xx
+xx......9xxxxxxxxx.......xx
+xx......xxx$999$xxx.......x
+xx......xC.9$$$9.xx.......x
+x.......CC.9$S$9Oxx.......x
+x.......xC.9$$$9.xx......xx
+x.......xAa$999$xxx......xx
+xx.......xAxDDDxxx9......xx
+xx........xxxDxxx9......xxx
+xx.....................xxxx
+xx.....................xxxx
+xx......................xxx
+x........................xx
+x.................xxxxx...x
+ ....xxxx.....xxxxxxxxxx..
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

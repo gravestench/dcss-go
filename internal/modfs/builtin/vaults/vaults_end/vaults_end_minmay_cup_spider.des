@@ -1,0 +1,33 @@
+# 28 *, 1 |, 20 monsters
+
+NAME:   vaults_end_minmay_cup_spider
+TAGS:   vaults_end_quadrant_prize unrand
+SUBST:  9 = 8 9 .:20
+NSUBST: O = 1:O / *:|
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ ........................
+x.........................x
+x..xxxx..xxxxxxxxx..xxxx..x
+x.....x..9..*x*..9..x.....x
+x.....x..9..*x*..9..x.....x
+x..x99xxxxxxxxxxxxxxx99x..x
+x..x..x**xO.....Ox**x..x..x
+x..x**x..xx..x..xx..x**x..x
+x..xxxx99xx99x99xx99xxxx..x
+x........x.......x........x
+x........x.......x........x
+x..xxxx99xx99x99xx99xxxx..x
+x..xxxx..xx..x..xx..xxxx..x
+x..9.*x......x......x*.9..x
+x..9.*x**....x....**x*.9..x
+x..xxxxxxxx99x99xxxxxxxx..x
+x..x**x**x*..x..*x**x**x..x
+x..x..x..x*..x..*x..x..x..x
+x..x99x99xxxxxxxxx99x99x..x
+x.........................x
+ .........................
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

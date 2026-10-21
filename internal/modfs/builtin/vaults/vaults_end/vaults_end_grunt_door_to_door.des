@@ -1,0 +1,39 @@
+# 18 *, 12 monsters
+
+NAME:    vaults_end_grunt_door_to_door
+TAGS:    vaults_end_quadrant unrand
+SHUFFLE: 456
+NSUBST:  1 = 1:9 / *:*
+NSUBST:  2 = 1:9 / *:*
+NSUBST:  3 = 1:9 / *:*
+NSUBST:  4 = 1:9 / *:*
+NSUBST:  5 = 1:9 / *:*
+NSUBST:  6 = 1:O / *:*
+SUBST:   9 = 8 9 .:30
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ +xxxxxxxxxxxxxxxxxxxxxxx
+xx..........xxx.........+xx
+x.9..+xx+..9.+.9..+xx+..9.x
+x....x11x....x....x22x....x
+x....x11x....x....x22x....x
+x.9..+xx+..9.+.9..+xx+..9.x
+xx..........xxx..........xx
+xx+xx+xx+xx+xxx+xx+xx+xx+xx
+xx..........xxx..........xx
+x.9..+xx+..9.x.9..+xx+..9.x
+x....x44x....x....x33x....x
+x....x44x....x....x33x....x
+x.9..+xx+..9.+.9..+xx+..9.x
+xx..........xxx..........xx
+xx+xx+xx+xx+xxx+xx+xx+xx+xx
+xx..........xxx..........xx
+x.9..+xx+..9.+.9..+xx+..9.x
+x....x55x....x....x66x....x
+x....x55x....x....x66x....x
+xx9..+xx+..9.+.9..+xx+..9xx
+ +x.........xxx.........x+
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

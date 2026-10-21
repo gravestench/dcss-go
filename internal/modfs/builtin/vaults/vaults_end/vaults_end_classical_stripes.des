@@ -1,0 +1,34 @@
+# about 5 |
+
+NAME:    vaults_end_classical_stripes
+TAGS:    vaults_end_quadrant unrand
+NSUBST:  Y = 4 = 9:30 8 / 8 = 9:30 8 .:40 / *:.
+NSUBST:  Z = 5 = 8:30 9 / 7 = 8:30 9 .:40 / *:.
+SUBST:   a : x ., b : x ., c : x .
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  axaxxaaxaxxxxxxxxxxxxbx
+  .......x................
+a.......x.................x
+x..Z..Yx.Y..Y..Yx.Yx.Y....b
+a...Z.xY..Y..Y..Yx.Zx.Y...x
+x....x..Y..Y..Y..Y..Yx.Y..x
+x..Yx.Y..Y..Y..Y..Y..Zx.Y.x
+a..xY..Y..Y..Zx.Y..Y..Yx..x
+a.x..Y..Y..Y.?Zx.Y..Y..Zx.x
+xx.Y..Y..Y??Y??Zx.Y..Y..Y.x
+a...Y..Z??Y??Y??Zx.Y..Yx..x
+x....Y.xZ??YO?Y??Zx.Y..Yx.x
+x..Y..Y.xZ??Y??Y??Z..Y..Y.x
+x..xY..Y.xZ??Y?.Y..Y..Z...x
+x...xY..Y.xZ?.Y..Y..Y..Y..x
+x..Y..Y..Y.xZ..Y..Y..Yx.Y.c
+x..xY..Y..Y..Y..Y..Y..Zx..c
+x...xZ..Y..Y..Y..Y..Z..Y..x
+x..Y.xZ..Y..Y..Y..Y..Z..Y.x
+b...Z.xY.xY..Y..Z.xZ..Z...c
+x....Y.xY.xY..Y..Y.xY..Y..x
+ .........................
+  xbxxxxxxxxxxxxxxxccxxcx
+ENDMAP

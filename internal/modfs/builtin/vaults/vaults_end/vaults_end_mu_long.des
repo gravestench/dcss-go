@@ -1,0 +1,35 @@
+# about 8 |
+
+NAME:   vaults_end_mu_long
+TAGS:   vaults_end_quadrant unrand
+SUBST:  9 = 8 9 .:10
+NSUBST: $ = 1:O / *:$
+SUBST:  $ = |**$
+SUBST:  a = x.
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  axxxxxxxxxxxxxxxxxxxxxa
+ ........................
+a.........................a
+x.........................x
+x..xxxxxxxxxxxxxxxxxxxxx..x
+x....999............$$$x..x
+x....999............$$$x..x
+x..xxxxxxxxxxxxxxxxxxxxx..x
+x..x$$$............999....x
+x..x$$$............999....x
+x..xxxxxxxxxxxxxxxxxxxxx..x
+x....999............$$$x..x
+x....999............$$$x..x
+x..xxxxxxxxxxxxxxxxxxxxx..x
+x..x$$$............999....x
+x..x$$$............999....x
+x..xxxxxxxxxxxxxxxxxxxxx..x
+x....999............$$$x..x
+x....999............$$$x..x
+x..xxxxxxxxxxxxxxxxxxxxx..x
+a.........................a
+  .......................
+  axxxxxxxxxxxxxxxxxxxxxa
+ENDMAP

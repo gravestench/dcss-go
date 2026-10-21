@@ -1,0 +1,35 @@
+# about 19 |
+
+NAME:   vaults_end_mu_triangles
+TAGS:   vaults_end_quadrant_prize unrand
+SUBST:  9 = 8 9 .:20
+NSUBST: ? = 1:O / *:|
+SUBST:  " = +:1 x:99
+SUBST:  ! = x:20 .
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  x.xxxxxxxxxxxxxxxxxxxxx
+ .........................
+x.!x..9..xx............x!.x
+...xx.....xx.9...9..9.xx..x
+x...xx..9..xx........xx.9.x
+x....xx.....xx.9..9.xx....x
+x..9..xx..9..xx****xx.9...x
+x......xx.....xx**xx......x
+x....9..xx..9.."xxx|9.....x
+x........xx.....xx||....9.x
+x......9.|x"..9.."x|9.....x
+x..9.....*|xx.....xx......x
+x......9.|xxx"..9..xx.9...x
+x........xx||xx.....xx....x
+x....9..xx||||xx..9..xx.9|x
+x......xx..9.9.xx.....xx||x
+x..9..xx........xx..9..xx?x
+x....xx..9.....9.xx.....xxx
+x...xx............xx..9..xx
+x..xx..9....9....9.xx.....x
+x.!x...............|xx....x
+ ..................|?xx...
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

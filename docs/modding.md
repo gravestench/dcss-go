@@ -2502,7 +2502,18 @@ second system just to make the source modifiers work.
 | `api:record(kind, arguments)` | Queue a typed placement effect; import its kind from `constants.vault_effects`. |
 | `api:map_size()` | Return local width and height; an empty-MAP child gets its parent region's size. |
 | `api:set_cell(x, y, glyph)` | Paint one zero-based local cell; out-of-bounds positions raise an error. |
+| `api:has_tag(tag)` | Check a tag on the current DES map. |
 | `api:has_placed_tag(tag)` | Check whether an earlier successful child map in this composition carried the tag. |
+
+The bundled `vaults/layout/vaults_vault.des` is a whole-level example.
+Its `PLACE: Vaults:$` selects the last Vaults floor. Its Lua hook chooses
+one prize quadrant and three ordinary quadrants, then the DES `SUBVAULT`
+operations place individually discovered files from `vaults/vaults_end/`.
+A new quadrant needs its own `.des` file, a suitable
+`vaults_end_quadrant` or `vaults_end_quadrant_prize` tag, an `O` rune slot,
+and `shared.loot` and `shared.rune` hook declarations. Keep its 27-by-23
+source geometry in `MAP`; the shared rune hook uses `api:has_tag` for the
+current quadrant and `api:has_placed_tag` to avoid a second real rune.
 
 An empty `MAP` can be useful for a `SUBVAULT` helper whose shape comes
 from its parent's placeholder region. Give that helper a named `vault.run`

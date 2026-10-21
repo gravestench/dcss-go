@@ -480,7 +480,8 @@ local function apply_subvault(vault, cells, operation, random, depth,
 end
 
 -- Expose only controlled random, context, and emission methods to ported vault hooks.
-local function hook_api(random, events, line, player, cells, state)
+local function hook_api(random, events, line, player, cells, state,
+    vault)
     local api = {}
 
     player = player or {}
@@ -506,6 +507,12 @@ local function hook_api(random, events, line, player, cells, state)
         end
 
         cells[y + 1][x + 1] = glyph
+    end
+
+    -- The current helper's source tags determine whether its rune slot is
+    -- a prize or an ordinary chance, independent of its selected file name.
+    function api:has_tag(tag)
+        return vault.tags[tag] == true
     end
 
     -- A later quadrant can see successful earlier children without any
@@ -785,7 +792,7 @@ function operations.apply(vault, cells, random, depth, player, state)
         if operation.kind == directives.HOOK_RUN then
             local events = {}
             local api = hook_api(random, events, operation.line,
-                player, cells, state)
+                player, cells, state, vault)
 
             hooks.run(vault, operation.argument, api)
 

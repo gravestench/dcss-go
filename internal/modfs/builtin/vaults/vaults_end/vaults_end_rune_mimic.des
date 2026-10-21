@@ -1,0 +1,13 @@
+# Vaults:$ - the subvault used for potential rune locations that do not
+# contain the rune, but rather a mimic of it!
+# This legacy mimic helper is retained only as inactive source data.
+
+NAME:    vaults_end_rune_mimic
+TAGS:    vaults_end_norune unrand
+# Legacy item mimics were removed from DCSS. Retain this source map
+# as data, but exclude it from live helper selection.
+WEIGHT:  0
+# KITEM:   o = silver rune of Zot mimic (legacy item mimic; inactive)
+MAP
+o
+ENDMAP

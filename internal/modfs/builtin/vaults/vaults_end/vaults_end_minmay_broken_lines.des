@@ -1,0 +1,32 @@
+# 18 *, 20 monsters
+
+NAME:   vaults_end_minmay_broken_lines
+TAGS:   vaults_end_quadrant unrand
+SUBST:  9 = 8 9 .:20
+: vault.run("shared.loot")
+: vault.run("shared.rune")
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ .9.x.x.x.x.x.x.x.9.x.x...
+x.x.x.x.x.x.x*x.x.x.x.x...x
+x.x.x.x.9.x.9*x.x.x.9.x.x.x
+x.x.9.x.x.x.x*x.x.x.x.x.x.x
+x.x.x.x.x.9.x*x.9.x.x.9.x.x
+x.x.x.9.x.x.x*x.x.x.x.x.x.x
+x.x.x.x.x.x.x*9.x.x.x.9.x.x
+x.x.x.x.9.x.x*x.x.9.9.x.x.x
+x.x.x.x.x.x.9*x.x.x.x.x.x.x
+x.x.x.x.x.x.x*x.x.x.x.x.9.x
+x.x.x.x.x.x.xO9.x.x.x.x.x.x
+x.x.9.x.x.9.x*x.x.9.x.x.x.x
+x.x.x.x.x.x.x*x.x.x.x.9.x.x
+x.x.x.x.9.x.x*9.x.x.x.x.x.x
+x.x.x.x.x.x.x*x.x.x.x.x.9.x
+x.x.x.9.x.9.x*x.9.x.9.x.x.x
+x.x.9.x.x.x.9*x.x.x.x.9.x.x
+x.x.x.x.x.x.x*9.x.x.x.x.x.x
+x.x.x.9.x.x.x*x.x.x.x.x.x.x
+x.x.x.x.x.x.x*x.x.9.x.x.9.x
+ .9.x.x.x.9.9.x.x.x.9.x...
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
