@@ -458,9 +458,9 @@ The opportunity-attack scheduler has not yet ported the source
 player-moving state that suppresses its trample. Generated
 lords now save source-style names and source colour rolls; their
 names reach combat messages and both values reach the terminal entity view.
-The ETC_RANDOM terminal tint is still a fixed palette colour, so animated
-source colour cycling remains presentation work. Other Pan rune families need
-a full authored-map run.
+Source `ETC_RANDOM` now redraws visible monsters and clouds with UI-only
+nonblack IRGB draws, without changing the saved game seed. Other Pan rune
+families need a full authored-map run.
 
 Intrinsic death effects now use the actor death phase for Ball Lightning,
 Fulminant Prism, Bloated Husk, Lurking Horror, and Bennu. Construct timeout

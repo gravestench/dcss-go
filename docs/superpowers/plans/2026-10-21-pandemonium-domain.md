@@ -86,14 +86,21 @@ Pan-focused tests and compilation of every package passed separately.
 The generated lord's non-brand melee flavours now reach live player and
 monster targets through the ordinary saved combat owners. Its source-style
 name and source colour choice are saved on the actor and projected into
-combat messages and terminal views. The remaining appearance gap is the
-animated `ETC_RANDOM` terminal tint. Trample now separates defender movement
-from the attacker's final follow and checks dangerous terrain, expiring
+combat messages and terminal views. Source `ETC_RANDOM` now draws from a
+separate UI-only stream on each redraw; an idle timer runs while such a cell
+is visible. Trample now separates defender movement from the attacker's
+final follow and checks dangerous terrain, expiring
 flight, holds, traps, and Passwall. Source player-moving suppression awaits
 the opportunity-attack scheduler. An authored Hellion Island rune now runs
 from its DES placement through pickup, repeated transit, restore, and exit;
 an uncollected authored rune is also retired with its old region. Pain brand
 uses the same live spellbook owner as casting for a Pan lord's dynamic
 `MST_GHOST` slots. Remaining Pan checks include the other authored rune
-families and animated colour cycling. The existing replay test also compares
+families. The existing replay test also compares
 the complete next-region save after restore.
+
+The Pan game and focused Lua/terminal presentation tests pass. A package-wide
+terminal run reached its ten-minute timeout during repeated Lua catalog
+initialization; startup-heavy cases hit their per-call deadline.
+The wand input test also had a stale forged entity cursor and passes after
+updating its fixture to the current save invariant.

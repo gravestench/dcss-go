@@ -3064,8 +3064,16 @@ Pandemonium lord's generated name, colour, body, and spells live on its
 `policy/population/pan_lord.lua`; changing the static monster catalog row
 alone does not alter an existing lord. Combat messages and the terminal
 read the saved actor name, while the saved colour overrides the catalog's
-base tint. The exceptional `ETC_RANDOM` colour is currently a fixed
-terminal tint; source-style colour cycling remains presentation work.
+base tint. Catalog monsters and clouds retain their source colour IDs too.
+For `ETC_RANDOM`, `presentation.entity` marks the cell as animated; the
+terminal requests a new nonblack IRGB colour from a UI-only random source
+on each redraw, and `presentation.entity_color` maps that draw to a colour.
+An idle redraw timer runs only while an animated cell is visible. A mod
+changing this palette should edit `policy/presentation/colors.lua` and
+`policy/presentation/view.lua`. Import the marker from
+`constants.element_colours` in Lua code; do not draw from the saved
+gameplay RNG.
+
 Combat reads the lord's rolled spell slots through
 `policy/combat/monster_spellbook.lua`, including when a Pain brand asks
 whether those spells contain Necromancy. Its `MST_GHOST` identity has no

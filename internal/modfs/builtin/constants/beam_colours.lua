@@ -1,5 +1,7 @@
 -- The colour names are source beam display values, separate from damage flavour and glyph.
 
+local elements = require("constants.element_colours")
+
 local ids = {
     BLACK = "BLACK",
     BLUE = "BLUE",
@@ -8,7 +10,7 @@ local ids = {
     DARKGREY = "DARKGREY",
     ETC_HOLY = "ETC_HOLY",
     ETC_MUTAGENIC = "ETC_MUTAGENIC",
-    ETC_RANDOM = "ETC_RANDOM",
+    ETC_RANDOM = elements.RANDOM,
     GREEN = "GREEN",
     LIGHTBLUE = "LIGHTBLUE",
     LIGHTCYAN = "LIGHTCYAN",

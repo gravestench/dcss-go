@@ -1,6 +1,10 @@
 package terminal
 
-import "crawl/internal/game"
+import (
+	"math/rand/v2"
+
+	"crawl/internal/game"
+)
 
 // dungeonRenderer projects the read-only level view into the map pane.
 type dungeonRenderer struct {
@@ -103,19 +107,31 @@ func (r dungeonRenderer) drawEntity(entity game.EntityView) {
 func (r dungeonRenderer) entityColor(entity game.EntityView) Color {
 	key := entity.Role + ":" + entity.KindID + ":" + entity.ColorID
 
-	if color, found := r.entityColors[key]; found {
-		return color
+	if !entity.AnimatedColor {
+		if color, found := r.entityColors[key]; found {
+			return color
+		}
 	}
 
-	result := runPresentation(r.policy, "presentation.entity_color", map[string]any{
+	input := map[string]any{
 		"role":     entity.Role,
 		"kind_id":  entity.KindID,
 		"color_id": entity.ColorID,
-	})
+	}
+
+	if entity.AnimatedColor {
+		// Source ui_random(15) is separate from saved gameplay RNG. Draw on
+		// each render and let the effective Lua policy choose the IRGB colour.
+		input["ui_roll"] = rand.IntN(int(White))
+	}
+
+	result := runPresentation(r.policy, "presentation.entity_color", input)
 
 	color := policyColor(result["fg"])
 
-	r.entityColors[key] = color
+	if !entity.AnimatedColor {
+		r.entityColors[key] = color
+	}
 
 	return color
 }

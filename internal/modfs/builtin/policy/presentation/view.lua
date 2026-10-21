@@ -53,6 +53,7 @@ function view.entity(ctx, input)
         local monster = catalog.get("monsters", kind_id)
         name = monster.name
         glyph = monster.glyph
+        color_id = monster.colour_id or ""
 
         if input.monster_entity_id then
             local actor = ctx:entity(input.monster_entity_id)
@@ -61,8 +62,9 @@ function view.entity(ctx, input)
             name = monster_display.name(ctx, actor)
             local generated = ctx:get(actor, component.PANDEMONIUM_LORD)
 
-            color_id = generated and generated.colour_id ~= "" and
-                generated.colour_id or ""
+            if generated and generated.colour_id ~= "" then
+                color_id = generated.colour_id
+            end
 
             if overrides and overrides.colour ~= "" then
                 color_id = overrides.colour
@@ -72,8 +74,11 @@ function view.entity(ctx, input)
         name = "disturbance in the air"
         glyph = string.byte("{")
     elseif role == "cloud" then
-        name = clouds.get(kind_id).name
+        local appearance = clouds.get(kind_id)
+
+        name = appearance.name
         glyph = string.byte("#")
+        color_id = appearance.color_id
     elseif role == "trap" then
         local trap = catalog.get("traps", kind_id)
         name = trap.name
@@ -97,6 +102,7 @@ function view.entity(ctx, input)
         name = name,
         glyph = glyph,
         color_id = color_id,
+        animated_color = color_id == colors.random_effect_id,
     }
 end
 
@@ -159,6 +165,17 @@ end
 -- Give an explicit vault tint first priority, then fall back by role and
 -- catalog type so unknown source colors never reach terminal ANSI output.
 function view.entity_color(input)
+    if input.color_id == colors.random_effect_id then
+        local draw = input.ui_roll
+
+        if type(draw) ~= "number" or draw % 1 ~= 0 or
+            draw < 0 or draw >= #colors.nonblack_irgb then
+            error("random element colour needs a bounded UI draw")
+        end
+
+        return { fg = colors.nonblack_irgb[draw + 1] }
+    end
+
     local source = input.color_id and colors.source[input.color_id:upper()]
 
     if source then

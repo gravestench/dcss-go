@@ -1,7 +1,9 @@
 -- random_colour() draws IRGB values 1..15, then random_monster_colour()
 -- rerolls DARKGREY. The source one-in-ten ETC_RANDOM choice is separate.
+local elements = require("constants.element_colours")
+
 local colours = {
-    RANDOM_EFFECT = "ETC_RANDOM",
+    RANDOM_EFFECT = elements.RANDOM,
     DARK_GREY = "DARKGREY",
     SOURCE = {
         "BLUE",

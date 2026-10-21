@@ -23,14 +23,15 @@ type CellView struct {
 }
 
 type EntityView struct {
-	ID      uint64
-	X       int
-	Y       int
-	Glyph   rune
-	KindID  string
-	Name    string
-	Role    string
-	ColorID string
+	ID            uint64
+	X             int
+	Y             int
+	Glyph         rune
+	KindID        string
+	Name          string
+	Role          string
+	ColorID       string
+	AnimatedColor bool
 }
 
 type ItemView struct {
@@ -214,6 +215,7 @@ func (g *Game) fillAltarView(view *View, record vault.Record) {
 
 		presentation := g.mustPresentationPolicy("presentation.altar",
 			map[string]any{"god_id": argument.String})
+
 		view.Entities = append(view.Entities, EntityView{
 			X:      record.X,
 			Y:      record.Y,
@@ -222,6 +224,7 @@ func (g *Game) fillAltarView(view *View, record vault.Record) {
 			Name:   presentation["name"].(string),
 			Role:   "altar",
 		})
+
 		return
 	}
 }
@@ -253,12 +256,14 @@ func (g *Game) fillCloudView(view *View, level *Level) {
 		})
 
 		view.Clouds = append(view.Clouds, EntityView{
-			X:      cloud.x,
-			Y:      cloud.y,
-			Glyph:  rune(presentation["glyph"].(int64)),
-			KindID: cloud.kindID,
-			Name:   presentation["name"].(string),
-			Role:   "cloud",
+			X:             cloud.x,
+			Y:             cloud.y,
+			Glyph:         rune(presentation["glyph"].(int64)),
+			KindID:        cloud.kindID,
+			Name:          presentation["name"].(string),
+			Role:          "cloud",
+			ColorID:       presentation["color_id"].(string),
+			AnimatedColor: presentation["animated_color"].(bool),
 		})
 	}
 }
@@ -545,14 +550,15 @@ func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 		}
 
 		view.Entities = append(view.Entities, EntityView{
-			ID:      entityID,
-			X:       location.X,
-			Y:       location.Y,
-			Glyph:   rune(presentation["glyph"].(int64)),
-			KindID:  presentation["kind_id"].(string),
-			Name:    presentation["name"].(string),
-			Role:    presentation["role"].(string),
-			ColorID: presentation["color_id"].(string),
+			ID:            entityID,
+			X:             location.X,
+			Y:             location.Y,
+			Glyph:         rune(presentation["glyph"].(int64)),
+			KindID:        presentation["kind_id"].(string),
+			Name:          presentation["name"].(string),
+			Role:          presentation["role"].(string),
+			ColorID:       presentation["color_id"].(string),
+			AnimatedColor: presentation["animated_color"].(bool),
 		})
 	}
 }

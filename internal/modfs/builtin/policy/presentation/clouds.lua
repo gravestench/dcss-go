@@ -20,6 +20,7 @@ function clouds.get(kind_id)
     return {
         name = definition.name,
         color = color,
+        color_id = color_id,
         glyph = "#",
     }
 end

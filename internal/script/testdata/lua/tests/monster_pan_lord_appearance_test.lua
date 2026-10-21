@@ -44,8 +44,6 @@ local function check_appearance(ctx, draw_value, expected_colour)
         kind_id = monsters.MONS_PANDEMONIUM_LORD,
         monster_entity_id = ctx:id(lord),
     })
-    local cell = view.entity_color(visible)
-
     harness.equal(projected.name, generated.name,
         "saved name reaches the monster profile")
     harness.equal(projected.colour_id, generated.colour_id,
@@ -56,8 +54,26 @@ local function check_appearance(ctx, draw_value, expected_colour)
         "terminal view uses the generated name")
     harness.equal(visible.color_id, generated.colour_id,
         "terminal view uses the generated colour")
-    harness.equal(cell.fg, colors.source[generated.colour_id],
-        "terminal colour resolves to its source palette entry")
+
+    if visible.animated_color then
+        visible.ui_roll = 0
+
+        local first = view.entity_color(visible)
+
+        visible.ui_roll = 14
+
+        local last = view.entity_color(visible)
+
+        harness.equal(first.fg, colors.nonblack_irgb[1],
+            "first redraw uses the source nonblack palette")
+        harness.equal(last.fg, colors.nonblack_irgb[15],
+            "later redraw can change the saved random-effect colour")
+    else
+        local cell = view.entity_color(visible)
+
+        harness.equal(cell.fg, colors.source[generated.colour_id],
+            "ordinary generated colour stays fixed across redraws")
+    end
 end
 
 -- A range of caller streams catches malformed names and illegal colours
@@ -89,7 +105,7 @@ end
 -- An exceptional one-in-ten roll saves the random-effect token; the
 -- ordinary roll saves a concrete colour and never produces dark grey.
 function test.run(ctx)
-    check_appearance(ctx, 0, "ETC_RANDOM")
+    check_appearance(ctx, 0, colour_ids.RANDOM_EFFECT)
     check_appearance(ctx, 1, "WHITE")
     check_generated_range()
 end

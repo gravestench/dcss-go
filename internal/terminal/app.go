@@ -70,6 +70,8 @@ type vampireTick struct {
 	id uint64
 }
 
+type visualTick struct{}
+
 type menuWeaponOption struct {
 	ID          string
 	Name        string
@@ -114,6 +116,7 @@ type AppModel struct {
 	equipmentTickID     uint64
 	spellTickID         uint64
 	vampireTickID       uint64
+	visualTickPending   bool
 	aimKind             game.CommandKind
 	aimItemID           uint64
 	aimSpellID          string
@@ -200,15 +203,15 @@ func (m *AppModel) Init() tea.Cmd {
 		view := m.game.View()
 
 		if view.EquipmentDelay != nil {
-			return m.nextEquipmentTick()
+			return m.withVisualTick(m.nextEquipmentTick())
 		}
 
 		if view.LearningRemaining > 0 {
-			return m.nextSpellTick()
+			return m.withVisualTick(m.nextSpellTick())
 		}
 	}
 
-	return nil
+	return m.withVisualTick(nil)
 }
 
 func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
@@ -218,7 +221,12 @@ func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = msg.Height
 
 	case tea.KeyPressMsg:
-		return m, m.handleKey(msg.String())
+		return m, m.withVisualTick(m.handleKey(msg.String()))
+
+	case visualTick:
+		m.visualTickPending = false
+
+		return m, m.withVisualTick(nil)
 
 	case equipmentTick:
 		if msg.id != m.equipmentTickID ||
@@ -227,9 +235,9 @@ func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 
-		return m, m.stepPlayCommand(game.Command{
+		return m, m.withVisualTick(m.stepPlayCommand(game.Command{
 			Kind: game.CommandContinueEquipment,
-		})
+		}))
 
 	case spellTick:
 		if msg.id != m.spellTickID ||
@@ -238,7 +246,8 @@ func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 
-		return m, m.stepPlayCommand(game.Command{Kind: game.CommandWait})
+		return m, m.withVisualTick(m.stepPlayCommand(
+			game.Command{Kind: game.CommandWait}))
 
 	case vampireTick:
 		if msg.id != m.vampireTickID ||
@@ -247,10 +256,11 @@ func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 
-		return m, m.stepPlayCommand(game.Command{Kind: game.CommandWait})
+		return m, m.withVisualTick(m.stepPlayCommand(
+			game.Command{Kind: game.CommandWait}))
 	}
 
-	return m, nil
+	return m, m.withVisualTick(nil)
 }
 
 func (m *AppModel) handleKey(key string) tea.Cmd {
@@ -527,6 +537,56 @@ func (m *AppModel) nextVampireTick() tea.Cmd {
 	return tea.Tick(80*time.Millisecond, func(time.Time) tea.Msg {
 		return vampireTick{id: id}
 	})
+}
+
+// Only visible animated cells need idle redraws. The source UI stream
+// changes their colour without taking a game turn or changing a save.
+func visibleAnimatedColor(view game.View) bool {
+	for _, entity := range view.Entities {
+		if entity.AnimatedColor {
+			return true
+		}
+	}
+
+	for _, cloud := range view.Clouds {
+		if cloud.AnimatedColor {
+			return true
+		}
+	}
+
+	return false
+}
+
+// A single pending timer animates the dungeon only while it is on screen.
+// Key actions restart it when a random-colour actor enters the current view.
+func (m *AppModel) withVisualTick(command tea.Cmd) tea.Cmd {
+	if m.visualTickPending || m.game == nil {
+		return command
+	}
+
+	showDungeon := m.screen == ScreenPlay ||
+		m.screen == ScreenAim ||
+		m.screen == ScreenStatChoice
+
+	if !showDungeon {
+		return command
+	}
+
+	if !visibleAnimatedColor(m.game.View()) {
+		return command
+	}
+
+	m.visualTickPending = true
+
+	animation := tea.Tick(160*time.Millisecond, func(time.Time) tea.Msg {
+		return visualTick{}
+	})
+
+	if command == nil {
+		return animation
+	}
+
+	return tea.Batch(command, animation)
 }
 
 func (m *AppModel) View() (view tea.View) {

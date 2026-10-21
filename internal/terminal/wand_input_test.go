@@ -13,14 +13,13 @@ import (
 func TestSourceWandKeyOpensMenuAndAims(t *testing.T) {
 	m := playingModel(t)
 	snapshot := m.game.Snapshot()
-	var lastID uint64
 
-	for _, record := range snapshot.Entities {
-		lastID = max(lastID, record.ID)
-	}
+	// A forged item must advance the allocator's saved high-water mark too.
+	// Restore rejects live IDs above the cursor before any wand input runs.
+	snapshot.EntityCursor++
 
 	snapshot.Entities = append(snapshot.Entities, save.EntityRecord{
-		ID: lastID + 1,
+		ID: snapshot.EntityCursor,
 		Item: &ecs.Item{
 			KindID:   "WAND_DIGGING",
 			Quantity: 1,
