@@ -428,6 +428,13 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
     append_vault_records(records, entry_maps)
     append_vault_records(records, extra)
 
+    -- A Temple entrance map can also contain an ordinary Dungeon stair.
+    -- Pair those authored exits with the next floor just like extra vault
+    -- exits; the scheduled Temple feature keeps its separate branch link.
+    for _, map in ipairs(entry_maps) do
+        add_source_stairs(map, source_up, source_down)
+    end
+
     local vault_ids = {}
 
     for _, map in ipairs(entry_maps) do
