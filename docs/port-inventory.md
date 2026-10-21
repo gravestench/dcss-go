@@ -516,8 +516,21 @@ spell departures omit smoke. Source-specific death wording remains part of
 the presentation parity pass. Xom and Jiyva poof variants still need
 per-monster god state from the religion domain.
 
-The builder and serial definition count is now 563 of 600. All 22 source
-arena builder maps are committed as individual `.des` files. Their original
+An audit of the pinned `builder/` and `serial/` DES files finds 600 unique
+`NAME` values, of which 575 occur in the committed vault catalog. The 25
+missing names comprise 17 procedural layouts from `layout_cc`,
+`layout_cellular`, `layout_delve`, `layout_geoelf`, `layout_geoelf_castle`,
+and `layout_halls`, plus all eight monster recipes from `builder/rooms.des`.
+The latter are mapless helpers: source `variable/mini_monsters.des` builds a
+variable-size room in `special_room` or `special_room_vaults`, then fills its
+`O` region from a weighted `special_room` helper. Both parent maps are also
+absent. Completing this family requires those parents, the eight Lua room
+recipes, dynamic local geometry, tagged child selection, monster placement,
+and a live save/restore check together; merely registering the helper names
+would leave them inert.
+
+All 22 source arena builder maps are committed as individual `.des` files.
+Their original
 MAP blocks are intact, and the two shared palette scripts are a named Lua
 hook. Arena maps have no Dungeon depth rule, so normal Dungeon generation
 does not draw them. An arena game mode and whole-level palette behavior
