@@ -20,6 +20,7 @@ local mutation_capabilities = require("constants.mutation_capabilities")
 local rage = require("policy.character.rage")
 local monster_stats = require("policy.combat.monster_stats")
 local monster_profile = require("policy.combat.monster_profile")
+local attack_flavours = require("policy.combat.monster_attack_flavours")
 local monster_roll = require("policy.combat.monster_roll")
 local roll = require("policy.combat.roll")
 local attack_types = require("constants.monster_attack_types")
@@ -431,6 +432,17 @@ function actions.monster(ctx, attacker)
             actor.kind_id, definition.name, health)
     end
 
+    if outcome.kind == "hit" then
+        attack_flavours.apply(ctx, attack.flavour_id, {
+            kind = outcome.kind,
+            attacker = attacker,
+            attacker_name = definition.name,
+            defender = player,
+            hit_dice = attack_input.hd,
+            damage_done = dealt,
+        })
+    end
+
     if outcome.kind == "hit" and dealt > 0 then
         black_mark.after_melee(ctx, attacker, player, dealt)
     end
@@ -597,6 +609,16 @@ function actions.monster_target(ctx, attacker, target)
     end
 
     if outcome.kind == "hit" then
+        attack_flavours.apply(ctx, attack.flavour_id, {
+            kind = outcome.kind,
+            attacker = attacker,
+            attacker_name = attacker_def.name,
+            defender = target,
+            defender_definition = target_def,
+            hit_dice = monster_stats.hit_dice(ctx, attacker, attacker_def),
+            damage_done = actual_dealt,
+        })
+
         ctx:emit("combat", "The " .. attacker_def.name .. " hits the " ..
             target_def.name .. " for " .. dealt .. " damage.")
     elseif outcome.kind == "block" then

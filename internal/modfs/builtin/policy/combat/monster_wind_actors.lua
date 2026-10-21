@@ -4,12 +4,11 @@
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local defense = require("policy.combat.monster_defense")
+local dislodge = require("policy.combat.dislodge")
 local display = require("policy.combat.monster_support.display")
-local equipment = require("policy.combat.equipment")
 local inventory_equipment = require("policy.inventory.equipment")
 local fighter = require("policy.combat.fighter")
 local flags = require("constants.monster_flags")
-local forms = require("policy.magic.effects.forms.player")
 local geometry = require("policy.combat.monster_wind_geometry")
 local habitat = require("policy.combat.monster_habitat")
 local monster_health = require("policy.combat.monster_health")
@@ -20,7 +19,6 @@ local translocation = require("policy.scrolls.translocation")
 local size = require("constants.size")
 local streams = require("constants.rng_streams")
 local traps = require("policy.traps.activation")
-local artefacts = require("ids.artefacts")
 local vampire = require("policy.character.vampire")
 
 local actors = {}
@@ -44,41 +42,6 @@ local function has_flag(ctx, entity, wanted)
     return false
 end
 
--- The Mountain Boots are the player's one source exception to ordinary
--- wind displacement. A melded or unequipped pair gives no protection.
-local function resists_dislodge(ctx, entity)
-    if not ctx:has(entity, component.PLAYER) then
-        return false
-    end
-
-    local boots = equipment.worn(ctx, entity, {
-        boots = true,
-    }).boots
-    local artefact = boots and
-        ctx:get(boots.entity, component.ITEM_ARTEFACT)
-
-    return artefact and
-        artefact.unique_id == artefacts.UNRAND_MOUNTAIN_BOOTS
-end
-
--- Source player body size comes from species in the current playable
--- form. Monster size belongs to its catalog definition.
-local function body_rank(ctx, entity)
-    if ctx:has(entity, component.PLAYER) then
-        local player = ctx:get(entity, component.PLAYER)
-        local species = catalog.get("species", player.species_id)
-        local form = forms.modifiers(ctx, entity)
-
-        return size.rank[form.size or species.size] or
-            size.rank[size.MEDIUM]
-    end
-
-    local actor = ctx:get(entity, component.ACTOR)
-    local definition = catalog.get("monsters", actor.kind_id)
-
-    return size.rank[definition.size_id] or size.rank[size.MEDIUM]
-end
-
 -- Distance, power, and body size independently change the number of
 -- attempted outward steps. A zero result leaves the actor in place.
 local function push_distance(ctx, source, entity, power)
@@ -89,7 +52,7 @@ local function push_distance(ctx, source, entity, power)
         distance = distance + ctx:random(streams.MONSTER_SPELL, bound)
     end
 
-    local rank = body_rank(ctx, entity)
+    local rank = dislodge.body_rank(ctx, entity)
 
     if rank < size.rank[size.MEDIUM] then
         distance = distance + 1
@@ -173,7 +136,7 @@ local function candidates(ctx, caster, source, aim, radius)
             position.level_id == source.level_id and
             distance > 0 and distance <= radius and
             not has_flag(ctx, entity, flags.STATIONARY) and
-            not resists_dislodge(ctx, entity) and
+            not dislodge.resists(ctx, entity) and
             geometry.in_cone(source, aim, position) and
             geometry.visible_solid(ctx, source, position) then
             selected[#selected + 1] = {

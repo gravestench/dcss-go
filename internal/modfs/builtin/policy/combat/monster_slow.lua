@@ -23,12 +23,14 @@ local function duration(ctx, speed, hit_dice)
     return math.max(15, raw + fuzz - low)
 end
 
--- Save original speed once and extend aut on repeated slows without compounding the speed change.
-function slow.apply(ctx, monster, definition)
+-- Save original speed once and extend aut without compounding the speed
+-- change. Direct speed-draining melee supplies its source strength in aut;
+-- spell Slow still rolls the ordinary HD and speed duration.
+function slow.apply(ctx, monster, definition, fixed_aut)
     local current = ctx:get(monster, "projectile.slow")
     local actor = ctx:get(monster, "core.actor")
     local base_speed = current and current.base_speed or actor.speed
-    local added_aut = duration(ctx, base_speed,
+    local added_aut = fixed_aut or duration(ctx, base_speed,
         monster_stats.hit_dice(ctx, monster, definition))
 
     if current then

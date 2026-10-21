@@ -446,8 +446,11 @@ in an Akara component. Its saved cloud ring now places and refreshes the
 source cloud family through the ordinary ECS cloud owner. Integrated tests
 compare a restored next-region draw with uninterrupted play and verify that
 uncollected floor runes disappear with a retired region. Generated lord
-names, colours, and special non-brand melee flavours still need their
-source behavior; Pan rune pickup also needs a full authored-map run.
+stat drain, drowning, web ensnare, speed drain, corrosion, weakness, and
+trample now use the ordinary saved combat owners. Source movement-time
+suppression and every knockback interruption still need a dedicated parity
+pass. Generated lord names and colours remain unported; Pan rune pickup
+also needs a full authored-map run.
 
 Intrinsic death effects now use the actor death phase for Ball Lightning,
 Fulminant Prism, Bloated Husk, Lurking Horror, and Bennu. Construct timeout

@@ -10,10 +10,10 @@ local weakness = {}
 -- Source player::weaken adds power plus one bounded draw to the current
 -- duration. Repeated gazes extend it but cannot exceed fifty turns.
 -- Example: weakness.apply(ctx, player, 10) adds at least 100 aut.
-function weakness.apply(ctx, player, power)
+function weakness.apply(ctx, player, power, stream)
     local current = ctx:get(player, component.PLAYER_WEAKNESS)
     local added = (power +
-        ctx:random(streams.MONSTER_SPELL, power + 3)) * 10
+        ctx:random(stream or streams.MONSTER_SPELL, power + 3)) * 10
     local remaining = math.min(500,
         (current and current.remaining_aut or 0) + added)
 
