@@ -16,6 +16,7 @@ local bands = require("policy.population.bands")
 local choice = require("policy.generation.vaults.specs.choice")
 local resolve = require("policy.generation.vaults.specs.resolve")
 local fog = require("policy.world.fog_machine_definitions")
+local slime_seal = require("policy.population.slime_seal")
 
 local vaults = {}
 
@@ -285,7 +286,10 @@ function vaults.materialize(ctx, level, excluded)
     for _, record in ipairs(level.vault_records or {}) do
         local arguments = record.arguments or {}
 
-        if record.kind == effects.MARKER and
+        if slime_seal.is_record(record) then
+            materialized[#materialized + 1] =
+                slime_seal.materialize(ctx, level, record)
+        elseif record.kind == effects.MARKER and
             fog.is_marker(record.identity) then
             local state = fog.parse(record.identity, record)
 

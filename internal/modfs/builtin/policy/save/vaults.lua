@@ -7,6 +7,7 @@ local hooks = require("policy.generation.vaults.hooks")
 local depth_rules = require("policy.generation.vaults.depth")
 local temple = require("policy.generation.temple.catalog")
 local altar = require("policy.generation.altar.catalog")
+local slime_seal = require("policy.save.slime_seal")
 
 local vaults = {}
 
@@ -89,8 +90,9 @@ local function validate_end_vault(level, branch)
 end
 
 -- Vault IDs in a save must still resolve against the active catalog.
--- Example: vaults.validate(nil, input) rejects a saved vault ID missing from the scenario catalog.
-function vaults.validate(_, input)
+-- Example: vaults.validate(ctx, input) rejects a saved vault ID missing
+-- from the scenario catalog and an authored seal missing from ECS state.
+function vaults.validate(ctx, input)
     for _, level in ipairs(input.levels or {}) do
         if level.vault_id and level.vault_id ~= "" then
             known(level.vault_id, level.id)
@@ -139,6 +141,10 @@ function vaults.validate(_, input)
             hooks.run(layout, validator, level)
         end
     end
+
+    -- The source map owns both immutable rune history and the mutable
+    -- clear-stone seal cells; check those cells in this same vault pass.
+    slime_seal.validate(ctx, input)
 
     return {}
 end

@@ -2112,6 +2112,24 @@ save validator calls the end map's `vault.validate` hook against its saved
 helper IDs and typed records, so the hook must also check the composition a
 modder wants to preserve.
 
+Slime:5 is an authored whole-floor example. Its complete source geometry
+is in `vaults/layout/slime_pit.des`; `: vault.run("mark")` calls `mark(api)`
+in `policy/generation/layouts/slime_pit.lua` at that directive's position.
+That method emits typed markers for the Royal Jelly and each inner clear
+stone wall. `: vault.validate("validate")` calls the same module's
+`validate(input)` after generation and on restore to require one source
+Royal Jelly and one real slimy rune. Generation turns the wall markers into
+saved `world.slime_seal` components. The Royal Jelly's death callback is a
+separate gameplay rule at `policy/combat/monster_death/slime_pit.lua`; it
+receives the live game `ctx` and opens those walls. The `.des` hook receives
+the generation `api` and does not have access to live actors. Restore also
+checks every seal marker against the effective authored `n` cell, so a
+saved marker and component cannot both disappear unnoticed. To replace
+this floor, override `vaults/layout/slime_pit.des` at the same relative path;
+keep its stable `NAME` and the source rune and guardian records, or the
+validator will reject the map. Override its Lua handler path too if the
+replacement needs different marker logic. A sparse override test lives in
+`internal/script/testdata/slime-end-mod/`.
 
 ### Branch end vaults
 

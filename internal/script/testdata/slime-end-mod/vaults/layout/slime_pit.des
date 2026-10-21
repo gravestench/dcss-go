@@ -1,0 +1,19 @@
+# Sparse test mod replaces only the source end map at this relative path.
+# The bundled named Lua hook remains effective under the layered VFS.
+NAME: slime_pit
+PLACE: Slime:$
+ORIENT: encompass
+TAGS: layout layout_type_slime_end
+MONS: the Royal Jelly
+KITEM: O = slimy rune of Zot
+KFEAT: Z = altar_jiyva
+: vault.run("mark")
+: vault.validate("validate")
+MAP
+xxxxxxx
+x..n..x
+x.1.O.x
+x..Z..x
+x.{...x
+xxxxxxx
+ENDMAP

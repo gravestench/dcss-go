@@ -100,6 +100,17 @@ func TestShoalsEndMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/shoals_end_mod_test.lua")
 }
 
+// A sparse mod replaces the authored Slime:5 DES map at the same path.
+func TestSlimeEndMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/slime-end-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/slime_end_mod_test.lua")
+}
+
 // An overlay end map tests PLACE selection through the production catalog.
 func TestLayoutPlaceSelection(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/layout-place")

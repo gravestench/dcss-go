@@ -50,6 +50,15 @@ end
 -- four quadrants and the single collectible silver rune. Fail at generation
 -- rather than recording a broken floor that restore would later reject.
 local function require_rune(result)
+    -- The shared placement engine first validates the local DES cells,
+    -- before its child maps and typed records exist. The catalog calls
+    -- this method again with the composed result, and save restore calls
+    -- it with historical records. Only those later calls can count runes.
+    if result.cells and not result.records and
+        not result.vault_records then
+        return true
+    end
+
     local rune_item = require("ids.items").RUNE_VAULTS
     local quadrant_count = 0
     local rune_helper_count = 0

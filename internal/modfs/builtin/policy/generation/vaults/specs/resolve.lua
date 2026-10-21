@@ -20,6 +20,7 @@ local slime_blob = require("policy.monsters.slime_blob")
 local monster_requests = require("constants.vault_monster_requests")
 local item_requests = require("constants.vault_item_requests")
 local streams = require("constants.rng_streams")
+local population_sentinels = require("constants.population_sentinels")
 
 local resolve = {}
 local names_by_category = {}
@@ -438,6 +439,13 @@ function resolve.monster(ctx, selected, depth, site)
         base_id = find_name(categories.MONSTERS, base_name, site)
     else
         kind_id = find_name(categories.MONSTERS, name, site)
+    end
+
+    -- Source branch pools can deliberately spend a vault monster draw on
+    -- no creature. Keep that result as a typed empty placement instead of
+    -- looking up the sentinel as a real species in the monster catalog.
+    if kind_id == population_sentinels.NO_MONSTER then
+        return { no_spawn = true }
     end
 
     if unique_already_exists(ctx, kind_id) then

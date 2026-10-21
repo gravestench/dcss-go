@@ -144,6 +144,7 @@ local component = {
     SLIME_BLOB = "monster.slime_blob",
     VAULT_ITEM_APPEARANCE = "vault.item_appearance",
     VAULT_ITEM_MIMIC = "vault.item_mimic",
+    SLIME_SEAL = "world.slime_seal",
     SUMMON_HAUNTING = "magic.summon_haunting",
     SUMMON_SERVITOR = "magic.summon_servitor",
     SUMMON_LIVING_SPELL = "magic.summon_living_spell",

@@ -28,6 +28,8 @@ local definition = {
     runes = {
         "RUNE_SLIME",
     },
+    -- Slime:5 is the source whole-floor Slime Pit, never a generic cave.
+    end_layout_required = true,
     ambient_noise = "quiet",
     mon_die_size_expr = "7",
 }
