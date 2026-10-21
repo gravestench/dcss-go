@@ -1,0 +1,22 @@
+# Overgrown hall is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: overgrown_hall
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+WEIGHT: 2
+MONS:   plant, fungus
+MONS:   cyclops / stone giant w:2
+SUBST:  x = x:20 .
+SUBST:  G = G:40 .
+SUBST:  . = .:90 1:19 x:1
+SUBST:  1 = 1 2:1
+MAP
+xxxxxxxxxxx
+x.........x
+x.G.G.G.G.x
++....3....+
+x.G.G.G.G.x
+x.........x
+xxxxxxxxxxx
+ENDMAP

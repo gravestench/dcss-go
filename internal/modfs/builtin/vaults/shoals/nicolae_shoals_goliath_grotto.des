@@ -1,0 +1,27 @@
+# Nicolae shoals goliath grotto is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_goliath_grotto
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:  transparent water_ok patrolling
+MONS:  goliath frog
+MONS:  snapping turtle / alligator snapping turtle / alligator
+SUBST: M = w., N = x., - = w_, ' = x_, r = 1 .:40 2:50
+CLEAR: _
+MAP
+   '''xxxxxxxx@Mwwww-
+  'xxxxxxxxxxx..Mwwww-
+ 'xxxN..r..NxxN..Mwwww-
+'xxxNr..MM.rNxxN.Mwwww-
+'xxN...MwwM..Nxx.Mwwwww-
+'xxF.rMwwwwMr....wwwwww-
+'xN..Mwwwwwwwwwwwwwwwww-
+'xN..Mwwwwwwwwwwwwwwwww-
+'xxF.rMwwwwMr....wwwwww-
+'xxN...MwwM..Nxx.Mwwwww-
+'xxxNr..MM.rNxxN.Mwwww-
+ 'xxxN..r..NxxN..Mwwww-
+  'xxxxxxxxxxx..Mwwww-
+   '''xxxxxxxx@Mwwww-
+ENDMAP

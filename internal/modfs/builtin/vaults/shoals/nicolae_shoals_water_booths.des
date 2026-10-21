@@ -1,0 +1,24 @@
+# Nicolae shoals water booths is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_water_booths
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:    no_pool_fixup transparent
+KMONS:   1 = merfolk / merfolk siren / merfolk impaler
+KMONS:   2 = merfolk javelineer / merfolk aquamancer / merfolk avatar
+KFEAT:   12 = w
+SHUFFLE: DEFH, JKLM
+SUBST:   DJ = ., EFHKLM = c, w = w:50 1:20 2
+MAP
+ccccDDEEFF
+cww......F
+cww......H
+cccc..c..H
+cww...cwwc
+cww...cwwc
+cccc..c..M
+cww......M
+cww......L
+ccccJJKKLL
+ENDMAP

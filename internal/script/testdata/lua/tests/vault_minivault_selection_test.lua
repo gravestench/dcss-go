@@ -170,8 +170,8 @@ local function extra_then_regular_stops()
         "later minivault enters saved history")
 end
 
--- When the entire eligible pool is extra and every fit fails, a finite
--- source-sized bound prevents an endless generation loop.
+-- A failed extra shape cannot gain room by retrying the same vault against
+-- unchanged protected terrain. Remove it from this floor's draw pool.
 local function all_extra_pool_is_bounded()
     local context = only_named({ ids.eino_curves_01 })
     local builder = {}
@@ -191,8 +191,8 @@ local function all_extra_pool_is_bounded()
 
     minivault.place(nil, builder, context, {}, reject_fit)
 
-    harness.equal(attempts, 10000,
-        "all-extra retry count has the source finite bound")
+    harness.equal(attempts, 1,
+        "an impossible extra vault is tried once per floor")
     harness.equal(#context.used:ids(), 0,
         "failed fits do not consume map IDs")
 end

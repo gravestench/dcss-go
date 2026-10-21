@@ -1,0 +1,26 @@
+# Nicolae shoals aquamancer cove is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_aquamancer_cove
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:   no_monster_gen
+KMONS:  123 = merfolk aquamancer
+SUBST:  X = x.
+KFEAT:  1 = w
+KFEAT:  2 = .
+KFEAT:  3 = W
+NSUBST: 1 = 1:1 / 1:w / * = 1www
+MAP
+     xxxX.@
+    xx...2.
+  xxxX.Xxx.
+xxxXX...Xxxx
+xXXX..*..XXxx
+xX...3W3...Xxx
+x..WWwwwWW..Xx
+x.Ww1www1wW.Xx
+Xw1wwwwwww1wXx
+  wwwwwwwww
+    wwwww
+ENDMAP

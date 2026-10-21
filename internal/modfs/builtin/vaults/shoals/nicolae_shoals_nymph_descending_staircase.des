@@ -1,0 +1,23 @@
+# Nicolae shoals nymph descending staircase is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_nymph_descending_staircase
+TAGS:    transparent water_ok
+DEPTH:   Shoals, !Shoals:$
+KMONS:   12 = water nymph
+# 2/5 chance of having all three downstairs, 3/5 of just two of them.
+SHUFFLE: }])>>
+SUBST:   1 = 1 .:13
+MAP
+cccc...cccc
+c.........c
+c.1..1..1.c
+c.........c
+....}.]....
+..1..2..1..
+....).>....
+c.........c
+c.1..1..1.c
+c.........c
+cccc...cccc
+ENDMAP

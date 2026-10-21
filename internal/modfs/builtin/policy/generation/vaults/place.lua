@@ -84,7 +84,7 @@ function place.place(ctx, builder, context, placed, fit)
     end
 
     placed[#placed + 1] = map
-    context.used:add(vault)
+    context.used:add_map(vault, map)
 
     return vault.id
 end

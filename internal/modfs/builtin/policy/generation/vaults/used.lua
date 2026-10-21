@@ -64,6 +64,7 @@ function used.new(prior_ids)
 
     state.allows = used.allows
     state.add = used.add
+    state.add_map = used.add_map
     state.ids = used.ids
 
     for _, id in ipairs(prior_ids or {}) do
@@ -95,6 +96,17 @@ function used.add(state, vault)
     remember_run(state, vault)
     remember_level(state, vault)
     state.placed[#state.placed + 1] = vault.id
+end
+
+-- SUBVAULT helpers are independently named source maps. Remember them
+-- immediately after their parent so later draws respect their uniqueness
+-- tags and save history can prove ownership of their items and monsters.
+function used.add_map(state, vault, map)
+    used.add(state, vault)
+
+    for _, id in ipairs(map.vault_ids or {}) do
+        used.add(state, catalog.get(id))
+    end
 end
 
 -- Return a copy so callers cannot alter placement history after generation.

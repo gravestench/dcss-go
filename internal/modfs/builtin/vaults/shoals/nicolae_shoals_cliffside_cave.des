@@ -1,0 +1,27 @@
+# Nicolae shoals cliffside cave is an authored Shoals vault.
+# Its terrain and feature positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_cliffside_cave
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:  water_ok no_pool_fixup transparent extra
+KPROP: ~' = no_tide
+SUBST: X = x., W = w.
+KFEAT: ~ = w
+MAP
+    xxxx
+  xxxxxxxx
+@XxxxxxxxxX@
+.Xxxx~~xxxX.
+.xxx''~~xxx.
+.xxx'''~~xx.
+.Xxxx'''~xX.
+.Xxxxx'~xx.W
+W.xxx'~xxx.w
+w.xx'~xxxX.w
+w.Xx'~xxxX.w
+w..xx'~xx.Ww
+ww.Xxx'~~.ww
+wwW......~ww
+ wwwwwwwwww
+ENDMAP

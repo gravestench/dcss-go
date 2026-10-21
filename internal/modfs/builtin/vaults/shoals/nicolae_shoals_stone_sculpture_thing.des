@@ -1,0 +1,23 @@
+# Nicolae shoals stone sculpture thing is an authored Shoals vault.
+# Its terrain and feature positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_stone_sculpture_thing
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:    water_ok transparent extra
+SHUFFLE: abde
+SUBST:   ab = @, de = ., C : .c, y : .wc, z : .wc
+MAP
+    CbbC
+   cc..cc
+  ccz..zcc
+ ccyc..cycc
+Cczc....czcC
+a....ww....d
+a....ww....d
+Cczc....czcC
+ ccyc..cycc
+  ccz..zcc
+   cc..cc
+    CeeC
+ENDMAP

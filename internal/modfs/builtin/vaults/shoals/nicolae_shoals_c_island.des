@@ -1,0 +1,28 @@
+# Nicolae shoals c island is an authored Shoals vault.
+# Its terrain and feature positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_c_island
+TAGS:    water_ok no_pool_fixup
+DEPTH:   Shoals, !Shoals:$
+KPROP:   .wW}xtD = no_tide
+KFEAT:   D = any shop
+SHUFFLE: }])
+SUBST:   y = Ww, z = w
+MAP
+       xxxxxx
+    xtttttttxx
+  xtt.........xz
+ xx....WWWWW...xz
+ x...xwwwWwww...z
+ x..xwwwwWwwwww.z
+yx..xwwwWWWwwwwwz
+x..xxwwwW}Wwwwwwz
+xDx..wwwWWWwwww.z
+x..t.twwwwwwwww.z
+yttt.ttwwwwwww..z
+ tt....xxwwww...z
+  ttt..........yz
+   yyy........yz
+     yyy....yyz
+       yyyyyy
+ENDMAP

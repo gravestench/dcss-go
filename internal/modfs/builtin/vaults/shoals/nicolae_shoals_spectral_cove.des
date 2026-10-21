@@ -1,0 +1,27 @@
+# Nicolae shoals spectral cove is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_spectral_cove
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:   transparent patrolling
+KMONS:  p = withered plant
+KMONS:  1 = spectral thing
+KMONS:  2 = ghost crab
+KMONS:  3 = spectral kraken
+KFEAT:  123 = w
+SUBST:  M = w., . = p...., ' = p., - = x_
+NSUBST: w = 3 / 3w / 2=2 / 2w / 1www
+CLEAR:  _
+MAP
+     -------
+   --xxxxxxx--
+  -xxxwwwwwxxx-
+ -xxwwwwwwwwwxx-
+-xxwwwMMMMMwwwxx-
+-xwwMM.....MMwwx-
+-xMM...'''...MMx-
+-x'...     ...'x-
+-x'...     ...'x-
+-x'@..     ..@'x-
+ENDMAP

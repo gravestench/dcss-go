@@ -1,0 +1,27 @@
+# Nicolae shoals lost giant baths is an authored Shoals vault.
+# Its terrain and feature positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_lost_giant_baths
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:  extra no_exits no_pool_fixup luniq_nicolostgiant
+SUBST: c = c:50 _, w = w:50 _
+CLEAR: _
+MAP
+cccc  cccc  cccc
+cccc  cccc  cccc
+cc            cc
+cc  ww    ww  cc
+   wwww  wwww
+   wwww  wwww
+cc  ww    ww  cc
+cc     cc     cc
+cc     cc     cc
+cc  ww    ww  cc
+   wwww  wwww
+   wwww  wwww
+cc  ww    ww  cc
+cc            cc
+cccc  cccc  cccc
+cccc  cccc  cccc
+ENDMAP

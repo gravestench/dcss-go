@@ -76,7 +76,8 @@ local function parse_term(text, expression, site)
 
                 result.spells[#result.spells + 1] = id
             end
-        elseif key == "ego" or key == "disc" or key == "owner" then
+        elseif key == "ego" or key == "disc" or key == "owner" or
+            key == "title" then
             if value == "" then
                 choice.fail(site, expression, "empty item " .. key)
             end

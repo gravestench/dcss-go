@@ -1,0 +1,18 @@
+# Yaktaur hedge is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: yaktaur_hedge
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:   transparent
+MONS:   bush
+MONS:   yaktaur
+MAP
+.......
+.11111.
+.1...1.
+.1.1.1.
+.1.121.
+.1.111.
+.......
+ENDMAP

@@ -1,0 +1,30 @@
+# Nicolae shoals isolated beach is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_isolated_beach
+TAGS:    water_ok no_pool_fixup
+DEPTH:   Shoals:2-
+NSUBST:  { = 1:{ / *:.
+SUBST:   b = .wW, r = ..Wxx
+KPROP:   wW.{x1 = no_tide
+SHUFFLE: {([
+KMONS:   1 = merfolk / merfolk impaler w:5 / merfolk siren w:5 / nothing w:20
+KFEAT:   : = . / W
+KFEAT:   y = w
+MAP
+    yyyyyyyy
+   yywwwwwwyy
+  yywwbbbbwwyy
+ yyywb{.1.bwwyy
+yyxxxxxrr.bwwwyy
+yxxr{.1.1rbbww::
+yxr{rr.rr..bww:@
+yxr{rr{rr1.bww:@
+yxr{rr.rr..bww:@
+yxxr{.1.1rbbww::
+yyxxxxxrr.bwwwyy
+ yyywb{.1.bwwyy
+  yywwbbbbwwyy
+   yywwwwwwyy
+    yyyyyyyy
+ENDMAP

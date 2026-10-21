@@ -134,6 +134,17 @@ func TestShoalsEndMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/shoals_end_mod_test.lua")
 }
 
+// A sparse layer adds an ordinary Shoals map and its named Lua hook.
+func TestShoalsVaultMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/shoals-vault-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/shoals_vault_mod_test.lua")
+}
+
 // A sparse mod replaces the authored Slime:5 DES map at the same path.
 func TestSlimeEndMod(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/slime-end-mod")

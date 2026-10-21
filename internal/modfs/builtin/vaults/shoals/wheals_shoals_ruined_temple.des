@@ -1,0 +1,22 @@
+# Wheals shoals ruined temple is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: wheals_shoals_ruined_temple
+TAGS:  water_ok
+DEPTH: Shoals, !Shoals:$
+KPROP: c.GWuw1 = no_tide
+KMONS: 1 = kraken
+KFEAT: 1 = w
+SUBST: u = Ww
+SUBST: . = .:500 0
+MAP
+ccccccccccccccccccccccccccccccccc
+c...c.................WWWWWWuwwwc
+@.c...c..G....G...G...GWWWWWuwwwc
+c...c.................WWWWWWuwwwc
+@.c...c..G....G...G...GWWCWWuw1wc
+c...c.................WWWWWWuwwwc
+@.c...c..G....G...G...GWWWWWuwwwc
+c...c.................WWWWWWuwwwc
+ccccccccccccccccccccccccccccccccc
+ENDMAP

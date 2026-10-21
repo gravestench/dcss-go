@@ -112,14 +112,20 @@ local function apply_border_fill(cells, record)
     local top = arguments.bounds_y
     local right = left + arguments.bounds_width
     local bottom = top + arguments.bounds_height
+    local preserved = {}
+
+    for coordinate in (arguments.preserve_cells or ""):gmatch("[^|]+") do
+        preserved[coordinate] = true
+    end
 
     for y, row in ipairs(cells) do
         for x in ipairs(row) do
             local world_x = x - 1
             local world_y = y - 1
 
-            if world_x < left or world_x >= right or
-                world_y < top or world_y >= bottom then
+            if (world_x < left or world_x >= right or
+                world_y < top or world_y >= bottom) and
+                not preserved[world_x .. ":" .. world_y] then
                 row[x] = feature
             end
         end

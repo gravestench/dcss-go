@@ -1,0 +1,35 @@
+# Nicolae shoals lost giant temple is an authored Shoals vault.
+# Its terrain and feature positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_lost_giant_temple
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:  extra no_exits water_ok luniq_nicolostgiant
+SUBST: c = c:50 _
+CLEAR: _
+MAP
+cccccc  cc    cc  cccccc
+cccccc  cc    cc  cccccc
+cc                    cc
+cc                    cc
+cc  cc  cccccccc  cc  cc
+cc  cc  cccccccc  cc  cc
+_
+_
+cc  cc  cc    cc  cc  cc
+cc  cc  cc    cc  cc  cc
+    cc     cc     cc
+    cc    cccc    cc
+    cc    cccc    cc
+    cc     cc     cc
+cc  cc  cc    cc  cc  cc
+cc  cc  cc    cc  cc  cc
+_
+_
+cc  cc  cccccccc  cc  cc
+cc  cc  cccccccc  cc  cc
+cc                    cc
+cc                    cc
+cccccc  cc    cc  cccccc
+cccccc  cc    cc  cccccc
+ENDMAP

@@ -463,6 +463,7 @@ local function select_entities(record, vault, random, depth, player)
         arguments.numspells = resolved.numspells or 0
         arguments.slevels = resolved.slevels or 0
         arguments.owner = resolved.owner or ""
+        arguments.title = resolved.title or ""
         arguments.plus = resolved.plus or 0
         arguments.has_plus = resolved.plus ~= nil
         arguments.ego = resolved.ego or ""
@@ -648,6 +649,17 @@ local function locate_records(source_records, cells, left, top, entry,
 
         if count == 0 and not targets then
             local pending = copy_record(record, entry.x, entry.y)
+
+            -- A whole-map border instruction needs the final placed bounds,
+            -- not the source MAP's local coordinates. Clone its arguments
+            -- so another placement of the same definition stays independent.
+            if pending.kind == effects.BORDER_FILL then
+                pending.arguments = copy_fields(pending.arguments or {})
+                pending.arguments.bounds_x = left
+                pending.arguments.bounds_y = top
+                pending.arguments.bounds_width = #cells[1]
+                pending.arguments.bounds_height = #cells
+            end
 
             if pending.pending == nil then
                 pending.pending = true

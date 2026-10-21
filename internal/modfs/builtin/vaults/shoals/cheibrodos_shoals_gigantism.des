@@ -1,0 +1,31 @@
+# Cheibrodos shoals gigantism is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: cheibrodos_shoals_gigantism
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS: no_item_gen no_monster_gen
+ORIENT: float
+MONS: titan, cyclops / w:3 stone giant / w:3 frost giant
+SUBST: " = .:2 W, x = c:1 x
+NSUBST: - = 1=|* / 1=|*% / 2=*%
+MAP
+     xxxxxxxxx
+   xxxxxxxxxxxx
+  xxx..x..""xxxx
+ xxx2..+...."xxxx
+ xxG...xx....""xxx
+ xxx".xxxx"...."xxx
+  xx"..xxxx"..."xxx
+ xxxx"..xxx"...."xx
+@xxxxx".2xx"...."xx
+@+..xxx..xxx...."xx
+@xx".xxx."mm...."xx
+ xxx".xx."mm..1..xx
+  xx".Gx."xxG.-.Gxx
+  xx"....xxxx---xxx
+   xx".."xxxxxxxxx
+   xxx2xxxx xxxxx
+    xxxxx    xxx
+     xxx
+ENDMAP

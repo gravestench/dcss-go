@@ -1,0 +1,59 @@
+# Nicolae shoals mermall is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_mermall
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:    water_ok no_tide no_pool_fixup
+ORIENT:  northwest
+KPROP:   DEF = no_tele_into
+KMONS:   1 = merfolk
+KMONS:   2 = water nymph
+KMONS:   3 = merfolk avatar / merfolk javelineer / merfolk impaler / \
+             merfolk aquamancer / merfolk siren
+: vault.run("configure_shops")
+# Source Lua: {{
+# Source Lua: -- They're all owned by the same person.
+# Source Lua: local owner = string.gsub(crawl.make_name(), " ", "_")
+# Source Lua: kfeat("D = weapon shop name:" .. owner .. " type:Merfolk suffix:Weapons ; \
+# Source Lua:       spear | trident | halberd | demon trident | bardiche | glaive | \
+# Source Lua:       dagger | quick blade | short sword | rapier | dart | javelin | \
+# Source Lua:       throwing net | boomerang" )
+# Source Lua: kfeat("E = armour shop name:" .. owner .. " type:Merfolk suffix:Armours ; \
+# Source Lua:       robe | leather armour | helmet | hat | pair of boots | cloak | scarf | \
+# Source Lua:       pair of gloves | buckler" )
+# Source Lua: kfeat("F = general shop name:" .. owner .. " type:Merfolk suffix:Magic ; \
+# Source Lua:       ring of dexterity | ring of evasion | ring of ice | ring of protection | \
+# Source Lua:       ring of see invisible | ring of willpower | amulet of reflection | \
+# Source Lua:       amulet of the acrobat | randbook disc:poison | randbook disc:hexes | \
+# Source Lua:       randbook disc:ice | randbook disc:summoning | phial of floods | \
+# Source Lua:       condenser vane | lightning rod | wand of charming | wand of iceblast | \
+# Source Lua:       wand of roots | randbook disc:transmutation" )
+# Source Lua: -- If you're not a merfolk and can't get to the shops on your own, the owner
+# Source Lua: -- will be more than happy to help make arrangements. With an additional
+# Source Lua: -- convenience fee, of course. (The scroll is for if you get stuck.)
+# Source Lua: kfeat("J = general shop name:" .. owner .. " type:Visitors' suffix:Centre \
+# Source Lua:       greed:100 count:2 use_all ; potion of flight q:1 | \
+# Source Lua:       scroll of teleportation q:1" )
+# Source Lua: }}
+KFEAT:   ~ = open_sea
+KFEAT:   123 = w
+SHUFFLE: DEF
+SUBST:   M = W., S = Ww, a = 1:30 2:15 3 w:35
+MAP
+~~~~~~~~~~~~~~~
+~wwwwwwwwwwwwww
+~wwwwwwwwwwwwww
+~wwwwwwwwwwwwww
+~wwwawawwawawww
+~wwwwEwwwwFwwww
+~wwwawawwawawww
+~wwwwwwwwwwwwww
+~wwwwwwwwwwwwww
+~wwwawawwawSSww
+~wwwwDwwwwJMSSw
+~wwwawawwSM.MSS
+~wwwwwwwwSSM.MS
+~wwwwwwwwwSSM.M
+~wwwwwwwwwwSSM@
+ENDMAP

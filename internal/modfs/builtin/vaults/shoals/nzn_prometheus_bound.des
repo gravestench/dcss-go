@@ -1,0 +1,17 @@
+# Nzn prometheus bound is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nzn_prometheus_bound
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+MONS:  patrolling harpy
+KITEM: e = book of fire
+KPROP: nd = bloody
+KFEAT: n = iron_grate
+: vault.run("decay.demigod_corpse_d")
+# Source Lua: : dgn.delayed_decay(_G, 'd', 'demigod corpse')
+MAP
+ 1e1
+xndnx
+ @1@
+ENDMAP

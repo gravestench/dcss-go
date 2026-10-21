@@ -1,0 +1,37 @@
+# Nicolae shoals raging river is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_raging_river
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:  transparent no_tide patrolling
+KMONS: 1 = water elemental
+KMONS: 2 = elemental wellspring
+KITEM: L = * w:20 / |
+KFEAT: L = W / .
+KFEAT: 12 = w
+SUBST: M = Wx, w = W x 1:5 2:5 w:70, W = . W:70, ~ = w:90 1
+SUBST: ' = L', x = x:60 c
+MAP
+ xxxxxxxx xxxxxx
+xxccccccxxxMMMMxxx
+xccLW2wccxMWWWWWMxxx
+xcL''WWwcxWW~~~WWWMxx
+xc'...WwcxWwwWW~~WWMx
+xc'...WwcxWwWxxW~~WMx
+xcc..Ww2cxWwwWxWW~WMx
+xxccWwWccxxWwWxxW~WMx
+ xxxWwWxxxWwwWxxW~WMx
+  xMWwWxxxWwWxxMW~Wxx
+ xxWwwWxxxWwWxxW~WWx
+xxWwwWxxxWwwWxMW~W..
+xWwwWxxxWwwWxxWW~W.@
+xWwWxxxWwwWxxxW~WW..
+xWwWxxxWwWMxxxx~xxxx
+xWwwWxxWwWMxx~~~~~xx
+xxWwWMMWwWMx~~~~~~x
+xxWwwWWWwWxx~~~~~~
+ xxWwwwwWWxxx~~~~
+  xxWWWWWxxxxxxx
+   xxxxxxxxx
+ENDMAP

@@ -1,0 +1,19 @@
+# Nicolae shoals hunting party is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_hunting_party
+TAGS:  no_item_gen no_monster_gen
+DEPTH: Shoals:2-
+KMONS: i = merfolk impaler band / merfolk javelineer band
+SUBST: : = .:3 h:1, W = .W
+: vault.run("decay.turtle_corpse_h")
+# Source Lua: : dgn.delayed_decay(_G, 'h', 'snapping turtle corpse')
+MAP
+WWWWWWW
+WW:::WW
+W:::::W
+W:i:i:W
+W:::::W
+WW:::WW
+WWWWWWW
+ENDMAP

@@ -1,0 +1,28 @@
+# Nicolae shoals drake roost is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_drake_roost
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:   water_ok no_monster_gen no_tide patrolling
+SUBST:  W = WWW w:6
+NSUBST: . = 2:s / 2:f / 2:i / 1:sfi / 2:sfi.. / *:.
+KMONS:  s = steam dragon
+KMONS:  f = rime drake
+KMONS:  i = wind drake
+MAP
+   WWWWWWWW
+ WWWWWWWWWWWW
+ WWWWWWWWWWWW
+WWWWWWWWWWWWWW
+WWWWW....WWWWW
+WWWW......WWWW
+WWWW..xx..WWWW
+WWWW..xx..WWWW
+WWWW......WWWW
+WWWWW....WWWWW
+WWWWWWWWWWWWWW
+ WWWWWWWWWWWW
+ WWWWWWWWWWWW
+   WWWWWWWW
+ENDMAP

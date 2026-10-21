@@ -1,0 +1,49 @@
+# Nicolae shoals island circles is an authored Shoals vault.
+# Its terrain and feature positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_island_circles
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:    transparent
+ORIENT:  float
+SHUFFLE: abc/xyz
+SUBST:   Z = Ww, ab = ., c = sG, xy = xx., z = x
+: vault.run("configure_stairs")
+# Source Lua: : if you.depth() == 1 then
+# Source Lua: SUBST:   s = ]})
+# Source Lua: : elseif you.depth() == dgn.br_depth(you.branch()) then
+# Source Lua: SUBST:   s = [{(
+# Source Lua: : else
+# Source Lua: SUBST:   s = ]})[{(
+# Source Lua: : end
+MAP
+              wwwwwww
+             wwwZZZwww
+     wwwwwwwwwwZ...Zwww
+    wwwZZZwwwwZ.....Zww
+   wwZZ...ZZwZ...a...Zw
+  wwZ.......ZZ..aaa..Zwwwww
+  wwZ...a...WW...a...ZZZZwww
+  wZ...aba...ZZ.....WZ...Zww
+  wZ..abcba..ZwZ...ZW.....Zw
+  wZ...aba...ZwwZZZwZ..a..Zw
+  wwZ...a...ZwwwwwwwZ.....Zw
+  wwZ.......ZwwwwwwwwZ...Zww
+  wwwZW...ZZwwwwwwwwwwZZWWwww
+ wwwZZWZZZwwwwwwwwwwwwwwZ.Zww
+wwwZ...ZwwwwwwwwwwwwwwwZ...Zw
+wwZ.....ZwwwwwwwwwwwwwwwZ.Zww
+wZ...a...ZwwwwwwwwwwwwwwwWwww
+wZ..aaa..ZwwwwwwwwwwwwwwZWZw
+wZ...a...Zwwwwwwwwwwwww  @
+wwZ.....Zwwwwwwwwwwww
+wwwZ...WWZZwwwwwwwww
+ wwwZZZZ...Zwwwwwww
+  wwwwZ.....Zwwwwww
+     wZ..a..ZwZwww
+     wZ.....WZ.ZwZ
+     wwZ...ZW...WW@
+     wwwZZZwwZ.ZwZ
+      wwwwwwwwZwww
+            wwwww
+ENDMAP

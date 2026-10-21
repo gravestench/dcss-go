@@ -1,0 +1,32 @@
+# Nicolae shoals secluded bog is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_secluded_bog
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:  no_pool_fixup transparent water_ok patrolling
+KPROP: .'Ww = no_tide
+KITEM: 1 = % w:15 / $ / * / | w:5
+KMONS: p = plant
+KMONS: 1 = bog body
+KFEAT: ~ = w
+KFEAT: M = W
+KFEAT: t = mangrove
+SUBST: - = ., . = p.., t = tx, ' = % 1:20 .:80
+MAP
+         xx
+      ~~xx---@@xxxx
+    ~~~xx---xxxxxxxx
+  ~~~xxx---xxttttttxx
+ ~~~~~xM-.xxx'''''ttxx
+~~~~~~xM-.WWwwwww''ttx
+~~~~~~~MM..Wwwwwww''tx
+~~~~~~~MMM.WWwwwwww'tx
+~~~~~~~MMM.WWwwwwww'tx
+~~~~~~~~MM..Wwwwwww'tx
+~~~~~~x~Mxx.WWwwww''tx
+ ~~~~~xxxxxxxWWww''ttx
+  ~~~xxx~xxxxt''''ttxx
+   ~~~~~~~~xxxtttttxx
+    ~~~~     xxxxxxx
+ENDMAP

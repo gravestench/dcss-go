@@ -1,0 +1,24 @@
+# Cheibrodos shoals roost is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: cheibrodos_shoals_roost
+TAGS:   water_ok no_monster_gen
+DEPTH:  Shoals, !Shoals:$
+ORIENT: float
+MONS:   harpy, manticore
+NSUBST: - = 6:12 / 3:%*
+MAP
+    ..ccc..
+   .cccGccc.
+  .ccc---ccc.
+ .cc---W---cc.
+ .cc-WWWWW-cc.
+.cc--WWWWW--cc.
+.cG-WWWWWWW-Gc.
+.cc--WWWWWW-cc.
+ .cc-WWWWWWWc.
+ .cc---WWWWWW.
+  .ccc---WWWW.
+   .cccGccWW@
+    ..ccc...
+ENDMAP

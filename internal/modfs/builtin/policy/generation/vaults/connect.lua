@@ -54,7 +54,7 @@ local function closest_edge(point, bounds)
 end
 
 -- Record every rock cell opened so source projection cannot restore it later.
-local function carve(builder, from, to, carved)
+local function carve(builder, from, to, carved, path)
     local x = from.x
     local y = from.y
 
@@ -70,6 +70,8 @@ local function carve(builder, from, to, carved)
         end
 
         local glyph = builder:cell(x, y)
+
+        path[key(x, y)] = true
 
         if not glyphs.up[glyph] and not glyphs.down[glyph] and
             glyph ~= "." then
@@ -116,6 +118,7 @@ end
 -- Check all required stairs against the connected walkable region after carving.
 local function reachable(builder, start)
     local seen = { [key(start.x, start.y)] = true }
+    local previous = {}
     local queue = { start }
     local cursor = 1
 
@@ -132,18 +135,19 @@ local function reachable(builder, start)
             if interior(builder, x, y) and not seen[id] and
                 passable(builder:cell(x, y)) then
                 seen[id] = true
+                previous[id] = point
                 queue[#queue + 1] = { x = x, y = y }
             end
         end
     end
 
-    return seen
+    return seen, previous
 end
 
 -- A zero-one search cuts the fewest walls needed to join an isolated source
 -- stair to the already connected map. Existing walkable source cells cost zero.
 -- Find the cheapest carve from a vault exit into the already connected Dungeon floor.
-local function bridge(builder, from, connected, carved)
+local function bridge(builder, from, connected, carved, path)
     local queue = { [0] = from }
     local head = 0
     local tail = 0
@@ -159,6 +163,8 @@ local function bridge(builder, from, connected, carved)
 
         if connected[id] then
             while previous[id] do
+                path[id] = true
+
                 if not passable(builder:cell(point.x, point.y)) then
                     builder:set(point.x, point.y, ".")
                     carved[id] = true
@@ -286,6 +292,7 @@ function connect.finish(ctx, builder, placed, required)
     end
 
     local carved = {}
+    local path = {}
     local connectors = {}
 
     for _, exit in ipairs(placed.exits) do
@@ -307,8 +314,8 @@ function connect.finish(ctx, builder, placed, required)
                 placed.path, placed.id))
         end
 
-        carve(builder, from, edge, carved)
-        carve(builder, edge, target, carved)
+        carve(builder, from, edge, carved, path)
+        carve(builder, edge, target, carved, path)
     end
 
     local points = { placed.entry }
@@ -319,18 +326,46 @@ function connect.finish(ctx, builder, placed, required)
 
     for _, point in ipairs(required or {}) do
         points[#points + 1] = point
+        path[key(point.x, point.y)] = true
     end
 
-    local connected = reachable(builder, connectors[1])
+    local connected, previous = reachable(builder, connectors[1])
 
     for _, point in ipairs(points) do
         if not connected[key(point.x, point.y)] then
-            bridge(builder, point, connected, carved)
-            connected = reachable(builder, connectors[1])
+            bridge(builder, point, connected, carved, path)
+            connected, previous = reachable(builder, connectors[1])
+        end
+    end
+
+    -- A stair may have been connected by existing floor, so bridge never
+    -- carved it. Keep one actual walkable route before BORDER_FILL turns the
+    -- remaining exterior into impassable open sea.
+    for _, stair in ipairs(required or {}) do
+        local point = stair
+
+        while point do
+            local id = key(point.x, point.y)
+
+            path[id] = true
+            point = previous[id]
         end
     end
 
     for _, record in ipairs(placed.records) do
+        if record.kind == effects.BORDER_FILL then
+            -- The source sea exterior may not drown a generated stair or
+            -- the corridor that joins it to the authored finale.
+            local keys = {}
+
+            for coordinate in pairs(path) do
+                keys[#keys + 1] = coordinate
+            end
+
+            table.sort(keys)
+            record.arguments.preserve_cells = table.concat(keys, "|")
+        end
+
         if (record.kind == effects.SOURCE_FEATURE or
             record.kind == effects.FEATURE) and
             carved[key(record.x, record.y)] then

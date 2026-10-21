@@ -1,0 +1,44 @@
+# Nicolae shoals enchanted isle is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_enchanted_isle
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:    no_tide no_pool_fixup water_ok
+ITEM:    * / |
+ITEM:    book of hexes / book of misfortune / book of debilitation / \
+         randbook disc:hexes / shortbow good_item / longbow good_item / \
+         sling good_item
+ITEM:    wand of charming / wand of paralysis / phial of floods / any wand
+ITEM:    scroll of vulnerability / scroll of fear / any scroll / any potion
+KMONS:   1 = eleionoma
+KMONS:   2 = faun w:20 / centaur / nothing
+KMONS:   3 = water nymph
+KMONS:   4 = satyr band
+KFEAT:   3 = w
+NSUBST:  a = x / ., p = w / t, q = w / t, r = w / t, d = e / f / g / d
+SUBST:   D = t., R = xw, M = W., P = w.
+FTILE:   @124defgt. = floor_grass
+MAP
+          wwwwwww
+  wwwwwwwwwxxxxxwww
+  wxxxxxxxxxtttxwww
+ wwxRRRwwwwR.1.xxwww
+wwxxR.PPwwwP...Dxwww
+wxx..2.Pw3ww..2Dxxww
+wxD....PwwwPD2..Dxwww
+wxx.4..MWWWM2DD..xwww
+xxx....DpppDxxxx2xwww
+xaxP...ttwttxdd..xwww
+@x....Dtqtqtxdd4.xxwww
+xaxP.Dtttwttxdd...xwww
+xxx...DtrrrDxxxxx2xwww
+wxxD..DPwwwP.2....xwww
+wxxD.2.wwwww......xwww
+wxD.2.Pww3ww..4..Dxwww
+wxD2..MMwwwwM...xxxwww
+wxD.1.xMWWWMMRxxxwwwww
+wxxtttxxxxxxxxxwwwwww
+wwxxxxxwwwwwwwwwwww
+ wwwwwwwwwwwwwww
+ENDMAP

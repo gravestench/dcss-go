@@ -1,0 +1,36 @@
+# Nicolae shoals water elemental grotto is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_water_elemental_grotto
+TAGS:   no_pool_fixup no_monster_gen no_trap_gen no_item_gen water_ok
+DEPTH:  Shoals, !Shoals:$
+KPROP:  .xrR-Ww = no_tide
+NSUBST: - = 1:] / *:-
+NSUBST: - = 3:z / *:-
+SUBST:  r = xx:, R = xxW, ] = ]}):
+KMONS:  - = nothing w:20 / plant w:5 / water elemental w:1
+KMONS:  z = water elemental
+KFEAT:  -z = . / W
+KMONS:  W = nothing w:50 / plant
+KFEAT:  m = w
+MARKER: m = lua:fog_machine { cloud_type = "thin mist", pow_min = 1, \
+        pow_max = 3, delay = 10, start_clouds = 1, size_min = 2, \
+        size_max = 3, spread_rate = 33 }
+MAP
+   xxxx.......
+  xxxx...xxxx@
+ xx.....xxrrxx
+ x..x..xxwWrrxx
+xx..xxxxmwW--Rxx
+xm--r-WwwWW--Rwx
+xr----WWWW---rRx
+xr------------rx
+xr------WWWW--rx
+xxr----WWmwW--rx
+ xrRWWWWWWWW-rxx
+ xxRWmWW-----rxx
+ xxRwWW-----rrx
+  xxRRR----rmxx
+  xxxxrrrrrrxx
+     xxxxxxxx
+ENDMAP

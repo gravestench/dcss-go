@@ -1,0 +1,26 @@
+# Nicolae shoals circle sea wall is an authored Shoals vault.
+# Its terrain and feature positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_circle_sea_wall
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS: water_ok transparent extra
+MAP
+      .....
+    ..cc.cc..
+   .cc.....cc.
+  ....     ....
+ .c..       ..c.
+ .c.         .c.
+.c.           .c.
+.c.           .c.
+...           ...
+.c.           .c.
+.c.           .c.
+ .c.         .c.
+ .c..       ..c.
+  ....     ....
+   .cc.....cc.
+    ..cc.cc..
+      .....
+ENDMAP

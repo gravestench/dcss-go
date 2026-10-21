@@ -1,0 +1,30 @@
+# Nicolae shoals elemental ambush is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_elemental_ambush
+TAGS:    transparent water_ok
+DEPTH:   Shoals:2-
+KPROP:   '{` = no_tide
+KMONS:   1 = water elemental
+KFEAT:   1 = w
+SHUFFLE: {[(
+SUBST:   ' = x., 1 = 1wwwww, M = wWWW., - = www_
+CLEAR:   _
+MAP
+  ---www@www---
+ --www1M.M1www--
+ -ww11wMWMw11ww-
+--w11MM...MM11w--
+-ww1MM.'''.MM1ww-
+-w1wM.'```'.Mw1w-
+-w1wM'`````'Mw1w-
+-w1wM'``{``'Mw1w-
+-w1wM'`````'Mw1w-
+-w1wM.'```'.Mw1w-
+-ww1MM.'''.MM1ww-
+--w11MMMMMMM11w--
+ -ww11wwwww11ww-
+ --www11111www--
+  ---wwwwwww---
+    ---------
+ENDMAP

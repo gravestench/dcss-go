@@ -1,0 +1,25 @@
+# Nicolae shoals mertower is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_mertower
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+FHEIGHT: ;'b123 = 40
+KPROP:   ;'b123 = no_tide
+KMONS:   1 = merfolk
+KMONS:   2 = merfolk impaler / nothing w:4
+KMONS:   3 = merfolk javelineer / nothing w:4
+KFEAT:   ' = W
+KFEAT:   ;23 = w
+KFEAT:   b = .
+MAP
+  wwwwwwww
+ wwwxxxxxww
+ wwxx;22xxw
+.b1x';;;3xw
+.bb+';;;3xw
+.b1x';;;3xw
+ wwxx;22xxw
+ wwwxxxxxww
+  wwwwwwww
+ENDMAP

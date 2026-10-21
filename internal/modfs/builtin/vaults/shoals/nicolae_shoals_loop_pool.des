@@ -1,0 +1,25 @@
+# Nicolae shoals loop pool is an authored Shoals vault.
+# Its terrain and feature positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_loop_pool
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:  transparent
+KPROP: w- = no_tide
+SUBST: Y = yZ, y = x___, Z = w.___, - = .
+CLEAR: _
+MAP
+ yxxxyyY
+yxx-----Y
+yx--www--YZZZ
+yx-wwwww-....@
+yx-wwwwwxxxxxxy
+yx-wwwww-----xxy
+yx--www--www--xy
+yxx-----wwwww-xy
+ yxxxxxxwwwww-xy
+  @....-wwwww-xy
+   ZZZY--www--xy
+       Y-----xxy
+        Yyyxxxy
+ENDMAP

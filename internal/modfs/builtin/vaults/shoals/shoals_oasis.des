@@ -1,0 +1,22 @@
+# Shoals oasis is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: shoals_oasis
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:   transparent extra
+WEIGHT: 1
+MONS:   plant
+SUBST:  . = 1:1 .
+SUBST:  W = W .
+SUBST:  w = W w
+SUBST:  _ = w
+MAP
+  ...
+ ..W..
+..WwW..
+.Ww_wW.
+..WwW..
+ ..W..
+  ...
+ENDMAP

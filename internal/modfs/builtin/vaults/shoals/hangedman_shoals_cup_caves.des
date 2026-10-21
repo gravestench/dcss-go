@@ -1,0 +1,24 @@
+# Hangedman shoals cup caves is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: hangedman_shoals_cup_caves
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:    water_ok
+MONS:    cyclops / stone giant w:2
+MONS:    merfolk siren, harpy, snapping turtle, centaur / centaur warrior
+MONS:    sea snake
+SHUFFLE: 234560, ABC
+SUBST:   A : x:6 .:1, B : xxw., C : xw.., c = c:29 .:1, x = x:9 c:1
+SUBST:   % = %:8 *:1 .:1
+MAP
+ xxxx        xxxxx  xxxx
+xxxcxxxxW@Wxxxxcxxxxxcxxx
+xW..%xxWABAWxx414xxx5..Wx
+WA...2x.....x%...%x%...AW
+@B.C.1c..C..c..C..c1.C.B@
+WA...2x3...3x.....x%...AW
+xW..%xxx%1%xxWABAWxx5..Wx
+xxxcxxxxxcxxxxW@Wxxxxcxxx
+ xxxx  xxxxx        xxxx
+ENDMAP

@@ -118,6 +118,7 @@ local function item_selection(record)
         slevels = arguments.slevels ~= 0 and arguments.slevels or nil,
         spells = selected.spells,
         owner = arguments.owner ~= "" and arguments.owner or nil,
+        title = arguments.title ~= "" and arguments.title or nil,
         plus = arguments.has_plus and arguments.plus or nil,
         ego = arguments.has_ego and arguments.ego or nil,
         allow_uniques = arguments.allow_uniques,

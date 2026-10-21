@@ -1,0 +1,23 @@
+# Nicolae shoals pincushion passage is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_pincushion_passage
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:  transparent no_pool_fixup
+MONS:  merfolk javelineer
+MONS:  merfolk impaler
+MONS:  manticore
+SUBST: E = D., D = c:50 w, 1 = 1., 2 = 2., 3 = 3.
+MAP
+     DDDDD
+  DDDDE.EDDDD
+DDDE...231.EDDDD       DDDD
+@.....2...3..1EDDDD DDDDE.@
+@....2.....13....EDDDE2...@
+@...2EDDDE....31.....2....@
+@.EDDDD DDDDE1..3...2.....@
+DDDD       DDDDE.132...EDDD
+              DDDDE.EDDDD
+                 DDDDD
+ENDMAP

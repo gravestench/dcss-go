@@ -1,0 +1,32 @@
+# Nicolae shoals so close is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_so_close
+TAGS:   no_pool_fixup water_ok no_item_gen no_trap_gen no_monster_gen
+DEPTH:  Shoals, !Shoals:$
+KPROP:  YycfZ. = no_tide
+KPROP:  ZYcf. = no_tele_into
+KMONS:  c = patrolling wraith
+NSUBST: f = 1:g / 2:f / *:.
+KITEM:  g = gold
+KITEM:  f = gold / nothing w:10
+: vault.run("decay.human_skeleton_c")
+# Source Lua: : dgn.delayed_decay(_G, 'c', 'human skeleton')
+SUBST:  Z = yY
+KFEAT:  y = w
+KFEAT:  Y = W
+MAP
+    wwwwwww
+   wwwwwwwww
+  wwwyyyyywww
+ wwwyyyyyyywww
+wwwyyZZZZyyywww
+wwyyZZYYYZyyywww
+wwyyZY...YZyyyww
+wwyyZY.c.Yyyyyyw
+wwyyZY..Yyyffyyw
+ wwyyZYYyyyffyyw
+  wwyyyyyyyyyyww
+   wwyyyyyyyyww
+    wwwwwwwwww
+ENDMAP

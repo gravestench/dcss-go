@@ -1,0 +1,52 @@
+# Nicolae shoals lighthouse is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_lighthouse
+TAGS:   no_pool_fixup no_trap_gen water_ok
+DEPTH:  Shoals, !Shoals:$
+ORIENT: northwest
+KPROP:  123DL*n'} = no_tide
+KITEM:  L = phantom mirror
+KMONS:  K = kraken
+# Two glyphs for merfolk: 1 gets no_tide (inside), M doesn't (outside)
+KMONS:  1M = merfolk / nothing w:2
+KMONS:  2 = merfolk siren / merfolk impaler / merfolk javelineer / \
+            merfolk aquamancer / nothing w:5
+KMONS:  3 = merfolk avatar
+KFEAT:  ~ = open_sea
+KFEAT:  D = closed_clear_door
+KFEAT:  R = runed_clear_door
+KFEAT:  K = w
+FTILE:  123DRL*n'} = floor_limestone
+SUBST:  } = }]), * = **|
+NSUBST: . = Q / *=% M:30 .:150, ' = Q / '
+MARKER: L = lua:fog_machine { cloud_type = "flame", pow_min = 10, \
+            pow_max = 10, delay = 10, size = 1, walk_dist = 0, \
+            start_clouds = 1, excl_rad = 0 }
+: vault.run("decay.human_skeleton_q")
+# Source Lua: : dgn.delayed_decay( _G, "Q", "human skeleton" )
+MAP
+~~~~~~~~~~~~~~~~~~~~~~~
+~wwwwwwwwwwwwwwwwwwwwww
+~wwwwwwwwwwwwwwwwwwwwww
+~wwKwwwwwwwwwwwwwKwwwww
+~wwwww.........wwwwwwww
+~wwww..nnnnnnn..wwwwwww
+~www..Dn'11''nn..wwwwww
+~www.nn}'11'21nn.wwwwww
+~www.n''''''12'n.wwwwww
+~www.n11'nnn''1n.wwwwww
+~www.n11'nLn'2*n.wwwwww
+~www.n'''nnR21*n.wwwwww
+~www.n'21''232*n.wwwwww
+~www.nn12'212*nn.wwwwww
+~www..nn'1***nn..wwwwww
+~wwww..nnnnnnn..wwwwwww
+~wwwww.........wwwwwwww
+~wwKwwwwwwwwwwwwwKwwwww
+~wwwwwwwwwwwwwwwwwwwww
+~wwwwwwwwwwwwwwwwwwwww
+~wwwwwwwwwwwwwwwwwwwww
+~wwwwwwwwwwwwwwwwwwww
+~wwwwwwwwwwwwwwwww
+ENDMAP

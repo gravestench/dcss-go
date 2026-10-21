@@ -2282,8 +2282,13 @@ For a mapless controller, the validation method receives the composed
 `vault_ids` and either live `records` or saved `vault_records`. Check the
 real rune's owning child ID and matching tag. The same method runs after
 generation and during restore, so the rule cannot drift between them.
-An authored full-map ending still owns its rune directly. A false-rune
-item may use the source `mimic` modifier on `KITEM`; population then adds
+An authored full-map ending may own its rune directly or place a rune
+helper through `SUBVAULT`. The helper must carry one of the parent's
+declared `SUBVAULT` tags and appear in saved placement history. For
+example, `shoals_end_hellmonk_storm_palace.des` reserves its `D` region
+for the `storm_palace_rune` tag; one of the matching child `.des` maps
+owns the rune record. A false-rune item may use the source `mimic`
+modifier on `KITEM`; population then adds
 the saved `vault.item_mimic` component. Pickup reveals the illusion
 without granting rune progress.
 
@@ -2291,7 +2296,8 @@ The successful end map becomes the floor's primary vault ID and remains in
 `vault_ids`. Its typed rune record is historical: picking up the ECS item
 does not erase it. Restore checks the selected map's family and `PLACE`
 rule, that ID in history, and exactly one matching rune record owned by the
-selected map, or by the selected controller's validated child. Changing a
+selected map, its declared `SUBVAULT` child, or the selected controller's
+validated child. Changing a
 saved map's relative path or removing its
 definition changes the ruleset and cannot silently rewrite that floor.
 
@@ -2310,6 +2316,23 @@ The vault catalog also discovers a new `vaults/<family>/` directory without
 an engine edit; put its named hook at the matching
 `policy/generation/vaults/<family>/<name>.lua` path. Layout maps use the
 separate `vaults/layout/` catalog because they carve the base floor.
+
+The ordinary Shoals family is an example of this split. Its 74 `.des`
+files live under `vaults/shoals/`; computed choices live under
+`policy/generation/vaults/shoals/`. For example,
+`nicolae_shoals_island_circles.des` calls
+`vault.run("configure_stairs")`, whose method in the same-named Lua module
+emits the depth-dependent stair substitution. A sparse mod can add
+`vaults/shoals/my_atoll.des` and, if needed,
+`policy/generation/vaults/shoals/my_atoll.lua`; the effective catalog and
+the hook resolver discover both by path and `NAME`. The
+`internal/script/testdata/shoals-vault-mod/` fixture shows the complete
+pair. The map remains authoritative for terrain and static directives;
+the hook handles only choices that need generation facts or randomness.
+The storm-palace finale's `BORDER_FILL` record makes exterior terrain open
+sea after the other vaults are placed. The connector records a surviving
+walkable route from each required stair to the finale, so this final fill
+does not strand the player or drown later authored cells.
 
 #### Named transporters
 

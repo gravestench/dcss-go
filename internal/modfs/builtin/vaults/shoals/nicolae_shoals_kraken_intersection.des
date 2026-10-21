@@ -1,0 +1,27 @@
+# Nicolae shoals kraken intersection is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_kraken_intersection
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:  transparent no_pool_fixup water_ok no_trap_gen
+SUBST: b = .w, z = x.
+KPROP: w1. = no_tide
+KPROP: c = no_tele_into
+SUBST: c = xw
+KFEAT: 1 = w
+KMONS: 1 = kraken
+MAP
+ ccxx@@xxcc
+ccxxz..zxxcc
+cxxz.bb.zxxc
+xxz.bwwb.zxx
+xz.bwwwwb.zx
+@.bwww1wwb.@
+@.bwwwwwwb.@
+xz.bwwwwb.zx
+xxz.bwwb.zxx
+cxxz.bb.zxxc
+ccxxz..zxxcc
+ ccxx@@xxcc
+ENDMAP

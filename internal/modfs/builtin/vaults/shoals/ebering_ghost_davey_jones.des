@@ -1,0 +1,69 @@
+# Ebering ghost davey jones is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: ebering_ghost_davey_jones
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+# Source ghost_setup declares these catalog-time selection facts.
+TAGS: luniq_player_ghost no_tele_into no_trap_gen no_monster_gen chance_player_ghost
+CHANCE: 10%
+ORIENT:  float
+TAGS:    water_ok
+# Source spelling uses player_ghost; the live monster catalog names it player ghost.
+KMONS:   O = player ghost
+KITEM:   O = any ring randart w:20 / ring of the octopus king w:1
+KMONS:   1 = snapping turtle / sea snake / alligator snapping turtle w:2
+KMONS:   2 = spectral snapping turtle / spectral sea snake \
+             / spectral alligator snapping turtle w:2
+KMONS:   E = water elemental
+: vault.run("equip_merfolk")
+# Source Lua: {{
+# Source Lua: kmons("F = merfolk ; " .. dgn.monster_weapon("merfolk", "draining") ..
+# Source Lua:       "    . throwing net w:3 | nothing w:9")
+# Source Lua: local quality = crawl.one_chance_in(3) and "randart" or "good_item"
+# Source Lua: kmons("3 = merfolk aquamancer ; " ..
+# Source Lua:       dgn.monster_weapon("blademaster", "electrocution", quality) ..
+# Source Lua:       "    . robe good_item")
+# Source Lua: kmons("4 = merfolk impaler ; " ..
+# Source Lua:       dgn.monster_weapon("impaler", "draining", quality) ..
+# Source Lua:       "    . robe good_item | leather armour good_item")
+# Source Lua: }}
+KMONS:   5 = kraken
+KMONS:   6 = spectral kraken
+KFEAT:   O = W
+KFEAT:   123456EF = w
+# Place 2-6 corpses around the perimiter. Place monsters on D, excluding the
+# merfolk leader's band, which goes on the E.
+NSUBST:  - = 2=- / 4=-s / s, D = 2=1 / 4=1w / 2=E / 3=Ew / 3 / w
+# Either the normal or spectral set. Also randomize wall patterns.
+SHUFFLE: 1E35 / 2F46, pq
+SUBST:   d = |*, r = wW, p = x, q = s, s = W.
+TILE:    G = dngn_statue_mermaid
+MARKER:  P = lua:transp_loc("davey_jones_entry")
+MARKER:  Q = lua:transp_dest_loc("davey_jones_entry")
+MARKER:  R = lua:transp_loc("davey_jones_exit")
+MARKER:  S = lua:transp_dest_loc("davey_jones_exit")
+: vault.run("configure_ghost")
+# Source Lua: {{
+# Source Lua: dgn.delayed_decay(_G, "-", "minotaur skeleton / elf skeleton" ..
+# Source Lua:   " / dwarf skeleton / human skeleton / kobold skeleton" ..
+# Source Lua:   " / felid skeleton / orc skeleton / ogre skeleton")
+# Source Lua: ghost_setup(_G)
+# Source Lua: }}
+MAP
+ WWssssSssssWW
+WWcccccccccccWW
+WccG---Q---GccW
+WcGspqpqpqpsGcW
+Wc-sqqrprqqs-cW
+Wc-srDDDDDrs-cW
+Wn-prDDDDDrp-nW
+Wn-qpDD5DDpq-nW
+Wn-prDDDDDrp-nW
+Wc-srDDDDDrs-cW
+Wc-sqqrprqqs-cW
+WcGspqpOpqpsGcW
+WccG-ddRdd-GccW
+WWccccnnnccccWW
+ WWssssPssssWW
+ENDMAP

@@ -1,0 +1,24 @@
+# Nicolae shoals siren and animal friends is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_siren_and_animal_friends
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:  patrolling no_monster_gen
+SUBST: w = f:4 w W
+KMONS: f = bat w:5 / harpy / manticore w:5 / \
+       kraken w:1 / sea snake / sky beast w:1 / \
+       snapping turtle / steam dragon w:1 / alligator w:5 / \
+       alligator snapping turtle / anaconda w:1 / \
+       water moccasin w:5 / electric eel w:1
+KMONS: s = merfolk avatar
+KFEAT: sf = w
+MAP
+  www
+ wwwww
+wwwwwww
+wwwswww
+wwwwwww
+ wwwww
+  www
+ENDMAP

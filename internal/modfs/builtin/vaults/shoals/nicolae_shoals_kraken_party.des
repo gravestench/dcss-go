@@ -1,0 +1,30 @@
+# Nicolae shoals kraken party is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_kraken_party
+TAGS:  no_monster_gen no_trap_gen water_ok
+DEPTH: Shoals:2-
+SUBST: { = {[(, . = ......wW, - = ...W
+KFEAT: 1 = w
+KMONS: 1 = kraken
+MAP
+      --.@.--
+ xxxxxxx---xxxxxxx
+ x1w-.........-w1x
+ xw--.........--wx
+ x--%.........%--x
+ x...............x
+-x...............x-
+-x...............x-
+.-...............-.
+@-.......{.......-@
+.-...............-.
+-x...............x-
+-x...............x-
+ x............%--x
+ x--%........%--wx
+ xw--........--1xx
+ x1w-........-wxx
+ xxxxxxx---xxxxx
+      --.@.--
+ENDMAP

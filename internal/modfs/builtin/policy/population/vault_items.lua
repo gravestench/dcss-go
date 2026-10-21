@@ -40,6 +40,7 @@ local function request_from(resolved, level_id, origin)
         slevels = resolved.slevels,
         included_spells = resolved.spells,
         owner = resolved.owner,
+        title = resolved.title,
         plus = resolved.plus,
         ego = resolved.ego,
         site = source_site(resolved, origin),

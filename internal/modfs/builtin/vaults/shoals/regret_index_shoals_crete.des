@@ -1,0 +1,35 @@
+# Regret index shoals crete is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: regret_index_shoals_crete
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:    no_monster_gen
+MONS:    snapping turtle / elephant
+MONS:    faun, satyr, meliai, minotaur
+KMONS:   _ = merfolk javelineer
+KMONS:   b = bush
+KMONS:   p = plant
+ITEM:    any potion, longbow good_item, arbalest good_item
+# Bacchus-approved.
+KFEAT:   _ = altar_uskayaw
+SHUFFLE: 35, ABC, FGHI
+SUBST:   0 = 24., X : xp.., Y : xp..
+SUBST:   A = x, B : p., F = x, G = p., CHI = .
+: vault.run("decay.crete_remains")
+# Source Lua: : dgn.delayed_decay(_G, 'g', 'snapping turtle corpse')
+# Source Lua: : dgn.delayed_decay(_G, 'h', 'elephant corpse')
+MAP
+    ccccccxxxxxxxcccccc
+    c3dd*xxxg_hxxx*dd5c
+    c..2xx2.b0b.4xx4..c
+    cex+xWWx...xWWx+xfc
+    cxx...WW.1.WW...xxc
+   xxx2.CBAWX.XWABC.4xxx
+  xx...1..WWW1WWW..1...xx
+xxx...IHGFWYWWWYWFGHI..xxx
+.........WW..W..WW........
+ ....xxxWW...W...WWxxx....
+       xxx...W...xxx
+         xxxx@xxxx
+ENDMAP

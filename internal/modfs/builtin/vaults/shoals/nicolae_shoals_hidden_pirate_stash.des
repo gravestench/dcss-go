@@ -1,0 +1,27 @@
+# Nicolae shoals hidden pirate stash is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_hidden_pirate_stash
+TAGS:   no_trap_gen no_monster_gen
+DEPTH:  Shoals, !Shoals:$
+ITEM:   gold good_item
+ITEM:   rapier good_item w:70 / captain's cutlass
+ITEM:   cloak / scarf / nothing
+ITEM:   pair of boots / pair of gloves / hat
+ITEM:   scroll of magic mapping / any scroll
+MONS:   shadow wraith
+NSUBST: ' = d / e / f / g / h / 1 / z / } / .
+SUBST:  } = }]), - = x_, x = x:70 c
+CLEAR: _
+: vault.run("decay.human_skeleton_z")
+# Source Lua: : dgn.delayed_decay( _G, "z", "human skeleton" )
+MAP
+  -xx-
+ -xxxx-
+-xx''xx-
+xx''''xx
+xx''''xx
+-xx''xx-
+ -xxxx-
+  -xx-
+ENDMAP

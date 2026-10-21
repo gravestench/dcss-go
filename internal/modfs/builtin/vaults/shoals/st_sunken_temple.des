@@ -1,0 +1,39 @@
+# St sunken temple is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: st_sunken_temple
+DEPTH:   Shoals, !Shoals:$
+TAGS:    no_pool_fixup
+KMONS:   1 = merfolk javelineer
+KMONS:   2 = merfolk impaler
+KMONS:   3 = merfolk aquamancer
+KMONS:   4 = merfolk
+KMONS:   5 = merfolk siren / merfolk avatar
+KMONS:   6 = cyclops
+KMONS:   7 = stone giant
+KMONS:   8 = frost giant
+KMONS:   9 = titan
+KFEAT:   123456789 = deep_water
+KITEM:   | = |
+KITEM:   * = *
+KFEAT:   |* = shallow_water
+SHUFFLE: 12345 / 86769
+NSUBST:  Z = 1:w / *:c
+SUBST:   G = GGGwwW, 7 = 667, 8 = 688, 9 = 7899, x = c
+MAP
+   xxxxxxxxxxx
+  xxGxGxGxGxGxx
+ xxwwwwwwwwwwwxx
+ xwww1wwwww1wwwx
+xxwwxxxxZxxxxwwxx
+xGwwx|wwwww*xwwGx
+xxwwxw2www4wxwwxx
+xGwwZwww5wwwZwwGx
+xxwwxw4www2wxwwxx
+xGwwx*wwwww*xwwGx
+xxwwxxxxZxxxxwwxx
+ xwww3wwwww3wwwx
+ xxwwwwwwwwwwwxx
+  xxGxGx+xGxGxx
+   xxxxx@xxxxx
+ENDMAP

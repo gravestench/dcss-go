@@ -1,0 +1,50 @@
+# Hangedman shoal volcano is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: hangedman_shoal_volcano
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:    no_monster_gen no_item_gen patrolling transparent
+KMONS:   12 = merfolk ; trident ego:flaming | spear ego:flaming . \
+             robe ego:fire_resistance | robe w:5 . \
+             buckler ego:fire_resistance | buckler | nothing w:30
+KMONS:   3 = merfolk siren ; trident ego:flaming | spear ego:flaming . \
+             robe ego:fire_resistance | robe w:5 . \
+             buckler ego:fire_resistance w:20 | buckler | nothing w:70
+KMONS:   4 = merfolk avatar
+KMONS:   67 = fire bat
+KMONS:   8 = fire crab
+KITEM:   67 = % w:15 / *
+KITEM:   8 = * w:15 / |
+KPROP:   l = no_cloud_gen
+KPROP:   .1234"x = no_tide
+: vault.run("choose_guards")
+# Source Lua: : if crawl.random2(you.depth()+4) <= you.depth() then
+# Source Lua: SUBST:   3 = 4
+# Source Lua: SHUFFLE: 12 / 4"
+# Source Lua: : else
+# Source Lua: SHUFFLE: 12 / 3"
+# Source Lua: : end
+: vault.run("choose_crab")
+# Source Lua: : if crawl.random2(you.depth()+4) <= you.depth() then
+# Source Lua: SUBST:   7 = 8
+# Source Lua: : end
+SUBST:   6 = 66*, X = xx., x : x:9 .:1
+FTILE:   '678 = floor_pebble_red
+COLOUR:  '678 = red
+MAP
+   WWWWWWWW
+ WWWW.xx.WWWW
+ WW..x..x..WW
+WW.x2x''x"x.WW
+WW.1''''''3.WW
+W.xx'8ll6'xx.W
+Wx.''llll''.xW
+Wx.''llll''.xW
+W.xx'6ll7'xx.W
+WW.3''''''2.WW
+WW.x"x''x1x.WW
+WWW..x..x..WWW
+ WWWW.xx.WWWW
+   WWWWWWWW
+ENDMAP

@@ -78,6 +78,98 @@ local function count_runes(placed)
     return count
 end
 
+-- Walk only the cells spared by sea fill. An adjacent spared cell is not
+-- enough; the entire exterior route must reach the authored map bounds.
+local function preserved_route(preserved, stair, bounds)
+    local queue = { stair }
+    local seen = { [stair.x .. ":" .. stair.y] = true }
+    local cursor = 1
+    local directions = {
+        {
+            x = 1,
+            y = 0,
+        },
+        {
+            x = -1,
+            y = 0,
+        },
+        {
+            x = 0,
+            y = 1,
+        },
+        {
+            x = 0,
+            y = -1,
+        },
+    }
+
+    while cursor <= #queue do
+        local point = queue[cursor]
+
+        cursor = cursor + 1
+
+        if point.x >= bounds.x and point.x < bounds.x + bounds.width and
+            point.y >= bounds.y and point.y < bounds.y + bounds.height then
+            return true
+        end
+
+        for _, direction in ipairs(directions) do
+            local x = point.x + direction.x
+            local y = point.y + direction.y
+            local id = x .. ":" .. y
+
+            if preserved[id] and not seen[id] then
+                seen[id] = true
+                queue[#queue + 1] = {
+                    x = x,
+                    y = y,
+                }
+            end
+        end
+    end
+
+    return false
+end
+
+-- A base stair can already reach an encompass finale before the source sea
+-- border is projected. Its existing route must survive that later fill.
+local function check_encompass_stair_route()
+    local ctx, builder = floor_for(81)
+    local context = context_for("shoals_end_hellmonk_storm_palace")
+    local stair = {
+        x = 2,
+        y = 35,
+    }
+    local placed = {}
+
+    builder:set(stair.x, stair.y, "<")
+    context.required = { stair }
+    context.protected[stair.x .. ":" .. stair.y] = true
+
+    end_vault.place(ctx, builder, context, placed, extra.place)
+
+    local border
+
+    for _, record in ipairs(placed[1].records) do
+        if record.kind == effects.BORDER_FILL then
+            border = record
+            break
+        end
+    end
+
+    harness.truthy(border, "storm palace keeps its open-sea border")
+
+    local preserved = {}
+
+    for coordinate in border.arguments.preserve_cells:gmatch("[^|]+") do
+        preserved[coordinate] = true
+    end
+
+    harness.truthy(preserved["2:35"], "the base stair survives sea fill")
+    harness.truthy(preserved_route(preserved, stair, placed[1].bounds),
+        "the already walkable route reaches the authored finale after sea fill")
+end
+
 -- A selected finale must remain the primary ID and provide one real rune.
 function test.run()
     vaults.load()
@@ -100,6 +192,8 @@ function test.run()
         harness.equal(count_runes(placed), 1,
             id .. " supplies exactly one real rune")
     end
+
+    check_encompass_stair_route()
 end
 
 return test

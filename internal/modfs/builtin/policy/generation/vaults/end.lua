@@ -8,6 +8,7 @@ local effects = require("constants.vault_effects")
 local directives = require("constants.vault_directives")
 local hooks = require("policy.generation.vaults.hooks")
 local controller = require("policy.generation.vaults.controller")
+local end_stairs = require("policy.generation.vaults.end_stairs")
 local weights = require("policy.generation.vaults.weight")
 
 local end_vault = {}
@@ -191,6 +192,8 @@ function end_vault.place(ctx, builder, context, placed, fit)
         return vault.id
     end
 
+    end_stairs.relocate(builder, vault, context)
+
     local map, reason = fit(ctx, builder, vault, context)
 
     if not map then
@@ -201,7 +204,7 @@ function end_vault.place(ctx, builder, context, placed, fit)
     validate_runes(map, branch)
 
     placed[#placed + 1] = map
-    context.used:add(vault)
+    context.used:add_map(vault, map)
 
     return vault.id
 end

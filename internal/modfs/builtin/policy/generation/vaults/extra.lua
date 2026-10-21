@@ -3,6 +3,7 @@ local catalog = require("policy.generation.vaults.catalog")
 local chance = require("policy.generation.vaults.chance")
 local controller = require("policy.generation.vaults.controller")
 local directives = require("constants.vault_directives")
+local effects = require("constants.vault_effects")
 local end_vault = require("policy.generation.vaults.end")
 local hooks = require("policy.generation.vaults.hooks")
 local minivault = require("policy.generation.vaults.minivault")
@@ -135,7 +136,11 @@ local function place_chance_map(ctx, builder, context, placed, vault)
         placed[#placed + 1] = map
     end
 
-    context.used:add(vault)
+    if map then
+        context.used:add_map(vault, map)
+    else
+        context.used:add(vault)
+    end
 
     for _, operation in ipairs(vault.operations) do
         if operation.kind == directives.HOOK_POST_PLACE then
@@ -221,6 +226,35 @@ function extra.generate(ctx, builder, context)
     local ordinary = minivault.place(ctx, builder, context,
         placed, extra.place, place_chance_map)
     unique_placement.place(ctx, builder, context, placed, extra.place)
+
+    -- A whole-floor sea border is decoded after every secondary vault has
+    -- placed. Preserve those later authored cells as well as the end map's
+    -- stair corridors, or the border would drown their saved entities.
+    for _, map in ipairs(placed) do
+        for _, record in ipairs(map.records or {}) do
+            if record.kind == effects.BORDER_FILL then
+                local preserved = {}
+
+                for coordinate in
+                    (record.arguments.preserve_cells or ""):gmatch("[^|]+") do
+                    preserved[coordinate] = true
+                end
+
+                for coordinate in pairs(context.protected) do
+                    preserved[coordinate] = true
+                end
+
+                local keys = {}
+
+                for coordinate in pairs(preserved) do
+                    keys[#keys + 1] = coordinate
+                end
+
+                table.sort(keys)
+                record.arguments.preserve_cells = table.concat(keys, "|")
+            end
+        end
+    end
 
     return placed, end_primary or primary or explicit or
         branch_regular or ordinary,

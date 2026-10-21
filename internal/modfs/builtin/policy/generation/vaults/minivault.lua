@@ -11,6 +11,18 @@ local weights = require("policy.generation.vaults.weight")
 local minivault = {}
 local MAX_EXTRA_DRAWS = 10000
 
+-- A fitter already tries multiple origins. If none works, another weighted
+-- draw of the same map cannot improve this floor's protected geometry.
+local function remove_failed(candidates, id)
+    for index, candidate in ipairs(candidates) do
+        if candidate.definition.id == id then
+            table.remove(candidates, index)
+
+            return
+        end
+    end
+end
+
 -- Build the eligible source pool once per floor in stable ID order. A
 -- depthless tagged helper can still serve its controller, but stays out
 -- of this ordinary draw; CHANCE controllers have their own earlier stage.
@@ -115,13 +127,15 @@ function minivault.place(ctx, builder, context, placed, place,
 
             if map then
                 placed[#placed + 1] = map
-                context.used:add(vault)
+                context.used:add_map(vault, map)
                 successful = true
             end
         end
 
         if successful then
             primary = primary or vault.id
+        else
+            remove_failed(candidates, vault.id)
         end
 
         if not selected.tags.extra then

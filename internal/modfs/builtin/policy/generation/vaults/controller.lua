@@ -95,7 +95,7 @@ function controller.place_maps(api, tag, count)
 
         if map then
             api.placed[#api.placed + 1] = map
-            api.context.used:add(vault)
+            api.context.used:add_map(vault, map)
             placed_count = placed_count + 1
         end
     end

@@ -1,0 +1,23 @@
+# Nicolae shoals arrival archipelago is an authored Shoals vault.
+# Its terrain and feature positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_arrival_archipelago
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:    transparent
+SHUFFLE: {[(<, abc, def
+SUBST:   a:@, de:., bcf:W
+MAP
+     wwwwb
+    www...b
+ wwwww..{..b
+wwwwwd.....w
+ww..dd....ww
+c....dwwffww
+c..(.wwwffww
+c....ee....w
+ww..eee.[..w
+wwwwwee....a
+  wwww....a
+    wwwwwa
+ENDMAP

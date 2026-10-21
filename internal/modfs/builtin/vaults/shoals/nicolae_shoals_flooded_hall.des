@@ -1,0 +1,30 @@
+# Nicolae shoals flooded hall is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_flooded_hall
+TAGS:    transparent
+DEPTH:   Shoals, !Shoals:$
+SHUFFLE: }}]]))>
+KPROP:   .123wqx = no_tide
+SUBST:   . = ....W, w = wWW..., q = w, x = xxxc
+KFEAT:   123 = . w:40 / W
+KMONS:   1 = merfolk / nothing w:5
+KMONS:   2 = merfolk / merfolk aquamancer / merfolk javelineer \
+             / merfolk impaler / nothing w:45
+KMONS:   3 = merfolk siren / merfolk avatar w:5 / nothing w:5
+MAP
+     .......
+   ...xxxxx...
+  .1..x.3.x..1..
+ ....xx.2.xx........
+..xxxx..w..xxxxxxxx.
+.xx..2.www.2..1..1.@
+.x}1wwwwqwwwwwwwwww@
+.x]1wwwwqwwwwwwwwww@
+.xx..2.www.2..1..1.@
+..xxxx..w..xxxxxxxx.
+ ....xx.2.xx........
+  .1..x.3.x..1..
+   ...xxxxx...
+     .......
+ENDMAP

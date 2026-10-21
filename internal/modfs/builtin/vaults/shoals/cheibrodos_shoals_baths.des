@@ -1,0 +1,53 @@
+# Cheibrodos shoals baths is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: cheibrodos_shoals_baths
+TAGS:   no_monster_gen no_tide no_pool_fixup
+DEPTH:  Shoals, !Shoals:$
+ORIENT: float
+KMONS:  " = merfolk siren / w:5 merfolk
+KMONS:  ' = merfolk aquamancer
+KMONS:  ` = water elemental
+KFEAT:  " = w
+KFEAT:  ' = w
+KFEAT:  ` = w
+FTILE:  - = floor_marble
+COLOUR: c- = white
+KPROP:  .- = no_tide
+# Should probably be less cloudy but idk what these numbers mean
+MARKER: " = lua:fog_machine { \
+                pow_max = 3, delay_min = 10, delay_max = 40, \
+                size = 3, size_buildup_amnt = 4, \
+                size_buildup_time = 25, cloud_type = "thin mist" \
+            }
+MARKER: ' = lua:fog_machine { \
+                pow_max = 3, delay_min = 10, delay_max = 40, \
+                size = 3, size_buildup_amnt = 4, \
+                size_buildup_time = 25, cloud_type = "thin mist" \
+            }
+MARKER: _ = lua:fog_machine { \
+                pow_max = 3, delay_min = 10, delay_max = 40, \
+                size = 3, size_buildup_amnt = 4, \
+                size_buildup_time = 25, cloud_type = "thin mist" \
+            }
+NSUBST: ' = 1:' / *:_, w = 3:` / 1=`w / *:w
+MAP
+.......
+.c---c.
+.-www-.   ........
+.-w"w-.   .c----c.
+.-www-.   .-wwww-.
+.c---c.   .-ww'w-.
+...........-w'ww-.
+          .-wwww-.
+          .c----c.
+          ........
+          .
+    .......
+    .c---c.
+    .-www-.
+    .-w"w-.
+    .-www-.
+    .c---c.
+    .......
+ENDMAP

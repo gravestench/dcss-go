@@ -1,0 +1,26 @@
+# Overgrown tower is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: overgrown_tower
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:   transparent extra
+WEIGHT: 2
+MONS:   plant, fungus
+SUBST:  x = x:60 . '
+SUBST:  ' = ' 1:5
+SUBST:  . = . 2:1
+SUBST:  ' = .
+MAP
+ '''''''''
+'''xx+xx'''
+''xx...xx''
+'xx.....xx'
+'x.......x'
+'x.......x'
+'x.......x'
+'xx.....xx'
+''xx...xx''
+'''xxxxx'''
+ '''''''''
+ENDMAP

@@ -1,0 +1,31 @@
+# Nicolae shoals lost giant amphitheater is an authored Shoals vault.
+# Its terrain and feature positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_lost_giant_amphitheater
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:  extra no_exits water_ok luniq_nicolostgiant
+SUBST: c = c:50 _
+CLEAR: _
+MAP
+      cccccccc
+      cccccccc
+  cccc        cccc
+  cccc        cccc
+  cc            cc
+  cc   cccccc   cc
+cc     cccccc     cc
+cc   cc      cc   cc
+cc   cc      cc   cc
+cc   cc      cc   cc
+cc   cc      cc   cc
+cc   cc      cc   cc
+cc   cc      cc   cc
+cc     cccccc     cc
+  cc   cccccc   cc
+  cc            cc
+  cccc        cccc
+  cccc        cccc
+      cccccccc
+      cccccccc
+ENDMAP

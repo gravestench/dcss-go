@@ -1,0 +1,36 @@
+# Nicolae shoals shepherds is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_shepherds
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:   transparent water_ok no_tide patrolling
+: vault.run("configure_herd")
+# Source Lua: : if crawl.coinflip() then
+# Source Lua: KMONS:  1 = centaur
+# Source Lua: KMONS:  2 = centaur warrior
+# Source Lua: : else
+# Source Lua: KMONS:  1 = faun / nothing w:5
+# Source Lua: KMONS:  2 = satyr
+# Source Lua: : end
+KMONS:  p = plant
+KMONS:  3 = dream sheep band
+SUBST:  - = ._
+NSUBST: . = 2 / 3. / *=1 p:50 .:100
+CLEAR:  _
+MAP
+    ------
+  ---....---
+ --........--
+ -..........-
+--..........--
+-............-
+-.....S......-
+-............-
+-............-
+--..........--
+ -..........-
+ --........--
+  ---....---
+    ------
+ENDMAP

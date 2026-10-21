@@ -1,0 +1,31 @@
+# Cheibrodos shoals oceanic diplomacy is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: cheibrodos_shoals_oceanic_diplomacy
+TAGS:    water_ok no_item_gen no_monster_gen
+DEPTH:   Shoals, !Shoals:$
+ORIENT:  float
+SHUFFLE: 1Ww / 2DD
+MONS:    merfolk, faun
+MONS:    merfolk impaler ; demon trident good_item | trident good_item . gold
+MONS:    satyr ; longbow good_item . gold
+COLOUR:  c = white
+COLOUR:  1234'D = cyan
+FTILE:   1234'D+WwG = floor_pebble_cyan
+MAP
+      cccccccccccc
+     ccGcGccccGcGcc
+  .cccwWWWW11WWWWwccc.
+@.ccwwWWWW1''1WWWWwwcc.@
+..cwWWWWccc++cccWWWWwc..
+.c+WWWWcc''''''ccWWWW+c.
+.ccccccc''''''''ccccccc.
+.ccccccG3''''''4Gcccccc.
+.ccccccc''''''''ccccccc.
+.c+DDDDcc''''''ccDDDD+c.
+..cDDDDDccc++cccDDDDDc..
+@.ccDDDDDD2''2DDDDDDcc.@
+  .cccDDDDD22DDDDDccc.
+     ccGcGccccGcGcc
+      cccccccccccc
+ENDMAP

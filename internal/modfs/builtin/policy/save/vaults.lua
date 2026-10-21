@@ -25,6 +25,37 @@ local function known(id, level_id)
     end
 end
 
+-- A source SUBVAULT can own the rune inside its parent finale. Require the
+-- helper to be both present in placement history and selected by a tag the
+-- parent actually declared; an unrelated known rune map is not enough.
+local function rune_owner_selected(selected, selected_ids, source_id)
+    if source_id == selected.id then
+        return true
+    end
+
+    if not selected_ids[source_id] then
+        return false
+    end
+
+    local helper = catalog.get(source_id)
+
+    for _, operation in ipairs(selected.operations) do
+        if operation.kind == directives.SUBVAULT then
+            local choices = operation.argument:match("^%s*%S+%s*:%s*(.-)%s*$")
+
+            for choice in ((choices or "") .. "/"):gmatch("(.-)/") do
+                local tag = choice:match("^%s*([%w_]+)")
+
+                if tag and helper.tags[tag] then
+                    return true
+                end
+            end
+        end
+    end
+
+    return false
+end
+
 -- The selected last-floor vault and its historical rune intent must agree.
 -- A collected rune may no longer have a floor entity, so validation reads
 -- the saved source record rather than requiring the item to remain present.
@@ -80,9 +111,10 @@ local function validate_end_vault(level, branch)
         end
 
         -- Count every real rune, even if its source map is absent from
-        -- history. The sole rune must come from the selected ending itself;
-        -- merely listing a different map in history cannot grant ownership.
-        if count ~= 1 or source_id ~= selected.id then
+        -- history. The sole rune must come from the selected ending or a
+        -- helper explicitly selected by that ending's SUBVAULT directive.
+        if count ~= 1 or
+            not rune_owner_selected(selected, selected_ids, source_id) then
             error(label .. " needs exactly one " .. rune_id ..
                 " source record from " .. selected.id)
         end

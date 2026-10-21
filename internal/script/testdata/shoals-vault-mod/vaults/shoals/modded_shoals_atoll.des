@@ -1,0 +1,11 @@
+# A sparse layer adds a map through normal Shoals discovery.
+NAME: modded_shoals_atoll
+DEPTH: Shoals
+WEIGHT: 7
+ORIENT: float
+: vault.run("configure")
+MAP
+.....
+..s..
+.....
+ENDMAP

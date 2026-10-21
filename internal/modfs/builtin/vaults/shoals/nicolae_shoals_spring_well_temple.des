@@ -1,0 +1,30 @@
+# Nicolae shoals spring well temple is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_spring_well_temple
+TAGS:   no_pool_fixup patrolling water_ok
+DEPTH:  Shoals, !Shoals:$
+KPROP:  +>FLMWcw = no_tide
+KITEM:  L> =  * w:20 / | / % w:5
+KMONS:  1 = elemental wellspring
+KMONS:  2 = water nymph
+KFEAT:  > = >
+KFEAT:  12 = w
+KFEAT:  L = W
+NSUBST: F = 1 / 2=1. / F
+SUBST:  F = 2 w:75, M = wW
+MAP
+       c c c c
+     c         c
+...c    ccccc    c
+.c.....ccwFFcc     c
+...cccccwwFFFccccc
+.c.cWWMwwFFFFFMLLc c
+...+WWMwFFFFFFML>c
+.c.cWWMwwFFFFFMLLc c
+...cccccwwFFFccccc
+.c.....ccwFFcc     c
+...c    ccccc    c
+     c         c
+       c c c c
+ENDMAP

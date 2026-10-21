@@ -1,0 +1,40 @@
+# Nicolae shoals abyss on the beach is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_abyss_on_the_beach
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:   transparent
+KPROP:  =aDPQ'_ = no_tide
+KITEM:  _ = *
+KITEM:  P = |
+KMONS:  p = plant
+KMONS:  1P_ = thrashing horror / wretched star / chaos spawn / zombie / \
+              small abomination / large abomination / ancient zyme / neqoxec / \
+              apocalypse crab / spatial vortex / worldbinder / shining eye
+KMONS:  2 = apocalypse crab
+KFEAT:  D = demonic_tree
+KFEAT:  P = enter_abyss
+KFEAT:  _ = altar_lugonu
+KFEAT:  q = x
+NSUBST: 2 = 2 / 2=2.
+SUBST:  z = wx, M = w., . = p...., 1 = 1', a = q:80 c:40 D:20 vb'
+FTILE:  =aD1P'_ = floor_nerves
+TILE:   q = wall_abyss
+MAP
+   wwwwwwwww
+  wwwwwwwwwww
+ wwwzzzzzzzwww
+wwwzxxxxxxxzwww
+wwzxxaaaaaxxzww
+wwzxaa1P1aaxzww
+wwzxa1'1'1axzww
+wwzxa1'_'1axzww
+MMzxa1'''1axzMM
+.MMxaa'''aaxMM.
+..Mxxxc=cxxxM..
+....2.....2....
+ ......2......
+  ...........
+   .........
+ENDMAP

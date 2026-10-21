@@ -1,0 +1,31 @@
+# St shoals ruin is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: st_shoals_ruin
+DEPTH:   Shoals, !Shoals:$
+TAGS:    no_pool_fixup
+MONS:    cyclops, frost giant, stone giant
+KMONS:   P = plant
+KMONS:   f = fungus
+KFEAT:   Pfp = shallow_water
+KFEAT:   5 = deep_water
+SUBST:   p = ppWw, p = Pf, y = xxxxcccPPPfw, f = PPwW, x = x:10 c:1
+SHUFFLE: 23
+SUBST:   2 = 2:15 1:10, 3 = 3:15 1:10
+MAP
+   ppp  @ ppp
+  pppxx..xxppp
+ ppxxx.3.wfxxpp
+ppxxpxx..xwfxxpp
+ppxpppxxxWWffxpp
+pxx**ppyfWWWfxxp
+pxp1..pyfW..ffxp
+pxp.21pyf..1.wxp
+pxp1..yyy1...pxp
+pxxp.1pyp..1pxxp
+ppxp.......ppxpp
+ppxxp..p.fppxxpp
+ ppxxpyyyyfxxpp
+  ppxxxxxxxxpp
+   pppppppppp
+ENDMAP

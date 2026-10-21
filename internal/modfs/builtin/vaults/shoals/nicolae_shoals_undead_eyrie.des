@@ -1,0 +1,19 @@
+# Nicolae shoals undead eyrie is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_undead_eyrie
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:   transparent
+SUBST:  y = ..xx1
+NSUBST: . = 4:1 / *:.
+MONS:   harpy zombie w:30 / manticore zombie / bat zombie w:5
+MAP
+ .....
+...y...
+..yxy..
+.yxxxy.
+..yxy..
+...y...
+ .....
+ENDMAP

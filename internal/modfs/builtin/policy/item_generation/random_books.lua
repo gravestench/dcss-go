@@ -230,7 +230,9 @@ function random_books.roll(ctx, definition, request, result)
         kind = kinds.RANDOM,
         unique_id = "",
         seed = seed,
-        name = title,
+        -- DES title: is an authored randbook name. The generated spells,
+        -- appearance, and seed still come from the normal book path.
+        name = request.title or title,
         appearance = appearance,
         brand = "",
         properties = {},

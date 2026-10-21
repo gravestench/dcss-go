@@ -108,7 +108,7 @@ function placement.place(ctx, builder, context, placed, place)
 
         if map then
             placed[#placed + 1] = map
-            context.used:add(vault)
+            context.used:add_map(vault, map)
 
             local kind_id = leader(vault)
 

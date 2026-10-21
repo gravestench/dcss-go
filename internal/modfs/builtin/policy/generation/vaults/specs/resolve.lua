@@ -211,6 +211,7 @@ local function named_artefact(name)
     for _, definition in ipairs(catalog.all(categories.ARTEFACTS)) do
         if active(definition) and
             (definition.tile_equipment == name or
+                definition.name:lower() == name:lower() or
                 definition.name:lower():gsub("[^a-z0-9]+", "_") == name) then
             return definition
         end
@@ -606,6 +607,7 @@ function resolve.item(ctx, selected, depth, site)
         slevels = selected.slevels,
         spells = selected.spells,
         owner = selected.owner and selected.owner:gsub("_", " "),
+        title = selected.title and selected.title:gsub("_", " "),
         plus = selected.plus,
         ego = item_ego(selected, kind_id, class_id, site),
         allow_uniques = selected.plus == nil and selected.ego == nil,

@@ -1,0 +1,21 @@
+# Nicolae shoals this corrosion is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_this_corrosion
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:   water_ok no_item_gen
+NSUBST: % = 1:d / *:%%%%%*
+KMONS:  1 = oklob plant
+KMONS:  2 = merfolk siren
+KMONS:  p = plant
+KITEM:  d = any ring w:24 / any ring good_item w:5
+MAP
+ xxxxxx
+xx1WW.xx
+x%.ww.pp@
+x%2ww.pp@
+x%.ww.pp@
+xx1WW.xx
+ xxxxxx
+ENDMAP

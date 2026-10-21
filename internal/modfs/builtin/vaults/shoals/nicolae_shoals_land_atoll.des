@@ -1,0 +1,29 @@
+# Nicolae shoals land atoll is an authored Shoals vault.
+# Its terrain and feature positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_land_atoll
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:    extra no_pool_fixup no_tide transparent water_ok
+SUBST:   a = DE, p = EF, q = FH, r = HJ, s = KJ, y = KL, z = LM, - = MD
+SUBST:   R = NO, S = OP, Z = PQ, ! = QN, _ = NOPQ
+SHUFFLE: DEFHJKLM
+SUBST:   D : ', E : 'wx, FH : w, JK : x, L : wx, M : wx, N : wx', O : wx'
+SUBST:   P : wx', Q : wx', ' = W., x = x:50 c
+MAP
+   pppFFFqqq
+  EEppFFFqqHH
+ EEEp.....qHHH
+aEE.........HHr
+aaa...OOO...rrr
+aa...ROOOS...rr
+DD..NNROSPP..JJ
+DD..NNN_PPP..JJ
+DD..NN!QZPP..JJ
+--...!QQQZ...ss
+---...QQQ...sss
+-MM.........KKs
+ MMMz.....yKKK
+  MMzzLLLyyKK
+   zzzLLLyyy
+ENDMAP

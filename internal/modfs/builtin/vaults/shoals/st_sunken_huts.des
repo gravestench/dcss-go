@@ -1,0 +1,31 @@
+# St sunken huts is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: st_sunken_huts
+DEPTH:   Shoals, !Shoals:$
+KMONS:   1 = merfolk javelineer
+KMONS:   2 = merfolk impaler
+KMONS:   3 = merfolk aquamancer
+KMONS:   4 = merfolk
+KMONS:   5 = merfolk siren / merfolk avatar
+KFEAT:   12345 = deep_water
+SHUFFLE: 1235
+NSUBST:  V = 1:w / *:x
+NSUBST:  U = 1:w / *:x
+NSUBST:  Y = 1:w / *:x
+NSUBST:  X = 1:w / *:x
+NSUBST:  Z = 1:w / *:x
+SUBST:   W = wWW
+MAP
+      WWWWWWWWWWWWWWW
+   WWWwwwwwwwxxxxwwwwWWW
+ WWwxxxxwwwwwxw2xwwwwwwwWW
+Wwwwx1wVww4wwUwwUww4wxYxxwW
+WwwwxwwVwwwwwxUUxwwwwYwwxwW
+WwwwxVVxwwwwwwwwwwwwwYw2xwW
+WwwwwwwwwxZZxwwxXXxwwxYxxwW
+Wwwww4wwwZwwZw5XwwxwwwwwwwW
+ WWwwwwwwxw1xwwXw3xwwwwwWW
+   WWWwwwxxxxwwxxxxwwWWW
+      WWWWWWWWWWWWWWW
+ENDMAP

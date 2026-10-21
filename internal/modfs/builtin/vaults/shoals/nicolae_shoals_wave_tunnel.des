@@ -1,0 +1,19 @@
+# Nicolae shoals wave tunnel is an authored Shoals vault.
+# Its monster and item positions remain DES so placement can use the ordinary branch selector.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des.
+NAME: nicolae_shoals_wave_tunnel
+# The source default-depth applies to this separated definition.
+DEPTH: Shoals
+TAGS:  water_ok transparent
+SUBST: b = .W, + = .++
+KMONS: m = merfolk / nothing w:5
+MAP
+    xxxxxxxxxwwwwwwwxxxxx
+   xx.......xxbbbbbxx...@
+  xx....m....xx.m.xx...m@
+xxx.m.......m.xx+xx.m...@
+@...m.xx+xx.m.......m.xxx
+@m...xx.m.xx....m....xx
+@...xxbbbbbxx.......xx
+xxxxxwwwwwwwxxxxxxxxx
+ENDMAP
