@@ -26,6 +26,7 @@ local temple_floor = require("policy.generation.temple.floor")
 local altar_catalog = require("policy.generation.altar.catalog")
 local shop_spec = require("policy.generation.vaults.shop_spec")
 local shoals_heights = require("policy.generation.shoals_heights")
+local streams = require("constants.rng_streams")
 
 local generated = {}
 
@@ -50,7 +51,7 @@ local function monster_count(ctx, branch_id, depth)
     local count = 0
 
     for _ = 1, 3 do
-        count = count + ctx:random("population-count", die_size) + 1
+        count = count + ctx:random(streams.POPULATION_COUNT, die_size) + 1
     end
 
     return count

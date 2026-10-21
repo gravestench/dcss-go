@@ -25,6 +25,7 @@ type Game struct {
 	entityCursor   uint64
 	branchSchedule *save.BranchScheduleRecord
 	templePlan     *save.TemplePlanRecord
+	panState       *save.PanStateRecord
 
 	turn TurnContext
 

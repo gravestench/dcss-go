@@ -27,6 +27,7 @@ function regular.candidates(context)
             context.branch_bottom, context.absolute_depth)
 
         if definition.family == context.branch_vault_family and
+            (not context.regular_extra_only or definition.tags.extra) and
             not definition.tags.minivault and
             #definition.depths > 0 and #definition.chances == 0 and
             weight > 0 and eligibility.depth(definition, context) then

@@ -238,6 +238,13 @@ end
 -- Example: vaults.validate(ctx, input) rejects a saved vault ID missing
 -- from the scenario catalog and an authored seal missing from ECS state.
 function vaults.validate(ctx, input)
+    -- Earlier Pan regions have been retired, but their successful map IDs
+    -- still constrain unique-lord and once-per-run draws. Validate those
+    -- names against the effective layered catalog during save restore.
+    for _, id in ipairs(input.pan_vault_ids or {}) do
+        known(id, "Pan history")
+    end
+
     for _, level in ipairs(input.levels or {}) do
         if level.vault_id and level.vault_id ~= "" then
             known(level.vault_id, level.id)

@@ -14,6 +14,7 @@ local streams = {
     MUTATION = "mutation",
     POTION = "potion",
     PLACEMENT = "placement",
+    POPULATION_COUNT = "population-count",
     SHOP = "shop",
     SPELL = "spell",
     TRAPS = "traps",

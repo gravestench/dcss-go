@@ -33,6 +33,25 @@ type Snapshot struct {
 	// entrances on parent floors that have not yet been generated.
 	BranchSchedule *BranchScheduleRecord `json:"branch_schedule,omitempty"`
 	TemplePlan     *TemplePlanRecord     `json:"temple_plan,omitempty"`
+	PanState       *PanStateRecord       `json:"pan_state,omitempty"`
+}
+
+// PanStateRecord carries session history across one-region replacements.
+// VaultIDs belong to earlier regions; the active region owns its own level
+// record. Lua decides which map to draw from this saved history.
+type PanStateRecord struct {
+	RegionsSeen   int              `json:"regions_seen"`
+	VaultIDs      []string         `json:"vault_ids"`
+	ActiveLevelID int              `json:"active_level_id"`
+	Return        *PanReturnRecord `json:"return,omitempty"`
+}
+
+// PanReturnRecord points back to the exact portal cell in the ordinary
+// world. Travel chooses a safe nearby landing if that cell later changes.
+type PanReturnRecord struct {
+	LevelID int `json:"level_id"`
+	X       int `json:"x"`
+	Y       int `json:"y"`
 }
 
 // TemplePlanRecord fixes the authored map and god identities before the

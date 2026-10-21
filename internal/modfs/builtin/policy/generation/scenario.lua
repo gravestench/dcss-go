@@ -2,6 +2,7 @@
 local fixed = require("policy.generation.fixed")
 local generated = require("policy.generation.generated")
 local abyss = require("policy.generation.abyss")
+local pan = require("policy.generation.pan.region")
 local features = require("content.terrain_features")
 local transporters = require("policy.generation.transporters")
 local item_ids = require("ids.items")
@@ -95,6 +96,19 @@ function module.first(ctx, input)
     return result
 end
 
+-- A Pan portal requests one complete replacement region. Return it through
+-- the same terrain decoder as first-entry branch floors so the generic Go
+-- installer never has to interpret source DES glyphs or Pan map IDs.
+function module.pan(ctx, input)
+    local level = pan.generate(ctx, input)
+
+    decode_level(ctx, level)
+
+    return {
+        level = level,
+    }
+end
+
 register.policy({
     id = "world.generate_scenario",
     run = module.run,
@@ -108,6 +122,11 @@ register.policy({
 register.policy({
     id = "world.generate_first_floor",
     run = module.first,
+})
+
+register.policy({
+    id = "world.generate_pan_region",
+    run = module.pan,
 })
 
 return module

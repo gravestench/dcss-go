@@ -233,8 +233,15 @@ func (g *Game) restoreLocationComponents(
 }
 
 func (g *Game) validateRestoredPlacement() error {
+	panVaultIDs := []string{}
+
+	if g.panState != nil {
+		panVaultIDs = append(panVaultIDs, g.panState.VaultIDs...)
+	}
+
 	if _, err := g.scripts.Policy("save.validate_vault_ids", map[string]any{
-		"levels": g.vaultValidationLevels(),
+		"levels":        g.vaultValidationLevels(),
+		"pan_vault_ids": panVaultIDs,
 	}); err != nil {
 		return err
 	}
