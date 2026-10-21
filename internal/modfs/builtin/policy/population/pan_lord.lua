@@ -247,8 +247,8 @@ local function attack_roll(ctx, spellcaster)
 end
 
 -- A branded lord has a matching ring; otherwise the source draws from its
--- weighted cloud family. The ring ID remains saved even where a particular
--- cloud effect has not yet been implemented by a live system.
+-- weighted cloud family. The saved ring ID determines which cloud the
+-- active monster system surrounds the lord with on each later action.
 local function cloud_ring(ctx, brand, flavour)
     if brand == brands.ELECTROCUTION then
         return traits.ring_thunder

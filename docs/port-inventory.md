@@ -442,8 +442,9 @@ authored primary, saves one current region, and replaces it through entry,
 transit, ordinary exit, and Abyss exit portals. Source upward stairs become
 transit portals after DES terrain resolution. The random lord owns its rolled
 body, resistances, attack form, brand, flight, spell slots, and ring choice
-in an Akara component. Continuous cloud-ring effects and full encounter
-parity remain for the next Pan combat pass.
+in an Akara component. Its saved cloud ring now places and refreshes the
+source cloud family through the ordinary ECS cloud owner. Full encounter
+parity remains for the next Pan combat pass.
 
 Intrinsic death effects now use the actor death phase for Ball Lightning,
 Fulminant Prism, Bloated Husk, Lurking Horror, and Bennu. Construct timeout

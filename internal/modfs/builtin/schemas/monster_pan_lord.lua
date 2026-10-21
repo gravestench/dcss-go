@@ -66,8 +66,8 @@ local schema = {
             default = "",
         },
 
-        -- The source rolls a cloud ring even when its continuous effect is
-        -- still pending; preserve that exact actor choice for later rules.
+        -- One persistent source ring choice drives live cloud placement.
+        -- Saving it prevents restore from drawing a different cloud type.
         ring_id = {
             type = "string",
             default = "",

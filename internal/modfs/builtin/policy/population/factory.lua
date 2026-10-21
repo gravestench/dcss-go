@@ -29,6 +29,7 @@ local attitudes = require("constants.attitude")
 local statues = require("constants.monster_statues")
 local behaviors = require("constants.ai_behaviors")
 local pan_lord = require("policy.population.pan_lord")
+local cloud_ring = require("policy.combat.monster_cloud_ring")
 
 local factory = {}
 
@@ -477,6 +478,12 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
     end
 
     ctx:place_actor(monster, level_id, x, y)
+
+    if generated_lord then
+        -- The source installs a cloud ring when its permanent enchantment
+        -- first lands, before the lord takes an ordinary monster turn.
+        cloud_ring.surround(ctx, monster)
+    end
 
     -- Shapeshifter's permanent enchantment picks its first body using the
     -- actual cell. Install all source statuses after placement so this

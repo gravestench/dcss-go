@@ -4,6 +4,7 @@
 local brands = require("constants.weapon_brands")
 local attacks = require("constants.monster_attack_types")
 local resistance = require("constants.resistance_ids")
+local clouds = require("ids.clouds")
 
 local traits = {
     fire = resistance.FIRE,
@@ -186,6 +187,19 @@ traits.random_rings = {
         weight = 5,
         id = traits.ring_mutation,
     },
+}
+
+-- mon-ench.cc maps one persistent enchantment to one cloud species.
+-- Saving the ring ID on the lord keeps this projection stable on restore.
+traits.cloud_for_ring = {
+    [traits.ring_thunder] = clouds.CLOUD_STORM,
+    [traits.ring_flames] = clouds.CLOUD_FIRE,
+    [traits.ring_ice] = clouds.CLOUD_COLD,
+    [traits.ring_draining] = clouds.CLOUD_NEGATIVE_ENERGY,
+    [traits.ring_chaos] = clouds.CLOUD_CHAOS,
+    [traits.ring_acid] = clouds.CLOUD_ACID,
+    [traits.ring_miasma] = clouds.CLOUD_MIASMA,
+    [traits.ring_mutation] = clouds.CLOUD_MUTAGENIC,
 }
 
 -- Validation uses the same source choices as generation. A mod changing
