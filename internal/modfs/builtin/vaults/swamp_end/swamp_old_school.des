@@ -1,0 +1,47 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/swamp.des
+# The old swamp ending winds through flooded trees toward a guarded rune chamber.
+NAME:    swamp_old_school
+TAGS:    no_pool_fixup
+PLACE:   Swamp:$
+WEIGHT:  20
+ORIENT:  southeast
+MONS:    swamp dragon, hydra, swamp drake
+MONS:    the lernaean hydra
+SHUFFLE: ab, 12
+SUBST:   a = c, b = ', " = ttw, ` = tt`
+SUBST:   u = wwwwwWWWWxxx., ' = W....
+NSUBST:  1 = 2:. / 2:1 / * = 1111.
+NSUBST:  2 = 2:. / 2:2 / * = 2222.
+SUBST:   3 = 3333.
+KITEM:   O = decaying rune of Zot
+CLEAR:   `
+MAP
+               t
+@@''x   "t     t`   x        t
+@'''   "ttt`  tt`    `t`    tt   ttt
+'x'"  "ttttt`tttt`  tttt`  tttt ttttt
+''''""tttttttttttttttttttttttttttttttt
+'''""ttt3wtcccccttcccttccttttttccctttt
+'''"tt.wcccccwwccccwcccccccttcccOccctt
+'''""'ccccuuwuuwuuwuwuuwccccccwu1ucctt
+'3'''1''cuu3uuuuuu2uuu3uuwcccwu2uwcctt
+''''''''''''''''''''''''uuwwccw3cccctt
+''""'2'cc'uuuuu'uu'uuuu'u1uuwccabccttt
+'"tt.ccccccuuuu'uuuuuuu'uuuwwccabctttt
+ W"tt.wcccccuuu'uuuuuuu'uuu2ccabcctttt
+  W"tt.wccccwuu'u1uuuuu'uuwccccabccttt
+  W.""ttccwwuuu'uuuuu1u'u2uccccc'ccctt
+   .xw"tccwuuuu'uuuuuuu'uucccc2u'ccctt
+x  .ww"ttccwu2u'u1uuu2u'u2uccuu'uucctt
+  WxW"ttccwuuuu'uuuuuuu'uuuuuu'u1ccttt
+  ww"tttcwuu''''''''''''''''''uucctttt
+   ww""tccwuuuu2uuuuuuu'uuuuu2uuuccttt
+ 3wWwwW"tccccuuuuu''''''uuuuuuuucctttt
+   xwwWxttcccuuuuuuuuuu''''''u2ucctttt
+   Wwww"ttccwuuu3uuuu3u''uuuu21ucctttt
+  @wWW"ttccwu1wuuccuuu2'''ccuccucctttt
+   ""tttccwuuwccccccc1cccw4ccccccttttt
+  `ttttttccwwcccttttcccccccctttttttttt
+ ``tttttttcccctttttttttttttttttttttttt
+tttttttttttttttttttttttttttttttttttttt
+ENDMAP

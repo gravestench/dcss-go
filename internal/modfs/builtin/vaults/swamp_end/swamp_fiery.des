@@ -1,0 +1,36 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/swamp.des
+# Lava and flame markers protect one surviving decaying rune.
+NAME:    swamp_fiery
+TAGS:    transparent no_pool_fixup no_rotate
+PLACE:   Swamp:$
+ORIENT:  float
+MONS:    fire dragon, lindwurm / fire crab w:8, swamp dragon / hydra w:12
+MONS:    swamp drake / steam dragon w:4
+SUBST:   L = ll., ' = t., " = t
+MARKER:  R = lua:fog_machine { cloud_type = "flame", pow_min = 8, \
+             pow_max = 12, delay_min = 40, delay_max = 70, \
+             size = 2, walk_dist = 1, spread_rate= 3, excl_rad = 0 }
+KPROP:   lR = no_cloud_gen
+KFEAT:   XR = lava
+KITEM:   O = decaying rune of Zot
+NSUBST:  O = 1:O / *:l
+SUBST:   - = WW.
+MAP
+     --'--
+   ------4-     ...3
+  --tcct-'- - -..ll.    4' -
+ --tccc4c.---4-.lRl.-4-------
+ -tccc3c.t-ttt-.ll..-tcc--t--
+--tc.L.3cctcccc3...ttccL.ct-
+-tccL4ll.ccc12cccccccc3Lc.t--
+--tcc.LLl.43Ll344cc.c.L4.cct-
+-tcccc4llLLlllLLl..L3Lll.Lct-
+--tcc.LllllclllllLlllllL.cct-
+ --tcc3LllRccllllRll.443cct--
+  -tccL.Lllllccclll3lcccct--
+  --tccc3L2lcctccO12ccttt--
+   --ttcc1Occt-tccccct----
+    ---tcccct---tttt---
+      --tttt-- -------
+       ------
+ENDMAP

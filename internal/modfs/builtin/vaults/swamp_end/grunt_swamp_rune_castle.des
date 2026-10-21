@@ -1,0 +1,43 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/swamp.des
+# The castle shuffles its guards but keeps the rune with the selected guardian.
+NAME:    grunt_swamp_rune_castle
+TAGS:    no_monster_gen no_trap_gen transparent
+PLACE:   Swamp:$
+ORIENT:  float
+MONS:    swamp dragon, swamp drake, hydra, bog body
+MONS:    fungus w:12 / plant w:5 / bush w:1
+KMONS:   d = patrolling the lernaean hydra / hydra w:1, hydra
+KMONS:   ef = patrolling hydra
+KITEM:   d = decaying rune of Zot
+KITEM:   ef = any good_item
+KITEM:   g = stone w:40 / large rock q:1
+NSUBST:  @ = 1:@ / *:.
+SUBST:   C = cc., = = +.
+SHUFFLE: def, 123
+NSUBST:  : = 6:1 / 6:2 / 6:3 / 9:4 / 3 = 0.... / 20:5 / * = '
+SUBST:   ' = .....WW, G = Gg
+MAP
+ cccccWWW'''''WWWccccc
+cc%..ccCC=C=C=CCcc..%cc
+c%1...c'::'''::'c...2%c
+c..d..c'G:::::G'c..e..c
+c.....c':::C::''c.....c
+cc....+.G:'C':G.+....cc
+Wcccc+c.::CCC:'.c+ccccW
+WC'''..'G:'C':G'..'''CW
+WC:G:G:G'''C'''G'G'G:CW
+'=::::::'':C:''::::::='
+'C'::'C'':VcV:''C'::'C.
+'=''CCCCCCcccCCCCCC''=@
+'C'::'C'':VcU:''C'::'C.
+'=::::::'':C:''::::::='
+WC:G'G'G'''C'''G'G'G:CW
+WC'''..'G:'C':G''''''CW
+Wcccc+c.':CCC:''C=CCCCW
+cc....+.G:'C':G'=''':CC
+c.....c''::C::''C'':::C
+c..f..c'G:::::G'C':::'C
+c%3...c'::'''::'C:::''C
+cc%..ccCC=C-C=CCCC:'''C
+ cccccWWW'.@.'WWWCCCCC@
+ENDMAP

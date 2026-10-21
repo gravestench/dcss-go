@@ -1,0 +1,50 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/swamp.des
+# Ice and deep water surround one rune retained by source NSUBST.
+NAME:    swamp_icy
+TAGS:    no_pool_fixup no_rotate transparent
+PLACE:   Swamp:$
+ORIENT:  southeast
+MONS:    ice dragon, hydra simulacrum, freezing wraith, azure jelly
+KMONS:   ? = swamp worm simulacrum / swamp drake simulacrum
+KFEAT:   Q? = deep_water
+NSUBST:  O = 1:O / *:Y
+SUBST:   X = tt., Y = Wwwww., 4 = 1:15 4
+KITEM:   O = decaying rune of Zot
+NSUBST:  2 = 4 = 2. / * = 2, 0 = 1:412 / 3:2 / 2:. / * = 2., 3 = 1:. / *:3
+MARKER:  Q = lua:fog_machine { cloud_type = "freezing vapour", \
+             pow_min = 8, pow_max = 12, delay_min = 30, delay_max = 40, \
+             size = 2, walk_dist = 1, spread_rate= 30, excl_rad = 0 }
+MAP
+@@             wwttttttttt
+@.  ..        wwttcccccctt
+@ ..  ..  .....wwccQc3cctt
+    ..  .....w?.wcXc3.Xctt
+      ..    ?ww......cXctt
+           www.wwXc3c3Xctt
+            w?.wXcXc.3cctt
+             ww.wccc..cctt
+              ..ttcc..cctt
+             ..wwtcc2.cctt
+            ..wwttc..ccctt
+           .twwwttcc0Xcctt
+          .tttwwwtcc.0.ctt
+         .tttttwwtc..ccctt
+         .ttttttttcc0.cctt
+          .wwtttttccX0.ctt
+          ..?wttttccc0.cct
+     @@  2.wwwwttttcc.0cct
+    ?@. ..ww?wttttccc.0cct
+   ttww.wwwwwtttttcc..cctt
+   ttw?ww?wwtttcccc.0ccttt
+  ttttwwwwtttcccccc0Xctttt
+  tttttttttcccwwwY0.Yccttt
+  tttttttcccwwQww.YY.wcctt
+   tttttccwwwww22Yww2wwctt
+     ttccwwww22YwwwwY2wctt
+    ttccwww.2YwwQwwwY2wctt
+   ttccww1.YwwwwwwwY2wwctt
+  ttcccwOYwWWcccWY1.wwcctt
+ ttcccccwwwwcW4WwOYYcccttt
+tttccccccccccccccccccttttt
+tttttttttttttttttttttttttt
+ENDMAP

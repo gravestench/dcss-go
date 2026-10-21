@@ -123,14 +123,14 @@ func descendBranch(t *testing.T, g *Game, level *Level,
 
 // Saved typed history outlives the floor item after pickup. Find the
 // authored real rune without relying on its current ECS entity position.
-func snakeRuneRecord(record vault.Record) bool {
+func runeRecord(record vault.Record, runeID string) bool {
 	if record.Kind != vault.KindItem {
 		return false
 	}
 
 	for _, argument := range record.Arguments {
 		if argument.Name == "kind_id" &&
-			argument.String == "RUNE_SNAKE" {
+			argument.String == runeID {
 			return true
 		}
 	}
@@ -155,7 +155,7 @@ func rejectChangedSnakeRuneHistory(t *testing.T, g *Game,
 		}
 
 		for recordIndex, record := range floor.VaultRecords {
-			if !snakeRuneRecord(record) {
+			if !runeRecord(record, "RUNE_SNAKE") {
 				continue
 			}
 
@@ -193,7 +193,7 @@ func rejectChangedSnakeRuneHistory(t *testing.T, g *Game,
 
 // Exercise live pickup, then round-trip both player rune progress and the
 // authored source record through the ordinary Go save.
-func collectSnakeRune(t *testing.T, g *Game, end *Level, x, y int) {
+func collectRune(t *testing.T, g *Game, end *Level, x, y int, runeID string) {
 	t.Helper()
 
 	if actor, occupied := end.ActorAt(x, y); occupied {
@@ -238,8 +238,8 @@ func collectSnakeRune(t *testing.T, g *Game, end *Level, x, y int) {
 
 	values, okay := collected.(map[string]any)
 
-	if !okay || values["RUNE_SNAKE"] != true {
-		t.Fatalf("serpentine rune was not collected: %#v", collected)
+	if !okay || values[runeID] != true {
+		t.Fatalf("%s was not collected: %#v", runeID, collected)
 	}
 
 	health.Max = 18
@@ -306,7 +306,7 @@ func TestSnakeEndVaultAppearsOnTravel(t *testing.T) {
 	sourceRunes := 0
 
 	for _, record := range end.VaultRecords() {
-		if snakeRuneRecord(record) {
+		if runeRecord(record, "RUNE_SNAKE") {
 			if record.SourceID != end.VaultID() {
 				t.Fatalf("Snake rune source %s differs from end %s",
 					record.SourceID, end.VaultID())
@@ -415,7 +415,7 @@ func TestSnakeEndVaultAppearsOnTravel(t *testing.T) {
 			floor.VaultIDs = append(floor.VaultIDs, other)
 
 			for recordIndex, record := range floor.VaultRecords {
-				if snakeRuneRecord(record) {
+				if runeRecord(record, "RUNE_SNAKE") {
 					floor.VaultRecords[recordIndex].SourceID = other
 					break
 				}
@@ -428,7 +428,11 @@ func TestSnakeEndVaultAppearsOnTravel(t *testing.T) {
 			_ = bad.Close()
 		}
 
-		if err == nil || !strings.Contains(err.Error(), "Snake end") {
+		if err == nil {
+			t.Fatal("rune from wrong historical end was accepted")
+		}
+
+		if !strings.Contains(err.Error(), "Snake end") {
 			t.Fatalf("rune from wrong historical end = %v", err)
 		}
 	})
@@ -474,5 +478,5 @@ func TestSnakeEndVaultAppearsOnTravel(t *testing.T) {
 		t.Fatalf("Snake end reciprocal descent = %+v, %v", down.View, err)
 	}
 
-	collectSnakeRune(t, g, end, runeX, runeY)
+	collectRune(t, g, end, runeX, runeY, "RUNE_SNAKE")
 }

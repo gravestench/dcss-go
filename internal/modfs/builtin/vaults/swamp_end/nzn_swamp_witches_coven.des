@@ -1,0 +1,50 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/swamp.des
+# The witches’ ritual circles the source rune and flame marker.
+NAME:   nzn_swamp_witches_coven
+PLACE:  Swamp:$
+ORIENT: float
+TAGS:   no_monster_gen no_rotate no_vmirror
+KITEM:  O = decaying rune of zot
+MONS:   fenstrider witch, green death / reaper / blizzard demon
+MONS:   neqoxec / soul eater / sixfirhy, orange demon / hellwing / chaos spawn
+MONS:   spriggan druid / orc sorcerer / ogre mage / deep elf pyromancer w:5 / \
+        deep elf zephyrmancer w:5 / wizard
+SUBST:  ' = W:55 .:15 4:5, 4 = 049
+KFEAT:  B = stone_arch
+KFEAT:  a = c
+MARKER: B = lua:fog_machine { cloud_type = "flame", pow_min = 10, \
+                              pow_max = 10, delay = 10, size = 1, \
+                              walk_dist = 0, excl_rad = 0 }
+TILE:   a = wall_stone_dark
+COLOUR: a = magenta
+TILE:   G = dngn_statue_demonic_bust / dngn_statue_imp / dngn_statue_cerebov \
+            / dngn_statue_ancient_evil
+MAP
+         ccccccccc
+       ccc''5t5''ccc
+     ccct'''ttt'''tccc
+    cc'''''''t'''''''cc
+   cc'aa'''''t'''''aa'cc
+  cc''aAaat''t''taaAa''cc
+  ct'''a'aa''t''aa'a'''tc
+ cc''''a'3aat'taa3'a''''cc
+ ct''''aa'5aataa5'aa''''tc
+@c'''''ta'''tat'''at'''''c@
+c'''''''aat'''''taa'''''''c
+c''t''''5aa'''''aa5'''t'''c
+c'''''''aat''2''taa'''''''c
+c''''taaaat''G''taaaat''''c
+c''taaa''a'''t'''a''aaat''c
+cttaa53'''attttta'''35aattc
+ccaaaaaaa'aaaaaaa'aaaaaaaac
+ ct'''''''a'''''a'''''''tc
+ ct''''tttaA'''Aattt''''tc
+ cct''t''''a'''a''''t''tcc
+  ct5'1'''ta'1'at'''1'5tc
+  cct'''''ta'2'at'''''tcc
+   cct''''taaOaat''''tcc
+    cct'''''aBa'''''tcc
+     ccct'''aaa'''tccc
+       ccc'''a'''ccc
+         ccccccccc
+ENDMAP

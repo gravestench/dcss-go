@@ -2105,34 +2105,38 @@ modder wants to preserve.
 ### Branch end vaults
 
 A branch ending that fits inside an ordinary generated floor uses an end
-vault family. The Snake branch declares `end_vault_family = "snake_end"` and
-`end_vault_required = true` in `content/branches/branch_snake.lua`. Its nine
-source alternatives live under `vaults/snake_end/`. Each file keeps its own
-`NAME`, `PLACE: Snake:$`, `ORIENT`, keyed entity directives, and `MAP`.
-The end selector discovers every effective file in that family and sorts
-candidates by `NAME` before a weighted draw. It runs before optional CHANCE,
-PLACE, and minivault stages. If no positive-weight end map exists, Snake:4
-is unavailable; generation never substitutes an ordinary floor.
+vault family. Snake and Swamp declare `end_vault_required = true` and name
+`snake_end` or `swamp_end` as their `end_vault_family` in their branch files.
+The nine Snake and eleven Swamp source maps live in matching `vaults/`
+subdirectories. Every file keeps its own `NAME`, final-floor `PLACE`,
+`ORIENT`, keyed entity directives, and `MAP`.
 
-To add an ending, create one `vaults/snake_end/<name>.des` with a unique
-`NAME`, a positive effective `WEIGHT`, `PLACE: Snake:$`, and a map with one
-real serpentine rune request. A same-path overlay replaces a bundled map;
-a new filename adds another weighted candidate. If its map needs a choice
-that DES directives cannot express, add a named hook at
-`policy/generation/vaults/snake_end/<name>.lua` and reference it from a
-`: vault.run("method")` line at the intended source position. Hook modules
-follow the local-object pattern shown below. A placed map's
-`: vault.validate("method")` receives `api.cells`, the final mutable DES
-matrix after substitutions and before it touches the level grid. Return
-`true` to accept it or `false` to reroll that map and, if needed, the base
-layout. Snake Hunt uses this to keep its entry connected to the rune.
+The end selector discovers all effective files in the declared family,
+sorts candidates by `NAME`, and makes a weighted draw before optional
+CHANCE, PLACE, and minivault stages. A geometric floor redraw keeps that
+same selected ending; it does not reroll the weighted pool. If no positive
+weight end map exists, the final-floor stair is unavailable rather than
+substituting an ordinary floor.
 
-The successful end map becomes the level's primary vault ID and remains in
+To add an ending, put one source-format `.des` file at
+`vaults/<family>/<name>.des` with a unique `NAME`, positive effective
+`WEIGHT`, exact final-floor `PLACE` such as `Swamp:$`, and one real rune
+request matching the branch's declared rune. A same-path overlay replaces
+a bundled map; a new filename adds a weighted candidate. If the map needs
+a computed choice, put a named hook at
+`policy/generation/vaults/<family>/<name>.lua` and reference its method
+from `: vault.run("method")` at the intended source position. Swamp's
+standard ending uses this for its one-in-eleven guardian choice. A placed
+map's `: vault.validate("method")` receives `api.cells`, the final DES
+matrix before it touches the level grid. Return `true` to accept or `false`
+to redraw the map; Snake Hunt uses this to keep its rune connected.
+
+The successful end map becomes the floor's primary vault ID and remains in
 `vault_ids`. Its typed rune record is historical: picking up the ECS item
-does not erase the record. Restore checks the chosen map's family and
-`PLACE` rule, its selected ID in history, and exactly one matching rune
-record. Changing a saved map's relative path or removing its definition
-changes the ruleset and cannot silently rewrite an existing floor.
+does not erase it. Restore checks the selected map's family and `PLACE`
+rule, that ID in history, and exactly one matching rune record owned by the
+selected map. Changing a saved map's relative path or removing its
+definition changes the ruleset and cannot silently rewrite that floor.
 
 
 ### Authored vaults

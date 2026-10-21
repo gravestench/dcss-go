@@ -1,0 +1,12 @@
+# A modder adds one Swamp ending with a DES file in the family directory.
+# The branch, Go engine, and Lua selector discover it without registration.
+NAME:   zz_reed_court
+PLACE:  Swamp:$
+WEIGHT: 1
+ORIENT: north
+KITEM:  O = decaying rune of Zot
+MAP
+ccccccccc
+c@.....Oc
+ccccccccc
+ENDMAP

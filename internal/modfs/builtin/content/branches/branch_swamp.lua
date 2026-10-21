@@ -27,8 +27,13 @@ local definition = {
     runes = {
         "RUNE_SWAMP",
     },
+    end_vault_family = "swamp_end",
+    end_vault_required = true,
     ambient_noise = "loud",
     mon_die_size_expr = "8",
+    -- Source branch_ood_cap limits 8/9 DES monster requests to the
+    -- Swamp's authored late-population rows, which end at depth seven.
+    ood_cap = 7,
 }
 
 register.definition(categories.BRANCHES, definition)

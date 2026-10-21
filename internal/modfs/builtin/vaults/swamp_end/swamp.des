@@ -1,0 +1,38 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/swamp.des
+# The standard ruin can rarely replace its hydra guardian with the Lernaean hydra.
+NAME:    swamp
+TAGS:    transparent no_monster_gen
+PLACE:   Swamp:$
+WEIGHT:  20
+ORIENT:  float
+TAGS:    no_rotate
+MONS:    swamp dragon, swamp drake, hydra
+MONS:    thorn hunter / shambling mangrove / spriggan druid
+KMONS:   O = fire dragon w:1 / ice dragon w:1 / hydra w:18
+KMONS:   & = the lernaean hydra
+KITEM:   O& = decaying rune of Zot
+SHUFFLE: 12
+SUBST:   - = WW.
+NSUBST:  13 = 5:., 1 = 5:1 / 2:. / * = 1..
+NSUBST:  2 = 5:2 / 2:. / * = 2.., 3 = 7:3 / 3:. / * = 3..
+# Ported source one-in-eleven unique guardian decision.
+: vault.run("rare_lernaean_hydra")
+MAP
+      -t-t-
+     2-2-2-2
+   ---cc.cc---
+   -tcc3.2cct-
+  --cc3.2.3cc---
+ --tc11.3322ctt-
+ -tcc...21.1ccc--
+--tc413321.14cct-
+-tcc31333.113cct-
+-tcc22113.223cc--
+--tcc3333113cct-
+ -tcccc3O3ccct--
+ --tcccccccct--
+  --ttccccct--
+   ---ttcct--
+     ---t---
+       ---
+ENDMAP

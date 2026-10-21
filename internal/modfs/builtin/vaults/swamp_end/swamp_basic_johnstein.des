@@ -1,0 +1,37 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/swamp.des
+# One surviving rune has either a rare unique guardian or ordinary swamp guardians.
+NAME:    swamp_basic_johnstein
+PLACE:   Swamp:$
+ORIENT:  float
+WEIGHT:  20
+SUBST:   1 = 111''
+SUBST:   % = %'
+KMONS:   1 =  swamp dragon / swamp drake / hydra w:15 / bog body w:5
+SUBST:   ' = .....WWW, - = ..wwwWW, T = .wWtt, C = ccct
+KFEAT:   1 =  floor / floor / shallow_water
+KITEM:   O = decaying rune of Zot
+NSUBST:  O = 1:O / *:*
+# Ported source one-in-eleven guardian and alternate prize decision.
+: vault.run("choose_guardians")
+MAP
+   tt  tt
+  ttttttttt @@@   tt  tt
+tttccccccttt'-'ttttttttt
+ttcc%O%Ccccc'-'ccccccccctt
+tccT1-1-Cccc1-1ccccC%O%cctt
+tcT1'1'1'ccc'-'cccC-1-1Tcctt
+tccT1-1-ccc-1T1-cc'1'1'1Tcct
+ttcC'-'ccc''TTT''cc-1-1Tcctt
+ tcC-1ccc1-ccccc-1cc'-'Ccctt
+ttcC-1cc'-cc%O%cc-'cc1-Ccctt
+ttc'-'c1-cc-1-1-cc-1c1-Ccct
+ttc-1Cc'-c'1'1'1'c-'c''-cctt
+ tc-''c1-cc-1-1-cc-1cC1-cct
+ttcC1'1'''cC'-'Cc-''c''-cttt
+ttccccC'''cC'-'Cc'''1'1cctt
+ ttttccC-1'1'T'1'1-CCccctt
+  ttttccC-1'TTT'1-Cccccttt
+    tttcccccccccccccttttt
+     ttttttttttttttttt t
+       tt   ttt ttt t
+ENDMAP
