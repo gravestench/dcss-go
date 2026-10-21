@@ -84,9 +84,10 @@ Wanderer gift and item-generation suites before their packages finished;
 Pan-focused tests and compilation of every package passed separately.
 
 The generated lord's non-brand melee flavours now reach live player and
-monster targets through the ordinary saved combat owners. The remaining
-appearance category must port the source name and colour rolls; a later
-movement parity pass must cover all source trample interruption cases. Then
+monster targets through the ordinary saved combat owners. Its source-style
+name and source colour choice are saved on the actor and projected into
+combat messages and terminal views. The remaining appearance gap is the
+animated `ETC_RANDOM` terminal tint; a later movement parity pass must cover all source trample interruption cases. Then
 exercise an authored Pan rune from map placement through pickup, repeated
 transit, save/restore, and escape in one run. The existing tests already
 compare the complete next-region save after restore and prove that an

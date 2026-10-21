@@ -4,8 +4,20 @@ local component = require("constants.component")
 
 local schema = {
     id = component.PANDEMONIUM_LORD,
-    version = 1,
+    version = 2,
     fields = {
+        -- Appearance is rolled only at creation, alongside combat traits.
+        -- Keeping both on the actor preserves display across save/restore.
+        name = {
+            type = "string",
+            default = "",
+        },
+
+        colour_id = {
+            type = "string",
+            default = "",
+        },
+
         hp = {
             type = "int64",
             default = 0,

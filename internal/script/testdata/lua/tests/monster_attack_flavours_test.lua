@@ -163,7 +163,7 @@ local function check_live_contact(ctx)
     local named = false
 
     for _, message in ipairs(messages) do
-        if message:find("pandemonium lord", 1, true) and
+        if message:find(generated.name, 1, true) and
             message:find("corrodes you", 1, true) then
             named = true
         end

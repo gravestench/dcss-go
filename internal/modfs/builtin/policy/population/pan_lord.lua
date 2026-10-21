@@ -5,6 +5,8 @@
 -- Source: ghost.cc:ghost_demon::init_pandemonium_lord.
 local spells = require("ids.spells")
 local streams = require("constants.rng_streams")
+local names = require("policy.names.source")
+local colours = require("constants.pan_lord_colours")
 local traits = require("constants.pan_lord_traits")
 local brands = require("constants.weapon_brands")
 local attacks = require("constants.monster_attack_types")
@@ -332,9 +334,27 @@ local function spell_slots(ctx, spellcaster, hd, friendly,
     return selected, frequencies, ring_id
 end
 
+-- Keep the source's one-in-ten random-effect token, then draw a concrete
+-- monster colour from IRGB 1..15. Dark grey is rerolled rather than removed
+-- from the draw range, preserving the source distribution and draw count.
+local function colour_roll(ctx)
+    if one_in(ctx, 10) then
+        return colours.RANDOM_EFFECT
+    end
+
+    local colour_id
+
+    repeat
+        colour_id = colours.SOURCE[draw(ctx, #colours.SOURCE) + 1]
+    until colour_id ~= colours.DARK_GREY
+
+    return colour_id
+end
+
 -- Roll the source body before creating an ECS actor. A failed placement can
 -- discard this value without leaving a half-built creature in the world.
 function pan_lord.roll(ctx, friendly)
+    local name = names.generate(ctx, streams.PAN_LORD)
     local spellcaster = draw(ctx, 4) < 3
     local hp = 100 + dice(ctx, 3, 50)
     local total_defense = 10 + average_three(ctx, 40)
@@ -382,7 +402,11 @@ function pan_lord.roll(ctx, friendly)
     spell_ids, frequencies, ring_id = spell_slots(ctx,
         spellcaster, hd, friendly, brand_id, flavour_id, ring_id)
 
+    local colour_id = colour_roll(ctx)
+
     return {
+        name = name,
+        colour_id = colour_id,
         hp = hp,
         spellcaster = spellcaster,
         hd = hd,

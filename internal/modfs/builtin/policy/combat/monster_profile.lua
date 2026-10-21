@@ -21,6 +21,14 @@ function profile.definition(ctx, entity, definition)
             generated[key] = value
         end
 
+        if lord.name ~= "" then
+            generated.name = lord.name
+        end
+
+        if lord.colour_id ~= "" then
+            generated.colour_id = lord.colour_id
+        end
+
         generated.speed = lord.speed
         generated.ac = lord.ac
         generated.ev = lord.ev

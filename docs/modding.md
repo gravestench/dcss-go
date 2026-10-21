@@ -3053,10 +3053,17 @@ what each source portal does. The game records the original entry cell once,
 so a normal exit can find a free landing near that cell. An Abyss exit also
 records the original return site for later Abyss escape. The saved Pan state
 keeps the visit count, retired map IDs, active level ID, and return site;
-restoring it does not regenerate the map or reroll its actors. After DES
-terrain and KFEAT choices are resolved, the Pan generator converts source
-upstairs and escape hatches into transit portals, matching the original
-branch's final terrain pass. Mod maps can therefore use the original stair
+restoring it does not regenerate the map or reroll its actors. A random
+Pandemonium lord's generated name, colour, body, and spells live on its
+`monster.pan_lord` component. To change those rolls, override
+`policy/population/pan_lord.lua`; changing the static monster catalog row
+alone does not alter an existing lord. Combat messages and the terminal
+read the saved actor name, while the saved colour overrides the catalog's
+base tint. The exceptional `ETC_RANDOM` colour is currently a fixed
+terminal tint; source-style colour cycling remains presentation work.
+After DES terrain and KFEAT choices are resolved, the Pan generator
+converts source upstairs and escape hatches into transit portals, matching
+the original branch's final terrain pass. Mod maps can therefore use the original stair
 glyphs without creating ordinary stair links on Pan:1.
 
 For a new Pan map, add `vaults/pan/<name>.des` with the appropriate `DEPTH`,

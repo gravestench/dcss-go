@@ -20,6 +20,7 @@ local ai_validation = require("policy.ai.validation")
 local monster_profile = require("policy.combat.monster_profile")
 local monster_spells = require("policy.combat.monster_spells")
 local pan_traits = require("constants.pan_lord_traits")
+local pan_colours = require("constants.pan_lord_colours")
 
 -- Banished monsters have different location requirements from level residents.
 local function validate_banishment(ctx, entity, position)
@@ -169,6 +170,16 @@ local function validate_pan_lord(ctx, entity, actor, health, definition, overrid
     local highest_speed = lord.spellcaster and 18 or 19
     local lowest_damage = lord.spellcaster and 22 or 32
     local highest_damage = lord.spellcaster and 60 or 70
+
+    if type(lord.name) ~= "string" or
+        not lord.name:match("^[A-Z][A-Za-z ]+$") or
+        lord.name:find("  ", 1, true) or
+        lord.name:sub(-1) == " " or
+        #lord.name < 4 or #lord.name > 450 or
+        not pan_colours.VALID[lord.colour_id] then
+        error("Pan lord " .. ctx:id(entity) ..
+            " has invalid generated appearance")
+    end
 
     if actor.kind_id ~= monsters.MONS_PANDEMONIUM_LORD or
         lord.hp < lowest_hp or lord.hp > highest_hp or

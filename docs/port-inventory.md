@@ -449,8 +449,11 @@ uncollected floor runes disappear with a retired region. Generated lord
 stat drain, drowning, web ensnare, speed drain, corrosion, weakness, and
 trample now use the ordinary saved combat owners. Source movement-time
 suppression and every knockback interruption still need a dedicated parity
-pass. Generated lord names and colours remain unported; Pan rune pickup
-also needs a full authored-map run.
+pass. Generated lords now save source-style names and source colour rolls; their
+names reach combat messages and both values reach the terminal entity view.
+The ETC_RANDOM terminal tint is still a fixed palette colour, so animated
+source colour cycling remains presentation work. Pan rune pickup also needs
+a full authored-map run.
 
 Intrinsic death effects now use the actor death phase for Ball Lightning,
 Fulminant Prism, Bloated Husk, Lurking Horror, and Bennu. Construct timeout

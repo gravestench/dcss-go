@@ -59,7 +59,14 @@ function view.entity(ctx, input)
             local overrides = ctx:get(actor, component.VAULT_ACTOR_OVERRIDES)
 
             name = monster_display.name(ctx, actor)
-            color_id = overrides and overrides.colour or ""
+            local generated = ctx:get(actor, component.PANDEMONIUM_LORD)
+
+            color_id = generated and generated.colour_id ~= "" and
+                generated.colour_id or ""
+
+            if overrides and overrides.colour ~= "" then
+                color_id = overrides.colour
+            end
         end
     elseif role == "disturbance" then
         name = "disturbance in the air"
