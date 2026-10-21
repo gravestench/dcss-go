@@ -4,6 +4,7 @@
 local branches = require("ids.branches")
 local catalog = require("policy.generation.layouts.catalog")
 local features = require("content.terrain_features")
+local dimensions = require("constants.level_dimensions")
 local harness = require("tests.harness")
 local weight = require("policy.generation.vaults.weight")
 
@@ -38,8 +39,20 @@ local function execute(id, branch, local_depth, expected_weight, seed)
     harness.equal(weight.for_branch(definition, branch),
         expected_weight, id .. " source weight")
     harness.truthy(#result.stairs >= 3, id .. " connected stairs")
+    -- This fixture visits Dis only above its finale, where source Hell
+    -- builders use the smaller extent rather than the ordinary 80x70.
+    local expected_width = dimensions.FULL_WIDTH
+    local expected_height = dimensions.FULL_HEIGHT
+
+    if branch == branches.BRANCH_DIS then
+        expected_width = dimensions.HELL_WIDTH
+        expected_height = dimensions.HELL_HEIGHT
+    end
+
     harness.equal(#features.decode_source_rows(result.rows),
-        70, id .. " terrain rows decode")
+        expected_height, id .. " terrain rows decode")
+    harness.equal(#result.rows[1], expected_width,
+        id .. " terrain columns decode")
 
     for _, row in ipairs(result.rows) do
         for glyph in row:gmatch(".") do
@@ -49,7 +62,11 @@ local function execute(id, branch, local_depth, expected_weight, seed)
         end
     end
 
-    harness.truthy(floor > 500, id .. " has source-sized open terrain")
+    local minimum_floor = math.floor(500 * expected_width *
+        expected_height / (dimensions.FULL_WIDTH * dimensions.FULL_HEIGHT))
+
+    harness.truthy(floor > minimum_floor,
+        id .. " has source-sized open terrain: " .. floor)
 
     return result
 end

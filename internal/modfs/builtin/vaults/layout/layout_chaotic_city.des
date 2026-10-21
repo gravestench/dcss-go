@@ -1,0 +1,11 @@
+# Chaotic City retains the source branch weights and non-rotating layout.
+# The named Lua hook ports its C++ building and optional market painter.
+NAME:   layout_chaotic_city
+DEPTH:  Lair:1-3, Crypt
+WEIGHT: 10, 15 (Crypt)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_city
+TAGS:   no_rotate no_vmirror no_hmirror
+: vault.run("layout_chaotic_city")
+MAP
+ENDMAP

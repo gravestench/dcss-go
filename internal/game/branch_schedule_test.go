@@ -312,6 +312,13 @@ func TestGeneratedLairAndOrcSecondFloors(t *testing.T) {
 	for _, branchID := range []string{"BRANCH_LAIR", "BRANCH_ORC"} {
 		t.Run(branchID, func(t *testing.T) {
 			g := newGeneratedTestGame(t, 423)
+			// This test exercises branch generation and save links while
+			// repeatedly taking stairs. A generated attacker can otherwise
+			// kill the level-one player before the scheduled entrance.
+			health, _ := g.stores.Health.Get(g.player)
+			originalMax := health.Max
+			health.Max = 100000
+			health.Current = health.Max
 			parentDepth := 0
 
 			for _, entry := range g.branchSchedule.Entries {
@@ -381,6 +388,9 @@ func TestGeneratedLairAndOrcSecondFloors(t *testing.T) {
 				t.Fatalf("second %s floor = %+v, view %+v",
 					branchID, second, result.View)
 			}
+
+			health.Max = originalMax
+			health.Current = originalMax
 
 			restored, err := Restore(g.Snapshot())
 
