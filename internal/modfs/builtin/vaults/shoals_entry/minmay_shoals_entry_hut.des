@@ -1,0 +1,22 @@
+# A coastal hut places its doorway and monsters around the keyed descent.
+# The keyed O feature becomes the saved reciprocal branch stair.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des
+NAME:  minmay_shoals_entry_hut
+TAGS:  shoals_entry transparent
+MONS:  snapping turtle
+SUBST: w = wwwW
+TILE:  x = wall_pebble_lightgray
+KFEAT: O = enter_shoals
+MAP
+  WWWWWWW
+ WWwwwwwWW
+WWwxxxxxwWW
+Wwxx1..xxwW
+Wwx.....xwW
+Wwx..O..+.@
+Wwx.....xwW
+Wwxx...xxwW
+WWwxxxxxwWW
+ WWwwwwwWW
+  WWWWWWW
+ENDMAP

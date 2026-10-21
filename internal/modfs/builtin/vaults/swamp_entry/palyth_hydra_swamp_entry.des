@@ -1,0 +1,34 @@
+# The hydra group and two separate fog points guard a longer approach to the gate.
+# The keyed O feature becomes the saved reciprocal branch stair.
+# Source definition: crawl-ref/source/dat/des/branches/swamp.des
+NAME:   palyth_hydra_swamp_entry
+TAGS:   swamp_entry no_monster_gen no_pool_fixup
+MONS:   hydra
+MONS:   iguana / komodo dragon / cane toad / tyrant leech
+KMONS:  s = swamp worm / nothing w:70
+KFEAT:  s = w / W
+NSUBST: - = 2:1 / 2:2 / .
+KFEAT:  O = enter_swamp
+KFEAT:  T = .
+MARKER: T = lua:fog_machine { \
+             pow_min = 8, pow_max = 12, delay = 25, \
+             size = 2, walk_dist = 1, spread_rate= 33 }
+MAP
+ ttttttt@@tt
+ twwWWWW...tt
+ twwssWsWstt
+ttwsssWsWtt
+ ttwsWs---tt
+  tttt---tt
+ ttT....ttttt
+ttt..ttttWsOt
+ tt..tttWsWtt
+tt--ttt---ttt
+ t--ssww---t
+ tWWWWsww.Ttt
+ ttWWssw..tt
+  t..Ttt...t
+  tt.----..tt
+   ttt...ttt
+     ttttt
+ENDMAP

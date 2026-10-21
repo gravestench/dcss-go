@@ -1,0 +1,10 @@
+# A second sparse gate shares the branch-entry catalog contract.
+NAME: modded_shoals_gate
+TAGS: shoals_entry
+WEIGHT: 9
+KFEAT: O = enter_shoals
+MAP
+.....
+..O..
+.....
+ENDMAP

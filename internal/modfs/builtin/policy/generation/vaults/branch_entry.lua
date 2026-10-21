@@ -18,6 +18,16 @@ local entry = {}
 -- Each entry family's DES tag, directory, and keyed terrain feature are
 -- data. New Lair branches can join this table without another selector.
 local source_entries = {
+    [branches.BRANCH_SWAMP] = {
+        family = families.SWAMP_ENTRY,
+        tag = tags.SWAMP_ENTRY,
+        feature = features.ENTER_SWAMP,
+    },
+    [branches.BRANCH_SHOALS] = {
+        family = families.SHOALS_ENTRY,
+        tag = tags.SHOALS_ENTRY,
+        feature = features.ENTER_SHOALS,
+    },
     [branches.BRANCH_SPIDER] = {
         family = families.SPIDER_ENTRY,
         tag = tags.SPIDER_ENTRY,

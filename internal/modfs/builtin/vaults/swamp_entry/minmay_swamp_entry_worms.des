@@ -1,0 +1,21 @@
+# The keyed worm cells mix shallow water and enemy slots around the descent.
+# The keyed O feature becomes the saved reciprocal branch stair.
+# Source definition: crawl-ref/source/dat/des/branches/swamp.des
+NAME:   minmay_swamp_entry_worms
+TAGS:   swamp_entry
+SUBST:  T = tww
+KMONS:  w = swamp worm / tyrant leech / nothing w:89
+KFEAT:  w = w / W
+KFEAT:  O = enter_swamp
+MARKER: O = lua:fog_machine { \
+             pow_min = 8, pow_max = 12, delay = 25, \
+             size = 2, walk_dist = 1, spread_rate= 33 }
+MAP
+ ttttt
+ttTTTtt
+tTwwwTt
+tTwOWW@
+tTwwwTt
+ttTTTtt
+ ttttt
+ENDMAP

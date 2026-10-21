@@ -2202,6 +2202,23 @@ The source warning also requests a `crawl.more()` acknowledgment. The
 current terminal client displays its message without a blocking prompt;
 message acknowledgment is a separate UI behavior still to port.
 
+Swamp and Shoals complete the source Lair entrance families. Put a new
+Swamp gate in `vaults/swamp_entry/<name>.des` with
+`TAGS: swamp_entry` and one `KFEAT: O = enter_swamp`. Shoals uses
+`vaults/shoals_entry/`, `TAGS: shoals_entry`, and
+`KFEAT: O = enter_shoals`. The scheduled selector makes a source-weighted
+draw from the effective family, fits the map around protected cells, and
+links the final keyed O cell. A sparse mod can add files to either family;
+see `internal/script/testdata/water-entry-mod/` for both examples.
+
+The ten bundled Swamp entrances retain their source `MARKER` declarations
+for fog machines. Population turns each marker into a saved ECS fog entity,
+so a modded Swamp gate can use the same marker syntax without a new system.
+The Shoals `elwin_shoals_entry_rooms.des` map also demonstrates
+`: vault.validate("has_exit")`: after water substitutions, its named Lua
+method checks that the branch stair can reach an edge of the map. A false
+result rejects that map variant before any of its cells enter the level.
+
 To make another one-shot movement marker, record a `MARKER` effect in a
 generation hook with `glyph` and an `identity` of the form
 `vault_trigger:<module>.<method>`. Place the glyph in the map. Define

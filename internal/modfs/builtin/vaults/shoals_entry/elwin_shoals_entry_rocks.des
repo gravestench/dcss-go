@@ -1,0 +1,17 @@
+# Rock and water geometry creates a jagged shore around the gate.
+# The keyed O feature becomes the saved reciprocal branch stair.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des
+NAME:   elwin_shoals_entry_rocks
+TAGS:   shoals_entry transparent
+KFEAT:  O = enter_shoals
+MAP
+.WW...W..
+WxxW..xWW
+WWxxWxxx.
+.WW..WW..
+.WW.O.xW.
+W..W...WW
+.xWW.WWW.
+Wxx.WxxW.
+.x....xx.
+ENDMAP

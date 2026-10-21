@@ -1,0 +1,9 @@
+# This one-cell gate balances the entry pool without adding a large encounter.
+# The keyed O feature becomes the saved reciprocal branch stair.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des
+NAME:  shoals_dummy_entry
+TAGS:  shoals_entry transparent
+KFEAT: O = enter_shoals
+MAP
+O
+ENDMAP

@@ -1,0 +1,24 @@
+# The stream layout shapes the landing around its keyed branch stair.
+# The keyed O feature becomes the saved reciprocal branch stair.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des
+NAME:   elwin_shoals_entry_stream
+TAGS:   shoals_entry transparent
+KFEAT:  O = enter_shoals
+NSUBST: Z = 4:1 / *:W
+KFEAT:  1 = W
+KMONS:  1 = merfolk / merfolk siren
+MAP
+..xxx
+xZ..x
+x.Z.xx
+xxZ..x
+ xZZ.xx
+ xxZx.x
+  xZO.x
+ xxZx.x
+ xZZ.xx
+xxZ..x
+x.Z.xx
+xZ..x
+..xxx
+ENDMAP

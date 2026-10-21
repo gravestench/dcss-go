@@ -7,5 +7,7 @@ return {
     SNAKE_ENTRY = "snake_entry",
     SLIME = "slime",
     SLIME_ENTRY = "slime_entry",
+    SWAMP_ENTRY = "swamp_entry",
+    SHOALS_ENTRY = "shoals_entry",
     TEMPLE_ENTRY = "temple_entry",
 }

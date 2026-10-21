@@ -1,0 +1,22 @@
+# Centaur and plant pools make a wide land approach to the Shoals stair.
+# The keyed O feature becomes the saved reciprocal branch stair.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des
+NAME:  minmay_shoals_entry_centaurs
+TAGS:  shoals_entry transparent
+MONS:  centaur / nothing w:5, plant / nothing w:20
+KFEAT: O = enter_shoals
+MAP
+   .......
+  .2222222.
+ .222...222.
+.222.222...2.
+.22.2222222.2
+.2.22.112222.
+.2.221O1222.2
+.2.22.12.22.2
+.22.2222.222.
+.222....2222.
+ .222222222.
+  .22.2..2.
+   ..2.22.
+ENDMAP

@@ -89,6 +89,18 @@ func TestSpiderVaultMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/spider_vault_mod_test.lua")
 }
 
+// Sparse maps add Swamp and Shoals entrances through the same effective
+// DES catalog used by bundled source gates.
+func TestWaterEntryMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/water-entry-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/water_entry_mod_test.lua")
+}
+
 // A sparse mod adds a Swamp end vault through the same DES discovery path.
 func TestSwampEndMod(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/swamp-end-mod")

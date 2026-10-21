@@ -1,0 +1,24 @@
+# Patrolling monsters and repeated water lanes form an approach to the gate.
+# The keyed O feature becomes the saved reciprocal branch stair.
+# Source definition: crawl-ref/source/dat/des/branches/swamp.des
+NAME: nicolae_swamp_entry_splash_gauntlet
+TAGS: swamp_entry patrolling transparent
+KFEAT: O = enter_swamp
+MARKER: O = lua:fog_machine { pow_min = 8, pow_max = 12, delay = 25, \
+   size = 2, walk_dist = 1, spread_rate = 33 }
+SUBST: D = twww
+NSUBST: E = tt. / ., F = tt. / ., H = tt. / ., J = tt. / ., K = tt. / .
+NSUBST: L = tt. / .
+KMONS: 1 = swamp worm / bog body / nothing
+KMONS: 2 = electric eel
+KFEAT: 12 = w
+MAP
+    ......tttttttt
+  ...ttttttttttttttttt
+ ..tttw1wDDDw1wDDDw1wtt
+@.T...E.F.H.J.K.L...2tt
+@.T...E.F.H.J.K.L..Owtt
+ ..tttw1wDDDww1DDDw1wtt
+  ...ttttttttttttttttt
+    ......tttttttt
+ENDMAP

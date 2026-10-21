@@ -1,0 +1,10 @@
+# A sparse mod adds one Swamp gate without copying bundled maps.
+NAME: modded_swamp_gate
+TAGS: swamp_entry
+WEIGHT: 7
+KFEAT: O = enter_swamp
+MAP
+.....
+..O..
+.....
+ENDMAP

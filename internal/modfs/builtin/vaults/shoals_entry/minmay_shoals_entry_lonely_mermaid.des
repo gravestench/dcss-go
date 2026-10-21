@@ -1,0 +1,21 @@
+# The authored merfolk and water frame the stair in a compact shoreline room.
+# The keyed O feature becomes the saved reciprocal branch stair.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des
+NAME:   minmay_shoals_entry_lonely_mermaid
+TAGS:   shoals_entry no_monster_gen transparent
+ORIENT: float
+KMONS:  1 = merfolk siren
+KFEAT:  1 = w
+SUBST:  Y = W.
+SUBST:  y = Ww
+KFEAT:  O = enter_shoals
+MAP
+     xx...@...xx
+   xxxWY.....YWxxx
+ xxxyWWWY...YWWWyxxx
+xxwyWWWWxxxxxWWWWywxx
+xwwyOWyxx   xxyW1ywwx
+xwwwyyxx     xxyywwwx
+xxwwwxx       xxwwwxx
+ xxxxx         xxxxx
+ENDMAP

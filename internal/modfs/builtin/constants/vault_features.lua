@@ -11,6 +11,8 @@ local features = {
     ENTER_SNAKE = "enter_snake_pit",
     ENTER_SPIDER = "enter_spider_nest",
     ENTER_SLIME = "enter_slime_pits",
+    ENTER_SWAMP = "enter_swamp",
+    ENTER_SHOALS = "enter_shoals",
 }
 
 return features

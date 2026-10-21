@@ -1,0 +1,26 @@
+# Several connected rooms place the Shoals stair inside authored coastal terrain.
+# The keyed O feature becomes the saved reciprocal branch stair.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des
+NAME:   elwin_shoals_entry_rooms
+TAGS:   shoals_entry transparent
+KFEAT:  O = enter_shoals
+NSUBST: 1 = 4:1 / *:W
+KFEAT:  1 = W
+KMONS:  1 = merfolk / merfolk siren / nothing w:40
+: vault.validate("has_exit")
+# Source Lua: validate {{ return has_exit_from_glyph('O') }}
+MAP
+@...xxxxxxx....
+.+xxxWWwWWxxxx.
+.xWwWxWwWxWWWx.
+.xW1WxW1Wxw1Wx.
+.xWWWxxxxxWWWx.
+.xxxxxWWW+xxxx.
+...xWW1O1WWx...
+.xxxx+WWWxxxxx.
+.xWWWxxxxxWWWx.
+.xW1wxW1WxW1Wx.
+.xWWWxWwWxWwWx.
+.xxxxWWwWWxxx+.
+....xxxxxxx...@
+ENDMAP

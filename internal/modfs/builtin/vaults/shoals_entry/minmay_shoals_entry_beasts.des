@@ -1,0 +1,13 @@
+# The small beast pool adds a variable encounter at the marked branch gate.
+# The keyed O feature becomes the saved reciprocal branch stair.
+# Source definition: crawl-ref/source/dat/des/branches/shoals.des
+NAME:    minmay_shoals_entry_beasts
+TAGS:    shoals_entry transparent
+MONS:    wind drake, manticore
+NSUBST:  1 = 1 / 2 / .
+KFEAT:   O = enter_shoals
+MAP
+111
+1O1
+111
+ENDMAP
