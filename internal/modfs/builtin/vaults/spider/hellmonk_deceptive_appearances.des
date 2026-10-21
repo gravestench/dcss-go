@@ -1,0 +1,15 @@
+# Hellmonk deceptive appearances is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: hellmonk_deceptive_appearances
+DEPTH: Spider
+TAGS:   transparent ruin
+MONS:   jorogumo, shapeshifter
+MAP
+ xxxx       xxxx
+xx..xx     xx..xx
+x1......@......2x
+xx..xx     xx..xx
+ xxxx       xxxx
+ENDMAP

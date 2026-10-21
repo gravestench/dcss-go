@@ -66,6 +66,7 @@ func TestSpiderEndVaultAppearsOnTravel(t *testing.T) {
 
 	lair := followBranch(t, g, g.levels[lairParent], "BRANCH_LAIR")
 	lair = descendBranch(t, g, lair, spiderParent)
+	clearSpiderGateGuard(t, g, lair)
 	spider := followBranch(t, g, lair, "BRANCH_SPIDER")
 	parent := descendBranch(t, g, spider, 3)
 	end := descendBranch(t, g, parent, 4)

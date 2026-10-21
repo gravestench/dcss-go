@@ -1,0 +1,21 @@
+# Spider nest entry funnel web is a source Spider entrance.
+# The keyed O cell carries this entrance into Spider; its authored hazards stay with that gate.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: spider_nest_entry_funnel_web
+TAGS:   spider_entry patrolling no_monster_gen
+KFEAT:  O = enter_spider_nest
+KFEAT:  ^ = web / floor
+MONS:   w:5 wolf spider / jumping spider / redback / culicivora / w:15 nothing
+MAP
+      xxxxxx
+     xx11.1x
+   xxx.1O1xx
+   x^^^...x
+  xx^^^^^xx
+ xx^^^^^xx
+xx^^^^^xx
+@.^^^xxx
+@.^xxx
+@.xx
+@@x
+ENDMAP

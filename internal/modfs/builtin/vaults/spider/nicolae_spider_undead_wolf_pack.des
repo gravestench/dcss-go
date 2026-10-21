@@ -1,0 +1,25 @@
+# Nicolae spider undead wolf pack is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_undead_wolf_pack
+DEPTH: Spider
+TAGS:  patrolling transparent
+MONS:  wolf spider / wolf spider zombie / wolf spider simulacrum \
+       / spectral wolf spider / nothing
+SUBST: D = x.
+MAP
+    .........
+  .............
+ ....DDD.DDD....
+ ...DxxD.DxxD...
+...DxxxD.DxxxD...
+..Dxx1xD.Dx1xxD..
+..Dx11xD.Dx11xD..
+..Dx11xD.Dx11xD..
+..Dx11xD.Dx11xD..
+..Dx11.D.D.11xD..
+..Dxx1.D.D.1xxD..
+...Dxx.....xxD...
+ ...DxxxxxxxD...
+ENDMAP

@@ -1,0 +1,26 @@
+# Spiders nest ghost moth duel is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: spiders_nest_ghost_moth_duel
+TAGS:   no_item_gen no_monster_gen
+DEPTH:  Spider:3-
+MONS:   ghost moth, tarantella
+ITEM:   potion of ambrosia ident:type
+MAP
+    ........
+   ..xx..xx..
+  ..xx....xx..
+ ..xx......xx..
+..xx........xx..
+.xx....WW....xx.
+.x....WxxW....x.
+.x...WxxxxW...x.
+.x.2.WxxxxW.2.x.
+.x.22.WxxW.22.x.
+.xx....WW....xx.
+..xx...1....xx..
+ ..xx......xx..
+  ..xxddddxx..
+   ..xxxxxx..
+    ........
+ENDMAP

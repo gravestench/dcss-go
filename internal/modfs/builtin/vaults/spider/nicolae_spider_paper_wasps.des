@@ -1,0 +1,24 @@
+# Nicolae spider paper wasps is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_paper_wasps
+DEPTH: Spider
+TAGS:   no_item_gen no_trap_gen no_monster_gen patrolling
+ITEM:   any scroll
+MONS:   hornet, spark wasp
+SUBST:  E = x', D = x.
+NSUBST: ' = 2 / 122 / 2=12'' / ', ' = 2=d / 2=d. / .
+MAP
+  xxxx
+ xxxxxx
+xxEEEExx
+xxE''Exx
+xxx''Exx
+xD.xxxxx
+xD.Dxxxx
+xD.DDxD.@
+xxD....xx
+ xxDDxxx
+  xxxx
+ENDMAP

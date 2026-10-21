@@ -1,0 +1,18 @@
+# Spider nest entry a is a source Spider entrance.
+# The keyed O cell carries this entrance into Spider; its authored hazards stay with that gate.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: spider_nest_entry_a
+TAGS:   spider_entry patrolling no_monster_gen transparent
+KFEAT:  O = enter_spider_nest
+MONS:   redback w:5 / jumping spider w:5 / nothing w:30
+MAP
+.WWW.WWW.
+W.WW.WW.W
+WW.W.W.WW
+WWW111WWW
+...1O1...
+WWW111WWW
+WW.W.W.WW
+W.WW.WW.W
+.WWW.WWW.
+ENDMAP

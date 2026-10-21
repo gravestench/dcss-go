@@ -1,0 +1,28 @@
+# Nicolae spider stair cavern is a source Spider vault.
+# KFEAT turns authored MAP glyphs into terrain features after the map is fitted.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: nicolae_spider_stair_cavern
+TAGS:
+DEPTH:   Spider:2-
+SHUFFLE: {[(
+SUBST:   D = .x, . = .:100 ^:5
+KFEAT:   ^ = web trap
+MAP
+  xxxxxxxxxx
+ xxDDDDDDDDxxx
+xxD.D...D.DDDxx
+xD.D.DDD.D..DDxx
+xDD.DDxDDDDD.DDxx
+xD.DDDxxxxxDD.DDxx
+xD.D.DDDDxxD.D.DDx
+xDD.D...DDxDD.D..@
+xxDDD.{..DxxDDDD.@
+xDD.D...DDxDD.D..@
+xD.D.DDDDxxD.D.DDx
+xD.DDDxxxxxDD.DDxx
+xDD.DDxDDDDD.DDxx
+xD.D.DDD.D..DDxx
+xxD.D...D.DDDxx
+ xxDDDDDDDDxxx
+  xxxxxxxxxx
+ENDMAP

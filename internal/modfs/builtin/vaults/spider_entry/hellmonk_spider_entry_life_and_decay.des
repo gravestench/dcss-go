@@ -1,0 +1,27 @@
+# Hellmonk spider entry life and decay is a source Spider entrance.
+# The keyed O cell carries this entrance into Spider; its authored hazards stay with that gate.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: hellmonk_spider_entry_life_and_decay
+TAGS: spider_entry no_monster_gen no_trap_gen ruin
+MONS:  culicivora
+: vault.run("decay.redback")
+# Source Lua: :      dgn.delayed_decay(_G, '%', 'redback corpse')
+KFEAT: O = enter_spider_nest
+KFEAT: ^ = web
+SUBST: . = ^:1 .:25
+NSUBST: % = 1:1 / *=1%%%
+MAP
+  xxxxxxx@@@xxxxxxx
+  xxxxxxxx.xxxxxxxx
+ xxx%..xx.x.xx..%xxx
+xxx....x.x.x.x....xxx
+xx%...x.x.x.x.x...%xx
+xxx....x.x.x.x....xxx
+ xxx%..xx.x.xx..%xxx
+  xxxxxxx%.%xxxxxxx
+    xxxx.....xxxx
+     xxx%...%xxx
+      xxx...xxx
+       xxxOxxx
+        xxxxx
+ENDMAP

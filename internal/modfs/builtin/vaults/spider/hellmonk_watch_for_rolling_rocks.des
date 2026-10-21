@@ -1,0 +1,29 @@
+# Hellmonk watch for rolling rocks is a source Spider vault.
+# KFEAT turns authored MAP glyphs into terrain features after the map is fitted.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: hellmonk_watch_for_rolling_rocks
+DEPTH:  Spider, !Spider:$
+WEIGHT: 5
+TAGS:   no_trap_gen no_item_gen no_monster_gen
+MONS:   boulder beetle, jumping spider
+KFEAT:  ^ = shaft trap
+MAP
+    xxxxx
+    x1.2x
+    x.x.x
+    x.x*x
+    x.xxx
+   xx1x
+   x..x
+   x..x
+   xx.x
+    x1x
+  xxx.xxx
+ xx.....xx
+xx.1.^...xx
+xx..^^^..xx
+xx...^...xx
+ xx..x..xx
+  x+xxxxx
+   @
+ENDMAP

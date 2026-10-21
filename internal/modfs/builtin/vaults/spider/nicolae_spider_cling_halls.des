@@ -1,0 +1,29 @@
+# Nicolae spider cling halls is a source Spider vault.
+# ORIENT lets this authored shape join the regular Spider placement stage rather than minivaults.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: nicolae_spider_cling_halls
+DEPTH:  Spider:2-, !Spider:$
+ORIENT: float
+TAGS:   no_pool_fixup extra
+NSUBST: D = 2=w / x, E = 2=w / x, F = 2=w / x
+SUBST:  ' = ..wx, . = W...., [ = [{()}], H = x_, J = xw
+KMASK:  Ww = no_monster_gen
+CLEAR: _
+MAP
+ Hxx.......xxH
+Hxxww'w'w'wwxxH
+HxJwwDwEwFwwJxH
+HxJwwDwEwFwwJxH
+HxJwwDwEwFwwJxH
+HxJwwDwEwFwwJxH
+HxJwwDwEwFwwJxH
+HxJww'w'w'wwJxH
+HxJww.....wwJxH
+HxJww..[..wwJxH
+HxJww.....wwJxH
+HxJwwwwwwwwwJxH
+HxJwwwwwwwwwJxH
+HxJJJJJJJJJJJxH
+HxxxxxxxxxxxxxH
+ HHHHHHHHHHHHH
+ENDMAP

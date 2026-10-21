@@ -1,0 +1,27 @@
+# Nicolae spider jumping sub lava is a source Spider vault.
+# The jumping parent selects this tagged helper to fill a gap; its own substitutions shape the gap.
+# Source definition: crawl-ref/source/dat/des/branches/spider_jumping.des.
+NAME: nicolae_spider_jumping_sub_lava
+# Source setup tags are visible before helper selection.
+TAGS: unrand no_pool_fixup nico_jumpspide transparent
+WEIGHT:  1
+SHUFFLE: PQRS
+NSUBST:  Q = . / l, R = . / l, S = . / l
+SUBST:   P = .
+# Clouds are turned off for lava, since obstructing LOS defeats the whole
+# point of the vault.
+KPROP:   l = no_cloud_gen
+: vault.run("jumping_setup.configure_unique")
+# Source Lua: : nicolae_spider_jumping_setup(_G, false)
+MAP
+--www
+..W..w
+..ww.W-
+WwPlllQ-
+.wlP1QlWw
+..l111lw..
+.wlS1Rlw..
+WwSlllRwW-
+.1.W....w-
+..ww..www-
+ENDMAP

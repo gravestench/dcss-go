@@ -1,0 +1,17 @@
+# Guppyfry hornet nest is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: guppyfry_hornet_nest
+DEPTH: Spider
+TAGS:   no_monster_gen no_trap_gen uniq_hornetnest
+MONS:   hornet / nothing
+SUBST:  - = wW.%
+MAP
+@WxxxxxxxxxxxxxxW@
+xWW....WWWW....WWx
+xxWW--WW--WW--WWxx
+ xxWWWW1111WWWWxx
+  xxWW..11..WWxx
+   xxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,22 @@
+# Spider nest entry rubble is a source Spider entrance.
+# The keyed O cell carries this entrance into Spider; its authored hazards stay with that gate.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: spider_nest_entry_rubble
+TAGS:   spider_entry patrolling no_monster_gen transparent
+KFEAT:  O = enter_spider_nest
+KMONS:  O = wolf spider / tarantella / redback / jumping spider / culicivora
+SUBST:  x = ..xx^
+KFEAT:  ^ = web
+MAP
+   xxxxx
+ @xxxxxxxx
+ x.xxxxxxx
+xxx.xxxxxxx
+xxxx.xxxxxx
+xxxxxOxxxxx
+xxxxxxxxxxx
+xxxxxxxxxxx
+ xxxxxxxxx
+ xxxxxxxxx
+   xxxxx
+ENDMAP

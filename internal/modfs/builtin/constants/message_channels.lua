@@ -8,6 +8,7 @@ local channels = {
     SOUND = "sound",
     READ = "read",
     MONSTER = "monster",
+    VAULT = "vault",
 }
 
 return channels

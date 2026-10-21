@@ -1,0 +1,25 @@
+# Nicolae spider entry tight spaces is a source Spider entrance.
+# The keyed O cell carries this entrance into Spider; its authored hazards stay with that gate.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: nicolae_spider_entry_tight_spaces
+TAGS: spider_entry no_pool_fixup no_monster_gen no_trap_gen
+KFEAT: O = enter_spider_nest
+NSUBST: A = 2:x / '
+SUBST: X = xxx', ' = .....^^1
+KFEAT: ^ = web
+KMONS: 1 = redback / jumping spider / culicivora
+MAP
+ xxxxxxxxx
+xxXxXxXxXxx
+xXx'x'x'xXx
+xx'x'xAx'xxx
+x'xXxXxXx'xx
+@..x'xAx.1.w@
+@..'x'x'1O1w@
+@..x'xAx.1.w@
+x'xXxXxXx'xx
+xx'x'xAx'xxx
+xXx'x'x'xXx
+xxXxXxXxXxx
+ xxxxxxxxx
+ENDMAP

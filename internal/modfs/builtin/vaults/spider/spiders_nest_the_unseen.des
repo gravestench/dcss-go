@@ -1,0 +1,27 @@
+# Spiders nest the unseen is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: spiders_nest_the_unseen
+TAGS:   no_item_gen no_monster_gen
+DEPTH:  Spider:3-
+MONS:   patrolling ghost moth
+SUBST:  | = %%d, * = ..%%d
+ITEM:   potion of ambrosia ident:type
+MAP
+     ........
+    ..xxxxxx..
+   ..xx$$$$xx..
+  ..xx......xx..
+ ..xx........xx..
+ .xx..........xx.
+..x*...........x.
+.xx|1............
+.xx|.............
+..x*...........x.
+ .xx..........xx.
+ ..xx........xx..
+  ..xx......xx..
+   ..xx$$$$xx..
+    ..xxxxxx..
+     ........
+ENDMAP

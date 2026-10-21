@@ -1,0 +1,40 @@
+# Nicolae spider mines 1 is a source Spider vault.
+# The named Lua hook makes source-dependent choices here; the MAP below fixes their placement.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: nicolae_spider_mines_1
+DEPTH:  Spider, !Spider:$
+ORIENT: southwest
+TAGS:   uniq_spidermines
+KMONS:  z = jumping spider w:5 / wolf spider w:3 / redback w:1 / \
+            tarantella w:1 / nothing w:96
+KITEM:  z = any armour w:5 / any weapon w:5 / gold w:1 / nothing w:50
+KFEAT:  z = web / floor w:60
+KFEAT:  X = rock_wall
+SUBST:  B = z.., z = v:1 z:14
+FTILE:  Xzvc = floor_orc
+TILE:   X = wall_orc
+TILE:   c = wall_stone_smooth
+COLOUR: Xv = brown
+: vault.run("decay.orc_skeleton")
+# Source Lua: : dgn.delayed_decay(_G, 'v', 'orc skeleton')
+MAP
+xxxxxxxxxxxxxxx
+xxxxxxxx......xx
+xxxxxx.....x...xx
+xxxx.......xx...@
+xxxx....BBBxx...@
+xxxx.xxxxBBXxx..@
+xxxxxxXXXBBBXxxxx
+xxxxxXXXzzzzXXXxx
+xxxXXXXzzzzzzXXXx
+xxXXXzzzzzzzzzXXx
+xXXXzzzzzzzzzzXXx
+xXXzzzzzzzzzzXXxx
+xXXzzzzzzzzzXXxx
+xXXzzzzzzzzzXXx
+xxXXzzzzzzzzXXx
+xxxXXzzzzzzXXxxx
+xXXXXzzzzzzXXXXx
+xXccccccccccccXx
+xXccccccccccccXx
+ENDMAP

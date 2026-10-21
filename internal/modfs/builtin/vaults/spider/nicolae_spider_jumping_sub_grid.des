@@ -1,0 +1,23 @@
+# Nicolae spider jumping sub grid is a source Spider vault.
+# The jumping parent selects this tagged helper to fill a gap; its own substitutions shape the gap.
+# Source definition: crawl-ref/source/dat/des/branches/spider_jumping.des.
+NAME: nicolae_spider_jumping_sub_grid
+# Source setup tags are visible before helper selection.
+TAGS: unrand no_pool_fixup nico_jumpspide transparent allow_dup
+NSUBST: M = F / w, N = F / w, O = H / w, P = H / w, Q = H / w, R = H / w
+NSUBST: F = w / W, H = w / W, p = w / ., q = w / ., r = w / ., s = w / 1
+SUBST:  S = w.
+: vault.run("jumping_setup.configure_repeatable")
+# Source Lua: : nicolae_spider_jumping_setup(_G, true)
+MAP
+-wwww
+-w.1ww
+wwwppR.
+wSwppR1.
+.SwOOwQQw
+1.MqqPrrww
+..MqqPrr1w
+wFwNNwww.w
+ssF.1SSwww
+ssw...ww--
+ENDMAP

@@ -1,0 +1,55 @@
+# Mumra spider spiderweb is a source Spider vault.
+# KMONS assigns authored monster requests to MAP glyphs so placement can create their entities.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: mumra_spider_spiderweb
+TAGS:    no_item_gen no_monster_gen no_pool_fixup
+ORIENT:  float
+DEPTH:   Spider, !Spider:$
+WEIGHT:  5
+# Water etc.
+SUBST:   w = z
+SUBST:   W = W w:5 ^:3 x:2
+SUBST:   . = . W:4
+SUBST:   z = W. ^:5
+SUBST:   X = w x
+KFEAT:   ^ = web
+# Monster sets, and some items
+NSUBST:  1 = 2:t / *:w
+SUBST:   2 = 2 *:4
+KMONS:   2 = tarantella / redback w:12 / jumping spider w:8 / wolf spider w:5
+KMONS:   3 = redback
+SUBST:   4 = 4 *:3
+KMONS:   4 = jumping spider / wolf spider w:5 / redback w:15
+SUBST:   6 = 6 *:2
+KMONS:   6 = redback / wolf spider w:4 / jumping spider w:1
+SUBST:   7 = 7 .:75
+KMONS:   7 = redback
+KITEM:   t = potion of ambrosia ident:type
+MAP
+     ..........   ......  ........
+     .xwxxxxxx3....xxxx....xxxxwx..
+     .xxwxx66xx..xxxWWxxxxxx66wxxx.
+     .x6xwwwxxxxxxWW.7.WWxxxxxw66x.
+     .xxxxxxwxWW.7..WWW.7.WWWxxwxx.
+     ..xxxxwW7..WWWXxxxWWW...7wxx3.
+     ...xxxW.WwxxxxxxxxxxxXXWw.Wxx..
+   ...xxxxW.Wxxwwx4xxxxxxxxxxwW.Wxx..
+  .3xxxxxW.2xxxxxwwxxxxxxxxxwxxW.Wxx...
+  .xxxxx7.WxxxxxxxxwwxxxxxxwxxxxW7Wxxx.
+  .x4xx.WWxxxxxxx2...w.22.wxxxxxxW.www.
+  .xxw.WXxxxxxx2..2|x2w..w.xxxxwwwW.Wx.
+ ..xx7WXxxxxx2..2.x2www.w..2wwwxxxW7Wx.
+..xxW.Wxxxxx2.x...ww11wwxwww2xxxxxXW.x.
+.xxW.Wxxxxxxx..wwwww11www...2xxxxxXW.x.
+3xW.Wxxxxx4wwww.x..www.x.www.2xxxxXW7x.
+.xW.WWxxxwwxxxx....x........wxxxxXW.xx.
+.wwW..WWwxxxxxxxxx......xxxxxw4xxW.Wx..
+.xxWWW.7.WWWxxxxxxxxxxW.WWWWxwxxW7Wxx.
+..xxxxWWW.7.WWXxxxxxxxxW7...WWwWW.Wx..
+ ....xxxxWWW.WWWXXxxxWWWxxWW.....Wxx3
+    ....xxxxW.7WWWWWWxxxx...WWWWWxx..
+       ..3.xxxx...WWW.7..WWWWxxxwx..
+          ...xxxx.......WWWWxx.....
+            ....xxxxxxxxxxxxxx.
+               ........3.......
+ENDMAP

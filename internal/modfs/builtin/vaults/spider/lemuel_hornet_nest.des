@@ -1,0 +1,31 @@
+# Lemuel hornet nest is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: lemuel_hornet_nest
+DEPTH: Spider
+TAGS:   uniq_hornetnest
+WEIGHT: 2
+MONS:   hornet
+SUBST:  1=1 .:15
+SUBST:  ?=a.
+COLOUR: a = brown
+TILE:   a = wall_wax
+SUBST:  a = x
+MAP
+     a?@?a
+     a?.?a
+  aaaaa.aaaaa
+ aa111a.a111aa
+aa111aa.aa111aa
+a111aaa.aaa111a
+a?1.??a.a??.1?a
+aa?...a.a...?aa
+ aaa?.....?aaa
+   aaa?.?aaa
+     aa.aa
+      a.a
+      a.a
+      a*a
+      aaa
+ENDMAP

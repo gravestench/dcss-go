@@ -1,0 +1,26 @@
+# Spiders nest hornet nest is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: spiders_nest_hornet_nest
+DEPTH: Spider
+TAGS:   no_trap_gen uniq_wasphive
+MONS:   hornet
+NSUBST: 1 = 1:% / 1:1 / * = %1
+SUBST:  a = .a, A = a
+COLOUR: a = brown
+TILE:   a = wall_wax
+SUBST:  a = x
+KPROP:  1% = no_tele_into
+MAP
+  ......
+ ..aaaa..
+..aAAAAA..
+.amA111Aa.
+.aA1111Aa.
+.aA1111Aa.
+.aAA11Ama.
+..aAAAAa..
+ ..aaaa..
+  ......
+ENDMAP

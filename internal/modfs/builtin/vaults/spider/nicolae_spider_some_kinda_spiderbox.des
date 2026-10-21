@@ -1,0 +1,22 @@
+# Nicolae spider some kinda spiderbox is a source Spider vault.
+# Its DES geometry is the gameplay definition; the Spider catalog selects it by source depth and weight.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_some_kinda_spiderbox
+DEPTH: Spider
+TAGS:   transparent
+NSUBST: E = . / D
+SUBST:  D = xx., 0 = 0. 9:2
+MAP
+...........
+.D.xDxDx.D.
+..DEDDDED..
+.xEx0x0xEx.
+.DD00000DD.
+.xDx000xDx.
+.DD00000DD.
+.xEx0x0xEx.
+..DEDDDED..
+.D.xDxDx.D.
+...........
+ENDMAP

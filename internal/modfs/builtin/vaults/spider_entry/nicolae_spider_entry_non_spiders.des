@@ -1,0 +1,22 @@
+# Nicolae spider entry non spiders is a source Spider entrance.
+# The keyed O cell carries this entrance into Spider; its authored hazards stay with that gate.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: nicolae_spider_entry_non_spiders
+TAGS: spider_entry ruin_lair transparent
+NSUBST: 1 = 21 / 1
+KFEAT: O = enter_spider_nest
+KMONS: 1 = scorpion w:20 / worm / giant cockroach
+KMONS: 2 = demonic crawler / boulder beetle / torpor snail
+MAP
+...........
+..xx...xx..
+.xxxx.xxxx.
+.xx1x.x1xx.
+..xx1.1xx..
+.....O.....
+..xx1.1xx..
+.xx1x.x1xx.
+.xxxx.xxxx.
+..xx...xx..
+...........
+ENDMAP

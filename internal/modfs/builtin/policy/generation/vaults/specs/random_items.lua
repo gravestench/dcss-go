@@ -18,6 +18,8 @@ function random_items.describe(name, depth)
 
     if name == requests.ANY_WEAPON then
         result.class_id = classes.OBJ_WEAPONS
+    elseif name == requests.ANY_ARMOUR then
+        result.class_id = classes.OBJ_ARMOUR
     elseif name == requests.ANY_AMULET or
         name == requests.ANY_RING or
         name == requests.ANY_JEWELLERY then

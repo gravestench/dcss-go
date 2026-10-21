@@ -1,0 +1,44 @@
+# Spiders nest a is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: spiders_nest_a
+TAGS:    no_item_gen no_monster_gen no_pool_fixup
+DEPTH:   Spider, !Spider:$
+WEIGHT:  5
+ORIENT:  southeast
+MONS:    scorpion
+MONS:    scorpion / emperor scorpion w:1
+MONS:    redback / nothing w:25
+MONS:    redback / wolf spider
+MONS:    culicivora / jumping spider / tarantella w:30
+MONS:    emperor scorpion / demonic crawler / nothing
+MAP
+@@@x
+@..xxx
+@...xxx       xxxxxxxx
+xx...xxxxx   xxWWWWxxxxx
+ xx...xxxxx xxxWW.Wxxxxxxxx
+  xx...xxxxxxxxW.3.xxxxxxxxxxxxxxx
+   xx....xxxxx......xxxxxxxxxxxxxxxxxx
+   xxx...xxxx...xx...xxxxxxxxxxxxxxxxx
+   xxx....xx...xxxx...xxxxxW4**xxxxxxxx
+    xxxx.1111.xxxxxx..WWWxxWW4*xxxxxxxxx
+     xxxx1111xxxxxxxx..WWxxWWW4xxxxxxxxxxx
+      xxx1111xxxxxxxx...WxxWWWWxxxxxxxxxxx
+     xxx.1111.xxxxxx..3.WxxxWWxxxxxxxxxxxx
+    xxx...xx...xxxx.....xxxxWWxxxxxxxxxxxx
+  xxxx...xxxx...xx...x..xxxxWWxxxxxxxxxxxx
+  xW....xxxxxx.2222.xx..xxxWWWWxxxxxxxxxxx
+ xx....xxxxxxxx2222xxx..xxxWWWWxxxxxxxxxxx
+ xx..3.xxxxxxxx2222xxx..xxxW..Wxxxxxx.**xx
+xxxW....xxxxxx.2222.xx..xx.....Wxxxxx..*xx
+xxxxxx...xxxx...xx...x..x...xx..Wxxx....xx
+ xxxxxx...xx...xxxx........xxxx..Wx...xxxx
+  xxxxxx......xxxxxx..44..xxxxxx.55..xxxxx
+  xxxxxxx............4554.......5665xxxxxx
+  xxxxxxxW..3........4554.......5665xxxxxx
+ xxxxxxxxWW..xxxxxxxW.44.Wxxxxxx.55.xxxxxx
+ xxxxxxxxxxxxxxxxxxxWW..WWxxxxxxxxxxxxxxxx
+ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

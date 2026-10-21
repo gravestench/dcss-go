@@ -1,0 +1,68 @@
+# Hangedman spider tarantella strand is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: hangedman_spider_tarantella_strand
+DEPTH: Spider
+TAGS:    extra transparent
+ORIENT:  north
+MONS:    tarantella
+# The size of the vault means this upped weight is actually akin
+# to the usual vault weight. The vault is highly random and ends
+# up being very unobtrusive for most Spider layouts, anyway.
+WEIGHT:  25
+# Very selectively, partially ruin the edge of the beats.
+NSUBST:  A = 1:. / 2 = X / *:x, B = 1:. / 2 = X / *:x
+NSUBST:  C = 1:. / 2 = X / *:x, D = 4:. / 4 = X / *:x
+NSUBST:  E = 1:X / *:x, F = 1:X / *:x, G = 1:X / *:x
+NSUBST:  H = 1:X / *:x, I = 1:X / *:x, J = 1:X / *:x
+NSUBST:  K = 1:X / *:x, L = 1:X / *:x, M = 1:X / *:x
+NSUBST:  N = 1:X / *:x, O = 1:X / *:x, P = 1:X / *:x
+# Even random trimming can have weighed styles to it.
+# TODO: the z SUBST here can generate pockets that will force a veto
+SUBST:   z : ^<>, ^ = xx', < = xx''', > = x'
+SUBST:   y : XYZ, X = xx., Y = xx..., Z = x.
+SUBST:   X : %*|, % = xxx.., * = x., | = xx...
+SUBST:   " : "`;, " = ..', ` = ...', ; = .'
+CLEAR:   '
+# The string here pushes the vault from the level border.
+MAP
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+                             '
+xzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzx
+xyyyyyyyyyyyyyyyyxzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+.................yzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz
+.................xyyyyyyyyyyyyyyyyyyxzzzzzzzzzzzzzzzzzzzzzzzzz
+.AAAA....BBBB.............1.........yzzzzzzzzzzzzzzzzzzzzzzzzz
+"AxxA.EE.BxxB.FF....................xyyyyyyyyyyyyyyyyyxzzzzzzz
+"AxxA.EE.BxxB.FF..GG.......JJ.........................yzzzzzzz
+.AAAA....BBBB.....GG.HH....JJ.KK......................xyyyyyyx
+.....................HH.II....KK.LL..CCCC....NN...............
+ .""..""..""..""........II.......LL..CxxC.MM.NN.OO.....DDDDDD.
+                 ....................CxxC.MM....OO.PP..DxxxxD.
+                 @"".""."".""."".""..CCCC..........PP..DxxxxD.
+                                    ...................DxxxxD.
+                                    @."".."".""."".""..DxxxxD.
+                                                      .DDDDDD.
+                                                      ........
+                                                      ...""...
+ENDMAP

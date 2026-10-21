@@ -1,0 +1,55 @@
+# Hangedman spider trapstep is a source Spider vault.
+# The named Lua hook makes source-dependent choices here; the MAP below fixes their placement.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: hangedman_spider_trapstep
+TAGS:   no_monster_gen no_pool_fixup patrolling allow_dup
+DEPTH:  Spider:1-2, Zot, !Zot:$
+KMONS:  0 = patrolling hornet
+KMONS:  1 = tarantella
+: vault.run("configure")
+# Source Lua: : if you.in_branch("Zot") then
+# Source Lua directive: KMONS:  2* = jumping spider / orb spider w:5
+# Source Lua directive: KMONS:  3| = ghost moth / moth of wrath
+# Source Lua directive: KITEM:  | = any good_item
+# Source Lua directive: KFEAT:  ` = zot trap
+# Source Lua directive: KFEAT:  ^ = web trap w:8 / any trap w:1 / . w:7
+# Source Lua: :   if you.depth() == dgn.br_depth("Zot") - 1 then
+# Source Lua directive: KFEAT:  ~ = zot trap w:20 / web trap / . w:5
+# Source Lua: :   else
+# Source Lua directive: KFEAT:  ~ = zot trap w:15 / shaft trap / web trap w:5 / . w:5
+# Source Lua: :   end
+# Source Lua directive: NSUBST: 4 = 1:122 / 1:112
+# Source Lua directive: SUBST:  X = c
+# Source Lua: : else
+# Source Lua directive: KMONS:  2 = tarantella
+# Source Lua directive: KMONS:  3 = orb spider
+# Source Lua directive: KITEM:  | = superb_item / any good_item w:5
+# Source Lua directive: KFEAT:  ` = shaft trap
+# Source Lua directive: KFEAT:  ^ = web w:9 / web trap w:1 / . w:6
+# Source Lua directive: KFEAT:  ~ = shaft trap w:15 / web / . w:5
+# Source Lua directive: NSUBST: 4 = 1:2 / *:W
+# Source Lua directive: SUBST:  X = x
+# Source Lua: : end
+KITEM:  * = star_item / superb_item w:5
+KFEAT:  123*| = shallow_water
+KMASK:  . = !no_monster_gen
+SUBST:  ' = ..^
+MAP
+    ..''0''..
+   ..XX'''XX..
+  .0XX`'G'`XX0.
+ ..XX~'''''~XX..
+..XX~''^^^''~XX..
+.XX~''^xxx^''~XX.
+.X~''^Wx1xW^''~X.
+.X~'^xxwxwxx^'~X.
+.X~'^x4xwx4x^'~X.
+.X~'^xWwxwWx^'~X.
+.X~''^xW2Wx^''~X.
+.XX^''^xxx^^'^XX.
+..XXW''^^^''WXX..
+ ..XX3'''''3XX..
+  ..XXW*|*WXX..
+   ..XXXXXXX..
+    .........
+ENDMAP

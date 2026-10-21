@@ -1,0 +1,20 @@
+# Guppyfry spider mini 3 is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: guppyfry_spider_mini_3
+DEPTH: Spider
+MONS:   jumping spider / redback w:15 / nothing w:5
+MAP
+W....WW....W
+xW...WW...Wx
+.xWWWWWWWWx.
+.WxW.WW.WxW.
+.W.1WWWW1.W.
+WWWW1111WWWW
+.W.1WWWW1.W.
+.WxW.WW.WxW.
+.xWWWWWWWWx.
+xW...WW...Wx
+W....WW....W
+ENDMAP

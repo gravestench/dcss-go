@@ -1,0 +1,22 @@
+# Nicolae spider jumping sub notch is a source Spider vault.
+# The jumping parent selects this tagged helper to fill a gap; its own substitutions shape the gap.
+# Source definition: crawl-ref/source/dat/des/branches/spider_jumping.des.
+NAME: nicolae_spider_jumping_sub_notch
+# Source setup tags are visible before helper selection.
+TAGS: unrand no_pool_fixup nico_jumpspide transparent allow_dup
+NSUBST: M = W / w, F = F / w, NOD = 1=w, DEF = 1=w, Q = w / W
+SUBST:  NODEF = W, p = .-
+: vault.run("jumping_setup.configure_repeatable")
+# Source Lua: : nicolae_spider_jumping_setup(_G, true)
+MAP
+ww..w
+1Q.1w-
+.wQww--
+wQ.w----
+...w-pppp
+.MMww....p
+.M..O..1.p
+ww..wDwFFw
+1WwNw.E..p
+11w...w.1p
+ENDMAP

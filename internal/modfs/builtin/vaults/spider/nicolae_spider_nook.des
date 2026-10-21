@@ -1,0 +1,22 @@
+# Nicolae spider nook is a source Spider vault.
+# KMONS assigns authored monster requests to MAP glyphs so placement can create their entities.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_nook
+DEPTH: Spider
+TAGS:   no_monster_gen
+MONS:   wolf spider / redback w:15 / jumping spider / culicivora / nothing w:7
+KITEM:  d = | w:5 / * w:20 / $
+KMONS:  d = orb spider
+MAP
+   xx+xx
+  xx.x.xx
+ xx1x1x1xx
+xx.x.x.x.xx
+x1x1x1x1x1x
+xx.x.x.x.xx
+ xx1x1x1xx
+  xxdxdxx
+   xx*xx
+    xxx
+ENDMAP

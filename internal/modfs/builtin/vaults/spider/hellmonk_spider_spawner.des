@@ -1,0 +1,30 @@
+# Hellmonk spider spawner is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: hellmonk_spider_spawner
+DEPTH: Spider
+TAGS:   transparent no_monster_gen
+MONS:   broodmother
+SUBST:  0 = 0...
+MAP
+    x@x
+    x.x
+    x.x
+  xxx.xxx
+ xx.....xx
+ x.......x
+xx..0x0..xx
+x0..xxx..0x
+x..xxxxx..x
+x0xxxxxxx0x
+x..xxxxx..x
+x0.0xxx0.0x
+xx...x...xx
+ x.x...x.x
+ x0.0.0.0x
+ xx..x..xx
+  xx0.0xx
+   xx1xx
+    xxx
+ENDMAP

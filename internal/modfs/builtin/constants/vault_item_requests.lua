@@ -2,6 +2,7 @@
 -- Shared spellings let validation and population recognize the same rule.
 local requests = {
     ANY_WEAPON = "any weapon",
+    ANY_ARMOUR = "any armour",
     ANY_AMULET = "any amulet",
     ANY_RING = "any ring",
     ANY_JEWELLERY = "any jewellery",

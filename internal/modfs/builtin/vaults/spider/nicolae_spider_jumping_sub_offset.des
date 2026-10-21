@@ -1,0 +1,21 @@
+# Nicolae spider jumping sub offset is a source Spider vault.
+# The jumping parent selects this tagged helper to fill a gap; its own substitutions shape the gap.
+# Source definition: crawl-ref/source/dat/des/branches/spider_jumping.des.
+NAME: nicolae_spider_jumping_sub_offset
+# Source setup tags are visible before helper selection.
+TAGS: unrand no_pool_fixup nico_jumpspide transparent allow_dup
+NSUBST: M = W / w, N = W / w, O = W / w, D = W / w
+: vault.run("jumping_setup.configure_repeatable")
+# Source Lua: : nicolae_spider_jumping_setup(_G, true)
+MAP
+ZZZZ-
+wwwww-
+w...N.-
+ww..N..-
+.W.wwOOww
+.www1..D..
+.W.111.D..
+ww..1www..
+wWwMMwwww-
+.ww...w---
+ENDMAP

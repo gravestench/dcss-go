@@ -1,0 +1,22 @@
+# Nicolae spider jumping sub empty is a source Spider vault.
+# The jumping parent selects this tagged helper to fill a gap; its own substitutions shape the gap.
+# Source definition: crawl-ref/source/dat/des/branches/spider_jumping.des.
+NAME: nicolae_spider_jumping_sub_empty
+# Source setup tags are visible before helper selection.
+TAGS: unrand no_pool_fixup nico_jumpspide transparent
+WEIGHT: 5
+SUBST:  s = w., ! = w1, S = Z-
+: vault.run("jumping_setup.configure_unique")
+# Source Lua: : nicolae_spider_jumping_setup(_G, false)
+MAP
+.sS--
+1sS---
+.sZS---
+WwZS----
+.sZZS----
+1sZZSS----
+.sZZZZSS--
+WwZZZZZZSS
+1!wssswsss
+11W.1.W.1.
+ENDMAP

@@ -1,5 +1,5 @@
 -- Theory of operation: a scheduled branch entrance can own an authored DES
--- map on its parent floor. Temple, Snake, and Slime choose from effective
+-- map on its parent floor. Temple and Lair subbranches choose from effective
 -- source maps, then use the map's keyed entrance as the actual linked stair.
 -- The ordinary vault fitter handles terrain, connectors, and saved records.
 local branches = require("ids.branches")
@@ -18,6 +18,11 @@ local entry = {}
 -- Each entry family's DES tag, directory, and keyed terrain feature are
 -- data. New Lair branches can join this table without another selector.
 local source_entries = {
+    [branches.BRANCH_SPIDER] = {
+        family = families.SPIDER_ENTRY,
+        tag = tags.SPIDER_ENTRY,
+        feature = features.ENTER_SPIDER,
+    },
     [branches.BRANCH_SNAKE] = {
         family = families.SNAKE_ENTRY,
         tag = tags.SNAKE_ENTRY,
@@ -38,7 +43,7 @@ function entry.supports(branch_id)
 end
 
 -- Temple has its own catalog because its entry files are not ordinary
--- extra vaults. Snake and Slime live in the normal effective DES catalog.
+-- extra vaults. Lair subbranches live in the normal effective DES catalog.
 local function definitions(branch_id)
     local result = {}
 

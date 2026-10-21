@@ -1,0 +1,23 @@
+# Nicolae spider eight legs is a source Spider vault.
+# Its DES geometry is the gameplay definition; the Spider catalog selects it by source depth and weight.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_eight_legs
+DEPTH: Spider
+TAGS:   transparent
+NSUBST: 0 = 8=0 / .
+SUBST:  x = x:60 .
+MAP
+.............
+...x.x.x.x...
+...x.x.x.x...
+..xx.x.x.xx..
+.xx0x0x0x0xx.
+.x0xxxxxxx0x.
+.x0xxxxxxx0x.
+.xx0x0x0x0xx.
+..xx.x.x.xx..
+...x.x.x.x...
+...x.x.x.x...
+.............
+ENDMAP

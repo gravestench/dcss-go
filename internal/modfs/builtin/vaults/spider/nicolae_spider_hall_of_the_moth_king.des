@@ -1,0 +1,27 @@
+# Nicolae spider hall of the moth king is a source Spider vault.
+# KMONS assigns authored monster requests to MAP glyphs so placement can create their entities.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_hall_of_the_moth_king
+DEPTH: Spider
+ORIENT: west
+TAGS: transparent
+KMONS: M = moth of wrath / ghost moth / sun moth / butterfly w:1
+SHUFFLE: AB, CD
+SUBST: B : ....c, D : ....c, AC : ., G : GGGc, G = GGGG., c : ccccx, \
+       & = @...., 0 = 00., 0 = 0009
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxx.&.xx
+xxxxcccccccccccccccccccccc+ccx
+xxxxcG.GccG.GccG.GccG.GccG.Gcx
+xcccc.0.cc.0.cc.0.cc.0.cc.0.cx
+xc..9...AA...CC...AA...CC...cx
+xc.G..G....G....G....G....G.cx
+xc.M..0.BB.0.DD.0.BB.0.DD.0.cx
+xc.G..G....G....G....G....G.cx
+xc..9...AA...CC...AA...CC...cx
+xcccc.0.cc.0.cc.0.cc.0.cc.0.cx
+xxxxcG.GccG.GccG.GccG.GccG.Gcx
+xxxxcccccccccccccccccccccc+ccx
+xxxxxxxxxxxxxxxxxxxxxxxxx.@.xx
+ENDMAP

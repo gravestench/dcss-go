@@ -1,0 +1,25 @@
+# Nicolae spider checkerboard is a source Spider vault.
+# Its DES geometry is the gameplay definition; the Spider catalog selects it by source depth and weight.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_checkerboard
+DEPTH: Spider
+TAGS:  transparent
+SUBST: D = x:30 ., E = x .:30
+MAP
+.E.xxx.E.xxx.E.
+E.ExxxE.ExxxE.E
+.E.DxD.E.DxD.E.
+xxD.E.DxD.E.Dxx
+xxxE.ExxxE.Exxx
+xxD.E.DxD.E.Dxx
+.E.DxD.E.DxD.E.
+E.ExxxE.ExxxE.E
+.E.DxD.E.DxD.E.
+xxD.E.DxD.E.Dxx
+xxxE.ExxxE.Exxx
+xxD.E.DxD.E.Dxx
+.E.DxD.E.DxD.E.
+E.ExxxE.ExxxE.E
+.E.xxx.E.xxx.E.
+ENDMAP

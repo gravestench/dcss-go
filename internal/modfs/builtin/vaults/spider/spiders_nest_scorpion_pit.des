@@ -1,0 +1,44 @@
+# Spiders nest scorpion pit is a source Spider vault.
+# KMONS assigns authored monster requests to MAP glyphs so placement can create their entities.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: spiders_nest_scorpion_pit
+TAGS:   no_item_gen no_monster_gen no_pool_fixup
+ORIENT: southeast
+DEPTH:  Spider, !Spider:$
+KMONS:  1 = hornet
+KMONS:  2 = scorpion / wolf spider w:3
+KMONS:  3 = redback / nothing w:15
+KMONS:  74 = redback / wolf spider / nothing w:15
+KMONS:  5 = jumping spider / tarantella w:20
+KMONS:  6 = emperor scorpion / scorpion
+KMONS:  M = fungus
+KFEAT:  14 = W
+SUBST:  W = WW. , * = %%**WM , X = xxW
+SUBST:  _ : __x     , - : --x     , ' : ''x     , " : ""x
+NSUBST: _ = 2:x/*:. , - = 1:x/*:. , ' = 1:x/*:. , " = 2:x/*:.
+MAP
+                          xxxxxxxxxxxx
+          xxxxxxxxxxxxxxxxxxxxx''xxxxx
+         xxxxxXXX...WWWWWWxwww1x'xxxxx
+        xxxXWWWW...2WW....wwwww''xxxxx
+    xxxxxxxW...WWXXXxxxxWW.wxxxxxxxxxx
+   xxxxxxxX.WW2XXxxxx**xxWWxxxxxxxxxxx
+   x1wxxxXWWXXxxxxxx7**xx++xxxxxxxxxxx
+  xxwwwxxWWxxxxwwxxx+xxxx..Wxxxxxx""xx
+xxxxxwwxx++xwwwwww4x6xxx5..*Wwwww1""xx
+@..xxx.WW.WWWwwwww1x.3+...65*Wwwww1xxx
+@..WWWWW.WWWWwwwww1x6xxx6..*Wwwww1""xx
+@..xxx.WWWWWWwwwwxxx+xxxx..Wxxxxxx""xx
+xxxxxxxxx++xwwww1xx**xxxx++xxxxxxxxxxx
+   xxxxxx..xxwwwxx7**xxxxxWWxxxxxxxxxx
+      xxXWWxxx1xxxxxxxxxxWWWxxxxxxxxxx
+     xxxXWWxxxxxxX3WWWXXXWWxxxxxxxxxxx
+   xxxxxXWWxxxxxxXWWWWW.WW.Wxxxxxxxxxx
+  xxxxxxXWWWXxxxxXWWWWWW..WWwxxxxxxxxx
+  x__xxxwW.WWWxxXXX..XXxxWWWwwxxxxxxxx
+  x__xwwwwxW.WW.WW.3.Xxxxxxwwww--xxxxx
+  x__4wwwxxxxx.WWWWxxxxxxxxxxw1x-xxxxx
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxx--xxxxx
+   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

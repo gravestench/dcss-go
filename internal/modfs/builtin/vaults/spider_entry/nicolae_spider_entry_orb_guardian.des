@@ -1,0 +1,26 @@
+# Nicolae spider entry orb guardian is a source Spider entrance.
+# The keyed O cell carries this entrance into Spider; its authored hazards stay with that gate.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: nicolae_spider_entry_orb_guardian
+TAGS: spider_entry no_monster_gen no_pool_fixup no_trap_gen
+KPROP: 'W = no_tele_into
+NSUBST: a = ..x / .
+SUBST: W = w', X = x., Q = xxx@, ' = ...x, . = .....^
+KFEAT: O = enter_spider_nest
+KFEAT: ^ = web
+KMONS: O = orb spider
+MAP
+   QQQX@@XX
+ xxxxxXX..XX
+xxXXXXxxx..xx
+xX.....a..''x
+xx+wwW''''''xx
+xX..wW''''''xx
+xXO.wW''''''xx
+xX..wW''''''xx
+xx+wwW''''''xx
+xX.....a..''x
+xxXXXXxxx..xx
+ xxxxxXX..XX
+   QQQX@@XX
+ENDMAP

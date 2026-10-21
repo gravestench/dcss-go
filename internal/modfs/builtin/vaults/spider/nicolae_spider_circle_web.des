@@ -1,0 +1,30 @@
+# Nicolae spider circle web is a source Spider vault.
+# Its DES geometry is the gameplay definition; the Spider catalog selects it by source depth and weight.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_circle_web
+DEPTH: Spider
+TAGS: transparent extra
+MAP
+       ......x
+     ...xxxxxx..
+    ..xx.....xx..
+   .xx......x..xx.
+  .x....xxxxx....x.
+ ..x...x....xx...x..
+ .x...x....x..x...x.
+xxx..x...xxx...x..x..
+.x.xxx..x..xx...x..x.
+.x..x.xxx.x..x..x..x.
+.x..x..x.xxx.x..x..x.
+.x..x..x..x.xxx.x..x.
+.x..x...xx..x..xxx.x.
+..x..x...xxx...x..xxx
+ .x...x..x....x...x.
+ ..x...xx....x...x..
+  .x....xxxxx....x.
+   .xx..x......xx.
+    ..xx.....xx..
+     ..xxxxxx...
+       x......
+ENDMAP

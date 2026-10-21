@@ -1,0 +1,22 @@
+# Hellmonk spider entry not the bees is a source Spider entrance.
+# The keyed O cell carries this entrance into Spider; its authored hazards stay with that gate.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: hellmonk_spider_entry_not_the_bees
+TAGS: spider_entry no_monster_gen no_trap_gen
+MONS:  killer bee
+KMONS: O = meliai
+KFEAT: O = enter_spider_nest
+KFEAT: ; = iron_grate
+SUBST: A = ;., 1 = 1.
+MAP
+   .;;;.
+ .;;.A.;;.
+ ;...A...;
+.;.1;;;1.;.
+;..;1A1;..;
+;AA;AOA;AA;
+;..;1A1;..;
+.;.1;;;1.;.
+ ;...A...;
+ .;;;;;;;.
+ENDMAP

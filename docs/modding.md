@@ -2015,6 +2015,13 @@ For an ordinary vault, `: vault.run("configure")` in
 `vaults/arrival/example.des` resolves to the `configure(api)` method in
 `policy/generation/vaults/arrival/example.lua`. A reference such as
 `vault.run("shared.configure")` loads `shared.lua` in the same family.
+The method name is a declaration, not executable DES Lua. Define that method
+on the local table returned by the Lua module. The generation `api` exists
+only during map selection and placement; it is not the live game `ctx`.
+Use `api:emit` to insert a DES directive at the declaration's position or
+`api:record` to create a typed placement record. A hook that needs to act
+later, after the player moves, must record a persistent effect and leave its
+live behavior to a system.
 
 ### Dungeon layouts
 
@@ -2165,6 +2172,47 @@ with local depth, branch bottom, absolute depth, source RNG methods, and
 `api:emit`. Its choices are resolved before terrain and entities are
 placed. The nine `snake_end` files still own Snake:4's mandatory ending;
 ordinary Snake maps can also fit around it when their source rules allow.
+
+Spider uses the same entry, ordinary, helper, and end owners. The eleven
+`vaults/spider_entry/` maps compete for the scheduled Lair entrance, each
+with a keyed `KFEAT: O = enter_spider_nest`. The 66 ordinary Spider maps
+live in `vaults/spider/`; the 17 jumping definitions are in that directory
+too, but the `nico_jumpspide` helper tag confines their child maps to the
+jumping parent's `SUBVAULT` choice. Spider:4 still selects one of the nine
+mandatory `vaults/spider_end/` maps. To add an entry, ordinary map, or
+jumping helper, add a `.des` file to the corresponding family and give it a
+unique `NAME`. Use `DEPTH: Spider` or a narrower source range; separate
+files do not inherit another file's `default-depth` setting. Put any source
+script choice in a named hook under `policy/generation/vaults/spider_entry/`
+or `policy/generation/vaults/spider/` and call it at the intended point in
+the `.des` declaration block.
+
+For example, `vaults/spider/spiders_nest_spider_trap.des` declares
+`: vault.run("configure")`. Its method in
+`policy/generation/vaults/spider/spiders_nest_spider_trap.lua` records two
+marker identities before `SUBST` changes their source glyphs. Population
+then creates one saved ECS trigger entity per marker. The generic
+`systems/world_vault_triggers.lua` system observes player movement, finds a
+trigger at the entered cell, calls the named method in
+`policy/world/vault_trigger_callbacks/`, and consumes the trigger. The
+Spider callback warns at one marker and spawns awake redbacks around the
+other. The map hook decides *where* an effect belongs; the callback handles
+*what happens* when the player reaches it.
+The source warning also requests a `crawl.more()` acknowledgment. The
+current terminal client displays its message without a blocking prompt;
+message acknowledgment is a separate UI behavior still to port.
+
+To make another one-shot movement marker, record a `MARKER` effect in a
+generation hook with `glyph` and an `identity` of the form
+`vault_trigger:<module>.<method>`. Place the glyph in the map. Define
+`<method>(ctx, state)` on the table returned by
+`policy/world/vault_trigger_callbacks/<module>.lua`. The `state` is the
+saved `WORLD_VAULT_TRIGGER` component: `level_id`, `x`, `y`, `vault_id`,
+`record_index`, `callback_module`, and `callback_method`. Read live actors
+and terrain through `ctx`; store any continuing state in a component. The
+generic system runs after movement and before traps, only for the player,
+then destroys the trigger entity. Other `MARKER` identities are not treated
+as callbacks. See the Spider trap module and callback for a complete pair.
 
 ### Branch end vaults
 

@@ -1,0 +1,34 @@
+# Nicolae orb stairs large is a source Spider vault.
+# KFEAT turns authored MAP glyphs into terrain features after the map is fitted.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: nicolae_orb_stairs_large
+TAGS:   no_pool_fixup no_monster_gen
+DEPTH:  Spider:2-3
+ORIENT: float
+WEIGHT: 3
+MONS:   orb spider / redback
+SUBST:  s = x.
+SUBST:  . = ...^
+KFEAT:  ^ = web
+SHUFFLE: [{(<
+MAP
+     xxx@@@xxx
+    xxsx^^^xsxx
+   xxsss...sssxx
+  xxss...1...ssxx
+ xxs1.........1sxx
+xxss...wwwww...ssxx
+xss...^.www.^...ssx
+xxs..w.......w..sxx
+@^...ww...(.ww...^@
+@^.1.ww.[...ww.1.^@
+@^...ww...{.ww...^@
+xxs..w.......w..sxx
+xss...^.www.^...ssx
+xxss...wwwww...ssxx
+ xxs1.........1sxx
+  xxss...1...ssxx
+   xxsss...sssxx
+    xxsx^^^xsxx
+     xxx@@@xxx
+ENDMAP

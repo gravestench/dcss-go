@@ -1,0 +1,27 @@
+# Hellmonk test site is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: hellmonk_test_site
+DEPTH: Spider
+TAGS:   no_monster_gen no_trap_gen ruin transparent
+MONS:   radroach
+NSUBST: ' = 1:1 / * = x:4 .
+SUBST:  G = G..
+FTILE:  x.G1 = floor_sand
+TILE:   x = wall_sandstone
+TILE:   G = dngn_crumbled_column
+MAP
+     @
+  xxx.xxx
+ xxx...xxx
+ xG.....Gx
+ x.'''''.x
+ x.'xxx'.x
+ x.'xxx'.x
+ x.'''''.x
+ xG.....Gx
+ xxx...xxx
+  xxx.xxx
+     @
+ENDMAP

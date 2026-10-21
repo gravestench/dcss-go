@@ -1,0 +1,10 @@
+# A sparse layer contributes one keyed Spider entrance on a Lair floor.
+NAME: modded_spider_gate
+TAGS: spider_entry
+WEIGHT: 7
+KFEAT: O = enter_spider_nest
+MAP
+.....
+..O..
+.....
+ENDMAP

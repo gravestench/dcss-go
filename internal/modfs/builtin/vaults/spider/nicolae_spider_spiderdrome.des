@@ -1,0 +1,29 @@
+# Nicolae spider spiderdrome is a source Spider vault.
+# Its DES geometry is the gameplay definition; the Spider catalog selects it by source depth and weight.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_spiderdrome
+DEPTH: Spider
+TAGS:    transparent
+SHUFFLE: pqrsz/PQRSZ/FHJay/KLMNO
+SUBST:   przs = ., q = x., PQKLFH = x, RMJD = xw, EZOy = w., SNa_ = x_
+CLEAR:   _
+MAP
+__________sss__________
+_xxxxxxxxxqpqxxxxxxxxx_
+_xDDDDDDDDDrDDDDDDDDDx_
+_xDEEEEEEEEzEEEEEEEEDx_
+_xDE...............EDx_
+_xDE...............EDx_
+_xDE..EEEEEEEEEEE..EDx_
+_xDE..EDDDDDDDDDE..EDQS
+_xDE..EDxxxxxxxDE..ZRPS
+_xDE..EDDDDDDDDDE..EDQS
+_xDE..EEEEEEEEEEE..EDx_
+_xDE...............EDx_
+_xDE...............EDx_
+_xDOEEEEEEEEEEEEEyEEDx_
+_LMDDDDDDDDDDDDDDJDDDx_
+NKLxxxxxxxxxxxxxHFHxxx_
+NN______________aaa____
+ENDMAP

@@ -1,0 +1,42 @@
+# Nicolae spider corner is a source Spider vault.
+# KMONS assigns authored monster requests to MAP glyphs so placement can create their entities.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: nicolae_spider_corner
+DEPTH:  Spider, !Spider:$
+ORIENT: southwest
+MONS:   orb spider
+SHUFFLE: ABC, DEF, GH, IJ, abcdefghi
+SUBST:  AEFGI = x, BCDHJ = .
+NSUBST: a = 1:} / 1:] / 1:) / 1:1 / *:.
+KMONS:  bcdefghi = tarantella / redback w:15 / wolf spider / \
+        jumping spider / culicivora / orb spider / demonic crawler / \
+        scorpion / emperor scorpion / \
+        hornet / nothing w:100
+SUBST: X = xxxx^....0
+KFEAT: ^ = web / floor w:20
+MAP
+xxxxxxxxX...
+xxaaaa.xGG....XXX
+xxa.0^^^xGX......X
+xxxxHHxxxxxXX..0..X
+xxc...xCCCxxxX.....X
+xx0cc.CCCCCCxxXX^^..X
+xxx..cxxxCCbbxxX..^..@@@@
+xxAAAxxxx0.bbxxX...^...0.@
+xxAAxxxx...bbxxX^^X.^^....
+x.0^.BBB..xxxxX...X^^xXX...
+x.^^.BBB.^.0.....^^..xxX...
+xddXXxxxx^.......X....XxX..
+xddXxxxxxxxxx^^^XXx....xx^^
+xxxxxXXxDDD...0.xxxxx..xx..
+xxeeee.DDDDD....xXXx^..xI..
+xxX....DDDxEE...xX...^xxIIx
+xx..0.xxxxEEEFFFxx.0.xxxIIx
+xx..xxxEEEEEFFFFxx..Xx.^.xx
+xx^^^EEEExxFFFFxx...Xxiiiix
+xxx...EExx....xxx^^^xx.^.xx
+xxff..^xx^^.ggxxh...XxxJJJx
+xxff.^.0...xggxxhh...0^...x
+xxxxx^....xxxxxxxxh...^..xx
+xxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

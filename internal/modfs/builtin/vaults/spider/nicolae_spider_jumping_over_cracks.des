@@ -1,0 +1,35 @@
+# Nicolae spider jumping over cracks is a source Spider vault.
+# SUBVAULT fills the marked gaps with tagged jumping helpers before this parent is placed.
+# Source definition: crawl-ref/source/dat/des/branches/spider_jumping.des.
+NAME: nicolae_spider_jumping_over_cracks
+TAGS:     transparent no_exits
+DEPTH:    Spider
+ORIENT:   float
+SUBVAULT: P : nico_jumpspide
+SUBVAULT: Q : nico_jumpspide
+SUBVAULT: R : nico_jumpspide
+SUBVAULT: S : nico_jumpspide
+SUBST:    PQRS = -
+CLEAR:    -
+MAP
+     PPPPPQQQQQ
+    PPPPPPQQQQQQ
+   PPPPPPPQQQQQQQ
+  PPPPPPPPQQQQQQQQ
+ PPPPPPPPPQQQQQQQQQ
+PPPPPPPPPPQQQQQQQQQQ
+PPPPPPPPPPQQQQQQQQQQ
+PPPPPPPPPPQQQQQQQQQQ
+PPPPPPPPPPQQQQQQQQQQ
+PPPPPPPPPPQQQQQQQQQQ
+RRRRRRRRRRSSSSSSSSSS
+RRRRRRRRRRSSSSSSSSSS
+RRRRRRRRRRSSSSSSSSSS
+RRRRRRRRRRSSSSSSSSSS
+RRRRRRRRRRSSSSSSSSSS
+ RRRRRRRRRSSSSSSSSS
+  RRRRRRRRSSSSSSSS
+   RRRRRRRSSSSSSS
+    RRRRRRSSSSSS
+     RRRRRSSSSS
+ENDMAP

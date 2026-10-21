@@ -1,0 +1,28 @@
+# Nicolae spider cling ruins is a source Spider vault.
+# Its DES geometry is the gameplay definition; the Spider catalog selects it by source depth and weight.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: nicolae_spider_cling_ruins
+TAGS:    no_pool_fixup extra
+DEPTH:   Spider:2-
+SHUFFLE: [{(
+NSUBST:  D = wx / x, E = wx / x, F = wx / x, H = wx / x
+NSUBST:  J = 2=w / x, K = 2=w / x, L = 2=w / x, M = 2=w / x, N = ' / 'x / x
+SUBST:   O = x', ' = W..., P = xw
+KMASK:   Ww = no_monster_gen
+MAP
+xxxO'''''''Oxxx
+x'O'wwwwwww'O'x
+xO'OwJJJJJwO'Ox
+O'OOwwwwwwwOO'O
+'wwwPwDDDwPwww'
+'wMwwwwwwwwwKw'
+'wMwHw'N'wEwKw'
+'wMwHwN[NwEwKw'
+'wMwHw'N'wEwKw'
+'wMwwwwwwwwwKw'
+'wwwPwFFFwPwww'
+O'OOwwwwwwwOO'O
+xO'OwLLLLLwO'Ox
+x'O'wwwwwww'O'x
+xxxO'''''''Oxxx
+ENDMAP

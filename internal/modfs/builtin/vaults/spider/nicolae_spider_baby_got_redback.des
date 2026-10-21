@@ -1,0 +1,28 @@
+# Nicolae spider baby got redback is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_baby_got_redback
+DEPTH: Spider
+TAGS:   patrolling
+MONS:   redback
+SUBST:  D = x., E = x'
+SUBST:  ' = 1.
+MAP
+   xxxxx
+ xxxEExxxx
+xxEE''Dxxxxx
+xE''''Dxxxxxx
+xE'''''Dxxxxxx
+xE''''..xDDxxx
+xE''''....DDxx
+xE''''.Dx..Dxx
+xxE'''.xxD.Dxx
+ xxEEEDxxD.Dxx
+..xxxxxxDD.Dxx
+@..DDDxDD..Dxx
+.....DDD..DDxx
+ xDD.....DDxx
+ xxDDDDDDDxx
+  xxxxxxxxx
+ENDMAP

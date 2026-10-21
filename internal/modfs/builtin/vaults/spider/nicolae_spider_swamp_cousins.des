@@ -1,0 +1,28 @@
+# Nicolae spider swamp cousins is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_swamp_cousins
+DEPTH: Spider
+TAGS:   no_pool_fixup no_trap_gen transparent patrolling
+MONS:   ghost crab, vampire mosquito, tyrant leech
+NSUBST: . = 1 / 1. / 4=2 / 6=2. / 3=3 / 4=3.
+SUBST:  Z = wD, D = x., E = x', . = ...W, ' = .
+MAP
+xxxxxxxxxxxxx
+@EEExDZZZZZZxx
+E''EED.....ZZxx
+xEE'E....D..Zxxxx
+xxxE...D....DDxxxxx
+xxDDD...ZZ.D.DDxEEE
+xxD....ZZZZ...EEE'@
+ xZ..D.ZZZZ...E''EE
+ xZZ....ZZ..D..EEEx
+ xxZZ..D.......Dxxx
+ xxxZ.D...D...ZZxx
+ xxxEE.......ZZxx
+ xxEE'EDD...ZZxx
+ xxE'EExDDDZZxx
+  xE'EExxxxxxx
+  xEE@Exxx
+ENDMAP

@@ -1,0 +1,24 @@
+# Nicolae spider bzzzt is a source Spider vault.
+# KMONS assigns authored monster requests to MAP glyphs so placement can create their entities.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: nicolae_spider_bzzzt
+DEPTH:  Spider
+SUBST:  D = xw, S = w., E = x.
+NSUBST: w = 2=1 / 2=1w / 2=2 / 2=2w / w
+KMONS:  1 = electric eel
+KMONS:  2 = spark wasp
+KFEAT:  12 = w
+MAP
+    xxxxx
+  xxxDDDxxx
+ xxDDwwwDDxx
+xxDwwSSSwwDxx
+xDwSS...SSwDxx
+@....EEE..SwDx
+@....EEE..SwDx
+xDwSS...SSwDxx
+xxDwwSSSwwDxx
+ xxDDwwwDDxx
+  xxxDDDxxx
+    xxxxx
+ENDMAP

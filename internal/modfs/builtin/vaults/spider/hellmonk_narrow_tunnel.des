@@ -1,0 +1,23 @@
+# Hellmonk narrow tunnel is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: hellmonk_narrow_tunnel
+DEPTH: Spider
+TAGS:   transparent
+MONS:   steelbarb worm / demonic crawler
+NSUBST: . = 16 = 1... / *:.
+MAP
+   xxxx
+  xxxxxx
+ xx....xx
+xxx.xx.xxx
+xx..xx..xx
+xxx.xx.xxx
+xx..xx..xx
+xxx.xx.xxx
+xx..xx..xx
+xxx.xx.xxx
+@...xx...@
+xxxxxxxxxx
+ENDMAP

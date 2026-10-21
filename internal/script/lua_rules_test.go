@@ -78,6 +78,17 @@ func TestSnakeVaultMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/snake_vault_mod_test.lua")
 }
 
+// A sparse layer extends Spider entries, ordinary maps, and jumping helpers.
+func TestSpiderVaultMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/spider-vault-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/spider_vault_mod_test.lua")
+}
+
 // A sparse mod adds a Swamp end vault through the same DES discovery path.
 func TestSwampEndMod(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/swamp-end-mod")

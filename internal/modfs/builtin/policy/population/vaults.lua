@@ -17,6 +17,7 @@ local choice = require("policy.generation.vaults.specs.choice")
 local resolve = require("policy.generation.vaults.specs.resolve")
 local fog = require("policy.world.fog_machine_definitions")
 local slime_seal = require("policy.population.slime_seal")
+local vault_triggers = require("policy.world.vault_triggers")
 
 local vaults = {}
 
@@ -308,6 +309,10 @@ function vaults.materialize(ctx, level, excluded)
                 level_id = level.id,
                 index = record.index,
             }
+        elseif record.kind == effects.MARKER and
+            vault_triggers.is_record(record.identity) then
+            materialized[#materialized + 1] =
+                vault_triggers.materialize(ctx, level, record)
         elseif record.kind == effects.FEATURE and
             shop_spec.is_shop(record.identity) then
             materialized[#materialized + 1] =

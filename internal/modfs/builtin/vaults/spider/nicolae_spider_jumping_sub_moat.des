@@ -1,0 +1,21 @@
+# Nicolae spider jumping sub moat is a source Spider vault.
+# The jumping parent selects this tagged helper to fill a gap; its own substitutions shape the gap.
+# Source definition: crawl-ref/source/dat/des/branches/spider_jumping.des.
+NAME: nicolae_spider_jumping_sub_moat
+# Source setup tags are visible before helper selection.
+TAGS: unrand no_pool_fixup nico_jumpspide transparent allow_dup
+NSUBST: M = N / w, N = w / W, O = W / w, D = W / w, E = W / w, F = 1 / w
+: vault.run("jumping_setup.configure_repeatable")
+# Source Lua: : nicolae_spider_jumping_setup(_G, true)
+MAP
+www--
+w.www-
+w.1E...
+w..E.1.-
+wDDww..w-
+w.1.wwwww-
+w..MMwO.w-
+wNwM..O1w-
+F1N.1.O.w-
+1Fwwwwwwww
+ENDMAP

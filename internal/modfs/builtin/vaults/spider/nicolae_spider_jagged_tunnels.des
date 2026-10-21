@@ -1,0 +1,28 @@
+# Nicolae spider jagged tunnels is a source Spider vault.
+# Its DES geometry is the gameplay definition; the Spider catalog selects it by source depth and weight.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_jagged_tunnels
+DEPTH: Spider
+TAGS:  transparent
+SUBST: D = x:75 0 .
+MAP
+..xxxxxxxxxx
+...DDDDDDDDx
+x.........Dx
+xD..DDDDD.Dxxxx
+xD.D.DxxD.DDDDx
+xD.DDDxDD....Dx
+xD.DxxxD.DDD.Dxxxx
+xD.DxDDDDDxD.DDDDx
+xD.DDD.DxxDD....Dx
+xD....DDxxD.DDD.Dx
+xDDDD.DxDDDDDxD.Dx
+xxxxD.DDD.DxxxD.Dx
+   xD....DDxDDD.Dx
+   xDDDD.DxxD.D.Dx
+   xxxxD.DDDDD..Dx
+      xD.........x
+      xDDDDDDDD...
+      xxxxxxxxxx..
+ENDMAP

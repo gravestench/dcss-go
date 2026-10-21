@@ -3,6 +3,8 @@
 local tags = {
     DECOR = "decor",
     SNAKE_ENTRY = "snake_entry",
+    SPIDER_ENTRY = "spider_entry",
+    SPIDER_JUMPING_CHILD = "nico_jumpspide",
     SLIME_ENTRY = "slime_entry",
     TEMPLE_OVERFLOW_TROG = "temple_overflow_trog",
     TEMPLE_OVERFLOW_MAKHLEB = "temple_overflow_makhleb",

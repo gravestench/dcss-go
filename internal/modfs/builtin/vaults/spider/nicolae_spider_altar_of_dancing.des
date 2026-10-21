@@ -1,0 +1,28 @@
+# Nicolae spider altar of dancing is a source Spider vault.
+# KFEAT turns authored MAP glyphs into terrain features after the map is fitted.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_altar_of_dancing
+DEPTH: Spider
+TAGS:  transparent
+MONS:  tarantella
+KFEAT: _ = altar_uskayaw
+SUBST: D = x., - = x-
+CLEAR: -
+MAP
+ -----
+--xxxx
+-xxDDx
+-xDD..@
+-xD.xx
+-xD.Dxxx---
+-xDD.DDxxx---
+-xxDD.DDxxxx-
+--xxDD.DDDDx-
+ --xxDD111Dx-
+  --xxD1_1Dx-
+   -xxD111Dx-
+   --xDDDDDx-
+    -xxxxxxx-
+    ---------
+ENDMAP

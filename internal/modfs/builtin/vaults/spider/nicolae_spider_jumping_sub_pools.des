@@ -1,0 +1,22 @@
+# Nicolae spider jumping sub pools is a source Spider vault.
+# The jumping parent selects this tagged helper to fill a gap; its own substitutions shape the gap.
+# Source definition: crawl-ref/source/dat/des/branches/spider_jumping.des.
+NAME: nicolae_spider_jumping_sub_pools
+# Source setup tags are visible before helper selection.
+TAGS: unrand no_pool_fixup nico_jumpspide transparent allow_dup
+NSUBST: P = w / W, Q = R / w, R = w / W
+SUBST:  q = w.
+: vault.run("jumping_setup.configure_repeatable")
+# Source Lua: : nicolae_spider_jumping_setup(_G, true)
+MAP
+1.---
+.qP.--
+.ww.1--
+wPwP.wZ-
+q..wwwww-
+qqwwq1.w--
+ZwwW..qR.-
+wwWwQQwwR-
+w1ww..Rw1.
+111wq.w.qq
+ENDMAP

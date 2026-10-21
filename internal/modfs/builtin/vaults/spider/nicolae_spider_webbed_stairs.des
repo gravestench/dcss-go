@@ -1,0 +1,27 @@
+# Nicolae spider webbed stairs is a source Spider vault.
+# The named Lua hook makes source-dependent choices here; the MAP below fixes their placement.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_webbed_stairs
+DEPTH: Spider
+TAGS:  transparent
+: vault.run("configure")
+# Source Lua: : if you.depth() == 1 then
+# Source Lua directive: SUBST: s = ]})
+# Source Lua: : elseif you.depth() == dgn.br_depth(you.branch()) then
+# Source Lua directive: SUBST: s = [{(
+# Source Lua: : else
+# Source Lua directive: SUBST: s = ]})[{(
+# Source Lua: : end
+SHUFFLE: abcde/^._^^/..x^^/..x^x/.._x^/x^___/^x___/..^xx/x.xx^/^^__^/^^___/ \
+         ^._x^/x.^^^/..^^x/x._^x/^^x^_
+SUBST: ab = ., cde = ^
+KFEAT: ^ = web
+CLEAR: _
+MAP
+cdedc
+dabad
+ebsbe
+dabad
+cdedc
+ENDMAP

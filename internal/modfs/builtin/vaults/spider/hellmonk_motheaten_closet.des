@@ -1,0 +1,21 @@
+# Hellmonk motheaten closet is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: hellmonk_motheaten_closet
+DEPTH: Spider
+TAGS:   no_monster_gen no_item_gen
+MONS:   ghost moth / sun moth / moth of wrath
+ITEM:   robe plus:-2 w:25 / hat plus:-2 / pair of gloves plus:-2
+ITEM:   robe randart w:25 / hat randart / pair of gloves randart
+NSUBST: d = 1:e / *:d, 1 = 2:1 / *=.
+MAP
+ xxxxxxxx
+ xddddddx
+xx++++++xx
+x1..11..1x
+xx1....1xx
+ x......x
+ xxx..xxx
+    @@
+ENDMAP

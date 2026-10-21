@@ -1,0 +1,14 @@
+# A tiny arrival tests the same saved trigger marker used by Spider's basket.
+NAME: fixture_spider_trigger_arrival
+TAGS: arrival no_monster_gen no_trap_gen
+ORIENT: float
+MARKER: A = vault_trigger:spider_nest.warn
+KFEAT: A = floor
+MAP
+xxxxxxx
+x.....x
+x..A..x
+x.....x
+x@...@x
+xxxxxxx
+ENDMAP

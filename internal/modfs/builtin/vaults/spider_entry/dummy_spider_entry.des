@@ -1,0 +1,9 @@
+# Dummy spider entry is a source Spider entrance.
+# The keyed O cell carries this entrance into Spider; its authored hazards stay with that gate.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: dummy_spider_entry
+TAGS:   spider_entry transparent
+KFEAT:  O = enter_spider_nest
+MAP
+O
+ENDMAP

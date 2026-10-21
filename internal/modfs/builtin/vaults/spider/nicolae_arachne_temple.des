@@ -1,0 +1,34 @@
+# Nicolae arachne temple is a source Spider vault.
+# KMONS assigns authored monster requests to MAP glyphs so placement can create their entities.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: nicolae_arachne_temple
+DEPTH:  Spider:2-
+TAGS:   no_item_gen no_monster_gen no_trap_gen
+MONS:   tarantella, wolf spider, redback, jumping spider
+FTILE:  -2 = FLOOR_SANDSTONE
+FTILE:  'A435 = FLOOR_LIMESTONE
+COLOUR: -2 = brown
+COLOUR: 'A435 = yellow
+KFEAT:  -' = web / floor w:40
+KMONS:  A = Arachne, orb spider
+MAP
+         .1.
+        cc'cc
+    1.cc5'''5cc..
+   .'c''--'--''c'1
+   .c'--2-3-2--'c.
+   c'-'-'''''-'-'c
+   c'--'--'--'--'c
+  c5-2'-'-'-'-'2-5c
+ .c'--'--4'4--'--'c.
+ 1'''3''''A''''3'''1
+ .c'--'--4'4--'--'c.
+  c5-2'-'-'-'-'2-5c
+   c'--'--'--'--'c
+   c'-'-'''''-'-'c
+   .c'--2-3-2--'c.
+   1'c''--'--''c'.
+    ..cc5'''5cc.1
+        cc'cc
+         .1.
+ENDMAP

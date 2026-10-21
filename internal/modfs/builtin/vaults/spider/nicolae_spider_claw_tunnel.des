@@ -1,0 +1,28 @@
+# Nicolae spider claw tunnel is a source Spider vault.
+# Its DES geometry is the gameplay definition; the Spider catalog selects it by source depth and weight.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_claw_tunnel
+DEPTH: Spider
+TAGS:  transparent
+SUBST: E = D:50 %. *:5, D = x .:50, - = x_
+CLEAR: _
+MAP
+ -------------------
+--xxxxxxxxxxxxxxxxx--
+-xxEEExxxEEExxxEEExx-
+-xDD.DDxDD.DDxDD.DDx-
+-xD.0.DxD.9.DxD.0.Dx-
+-xDD.DDxDD.DDxDD.DDx-
+-xxD.DxxxD.DxxxD.Dxx-
+.DDD.DDDDD.DDDDD.DDD.
+@...D.....D.....D...@
+.DDD.DDDDD.DDDDD.DDD.
+-xxD.DxxxD.DxxxD.Dxx-
+-xDD.DDxDD.DDxDD.DDx-
+-xD.0.DxD.9.DxD.0.Dx-
+-xDD.DDxDD.DDxDD.DDx-
+-xxEEExxxEEExxxEEExx-
+--xxxxxxxxxxxxxxxxx--
+ -------------------
+ENDMAP

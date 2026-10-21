@@ -1,0 +1,31 @@
+# Nicolae spider webs and nodes is a source Spider vault.
+# Its DES geometry is the gameplay definition; the Spider catalog selects it by source depth and weight.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_webs_and_nodes
+DEPTH: Spider
+TAGS:  transparent extra
+SUBST: D : .E, E : x .:5, F : .H, H : x .:5
+MAP
+             DDD
+          ..DEEED
+       .....DxxED
+    ......xxxExED
+ DDD...xxx...DDx..
+DEEExxx.x......x..
+DExxD....x.....x..
+DExED....x......x..
+ DDx.....xFF...xx..
+ ..x....FHxHxxx.x..
+ ..x....FxxxF....x..
+  ..x.xxxHxHF....x..
+  ..xx...FFx.....xDD
+  ..x......x....DExED
+   ..x.....x....DxxED
+   ..x......x.xxxEEED
+   ..xDD...xxx...DDD
+    DExExxx......
+    DExxD.....
+    DEEED..
+     DDD
+ENDMAP

@@ -1,0 +1,29 @@
+# Nicolae spider not touching you is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_not_touching_you
+DEPTH: Spider
+TAGS:    transparent
+MONS:    entropy weaver, ghost moth, moth of wrath, torpor snail, orb spider
+SHUFFLE: 1234
+SUBST:   1 = 115, 2 = 225, 3 = 335
+SUBST:   w = wwD, D = xx.
+MAP
+      ....
+      .DD.
+  .....DD.....
+  .DD......DD.
+  .DD......DD.
+  .....ww.....
+......1ww2......
+.DD..wwwwww..DD.
+.DD..wwwwww..DD.
+......4ww3......
+  .....ww.....
+  .DD......DD.
+  .DD......DD.
+  .....DD.....
+      .DD.
+      ....
+ENDMAP

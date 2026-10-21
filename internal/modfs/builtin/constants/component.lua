@@ -6,6 +6,7 @@ local component = {
     ACTOR = "core.actor",
     VAULT_ORIGIN = "vault.origin",
     WORLD_TRAP = "world.trap",
+    WORLD_VAULT_TRIGGER = "world.vault_trigger",
     TRAP_MARK = "trap.sentinel_mark",
     TRAP_HELD = "trap.held",
     PROJECTILE_NET = "projectile.net",

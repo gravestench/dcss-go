@@ -41,6 +41,7 @@ local random_monster_names = {
 
 local random_item_names = {
     [item_requests.ANY_WEAPON] = true,
+    [item_requests.ANY_ARMOUR] = true,
     [item_requests.ANY_AMULET] = true,
     [item_requests.ANY_RING] = true,
     [item_requests.ANY_JEWELLERY] = true,

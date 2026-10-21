@@ -1,0 +1,28 @@
+# Nicolae spider nooks and crannies is a source Spider vault.
+# KMONS assigns authored monster requests to MAP glyphs so placement can create their entities.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_nooks_and_crannies
+DEPTH: Spider
+TAGS:  transparent
+KITEM: L = %
+KMONS: L = 0 / 0 band
+SUBST: D = x.
+MAP
+   ...........
+  ...DDD.D.....
+ ..DxDxDx.xD.D..
+..Dxxxxxx.xxx...
+.xxx.LxxD..xxD...
+...x..xxxx.DxxD..
+.xxxx.x....xx....
+.Dxx..xL.xxxxxD..
+.Dx..xxxxxD.LxDD.
+....xx.Lx....x.D.
+.Dxxx...x.xxxx.D.
+..DxD.xxx.....D..
+..Dxx...xxxxxD..
+ ..Dxxx.xDxDD..
+  ..DDD.D.D...
+   ..........
+ENDMAP

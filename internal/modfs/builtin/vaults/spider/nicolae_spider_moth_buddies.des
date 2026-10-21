@@ -1,0 +1,23 @@
+# Nicolae spider moth buddies is a source Spider vault.
+# The MONS pool supplies map monsters while the authored geometry controls where they appear.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_moth_buddies
+DEPTH: Spider
+TAGS:  transparent
+SUBST: D = x.
+MONS:  moth of wrath
+MONS:  ghost moth
+MONS:  wolf spider / redback / tarantella / jumping spider / orb spider
+MAP
+  xxxxx...xxxxx
+ xx3.xx...xx.3xx
+xxD..D.....D..Dxx
+xD....3...3....Dx
+xD.1...DDD.....Dx
+xD.....DDD...2.Dx
+xD....3...3....Dx
+xxD..D.....D..Dxx
+ xx3.xx...xx.3xx
+  xxxxx...xxxxx
+ENDMAP

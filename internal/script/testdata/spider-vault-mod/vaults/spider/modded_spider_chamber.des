@@ -1,0 +1,10 @@
+# A mod-added ordinary chamber joins Spider without a Go roster edit.
+NAME: modded_spider_chamber
+DEPTH: Spider
+WEIGHT: 7
+ORIENT: float
+MAP
+.....
+..x..
+.....
+ENDMAP

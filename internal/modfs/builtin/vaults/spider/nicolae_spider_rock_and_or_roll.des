@@ -1,0 +1,28 @@
+# Nicolae spider rock and or roll is a source Spider vault.
+# KITEM binds authored loot requests to MAP glyphs before the item picker resolves them.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_rock_and_or_roll
+DEPTH: Spider
+TAGS:   no_trap_gen transparent
+KITEM:  R = large rock q:1
+MONS:   boulder beetle
+NSUBST: P = . / x., Q = . / x., E = 4=1 / 2=1' / x', ! = 4=x / 3=x' / '
+NSUBST: ' = 4=R / 6=R. / .
+SUBST:  - = x-
+CLEAR:  -
+MAP
+ --------
+--xxxxxxxx.@
+-xxEEEEEEQQ.
+-xEE''''''Qx
+-xE'!!!!!'Ex-
+-xE'!!!!!'Ex-
+-xE'!!!!!'Ex-
+-xE'!!!!!'Ex-
+-xE'!!!!!'Ex-
+-xP''''''EEx-
+ .PPEEEEEExx-
+ @.xxxxxxxx--
+   ---------
+ENDMAP

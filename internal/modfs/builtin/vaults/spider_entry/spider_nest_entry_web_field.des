@@ -1,0 +1,21 @@
+# Spider nest entry web field is a source Spider entrance.
+# The keyed O cell carries this entrance into Spider; its authored hazards stay with that gate.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+NAME: spider_nest_entry_web_field
+TAGS:   spider_entry patrolling no_monster_gen transparent
+KFEAT:  O = enter_spider_nest
+KFEAT:  ^ = web trap / floor
+KFEAT:  ~ = web trap / w:20 floor
+MAP
+...~~~~~...
+.~~~~~~~~~.
+.~~~^^^~~~.
+~~~^^^^^~~~
+~~^^^^^^^~~
+~~^^^O^^^~~
+~~^^^^^^^~~
+~~~^^^^^~~~
+.~~~^^^~~~.
+.~~~~~~~~~.
+...~~~~~...
+ENDMAP

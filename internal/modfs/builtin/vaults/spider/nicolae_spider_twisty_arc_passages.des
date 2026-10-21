@@ -1,0 +1,32 @@
+# Nicolae spider twisty arc passages is a source Spider vault.
+# Its DES geometry is the gameplay definition; the Spider catalog selects it by source depth and weight.
+# Source definition: crawl-ref/source/dat/des/branches/spider.des.
+# Source default-depth: Spider is explicit in this separate file.
+NAME: nicolae_spider_twisty_arc_passages
+DEPTH: Spider
+TAGS:  transparent
+SUBST: D = x..
+MAP
+     ......   ........
+    D...DD....D...DD......
+   xxD.DxxD.DDxD.DxxDD.DDD.
+  xxD..DxD.DxxxD..Dxxx.DxD.
+ .DD..DxxD.DxDD....DDxDxxD.
+ ...DDxxD..xxD..DDD.DxxxD..
+ .DDxxxD..DxD..DxxxD.DxD..
+.DxxxD....DxD.DxxDD..DxD.D
+..DDD.xxD.DxD.DxD.....D..D
+..DD..DxxDDxD..DD..DDDD...
+.DxxD..DxxDxxD.DxDDxxxxDD..
+ .DD..D.DD.xD..DxxxxDDDDxD.
+ .DD.D.....D.DD.DxxD....D..
+.DxxD..DDD.DDxxD.DxD.D..D..
+..DxxDDxxxDxxxD........DxD.
+.DxxxxxxDxxxDD.D..DDDDDxxD.
+..DDxxD.DxD......DxxxxxxxD.
+....DxxD.xxD.D..DxxDDDDDD.
+.DDD.DxD.DxD..DDxxD....Dx
+.DxD.DxD..D..DxxxD...Dxxx
+ DxD..D.D..D..DDD..D..D
+     .. ....  .......
+ENDMAP
