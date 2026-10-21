@@ -12,6 +12,7 @@ local branches = require("ids.branches")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local branch_levels = require("policy.generation.branch_levels")
+local effects = require("policy.world.hell.effects")
 
 local travel = {}
 
@@ -237,6 +238,8 @@ function travel.commit(ctx, input)
         return { message = branch.entry_message }
     elseif input.operation == operations.BRANCH_FLOOR then
         local branch = catalog.get(categories.BRANCHES, input.branch_id)
+
+        effects.arrive(ctx, player)
 
         return { message = branch.entry_message }
     elseif input.operation == operations.BRANCH_RETURN then

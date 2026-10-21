@@ -68,7 +68,7 @@ local function validate(ctx)
     if not choice.allowed(species, job) then
         error("invalid player choice")
     end
-    local origin = ctx:get(entity, "character.origin")
+    local origin = ctx:get(entity, component.CHARACTER_ORIGIN)
 
     if not origin then
         error("player lacks character origin")

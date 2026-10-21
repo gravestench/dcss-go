@@ -42,7 +42,7 @@ local function validate(ctx)
     end
 
     local species = catalog.get("species", player.species_id)
-    local origin = ctx:get(actor, "character.origin")
+    local origin = ctx:get(actor, component.CHARACTER_ORIGIN)
 
     if not origin then
         error("player lacks character origin")

@@ -199,6 +199,10 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 	}
 
 	if portal != nil {
+		// The player action's events were copied before portal.commit.
+		// Lua travel policies can emit more messages while moving the player;
+		// publish only those new events after the stair announcement.
+		before := len(g.turn.Events)
 		travelEvent, travelErr := portal.commit(g)
 
 		if travelErr != nil {
@@ -208,6 +212,11 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 		if travelEvent.Text != "" {
 			events = append(events, travelEvent)
 			g.messages = append(g.messages, travelEvent.Text)
+		}
+
+		for _, event := range g.turn.Events[before:] {
+			events = append(events, event)
+			g.messages = append(g.messages, event.Text)
 		}
 	}
 

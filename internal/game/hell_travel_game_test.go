@@ -11,6 +11,20 @@ import (
 	"crawl/internal/terrain"
 )
 
+const hellEffectEventKind = "hell_effect"
+
+// Travel tests inflate HP to keep unrelated combat out of scope. A source
+// Hell drain applied to that artificial maximum can exceed the character's
+// real maximum; remove it before restoring the ordinary saved profile.
+func resetHellTestHealth(g *Game, maximum, current int) {
+	g.scripts.Components()["status.drain"].Remove(g.player)
+
+	health, _ := g.stores.Health.Get(g.player)
+
+	health.Max = maximum
+	health.Current = current
+}
+
 // The source chance family must put an actionable typed gate on a real
 // Depths floor. Travel from it exercises generation, terrain projection,
 // command preparation, and the persistent Vestibule in one path.
@@ -164,8 +178,16 @@ func TestHellBranchGateOpensPersistentFloor(t *testing.T) {
 	g := newGeneratedTestGame(t, 8201)
 	placePortalForTest(t, g, terrain.EnterHell)
 
-	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
+	vestibuleEntry, err := g.Step(Command{Kind: CommandDownstairs})
+
+	if err != nil {
 		t.Fatal(err)
+	}
+
+	for _, event := range vestibuleEntry.Events {
+		if event.Kind == hellEffectEventKind {
+			t.Fatal("Vestibule entry applied a subbranch effect")
+		}
 	}
 
 	vestibule := g.levels[g.hellState.VestibuleLevelID]
@@ -213,8 +235,22 @@ func TestHellBranchGateOpensPersistentFloor(t *testing.T) {
 	health.Max = 10000
 	health.Current = health.Max
 
-	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
+	branchEntry, err := g.Step(Command{Kind: CommandDownstairs})
+
+	if err != nil {
 		t.Fatal(err)
+	}
+
+	effects := 0
+
+	for _, event := range branchEntry.Events {
+		if event.Kind == hellEffectEventKind {
+			effects++
+		}
+	}
+
+	if effects != 1 {
+		t.Fatalf("Dis entry produced %d Hell-effect messages", effects)
 	}
 
 	position, found := g.stores.Positions.Get(g.player)
@@ -236,8 +272,7 @@ func TestHellBranchGateOpensPersistentFloor(t *testing.T) {
 		t.Fatalf("Dis:1 has wrong identity or compact geometry: %+v", dis)
 	}
 
-	health.Max = originalMax
-	health.Current = originalCurrent
+	resetHellTestHealth(g, originalMax, originalCurrent)
 
 	restored, err := Restore(g.Snapshot())
 
@@ -506,8 +541,7 @@ func TestHellFourBranchGates(t *testing.T) {
 		})
 	}
 
-	health.Max = originalMax
-	health.Current = originalCurrent
+	resetHellTestHealth(g, originalMax, originalCurrent)
 
 	if _, err := Restore(g.Snapshot()); err != nil {
 		t.Fatalf("four saved Hell branches failed restore: %v", err)

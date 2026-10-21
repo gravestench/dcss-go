@@ -2045,6 +2045,15 @@ the persistent Vestibule and remembers the outside return gate. This travel
 policy is distinct from a generation hook: a `.des` hook configures a map
 while it is built; the world policy acts when the player uses its gate.
 
+After travel lands on any Dis, Gehenna, Cocytus, or Tartarus floor,
+`policy/world/hell/effects.lua` runs the source Hell arrival draw. Its
+protected, quiet, and loud paths use the player's saved origin and the
+`hell_effect` RNG stream. The prose is in `data/hell_effect_messages.lua`,
+so a mod can replace that file without changing punishment odds. The
+policy applies temporary bad mutations, HP drain, and stat loss through
+their existing state owners. A generation hook cannot cause an arrival
+effect: it has no live player `ctx`, and the effect must recur on revisits.
+
 The four ordinary Hell branches discover maps in `vaults/dis/`,
 `vaults/geh/`, `vaults/coc/`, and `vaults/tar/`. They also share
 `vaults/hells/`; Gehenna's maze helpers live in `vaults/geh_lava_maze/`.

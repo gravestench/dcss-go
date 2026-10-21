@@ -8,6 +8,7 @@ local streams = {
     CLOUDS = "clouds",
     FOG_MACHINES = "fog_machines",
     HELL_SERPENT = "hell_serpent",
+    HELL_EFFECT = "hell_effect",
     ITEM_GENERATION = "item_generation",
     MELEE = "melee",
     MONSTER_HP = "monster_hp",

@@ -1,7 +1,9 @@
 -- Durable source-derived facts from character creation. Later Lua systems
 -- can read them without reconstructing randomized choices from the job ID.
+local component = require("constants.component")
+
 register.component{
-    id = "character.origin",
+    id = component.CHARACTER_ORIGIN,
     version = 1,
     -- Creation bonuses and initial skills remain available after the randomized starting profile is discarded.
     fields = {

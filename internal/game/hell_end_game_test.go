@@ -226,10 +226,7 @@ func TestHellSeventhFloorEndings(t *testing.T) {
 					selected.name, runes, bosses, down, exits)
 			}
 
-			health, _ := g.stores.Health.Get(g.player)
-
-			health.Max = originalMax
-			health.Current = originalMax
+			resetHellTestHealth(g, originalMax, originalMax)
 
 			restored, err := Restore(g.Snapshot())
 

@@ -433,6 +433,11 @@ Serpent of Hell can appear. Named Lua hooks replace the source inline
 scripts, including Tartarus maze carving and tagged helper placement.
 Remaining Hell monster and boss behavior still depends on later combat
 and content slices.
+On every subbranch arrival, Lua now performs the source Zin protection,
+message, noise, and four-way consequence draw. Temporary bad mutations,
+drain, and stat loss use their saved character owners. The message groups
+are committed Lua content. Sanctuary and divine-stamina protection still
+depend on the later religion domain; no current action creates those states.
 
 The fifty-three-definition aquarium family retains the source controller
 and all fifty-two authored child maps. One Lua controller picks a shared

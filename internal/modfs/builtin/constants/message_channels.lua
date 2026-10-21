@@ -9,6 +9,7 @@ local channels = {
     READ = "read",
     MONSTER = "monster",
     VAULT = "vault",
+    HELL_EFFECT = "hell_effect",
 }
 
 return channels

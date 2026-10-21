@@ -54,7 +54,7 @@ registry.add(spells.SPELL_MONSTROUS_MENAGERIE, {
 
 -- Source: spl-summoning.cc:cast_summon_horrible_things.
 function spell_effects.resolve_summon_horrible_things(ctx, player, _, _, power)
-    local origin = ctx:get(player, "character.origin")
+    local origin = ctx:get(player, component.CHARACTER_ORIGIN)
 
     if origin and origin.religion == "GOD_NO_GOD" and
         summons.roll(ctx, 5) == 0 then

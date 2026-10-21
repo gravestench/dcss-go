@@ -163,7 +163,7 @@ function start.run_start(ctx, input)
     local origin, library, memorized, future = starting_state(
         ctx, species, job, profile, generated)
 
-    ctx:add(player, "character.origin", origin)
+    ctx:add(player, component.CHARACTER_ORIGIN, origin)
     spell_records.start(ctx, player, library, memorized, future)
 
     return {}
