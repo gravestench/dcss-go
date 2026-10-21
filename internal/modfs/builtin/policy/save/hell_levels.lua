@@ -8,6 +8,7 @@ local vaults = require("policy.generation.vaults.catalog")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local size = require("policy.generation.hell.size")
+local primary = require("policy.generation.vaults.primary")
 
 local hell = {}
 
@@ -82,19 +83,31 @@ local function validate_floors(by_id, state)
         local branch = catalog.get(categories.BRANCHES, floor.branch_id)
         local id = levels.id(floor.branch_id, floor.local_depth)
         local level = by_id[id]
+        local width, height = size.for_branch(branch, floor.local_depth)
 
         if not size.is_subbranch(branch) or
-            floor.local_depth >= branch.depth or
+            floor.local_depth > branch.depth or
             floor.level_id ~= id or seen[id] or not level or
             level.branch_id ~= floor.branch_id or
             level.local_depth ~= floor.local_depth or
-            #level.cells ~= 35 or #level.cells[1] ~= 40 or
+            #level.cells ~= height or #level.cells[1] ~= width or
             #level.stairs ~= 0 or level.initial_monsters < 3 or
             level.initial_monsters > 18 or
-            floor.entry_x < 0 or floor.entry_x >= 40 or
-            floor.entry_y < 0 or floor.entry_y >= 35 or
+            floor.entry_x < 0 or floor.entry_x >= width or
+            floor.entry_y < 0 or floor.entry_y >= height or
             level.cells[floor.entry_y + 1][floor.entry_x + 1] ~= branch.escape_feature then
             error("saved Hell floor has invalid identity or geometry")
+        end
+
+        if floor.local_depth == branch.depth then
+            local specification = primary.specification(branch,
+                floor.local_depth)
+            local selected = level.vault_id and vaults.get(level.vault_id)
+
+            if not specification or not selected or
+                selected.family ~= specification.family then
+                error("saved Hell ending lacks its primary vault")
+            end
         end
 
         local exits = 0
@@ -110,8 +123,10 @@ local function validate_floors(by_id, state)
             end
         end
 
-        if exits < 1 or down ~= 1 then
-            error("saved Hell floor needs an exit and one descent")
+        local expected_down = floor.local_depth < branch.depth and 1 or 0
+
+        if exits < 1 or down ~= expected_down then
+            error("saved Hell floor has invalid escape or descent")
         end
 
         seen[id] = true

@@ -3,6 +3,7 @@
 -- owns whether that particular callback is still armed.
 local component = require("constants.component")
 local trigger_ids = require("constants.vault_triggers")
+local death_hooks = require("policy.combat.death_hooks")
 
 local triggers = {}
 
@@ -75,6 +76,8 @@ function triggers.materialize(ctx, level, record)
         record_index = record.index,
         callback_module = module_name,
         callback_method = method_name,
+        event = record.arguments and record.arguments.event or
+            trigger_ids.ENTER_EVENT,
         target_x = target and target.x or 0,
         target_y = target and target.y or 0,
     })
@@ -119,7 +122,8 @@ function triggers.enter(ctx, actor, position)
     for _, entity in ipairs(ctx:query({ component.WORLD_VAULT_TRIGGER })) do
         local state = ctx:get(entity, component.WORLD_VAULT_TRIGGER)
 
-        if state.level_id == position.level_id and
+        if state.event == trigger_ids.ENTER_EVENT and
+            state.level_id == position.level_id and
             state.x == position.x and state.y == position.y then
             local identity = trigger_ids.PREFIX .. state.callback_module ..
                 "." .. state.callback_method
@@ -135,5 +139,27 @@ function triggers.enter(ctx, actor, position)
         end
     end
 end
+
+-- Source monster_on_death markers persist until their callback recognizes
+-- the killed monster. Each armed marker is an ECS entity, so save/restore
+-- preserves which statues have already awakened.
+function triggers.monster_death(ctx, _, definition, position)
+    for _, entity in ipairs(ctx:query({ component.WORLD_VAULT_TRIGGER })) do
+        local state = ctx:get(entity, component.WORLD_VAULT_TRIGGER)
+
+        if state.event == trigger_ids.MONSTER_DEATH_EVENT and
+            state.level_id == position.level_id then
+            local identity = trigger_ids.PREFIX .. state.callback_module ..
+                "." .. state.callback_method
+            local _, _, method = callback(identity)
+
+            if method(ctx, state, definition) ~= false then
+                consume(ctx, entity, state, identity)
+            end
+        end
+    end
+end
+
+death_hooks.add("vault.monster_death", triggers.monster_death)
 
 return triggers

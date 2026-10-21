@@ -476,7 +476,11 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
             god_id = options.god_id or "",
             spells = options.spells or {},
             fixed_hp = options.hp or 0,
-            hit_dice = options.hd or 0,
+            -- Derived undead has no fixed HD in its generic catalog row.
+            -- Its saved override must carry the selected corpse base's HD
+            -- for later AI and spell decisions after the spawn call ends.
+            hit_dice = options.hd or
+                (not definition.hd and source.hd) or 0,
             custom_name = options.custom_name or "",
             name_adjective = options.name_adjective or false,
             database_name = options.database_name or "",

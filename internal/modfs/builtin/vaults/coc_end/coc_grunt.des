@@ -1,0 +1,99 @@
+# Source: crawl-ref/source/dat/des/branches/coc.des.
+# Cocytus seventh-floor controller; MAP rows match source bytes.
+NAME:    coc_grunt
+ORIENT:  encompass
+MONS:    patrolling Antaeus, ice fiend, shard shrike / nothing
+KMONS:   8 = ice statue
+KMONS:   9 = elemental wellspring
+KMONS:   de = ice fiend
+KMONS:   fg = titan
+KITEM:   df = superb_item
+KITEM:   egh = gold
+# Source serpent_of_hell_setup: unique, persistent Hell-branch selection.
+: vault.run("shared.serpent_of_hell")
+KFEAT:   D = floor
+KFEAT:   X = open_sea
+KFEAT:   9 = w
+# Preserve this source border-fill call at its authored operation site.
+: vault.run("shared.open_sea_border")
+SHUFFLE: 1O|d$e / 5!*f%g, |d / $e
+NSUBST:  H = 1:D / *:8
+SUBST:   * = |, % = $, 5 = 2
+# Preserve this source border-fill call at its authored operation site.
+: vault.run("shared.open_sea_border")
+# Source coc_setup: place and rotation metadata must exist before selection.
+PLACE: Coc:$
+TAGS: no_rotate
+: vault.run("shared.coc_setup")
+MAP
+XXXXXXXXXXXcccccccccccXXXXXXXXXXXcccccccccXXXXXXXXXXXXXXX
+Xwwwwwwwwww9cccccccccwwwwwwwwwwwwwccccccc9wwwwwwwwwwwwwwX
+XwwwwwwwwwwwcccccccccwwwwwwwwwwwwwwcccccwwwwwwwwwwwwwwwwX
+XwwwwwwwwwwwwccccccccwwwwwwwwwwwwwwccccwwwwwwwwwwwwwwwwwX
+Xwwww...wwwwwccccccccwwwwwww.{.wwwwwcccwwwwwww...wwwwwwwX
+Xwwww....wwwwwccccccwwwwww.......wwwcccwwwwww......wwwwwX
+Xwww...0..wwwwccccccwwwwww.......wwwcccwwww.........wwwwX
+Xwww.......wwwccccccwwwww....w....wwcccwww.....0.....wwwX
+Xww..cc+cc..wwwcccccwwww..0.wwww.0wwcccww.............wwX
+Xw..cc*.%cc..wwcccccwwww....wwwww..wcccw.....cc+cc.....wX
+Xw..c**.%%c..wwcccccwwww.0.wwwwwwW0wwccw....cc|.$cc....wX
+Xw.3cf*5%gc3.wwcccccwwwwW.WwwwwwwWWwwccw....c||.$$c....wX
+Xw..c*f.g%c..wwcccccwwwwWWWwwcwwwWWwwccw..3.cd|1$ec.3..wX
+Xw..cc*!%cc..wwcccccwwwwWWWwwcwwwwWWwccw....c|d.e$c....wX
+Xww.0ccccc0.wwwccccwwwwwWWwwwcwwwwWWwccw....cc|O$cc...wwX
+Xwww...3....wwwccccwwwwwWWwwwcwwwwWWwccww....ccccc....wwX
+Xwwww......wwwcccccwwwwwWWwwwcwwwwWWwwccww.0.......0.wwwX
+Xwwwww....wwwwccccwwwwwwWWwwwcwwwWWWwwccww.....3.....wwwX
+Xwwwww....wwwwccccwwwwwW.0WwwcwwwW..Wwcccww.........wwwwX
+Xwwwww....wwwwccccwwwww....wwcwww....wccccwwww.....WwwwwX
+Xwwwww...0.wwwccccwwwww.3..wwcwww.0..wwcccwwwwWWWWWWwwwwX
+Xwwwww.....wwwccccwwwww...wwwcwww....wwccccwwwwWWWWWwwwwX
+Xwwwwww3...wwwccccwwwww0..wwwcwww..3..wccccwwwwwW...wwwwX
+Xwwwwww....wwwcccccwwww.Wwwwwcwww.....wwccccwwwww0...wwwX
+Xwwwwwww.0.wwwcccccwwwwWWwwwwcwww...0.wwcccccwwww..3.wwwX
+XwwwwwwwW.WwwwcccccwwwwWWwwwwcwwww....wwcccccwwww....wwwX
+XwwwwwwwwWWwwwcccccwwwwWWwwwwccwwwW...wwcccccwwwww.0.wwwX
+XwwwwwwwwWWwwwcccccwwwwWWwwwwccwwwwWWWwwcccccwwwwww.WwwwX
+XwwwwwwwwWWwwwccccwwwwwWWwwwwcccwwwWWWwwcccccwwwwwwWWwwwX
+XwwwwwwwwWWwwwccccwwwwwWWwwwwcccwwwWWwwwwccccwwwwwwWWwwwX
+XwwwwwwwwwWWwwccccwwwwwWWWwwwcccwwwWWwwwwcccccwwwwwWWwwwX
+XwwwwwwwwwWWwwwcccwwwwWWWWwwwcccwwwWWwwwwcccccwwwwwWWwwwX
+XwwwwwwwwwWWwwwcccwwwwW..WwwwcccwwwWWwwwwcccccwwwwwWWwwwX
+XwwwwwwwwwWWwwwccwwwww....wwwcccwwwWWwwwwcccccwwwwwWWwwwX
+XwwwwwwwwWWWWwwccwwwww....wwwcccwwwwWwwwwcccccwwwwwWWwwwX
+XwwwwwwwW...Wwwccwwwww....wwwcccwwwwWwwwwcccccwwwwwWWwwwX
+Xwwwwwww...0.wwccwwww....wwwwcccwwwwWwwwwcccccwwwwW..WwwX
+Xwwwwwww.....wwwcwwww....wwwwcccwwwwWWwwwwcccwwwww..0.wwX
+Xwwwwwww..3..wwwcwwww..0.wwwwcccwwwwWWwwwwcccwwwww....wwX
+Xwwwwwww.....wwwcwwww....wwwccccwwwWWWwwwwcccwwwww.3.wwwX
+Xwwwwwww.0...wwwcwwww.3..wwwccccwwWW.Wwwwwcccwwww....wwwX
+Xwwwwwww.....wwwcwwww...WwwwccccwwW.0.wwwwcccwwww.0..wwwX
+Xwwwwwww....wwwwcwwww0.WWwwwccccwwW...wwwwcccwwww...WwwwX
+XwwwwwwwW..WwwwwcwwwwWWWwwwwccccww.3..wwwwcccwwwwW.WwwwwX
+XwwwwwwwwWWWwwwwcwwwwWWwwwwwccccww....wwwwcccwwwwWWWwwwwX
+XwwwwwwwwwWWwwwwcwwwwWWwwwwwcccwww.0.wwwwwcccwwwwWWWwwwwX
+XwwwwwwwwwWWwwwwcwwwwWWwwwwwcccwww...wwwwwcccwwwwWWWwwwwX
+XwwwwwwwwwwWwwwccwwwwWWwwwwwcccwww...wwwwwcccwwwwWWWwwwwX
+XwwwwwwwwwwWWwwwcwwwwWWwwwwwcccwwwW..wwwwwcccwwwwWWWwwwwX
+XwwwwwwwwwwWWwwwwwwwW.WWwwwwcccwwwWWWwwwwwcccwwwwWWwwwwwX
+XwwwwwwwwwwWWwwwwwwwWW.WwwwwcccwwwWWwwwwwwwcwwwwwWWwwwwwX
+XwwwwwwwwwwWWwwwwwwwwWWwwwwwcccwwwWWwwwwwwwwwwwwwWWwwwwwX
+XwwwwwwwwwwWWwwwwwwwwWWwwwwwcccwwwWWwwwwwwwwwwwwWWWwwwwwX
+XwwwwwwwwwwWWwwwwwwwwWWwwwwwcccwwwWWwwwwwwwwwwwwWWwwwwwwX
+XwwwwwwwwwwWWwwwwwwwwWWwwwwwcccwwwWWWwwwwwwwwwwWWWwwwwwwX
+XwwwwwwwwwwWWWwwwwwwWWWwwwwwccccwwwWWwwwwwwwwwwWWwwwwwwwX
+XwwwwwwwwwwW..wwwwwWWWWwwwwcccccwwwWWwwwwwwwwwwWWwwwwwwwX
+Xwwwwwwwwwww.0.wwww..WWwwwwcccccwwWWWWwwwwwwwwWWwwwwwwwwX
+cwwwwwwwwwww....ww..0.WwwwwcccccwwWWW.wwwwwww.WWwwwwwwwwX
+cwwwwwwwwwwww..2.......WwwwWcccWwwWW...........wwwwwwwwwX
+cccwwwwwwwwwww...H...wWWWWWWWWWWWWW..0.....0..wwwwwwwwwwX
+ccccwwwwwwwwwww.....wwwwWWWWWWWWWWww...2.H...wwwwwwwwwwwX
+cccccwwwwwwwwwwwwwwwwwwwwcWWWWWcwwwww.......wwwwwwwwwwwwc
+cccccccwwwwwwwwwwwwwwwwwwcc3..3cwwwwwww....wwwwwwwwwwwwcc
+ccccccccwwwwwwwwwwwwwwwwwccchhccwwwwwwwwwwwwwwwwwwwwwwwcc
+cccccccccwwwwwwwwwwwwwwwwccchhccwwwwwwwwwwwwwwwwwwwwwcccc
+cccccccccccwwwwwwwwwwwwwwcccccccwwwwwwwwwwwwwwwwwwwcccccc
+ccccccccccccwwwwwwwwwwwwwcccccccwwwwwwwwwwwwwwwwwwccccccc
+cccccccccccccwwwwwwwwwwwwcccccccwwwwwwwwwwwwwwwwwcccccccc
+ccccccccccccccXXXXXXXXXXcccccccccXXXXXXXXXXXXXXcccccccccc
+ENDMAP

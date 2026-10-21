@@ -1,0 +1,16 @@
+# Source: crawl-ref/source/dat/des/branches/tar.des.
+# Tartarus seventh-floor helper.
+NAME:   tar_grunt_small_loot
+TAGS:   tar_grunt_small_loot allow_dup unrand no_exits
+MONS:   doom hound w:20 / profane servitor w:15 / shadow wraith w:10 / \
+        putrid mouth w:5
+NSUBST: x = 1:m / *:x
+MAP
+cccxccc
+c..$..c
+c.$|$.c
+x$|1|$x
+c.$|$.c
+c..$..c
+cccxccc
+ENDMAP

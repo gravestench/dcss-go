@@ -142,6 +142,14 @@ local function origin(vault, cells, map_width, map_height, builder, options)
     local width = builder.width
     local height = builder.height
 
+    -- A controller may request a source map at an exact center. Resolve
+    -- that center after rotation, so a non-square child still lands where
+    -- the controller asked and uses the same protected-cell check below.
+    if options and options.center_x ~= nil then
+        options.left = options.center_x - math.floor(map_width / 2)
+        options.top = options.center_y - math.floor(map_height / 2)
+    end
+
     -- A procedural layout has already chosen the room's connecting wall.
     -- Check the entire candidate before drawing, so a rejected room cannot
     -- erase stairs or records belonging to an earlier placement.

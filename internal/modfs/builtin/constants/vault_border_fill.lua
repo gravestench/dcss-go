@@ -3,6 +3,7 @@
 local fill = {
     OPEN_SEA = "open_sea",
     ENDLESS_LAVA = "endless_lava",
+    PERMAROCK_WALL = "permarock_wall",
 }
 
 return fill

@@ -74,13 +74,22 @@ function extra.place(ctx, builder, vault, context)
     local protected = context.protected
     local last_error
 
-    for _ = 1, 8 do
+    local attempts = context.exact_center and 1 or 8
+
+    for _ = 1, attempts do
         local before = builder:rows()
+        local options = {
+            protected = protected,
+            attempts = context.exact_center and 1 or 128,
+        }
+
+        if context.exact_center then
+            options.center_x = context.exact_center.x
+            options.center_y = context.exact_center.y
+        end
+
         local ok, placed = pcall(placement.place, ctx, builder, vault,
-            context.player, {
-                protected = protected,
-                attempts = 128,
-            })
+            context.player, options)
 
         if ok then
             local connected, message = pcall(connect.finish, ctx, builder,

@@ -61,8 +61,9 @@ local function destination(builder, bounds, protected, original)
 
             if not inside(bounds, point) and
                 not protected[x .. ":" .. y] and
-                (glyph == "." or glyph == "W") then
-                local priority = glyph == "." and 0 or 1000
+                (glyph == "." or glyph == "W" or glyph == "#") then
+                local priority = glyph == "." and 0 or
+                    glyph == "W" and 1000 or 2000
                 local distance = math.abs(x - original.x) +
                     math.abs(y - original.y)
                 local candidate_score = priority + distance
@@ -99,6 +100,29 @@ local function relocate_point(builder, bounds, protected, point)
 
     protected[point.x .. ":" .. point.y] = nil
     builder:set(point.x, point.y, ".")
+
+    -- A source ending can occupy every preexisting floor outside its
+    -- rectangle. Give the relocated stair one exterior floor neighbor;
+    -- the ordinary connector will join that landing to the authored map.
+    if builder:cell(next_point.x, next_point.y) == "#" then
+        local adjacent = {
+            { x = next_point.x + 1, y = next_point.y },
+            { x = next_point.x - 1, y = next_point.y },
+            { x = next_point.x, y = next_point.y + 1 },
+            { x = next_point.x, y = next_point.y - 1 },
+        }
+
+        for _, neighbor in ipairs(adjacent) do
+            if neighbor.x > 0 and neighbor.x < builder.width - 1 and
+                neighbor.y > 0 and neighbor.y < builder.height - 1 and
+                not inside(bounds, neighbor) and
+                not protected[neighbor.x .. ":" .. neighbor.y] then
+                builder:set(neighbor.x, neighbor.y, ".")
+                break
+            end
+        end
+    end
+
     builder:set(next_point.x, next_point.y, glyph)
     point.x = next_point.x
     point.y = next_point.y

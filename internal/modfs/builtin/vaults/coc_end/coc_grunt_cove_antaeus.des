@@ -1,0 +1,13 @@
+# Source: crawl-ref/source/dat/des/branches/coc.des.
+# Cocytus seventh-floor SUBVAULT helper; MAP rows match source bytes.
+NAME:  coc_grunt_cove_antaeus
+TAGS:  coc_grunt_cove_antaeus
+MONS:  patrolling Antaeus, patrolling ice fiend
+KITEM: $ = $ no_pickup
+KITEM: O = icy rune of Zot
+MAP
+ $|
+|1|$
+$2O|
+ |$
+ENDMAP

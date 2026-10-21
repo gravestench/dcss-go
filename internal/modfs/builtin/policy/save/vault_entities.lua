@@ -6,6 +6,7 @@ local monster_specs = require("policy.generation.vaults.specs.monster")
 local slime_blob = require("policy.monsters.slime_blob")
 local monsters = require("ids.monsters")
 local vault_enchantments = require("policy.monsters.vault_enchantments")
+local catalog = require("policy.catalog")
 
 local vault_entities = {}
 
@@ -92,6 +93,19 @@ local function validate_actor_overrides(ctx, entity, record, arguments)
         or (arguments.database_name or "") ~= ""
         or (arguments.tile or "") ~= ""
     local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
+    local expected_hd = arguments.hd or 0
+
+    -- A generic skeleton or zombie has no catalog HD. Its source corpse
+    -- base supplies the saved derived override used by live combat policy.
+    if expected_hd == 0 and (arguments.base_id or "") ~= "" then
+        local definition = catalog.get("monsters", arguments.kind_id)
+
+        if not definition.hd then
+            local base = catalog.get("monsters", arguments.base_id)
+
+            expected_hd = base.hd or 0
+        end
+    end
 
     if not expected and not overrides then
         return
@@ -105,7 +119,7 @@ local function validate_actor_overrides(ctx, entity, record, arguments)
             arguments.attitude or "hostile") or
         overrides.god_id ~= (arguments.god_id or "") or
         overrides.fixed_hp ~= (arguments.hp or 0) or
-        overrides.hit_dice ~= (arguments.hd or 0) or
+        overrides.hit_dice ~= expected_hd or
         overrides.custom_name ~= (arguments.custom_name or "") or
         overrides.name_adjective ~= (arguments.name_adjective or false) or
         overrides.database_name ~= (arguments.database_name or "") or

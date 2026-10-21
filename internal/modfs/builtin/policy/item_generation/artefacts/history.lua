@@ -12,6 +12,7 @@ function history.initialise(ctx, player)
             status = {},
             monsters = {},
             pan_states = {},
+            choices = {},
             boris_killed = false,
         })
     end

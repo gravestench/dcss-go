@@ -48,6 +48,8 @@ local random_undead_names = {
     [monster_requests.RANDOM_SPECTRE] = true,
     [monster_requests.RANDOM_SPECTRAL] = true,
     [monster_requests.RANDOM_SIMULACRUM] = true,
+    [monster_requests.RANDOM_ZOMBIE] = true,
+    [monster_requests.RANDOM_SKELETON] = true,
 }
 
 -- DCSS shares one late-game corpse roster across these branches. Their
@@ -76,6 +78,7 @@ local random_item_names = {
     [item_requests.ANY_CONCEALMENT_SCROLL] = true,
     [item_requests.ANY_POTION] = true,
     [item_requests.ANY_WAND] = true,
+    [item_requests.ANY_MISC] = true,
     [item_requests.ANY_GOOD_ITEM] = true,
     ["any"] = true,
     ["$"] = true,
@@ -199,7 +202,12 @@ local function find_name(category, name, site)
             -- A source display name can also identify another form of
             -- the same unique. Prefer the exact species ID before asking
             -- whether the remaining profiles are spawnable.
-            local canonical = "MONS_" .. name:upper():gsub(
+            -- Source names often include an article that the stable monster
+            -- ID omits (for example, "the Serpent of Hell"). Remove it only
+            -- for this exact-form check; the display-name lookup above still
+            -- decides which catalog entries are candidates.
+            local id_name = name:gsub("^[Tt]he%s+", "")
+            local canonical = "MONS_" .. id_name:upper():gsub(
                 "[^A-Z0-9]+", "_"):gsub("^_", ""):gsub("_$", "")
 
             local exact = false
@@ -705,10 +713,20 @@ function resolve.monster(ctx, selected, depth, site)
     end
 
     if random_undead_names[name] then
-        variant = name ~= monster_requests.RANDOM_SIMULACRUM and
-            "spectral" or "simulacrum"
-        kind_id = variant == "spectral" and
-            monster_ids.MONS_SPECTRAL_THING or monster_ids.MONS_SIMULACRUM
+        if name == monster_requests.RANDOM_ZOMBIE then
+            variant = "zombie"
+            kind_id = monster_ids.MONS_ZOMBIE
+        elseif name == monster_requests.RANDOM_SKELETON then
+            variant = "skeleton"
+            kind_id = monster_ids.MONS_SKELETON
+        elseif name == monster_requests.RANDOM_SIMULACRUM then
+            variant = "simulacrum"
+            kind_id = monster_ids.MONS_SIMULACRUM
+        else
+            variant = "spectral"
+            kind_id = monster_ids.MONS_SPECTRAL_THING
+        end
+
         base_id = random_undead_base(ctx, selected, depth, site)
     elseif name == monster_requests.ANY_BASE_DRACONIAN then
         kind_id = random_monsters.pick(ctx,

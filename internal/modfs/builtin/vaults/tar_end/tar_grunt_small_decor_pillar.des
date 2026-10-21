@@ -1,0 +1,14 @@
+# Source: crawl-ref/source/dat/des/branches/tar.des.
+# Tartarus seventh-floor helper.
+NAME:   tar_grunt_small_decor_pillar
+TAGS:   tar_grunt_decor transparent allow_dup unrand no_exits
+WEIGHT: 60
+: vault.run("shared.decor_pillar")
+MAP
+xABCDE
+AABCDE
+BBBCDE
+CCCCDE
+DDDDDE
+EEEEEE
+ENDMAP

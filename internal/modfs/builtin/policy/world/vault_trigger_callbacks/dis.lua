@@ -53,4 +53,37 @@ function handler.trap_statue()
     return false
 end
 
+-- Dis:7's iron statues wake only after Dispater dies. The source marker
+-- vetoes removal before then, so the generic death trigger retains each
+-- saved marker until this callback consumes it.
+function handler.mu_statue_awaken(ctx, state, definition)
+    if definition.id ~= monsters.MONS_DISPATER then
+        return false
+    end
+
+    if ctx:cell(state.level_id, state.x, state.y) ~=
+        terrain.DNGN_GRANITE_STATUE then
+        return true
+    end
+
+    ctx:set_cell(state.level_id, state.x, state.y, terrain.DNGN_FLOOR)
+    factory.spawn(ctx, monsters.MONS_IRON_GOLEM, state.level_id,
+        state.x, state.y, {
+            generate_awake = true,
+        })
+
+    local player = ctx:get(ctx:player(), component.POSITION)
+    local seen = player and player.level_id == state.level_id and
+        ctx:visible(state.level_id, player.x, player.y, 7,
+            state.x, state.y)
+
+    if seen then
+        ctx:emit(channels.VAULT, "The iron statue comes to life!")
+    else
+        ctx:emit(channels.VAULT, "You hear a grinding sound.")
+    end
+
+    return true
+end
+
 return handler

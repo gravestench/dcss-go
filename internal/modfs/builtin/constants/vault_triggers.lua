@@ -2,6 +2,9 @@
 -- The prefix separates active triggers from unrelated source markers.
 local triggers = {
     PREFIX = "vault_trigger:",
+    ENTER_EVENT = "enter",
+    MONSTER_DEATH_EVENT = "monster_death",
+    DIS_MU_STATUE_AWAKEN = "vault_trigger:dis.mu_statue_awaken",
     SPIDER_NEST_SPAWN = "vault_trigger:spider_nest.spawn",
     SPIDER_NEST_WARN = "vault_trigger:spider_nest.warn",
     LADY_OF_LAKE_SPAWN = "vault_trigger:lady_of_lake.spawn",

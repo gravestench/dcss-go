@@ -12,6 +12,12 @@ local definition = {
     min_depth = 1,
     max_depth = 1,
     depth = 7,
+    primary_vaults = {
+        {
+            depth = 7,
+            family = families.GEH_END,
+        },
+    },
     -- The source lava maze is a whole-floor option on ordinary depths.
     encompass_vault_families = {
         families.GEH,

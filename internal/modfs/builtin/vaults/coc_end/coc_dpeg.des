@@ -1,0 +1,80 @@
+# Source: crawl-ref/source/dat/des/branches/coc.des.
+# Cocytus seventh-floor controller; MAP rows match source bytes.
+NAME:    coc_dpeg
+ORIENT:  encompass
+MONS:    patrolling Antaeus, Ice Fiend, wendigo band, titan
+KMONS:   E = elemental wellspring
+# Source serpent_of_hell_setup: unique, persistent Hell-branch selection.
+: vault.run("shared.serpent_of_hell")
+KMONS:   defg = shard shrike w:5 / ice fiend / nothing w:5
+KITEM:   defg = any misc
+KFEAT:   E = w
+SHUFFLE: O1dD / e4%H / f9*I / g8|J
+SUBST:   ' = w ., 3 = 3 ., HIJ = 4 4 .
+NSUBST:  w = 2:E / 2 = E w / *:w
+# Source coc_setup: place and rotation metadata must exist before selection.
+PLACE: Coc:$
+TAGS: no_rotate
+: vault.run("shared.coc_setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxx
+xxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxx
+xxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxx
+xxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxx
+xxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxx
+xxxxwwwwwwww.......wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxx
+xxxxwwwww....wwwww....wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww''wwwwwwwwxxxx
+xxxxwww...wwwwwwwwwww....wwwwwwwwwwwwwwwwwwwwwwwwwww'.......wwwwwwxxxx
+xxxxwww.wwww......wwwwww..wwwwwwwwwwwwwwwwwwww'.......ccccc...wwwwxxxx
+xxxxww..ww....cc......www.3wwwwwwwwwwwww..........ccccccccccc..wwwxxxx
+xxxxw...ww..cccccc.....www.wwwwwwwwww'3..........cc....9.2..cc..wwxxxx
+xxxxw..ww..ccccccc+c....ww.'wwwwwwwwwww''........ccf********cc..wwxxxx
+xxxxw..ww..cc.%%%%.cc...ww..wwwwwwwwwwwwwwwww'....ccccccc+ccc...'wxxxx
+xxxxw..ww..cc2.e4.2cc...ww..wwwwwwwwwwwwwwwwwwww'......c...c.....wxxxx
+xxxxw..ww..cc.%%%%.cc..www.'wwwwwwwwwwwwwwwwwwwwwwwww'.cc+cc..I..wxxxx
+xxxxw..www..c+cccccc...ww..wwwwwwwwwwwwwwwwwwwwwwwwwww..........wwxxxx
+xxxxww..ww....ccccH...www.wwwwwwwwwwwwwwwwwwwwwwwwwwwww........wwwxxxx
+xxxxww..www..........www..wwwwwwwwwwwwwwwwwwwwwwwwwwww'..2....w..wxxxx
+xxxxwww..wwww......wwww..wwwwwwwwwwwwwwwwwwwwwwwwwww'............wxxxx
+xxxxwwwW..wwwwwwwwwwww..wwwwwwwwwwwwwwwwwwwwwwwwww..............wwxxxx
+xxxxwwwWW...'wwwwww....wwwwwwwwwwwwwwwwwwwwwwwwww............'wwwwxxxx
+xxxxwwwWWwww........'wwwwwwwwwwwwwwwwwwwwwwww'3..'ww'....''wwwwwwwxxxx
+xxxxwwwWWwwwwww'...3wwwwwwwwwwwwwwwwwwwwwwwwww''wwwwwww.Wwwwwwwwwwxxxx
+xxxxwwwWWwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwWWwwwwwwwwwxxxx
+xxxxwwWWwwwwwwwwwwwwwwwwwwwwww........wwwwwwwwwwwwwwwwwWWwwwwwwwwwxxxx
+xxxxwwWWwwwwwwwwwwwwwwwwwwww............wwwwwwwwwwwwwwwWWwwwwwwwwwxxxx
+xxxxwwWWwwwwwwwwwwwwwwwwwwww...ccc+ccc...wwwwwwwwwwwwwWWwwwwwwwwwwxxxx
+xxxxwww.wwwwwwwwwwwwwwwwwww...cc.....cc...wwwwwwwwwwwwWWwwwwwwwwwwxxxx
+xxxxwww..wwwwwwwwwwwwwwwwww...c.......c...wwwwwwwwwwwwW3wwwwwwwwwwxxxx
+xxxxwww...wwwwwwwwwwwwwwwww...+...{...+...wwwwwwwwwwww...wwwwwwwwwxxxx
+xxxxwww.3.wwwwwwwwwwwwwwwww...c.......c...wwwWWwwWWwwW...wwwwwwwwwxxxx
+xxxxwww...wWwwwWwwwwwwwwwwW...cc.....cc...WWWWWWWWWWW.....wwwwwwwwxxxx
+xxxxwwww..WWWwWWWwwwwwwwwWWw...ccc+ccc...WWwwwWWwwwWww...wwwwwwwwwxxxx
+xxxxwwww..WwWWWwWWwwwwWWWWww............wwwwwwwwwwwwww...wwwwwwwwwxxxx
+xxxxwwwww.wwwWwwwWW'.3.WWwwwww.........wwwwwwwwwwwwwwww.wwwwwwwwwwxxxx
+xxxxwwwww.wwwwwwwwW.3.'wwwwwwwwwwwwwwwwwwww'wwwwwwwwwww.wwwwwwwwwwxxxx
+xxxxwwwww.wwwwwwwww'.'wwwwwwwwwwwwwwwwwwww'3wwwwwwwwwww.wwwwwwwwwwxxxx
+xxxxwwwww..wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww..wwwwwwwww.wwwwwwwwwwxxxx
+xxxxwwwww..'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww...w.wwwww..wwwwwwwwwxxxx
+xxxxwwww'...wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww....www...w.wwwwwwwxxxx
+xxxxwwww....'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww..ccccccc.c.wwwwwwwwxxxx
+xxxxwwww.....wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww..cc$$$$$$.c..wwwwwwwxxxx
+xxxxwww'.....wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww..c.$dddd$.c...wwwwwwxxxx
+xxxxwww..cc..'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww'...$$$$$$cc....wwwwwxxxx
+xxxxwww.cccc..'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww'.ccccccc....wwwwwwxxxx
+xxxxwww.cg.cc..'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwww........ww..wwwwwwwxxxx
+xxxxww'.c||.cc...'wwwwwwwwwwwwwwwwwwwwwwwwwwww.D...wwwwwwwwwwwwwwwxxxx
+xxxxww'.c||.8cc......'wwwwwwwwwwwwwwwwwwwwwww'...w..wwwwwwwwwwwwwwxxxx
+xxxxww..c||2.2cc..J.....'wwwwwwwwwwwwwwwwww....wwww..wwwwwwwwwwwwwxxxx
+xxxxww..c||....cc..............3wwwwwwwwww...wwwwwww.....wwccccwwwxxxx
+xxxxww..cccc+ccccc..........wwwwwwwwwwww3...wwwwwwwwwww.2.cc2dccwwxxxx
+xxxxwww..ccc...........'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww.+dd1Ocwwxxxx
+xxxxwwww......'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwcc2dccwwxxxx
+xxxxwwwwww'''wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwccccwwwxxxx
+xxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxx
+xxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxx
+xxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxx
+xxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

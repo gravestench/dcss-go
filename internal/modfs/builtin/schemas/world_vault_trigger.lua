@@ -4,7 +4,7 @@ local component = require("constants.component")
 
 register.component({
     id = component.WORLD_VAULT_TRIGGER,
-    version = 2,
+    version = 3,
     fields = {
         level_id = {
             type = "int64",
@@ -33,6 +33,12 @@ register.component({
         callback_method = {
             type = "string",
             default = "",
+        },
+        -- The same saved marker owner can fire on entry or on a named
+        -- monster's death; its callback decides when to consume itself.
+        event = {
+            type = "string",
+            default = "enter",
         },
         target_x = {
             type = "int64",

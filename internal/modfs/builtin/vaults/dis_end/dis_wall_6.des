@@ -1,0 +1,21 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des.
+# Dis seventh-floor helper.
+# Source default-depth is Dis, !Dis:$; helper setup below overrides to Dis:$.
+NAME:    dis_wall_6
+TAGS:    dis_divider no_rotate no_hmirror unrand
+ORIENT:  north
+DEPTH:   Dis:$
+KMONS:   1 = hell sentinel
+KMONS:   2 = quicksilver elemental / iron giant w:5
+MAP
+....................................................................
+vvvvvvvvvvv+++vvvvvvvvvvvvvvvvvv++++vvvvvvvvvvvvvvvvvv+++vvvvvvvvvvv
+vvvvvvvvvvv...vvvvvvvvvvvvvvvvvv....vvvvvvvvvvvvvvvvvv...vvvvvvvvvvv
+vvvvvvvvvv.....vvvvvvvvvvvvvvvv......vvvvvvvvvvvvvvvv.....vvvvvvvvvv
+vvvvvvvvvvv.1.vvvvvvvvvvvvvvvvvv..1.vvvvvvvvvvvvvvvvvv.1.vvvvvvvvvvv
+vvvvvvvvvvv...vvvvvvvvvvvvvvvvvv....vvvvvvvvvvvvvvvvvv...vvvvvvvvvvv
+vvvvvvvvvv2...2vvvvvvvvvvvvvvvv2....2vvvvvvvvvvvvvvvv2...2vvvvvvvvvv
+vvvvvvvvvvv...vvvvvvvvvvvvvvvvvv....vvvvvvvvvvvvvvvvvv...vvvvvvvvvvv
+vvvvvvvvvvv+++vvvvvvvvvvvvvvvvvv++++vvvvvvvvvvvvvvvvvv+++vvvvvvvvvvv
+vvvv............................................................vvvv
+ENDMAP

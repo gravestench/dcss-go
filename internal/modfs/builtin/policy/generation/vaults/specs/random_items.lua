@@ -35,6 +35,8 @@ function random_items.describe(name, depth)
         result.class_id = classes.OBJ_POTIONS
     elseif name == requests.ANY_WAND then
         result.class_id = classes.OBJ_WANDS
+    elseif name == requests.ANY_MISC then
+        result.class_id = classes.OBJ_MISCELLANY
     elseif name == "$" or name == "random_gold" then
         result.kind_id = ids.OBJ_GOLD
     elseif name == "*" or name == "star_item" then

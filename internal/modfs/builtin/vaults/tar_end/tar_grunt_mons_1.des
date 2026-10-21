@@ -1,0 +1,8 @@
+# Source: crawl-ref/source/dat/des/branches/tar.des.
+# Tartarus seventh-floor helper.
+NAME:    tar_grunt_mons_1
+TAGS:    tar_grunt_mons_1 transparent allow_dup unrand
+MONS:    spectral thing
+MAP
+1
+ENDMAP

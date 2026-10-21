@@ -560,6 +560,20 @@ local function hook_api(random, events, line, player, cells, state,
         return cells[1] and #cells[1] or 0, #cells
     end
 
+    -- Read the current local glyph after earlier source substitutions and
+    -- hook edits. Maze scripts need to inspect their own evolving map.
+    function api:cell(x, y)
+        local width, height = self:map_size()
+
+        if type(x) ~= "number" or type(y) ~= "number" or
+            x % 1 ~= 0 or y % 1 ~= 0 or
+            x < 0 or y < 0 or x >= width or y >= height then
+            error("vault hook cell is outside its local MAP")
+        end
+
+        return cells[y + 1][x + 1]
+    end
+
     -- Paint only a cell owned by this hook's current MAP. Coordinates are
     -- zero-based because the source DES Lua API used zero-based map points.
     function api:set_cell(x, y, glyph)
@@ -749,6 +763,23 @@ local function hook_api(random, events, line, player, cells, state,
     -- Avoid offering a unique item already created in the current run.
     function api:unique_generated(name)
         return player.unique_items and player.unique_items[name] or false
+    end
+
+    -- Generation hooks can inspect durable unique claims without mutating
+    -- the player or carrying a process-global set between map attempts.
+    function api:unique_seen(kind_id)
+        return player.unique_monsters and
+            player.unique_monsters[kind_id] == true or false
+    end
+
+    -- Read a choice already persisted by the floor owner. Hook expansion
+    -- must not make new run-wide decisions while a map is being retried.
+    function api:run_choice(key)
+        if not player.run_choices or not player.run_choices[key] then
+            error("vault hook needs saved run choice " .. tostring(key))
+        end
+
+        return player.run_choices[key]
     end
 
     -- Build one stable owner name from layout-stream syllable choices.

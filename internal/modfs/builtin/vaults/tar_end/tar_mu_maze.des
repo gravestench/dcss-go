@@ -1,0 +1,72 @@
+# Source: crawl-ref/source/dat/des/branches/tar.des.
+# Tartarus seventh-floor helper.
+NAME:     tar_mu_maze
+# only to shut up the validator
+ORIENT:   encompass
+TAGS:     tar_mu_maze no_rotate no_hmirror no_vmirror unrand
+: vault.run("shared.dig_mu_maze")
+NSUBST:   L = 2:M / 3 = M. / 5:N / 5:P / 5:V / 1:L / *:.
+NSUBST:   . = 5:Q / *:.
+KFEAT:    L = zot trap
+KMONS:    M = tzitzimitl
+KFEAT:    N = floor
+KITEM:    N = superb_item
+KMONS:    N = patrolling tzitzimitl / patrolling putrid mouth
+KFEAT:    P = floor
+KITEM:    P = star_item
+KMONS:    P = patrolling tainted leviathan / nothing
+KMONS:    Q = generate_awake unseen horror
+SUBST:    V = V / .
+MAP
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccc
+           cccccccccccccccc
+           cccccccccccccccc
+           cccccccccccccccc
+           cccccccccccccccc
+           cccccccccccccccc
+           cccccccccccccccc
+           cccccccccccccccc
+           cccccccccccccccc
+           cccccccccccccccc
+           cccccccccccccccc
+ENDMAP

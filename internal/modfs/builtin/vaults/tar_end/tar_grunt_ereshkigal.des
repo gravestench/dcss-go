@@ -1,0 +1,51 @@
+# Source: crawl-ref/source/dat/des/branches/tar.des.
+# Tartarus seventh-floor helper.
+NAME:    tar_grunt_ereshkigal
+TAGS:    tar_grunt_ereshkigal unrand
+MONS:    patrolling Ereshkigal, Tzitzimitl, profane servitor / tainted leviathan
+MONS:    ancient lich / dread lich
+KMASK:   O = no_item_gen
+KITEM:   O = bone rune of Zot
+: vault.run("shared.serpent_of_hell")
+: vault.run("shared.dig_grunt_maze")
+KFEAT:   - = floor
+NSUBST:  L = 2:2 / 3:4 / 8:3 / *:.
+MAP
+ccccccccccccccccccccc
+ccccccc$$$O$$$ccccccc
+ccccccc$$$$$$$ccccccc
+ccccccc$.....$ccccccc
+ccccccc...1...ccccccc
+ccccccc.......ccccccc
+ccccccc..2.2..ccccccc
+ccccccc.......ccccccc
+ccccccccc+++ccccccccc
+ccccccccc---ccccccccc
+ccccccccccccccccccccc
+ccccccccccccccccccccc
+ccccccccccccccccccccc
+ccccccccccccccccccccc
+ccccccccccccccccccccc
+ccccccccccccccccccccc
+ccccccccccccccccccccc
+ccccccccccccccccccccc
+ccccccccccccccccccccc
+ccccccccccccccccccccc
+ccccccccccccccccccccc
+ccccccccc---ccccccccc
+ccccccccc+++ccccccccc
+       ........
+       xx3.4xx
+       xx.D.xx
+       .......
+       xx...xx
+       xx...xx
+       .......
+        x...x
+        .....
+        x...x
+        .....
+        x...x
+        .....
+        x.2.x
+ENDMAP

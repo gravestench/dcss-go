@@ -1,0 +1,82 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/geh.des; geh_mu
+NAME:   geh_mu
+PLACE:  Geh:$
+ORIENT: encompass
+TAGS:   no_rotate
+MONS:   patrolling Asmodeus, brimstone fiend
+MONS:   balrug, searing wretch, hellion, fire giant
+KMONS:  7 = hellephant
+# Place one Serpent in the inner circle.
+: vault.run("serpent")
+# Source Lua: serpent_of_hell_setup(_G)
+KFEAT:  D = lava
+NSUBST: X = 1:D / *:l
+SUBST:  4 = 3445677, % = $|
+SUBST:  " : """.l , " : ""; , " = .l , ; = ...l
+SUBST:  ' : '''.x , ' : ''; , ' = .x , ; = ...x
+NSUBST: { = 1:{ / *:.
+: vault.run("setup")
+# Source Lua: geh_setup(_G); PLACE is static above.
+COLOUR: = = red
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x...."llvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvlllll"xx
+x.{.."llv......+......................................+......vllll".{x
+x..."lllv.vvvv.v....4....lllllllll.llllllllll.........v.vvvv.vllll".'x
+x..."lllv.v2|v.v.......lllllllllll.llllllllllll...4...v.v|2v.vlll"..'x
+x'."llllv.v+vv.v.....lllllllllllcc+ccllllllllllll.....v.vv+v.vll"..'xx
+x'."llllv.v....v...lllllllllllllc...cllllllllllllll...v....v.vll".'xxx
+x'."llllv.vvvvvv..lllllllllllXllc.4.cllXllllllllllll..vvvvvv.vll".'xxx
+x'."llllv.v......lllllllllllllllc...cllllllllllllllll......v.vll".'xxx
+x'.."lllv.v.4...llllllcccccccccccc+cclllllllllllllllll.....v.vll"..'xx
+x'.."lllv.v.....llllllccc..........cccccccccccllllllll..4..v.vlll".'xx
+x'."llllv.v....lllllllccc..........ccccccccccclllllllll....v.vlll".'xx
+x'."llllv.v....lllllllccc..........c..c....ccclllllllll....v.vlll"..'x
+x'."llllv.v...lllcccccc.+..........c..+..1.cccllllllllll...v.vllll".'x
+x'.."lllv.v...lllc$$$$c.+..........c..c....cccccccclllll...v.vllll".{x
+xx."llllv.v...lllc$$$$c.c.44....44.c..c2.2.c|||.nOclllll...v.vllll".'x
+x'.."lllv.v...lllc$2..c.cccccccccccc..c....c|||.n.clllll...v.vllll".'x
+x'.."lllv.v...lllc$...c.+..........c..c....c|||.n+clllll...v.vlll"..'x
+x'.."lllv.v...lllcccc+c.+..4..vvvv.c..cc++cc......clllll...v.vll"...'x
+x'."llllv.v...llllllc.ccc.....n||+.c..c....c.%%%%%clllll...v.vll"...'x
+x'.."lllv.v...llllllc.ccc..4..n||+.c..c%%%.c.%%%%%clllll...v.vll"...'x
+x'.."lllv.v...llllllc...+.....vvvv.c..c%%%.+.%%%%%clllll...v.vll"...'x
+xx.."lllv.v....lllllccccc..........c..c%%%.c.%%%%%cllll....v.vll"...'x
+xx.."lllv.v....lllllcccccccc+ccccccc..cccccc.%%%%%cllll....v.vll"...'x
+xx.."lllv.v.....llllcccccccc+ccccccc....ccccccccccclll.....v.vl"...'xx
+x'.."lllv.v.....llllccccccc....c...cc....cllllllllllll.....v.vl".4.'xx
+x'.."lllv.v......lllccccccc..4.+...++..4.clllllllllll......v.vl"...'xx
+x'.."lllv.v.4.....lllllllcc....c...cc....cllllllllll.......v.vll"...'x
+x'4."lllv.v........llllllccccccccccccc..cclllllllll........v.vll"..4'x
+x'.."lllv.v..........llllcccccccccclcccccclllllll......4...v.vlll"..'x
+xx.."lllv.v........4...llllllllllllllllllllllll............v.vlll"..'x
+xx.4"lllv.v..............llllllllllllllllllll....4.........v.vllll".'x
+x'.."llvv+vv..............................................vv+vvlll".'x
+x'.."lvvv+vvv............................................vvv+vvvll".'x
+x'.."lvv...vvvvvvvvvvvvvvvvvvvvvvv+++vvvvvvvvvvvvvvvvvvvvvv...vvll".'x
+x'.."lvv.4.vvvvvvvvvvvvvvvvvvvvvvv+++vvvvvvvvvvvvvvvvvvvvvv.4.vvl"..'x
+x'.."lvv.4.++............................................++.4.vvl"..'x
+x'."llvv.4.vvvvvnnnvvvvvvnnnvvvvvv+++vvvvvvnnnvvvvvvnnnvvvv.4.vvll".'x
+x'."llvv...vvvvvnnnvvvvvvnnnvvvvvv+++vvvvvvnnnvvvvvvnnnvvvv...vvll".'x
+x'.."lvvvvvvvllllllllllllllllllll.....lllllllllllllllllllvvvvvvvll".'x
+x'.."llvvvvvlllllllllllllllllllll.4.4.llllllllllllllllllllvvvvvll"..'x
+x'.."llllllllllllllllllllllllllll.....llllllllllllllllllllllllll"".'xx
+x'..."lllllllllllllllllllllllllll.....lllllllllllllllllllllllll"..'xxx
+x'..."lllllllllllllllllllllllllll.....lllllllllllllllllllllllll".'xxxx
+x'..."lllllllllllllllllllllllllll.4.4.llllllllllllllllllllllll".'xxxxx
+xx'..."llllllllllllllllllllllllll.....llllllllllllllllllllll""..'xxxxx
+xxx'..."""lllllllllllllllllllllll.....llllllllllllllllllll""...'xxxxxx
+xxx'......""""lllllllllllllllllll.....llllllllllllllll"""".....'xxxxxx
+xxx'.........."""llllllllllllllll.4.4.llllllllllll""""........'xxxxxxx
+xxx'............."""lllllllllll"l.....l""lllllll""...........'xxxxxxxx
+xxxx'..............."""lllll""".7.....7..""lll""............'xxxxxxxxx
+xxxxx'................."""""..............."""..............'xxxxxxxxx
+xxxxx'...''.............................................''.'xxxxxxxxxx
+xxxxxx''..''............................................'xxxxxxxxxxxxx
+xxxxxxxx''''.........'''.................''''''......'''xxxxxxxxxxxxxx
+xxxxxxxxxxxxx'....'''xx'''...'''......'''xxxxxx'.......'xxxxxxxxxxxxxx
+xxxxxxxxxxxxxx'.'''xxxxxxx''.'xx''...'xxxxxxxxxx'''...'xxxxxxxxxxxxxxx
+xxxxxxxxxxxxxx''''xxxxxxxxxxxxxxxx'''xxxxxxxxxxxxxx'''xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

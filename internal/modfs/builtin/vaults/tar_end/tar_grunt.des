@@ -1,0 +1,12 @@
+# Source: crawl-ref/source/dat/des/branches/tar.des.
+# Tartarus seventh-floor controller.
+NAME:   tar_grunt
+TAGS:   overwritable
+ORIENT: encompass
+# Source Lua generates a 70x70 base, then composes tagged rooms.
+KPROP:  X-_ = no_tele_into
+PLACE:   Tar:$
+TAGS:    no_rotate
+KMASK:   O = no_item_gen
+KITEM:   O = bone rune of Zot
+: vault.post_place("compose")

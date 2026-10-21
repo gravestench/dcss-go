@@ -1,0 +1,80 @@
+# Source: crawl-ref/source/dat/des/branches/tar.des.
+# Tartarus seventh-floor controller.
+NAME:    tar_old
+ORIENT:  encompass
+MONS:    patrolling Ereshkigal, tainted leviathan, profane servitor
+MONS:    shadow wraith, ancient lich / dread lich, putrid mouth
+MONS:    tzitzimitl
+KMONS:   8 = bone dragon
+KMONS:   9 = doom hound
+KMONS:   0 = eidolon
+KMONS:   Z = skeleton / zombie
+SUBST:   ? = ?..., ? = 2., 0 = 002
+SHUFFLE: 3569
+: vault.run("shared.serpent_of_hell")
+PLACE:   Tar:$
+TAGS:    no_rotate
+KMASK:   O = no_item_gen
+KITEM:   O = bone rune of Zot
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxx..............................................................xxxx
+xxxx..............................................................xxxx
+xxxx.................cccc..........ccc............................xxxx
+xxxx.............ccccc..cccc.....ccc.cccc.........................xxxx
+xxxx...........ccc.........ccccccc.....cc.........................xxxx
+xxxx.........ccc........6...........V..cc.........................xxxx
+xxxx........cc4........................cc...........xxxxxxxx......xxxx
+xxxx........cc44xxx++xxx......D........cc..........xx......xx.....xxxx
+xxxx........ccxxx......xxx.......ccc++ccc....6....xx........xx....xxxx
+xxxx........cxx..........xxx.....ccc44ccc.........x..........x....xxxx
+xxxx........cx............xx....cccc44cc.........xx.9......7.xx...xxxx
+xxxx.......ccx.G........G.xxx7ccc..c44c..........x....||||....x...xxxx
+xxxx.......cxx............xxxcc..................x....||||....x...xxxx
+xxxx......ccx..............xxc...................xx.9......9.xx...xxxx
+xxxx......ccx..G........G..xxc..x.........x.......x..........x....xxxx
+xxxx......ccx..............xcc......??............xx........xx....xxxx
+xxxx.......cxx............xxc......2222............xx......xx.....xxxx
+xxxx.......ccx.G........G.xcc.......??..............xxxxxxxx......xxxx
+xxxx........cx7..........7xc......................................xxxx
+xxxx........cxx....17....xxc....x.........x.......................xxxx
+xxxx........ccxxx......xxxcc......................................xxxx
+xxxx........cccc+xxxxxx+cccc.................................3....xxxx
+xxxx........cc$$cccccccc$$cc......................................xxxx
+xxxx.........cc$$$$O$$$$$cc.......................................xxxx
+xxxx..........cccccccccccc......x.........x............V..........xxxx
+xxxx..............................................................xxxx
+xxxx...........................................cccccccccccccccc...xxxx
+xxxx...........................................cccccccccccccccc...xxxx
+xxxx..................................6........cc$$$$$xx|||||cc...xxxx
+xxxx.......3........V...........x.........x....cc$$$$$xx|||||cc...xxxx
+xxxx................................7..........ccxxcccccccccccc...xxxx
+xxxx...........................................ccxxcccccccccccc...xxxx
+xxxx...........................................cc44744xx00000cc...xxxx
+xxxx.......ccccccccc+ccccccccc.................cc44444xx88888cc...xxxx
+xxxx.......c.................c..x.........x..ccccccccccccxxxxcc...xxxx
+xxxx.......c.x.x.x.x.x.x.x.x.c.................ccccccccccxxxxcc...xxxx
+xxxx.......c.................c......................+........cc...xxxx
+xxxx.......cx5x.x.x.x.x.x.x5xc......................+........cc...xxxx
+xxxx.......c.................c.................ccccccccccxxxxcc...xxxx
+xxxx.......c.x.x.x.x5x.x.x.x.c..x.........x..ccccccccccccxxxxcc...xxxx
+xxxx.......c.................c.................ccZZZZZxx88888cc...xxxx
+xxxx.......cxxxxxxx.x.xxxxxxxc.................ccZZZZZxx00000cc...xxxx
+xxxx.......c$$$$$$x....x$$$||c.................ccxxcccccccccccc...xxxx
+xxxx.......c$x$$x$xx.x.x$x$x|c.................ccxxcccccccccccc...xxxx
+xxxx.......c||||||+....+$$$||c..x....3....x....cc||xx444xx|||cc...xxxx
+xxxx.......ccccccccccccccccccc.................cc||xx444xx|7|cc...xxxx
+xxxx...........................................cccccccccccccccc...xxxx
+xxxx...........................................cccccccccccccccc...xxxx
+xxxx..............................................................xxxx
+xxxx..............................................................xxxx
+xxxx..............................................................xxxx
+xxxx..............................................................xxxx
+xxxx..............................................................xxxx
+xxxx..............................{...............................xxxx
+xxxx..............................................................xxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

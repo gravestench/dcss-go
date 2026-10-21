@@ -28,6 +28,8 @@ local altar_catalog = require("policy.generation.altar.catalog")
 local shop_spec = require("policy.generation.vaults.shop_spec")
 local shoals_heights = require("policy.generation.shoals_heights")
 local monster_budget = require("policy.generation.monster_budget")
+local component = require("constants.component")
+local hell_serpent = require("policy.generation.hell.serpent")
 
 local generated = {}
 
@@ -538,7 +540,8 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
                 "hells" or nil,
             tag = branch.encompass_vault_tag,
         }
-        local candidates = (branch.encompass_vault_family or
+        local candidates = not primary_spec and
+            (branch.encompass_vault_family or
             branch.encompass_vault_families or
             encompass_context.shared_family) and
             vault_encompass.candidates(encompass_context) or {}
@@ -570,6 +573,8 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
         name = player.name,
         started = player.started,
         branch_entries = scheduled_entries,
+        run_choices = player.run_choices,
+        unique_monsters = player.unique_monsters,
     }
     local branch_links, entry_maps, provisional_links = place_branch_entrances(ctx,
         layout.builder, layout, protected, required, entry_player,
@@ -612,6 +617,8 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
                 absolute_depth = absolute_depth,
                 layout_family = layout_family(layout),
                 branch_entries = scheduled_entries,
+                run_choices = player.run_choices,
+                unique_monsters = player.unique_monsters,
             },
             })
     end
@@ -938,6 +945,20 @@ function generated.hell(ctx, input)
         name = input.player_name,
         started = true,
     }
+
+    if depth == branch.depth then
+        -- The first reached ending fixes the Serpent's one run-wide home.
+        -- Stage rollback restores this player component if floor creation
+        -- or its final landing fails before portal commit.
+        hell_serpent.branch(ctx)
+
+        local state = ctx:get(ctx:player(),
+            component.PLAYER_UNIQUE_HISTORY)
+
+        player.run_choices = state.choices
+        player.unique_monsters = state.monsters
+    end
+
     local floor = build_floor(ctx, player, branch_id, depth,
         input.prior_vault_ids, input.branch_schedule, input.temple_plan)
     local level = level_record(ctx, floor)

@@ -12,6 +12,8 @@ local requests = {
     RANDOM_SPECTRE = "spectre",
     RANDOM_SPECTRAL = "spectral",
     RANDOM_SIMULACRUM = "simulacrum",
+    RANDOM_ZOMBIE = "zombie",
+    RANDOM_SKELETON = "skeleton",
 }
 
 return requests

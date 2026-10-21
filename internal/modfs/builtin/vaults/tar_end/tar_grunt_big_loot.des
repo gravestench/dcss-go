@@ -1,0 +1,26 @@
+# Source: crawl-ref/source/dat/des/branches/tar.des.
+# Tartarus seventh-floor helper.
+NAME: tar_grunt_big_loot
+TAGS: tar_grunt_big_loot unrand
+MONS: Tzitzimitl / bone dragon, profane servitor / tainted leviathan
+MONS: ancient lich / dread lich
+MAP
+..................
+.cccccccccccccccc.
+.c|$x.2c||c2.x$|c.
+.c$.x..c||c..x.$c.
+.c..c..c||c..c..c.
+.c..c$|c$$c|$c..c.
+.c..c|$c$$c$|c..c.
+.c..c..c$$c..c..c.
+.c..c..c22c..c..c.
+.c2.c3.c13c.3c.2c.
+.c..cxxcxxcxxc..c.
+.c..c$...1..$c..c.
+.c..c|$.3..$|c..c.
+.c..cccccccccc..c.
+.c$.x..1..2..x.$c.
+.c|$x........x$|c.
+.ccccccc++ccccccc.
+........@@........
+ENDMAP

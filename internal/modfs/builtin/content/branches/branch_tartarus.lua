@@ -3,6 +3,7 @@
 -- Entry and depth are catalog facts; generated levels and stair links are saved separately.
 
 local categories = require("constants.catalog")
+local families = require("constants.vault_families")
 
 local definition = {
     id = "BRANCH_TARTARUS",
@@ -11,6 +12,12 @@ local definition = {
     min_depth = 1,
     max_depth = 1,
     depth = 7,
+    primary_vaults = {
+        {
+            depth = 7,
+            family = families.TAR_END,
+        },
+    },
     absolute_depth = 28,
     flags = {
         "no_items",

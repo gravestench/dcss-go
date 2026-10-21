@@ -1,0 +1,12 @@
+# Source: crawl-ref/source/dat/des/branches/coc.des.
+# Cocytus seventh-floor SUBVAULT helper; MAP rows match source bytes.
+NAME:  coc_grunt_cove_fiend
+TAGS:  coc_grunt_cove_fiend allow_dup
+MONS:  patrolling ice fiend
+KITEM: $ = $ no_pickup
+MAP
+ $*
+*1*$
+$*|*
+ *$
+ENDMAP

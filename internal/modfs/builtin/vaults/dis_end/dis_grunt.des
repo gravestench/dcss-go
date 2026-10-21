@@ -1,0 +1,62 @@
+# Source: crawl-ref/source/dat/des/branches/dis.des.
+# Dis seventh-floor helper.
+# Source default-depth is Dis, !Dis:$; helper setup below overrides to Dis:$.
+NAME:    dis_grunt
+MONS:    patrolling Dispater, Hell Sentinel, crystal echidna / iron dragon w:5
+MONS:    caustic shrike / ancient champion w:20
+MONS:    iron golem, quicksilver dragon, cacodemon
+SHUFFLE: AP / BQ / CR / DS / ET
+SUBST:   A = 1, BC = 2, DE = 7
+SUBST:   P = O, QRST = .
+NSUBST:  G = 4:8 / *:G
+TILE:    G = dngn_statue_iron_golem
+COLOUR:  G = cyan
+KMONS:   8 = iron golem
+KMONS:   9 = war gargoyle
+ITEM:    plate armour good_item / crystal plate armour good_item w:3
+ITEM:    any weapon good_item
+KMONS:   K = Hell Sentinel
+KITEM:   K = |
+KMONS:   J = Hell Sentinel
+KITEM:   J = $
+: vault.run("shared.serpent_of_hell")
+TAGS:    dis_castle no_rotate no_vmirror unrand
+ORIENT:  north
+DEPTH:   Dis:$
+KMASK:   O = no_item_gen
+KITEM:   O = iron rune of Zot
+COLOUR:  G = cyan
+TILE:    G = dngn_statue_iron
+: vault.run("shared.iron_statue_name")
+MAP
+....................................................................
+....................................................................
+...............vv9.vv4.vv9.vvvvvvvvvvvvvvvvvvvvvv.9v.4v.9vvvvvvvvv..
+.............vvvvvvvvvvvvvvv.....+$$$v||vP......vvvvvvvvvv......Qv..
+...........vvv.............v.4.5.+$$$vK|v........vvvvvvvv........v..
+.........vvvvv.G.G.G.G.G.G.v..3..v$J$v$$v..A.....vvvvvvvv.....B..v..
+......vvvvvvvv.............+...4.v|||v$$v........vvvvvvvv........v..
+......vv.....+......3......+.....vvvvv++v........vvvvvvvv........v..
+......9v.5.4.+....5...4....vvvvvvv...v45v.........vvvvvv.........v..
+......vv.....+.............vvvvv.....v.3v........................v..
+......vv...G.vvvvvv+++vvvvvvvvv..4.9.+.4vv......................vv..
+.vv...9v.....v.............vvv.......+..vvvvvv..............vvvvv9..
+.vvv++vv...3.v.G.G.....G.G.vv..G.G.G.vvvvvvvvvv....v++v....vvvvvvv..
+..v...4v...G.v.............v..4.8....vvvvvvvvvv...vv..vv...vvvvvv9..
+..+....+.....v..4....2...5.+.....D...+....2...+...+.dT.+...vvvvvvv..
+..+....+.....v..5..9.....4.+.....2...+........+...+.Ee.+...vvvvvv9..
+..v...4v...G.v.............v..4.8....vvvvvvvvvv...vv..vv...vvvvvvv..
+.vvv++vv...3.v.G.G.....G.G.vv..G.G.G.vvvvvvvvvv....v++v....vvvvvv9..
+.vv...9v.....v.............vvv.......+..vvvvvv..............vvvvvv..
+......vv...G.vvvvvv+++vvvvvvvvv..4.9.+.4vv......................vv..
+......vv.....+.............vvvvv.....v.3v........................v..
+......9v.5.4.+....4...5....vvvvvvv...v54v.........vvvvvv.........v..
+......vv.....+......3......+.....vvvvv++v........vvvvvvvv........v..
+......vvvvvvvv.............+...4.v$$$v$$v........vvvvvvvv........v..
+.........vvvvv.G.G.G.G.G.G.v..3..v$$$v$$v..D.....vvvvvvvv.....C..v..
+...........vvv.............v.4.5.+$J$vK|v........vvvvvvvv........v..
+.............vvvvvvvvvvvvvvv.....+|||v||vS......vvvvvvvvvv......Rv..
+...............vv9.vv4.vv9.vvvvvvvvvvvvvvvvvvvvvv.9v.4v.9vvvvvvvvv..
+....................................................................
+....................................................................
+ENDMAP

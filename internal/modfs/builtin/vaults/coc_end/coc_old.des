@@ -1,0 +1,83 @@
+# Source: crawl-ref/source/dat/des/branches/coc.des.
+# Cocytus seventh-floor controller; MAP rows match source bytes.
+NAME:    coc_old
+ORIENT:  encompass
+MONS:    patrolling Antaeus, ice fiend, shard shrike, titan
+KMONS:   0 = wendigo / simulacrum w:40
+KMONS:   E = elemental wellspring
+KMONS:   F = ice dragon
+KFEAT:   E = w
+KFEAT:   F = W
+SHUFFLE: 1O26Y$| / 8~47Z%*, 1O, 8~, $|, %*
+SHUFFLE: 5X, 6Y, 7Z, AB
+SUBST:   % = $, ~ = |, 3 = 3:6 .:4
+SUBST:   567 = 2, X8 = 4, AYZ = ., B = c , < = .
+# Source serpent_of_hell_setup: unique, persistent Hell-branch selection.
+: vault.run("shared.serpent_of_hell")
+KFEAT:   D = deep_water
+NSUBST:  H = 1:D / *:w
+NSUBST:  0 = 20:0 / 4:0. / 4:0.. / *:.
+# Source coc_setup: place and rotation metadata must exist before selection.
+PLACE: Coc:$
+TAGS: no_rotate
+: vault.run("shared.coc_setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxx........................xxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxx............00............xxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxx.............00.............xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxx..............00..............xxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxx................................xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx....ccAAccccccccccccccccccBBcc....xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxx....cccAAccccccccccccccccccBBccc....xxxxxxxxxxxxxxx
+xxxxxxxxxxxxxx....cc........X........5........cc....xxxxxxxxxxxxxx
+xxxxxxxxxxxxx....cc............................cc....xxxxxxxxxxxxx
+xxxxxxxxxxxx....cc...wwwwwwwwwwwwwwwwwwwwwwww...cc....xxxxxxxxxxxx
+xxxxxxxxxxx....cc...wwwwwwwwwwwwwwwwwwwwwwwwww...cc....xxxxxxxxxxx
+xxxxxxxxxx....cc...wwwwwwwwwwwwwwwwwwwwwwwwwwww...cc....xxxxxxxxxx
+xxxxxxxxx....cc...ww.......3....33....3.......ww...cc....xxxxxxxxx
+xxxxxxxx....cc...ww............................ww...cc....xxxxxxxx
+xxxxxxx....cc0..ww....cccccccccccccccccccccc....ww..0cc....xxxxxxx
+xxxxxx....cc0..ww....cccccccccccccccccccccccc....ww..0cc....xxxxxx
+xxxxx....cc...ww....cc......................cc....ww...cc....xxxxx
+xxxx....cc...ww...0cc...T................T...cc0...ww...cc....xxxx
+xxx....cc...ww...0cc..........wwWWww..........cc0...ww...cc....xxx
+xx....cc...ww....cc......wwwwwwWWWWwwwwww......cc....ww...cc....xx
+xx....cc...ww...cc.....wwwWWWWWWwwWWWWWWwww.....cc...ww...cc....xx
+xx....cc..www..cc....wwwwWcccccwwwwcccccWwwww....cc..www..cc....xx
+xx....cc..www.cc....wwwwWcc%%cccwwccc$$ccWwwww....cc.www..cc....xx
+xx....cc..www.cc...wwwwwWc%%%+4cccc2+$$$cWwwww....cc.www..cc....xx
+xx....cc..www.cc...wwwwwWc%%%c+cccc+c$$$cWwwwww...cc.www..cc....xx
+xx.00.cc..www3.c..wwwwwwWccccc.7cc6.cccccWwwwwww..c.3www..cc.00.xx
+xx.00.cc..wwww.c.wwwwwwwF+.Z.+.8cc1.+.Y.+Fwwwwwww.c.wwww..cc.00.xx
+xx.00.cc..wwww3c.wEwwwwwF+.Z.+.~ccO.+.Y.+FwwwwwEw.c3wwww..cc.00.xx
+xx....cc..wwww.c.wwwwwwwwccccc.7cc6.cccccwwwwwwww.c.wwww..cc....xx
+xx....cc..www3.c..wwwwwwwc***c+cccc+c|||cwwwwwww..c.3www..cc....xx
+xx....cc..www.cc...wwwwwwc***+4cccc2+|||cwwwwww...cc.www..cc....xx
+xx....cc..www.cc...wwwwwwcc**cccwwccc||ccwwwwww...cc.www..cc....xx
+xx....cc..www.cc....wwwwwwcccccwwwwcccccwwwwww....cc.www..cc....xx
+xx....cc..www..cc....wwwwwwwwwwwwwwwwwwwwwwww....cc..www..cc....xx
+xx....cc...ww...cc.....wwwwwwwwwwwwwwwwwwww.....cc...ww...cc....xx
+xx....cc...ww....cc......wwwwwwwwwwwwwwww......cc....ww...cc....xx
+xxx....cc...ww....cc..........wwwwww..........cc....ww...cc....xxx
+xxxx....cc...ww....cc...T................T...cc....ww...cc....xxxx
+xxxxx....cc...ww....BB........5....X........AA....ww...cc....xxxxx
+xxxxxx....cc...ww....cBccccccccccccccccccccAc....ww...cc....xxxxxx
+xxxxxxx....cc...ww....BccccccccccccccccccccA....ww...cc....xxxxxxx
+xxxxxxxx....cc...ww............0000............ww...cc....xxxxxxxx
+xxxxxxxxx....cc...ww..........................ww...cc....xxxxxxxxx
+xxxxxxxxxx....cc...wwwwwwwwwwwww..wwwwwwwwwwwww...cc....xxxxxxxxxx
+xxxxxxxxxxx....cc...wwwwwwwwwHww..wwHwwwwwwwww...cc....xxxxxxxxxxx
+xxxxxxxxxxxx....cc...wwwwwwwwwww..wwwwwwwwwww...cc....xxxxxxxxxxxx
+xxxxxxxxxxxxx....cc............................cc....xxxxxxxxxxxxx
+xxxxxxxxxxxxxx....cc...........0000...........cc....xxxxxxxxxxxxxx
+xxxxxxxxxxxxxxx....cccccccccccccccccccccccccccc....xxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx....cccccccccccccccccccccccccc....xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxx..............0000..............xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxx..............................xxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxx............................xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxx............{<............xxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

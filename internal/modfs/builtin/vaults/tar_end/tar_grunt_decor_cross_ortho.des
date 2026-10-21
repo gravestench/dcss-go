@@ -1,0 +1,14 @@
+# Source: crawl-ref/source/dat/des/branches/tar.des.
+# Tartarus seventh-floor helper.
+NAME: tar_grunt_decor_cross_ortho
+TAGS: tar_grunt_decor transparent allow_dup unrand
+MAP
+  ....
+  .xx.
+...xx...
+.xxxxxx.
+.xxxxxx.
+...xx...
+  .xx.
+  ....
+ENDMAP

@@ -170,6 +170,42 @@ function controller.place_maps(api, tag, count, options)
     return placed_count, placed_ids
 end
 
+-- Put one tagged child at the exact center requested by a source
+-- controller. Reuse the ordinary fitter, history, and child hooks so this
+-- path cannot silently bypass unique claims or typed record placement.
+function controller.place_tag_at(api, tag, x, y)
+    local child = child_context(api.context, tag)
+
+    child.exact_center = {
+        x = x,
+        y = y,
+    }
+
+    local selected = selection.choose_tag(api.builder, tag, child)
+
+    if not selected then
+        error("controller has no child tagged " .. tostring(tag))
+    end
+
+    local vault = catalog.get(selected.id)
+
+    if #vault.rows == 0 then
+        error("exact child placement needs a MAP: " .. vault.id)
+    end
+
+    local map, reason = api.place(nil, api.builder, vault, child)
+
+    if not map then
+        error("exact child placement failed: " .. tostring(reason))
+    end
+
+    api.placed[#api.placed + 1] = map
+    api.context.used:add_map(vault, map)
+    run_child_hooks(api, child, vault, map)
+
+    return map
+end
+
 -- Preserve source whole-level tile choices as a saved, typed controller
 -- record. The ASCII client has no tile surface, while a future tiles client
 -- can read the same level data without rerunning the source hook.
@@ -228,6 +264,7 @@ function controller.new(builder, context, placed, place, controller_id, map)
     api.absolute_depth = controller.absolute_depth
     api.has_tag = controller.has_tag
     api.place_maps = controller.place_maps
+    api.place_tag_at = controller.place_tag_at
     api.level_tiles = controller.level_tiles
     api.recall = controller.recall
 

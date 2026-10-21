@@ -7,6 +7,8 @@ local component = require("constants.component")
 local flags = require("constants.monster_flags")
 local decisions = require("constants.pan_unique_decision")
 local monsters = require("ids.monsters")
+local choices = require("constants.unique_choices")
+local branches = require("ids.branches")
 local history = {}
 
 -- A catalog flag determines whether a monster consumes unique history;
@@ -122,6 +124,34 @@ function history.set_pan_state(ctx, kind_id, decision)
     ctx:set(player, component.PLAYER_UNIQUE_HISTORY, state)
 end
 
+-- Choose one home for a unique from a stable, named RNG stream. Keeping the
+-- result on the player makes a later Hell end independent of visit order.
+function history.choice(ctx, key, values, stream)
+    local player = ctx:player()
+    local state = ctx:get(player, component.PLAYER_UNIQUE_HISTORY)
+
+    if not state or not state.choices then
+        error("player unique choices are missing")
+    end
+
+    local saved = state.choices[key]
+
+    if saved then
+        return saved
+    end
+
+    if #values == 0 then
+        error("unique choice has no alternatives " .. key)
+    end
+
+    local selected = values[ctx:random(stream, #values) + 1]
+
+    state.choices[key] = selected
+    ctx:set(player, component.PLAYER_UNIQUE_HISTORY, state)
+
+    return selected
+end
+
 -- A saved ID must name a current unique profile, not an ordinary monster
 -- or arbitrary string injected into the player history map.
 function history.validate(state)
@@ -137,6 +167,19 @@ function history.validate(state)
 
     if not state.pan_states then
         error("player Pan unique history is missing")
+    end
+
+    if not state.choices then
+        error("player unique choices are missing")
+    end
+
+    local serpent_branch = state.choices[choices.HELL_SERPENT_BRANCH]
+
+    if serpent_branch and serpent_branch ~= branches.BRANCH_GEHENNA and
+        serpent_branch ~= branches.BRANCH_COCYTUS and
+        serpent_branch ~= branches.BRANCH_DIS and
+        serpent_branch ~= branches.BRANCH_TARTARUS then
+        error("invalid Serpent of Hell branch " .. serpent_branch)
     end
 
     if type(state.boris_killed) ~= "boolean" then

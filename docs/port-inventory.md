@@ -424,9 +424,15 @@ vault chance stage, with `hell_entry` as a failed-fit fallback. The four
 subbranches now have source-backed ordinary-depth (1–6) catalogs: 36 Dis
 maps, 30 Gehenna maps, 26 Cocytus maps, 39 Tartarus maps, ten shared Hell
 maps, and 39 Gehenna lava-maze definitions. Compact 40×35 generation,
-branch gate travel, and persistent floor records are being integrated.
-Seventh-floor endings, bosses, and runes remain to be integrated before Hell
-is fully playable.
+branch gate travel, and persistent floor records use the live generation
+path. The 51 source seventh-floor definitions are committed as 15 Dis, seven
+Gehenna, eight Cocytus, and 21 Tartarus controllers and helpers. One weighted
+controller owns each 80×70 ending. Its source rune, boss records, and exit
+are generated and saved; a single saved branch choice determines where the
+Serpent of Hell can appear. Named Lua hooks replace the source inline
+scripts, including Tartarus maze carving and tagged helper placement.
+Remaining Hell monster and boss behavior still depends on later combat
+and content slices.
 
 The fifty-three-definition aquarium family retains the source controller
 and all fifty-two authored child maps. One Lua controller picks a shared

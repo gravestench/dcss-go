@@ -2055,6 +2055,20 @@ catalog but is skipped before the weighted map draw. Travel through the
 four Vestibule gates belongs to `policy/world/hell/travel.lua`, while
 live marker callbacks belong to `policy/world/vault_trigger_callbacks/`.
 
+The seventh floors use the `dis_end`, `geh_end`, `coc_end`, and `tar_end`
+families. Each branch chooses one weighted controller map, and a controller
+may place tagged child maps after it fits. For example,
+`vaults/coc_end/coc_grunt.des` declares
+`: vault.run("shared.serpent_of_hell")`; the resolver calls
+`serpent_of_hell(api)` in
+`policy/generation/vaults/coc_end/shared.lua`. That hook reads the single
+saved Hell branch chosen for the Serpent and emits a monster directive only
+on its home floor. The choice is made before generation and survives saves;
+loading the four end families in a different order does not change it.
+Generation hooks only configure the map. A delayed event, such as the
+iron statue that awakens after Dispater dies, is recorded as a saved marker
+and handled by `policy/world/vault_trigger_callbacks/dis.lua` during play.
+
 | DES declaration | When its Lua method runs |
 | --- | --- |
 | `: vault.run("method")` | At that line's position among the map's directives; it may emit more typed directives. |
@@ -2073,6 +2087,13 @@ Use `api:emit` to insert a DES directive at the declaration's position or
 `api:record` to create a typed placement record. A hook that needs to act
 later, after the player moves, must record a persistent effect and leave its
 live behavior to a system.
+
+On an end map, `api:run_choice(key)` reads a choice saved on the player
+before generation, and `api:unique_seen(monster_id)` reads its saved unique
+history. Neither method rolls or changes that history. A mod that needs a
+run-wide random decision should make and save it in a live policy before
+selecting the map, then let its hook read the result. This prevents map
+load order and rejected placement attempts from changing the decision.
 
 When the original DES script computes a value before intervening directives
 and uses it later, split it into two named hooks at those positions. The
@@ -2982,7 +3003,10 @@ second system just to make the source modifiers work.
 | `api:record(kind, arguments)` | Queue a typed placement effect; import its kind from `constants.vault_effects`. |
 | `api:remember(name, value)`, `api:recall(name)` | Carry a source script value between hooks in one map placement; recall errors if the first hook did not run. |
 | `api:map_size()` | Return local width and height; an empty-MAP child gets its parent region's size. |
+| `api:cell(x, y)` | Read the current zero-based local glyph, including earlier substitutions and hook edits. |
 | `api:set_cell(x, y, glyph)` | Paint one zero-based local cell; out-of-bounds positions raise an error. |
+| `api:run_choice(key)` | Read a saved player choice supplied to generation; return `nil` when unset. |
+| `api:unique_seen(monster_id)` | Check whether the player already generated this unique monster. |
 | `api:has_tag(tag)` | Check a tag on the current DES map. |
 | `api:has_placed_tag(tag)` | Check whether an earlier successful child map in this composition carried the tag. |
 
@@ -3005,6 +3029,13 @@ for one generation call, so it does not depend on file load order or a Lua
 global. A failed helper fit never claims a name or tag. The selected helper
 IDs and protected cells pass through the authored layout result for level
 population and saves.
+
+For a `vault.post_place` controller, `api:place_maps(tag, count)` draws
+tagged children through the ordinary fitter. `api:place_tag_at(tag, x, y)`
+draws one tagged child with its center fixed at the given whole-level
+coordinates; it rejects a missing or unfittable child and records its
+history through the same path. Tartarus's `tar_grunt` controller uses this
+for Ereshkigal's chamber before placing its other decoration maps.
 
 `SUBVAULT` may name several placeholder glyphs before the colon, as in
 `SUBVAULT: ErH : nico_lavamaze_diaghalf`. The engine treats those glyphs

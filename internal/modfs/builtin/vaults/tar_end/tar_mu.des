@@ -1,0 +1,86 @@
+# Source: crawl-ref/source/dat/des/branches/tar.des.
+# Tartarus seventh-floor controller.
+NAME:     tar_mu
+ORIENT:   encompass
+MONS:     patrolling Ereshkigal, tzitzimitl, tainted leviathan, putrid mouth
+MONS:     profane servitor, bone dragon, shadow wraith
+KMONS:    8 = shadow imp
+: vault.run("shared.serpent_of_hell")
+SUBVAULT: = : tar_mu_maze
+# position of the loot chamber varies
+SHUFFLE:  AB
+SUBST:    A = %
+SUBST:    B = x
+KFEAT:    % = .
+KMONS:    % = putrid mouth w:20 / shadow wraith w:15 / reaper w:5 / nothing w:20
+KITEM:    % = | / $
+SUBST:    4 = 3333444455566778
+KMONS:    s = eidolon
+KMONS:    t = shadow wraith
+PLACE:   Tar:$
+TAGS:    no_rotate
+KMASK:   O = no_item_gen
+KITEM:   O = bone rune of Zot
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxx..............................................................xxxx
+xxxx.4.............................4............................{.xxxx
+xxxx..ccccccccccccccccccccccccccccc...............................xxxx
+xxxx..c===========================+...............................xxxx
+xxxx..c===========================c...............................xxxx
+xxxx..c===========================c...............................xxxx
+xxxx..c===========================c...............................xxxx
+xxxx..c===========================c..............3ccccccc3........xxxx
+xxxx..c===========================c............7ccccccccccc7......xxxx
+xxxx..c===========================c...........3ccccc$$$ccccc3.....xxxx
+xxxx..c===========================c..........7cccc$$$$$$$cccc7....xxxx
+xxxx..c===========================c..........7ccc$$$$$$$$$ccc7....xxxx
+xxxx..c===========================c..........ccc$$$$$$$$$$$ccc....xxxx
+xxxx..c===========================c..........ccc.2.$$$$$.2.ccc....xxxx
+xxxx..c===========================c.........ccc....xxxxx....ccc...xxxx
+xxxx..c===========================c.........ccc..xxxxxxxxx..ccc...xxxx
+xxxx..c===========================c.........cc..xxxxxxxxxxx..cc...xxxx
+xxxx..c===========================c.........cc+cxxxxxxxxxxxc+cc...xxxx
+xxxx..c===========================c.........cc.c...........c.cc...xxxx
+xxxx..c===========================c.........cc.c.xxxxxxxxx.c.cc...xxxx
+xxxx..c===========================c.........cc.c+xxxxxxxxc+c.cc...xxxx
+xxxx..c===========================c.........cc.c.xx.444.xc.c.cc...xxxx
+xxxx..c===========================c.........cc.c.cx.444.xc.c.cc...xxxx
+xxxx..c===========================c.........cc.c.cxxxxxxxc.c.cc...xxxx
+xxxx..c===========================c.........cc.c.cccxxxccc.c.cc...xxxx
+xxxx..c===========================c.........cc.c...cxxxc...c.cc...xxxx
+xxxx..c===========================c.........cc.c.cccxxxccc.c.cc...xxxx
+xxxx..c===========================c.........cc.c.cx|2.2|xc.c.cc...xxxx
+xxxx..c===========================c.........cc.c.cx|$$$|xc.c.cc...xxxx
+xxxx..c===========================c.........cc.c.ccccxcccc.c.cc...xxxx
+xxxx..c===========================c.........cc.c....cxc....c.cc...xxxx
+xxxx..c===========================c.........cc.c.ccccxcccc.c.cc...xxxx
+xxxx..c===========================c.........cc.c.cxx|||xxc.c.cc...xxxx
+xxxx..c===========================c.........cc.c.cxx|||xxc.c.cc...xxxx
+xxxx..c===========================c.........cc+c.ccccccccc.c+cc...xxxx
+xxxx..c===========================c..........c.c.....c.....c.c....xxxx
+xxxx..c===========================c............c...........c......xxxx
+xxxx..c===========================c...............................xxxx
+xxxx..c===========================c...............4.4.4.4.........xxxx
+xxxx..c===========================c................4...4..........xxxx
+xxxx..c===========================c...........x.................xxxxxx
+xxxx..c===========================c..........xxx...............xxxxxxx
+xxxx..c===========================c.........xxxxxx+xxxxxxxxx+xxxxxxxxx
+xxxx..c===========================c.........xxxxxx.x|$...$|x.xxxxxxxxx
+xxxx..ccccccccccccc===============c.........xxxxxx.xxx2.2xxx.xxxAAAAxx
+xxxx..cc..........+===============c........xxxxxxx.xxxxxxxxx.xxxAAAAxx
+xxxx..cc..........c===============c........xxxxxxx..xxxxxxx..xxxAAAAxx
+xxxx..cc..........c===============c........xxxxxxxx.........xxxxAAAAxx
+xxxx..cc....2.....c===============c.......xxxxxxxxxx.......xxxxxxxxxxx
+xxxx..cc.s...2..s.c===============c.......xxxxxxxxxxx.....xxAAAAAAAAxx
+xxxx..cc.7..1...7.c===============c......xxBBBBBBBxxxx...xxxAAAAAAAAxx
+xxxx..cc..........c===============c......xxBBBBBBBxxxxx.xxxxAAAAAAAAxx
+xxxx..cc..........c===============c.....xxxBBBBBBBxxxxx+xxxxxxxxxxxxxx
+xxxx..cc.5.t..t.5.c===============c.....xxxxxxxxxxxx..............$$xx
+xxxx..cc.$$$O$$$$.ccccccccccccccccc.....xxBBBBxBBBBx.4...4.......$$$xx
+xxxx..ccccccccccccccccccccccccccccc.....xxBBBBxBBBBx...4..4.....$$$$xx
+xxxx.4..............................4..xxxBBBBxBBBBx.2..4..4...$$$$$xx
+xxxx..................................xxxxBBBBxBBBBx..........$$$$$$xx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

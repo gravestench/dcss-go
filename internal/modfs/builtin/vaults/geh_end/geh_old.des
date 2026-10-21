@@ -1,0 +1,73 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/geh.des; geh_old
+NAME:   geh_old
+PLACE:  Geh:$
+TAGS:   no_rotate
+ORIENT: encompass
+MONS:   patrolling Asmodeus, brimstone fiend, Balrug, searing wretch / stoker w:1
+NSUBST: { = 1:{ / *:.
+: vault.run("serpent")
+# Source Lua: serpent_of_hell_setup(_G)
+: vault.run("setup")
+# Source Lua: geh_setup(_G); PLACE is static above.
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxx....xxxxxxxxxxxxxxx.xxxxxxx
+xxxxxxxxxxxxxxxxxxxx............................xxxxxxxxxxxxxx..xxxxxx
+xxxxxxxxxxxxxxxxxxxxx..............................xxxxxxxxxx....xxxxx
+xxxxxxxxxxxxxxxx...xxx................................xxxxxx....xxxxxx
+xxxxxxx.x.xxxxx.........................................xxx....xxxxxxx
+xxxxxxx....xx.....................4......................xx...xxxxxxxx
+xxxxxx......x......................llllllllllllll.........x..xxxxxxxxx
+xxxxxx..xx..................lllllllllllllllllllllllll........xxxxxxxxx
+xxxxx...xxx....0..........llllllllllllllllllllllllll........xx...xxxxx
+xxxx....xxx.............llllllllllllllllllllllllllll..............xxxx
+xxxxx....xx...........lllllllllllllllllllllllllllll...............xxxx
+xxxxxxx..............llllllllllllllllllllllllllllll...2..xx...0...xxxx
+xxxxxxxx...........lllllllllllllllllll.......llllll......xx......xxxxx
+xxxxxxxxx.......llllllllllllllllll............llllll.............xxxxx
+xxxxxxxxxx......lllllllll..........4.........4.lllllll..........xxxxxx
+xxxxx...xx...ll3lllll......4...................llllllll......x.xxxxxxx
+xxxx.......lllll.l................................llll.......xxxxxxxxx
+xxxxx..4..llllll...cccccccc+c+c+c+c+c+c+c+c+c+c....lll......xxxxxxxxxx
+xxxxxx..lllllll..4.c.....c....................c....llll.....xxxxxxxxxx
+xxxxx...llllll.....c.V.V.+....0.....3.....0...c.....llll....x..xxxxxxx
+xxxx...llllll...l..c.....c....................c....lllll........xxxxxx
+xxxxx...lllll..ll..c..D..cccccccccccccccccccccc.4..llllll........xxxxx
+xxxx...lllll..llll.c.....c...............c....c....lllllll.......xxxxx
+xxxx...lllll..llll.c.V.V.c.......0.......c....c....lllllll.......xxxxx
+xxxxx...lllll..lll.c.....+...............+....c...lllllll........xxxxx
+xxxxxx..lllll...ll.cccccccccc....0.......c....c...llllllll........xxxx
+xxxxx...lllll..4...c|$$||$$|c............c.0..c...llllllll........xxxx
+xxxx...lllll.......c$$$$$$$$cccccccccccccc....c...lllllll.........xxxx
+xxxx...lllll.......c$$|2|$$|c..0.........+....c...lllllll........xxxxx
+xxxxx.lllllll......c|$$$$$$$c........9...c....c....llllllll.....xxxxxx
+xxxxx.lllllll......c$|$|$$|$c+ccccccccccccccccc....lllllll......xxxxxx
+xxxxx..llllll......cccccccc+c.....9.......c.........llllll......x.xxxx
+xxxxx..lllllll.....c$$$$$$+3c.....8...3...c.....4...llllll........xxxx
+xxxxx..llllllll....c$$$$$$c.c.....9.......c..ll....llllll.........xxxx
+xxxxx...llllll..4..c$$2$$$c.ccccccccccccc+c.lll...lllllll...0....xxxxx
+xxxxxx..llllll.....c$$$$$$c..+............c.ll...lllllll..........xxxx
+xxxxxx..llllllll...ccccccccc+cccccccccccccc.....lllllll...........xxxx
+xxxxxxx..llllllll.........cc..........cc........lllllll.......x..xxxxx
+xxxxxxxx.llllllllll.......ccc.........cc......lllllllll.......xxxxxxxx
+xxxxx....lllllllllll...4...cc.....2.2.cc....llllllllll.4.......xxxxxxx
+xxxx....4.lllllllllllll....cccccccc+cccc..lllllllllll.....xx....xxxxxx
+xxxxx.....llllllllllllll...cccccccc+cccc..llllllllll......xx....xxxxxx
+xxxxxx.....lllllllllllllll..cc......cc...lllllllllll...........xxxxxxx
+xxxxxx.....llllllllllllll...ccO1....cc.4..lllllllll...........xxxxxxxx
+xxxxxxx.....lllllllllllll...cc......cc....lllllllll.......xx.xxxxxxxxx
+xxxxxxx.......llllllllllll..cccccccccc...lllllllll........xxxxxxxxxxxx
+xxxx.........llllllllllllll.cccccccccc.lllllllllll.......xxxxxxxxxxxxx
+xxxxx....0...llllllllllllll............lllllllll....0....xxxxxxxxxxxxx
+xxxxx.......4.lllllllllllllll..4....lllllllll...........xxxxxxxxxxxxxx
+xxxxxx..........llllllllllllll....lllllll....4.....x........xxxxxxxxxx
+xxxxxx...xx.........lllllllllllllllll...................xx{xxxxxxxxxxx
+xxxxxxxx..xx................lllllll.....................xxxxxxxxxxxxxx
+xxxxxxxxxxxx.........xxx.................xxxxxx......xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxx....xxxxxxxx...xxx......xxxxxxxxxx.......xxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxx{xxxxxxxxxxxx{xxxxx...xxxxxxxxxxxxxx...xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

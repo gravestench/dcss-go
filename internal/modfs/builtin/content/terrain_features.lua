@@ -137,6 +137,8 @@ local function apply_border_fill(cells, record)
         feature = "DNGN_OPEN_SEA"
     elseif style == fill.ENDLESS_LAVA then
         feature = "DNGN_LAVA_SEA"
+    elseif style == fill.PERMAROCK_WALL then
+        feature = terrain.DNGN_PERMAROCK_WALL
     else
         error("unknown vault border fill " .. tostring(style))
     end
