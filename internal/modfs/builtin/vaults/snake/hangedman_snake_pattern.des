@@ -1,0 +1,21 @@
+# Hangedman snake pattern is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: hangedman_snake_pattern
+DEPTH: Snake
+TAGS:    transparent extra
+# Pillars, door positions, entrances.
+SHUFFLE: XYZ, aA-+ / aA-+ / aA-+ / Aa+- / Aa+-, ABCDE
+SUBST:   X : cx.., Y : cx...., Z = ., a = x, - : xx+, + : +++..
+SUBST:   A : @@+, B : @@++..x, C : @+...xxx, DE = x
+MAP
+   xxBxxxxxxxCxxxxxxxDxxxxxxxxExxxxxx
+  xx...xx.........xx...xx.........xx
+ xx.....xx.......xx.....xx.......xx
+aa...X...xx..Z..--...X...xx..Z..aa
+ AA...Y...++..Y..++...Y...++..Y..AA
+  xx...Z...--..X..xx...Z...--..X..xx
+   xx.....xx.......xx.....xx.......xx
+    xx...xx.........xx...xx.........xx
+     xxExxxxxxDxxxxxxxxCxxxxxxBxxxxxxx
+ENDMAP

@@ -1,0 +1,30 @@
+# Nicolae snake snakes in the grass is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_snakes_in_the_grass
+DEPTH: Snake
+TAGS:   transparent
+KMONS:  1 = plant
+KFEAT:  1 = . w:30 / W
+KFEAT:  . = . w:50 / W
+SUBST:  ' = 0 ':200
+SUBST:  F = tt''0, - = _', ' = 1.
+CLEAR:  _
+MAP
+    --------
+  ---''''''---
+ --''''''''''--
+ -''''''''''''-
+--''''''''''''--
+-''''''''''''''-
+-'''''FFFF'''''-
+-'''''FttF'''''-
+-'''''FttF'''''-
+-'''''FFFF'''''-
+-''''''''''''''-
+--''''''''''''--
+ -''''''''''''-
+ --''''''''''--
+  ---''''''---
+    --------
+ENDMAP

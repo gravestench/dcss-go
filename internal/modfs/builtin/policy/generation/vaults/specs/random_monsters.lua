@@ -118,11 +118,11 @@ function random_monsters.pick(ctx, request, depth, site, place)
     local selected_depth = effective_depth(request, local_depth, branch_id)
     local branch = register.get(categories.BRANCHES, branch_id)
 
-    -- Explicit out-of-depth requests can exceed a branch's normal floor
-    -- count. Source mon-place caps them before consulting its spawn rows.
-    if branch.ood_cap then
-        selected_depth = math.min(selected_depth, branch.ood_cap)
-    end
+    -- Source mon-place caps every out-of-depth request. Most branches use
+    -- their floor count; only branches with a larger source cap declare
+    -- ood_cap in their catalog file.
+    selected_depth = math.min(selected_depth,
+        branch.ood_cap or branch.depth)
 
     local rows, total = pool.at_depth(branch_id,
         selected_depth)

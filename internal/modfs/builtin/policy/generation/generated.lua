@@ -308,7 +308,7 @@ local function place_branch_entrances(ctx, builder, layout, protected,
             temple_catalog.main(temple.map_id) ~= nil or
             availability.can_build(entry.branch_id, 1)
 
-        if is_temple or entry.branch_id == branches.BRANCH_SLIME then
+        if branch_entry.supports(entry.branch_id) then
             local placed
 
             placed, point = branch_entry.place(ctx, builder, protected,

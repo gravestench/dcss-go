@@ -1,0 +1,30 @@
+# Nicolae snake naga rites is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_naga_rites
+DEPTH: Snake
+TAGS:   patrolling transparent
+KMONS:  1* = black mamba w:15 / mana viper / anaconda w:5
+KMONS:  2 = naga ritualist
+KMONS:  3 = naga ritualist band
+KITEM:  2 = |
+KITEM:  * = *
+# Seven 1s on-average.
+SUBST:  S = 2...
+MAP
+ xxxxxxxxxxxxx
+ xxxxxcccccxxx
+ xxxxxcSSScxxx
+ xxxccc.c.cccxxxxxxxxxxxxx
+xxxxcS..S..Scccccccccxxxxx
+.Gccc.cScSc.ccc1...1cccccx
+..c...S.S.S..Sc.....c%**cx
+@.+.cScSc1cScS+..3..+%*2cx
+..c...S.S.S..Sc.....c%**cx
+.Gccc.cScSc.ccc1...1cccccx
+xxxxcS..S..Scccccccccxxxxx
+ xxxccc.c.cccxxxxxxxxxxxxx
+ xxxxxcSSScxxx
+ xxxxxcccccxxx
+ xxxxxxxxxxxxx
+ENDMAP

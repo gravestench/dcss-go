@@ -1,0 +1,30 @@
+# Nicolae sea snake s is a source Snake vault.
+# Explicit orientation sends this map through the full-vault fitter.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_sea_snake_s
+TAGS:    no_monster_gen
+DEPTH:   Snake:2-, !Snake:$
+ORIENT:  float
+MONS:    naga mage, naga
+KMONS:   q = w:15 sea snake / w:5 nothing
+KFEAT:   q = w
+SHUFFLE: {[(
+SHUFFLE: (<
+MAP
+xxxwwwwwwwxxxxxx
+@..wwwqwww.....xx
+@...wwwww.......xx
+@....wqw.........x
+x..2.www....x....x
+xx...wqw...xxx...x
+ x...www...xxx...x
+ x.2.wqw...xxx...x
+ x...www...xxx...x
+ x...wqw...xxx...x
+ x.2.www...xxx...x
+ x....w....xxx...x
+ x.........xxx{.[x
+ xx...1...xxxx...x
+  xx.....xx  xx(xx
+   xxxxxxx    xxx
+ENDMAP

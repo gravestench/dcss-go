@@ -1,0 +1,9 @@
+# Dummy snake entry is a source Snake entrance.
+# Its keyed O supplies the linked Lair stair; other glyphs remain authored content.
+# Source definition: crawl-ref/source/dat/des/branches/snake.des.
+NAME: dummy_snake_entry
+TAGS:   snake_entry transparent
+KFEAT:  O = enter_snake_pit
+MAP
+O
+ENDMAP

@@ -1,5 +1,5 @@
 -- Theory of operation: a scheduled branch entrance can own an authored DES
--- map on its parent floor. Temple and Slime both choose from effective
+-- map on its parent floor. Temple, Snake, and Slime choose from effective
 -- source maps, then use the map's keyed entrance as the actual linked stair.
 -- The ordinary vault fitter handles terrain, connectors, and saved records.
 local branches = require("ids.branches")
@@ -15,8 +15,30 @@ local vaults = require("policy.generation.vaults.catalog")
 
 local entry = {}
 
+-- Each entry family's DES tag, directory, and keyed terrain feature are
+-- data. New Lair branches can join this table without another selector.
+local source_entries = {
+    [branches.BRANCH_SNAKE] = {
+        family = families.SNAKE_ENTRY,
+        tag = tags.SNAKE_ENTRY,
+        feature = features.ENTER_SNAKE,
+    },
+    [branches.BRANCH_SLIME] = {
+        family = families.SLIME_ENTRY,
+        tag = tags.SLIME_ENTRY,
+        feature = features.ENTER_SLIME,
+    },
+}
+
+-- Temple keeps its dedicated catalog but follows the same placement and
+-- retry contract as branch maps from the effective extra-vault catalog.
+function entry.supports(branch_id)
+    return branch_id == branches.BRANCH_TEMPLE or
+        source_entries[branch_id] ~= nil
+end
+
 -- Temple has its own catalog because its entry files are not ordinary
--- extra vaults. Slime entries live in the normal effective DES catalog.
+-- extra vaults. Snake and Slime live in the normal effective DES catalog.
 local function definitions(branch_id)
     local result = {}
 
@@ -24,14 +46,16 @@ local function definitions(branch_id)
         for _, id in ipairs(temple.entry_ids()) do
             result[#result + 1] = temple.entry(id)
         end
-    elseif branch_id == branches.BRANCH_SLIME then
+    elseif source_entries[branch_id] then
+        local specification = source_entries[branch_id]
+
         vaults.load()
 
         for _, id in ipairs(register.ids(categories.VAULTS)) do
             local definition = register.get(categories.VAULTS, id)
 
-            if definition.family == families.SLIME_ENTRY and
-                definition.tags[tags.SLIME_ENTRY] then
+            if definition.family == specification.family and
+                definition.tags[specification.tag] then
                 result[#result + 1] = vaults.get(id)
             end
         end
@@ -123,8 +147,9 @@ end
 -- authored entry can fit around this floor's protected cells.
 function entry.place(ctx, builder, protected, required, player, branch_id)
     local choices = entry.candidates(branch_id)
-    local feature = branch_id == branches.BRANCH_TEMPLE and
-        features.ENTER_TEMPLE or features.ENTER_SLIME
+    local specification = source_entries[branch_id]
+    local feature = specification and specification.feature or
+        features.ENTER_TEMPLE
     while #choices > 0 do
         local definition = draw(builder, choices)
         local placed = extra.place(ctx, builder, definition, {

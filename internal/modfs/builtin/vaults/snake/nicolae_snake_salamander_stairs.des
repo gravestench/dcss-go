@@ -1,0 +1,30 @@
+# Nicolae snake salamander stairs is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_salamander_stairs
+TAGS:    no_monster_gen
+DEPTH:   Snake, !Snake:$
+: vault.run("configure")
+# Source Lua: : if you.depth() < 2 then
+# Source Lua directive: KMONS:   1 = salamander mystic / salamander tyrant w:5
+# Source Lua directive: KMONS:   2 = salamander / salamander mystic w:1 / nothing w:80
+# Source Lua: : elseif you.depth() < 3 then
+# Source Lua directive: KMONS:   1 = salamander mystic / salamander tyrant
+# Source Lua directive: KMONS:   2 = salamander / salamander mystic w:2 / nothing w:50
+# Source Lua: : else
+# Source Lua directive: KMONS:   1 = salamander tyrant
+# Source Lua directive: KMONS:   2 = salamander / salamander mystic w:5 / nothing w:45
+# Source Lua: : end
+KFEAT:   12 = l
+SHUFFLE: ])}
+NSUBST:  ' = 1 / l, D = 2=. / x, E = 2=. / x, F = @ / .
+SUBST:   L = l.
+MAP
+ xxxxxxxxxx
+xx2222L.D.EF
+x.'222L.D.EF
+x]''22L.D.EF
+x.'222L.D.EF
+xx2222L.D.EF
+ xxxxxxxxxx
+ENDMAP

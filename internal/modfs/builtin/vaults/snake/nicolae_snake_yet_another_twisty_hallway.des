@@ -1,0 +1,25 @@
+# Nicolae snake yet another twisty hallway is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_yet_another_twisty_hallway
+DEPTH: Snake
+TAGS:  extra transparent
+: vault.run("configure")
+# Source Lua: : if crawl.one_chance_in(5) then
+# Source Lua directive: SUBST: x = -, . = x, @- = .
+# Source Lua: : end
+SUBST: x : x:50 c:30 b, ' = .
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@'........xxx.....xxx...........xx
+@..........x.......x.............x
+xxxxxxxxx..x..xxx..x..xxxxxxxxx..x
+xx....xxx..x..xxx..x..xx....xxx..x
+x......xx..x..xx...x..x......xx..x
+x..xx......x..x...xx..x..xx......x
+x..xxx....xx..x..xxx..x..xxx....xx
+x..xxxxxxxxx..x..xxx..x..xxxxxxxxx
+x.............x.......x..........@
+xx...........xxx.....xxx........'@
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

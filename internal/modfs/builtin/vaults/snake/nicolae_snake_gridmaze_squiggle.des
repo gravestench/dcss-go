@@ -1,0 +1,43 @@
+# Nicolae snake gridmaze squiggle is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_gridmaze_squiggle
+DEPTH: Snake
+TAGS:    extra transparent
+: vault.run("configure")
+# Source Lua: : if crawl.one_chance_in(3) then
+# Source Lua directive: SUBST:   DHK = x, EFJ = .
+# Source Lua: : elseif crawl.coinflip() then
+# Source Lua directive: SUBST:   EHJ = x, DFK = .
+# Source Lua: : else
+# Source Lua directive: SUBST:   FJK = x, DEH = .
+# Source Lua: : end
+SHUFFLE: LMNOPQRSZ
+SUBST:   L = _, MNOPQRSZ = .
+CLEAR:   _
+MAP
+...NN......OO......PP...
+..xxxx....xxxx....xxxx..
+.xxxxxx..xxxxxx..xxxxxx.
+Mxx..xx..xx..xx..xx..xxQ
+Mxx..xx..xx..xx..xx..xxQ
+.xx..xxxxxx..xxxxxx..xx.
+.xx...xxxx....xxxx...xx.
+Lxx..................xxR
+Lxx..................xxR
+.xxx...EKKKKH...xxxxxxx.
+..xxx..xxKKxJ..xxxxxxx..
+.......HH..JJ..xx.......
+.......HH..JJ..xx.......
+..xxxxxxx..Jxxxxx..xxx..
+.xxxxxxx...Dxxxx....xxx.
+Rxx..................xxL
+Rxx..................xxL
+.xx...xxxx....xxxx...xx.
+.xx..xxxxxx..xxxxxx..xx.
+Qxx..xx..xx..xx..xx..xxM
+Qxx..xx..xx..xx..xx..xxM
+.xxxxxx..xxxxxx..xxxxxx.
+..xxxx....xxxx....xxxx..
+...PP......OO......NN...
+ENDMAP

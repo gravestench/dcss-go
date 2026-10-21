@@ -11,7 +11,7 @@ local ids = require("ids.vaults")
 local tags = require("constants.vault_tags")
 
 local test = {}
-local SOURCE_DECOR_MAPS = 74
+local SOURCE_DECOR_MAPS = 85
 
 -- The source controller has no cells and only enters the chance stage
 -- from D:14 onward or in Depths; its child draw follows placement.

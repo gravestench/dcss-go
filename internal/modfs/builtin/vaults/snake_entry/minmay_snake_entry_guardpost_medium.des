@@ -1,0 +1,20 @@
+# Minmay snake entry guardpost medium is a source Snake entrance.
+# Its keyed O supplies the linked Lair stair; other glyphs remain authored content.
+# Source definition: crawl-ref/source/dat/des/branches/snake.des.
+NAME: minmay_snake_entry_guardpost_medium
+TAGS:   snake_entry transparent
+WEIGHT: 5
+ORIENT: float
+MONS:   naga, naga / nothing
+KFEAT:  O = enter_snake_pit
+MAP
+   ccccccc
+ ccc.....ccc
+cc2.......2cc
+c...c2.1c...c
+@...c.O.c...@
+c...c1.2c...c
+cc2.......2cc
+ ccc.....ccc
+   ccccccc
+ENDMAP

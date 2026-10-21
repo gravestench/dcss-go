@@ -1,0 +1,16 @@
+# Nicolae snake slithery hallway is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_slithery_hallway
+DEPTH: Snake
+TAGS:  extra transparent
+SUBST: D : TGG., E : TGG., F : TGG.
+MAP
+  cccccccccccccccccccccccccccccccccc
+ cc..F..ccccc..D..ccccc..E..ccccc..@
+cc.......ccc.......ccc.......ccc...@
+@..................................@
+@...ccc.......ccc.......ccc.......cc
+@..ccccc..E..ccccc..D..ccccc..F..cc
+cccccccccccccccccccccccccccccccccc
+ENDMAP

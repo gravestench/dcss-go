@@ -1,0 +1,25 @@
+# Nicolae snake attic fulla snakes is a source Snake vault.
+# Explicit orientation sends this map through the full-vault fitter.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_attic_fulla_snakes
+DEPTH:   Snake, !Snake:$
+ORIENT:  northeast
+KITEM:   2 = *
+KITEM:   3 = |
+KITEM:   4 = $
+KMONS:   123 = anaconda / black mamba / shock serpent / mana viper / \
+         sea snake / water moccasin
+KMONS:   4 = guardian serpent
+SUBST:   ' = 1 .:25
+SHUFFLE: }])
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxx'''''xxxxxxxxxxxxx.4%%*x
+xxxxxxxx'''''''''xxxxxxxxx''.4%*|x
+xxxxxxx'''''''''''xxxxxxx'''.4%%*x
+xxxxx.'''''xxx''''''xxx'''''.xxxxx
+x.....'''xxxxxxx'''''''''''xxxxxxx
+x.}...''xxxxxxxxx'''''''''xxxxxxxx
+x.....xxxxxxxxxxxxx'''''xxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,30 @@
+# Nicolae snake serpentine hallways is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_serpentine_hallways
+DEPTH: Snake
+TAGS:  transparent extra
+MAP
+        x@@@@xxxxx
+        x........xxx
+       xxx.........xx
+    xxxxxxxx........x
+xxxxxxxxxxxxxxxx....xx
+@..............xx....x
+@...............xx...x
+xxxxxxxxxxx......x...x
+xxxxx.....xxx...xx...x
+xxx.........xx.xx....x
+xx...........x+x....xx
+xx....x+x...........xx
+x....xx.xx.........xxx
+x...xx...xxx.....xxxxx
+x...x......xxxxxxxxxxx
+x...xx...............@
+x....xx..............@
+xx....xxxxxxxxxxxxxxxx
+ x........xxxxxxxx
+ xx.........xxx
+  xxx........x
+    xxxxx@@@@x
+ENDMAP

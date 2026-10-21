@@ -1,0 +1,10 @@
+# A sparse layer contributes one keyed branch entrance beside source files.
+NAME: modded_snake_gate
+TAGS: snake_entry
+WEIGHT: 7
+KFEAT: O = enter_snake_pit
+MAP
+.....
+..O..
+.....
+ENDMAP

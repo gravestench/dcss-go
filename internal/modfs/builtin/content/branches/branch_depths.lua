@@ -27,6 +27,9 @@ local definition = {
     runes = mod.null,
     ambient_noise = "normal",
     mon_die_size_expr = "10",
+    -- Source Depths vaults may request monster depth thirteen while the
+    -- branch itself has four playable floors.
+    ood_cap = 13,
 }
 
 register.definition(categories.BRANCHES, definition)

@@ -6,6 +6,7 @@ local generation = require("policy.item_generation")
 local origin_component = require("policy.population.origin")
 local quality = require("constants.vault_item_quality")
 local purpose = require("constants.item_generation_purpose")
+local item_requests = require("constants.vault_item_requests")
 local identification = require("policy.items.identification")
 
 local vault_items = {}
@@ -43,6 +44,14 @@ local function request_from(resolved, level_id, origin)
         ego = resolved.ego,
         site = source_site(resolved, origin),
     }
+
+    -- A source ring or amulet request must keep its jewellery branch after
+    -- the saved vault choice reaches the later item-generation stream.
+    if resolved.request == item_requests.ANY_AMULET then
+        request.amulet = true
+    elseif resolved.request == item_requests.ANY_RING then
+        request.amulet = false
+    end
 
     if resolved.kind_id ~= classes.OBJ_RANDOM then
         request.kind_id = resolved.kind_id

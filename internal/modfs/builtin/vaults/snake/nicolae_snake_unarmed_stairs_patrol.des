@@ -1,0 +1,25 @@
+# Nicolae snake unarmed stairs patrol is a source Snake vault.
+# Explicit orientation sends this map through the full-vault fitter.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_unarmed_stairs_patrol
+DEPTH:   Snake, !Snake:$
+TAGS:    transparent
+ORIENT:  float
+MONS:    guardian serpent
+MONS:    anaconda w:20 / black mamba w:20 / shock serpent / mana viper / \
+         sea snake w:5
+SUBST:   2 = 2:30 1:5 .:35
+SHUFFLE: )]}>>
+MAP
+     xxxxxxxxx
+  xxxxcccccccxxxx
+xxxccccG222Gccccxxxx
+xcccG.2.....2.Gccc.@
+xc)...2.....2....c..
+xc]...1..G..1....+.@
+xc}...2.....2....c..
+xcccG.2.....2.Gccc.@
+xxxccccG222Gccccxxxx
+  xxxxcccccccxxxx
+     xxxxxxxxx
+ENDMAP

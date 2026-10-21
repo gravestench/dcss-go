@@ -1,0 +1,21 @@
+# Minmay snake pond is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: minmay_snake_pond
+DEPTH: Snake
+TAGS:   transparent no_monster_gen
+KMONS:  1 = black mamba w:20 / mana viper w:5 / shock serpent w:5
+KMONS:  2 = anaconda / sea snake
+KFEAT:  1 = W
+KFEAT:  2 = w
+SUBST:  W = WWW1, w = wwwwwWWWW2
+MAP
+  wwww
+ WwwWww
+wwWWwwWw
+wWwwWWww
+wWwwwwWw
+wwwWwWww
+ wWwWww
+  wwww
+ENDMAP

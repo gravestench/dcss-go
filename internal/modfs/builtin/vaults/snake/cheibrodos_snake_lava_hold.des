@@ -1,0 +1,31 @@
+# Cheibrodos snake lava hold is a source Snake vault.
+# Explicit orientation sends this map through the full-vault fitter.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: cheibrodos_snake_lava_hold
+TAGS:   no_item_gen no_monster_gen patrolling
+DEPTH:  Snake, !Snake:$
+ORIENT: float
+KFEAT:  DEF = lava
+KMONS:  D = salamander
+KMONS:  E = salamander mystic
+KMONS:  F = salamander tyrant
+SUBST:  E = El, H = EEEF, D = Dl
+NSUBST: ' = '''l
+
+MAP
+    ccccccccccccccc
+   ccccccccccccccccc
+  cccEcDcDcDcDcDcDccc
+ cccEl.............ccc
+ ccHl..lclclc.......cc
+cccl..lccccclc..clc..c
+ccHl..lc*$*ccl.clllc.+@
+ccFl....$|$Gcc.lllll.+@
+ccHl..lc*$*ccl.clllc.+@
+cccl..lccccclc..clc..c
+ ccHl..lclclc.......cc
+ cccEl.............ccc
+  cccEcDcDcDcDcDcDccc
+   ccccccccccccccccc
+    ccccccccccccccc
+ENDMAP

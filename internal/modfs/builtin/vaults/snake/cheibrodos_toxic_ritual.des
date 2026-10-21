@@ -1,0 +1,23 @@
+# Cheibrodos toxic ritual is a source Snake vault.
+# Explicit orientation sends this map through the full-vault fitter.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: cheibrodos_toxic_ritual
+DEPTH: Snake
+TAGS:   no_item_gen no_monster_gen transparent
+ORIENT: float
+MONS:   green death, naga ritualist, naga mage, naga
+NSUBST: - = 2=2 / ., _ = 2=2 / ., ' = 3 / 2=4 / 3=34 / .
+NSUBST: " = | / 3=* / 4=$%
+MAP
+.............
+..ccc...ccc..
+.cc"cc.cc"cc.
+.c"""ncn"""c.
+.c'''''''''c.
+.c'''''''''c.
+.c---c=c___c.
+.c-1-n.n_1_c.
+.ccAcc.ccAcc.
+..ccc...ccc..
+......@......
+ENDMAP

@@ -18,20 +18,26 @@ function random_items.describe(name, depth)
 
     if name == requests.ANY_WEAPON then
         result.class_id = classes.OBJ_WEAPONS
+    elseif name == requests.ANY_AMULET or
+        name == requests.ANY_RING or
+        name == requests.ANY_JEWELLERY then
+        result.class_id = classes.OBJ_JEWELLERY
+    elseif name == requests.ANY_MAGICAL_STAFF then
+        result.class_id = classes.OBJ_STAVES
     elseif name == requests.ANY_BOOK then
         result.class_id = classes.OBJ_BOOKS
     elseif name == requests.ANY_SCROLL then
         result.class_id = classes.OBJ_SCROLLS
-    elseif name == "any potion" then
+    elseif name == requests.ANY_POTION then
         result.class_id = classes.OBJ_POTIONS
-    elseif name == "any wand" then
+    elseif name == requests.ANY_WAND then
         result.class_id = classes.OBJ_WANDS
     elseif name == "$" or name == "random_gold" then
         result.kind_id = ids.OBJ_GOLD
     elseif name == "*" or name == "star_item" then
         result.quality = quality.STAR
         result.depth = 5 + depth * 2
-    elseif name == "good_item" then
+    elseif name == "good_item" or name == requests.ANY_GOOD_ITEM then
         result.quality = quality.GOOD
     elseif name == "|" or name == "superb_item" then
         result.quality = quality.SUPERB

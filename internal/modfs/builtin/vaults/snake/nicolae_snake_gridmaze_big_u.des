@@ -1,0 +1,35 @@
+# Nicolae snake gridmaze big u is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_gridmaze_big_u
+DEPTH: Snake
+TAGS:    extra transparent
+SHUFFLE: DEFHJ, KL/MN, KL, OPQRSZ, apqrsy, z-
+SUBST:   DEFHKMz = x, JLNPQRSZpqrsy- = ., Oa = _
+CLEAR:   _
+MAP
+.....OO..........yy.....
+..xxxxxxxx----xxxxxxxx..
+.xxxxxxxxxx--xxxxxxxxxx.
+.xx......zz..zz......xx.
+.xx......zz..zz......xx.
+Pxx...x..zx--xxxxx...xxs
+Pxx..xx..xx---xxxxx..xxs
+.xx..xx..xx......xx..xx.
+.xx..xx..xx......xx..xx.
+.xx..xxLLxx..xNNNxx..xx.
+.xx..KxLLxK..MxNNxM..xx.
+Qxx..KK..KK..MM..MM..xxr
+Qxx..KK..KK..MM..MM..xxr
+.xx..KxLLxxxxxxNNxM..xx.
+.xx..xxLLLxxxxNNNxx..xx.
+.xx..xx..........xx..xx.
+.xx..xx..........xx..xx.
+Rxx..xxxxxxxxxxxxxx..xxq
+Rxx...xxxxxxxxxxxx...xxq
+.xx..................xx.
+.xx..................xx.
+.xxJJJHHHHFFFFEEEEDDDxx.
+..xJJxxHHxxFFxxEExxDDx..
+.....SS..ZZ..aa..pp.....
+ENDMAP

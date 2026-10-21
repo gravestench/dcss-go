@@ -1,0 +1,32 @@
+# Minmay snake entry six corridors is a source Snake entrance.
+# Its keyed O supplies the linked Lair stair; other glyphs remain authored content.
+# Source definition: crawl-ref/source/dat/des/branches/snake.des.
+NAME: minmay_snake_entry_six_corridors
+TAGS:   snake_entry ruin_lair transparent
+ORIENT: float
+MONS:   water moccasin, black mamba
+KMONS:  P = plant / fungus w:1 / nothing
+SUBST:  1 = 1 .:30, 2 = 122 .:30, D = 12 .:40
+KFEAT:  O = enter_snake_pit
+MAP
+xxxx.@1xxxxxxP@xxxxx
+xxxx1.PxxxxxP..xxxxx
+xxxxx..xxxxx1.xxxxxx
+ xxxxP..xxxx..xxxxx
+ xxxxP.1xxxxD..xxxx
+xxxxxx..Pxxxx1Pxxxxx
+xxxxxxxD.xxxP.xxxxxx
+xxxxxxxP2xx1..xxxxxx
+xxxxxxxx...2.xxxxxxx
+xxxxxxxP2..P2.xxxxxx
+xxD1xxP..PO.P..Dxx1P
+P.....1.2.2.xx.....@
+@.1PxxxP..xxxx.Px1P.
+xxxxxxxx.1xxxxDxxxxx
+xxxxxxxx..Pxx..xxxx
+xxxxxxxx..PxxP.1xxx
+ xxxxxx1.Dxxxx..xxxx
+ xxxxxxP.xxxxxx1..Px
+xxxxxxx.1xxxxxxxP...
+xxxxxx.@.Pxxxxxxxx.@
+ENDMAP

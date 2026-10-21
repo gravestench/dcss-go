@@ -8,6 +8,7 @@ local features = {
     STONE_WALL = "stone_wall",
     CLEAR_ROCK_WALL = "clear_rock_wall",
     ENTER_TEMPLE = "enter_temple",
+    ENTER_SNAKE = "enter_snake_pit",
     ENTER_SLIME = "enter_slime_pits",
 }
 

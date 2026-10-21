@@ -1,0 +1,41 @@
+# Nicolae snake serpentine bazaar is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_serpentine_bazaar
+DEPTH: Snake
+TAGS:    no_pool_fixup transparent
+KFEAT:   a = weapon shop
+KFEAT:   p = armour shop
+KFEAT:   q = antiques shop
+KFEAT:   r = jewellery shop
+KFEAT:   s = distillery shop
+KFEAT:   y = scroll shop
+KFEAT:   z = general shop
+KFEAT:   - = abandoned_shop
+# Odds of X non-abandoned shops: 3 = 3/8 ; 4 = 3/8 ; 5 = 3/16 ; 6 = 1/16
+SHUFFLE: DEF
+SUBST:   F : FSSS, S : GGGtTU, Z : GGGtTU
+NSUBST:  DEF = a / p / q / r / s / y
+SHUFFLE: apqrsyz-
+MAP
+    ............
+    ..xxxxxxxx..
+    .xxxxxxxxxx.
+    ........Zxx.
+.............xx.....
+..xxxxxxxx...xxxxx..
+.xxxxxxxxxx...xxxxx.
+.xxF....Dxx.....Exx.
+.xx......x.......xx.
+.xx..ww......ww..xx.
+.xx..ww......ww..xx.
+.xx.......x......xx.
+.xxE.....xxD....Fxx.
+.xxxxx...xxxxxxxxxx.
+..xxxxx...xxxxxxxx..
+.....xx.............
+    .xxZ........
+    .xxxxxxxxxx.
+    ..xxxxxxxx..
+    ............
+ENDMAP

@@ -1,0 +1,31 @@
+# Nicolae aizul guard is a source Snake vault.
+# Explicit orientation sends this map through the full-vault fitter.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_aizul_guard
+TAGS:    no_rotate no_hmirror no_vmirror transparent
+DEPTH:   Snake:2-, !Snake:$
+ORIENT:  float
+: vault.run("configure")
+# Source Lua: : if you.absdepth() > 14 then
+# Source Lua directive: KMONS:   D = patrolling Aizul, patrolling nagaraja
+# Source Lua directive: KMONS:   E = guardian serpent / nagaraja
+# Source Lua: : else
+# Source Lua directive: KMONS:   D = patrolling Aizul, patrolling guardian serpent
+# Source Lua directive: KMONS:   E = naga mage / guardian serpent
+# Source Lua: : end
+SHUFFLE: ]})>
+SUBST:   ) = )>
+NSUBST:  E = D / E
+MAP
+ xxx.@.xxx
+xx.E...E.xx
+x.........x
+xE.......Ex
+....].>....
+@.........@
+....).}....
+xE.......Ex
+x.........x
+xx.E...E.xx
+ xxx.@.xxx
+ENDMAP

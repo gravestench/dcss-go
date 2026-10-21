@@ -1,0 +1,30 @@
+# Nicolae snake storage room is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_storage_room
+DEPTH: Snake
+TAGS:  patrolling transparent
+KMONS: 0 = 0 / 0 band
+KMONS: 9 = 9 / 9 band
+KMONS: 8 = 8 / 8 band
+SUBST: 0 = 0:50 9 .:60, 9 = 9:50 8
+MAP
+ cccccccc
+cccccccccc
+cc9..%*|cc.....@
+cc.8.%*|cc......
+cc..9ccccc..cc..
+cc..ccccc0..cc..
+cc.0....0.09....
+cc0....0..90....
+ccccc.0.cc..0cccc
+ ccccc.0cc.0cccccc
+    cc9.0.0.cc||cc
+    cc.9.0..cc**cc
+    ccccc...cc%%cc
+     ccccc..c9..cc
+        cc.0..8.cc
+        cc0....9cc
+        cccccccccc
+         cccccccc
+ENDMAP

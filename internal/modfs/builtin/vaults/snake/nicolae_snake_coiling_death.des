@@ -1,0 +1,21 @@
+# Nicolae snake coiling death is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_coiling_death
+DEPTH: Snake
+TAGS: transparent
+MONS: naga sharpshooter band
+MONS: naga warrior band / naga mage band / naga ritualist band
+MAP
+       cccc  cccc  cccc
+      cc..cccc..cccc..cc
+    ..c....cc....cc....c
+   ..c.....c.....c.....c.
+  ..c.....c.....c.....c..
+@..c..2..c..1..c..2..c..@
+..c.....c.....c.....c..
+.c.....c.....c.....c..
+ c....cc....cc....c..
+ cc..cccc..cccc..cc
+  cccc  cccc  cccc
+ENDMAP

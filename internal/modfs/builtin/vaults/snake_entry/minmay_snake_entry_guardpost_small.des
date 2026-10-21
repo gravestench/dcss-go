@@ -1,0 +1,19 @@
+# Minmay snake entry guardpost small is a source Snake entrance.
+# Its keyed O supplies the linked Lair stair; other glyphs remain authored content.
+# Source definition: crawl-ref/source/dat/des/branches/snake.des.
+NAME: minmay_snake_entry_guardpost_small
+TAGS:   snake_entry transparent
+ORIENT: float
+MONS:   naga, naga / nothing w:3
+KFEAT:  O = enter_snake_pit
+MAP
+ccc.@.ccc
+c.......c
+c.2...2.c
+.........
+@...O...@
+.........
+c.1...2.c
+c.......c
+ccc.@.ccc
+ENDMAP

@@ -1,0 +1,35 @@
+# Nicolae snake gridmaze waves is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_gridmaze_waves
+DEPTH: Snake
+TAGS:    extra transparent
+SHUFFLE: DE, FH, JKLMNOPQ
+SUBST:   DF = x, EHKLMNOPQ = ., J = _
+CLEAR:   _
+MAP
+...NN......OO......PP...
+..xxxxH...xxxx....xxxx..
+.xxxxxF..xxxxxx..xxxxxx.
+.xx..FF..xx..xx..xx..xx.
+.xx..FF..xx..xx..xx..xx.
+.xxHHxxxxxx..xxxxxx..xx.
+.FHHHHxxxx....xxxx...xx.
+.....................xxQ
+.....................xxQ
+..xxxxx.....xxxxx....xx.
+.xxxxxxx...xxxxxxx...xx.
+.xx...xx...xx...xx...xx.
+.xx...xx...xx...xx...xx.
+.xx...xxxxxxx...xxDDDxx.
+.xx....xxxxx....EDDDDxE.
+Mxx..................EE.
+Mxx..................EE.
+.xx...xxxx....xxxx...Ex.
+.xx..xxxxxx..xxxxxx..xx.
+.xx..xx..xx..xx..xx..xx.
+.xx..xx..xx..xx..xx..xx.
+.xxxxxx..xxxxxx..xxxxxx.
+..xxxx....xxxx....xxxx..
+...LL......KK......JJ...
+ENDMAP

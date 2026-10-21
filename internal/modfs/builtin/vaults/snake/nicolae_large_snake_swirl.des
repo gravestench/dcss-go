@@ -1,0 +1,41 @@
+# Nicolae large snake swirl is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_large_snake_swirl
+DEPTH: Snake
+TAGS:  transparent
+: vault.run("configure")
+# Source Lua: : if you.depth() == 1 then
+# Source Lua directive: SUBST: s = ]})
+# Source Lua: : elseif you.depth() == dgn.br_depth(you.branch()) then
+# Source Lua directive: SUBST: s = [{(
+# Source Lua: : else
+# Source Lua directive: SUBST: s = ]})[{(
+# Source Lua: : end
+MAP
+xxxxxxxxxxx
+@.........xxx
+............xx
+.............xx
+..............x@......@x
+..............xx.......x
+...............x.......x
+...............x.......x
+.....xxxxx.....x......xx
+...xxx.........x......x
+..xx...........x......x
+.xx...........xx.....xx
+@x....xxxx....x......x
+xx...xx......xx.....xx
+x....x..s...xx.....xx
+x....xx...xxx.....xx
+x.....xxxxx......xx
+x...............xx
+x.............xxx
+xx.........xxxx
+ x.....xxxxx
+ xx......@
+  xx......
+   xxx...@
+     xxxxx
+ENDMAP

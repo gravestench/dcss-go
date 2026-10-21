@@ -26,6 +26,9 @@ local definition = {
     runes = mod.null,
     ambient_noise = "normal",
     mon_die_size_expr = "DEFAULT_MON_DIE_SIZE",
+    -- Source monster placement may draw D:16-27 for out-of-depth requests,
+    -- even though the playable Dungeon stops at D:15.
+    ood_cap = 27,
 }
 
 register.definition(categories.BRANCHES, definition)

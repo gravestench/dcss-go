@@ -1,0 +1,18 @@
+# Nicolae snake horde hoard is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_horde_hoard
+DEPTH: Snake
+TAGS:  no_monster_gen
+KITEM: s = $ / nothing w:25 / * w:1
+KMONS: s = black mamba w:35 / anaconda / mana viper / shock serpent \
+           / sea snake w:5 / nothing w:100
+MAP
+ xxxxxxx
+xxsssssxxxxxx
+xssssssss=..@
+xssssssss=.0@
+xssssssss=..@
+xxsssssxxxxxx
+ xxxxxxx
+ENDMAP

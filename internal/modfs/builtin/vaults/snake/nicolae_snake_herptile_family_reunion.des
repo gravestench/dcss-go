@@ -1,0 +1,32 @@
+# Nicolae snake herptile family reunion is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_herptile_family_reunion
+DEPTH: Snake
+TAGS:   no_pool_fixup patrolling transparent
+MONS:   anaconda / black mamba / shock serpent / mana viper / sea snake / \
+        guardian serpent
+MONS:   goliath frog, alligator, snapping turtle, alligator snapping turtle
+MONS:   hydra
+NSUBST: D = 2 / 3 / 4 / 5 / E.
+SUBST:  - = x:25 .:25 w W E:5, E = 1:80 2345 .:80
+MAP
+                xxxxxxxx
+            xxxxxx----xxxxxx
+        xxxxxxxxx-..D.-xxxxxxxxx
+    xxxxxxxxxxxxx-.--.-xxxxxxxxxxxxx
+xxxxxx----xxxxxx-..xx..-xxxxxx----xxxxxx
+xxx---....---xxx-DxxxxD-xxx---....---xxx
+x--...E..E...--x-.-xx-.-x--...E..E...--x
+-.E.x-....-x.D.-.E.--...-.D.x-....-x.E.-
+..-xxx----xxx-.....--.6...-xxx----xxx-.@
+@.-xxx----xxx-...6.--.....-xxx----xxx-..
+-.E.x-....-x.D.-...--.E.-.D.x-....-x.E.-
+x--...E..E...--x-.-xx-.-x--...E..E...--x
+xxx---....---xxx-DxxxxD-xxx---....---xxx
+xxxxxx----xxxxxx-..xx..-xxxxxx----xxxxxx
+    xxxxxxxxxxxxx-.--.-xxxxxxxxxxxxx
+        xxxxxxxxx-.D..-xxxxxxxxx
+            xxxxxx----xxxxxx
+                xxxxxxxx
+ENDMAP

@@ -1,0 +1,23 @@
+# Cheibrodos snake ritualist ritual is a source Snake vault.
+# Explicit orientation sends this map through the full-vault fitter.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: cheibrodos_snake_ritualist_ritual
+TAGS:   no_item_gen no_monster_gen no_pool_fixup patrolling transparent
+DEPTH:  Snake, !Snake:$
+ORIENT: float
+MONS:   naga mage / mana viper
+KMONS:  - = naga ritualist
+KITEM:  - = any good_item / any amulet
+MAP
+...........
+.wwwwwwwww.
+.w1.....1w.
+.w.ww.ww.w.
+.w.w...w.w.
+@..w.-.w..@
+.w.w...w.w.
+.w.ww.ww.w.
+.w1.....1w.
+.wwwwwwwww.
+...........
+ENDMAP

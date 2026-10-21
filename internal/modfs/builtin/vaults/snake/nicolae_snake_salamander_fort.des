@@ -1,0 +1,28 @@
+# Nicolae snake salamander fort is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_salamander_fort
+DEPTH: Snake
+TAGS:    patrolling transparent
+KMONS:   1 = salamander tyrant band
+KMONS:   2 = salamander / salamander mystic w:5
+KFEAT:   12 = l
+SHUFFLE: DEFH, EFHJKLMNOPQRSZa, pqrsy
+SUBST:   D : ., EFHJKpq : v, LMNOPrs : l, Q : lv, R : lv, S : lv, Z : lv
+SUBST:   a : lv, y : lv, * = **|, ~ = 2 l:6
+MAP
+..............
+.vvDDEEFFHHvv.
+.v....~l....v.
+.a.~l....l~.J.
+.a.lvvvvvvl.J.
+.Z..q****r..K.
+.Zl.q.1l.r.~K.
+.S~.p.ll.s.lL.
+.S..p....s..L.
+.R.lv..yyvl.M.
+.R.~l....l~.M.
+.v....l~....v.
+.vvQQPPOONNvv.
+..............
+ENDMAP

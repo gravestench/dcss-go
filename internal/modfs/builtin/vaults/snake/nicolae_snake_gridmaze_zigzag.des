@@ -1,0 +1,35 @@
+# Nicolae snake gridmaze zigzag is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_gridmaze_zigzag
+DEPTH: Snake
+TAGS:    extra transparent
+SHUFFLE: DE, FH, JK, LMNOP
+SUBST:   DFJ = x, EHKMNOP = ., L = _
+CLEAR:   _
+MAP
+.....LL..........MM.....
+..xxxxxxxx....xxxxxxxx..
+.xxxxxxxxxx..xxxxxxxxxx.
+Pxx......xx..xx......xxN
+Pxx......xx..xx......xxN
+.xxHHxH..xxxxxx...xxxxx.
+.FxHHxF...xxxx...xxxxx..
+.FF..FF..........xx.....
+.FF..FF..........xx.....
+.FxHHxxxxxKKKKxxxxx...xO
+.xxHHHxxxxxKKxxxxx...xxO
+.xx......JJ..JJ......xx.
+.xx......JJ..JJ......xx.
+Oxx...xxxxxKKxxxxxEEExx.
+Ox...xxxxxKKKKxxxxxEExD.
+.....xx..........DD..DD.
+.....xx..........DD..DD.
+..xxxxx...xxxx...DxEExD.
+.xxxxx...xxxxxx..ExEExx.
+Nxx......xx..xx......xxP
+Nxx......xx..xx......xxP
+.xxxxxxxxxx..xxxxxxxxxx.
+..xxxxxxxx....xxxxxxxx..
+.....MM..........LL.....
+ENDMAP

@@ -1,0 +1,26 @@
+# Nicolae snake linked coils is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_linked_coils
+DEPTH: Snake
+TAGS:  transparent extra
+SUBST: + : +x
+MAP
+    xxxxxxxxxxxxxx
+  xxx.....xxx....xxx
+ xx.........+x.....xx
+xx...xxxxx...xxxx...xx
+@...xxxx.+xx..xxxx...@
+@..xxxxx..xx..xxxxx..@
+xxxxxxx..xxxx..xxxxxxx
+xxxxxxx..xxxx..xxxxxxx
+xxxxxxx..xxxx..xxxxxxx
+xxxxxxx..xxxx..xxxxxxx
+xxxxxxx..xxxx..xxxxxxx
+@..xxxxx..xx..xxxxx..@
+@...xxxx...x+.xxxx...@
+xx...xxxx...xxxxx...xx
+ xx.....x+.........xx
+  xxx....xxx.....xxx
+    xxxxxxxxxxxxxx
+ENDMAP

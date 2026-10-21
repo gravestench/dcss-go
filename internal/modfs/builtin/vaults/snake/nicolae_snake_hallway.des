@@ -1,0 +1,24 @@
+# Nicolae snake hallway is a source Snake vault.
+# Explicit orientation sends this map through the full-vault fitter.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_hallway
+DEPTH: Snake
+ORIENT: float
+MONS:   naga, naga warrior
+MONS:   naga mage w:25 / nagaraja w:5
+SUBST:  A : @xx
+SUBST:  B : @xx
+SUBST:  C : @xx
+SUBST:  T : TTTVVUY
+MAP
+             xxxxxx
+           xxx.G.GxxxxxAAxx
+xxx      xxx.G..1..Gxx.1..xxx
+@Gxxx  xxx.G....1....G...T..xx
+@..Gxxxx.G.2...G.G.....3...1.C
+@..1.G.G.3.2.Gxxxx.G...3...1.C
+@G.1...2.3.Gxxx  xxx.G...T..xx
+xx.G...2.Gxxx      xxx.1..xxx
+ xxx.G.Gxxx          xxBBxx
+   xxxxxx
+ENDMAP

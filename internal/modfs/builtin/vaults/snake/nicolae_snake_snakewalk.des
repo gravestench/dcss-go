@@ -1,0 +1,29 @@
+# Nicolae snake snakewalk is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_snakewalk
+DEPTH: Snake
+TAGS:  transparent
+KMONS: 0 = 0 / 0 band
+KMONS: 9 = 9 / 9 band
+KMONS: 8 = 8 / 8 band
+SUBST: 0 = 00., 9 = 99.
+MAP
+     ccccccc         ccccccc
+   ccc.....ccc     ccc.....ccc
+  cc....9....cc   cc....8....cc
+ cc...........cc cc...........cc
+cc..0.ccccc.0..ccc..0.ccccc.0..cc
+cc...ccccccc...ccc...ccccccc...cc
+c...ccccccccc...c...ccccccccc...c@@@ ccc
+c.0.cc.ccc.cc.0.c.9.cc|ccc*cc.9.c...cc.cc
+c...+...c...+...c...+...c...+...c...+...c
+cc.cc...c.9.cc*ccc|cc.9.c.0.cc.ccc.cc.0.c
+ ccc @@@c...ccccccccc...c...ccccccccc...c
+        cc...ccccccc...ccc...ccccccc...cc
+        cc..0.ccccc.0..ccc..0.ccccc.0..cc
+         cc...........cc cc...........cc
+          cc....8....cc   cc....9....cc
+           ccc.....ccc     ccc.....ccc
+             ccccccc         ccccccc
+ENDMAP

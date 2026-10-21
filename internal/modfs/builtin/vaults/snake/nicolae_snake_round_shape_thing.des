@@ -1,0 +1,35 @@
+# Nicolae snake round shape thing is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_round_shape_thing
+DEPTH: Snake
+TAGS:    transparent extra
+SHUFFLE: bc
+SUBST:   a : x., b : x@, c : @
+MAP
+       xxbbbxx
+     xxx.....xxx
+    xx.........xx
+    x...........x
+   xx....xxx....xx
+   x....xxxxx....x
+   x...xxxxxxx...x
+   x...xxxxxxx...x
+  xx...xxxxxxx...xx
+ xx.....xxxxx.....xx
+xx.......xxx.......xx
+c....a.........a....c
+c...aaa.......aaa...c
+c....a.........a....c
+xx.......xxx.......xx
+ xx.....xxxxx.....xx
+  xx...xxxxxxx...xx
+   x...xxxxxxx...x
+   x...xxxxxxx...x
+   x....xxxxx....x
+   xx....xxx....xx
+    x...........x
+    xx.........xx
+     xxx.....xxx
+       xxbbbxx
+ENDMAP

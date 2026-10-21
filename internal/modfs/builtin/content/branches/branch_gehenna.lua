@@ -31,6 +31,8 @@ local definition = {
     },
     ambient_noise = "normal",
     mon_die_size_expr = "HELL_MON_DIE_SIZE",
+    -- Source Gehenna monster requests can reach fourteen, past floor seven.
+    ood_cap = 14,
 }
 
 register.definition(categories.BRANCHES, definition)

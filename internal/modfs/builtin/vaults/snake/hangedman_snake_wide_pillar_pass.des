@@ -1,0 +1,24 @@
+# Hangedman snake wide pillar pass is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: hangedman_snake_wide_pillar_pass
+DEPTH: Snake
+TAGS:    extra transparent
+WEIGHT:  4
+SHUFFLE: @' / @' / @' / '@
+SUBST:   A : c.., B : c.., C : c.., D = cccc., E : c...., F : c...., ' = .
+: vault.run("configure")
+# Source Lua: : local Z = dgn.br_depth(you.branch())
+# Source Lua: : if crawl.x_chance_in_y(Z - you.depth(), Z) then
+# Source Lua directive: SUBST: c = x
+# Source Lua: : end
+MAP
+x.xxx.@.xxxxxxxxxxxxx.@.xxx.x
+x...x.A......FDF......A.x...x
+xxx...c.B.....c.....C.c...xxx
+  xxx...c.C...c...B.c...xxx
+    xxx...c.E...E.c...xxx
+      xxx...c...c...xxx
+        xxx...D...xxx
+          xxx.'.xxx
+ENDMAP

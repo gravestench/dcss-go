@@ -41,11 +41,16 @@ local random_monster_names = {
 
 local random_item_names = {
     [item_requests.ANY_WEAPON] = true,
+    [item_requests.ANY_AMULET] = true,
+    [item_requests.ANY_RING] = true,
+    [item_requests.ANY_JEWELLERY] = true,
+    [item_requests.ANY_MAGICAL_STAFF] = true,
     [item_requests.ANY_BOOK] = true,
     [item_requests.ANY_SCROLL] = true,
+    [item_requests.ANY_POTION] = true,
+    [item_requests.ANY_WAND] = true,
+    [item_requests.ANY_GOOD_ITEM] = true,
     ["any"] = true,
-    ["any potion"] = true,
-    ["any wand"] = true,
     ["$"] = true,
     ["%"] = true,
     ["*"] = true,
@@ -540,7 +545,11 @@ function resolve.item(ctx, selected, depth, site)
     local class_id
     local base_id
     local unique_id
-    local quality = selected.quality or item_quality.ORDINARY
+    -- Source good_item is an item modifier, not part of the random item's
+    -- name. Preserve it before the later live item-generation draw.
+    local quality = selected.quality or
+        (selected.good_item and item_quality.GOOD) or
+        item_quality.ORDINARY
     local generation_depth = selected.level or source_depth(selected, depth)
     local request
 
@@ -552,7 +561,9 @@ function resolve.item(ctx, selected, depth, site)
 
         kind_id = described.kind_id
         class_id = described.class_id
-        quality = selected.quality or described.quality
+        quality = selected.quality or
+            (selected.good_item and item_quality.GOOD) or
+            described.quality
         generation_depth = selected.level or described.depth
     elseif name == "corpse" or name == "skeleton" then
         variant = name

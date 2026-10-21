@@ -38,6 +38,7 @@ local monster_health = require("policy.combat.monster_health")
 local wander = require("policy.ai.wander")
 local noise = require("policy.world.noise")
 local decision = require("systems.monster_decision")
+local item_requests = require("constants.vault_item_requests")
 
 local test = {}
 
@@ -326,6 +327,29 @@ local function vault_items_keep_variant_and_quantity(ctx)
         "source good armour may have zero enchantment")
     harness.equal(ctx:get(wand, component.ITEM).charges, 1,
         "source wand has usable charges")
+end
+
+-- Snake's any-amulet request must select an amulet after the vault choice
+-- has been saved. The matching ring request must not slip into that pool.
+local function vault_jewellery_keeps_source_half(ctx)
+    local world = world_context(ctx)
+    local amulet = vault_items.create(world, {
+        kind_id = object_classes.OBJ_RANDOM,
+        class_id = object_classes.OBJ_JEWELLERY,
+        request = item_requests.ANY_AMULET,
+        generation_depth = 16,
+    }, 1, 51, 9, origin)
+    local ring = vault_items.create(world, {
+        kind_id = object_classes.OBJ_RANDOM,
+        class_id = object_classes.OBJ_JEWELLERY,
+        request = item_requests.ANY_RING,
+        generation_depth = 16,
+    }, 1, 52, 9, origin)
+
+    harness.truthy(ctx:get(amulet, component.ITEM).kind_id:match("^AMU_"),
+        "source any amulet produced a ring")
+    harness.truthy(ctx:get(ring, component.ITEM).kind_id:match("^RING_"),
+        "source any ring produced an amulet")
 end
 
 -- Explicit vault equipment overrides ordinary monster gear generation.
@@ -728,6 +752,7 @@ function test.run(ctx)
     authored_actor_identity(ctx)
     permanent_source_enchantments(ctx)
     vault_items_keep_variant_and_quantity(ctx)
+    vault_jewellery_keeps_source_half(ctx)
     source_gear_and_explicit_equipment(ctx)
     trog_guard_keeps_source_gear(ctx)
     weighted_vault_equipment(ctx)

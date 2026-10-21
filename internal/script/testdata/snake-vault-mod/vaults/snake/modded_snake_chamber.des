@@ -1,0 +1,10 @@
+# A mod-added ordinary chamber joins the same Snake family without a roster.
+NAME: modded_snake_chamber
+DEPTH: Snake
+WEIGHT: 7
+ORIENT: float
+MAP
+.....
+..x..
+.....
+ENDMAP

@@ -1,0 +1,33 @@
+# Hangedman snake corridor cut is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: hangedman_snake_corridor_cut
+DEPTH: Snake
+TAGS:    no_monster_gen transparent
+MONS:    naga, patrolling naga mage
+MONS:    anaconda / mana viper / shock serpent w:5, patrolling guardian serpent
+MONS:    patrolling black mamba
+SHUFFLE: hH / hH / hH, iI / iI / Ii, jJ / jJ / Jj, kK / kK / Kk
+SHUFFLE: 1234 / 1234 / 1212 / 3434
+SUBST:   hi = ., H : xx., I : xx., J : xx., K : xx., % = $%
+MAP
+xxxxxxxxx@5@xxx
+xccccccccc...xxx
+xc*2%...KxJ...xxx
+xc2*1...xxx.j..xxx
+xc%1....JxKk....xxx
+xcHxI.....kKxJ...xx
+@cxxx.i1.j.xxx.j..x
+5.IxHh..%..JxKk...@
+@...hHxI.1%..kKxJ.5
+x..i.xxx.i3.j.xxxc@
+xx...IxHh..%..JxKcx
+xxx....hHxI.3....cx
+ xxx..i.xxx.i....cx
+  xxx...IxHh.....cx
+   xxx....hHxI.3%cx
+    xxx..i.xxx3*4cx
+     xxx...IxH%4*cx
+      xxx...ccccccx
+       xxx@5@xxxxxx
+ENDMAP

@@ -1,0 +1,28 @@
+# Nicolae snake snake lake is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_snake_lake
+DEPTH: Snake
+TAGS:   extra transparent
+KMONS:  1 = plant
+KFEAT:  1 = . w:40 / W
+NSUBST: t = . / t
+SUBST:  ' = 1 W .:60, t = t:80 1 . W:5
+MAP
+         .......   .......   .......
+        .............................
+    .....ttttttt...ttttttt...ttttttt..
+   .....tt'''''tt.tt'''''tt.tt'''''tt..
+  ..ttttt'''''''ttt'''''''ttt'''''''tt..
+ ..tt'''''wwwww'''''wwwww'''''wwww'''t..
+..tt'''''wwwwwww'''wwwwwww'''wwwwww''t..
+..t'''wwwwwwwwwwwwwwwwwwwwwwwwwwwww''t..
+..t''wwwwwwwwwwwwwwwwwwwwwwwwwwwww'''t..
+..t''wwwwww'''wwwwwww'''wwwwwww'''''tt..
+..t'''wwww''''.wwwww'''''wwwww'''''tt..
+..tt'''''''ttt'''''''ttt'''''''ttttt..
+ ..tt'''''tt.tt'''''tt.tt'''''tt.....
+  ..ttttttt...ttttttt...ttttttt.....
+   .............................
+    .......   .......   .......
+ENDMAP

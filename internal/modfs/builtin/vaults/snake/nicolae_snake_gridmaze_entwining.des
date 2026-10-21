@@ -1,0 +1,35 @@
+# Nicolae snake gridmaze entwining is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_gridmaze_entwining
+DEPTH: Snake
+TAGS:    extra transparent
+SHUFFLE: DE/FH, DE, JK, LM, NOPQRSZap
+SUBST:   HDJL = x, FEKMOPQRSZap = ., N = _
+CLEAR:   _
+MAP
+...PP..QQ..RR..SS..ZZ...
+..xxxxxxxxxxxxxxxxxxxx..
+.xxxxxxxxxxxxxxxxxxxxxx.
+Oxx..................xxa
+Oxx..................xxa
+.xx...xxxxDDDDxxxxL..xx.
+.xx..xxxxxxDDxxxxxM..xx.
+Nxx..xx..EE..EE..MM..xxp
+Nxx..xx..EE..EE..MM..xxp
+.xxxxxx..ExDDxE..MxLLxx.
+..xxxx...xxDDxx..xLLLLM.
+.........xx..xx.........
+.........xx..xx.........
+.KJJJJx..xxFFxx...xxxx..
+.xxJJxK..HxFFxH..xxxxxx.
+pxx..KK..HH..HH..xx..xxN
+pxx..KK..HH..HH..xx..xxN
+.xx..KxxxxxFFxxxxxx..xx.
+.xx..JxxxxFFFFxxxx...xx.
+axx..................xxO
+axx..................xxO
+.xxxxxxxxxxxxxxxxxxxxxx.
+..xxxxxxxxxxxxxxxxxxxx..
+...ZZ..SS..RR..QQ..PP...
+ENDMAP

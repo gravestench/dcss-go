@@ -1,0 +1,35 @@
+# Nicolae snake gridmaze spiral is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_gridmaze_spiral
+DEPTH: Snake
+TAGS:    extra transparent
+SHUFFLE: DE/FH/JK/LM/pq, DE, NO, PQRSZa
+SUBST:   DFJLNp = x, EHKMOQRSZaq = ., P = _
+CLEAR:   _
+MAP
+.................PP.....
+.qxqqqxxxxLLLLxxxxxxxx..
+.pxqqxxxxxxLLxxxxxxxxxx.
+.pp..pp..MM..MM......xx.
+.pp..pp..MM..MM......xx.
+.pxqqxp..MxLLxxxxx...xxQ
+.xxqqxx..xxLLLxxxxx..xxQ
+.xx..xx..xx......xx..xx.
+.xx..xx..xx......xx..xx.
+.xxEExx..xxOOON..xxKKxx.
+.DxEExD..NxOOxx..JxKKxJ.
+.DD..DD..NN..xx..JJ..JJ.
+.DD..DD..NN..xx..JJ..JJ.
+.DxEExD..Nxxxxx..JxKKxJ.
+.xxEExx..Oxxxx...xxKKxx.
+.xx..xx..........xx..xx.
+.xx..xx..........xx..xx.
+axx..xxxxxFFFFxxxxx..xxR
+axx...xxxxxFFxxxxx...xxR
+.xx......HH..HH......xx.
+.xx......HH..HH......xx.
+.xxxxxxxxxxFFxxxxxxxxxx.
+..xxxxxxxxFFFFxxxxxxxx..
+.....ZZ..........SS.....
+ENDMAP

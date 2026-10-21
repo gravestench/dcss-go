@@ -26,6 +26,9 @@ local definition = {
     runes = mod.null,
     ambient_noise = "normal",
     mon_die_size_expr = "DEFAULT_MON_DIE_SIZE",
+    -- Source Lair population extends to depth twelve for vault requests,
+    -- beyond the five floors the player can visit.
+    ood_cap = 12,
 }
 
 register.definition(categories.BRANCHES, definition)

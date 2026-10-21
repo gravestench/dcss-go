@@ -9,6 +9,7 @@ local harness = require("tests.harness")
 local item = require("policy.generation.vaults.specs.item")
 local monster = require("policy.generation.vaults.specs.monster")
 local resolve = require("policy.generation.vaults.specs.resolve")
+local branches = require("ids.branches")
 local monster_ids = require("ids.monsters")
 local item_ids = require("ids.items")
 local item_quality = require("constants.vault_item_quality")
@@ -405,11 +406,23 @@ local function handler_declarations_resolve()
     harness.equal(count, 36, "source handler owners")
 end
 
--- Empty depth pools should error with source site; duplicate uniques should return no-spawn.
+-- Empty population branches should error with the source site; duplicate
+-- uniques should return no-spawn. A huge Dungeon depth is no longer empty:
+-- source out-of-depth requests cap at D:27 and still have eligible rows.
 local function missing_pool_and_unique_veto()
     local ctx = random_context()
     local random_term = monster.parse("0", site)[1][1]
-    local ok, reason = pcall(resolve.monster, ctx, random_term, 999, site)
+    local empty_site = {
+        path = site.path,
+        vault_id = site.vault_id,
+        line = site.line,
+        directive = site.directive,
+        glyph = site.glyph,
+        branch_id = branches.BRANCH_ARENA,
+        local_depth = 1,
+    }
+    local ok, reason = pcall(resolve.monster, ctx, random_term, 1,
+        empty_site)
 
     harness.falsy(ok, "empty depth pool accepted")
     harness.truthy(reason:find(site.path, 1, true),

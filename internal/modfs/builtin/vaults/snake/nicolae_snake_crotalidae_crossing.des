@@ -1,0 +1,49 @@
+# Nicolae snake crotalidae crossing is a source Snake vault.
+# Explicit orientation sends this map through the full-vault fitter.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_crotalidae_crossing
+DEPTH: Snake
+TAGS:    transparent
+ORIENT:  float
+KMONS:   0 = 0 / 0 band
+: vault.run("configure")
+# Source Lua: : if you.depth() == 1 then
+# Source Lua directive: SUBST:   S = )}]
+# Source Lua: : elseif you.depth_fraction() < 1 then
+# Source Lua directive: SUBST:   S = (){}[]
+# Source Lua: : else
+# Source Lua directive: SUBST:   S = ({[
+# Source Lua: : end
+SHUFFLE: DE
+SUBST:   D = c, E = ., 0 = 00.
+MAP
+@.0.cc                 cc.0.@
+.....cc               cc.....
+0.cE..cc             cc..cc.0
+..cE...cc           cc..DEE..
+c..DcE..cc         cc...c...c
+cc...Dc..cc       cc...DE..cc
+ cc...ED..cc     cc...Ec..cc
+  cc...c...cc   cc..EcD..cc
+   cc..ED...cc cc..cD...cc
+    cc..cE...ccc..DE...cc
+     cc..DcE..c...c...cc
+      cc...Dc...DDE..cc
+       cc..Dc.0.cc..cc
+        cc.........cc
+         cc.0.S.0.cc
+        cc.........cc
+       cc..cc.0.cD..cc
+      cc..EDD...cD...cc
+     cc...c...c..EcD..cc
+    cc...ED..ccc...Ec..cc
+   cc...Dc..cc cc...DE..cc
+  cc..DcE..cc   cc...c...cc
+ cc..cE...cc     cc..DE...cc
+cc..ED...cc       cc..cD...cc
+c...c...cc         cc..EcD..c
+..EED..cc           cc...Ec..
+0.cc..cc             cc..Ec.0
+.....cc               cc.....
+@.0.cc                 cc.0.@
+ENDMAP

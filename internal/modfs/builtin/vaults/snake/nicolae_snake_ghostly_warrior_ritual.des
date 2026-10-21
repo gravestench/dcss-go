@@ -1,0 +1,26 @@
+# Nicolae snake ghostly warrior ritual is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_ghostly_warrior_ritual
+DEPTH: Snake
+TAGS:    patrolling transparent
+MONS:    naga ritualist / naga mage, naga warrior
+MONS:    phantasmal warrior / spectral naga warrior w:3
+SUBST:   D : bc, E : bc
+NSUBST:  F = 3=2 / 3=3 / 23
+MAP
+..............
+......EE......
+..DDWWEEWWDD..
+..DD......DD..
+..W..F.F...W..
+..W......F.W..
+.EE.F.1....EE.
+.EE......F.EE.
+..W.F......W..
+..W...F.F..W..
+..DD......DD..
+..DDWWEEWWDD..
+......EE......
+..............
+ENDMAP

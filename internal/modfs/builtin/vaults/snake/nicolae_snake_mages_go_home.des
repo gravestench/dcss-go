@@ -1,0 +1,28 @@
+# Nicolae snake mages go home is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_mages_go_home
+DEPTH: Snake
+TAGS:    transparent
+MONS:    mana viper
+MONS:    naga w:20 ; any weapon ego:antimagic / \
+            naga warrior ; any weapon ego:antimagic / \
+            salamander ; any weapon ego:antimagic
+SHUFFLE: DE/FH
+SUBST:   M = 1:30 2:5 .:80, N = 2:30 1:5 .:80
+SUBST:   D = c, E = %:30 *:20 .:40, FH = .:100 1 2
+MAP
+  xxxbbb@@@bbbxxx
+ xxbbbM.N.N.Mbbbxx
+xxbb.M.N.N.N.M.bbxx
+xbbE..MFFFFFM..Ebbx
+xbDDDDD.HFH.DDDDDbx
+xbE.M.N.HFH.N.M.Ebx
+xbEM.N.NHFHN.N.MEbx
+xbE.M.N.HFH.N.M.Ebx
+xbDDDDD.HFH.DDDDDbx
+xbbE..MFFFFFM..Ebbx
+xxbb.M.N.N.N.M.bbxx
+ xxbbbM.N.N.Mbbbxx
+  xxxbbb@@@bbbxxx
+ENDMAP

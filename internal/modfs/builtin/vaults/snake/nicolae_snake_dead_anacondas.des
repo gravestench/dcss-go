@@ -1,0 +1,27 @@
+# Nicolae snake dead anacondas is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_dead_anacondas
+DEPTH: Snake
+TAGS:   no_pool_fixup transparent no_monster_gen patrolling
+KMONS:  1 = anaconda skeleton / anaconda zombie
+KMONS:  2 = anaconda skeleton w:5 / anaconda zombie w:5 / spectral anaconda \
+        / anaconda simulacrum
+KFEAT:  2 = W / . w:30
+NSUBST: D = 2=% / 2=* / *| / -'
+# About 18.5 snek on-average.
+SUBST:  ' = 2:40 W .:50, - = xwW.
+MAP
+  xxxxxxx
+ xxxxxxxxx..@
+xxxDDD--xx...x
+xxDD''''-xx1.x
+xxD''''''.+..x
+xxD''''''-xxxx
+xxD''''''-xxxx
+xxD''''''.+..x
+xxDD''''-xx1.x
+xxxDDD--xx...x
+ xxxxxxxxx..@
+  xxxxxxx
+ENDMAP

@@ -1,0 +1,27 @@
+# Nicolae snake salamander jacuzzi is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_salamander_jacuzzi
+DEPTH: Snake
+TAGS:   transparent
+KMONS:  L = salamander
+KFEAT:  L = l
+NSUBST: D = + / +c / +cc
+SUBST:  l = Ll, E : cGl
+MAP
+xx           xx
+xxx         xxx
+ xxxcccDcccxxx
+  xccc...cccx
+  ccE.....Ecc
+  cc.......cc
+  c...lll...c
+  +...lll...D
+  c...lll...c
+  cc.......cc
+  ccE.....Ecc
+  xccc...cccx
+ xxxcccDcccxxx
+xxx         xxx
+xx           xx
+ENDMAP

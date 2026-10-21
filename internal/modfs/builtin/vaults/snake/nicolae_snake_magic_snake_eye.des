@@ -1,0 +1,37 @@
+# Nicolae snake magic snake eye is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_magic_snake_eye
+DEPTH: Snake
+TAGS:    patrolling transparent
+ITEM:    any book, any wand / any magical staff, any jewellery / any wand
+ITEM:    any scroll, any potion
+MONS:    naga mage / naga ritualist / naga sharpshooter / salamander mystic
+MONS:    nagaraja / salamander tyrant
+MONS:    naga mage band / naga ritualist band / naga sharpshooter band / \
+         salamander mystic band
+SHUFFLE: dD / eE / fF / gG, gG / hH
+SUBST:   D = ., E = ., F = ., G = g.., H = h..
+NSUBST:  J = 1 / 2=1.. / 3 / ., K = 2=1 / 2=1.. / 2 / 3 / .
+NSUBST:  L = 2=1 / 2=1.. / 2 / 3 / .
+MAP
+xxxxxxx       xxxxxxx
+xxxxxccccc+cccccxxxxx
+xxxxcc.Ddc.ceE.ccxxxx
+xxxcc.KDcc.ccEL.ccxxx
+xxcc....c...c....ccxx
+xxc..K.cc.J.cc.L..cxx
+xcc....c.....c....ccx
+xc..K..c..J..c..L..cx
+xc.....c.....c.....cx
+xc..K..+..J..+..L..cx
+xc.....c.....c.....cx
+xc..K..c..J..c..L..cx
+xcc....c.....c....ccx
+xxc..K.cc.J.cc.L..cxx
+xxcc....c...c....ccxx
+xxxcc.KFcc.ccGL.ccxxx
+xxxxcc.Ffc.cgG.ccxxxx
+xxxxxccccc+cccccxxxxx
+xxxxxxx       xxxxxxx
+ENDMAP

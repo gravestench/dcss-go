@@ -67,6 +67,17 @@ func TestSnakeEndMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/snake_end_mod_test.lua")
 }
 
+// Sparse Snake entry and ordinary DES files join the effective source pools.
+func TestSnakeVaultMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/snake-vault-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/snake_vault_mod_test.lua")
+}
+
 // A sparse mod adds a Swamp end vault through the same DES discovery path.
 func TestSwampEndMod(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/swamp-end-mod")

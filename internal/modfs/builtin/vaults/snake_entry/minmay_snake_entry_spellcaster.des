@@ -1,0 +1,14 @@
+# Minmay snake entry spellcaster is a source Snake entrance.
+# Its keyed O supplies the linked Lair stair; other glyphs remain authored content.
+# Source definition: crawl-ref/source/dat/des/branches/snake.des.
+NAME: minmay_snake_entry_spellcaster
+TAGS:   snake_entry transparent
+ORIENT: float
+WEIGHT: 2
+MONS:   guardian serpent
+KFEAT:  O = enter_snake_pit
+MAP
+...
+.O1
+...
+ENDMAP

@@ -1,0 +1,27 @@
+# Nicolae snake guarding the ruins is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_guarding_the_ruins
+DEPTH: Snake
+TAGS:   patrolling transparent
+MONS:   naga / salamander / nothing w:5, naga warrior band
+NSUBST: D = . / x, E = . / x, F = . / x, H = . / x, J = . / x, K = . / x, \
+        L = . / x, M = . / x, N = . / x, O = . / x, P = . / x, Q = . / x
+SUBST:  x = x:30 .
+MAP
+cc...........cc
+ccDDDcJJJcEEEcc
+.D...J...J...E.
+.D.1.J.1.J.1.E.
+.D...J...J...E.
+.cMMMcNNNcKKKc.
+.M...Q...O...K.
+.M.1.Q.2.O.1.K.
+.M...Q...O...K.
+.cMMMcPPPcKKKc.
+.H...L...L...F.
+.H.1.L.1.L.1.F.
+.H...L...L...F.
+ccHHHcLLLcFFFcc
+cc...........cc
+ENDMAP

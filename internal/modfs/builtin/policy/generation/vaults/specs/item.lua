@@ -16,8 +16,14 @@ local function parse_term(text, expression, site)
 
     for token in text:gmatch("%S+") do
         local key, value = token:match("^([%w_]+):(.*)$")
+        local marker, marker_weight = token:match("^([%%*|]):(%d+)$")
 
-        if key == "w" or key == "weight" then
+        if marker then
+            -- Source DES also writes %:15 and |:5, attaching a weight
+            -- directly to a random-item marker instead of using w:.
+            result.weight = tonumber(marker_weight)
+            names[#names + 1] = marker
+        elseif key == "w" or key == "weight" then
             local weight = tonumber(value)
 
             if not weight or weight % 1 ~= 0 or weight <= 0 then

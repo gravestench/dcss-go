@@ -1,0 +1,20 @@
+# Nicolae snake biting tails is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_biting_tails
+DEPTH: Snake
+TAGS:  transparent extra
+SUBST: G : GT
+MAP
+xxxxx     xxxxxxx     xxxxxxx     xxxxxxx
+@...xxxxxxx.....xxx xxx.....xxx xxx.....xxxxxxxx
+xx....xx..........xxx.........xxx.........xx...x
+ xxx.x......xxx....x....xxx....x....xxx..x.....x
+   xx.G....xxxxxx.x...xxxxxxx.x...xxxxxxx.G....x
+   xx.....xxxxxxxx...xxxxxxxxx...xxxxxxxx.....xx
+   x....G.xxxxxxx...x.xxxxxxx...x.xxxxxx....G.xx
+   x.....x..xxx....x....xxx....x....xxx......x.xxx
+   x...xx.........xxx.........xxx..........xx....xx
+   xxxxxxxx.....xxx xxx.....xxx xxx.....xxxxxxx...@
+          xxxxxxx     xxxxxxx     xxxxxxx     xxxxx
+ENDMAP

@@ -1,0 +1,29 @@
+# Nicolae snake slithery corners is a source Snake vault.
+# The extra tag allows another ordinary Snake map after this one fits.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_slithery_corners
+DEPTH: Snake
+TAGS:  extra transparent
+SUBST: D : TGG., E : TGG., F : TGG.
+MAP
+     ccc
+c@@@ccccc@@@cc
+c...ccccc...cccc
+c...ccccc...ccccc
+c....ccc....cccccc
+cc....c....ccccccc
+ccc...c...ccccccccc
+ccc..DcF..ccccccccc
+ccc...c...ccccc...@
+cc....c....ccc....@
+c....ccc..........@
+c...cccc........ccc
+cE..cccccc..F..ccccc
+c...cccccccccccccccc
+c....ccccc..D..ccccc
+cc....ccc.......ccc
+ c................@
+ cc........ccc....@
+  ccc..E..ccccc...@
+    ccccccccccccccc
+ENDMAP

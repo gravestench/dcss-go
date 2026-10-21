@@ -1,0 +1,25 @@
+# Nicolae snake omega is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_omega
+DEPTH: Snake
+TAGS:    no_pool_fixup transparent
+# It is intentional that sometimes the front doors merge into a big 1x4 door.
+SHUFFLE: MNO
+SUBST:   D : GTUw%0., E : GTUw%0., F : GTUw%0., H : GTUw%0., J : GTUw%0.
+SUBST:   M : +, N : 0, O : ., 0 = 0009., 9 = 9998., % = %:70 *:30 .:20 |
+SUBST:   w : w:50 l
+MAP
+  cccc.@.cc
+ cc%Fcc...cc
+ cE...cc.0Hc
+cc..0..cc.cc
+cD.9w0..c+cJ
+c%9www..MNO@
+c%9www..MNO@
+cD.9w0..c+cJ
+cc..0..cc.cc
+ cE...cc.0Hc
+ cc%Fcc...cc
+  cccc.@.cc
+ENDMAP

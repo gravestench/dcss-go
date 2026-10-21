@@ -1,0 +1,34 @@
+# Nicolae snake nest is a source Snake vault.
+# Explicit orientation sends this map through the full-vault fitter.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_nest
+DEPTH: Snake
+TAGS:   transparent
+ORIENT: float
+MAP
+         .........
+    ......xx..xxx..
+  ...xxxxxx..xx.xx..
+.....x......xx...xx..
+.xx..xx...............
+..xx....xxxx..xxxx..x..
+ ..x..xxx..x.....xx.xx..
+ ..x..x....xx.x...x..x...
+ ..x....xx....xx..x..xxx.
+ .xx.xx.x......x.xx....x.
+ .x..x..x..xxxxx.x.....x.
+ .x..x..x.xx........x.xx.
+ ....x..x....x..xxx.x....
+ .xx.xx.xx...x.xx.x.xxx..
+ .x...x..xxx.x....x...x.
+ .xx..xx.....x....x.x.x.
+ ..x...x.x...x..xxx.xxx.
+  .xx....xxxxx..........
+  ..x...........x..xx..
+   .x.xxx...xxx.x..x..
+   .x...xxxxx...x..x.
+   .............xxxx.
+     ..xx..xxxx......
+      ..xxxx..x.
+       .........
+ENDMAP

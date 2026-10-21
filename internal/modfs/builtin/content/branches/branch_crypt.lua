@@ -26,6 +26,8 @@ local definition = {
     runes = mod.null,
     ambient_noise = "quiet",
     mon_die_size_expr = "10",
+    -- Source Crypt out-of-depth requests stop at five, not floor three.
+    ood_cap = 5,
 }
 
 register.definition(categories.BRANCHES, definition)

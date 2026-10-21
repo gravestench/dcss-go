@@ -1,0 +1,24 @@
+# Nicolae snake bzzzt is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_bzzzt
+DEPTH: Snake
+KMONS:  1 = electric eel
+KMONS:  2 = shock serpent
+KFEAT:  1 = w
+SUBST:  S = w', E = x'
+NSUBST: w = 2=1 / 4=1www / w, ' = 2=2 / 4=2... / .
+MAP
+   xxxxxxx
+  xxwwwwwxx
+ xxwwSSSwwxx
+xxwwSS'SSwwxx
+xwwSS'''SSSwx
+@..''EEE''Swx
+@..''EEE''Swx
+xwwSS'''SSSwx
+xxwwSS'SSwwxx
+ xxwwSSSwwxx
+  xxwwwwwxx
+   xxxxxxx
+ENDMAP

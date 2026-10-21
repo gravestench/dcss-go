@@ -1,0 +1,28 @@
+# Nicolae snake boneroom is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_boneroom
+DEPTH: Snake
+TAGS:   transparent
+MONS:   naga ritualist band / naga sharpshooter band / naga warrior band \
+        / naga mage band / nagaraja w:5
+NSUBST: E = . / 1, F = . / 1, q = | / 2=* / 3=% / $.
+MAP
+xxx+xxxxxxxxxxxxxxxxxxxxxxx
+xcc.ccccccccccccccccccccccx
+xcc.ccc.c.c.c.c.c.c.c.c.ccx
+xc...c...................cx
+xcc.ccc.E.c.c..E..c.c.E.ccx
+xc...c....ccc.....ccc....cx
+xcc.ccc.ccc.ccc.cccqccc.ccx
+xc...cq.qc...c...cq.qc...cx
+xcc.ccc.ccc.c+c.ccc.ccc.ccx
+xc...cq.qc...c...cq.qc...cx
+xcc.cccqccc.ccc.ccc.ccc.ccx
+xc....ccc.....ccc....c...cx
+xcc.F.c.c..F..c.c.F.ccc.ccx
+xc...................c...cx
+xcc.c.c.c.c.c.c.c.c.ccc.ccx
+xcccccccccccccccccccccc.ccx
+xxxxxxxxxxxxxxxxxxxxxxx+xxx
+ENDMAP

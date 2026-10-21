@@ -1,0 +1,37 @@
+# Nicolae snake scaly snakehead is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_scaly_snakehead
+DEPTH: Snake
+TAGS:   no_pool_fixup patrolling transparent
+KMONS:  12 = guardian serpent / naga w:20 / salamander / anaconda w:20 / \
+             naga warrior / black mamba w:20 / mana viper / nothing w:80
+KMONS:  3 = naga mage / naga ritualist / naga sharpshooter / shock serpent / \
+            salamander mystic / nothing w:40
+KMONS:  4 = nagaraja / salamander tyrant
+KITEM:  2 = %:15 / * / |:5 / nothing w:5
+NSUBST: 4 = 2=4 / 34
+SUBST:  D = 13
+MAP
+ cccccccccccccc
+ c2..c1c..2c2.ccc
+ccc..c..cccc..c1ccc
+c3.c.ccc.wwwcc.c.1ccc
+c...c.2.cwwwc1c.cc.1c
+c2.c.....cccc.c.c.cccc
+ccc.4..3.c.2cc.cc.w.1c
+c2c2.....c..c.D..cc.cc
+c.c..D.3..ccc...c1.c.c.....l
+cc.c.....c...c.2c..c..c...l.
+c24.ccccc..D.cccccc.D.clll.@
+cc.c.....c...c.2c1.c..c...l.
+c.c..D.3..ccc...c..c.c.....l
+c2c2.....c..c.D..cc.cc
+ccc.4..3.c.2cc.cc.w.1c
+c2.c.....cccc.c.c.cccc
+c...c.2.cwwwc1c.cc.1c
+c3.c.ccc.wwwcc.c.1ccc
+ccc..c..cccc..c1ccc
+ c2..c1c..2c2.ccc
+ cccccccccccccc
+ENDMAP

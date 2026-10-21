@@ -30,6 +30,8 @@ local definition = {
     },
     ambient_noise = "quiet",
     mon_die_size_expr = "DEFAULT_MON_DIE_SIZE",
+    -- Source Tomb out-of-depth requests stop at five, not floor three.
+    ood_cap = 5,
 }
 
 register.definition(categories.BRANCHES, definition)

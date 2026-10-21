@@ -1,0 +1,36 @@
+# Nicolae snake salamander zone is a source Snake vault.
+# The Snake depth keeps this independently loaded map out of other branches.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_salamander_zone
+DEPTH: Snake
+TAGS:  transparent
+KITEM: 2 = *
+KITEM: 3 = |
+KMONS: 1S = salamander
+KMONS: 2 = salamander / nothing w:5
+KMONS: 3 = salamander mystic
+KFEAT: S = l
+SUBST: l = l:170 S
+MAP
+          v
+       ...v...
+     ...llvll...
+   @..lllllllll..@
+   .llllllvllllll.
+  ..llllvvv..llll..
+  .lllvvv3v....lll.
+ ..lllv222v.1..lll..
+ .lllvv%%%v..1..lll.
+ .lllv$$$vv.....lll.
+vvvlv+vvvv+v+vvvvlvvv
+ .lll.....vv.llllll.
+ .lll.1...v.1.lllll.
+ ..lll.1..vl...lll..
+  .lll..1.vll...ll.
+  ..llll..vlll.....
+   .llllllvllll...
+   @..lllllllll..@
+     ...llvll...
+       ...v...
+          v
+ENDMAP

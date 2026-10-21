@@ -1,0 +1,40 @@
+# Nicolae snake shooting gallery is a source Snake vault.
+# Explicit orientation sends this map through the full-vault fitter.
+# Source default-depth: Snake is made explicit for this separate file.
+NAME: nicolae_snake_shooting_gallery
+TAGS:    no_pool_fixup transparent
+DEPTH:   Snake, !Snake:$
+ORIENT:  float
+ITEM:    shortbow / longbow w:4 / hand crossbow / arbalest w:3 \
+         / triple crossbow w:1
+MONS:    naga sharpshooter
+SUBST:   s = 1'
+SHUFFLE: }])
+KMASK:   1dw'+}]) = opaque
+MAP
+ xxxxxxxxx.@@@.xxxxxxxxx
+xxxxxxxxxxx...xxxxxxxxxxx
+xx.......xx...xx.......xx
+xx.....................xx
+xx.....................xx
+xx.....................xx
+xx....wwwwwwwwwwwww....xx
+xx....wwwwwwwwwwwww....xx
+xx....ww1'''s'''1ww....xx
+xxx...ww'ccccccc'ww...xxx
+.xx...ww'c'''''c'ww...xx.
+@.....ww'+''s''c'ww.....@
+@.....wws+''1'}csww.....@
+@.....ww'+''s''c'ww.....@
+.xx...ww'cdddddc'ww...xx.
+xxx...ww'ccccccc'ww...xxx
+xx....ww1'''s'''1ww....xx
+xx....wwwwwwwwwwwww....xx
+xx....wwwwwwwwwwwww....xx
+xx.....................xx
+xx.....................xx
+xx.....................xx
+xx.......xx...xx.......xx
+xxxxxxxxxxx...xxxxxxxxxxx
+ xxxxxxxxx.@@@.xxxxxxxxx
+ENDMAP

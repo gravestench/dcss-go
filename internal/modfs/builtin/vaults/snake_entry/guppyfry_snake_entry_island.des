@@ -1,0 +1,22 @@
+# Guppyfry snake entry island is a source Snake entrance.
+# Its keyed O supplies the linked Lair stair; other glyphs remain authored content.
+# Source definition: crawl-ref/source/dat/des/branches/snake.des.
+NAME: guppyfry_snake_entry_island
+TAGS:   snake_entry patrolling no_monster_gen transparent
+ORIENT: float
+MONS:   naga / nothing, plant
+KFEAT:  O = enter_snake_pit
+SUBST:  - = . W:2 2:1
+MAP
+   -WWWWW-
+  -WWWWWWW-
+ -WWW---WWW-
+-WWW-----WWW-
+-WW---1---WW-
+@WW--1O1--WW@
+-WW---1---WW-
+-WWW-----WWW-
+ -WWW---WWW-
+  -WWWWWWW-
+   -WWWWW-
+ENDMAP

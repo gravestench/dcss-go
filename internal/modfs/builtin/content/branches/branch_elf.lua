@@ -26,6 +26,8 @@ local definition = {
     runes = mod.null,
     ambient_noise = "normal",
     mon_die_size_expr = "DEFAULT_MON_DIE_SIZE",
+    -- Source Elf monster requests can reach seven, past its three floors.
+    ood_cap = 7,
 }
 
 register.definition(categories.BRANCHES, definition)

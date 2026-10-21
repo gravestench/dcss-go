@@ -2145,6 +2145,27 @@ draw before minivaults. Both use the same DES substitutions, entity
 records, protected-cell fitting, and save history. The final floor still
 belongs exclusively to `slime_pit`.
 
+Snake Pit uses the same effective vault owners. Add an authored Lair gate
+under `vaults/snake_entry/<name>.des` with `TAGS: snake_entry` and exactly
+one `KFEAT: O = enter_snake_pit`. The scheduled entrance selector tries
+source-weighted entries in stable ID order and links the placed `O` cell to
+Snake:1. If none fits, it leaves one ordinary branch stair. The eight
+bundled entries include the source's small dummy entry; a sparse example
+that adds a ninth entry is in `internal/script/testdata/snake-vault-mod/`.
+
+Put ordinary Snake maps under `vaults/snake/`. Give each file an explicit
+`DEPTH: Snake` or a narrower source range: the original `snake.des` sets
+`default-depth: Snake` once for the rest of that file, but separately
+loaded mod files have no shared default. Maps without `ORIENT` join the
+minivault draw; oriented maps join the regular branch-family draw. Source
+scripts become `: vault.run("configure")` at their original declaration
+position with a same-named Lua file under
+`policy/generation/vaults/snake/`. That hook receives a generation `api`
+with local depth, branch bottom, absolute depth, source RNG methods, and
+`api:emit`. Its choices are resolved before terrain and entities are
+placed. The nine `snake_end` files still own Snake:4's mandatory ending;
+ordinary Snake maps can also fit around it when their source rules allow.
+
 ### Branch end vaults
 
 A branch ending that fits inside an ordinary generated floor uses an end
