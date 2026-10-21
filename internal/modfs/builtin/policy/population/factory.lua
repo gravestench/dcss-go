@@ -20,6 +20,7 @@ local missile_brands = require("constants.missile_brands")
 local shapeshifter = require("policy.monsters.shapeshifter")
 local unique_history = require("policy.population.unique_history")
 local generation = require("policy.item_generation")
+local identification = require("policy.items.identification")
 local item_purpose = require("constants.item_generation_purpose")
 local item_quality = require("constants.vault_item_quality")
 local vault_enchantments = require("policy.monsters.vault_enchantments")
@@ -257,11 +258,10 @@ local function give_explicit_equipment(ctx, monster, selected, origin)
         end
 
         if entry.ident == "type" or entry.ident == "all" then
-            ctx:add(entity, component.ITEM_IDENTIFICATION, {
-                known_type = true,
-                known_pluses = entry.ident == "all",
-                known_properties = entry.ident == "all",
-                cosmetic = 0,
+            identification.reveal_item(ctx, entity, {
+                type = true,
+                pluses = entry.ident == "all",
+                properties = entry.ident == "all",
             })
         end
         if slot then

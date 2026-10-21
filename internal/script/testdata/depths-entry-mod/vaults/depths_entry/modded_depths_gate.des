@@ -1,0 +1,14 @@
+# A sparse mod contributes one complete D:15 entrance without a Go switch.
+NAME: modded_depths_gate
+TAGS: depths_entry uniq_depths_entry chance_depths_entry no_monster_gen
+PLACE: D:$
+WEIGHT: 7 (D:$)
+KFEAT: O = enter_depths
+ORIENT: float
+MAP
+xxxxxxx
+x.....x
+x..O..x
+x.....x
+xxxxxxx
+ENDMAP

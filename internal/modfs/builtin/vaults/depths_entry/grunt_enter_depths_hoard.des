@@ -1,0 +1,21 @@
+# grunt_enter_depths_hoard is an authored D:15 gate to the Depths.
+# Source: crawl-ref/source/dat/des/branches/depths.des.
+NAME:    grunt_enter_depths_hoard
+MONS:    fire dragon, ice dragon
+ITEM:    $ no_pickup
+SHUFFLE: 12 / 12 / 11 / 22
+# Source Lua: : depths_entry(_G)
+TAGS: depths_entry uniq_depths_entry chance_depths_entry no_monster_gen
+PLACE: D:$
+WEIGHT: 20
+KFEAT: O = enter_depths
+ORIENT: float
+MAP
+  ccccccc
+ ccdddd.cc
+cc...1...ccccc
+cO.ccccc.....cc
+cc...2...cc...cc
+ ccdddd.ccc.G..cc
+  cccccccc.@.@..c
+ENDMAP

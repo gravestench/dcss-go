@@ -1,0 +1,25 @@
+# grunt_enter_depths_magical_seal is an authored D:15 gate to the Depths.
+# Source: crawl-ref/source/dat/des/branches/depths.des.
+NAME: grunt_enter_depths_magical_seal
+KMONS: O = necromancer band
+MONS: wizard / deep elf pyromancer w:5 / deep elf zephyrmancer w:5 / \
+      orc sorcerer / naga mage
+# Source Lua: : depths_entry(_G)
+TAGS: depths_entry uniq_depths_entry chance_depths_entry no_monster_gen
+PLACE: D:$
+WEIGHT: 20
+KFEAT: O = enter_depths
+ORIENT: float
+MAP
+  bbbbbbb
+ bb..1..bb
+bb.......bb
+b..bb+bb..b
+b..b...b..b
+b.1b.O.b1.b
+b..b...b..b
+b..bbbbb..b
+bb...1...bb
+ bb.....bb
+  bbb+bbb
+ENDMAP

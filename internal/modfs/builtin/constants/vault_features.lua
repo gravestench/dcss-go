@@ -12,6 +12,7 @@ local features = {
     ENTER_LAIR = "enter_lair",
     ENTER_ORC = "enter_orcish_mines",
     ENTER_ELF = "enter_elven_halls",
+    ENTER_DEPTHS = "enter_depths",
     ENTER_SNAKE = "enter_snake_pit",
     ENTER_SPIDER = "enter_spider_nest",
     ENTER_SLIME = "enter_slime_pits",

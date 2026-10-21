@@ -468,7 +468,8 @@ function identification.validate(ctx, player)
         if state.known_type and not appearances.pool(kind) and
             not manual and
             not ctx:has(entity, component.ITEM_ARTEFACT) then
-            error("non-identifiable item has type knowledge")
+            error("non-identifiable item " .. item.kind_id ..
+                " (entity " .. ctx:id(entity) .. ") has type knowledge")
         end
 
         local artefact_book = kind.class == classes.OBJ_BOOKS and

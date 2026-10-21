@@ -1,0 +1,30 @@
+# grunt_enter_depths_giant_problem is an authored D:15 gate to the Depths.
+# Source: crawl-ref/source/dat/des/branches/depths.des.
+NAME: grunt_enter_depths_giant_problem
+TAGS: transparent
+SHUFFLE: JKLMN
+SUBST: J = l, K : ll., L : l., M : l.., N = .
+KMONS: O = patrolling stone giant / patrolling fire giant
+# Source Lua: : depths_entry(_G)
+TAGS: depths_entry uniq_depths_entry chance_depths_entry no_monster_gen
+PLACE: D:$
+WEIGHT: 20
+KFEAT: O = enter_depths
+ORIENT: float
+# This source map overrides the shared entry weight after the setup call.
+WEIGHT: 12
+MAP
+  ....@....
+ ..LJLJLJL..
+..KKllxllKK..
+.LKxlllllxKL.
+.JlllMNMlllJ.
+..l.l...MllL.
+@l.l..O.NlxJ@
+..lll...MllL.
+.JlllMNMlllJ.
+.LKxlllllxKL.
+..KKllxllKK..
+ ..LJLJLJL..
+  ....@....
+ENDMAP

@@ -111,6 +111,17 @@ func TestElfVaultMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/elf_vault_mod_test.lua")
 }
 
+// A sparse layer extends the source D:15 Depths gate pool by DES discovery.
+func TestDepthsEntryMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/depths-entry-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/depths_entry_mod_test.lua")
+}
+
 // A sparse layer extends Spider entries, ordinary maps, and jumping helpers.
 func TestSpiderVaultMod(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/spider-vault-mod")

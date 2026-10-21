@@ -9,9 +9,11 @@ local effects = require("constants.vault_effects")
 local features = require("constants.vault_features")
 local families = require("constants.vault_families")
 local tags = require("constants.vault_tags")
+local depth = require("policy.generation.vaults.depth")
 local extra = require("policy.generation.vaults.extra")
 local temple = require("policy.generation.temple.catalog")
 local vaults = require("policy.generation.vaults.catalog")
+local weights = require("policy.generation.vaults.weight")
 
 local entry = {}
 
@@ -27,6 +29,11 @@ local source_entries = {
         family = families.ORC_ENTRY,
         tag = tags.ORC_ENTRY,
         feature = features.ENTER_ORC,
+    },
+    [branches.BRANCH_DEPTHS] = {
+        family = families.DEPTHS_ENTRY,
+        tag = tags.DEPTHS_ENTRY,
+        feature = features.ENTER_DEPTHS,
     },
     [branches.BRANCH_SWAMP] = {
         family = families.SWAMP_ENTRY,
@@ -96,16 +103,32 @@ local function definitions(branch_id)
     return result
 end
 
--- Expose the effective pool for mod and source-catalog tests. Source
--- weights are preserved; a disabled map contributes no candidate.
-function entry.candidates(branch_id)
+-- Resolve the source weight and PLACE against the parent floor. A mod may
+-- specify only a D:$ weight, while a tagged map for another floor must stay
+-- out of the scheduled entrance draw. Omitting the floor keeps the catalog
+-- inspection API useful to older source-family tests.
+function entry.candidates(branch_id, floor)
     local choices = {}
 
     for _, definition in ipairs(definitions(branch_id)) do
-        if definition.weight > 0 then
+        local map_weight = definition.weight
+        local allowed = true
+
+        if floor then
+            map_weight = weights.for_branch(definition, floor.branch_id,
+                floor.depth, floor.branch_bottom, floor.absolute_depth)
+
+            if #definition.places > 0 then
+                allowed = depth.eligible({ depths = definition.places },
+                    floor.branch_id, floor.depth, floor.branch_bottom,
+                    floor.absolute_depth)
+            end
+        end
+
+        if map_weight > 0 and allowed then
             choices[#choices + 1] = {
                 definition = definition,
-                weight = definition.weight,
+                weight = map_weight,
             }
         end
     end
@@ -171,7 +194,7 @@ end
 -- As in source Crawl, a lone branch stair remains the fallback when no
 -- authored entry can fit around this floor's protected cells.
 function entry.place(ctx, builder, protected, required, player, branch_id)
-    local choices = entry.candidates(branch_id)
+    local choices = entry.candidates(branch_id, player)
     local specification = source_entries[branch_id]
     local feature = specification and specification.feature or
         features.ENTER_TEMPLE

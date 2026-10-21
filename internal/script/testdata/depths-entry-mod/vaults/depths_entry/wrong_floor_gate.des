@@ -1,0 +1,12 @@
+# This tagged gate is positive-weight but belongs to D:14, not D:15.
+NAME: wrong_floor_gate
+TAGS: depths_entry
+PLACE: D:14
+WEIGHT: 9
+KFEAT: O = enter_depths
+ORIENT: float
+MAP
+xxxxx
+x.O.x
+xxxxx
+ENDMAP

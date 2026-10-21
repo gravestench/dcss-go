@@ -1,0 +1,27 @@
+# grunt_enter_depths_snipers is an authored D:15 gate to the Depths.
+# Source: crawl-ref/source/dat/des/branches/depths.des.
+NAME: grunt_enter_depths_snipers
+TAGS: no_pool_fixup
+MONS: tengu warrior ; longbow / tengu warrior ; arbalest
+KMONS: O = stone giant / frost giant w:4
+SUBST: - = ++c
+# Source Lua: : depths_entry(_G)
+TAGS: depths_entry uniq_depths_entry chance_depths_entry no_monster_gen
+PLACE: D:$
+WEIGHT: 20
+KFEAT: O = enter_depths
+ORIENT: float
+MAP
+ccccccccc
+c1+...+1c
+c.c.O.c.c
+c.c...c.c
+c.cc-cc.c
+c.w...w.c
+c.w...w.c
+c.w.w.w.c
+c.c.c.c.c
+cw..c..wc
+cww...wwc
+cccc+cccc
+ENDMAP

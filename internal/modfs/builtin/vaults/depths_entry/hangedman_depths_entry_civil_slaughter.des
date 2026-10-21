@@ -1,0 +1,34 @@
+# hangedman_depths_entry_civil_slaughter is an authored D:15 gate to the Depths.
+# Source: crawl-ref/source/dat/des/branches/depths.des.
+NAME:    hangedman_depths_entry_civil_slaughter
+TAGS:    transparent
+MONS:    deep troll w:14 / tengu warrior w:12 / \
+         deep elf pyromancer w:1 / deep elf zephyrmancer w:1
+MONS:    wizard w:14 / tengu conjurer w:6 / necromancer w:14
+MONS:    deep troll w:14 / hell knight w:8 / orc sorcerer / shapeshifter w:4
+KMONS:   O = ettin w:14 / stone giant w:2 / glowing shapeshifter w:2
+SUBST:   c : c:9 v:2 b:1
+SHUFFLE: 12 / 12 / 21
+# Source Lua: : depths_entry(_G)
+TAGS: depths_entry uniq_depths_entry chance_depths_entry no_monster_gen
+PLACE: D:$
+WEIGHT: 20
+KFEAT: O = enter_depths
+ORIENT: float
+MAP
+          .x...
+          ...1.
+      .....x...
+      .cccc.ccc
+      .cO..x...
+ xxxxx.c.....x
+ x2....c...x.x
+ x..x.x.x.x..x
+ x.x...c....2x
+ x...3.c.xxxxx
+...x..Tc.
+ccc.cccc.
+...x.....
+.1...
+...x.
+ENDMAP

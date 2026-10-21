@@ -12,6 +12,7 @@ return {
     ELF_BLADE_ENTRY = "elf_blade_entry",
     ELF_BLADES = "elf_blades",
     ELF_END = "elf_end",
+    DEPTHS_ENTRY = "depths_entry",
     SPIDER = "spider",
     SPIDER_ENTRY = "spider_entry",
     SPIDER_END = "spider_end",

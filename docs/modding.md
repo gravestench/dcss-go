@@ -2247,6 +2247,21 @@ draw from the effective family, fits the map around protected cells, and
 links the final keyed O cell. A sparse mod can add files to either family;
 see `internal/script/testdata/water-entry-mod/` for both examples.
 
+Depths uses the same scheduled branch-entry owner at D:15. All eight
+source maps live in `vaults/depths_entry/` and carry
+`TAGS: depths_entry uniq_depths_entry chance_depths_entry no_monster_gen`,
+`PLACE: D:$`, an explicit positive `WEIGHT`, `ORIENT: float`, and one
+`KFEAT: O = enter_depths`. These declarations are written in every split
+file because the original `depths_entry(e)` Lua helper supplied them at
+parse time. The map and its keyed O cell remain authoritative; the
+generator links that cell to Depths:1 and saves the selected map ID. To
+add a gate, put one new `.des` file at the same relative family path.
+`internal/script/testdata/depths-entry-mod/` shows a complete example.
+The grave entrance also illustrates a local feature-name hook: its
+`.des` file declares `vault.run("rename_gravestone")`, whose Lua method
+lives in the same-named file under
+`policy/generation/vaults/depths_entry/`.
+
 The ten bundled Swamp entrances retain their source `MARKER` declarations
 for fog machines. Population turns each marker into a saved ECS fog entity,
 so a modded Swamp gate can use the same marker syntax without a new system.

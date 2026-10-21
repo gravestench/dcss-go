@@ -10,6 +10,7 @@ local tags = {
     ORC_HOUSE = "grunt_orc_community_house",
     MISC_ELF_VAULT = "misc_elf_vault",
     ELF_BLADE_ENTRY = "elf_blade_entry",
+    DEPTHS_ENTRY = "depths_entry",
     SNAKE_ENTRY = "snake_entry",
     SPIDER_ENTRY = "spider_entry",
     SPIDER_JUMPING_CHILD = "nico_jumpspide",
