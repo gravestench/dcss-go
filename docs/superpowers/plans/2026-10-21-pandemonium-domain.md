@@ -72,3 +72,20 @@
 - [ ] Run relevant Lua, generation, game, terminal, save, style, and compile checks once at the category boundary; investigate substantive failures.
 - [ ] Review the complete domain against the spec, commit each remaining
   contiguous category, and push `main`.
+
+## Current verification and remaining parity
+
+The source map import, weighted selection, Lua hooks, region replacement,
+portal commands, safe exit, Abyss return, and saved lord profile are on
+`main`. The ring's eight cloud types now use the saved ECS cloud owner.
+Targeted game and Lua integration tests pass for these paths. A full
+repository test attempt with a four-minute timeout reached the unrelated
+Wanderer gift and item-generation suites before their packages finished;
+Pan-focused tests and compilation of every package passed separately.
+
+The next Pan combat category must port the generated lord's source name and
+colour rolls and the effects of its non-brand melee flavours. After that,
+exercise an authored Pan rune from map placement through pickup, repeated
+transit, save/restore, and escape in one run. The existing tests already
+compare the complete next-region save after restore and prove that an
+uncollected rune entity is retired with its old region.
