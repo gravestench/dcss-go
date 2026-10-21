@@ -447,9 +447,12 @@ source cloud family through the ordinary ECS cloud owner. Integrated tests
 compare a restored next-region draw with uninterrupted play and verify that
 uncollected floor runes disappear with a retired region. Generated lord
 stat drain, drowning, web ensnare, speed drain, corrosion, weakness, and
-trample now use the ordinary saved combat owners. Source movement-time
-suppression and every knockback interruption still need a dedicated parity
-pass. Generated lords now save source-style names and source colour rolls; their
+trample now use the ordinary saved combat owners. Trample now pushes the
+defender first and follows only after attack reactions, with source size,
+habitat, constriction, flight-expiry, Mountain Boots, trap-entry, and
+Passwall-interruption checks. The opportunity-attack scheduler has not yet
+ported the source player-moving state that suppresses its trample. Generated
+lords now save source-style names and source colour rolls; their
 names reach combat messages and both values reach the terminal entity view.
 The ETC_RANDOM terminal tint is still a fixed palette colour, so animated
 source colour cycling remains presentation work. Pan rune pickup also needs

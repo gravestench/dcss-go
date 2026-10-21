@@ -21,6 +21,7 @@ local rage = require("policy.character.rage")
 local monster_stats = require("policy.combat.monster_stats")
 local monster_profile = require("policy.combat.monster_profile")
 local attack_flavours = require("policy.combat.monster_attack_flavours")
+local trample = require("policy.combat.trample")
 local monster_roll = require("policy.combat.monster_roll")
 local roll = require("policy.combat.roll")
 local attack_types = require("constants.monster_attack_types")
@@ -432,15 +433,19 @@ function actions.monster(ctx, attacker)
             actor.kind_id, definition.name, health)
     end
 
+    local flavour_hit
+
     if outcome.kind == "hit" then
-        attack_flavours.apply(ctx, attack.flavour_id, {
+        flavour_hit = {
             kind = outcome.kind,
             attacker = attacker,
             attacker_name = definition.name,
             defender = player,
             hit_dice = attack_input.hd,
             damage_done = dealt,
-        })
+        }
+
+        attack_flavours.apply(ctx, attack.flavour_id, flavour_hit)
     end
 
     if outcome.kind == "hit" and dealt > 0 then
@@ -488,6 +493,7 @@ function actions.monster(ctx, attacker)
 
     grab(ctx, attacker, definition, ctx:get(player, "core.health"))
     player_reactions.after_attack(ctx, attacker, definition)
+    trample.follow(ctx, flavour_hit)
 end
 
 -- Confusion and allegiance can make another monster the target. Validate
@@ -608,8 +614,10 @@ function actions.monster_target(ctx, attacker, target)
         health = hit.health
     end
 
+    local flavour_hit
+
     if outcome.kind == "hit" then
-        attack_flavours.apply(ctx, attack.flavour_id, {
+        flavour_hit = {
             kind = outcome.kind,
             attacker = attacker,
             attacker_name = attacker_def.name,
@@ -617,7 +625,9 @@ function actions.monster_target(ctx, attacker, target)
             defender_definition = target_def,
             hit_dice = monster_stats.hit_dice(ctx, attacker, attacker_def),
             damage_done = actual_dealt,
-        })
+        }
+
+        attack_flavours.apply(ctx, attack.flavour_id, flavour_hit)
 
         ctx:emit("combat", "The " .. attacker_def.name .. " hits the " ..
             target_def.name .. " for " .. dealt .. " damage.")
@@ -631,6 +641,8 @@ function actions.monster_target(ctx, attacker, target)
         ctx:emit("combat", "The " .. attacker_def.name .. " misses the " ..
             target_def.name .. ".")
     end
+
+    trample.follow(ctx, flavour_hit)
 
     return health
 end

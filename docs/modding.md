@@ -3061,9 +3061,19 @@ alone does not alter an existing lord. Combat messages and the terminal
 read the saved actor name, while the saved colour overrides the catalog's
 base tint. The exceptional `ETC_RANDOM` colour is currently a fixed
 terminal tint; source-style colour cycling remains presentation work.
+
+`policy/combat/trample.lua` owns the generated lord's physical shove and
+final follow. Its source size contest and terrain checks run during melee
+contact. The combat coordinator calls its follow method after reactions, so
+a dead or displaced attacker does not move into the defender's old cell.
+Forced player movement also interrupts Passwall and activates an entered
+trap. A mod changing this attack should keep the push and follow phases
+separate and leave durable statuses to their ECS component owners.
+
 After DES terrain and KFEAT choices are resolved, the Pan generator
 converts source upstairs and escape hatches into transit portals, matching
-the original branch's final terrain pass. Mod maps can therefore use the original stair
+the original branch's final terrain pass. Mod maps can therefore use the
+original stair
 glyphs without creating ordinary stair links on Pan:1.
 
 For a new Pan map, add `vaults/pan/<name>.des` with the appropriate `DEPTH`,

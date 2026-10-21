@@ -87,8 +87,11 @@ The generated lord's non-brand melee flavours now reach live player and
 monster targets through the ordinary saved combat owners. Its source-style
 name and source colour choice are saved on the actor and projected into
 combat messages and terminal views. The remaining appearance gap is the
-animated `ETC_RANDOM` terminal tint; a later movement parity pass must cover all source trample interruption cases. Then
-exercise an authored Pan rune from map placement through pickup, repeated
+animated `ETC_RANDOM` terminal tint. Trample now separates defender movement
+from the attacker's final follow and checks dangerous terrain, expiring
+flight, holds, traps, and Passwall. Source player-moving suppression awaits
+the opportunity-attack scheduler. Next, exercise an authored Pan rune from
+map placement through pickup, repeated
 transit, save/restore, and escape in one run. The existing tests already
 compare the complete next-region save after restore and prove that an
 uncollected rune entity is retired with its old region.

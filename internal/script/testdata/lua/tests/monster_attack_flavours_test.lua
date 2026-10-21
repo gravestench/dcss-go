@@ -216,6 +216,10 @@ local function check_other_flavours(ctx)
 
     harness.equal(ctx:get(player, component.POSITION).x, 42,
         "trample pushes the defender one cell away")
+
+    -- The combat coordinator runs the source final effect after reactions.
+    require("policy.combat.trample").follow(game, hit)
+
     harness.equal(ctx:get(lord, component.POSITION).x, 41,
         "trampling attacker follows into the old defender cell")
     harness.equal(messages[#messages], "You stumble backwards!",
