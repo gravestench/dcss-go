@@ -1,6 +1,7 @@
 local spells = require("ids.spells")
 local monsters = require("ids.monsters")
 local component = require("constants.component")
+local gods = require("constants.gods")
 local catalog = require("policy.catalog")
 local registry = require("policy.magic.effects.registry")
 local summons = require("policy.magic.effects.summons.common")
@@ -54,9 +55,9 @@ registry.add(spells.SPELL_MONSTROUS_MENAGERIE, {
 
 -- Source: spl-summoning.cc:cast_summon_horrible_things.
 function spell_effects.resolve_summon_horrible_things(ctx, player, _, _, power)
-    local origin = ctx:get(player, component.CHARACTER_ORIGIN)
+    local worship = ctx:get(player, component.RELIGION_WORSHIP)
 
-    if origin and origin.religion == "GOD_NO_GOD" and
+    if worship and worship.god_id == gods.NO_GOD and
         summons.roll(ctx, 5) == 0 then
         local attributes = ctx:get(player, component.ATTRIBUTES)
         attributes.intelligence = math.max(0, attributes.intelligence - 1)

@@ -73,6 +73,7 @@ func TestDistinctCharacterStartFamiliesReachDungeon(t *testing.T) {
 		weaponID  string
 		skillID   string
 		religion  string
+		piety     int64
 		spellID   string
 		maxMP     int
 	}{
@@ -109,6 +110,7 @@ func TestDistinctCharacterStartFamiliesReachDungeon(t *testing.T) {
 			weaponID:  "WPN_HAND_AXE",
 			skillID:   "SK_AXES",
 			religion:  "GOD_TROG",
+			piety:     35,
 			maxMP:     1,
 		},
 
@@ -119,7 +121,28 @@ func TestDistinctCharacterStartFamiliesReachDungeon(t *testing.T) {
 			weaponID:  "WPN_HAND_AXE",
 			skillID:   "SK_AXES",
 			religion:  "GOD_XOM",
+			piety:     100,
 			maxMP:     1,
+		},
+
+		{
+			name:      "abyssal worship",
+			speciesID: "SP_HUMAN",
+			jobID:     "JOB_ABYSSAL_KNIGHT",
+			weaponID:  "WPN_HAND_AXE",
+			religion:  "GOD_LUGONU",
+			piety:     60,
+			maxMP:     -1,
+		},
+
+		{
+			name:      "ignis worship",
+			speciesID: "SP_HUMAN",
+			jobID:     "JOB_CINDER_ACOLYTE",
+			weaponID:  "WPN_HAND_AXE",
+			religion:  "GOD_IGNIS",
+			piety:     150,
+			maxMP:     -1,
 		},
 
 		{
@@ -192,7 +215,19 @@ func TestDistinctCharacterStartFamiliesReachDungeon(t *testing.T) {
 				t.Fatal("start lacks durable Lua origin")
 			}
 
-			god, err := origin.Get("religion")
+			worshipStore := started.scripts.Components()["religion.worship"]
+
+			if worshipStore == nil {
+				t.Fatal("start lacks religion worship schema")
+			}
+
+			worship, found := worshipStore.Get(started.player)
+
+			if !found {
+				t.Fatal("start lacks durable worship state")
+			}
+
+			god, err := worship.Get("god_id")
 
 			if err != nil {
 				t.Fatal(err)
@@ -206,6 +241,20 @@ func TestDistinctCharacterStartFamiliesReachDungeon(t *testing.T) {
 
 			if god != wantGod {
 				t.Fatalf("starting god = %v, want %s", god, wantGod)
+			}
+
+			piety, err := worship.Get("piety")
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if piety != tc.piety {
+				t.Fatalf("starting piety = %v, want %d", piety, tc.piety)
+			}
+
+			if _, err := origin.Get("religion"); err == nil {
+				t.Fatal("mutable religion remains in character origin")
 			}
 
 			spells := playerSpellRecords(t, started)
@@ -251,9 +300,6 @@ func TestDistinctCharacterStartFamiliesReachDungeon(t *testing.T) {
 
 			for _, field := range []string{
 				"initial_skills",
-				"religion",
-				"piety",
-				"gift_timeout",
 			} {
 				beforeValue, beforeErr := origin.Get(field)
 				afterValue, afterErr := restoredOrigin.Get(field)
@@ -262,6 +308,36 @@ func TestDistinctCharacterStartFamiliesReachDungeon(t *testing.T) {
 					afterErr != nil ||
 					beforeValue != afterValue {
 					t.Fatalf("restore changed %s: %v to %v", field, beforeValue, afterValue)
+				}
+			}
+
+			restoredWorship, found := restored.scripts.Components()["religion.worship"].Get(
+				restored.player,
+			)
+
+			if !found {
+				t.Fatal("restore lost religion worship")
+			}
+
+			for _, field := range []string{
+				"god_id",
+				"piety",
+				"gift_timeout",
+			} {
+				beforeValue, beforeErr := worship.Get(field)
+				afterValue, afterErr := restoredWorship.Get(field)
+
+				if beforeErr != nil {
+					t.Fatal(beforeErr)
+				}
+
+				if afterErr != nil {
+					t.Fatal(afterErr)
+				}
+
+				if beforeValue != afterValue {
+					t.Fatalf("restore changed worship %s: %v to %v",
+						field, beforeValue, afterValue)
 				}
 			}
 

@@ -45,10 +45,10 @@ end
 -- Keep these draws in source order. A protected arrival consumes only the
 -- protection roll; Silence suppresses noise but not the one-in-six draw.
 -- The fourth consequence intentionally has no effect beyond its message.
-function effects.plan(ctx, origin, silenced, smells)
-    if origin.religion == gods.ZIN and
+function effects.plan(ctx, worship, silenced, smells)
+    if worship.god_id == gods.ZIN and
         ctx:random(streams.HELL_EFFECT, kinds.MAX_PIETY * 2) <
-            origin.piety then
+            worship.piety then
         return {
             protected = true,
         }
@@ -100,16 +100,16 @@ end
 -- Call only after the travel kernel has placed the player on a Hell floor.
 -- The loud version wakes nearby actors through the normal sound service.
 function effects.arrive(ctx, player)
-    local origin = ctx:get(player, component.CHARACTER_ORIGIN)
+    local worship = ctx:get(player, component.RELIGION_WORSHIP)
     local position = ctx:get(player, component.POSITION)
 
-    if not origin or not position then
-        error("Hell arrival requires player origin and position")
+    if not worship or not position then
+        error("Hell arrival requires player worship and position")
     end
 
     local silenced = silence.at(ctx, position.level_id,
         position.x, position.y)
-    local plan = effects.plan(ctx, origin, silenced,
+    local plan = effects.plan(ctx, worship, silenced,
         can_smell(ctx, player))
 
     if plan.protected then

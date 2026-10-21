@@ -27,9 +27,10 @@ and the terminal's primitive input and display.
   switch or depend on file discovery order for random seeds.
 - Comment each new Lua function's why and how. Keep lines at or below 120
   characters, preferably near 80. Break multi-field table declarations out.
-- Keep this as one worship/piety category commit after meaningful boundary
-  verification. Later conduct, abilities, gifts, passives, and wrath are
-  separate contiguous categories, and remain explicit inventory work.
+- Commit the ownership, altar access, rule, and terminal categories after
+  their boundary verification, rather than committing each small file.
+  Later conduct, abilities, gifts, passives, and wrath are separate
+  contiguous categories and remain explicit inventory work.
 
 ## Review Focus
 
@@ -54,8 +55,12 @@ and the terminal's primitive input and display.
 - Modify: `internal/modfs/builtin/schemas/character_origin.lua`
 - Modify: `internal/modfs/builtin/policy/character/start.lua`
 - Modify: `internal/modfs/builtin/policy/save/player.lua`
+- Modify: `internal/modfs/builtin/policy/world/hell/effects.lua`
+- Modify: `internal/modfs/builtin/policy/magic/effects/summons/greater.lua`
 - Test: `internal/script/testdata/lua/tests/religion_state_test.lua`
+- Test: `internal/script/testdata/lua/tests/hell_arrival_effects_test.lua`
 - Test: `internal/game/all_character_starts_test.go`
+- Test: `internal/game/player_mutation_forlorn_test.go`
 
 **Interfaces:**
 - Produces `component.RELIGION_WORSHIP = "religion.worship"`.
@@ -64,17 +69,19 @@ and the terminal's primitive input and display.
   `previous_good_god`, `saved_good_piety`, and `min_ignis_piety`.
 - `penance`, `worshipped`, and `piety_max` use `map<string,int64>`.
 
-- [ ] Write a Lua test using production schema/IDs: all four religious
+- [x] Write a Lua test using production schema/IDs: all four religious
       starting jobs get their pinned god/piety, ordinary jobs get no god,
       and the origin component contains no mutable worship fields.
-- [ ] Run `GOCACHE=/private/tmp/crawl-gocache go test ./internal/script
+- [x] Run `GOCACHE=/private/tmp/crawl-gocache go test ./internal/script
       -run 'TestLuaRules/religion_state_test' -count=1`; verify the
       pre-implementation failure identifies missing worship state.
-- [ ] Add the schema and migrate `character.start` to initialize it. Remove
+- [x] Add the schema and migrate `character.start` to initialize it. Remove
       the three religion fields from origin and validate the new schema in
-      `save/player.lua`, including registered god IDs and nonnegative history
-      maps.
-- [ ] Run the focused Lua test and `go test ./internal/game
+      `save/player.lua`, including current source god IDs and nonnegative
+      history maps. Task 4 replaces the source ID set with the effective god
+      catalog. Move Hell's Zin protection and Horrible Things' god check to
+      the new component; update tests that formerly modified origin religion.
+- [x] Run the focused Lua test and `go test ./internal/game
       -run TestDistinctCharacterStartFamiliesReachDungeon -count=1`.
 
 ### Task 2: Expose typed level records at a coordinate
@@ -161,6 +168,8 @@ and the terminal's primitive input and display.
 - [ ] Implement the common transition and per-god immediate effects from
       `religion.cc`. Persist deferred effects as typed state owned by their
       later system rather than dropping them or substituting generic effects.
+      Make worship validation accept effective registered god IDs so a
+      mod-added god does not require a Go or shared-constant change.
 - [ ] Run the focused test.
 
 ### Task 5: Wire prayer, confirmation, save, and presentation

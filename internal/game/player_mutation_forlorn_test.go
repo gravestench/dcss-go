@@ -27,15 +27,15 @@ func TestForlornCannotRestoreWithReligion(t *testing.T) {
 		for componentIndex := range snapshot.Entities[entityIndex].Dynamic {
 			record := &snapshot.Entities[entityIndex].Dynamic[componentIndex]
 
-			if record.Schema == "character.origin" {
-				record.Values["religion"] = json.RawMessage(`"GOD_TROG"`)
+			if record.Schema == "religion.worship" {
+				record.Values["god_id"] = json.RawMessage(`"GOD_TROG"`)
 				changed = true
 			}
 		}
 	}
 
 	if !changed {
-		t.Fatal("Demigod snapshot has no origin")
+		t.Fatal("Demigod snapshot has no worship state")
 	}
 
 	restored, restoreErr := Restore(snapshot)

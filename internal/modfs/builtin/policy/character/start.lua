@@ -111,12 +111,14 @@ local function starting_state(ctx, species, job, profile, generated)
         strength_bonus = profile.attributes.strength - species.strength - job.strength,
         intelligence_bonus = profile.attributes.intelligence - species.intelligence - job.intelligence,
         dexterity_bonus = profile.attributes.dexterity - species.dexterity - job.dexterity,
-        religion = worship and worship.god or gods.NO_GOD,
+    }
+    local religion = {
+        god_id = worship and worship.god or gods.NO_GOD,
         piety = worship and worship.piety or 0,
         gift_timeout = timeout,
     }
 
-    return origin, library, memorized, future
+    return origin, religion, library, memorized, future
 end
 
 -- Build the player profile and inventory together before the first playable turn begins.
@@ -160,10 +162,11 @@ function start.run_start(ctx, input)
         current = profile.max_mp,
         max = profile.max_mp,
     })
-    local origin, library, memorized, future = starting_state(
+    local origin, religion, library, memorized, future = starting_state(
         ctx, species, job, profile, generated)
 
     ctx:add(player, component.CHARACTER_ORIGIN, origin)
+    ctx:add(player, component.RELIGION_WORSHIP, religion)
     spell_records.start(ctx, player, library, memorized, future)
 
     return {}

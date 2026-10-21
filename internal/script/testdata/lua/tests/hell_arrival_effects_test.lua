@@ -39,7 +39,7 @@ local function protected_zin()
         { bound = 400, value = 0 },
     })
     local plan = effects.plan(ctx, {
-        religion = gods.ZIN,
+        god_id = gods.ZIN,
         piety = 200,
     }, false)
 
@@ -53,7 +53,7 @@ local function protected_zin()
         { bound = 4, value = 3 },
     })
     local other = effects.plan(unprotected, {
-        religion = gods.ZIN,
+        god_id = gods.ZIN,
         piety = 200,
     }, false)
 
@@ -69,7 +69,7 @@ local function silenced_arrival()
         { bound = 4, value = 1 },
     })
     local plan = effects.plan(ctx, {
-        religion = gods.NO_GOD,
+        god_id = gods.NO_GOD,
         piety = 0,
     }, true)
 
@@ -84,7 +84,7 @@ local function silenced_arrival()
         { bound = 4, value = 3 },
     })
     local no_smell_plan = effects.plan(without_smell, {
-        religion = gods.NO_GOD,
+        god_id = gods.NO_GOD,
         piety = 0,
     }, false, false)
 
@@ -108,7 +108,7 @@ local function outcomes()
             { bound = 4, value = outcome },
         })
         local plan = effects.plan(ctx, {
-            religion = gods.NO_GOD,
+            god_id = gods.NO_GOD,
             piety = 0,
         }, false)
 
@@ -126,7 +126,7 @@ local function loud_arrival()
         { bound = 4, value = 2 },
     })
     local plan = effects.plan(ctx, {
-        religion = gods.NO_GOD,
+        god_id = gods.NO_GOD,
         piety = 0,
     }, false)
 

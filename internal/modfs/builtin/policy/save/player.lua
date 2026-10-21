@@ -10,6 +10,7 @@ local evolution = require("policy.mutations.evolution")
 local forms = require("policy.magic.effects.forms.player")
 local rage = require("policy.character.rage")
 local gods = require("constants.gods")
+local religion_validation = require("policy.religion.validation")
 local mutation_effects = require("policy.mutations.effects.registry")
 local mutation_capabilities = require("constants.mutation_capabilities")
 local vampire = require("policy.character.vampire")
@@ -215,7 +216,9 @@ local function validate(ctx)
     mutation_records.validate(ctx, entity, species, historical_level)
     vampire.validate(ctx, entity)
 
-    if origin.religion ~= gods.NO_GOD and
+    local worship = religion_validation.check(ctx, entity)
+
+    if worship.god_id ~= gods.NO_GOD and
         mutation_effects.sum(ctx, entity,
             mutation_capabilities.WORSHIP_FORBIDDEN) > 0 then
         error("Forlorn player cannot worship a god")

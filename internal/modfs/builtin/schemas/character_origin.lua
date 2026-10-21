@@ -4,7 +4,7 @@ local component = require("constants.component")
 
 register.component{
     id = component.CHARACTER_ORIGIN,
-    version = 1,
+    version = 2,
     -- Creation bonuses and initial skills remain available after the randomized starting profile is discarded.
     fields = {
         initial_skills = {
@@ -27,19 +27,5 @@ register.component{
             default = 0,
         },
 
-        religion = {
-            type = "string",
-            default = "GOD_NO_GOD",
-        },
-
-        piety = {
-            type = "int64",
-            default = 0,
-        },
-
-        gift_timeout = {
-            type = "int64",
-            default = 0,
-        },
     },
 }
