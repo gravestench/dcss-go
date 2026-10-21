@@ -35,6 +35,7 @@ local component = {
     ITEM_KNOWLEDGE = "character.item_knowledge",
     PLAYER_ITEM_SETS = "character.item_sets",
     PLAYER_UNIQUE_HISTORY = "character.unique_history",
+    TRANSPORTER_KNOWLEDGE = "character.transporter_knowledge",
     UNIQUE_REVIVAL = "monster.unique_revival",
     UNIQUE_REPLACEMENT = "monster.unique_replacement",
     BENNU_REVIVAL = "monster.bennu_revival",

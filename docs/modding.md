@@ -2015,6 +2015,38 @@ an engine edit; put its named hook at the matching
 `policy/generation/vaults/<family>/<name>.lua` path. Layout maps use the
 separate `vaults/layout/` catalog because they carve the base floor.
 
+#### Named transporters
+
+Keep transporter geometry in the `.des` map. Assign one marker glyph to the
+outbound portal and another to its landing, then give both the same
+level-local name:
+
+```text
+MARKER: E = lua:transp_loc("my_portal")
+MARKER: F = lua:transp_dest_loc("my_portal")
+MAP
+E..F
+ENDMAP
+```
+
+The generation pass pairs markers after *all* vaults on the level are placed.
+This lets separate serial pieces link to one another. Several outbound
+markers may share a name and landing, but each name needs exactly one
+destination marker. Missing, duplicate, and unused destinations are map
+errors. Name the marker calls exactly as shown; the `lua:` prefix is part of
+the DES marker syntax, while the game implements their behavior in
+`policy/generation/transporters.lua` and `policy/world/transporters.lua`.
+There is no inline Lua script to copy into a new map.
+
+The resolver paints `DNGN_TRANSPORTER` at each source and
+`DNGN_TRANSPORTER_LANDING` at its destination. Pressing either stair key while
+standing on the source attempts a one-way trip. A blocked landing refuses
+the command; a successful trip costs one movement action, may bring nearby
+followers, leaves a short translocation cloud, and records the discovered
+destination in the player's saved component. A mod that changes this policy
+can override the corresponding Lua file by relative path. Its marker names
+and saved link argument keys are imported from `constants.transporter`.
+
 #### Temple maps and entrances
 
 Temple has two auto-discovered `.des` families with different roles. Put a

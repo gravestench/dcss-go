@@ -239,6 +239,12 @@ func (g *Game) validateRestoredPlacement() error {
 		return err
 	}
 
+	if _, err := g.scripts.Policy("save.validate_transporters", map[string]any{
+		"levels": g.vaultValidationLevels(),
+	}); err != nil {
+		return err
+	}
+
 	if g.scenarioID == generatedDungeonScenarioID {
 		if _, err := g.scripts.Policy("save.validate_temple_altars",
 			map[string]any{

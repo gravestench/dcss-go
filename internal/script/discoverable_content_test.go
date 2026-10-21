@@ -231,8 +231,11 @@ func TestSamePathPopulationOverrideKeepsLocalRow(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	const oldRarity = "monster_id = monsters.MONS_RAT,\n            min_depth = 1,\n            max_depth = 3,\n            rarity = 1000,"
-	const newRarity = "monster_id = monsters.MONS_RAT,\n            min_depth = 1,\n            max_depth = 3,\n            rarity = 777,"
+	const prefix = "monster_id = monsters.MONS_RAT,\n" +
+		"            min_depth = 1,\n" +
+		"            max_depth = 3,\n"
+	const oldRarity = prefix + "            rarity = 1000,"
+	const newRarity = prefix + "            rarity = 777,"
 
 	if strings.Count(string(source), oldRarity) != 1 {
 		t.Fatal("Dungeon rat source population row changed")

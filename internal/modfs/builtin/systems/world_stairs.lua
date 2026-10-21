@@ -1,6 +1,9 @@
 local abyss = require("policy.world.abyss")
 local barbs = require("policy.combat.barbs")
 local component = require("constants.component")
+local terrain = require("constants.terrain")
+local transporters = require("policy.world.transporters")
+local intents = require("constants.intent")
 
 local system = {}
 
@@ -9,7 +12,8 @@ local system = {}
 function system.update(ctx, actor, elapsed_aut)
     local intent = ctx:get(actor, "core.intent")
 
-    if not intent or (intent.kind ~= 4 and intent.kind ~= 5) then
+    if not intent or (intent.kind ~= intents.UPSTAIRS and
+        intent.kind ~= intents.DOWNSTAIRS) then
         return
     end
 
@@ -19,7 +23,18 @@ function system.update(ctx, actor, elapsed_aut)
         error("stair actor " .. ctx:id(actor) .. " has no position")
     end
 
-    local glyph = intent.kind == 4 and "DNGN_STONE_STAIRS_UP_I" or
+    if ctx:cell(position.level_id, position.x, position.y) ==
+        terrain.DNGN_TRANSPORTER then
+        if actor ~= ctx:player() then
+            error("only the player can use a transporter")
+        end
+
+        transporters.take(ctx, actor, elapsed_aut)
+        return
+    end
+
+    local glyph = intent.kind == intents.UPSTAIRS and
+        "DNGN_STONE_STAIRS_UP_I" or
         "DNGN_STONE_STAIRS_DOWN_I"
 
     if ctx:cell(position.level_id, position.x, position.y) ~= glyph then

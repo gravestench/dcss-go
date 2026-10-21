@@ -3,6 +3,9 @@ local catalog = require("policy.catalog")
 local fighter = require("policy.combat.fighter")
 local abyss = require("policy.world.abyss")
 local component = require("constants.component")
+local terrain = require("constants.terrain")
+local transporters = require("policy.world.transporters")
+local intent_ids = require("constants.intent")
 
 -- Rooted movement is rejected before checking the destination cell.
 local function rooted(ctx)
@@ -95,6 +98,23 @@ function navigation.stairs(ctx, position, downstairs)
     local missing = downstairs and "There are no stairs down here." or
         "There are no stairs up here."
     local cell = ctx:cell(position.level_id, position.x, position.y)
+
+    if cell == terrain.DNGN_TRANSPORTER then
+        local destination, refusal = transporters.prepare(ctx, position)
+
+        if not destination then
+            return { message = refusal }
+        end
+
+        return {
+            intent = {
+                kind = downstairs and intent_ids.DOWNSTAIRS or
+                    intent_ids.UPSTAIRS,
+            },
+            cost = 10,
+        }
+    end
+
     local stair = ctx:stair_at(position.level_id, position.x, position.y)
 
     if cell ~= glyph or not stair then

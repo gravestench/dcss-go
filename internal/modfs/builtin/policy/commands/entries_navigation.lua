@@ -9,6 +9,7 @@ local registry = require("policy.commands.registry")
 local intent = require("constants.intent")
 local streams = require("constants.rng_streams")
 local display = require("policy.combat.monster_support.display")
+local terrain = require("constants.terrain")
 
 local entries = {}
 
@@ -73,7 +74,8 @@ end
 function entries.upstairs(ctx, player, _, position)
     local beholder = mesmerism.any(ctx, player)
 
-    if beholder then
+    if beholder and ctx:cell(position.level_id,
+        position.x, position.y) ~= terrain.DNGN_TRANSPORTER then
         return {
             message = "You cannot leave while mesmerised by the " ..
                 display.name(ctx, beholder) .. "!",
@@ -87,7 +89,8 @@ end
 function entries.downstairs(ctx, player, _, position)
     local beholder = mesmerism.any(ctx, player)
 
-    if beholder then
+    if beholder and ctx:cell(position.level_id,
+        position.x, position.y) ~= terrain.DNGN_TRANSPORTER then
         return {
             message = "You cannot leave while mesmerised by the " ..
                 display.name(ctx, beholder) .. "!",

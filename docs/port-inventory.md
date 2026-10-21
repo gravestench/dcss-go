@@ -322,8 +322,11 @@ corresponding branch generator. The rare `bzr_entry` request has no imported baz
 maps yet; an empty eligible tag pool leaves that slot available for an
 ordinary shop instead of aborting the floor.
 The four-map `serial_nicolae_subway` family adds its controller and three
-linked stations. Their transport markers survive as typed level records;
-transporter movement still needs its own gameplay slice. The demonic and
+linked stations. Its named markers pair across separately placed stations,
+paint one-way transporters and landings, and retain their links in saved level
+records. Either stair key enters a portal; the Lua travel policy handles
+nearby followers, a short translocation cloud, and learned destinations.
+The demonic and
 undead serials add fifteen source maps with depth-scaled monster requests,
 typed fog markers, and the undead gravestone name. Hook-attached markers
 retain their positions even when a later source substitution changes the

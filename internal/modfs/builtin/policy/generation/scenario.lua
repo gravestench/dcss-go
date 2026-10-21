@@ -3,6 +3,7 @@ local fixed = require("policy.generation.fixed")
 local generated = require("policy.generation.generated")
 local abyss = require("policy.generation.abyss")
 local features = require("content.terrain_features")
+local transporters = require("policy.generation.transporters")
 local item_ids = require("ids.items")
 
 local module = {}
@@ -15,6 +16,7 @@ local function decode_level(ctx, level)
     if level.vault_records then
         level.vault_records = features.apply_vault_terrain(
             level.cells, level.vault_records, ctx, level.id)
+        transporters.resolve(level)
     end
 
     level.rows = nil

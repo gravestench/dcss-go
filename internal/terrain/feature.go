@@ -44,6 +44,8 @@ const (
 	SealedStairsDown   ID = "DNGN_SEALED_STAIRS_DOWN"
 	MalignGateway      ID = "DNGN_MALIGN_GATEWAY"
 	PassageOfGolubria  ID = "DNGN_PASSAGE_OF_GOLUBRIA"
+	Transporter        ID = "DNGN_TRANSPORTER"
+	TransporterLanding ID = "DNGN_TRANSPORTER_LANDING"
 )
 
 type Feature struct {
@@ -218,6 +220,16 @@ var definitions = map[ID]Feature{
 	MalignGateway: {Glyph: 'w'},
 	PassageOfGolubria: {
 		Glyph:    '^',
+		Walkable: true,
+	},
+
+	Transporter: {
+		Glyph:    '©',
+		Walkable: true,
+	},
+
+	TransporterLanding: {
+		Glyph:    '©',
 		Walkable: true,
 	},
 }
