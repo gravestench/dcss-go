@@ -10,6 +10,7 @@ local definition = {
     name = "Ignis",
     temple_eligible = false,
     starting_piety = 130,
+    wrath_penance = 15,
     piety_mode = modes.ORDINARY,
 }
 

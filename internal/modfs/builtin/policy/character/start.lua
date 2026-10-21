@@ -116,6 +116,9 @@ local function starting_state(ctx, species, job, profile, generated)
         god_id = worship and worship.god or gods.NO_GOD,
         piety = worship and worship.piety or 0,
         gift_timeout = timeout,
+        worshipped = worship and { [worship.god] = 1 } or {},
+        min_ignis_piety = worship and worship.god == gods.IGNIS and
+            worship.piety or 0,
     }
 
     return origin, religion, library, memorized, future

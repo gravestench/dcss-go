@@ -10,7 +10,9 @@ local definition = {
     name = "Uskayaw",
     temple_eligible = true,
     starting_piety = 15,
+    wrath_penance = 25,
     piety_mode = modes.ORDINARY,
+    behavior_module = "policy.religion.gods.uskayaw",
 }
 
 register.definition(categories.GODS, definition)

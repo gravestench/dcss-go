@@ -10,6 +10,12 @@ register.component({
 
         -- DCSS prices Gozag's entry from gold generated on explored floors,
         -- regardless of what the player has actually collected or spent.
+        -- Gozag's entry fee remains spent after renunciation and save/restore.
+        gozag_gold_used = {
+            type = "int64",
+            default = 0,
+        },
+
         generated_gold = {
             type = "int64",
             default = 0,

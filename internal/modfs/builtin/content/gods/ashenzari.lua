@@ -10,7 +10,9 @@ local definition = {
     name = "Ashenzari",
     temple_eligible = true,
     starting_piety = 2,
+    wrath_penance = 50,
     piety_mode = modes.ORDINARY,
+    behavior_module = "policy.religion.gods.ashenzari",
 }
 
 register.definition(categories.GODS, definition)

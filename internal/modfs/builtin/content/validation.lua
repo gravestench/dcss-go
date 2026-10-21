@@ -806,6 +806,12 @@ local function validate_god(definition)
         fail(category, id, "has invalid starting_piety")
     end
 
+    local wrath = required(category, definition, "wrath_penance", "number")
+
+    if wrath < 0 or wrath % 1 ~= 0 then
+        fail(category, id, "has invalid wrath_penance")
+    end
+
     local modes = require("constants.god_piety_modes")
     local mode = required(category, definition, "piety_mode", "string")
 

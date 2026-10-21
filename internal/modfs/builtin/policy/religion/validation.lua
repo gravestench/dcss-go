@@ -64,6 +64,38 @@ function validation.check(ctx, player)
         error("godless player has piety")
     end
 
+    local wallet = ctx:get(player, component.WALLET)
+
+    if wallet and (wallet.gold < 0 or wallet.generated_gold < 0 or
+        wallet.gozag_gold_used < 0) then
+        error("invalid worship wallet counters")
+    end
+
+    local ash = ctx:get(player, component.RELIGION_ASHENZARI)
+
+    if ash and (ash.curse_progress < 0 or ash.curse_delay < 0) then
+        error("invalid Ashenzari curse progress")
+    end
+
+    local ru = ctx:get(player, component.RELIGION_RU)
+
+    if ru and (ru.sacrifice_progress < 0 or ru.sacrifice_delay < 0 or
+        ru.sacrifice_penalty < 0) then
+        error("invalid Ru sacrifice progress")
+    end
+
+    local xom = ctx:get(player, component.RELIGION_XOM)
+
+    if xom and xom.pending_stimulation < 0 then
+        error("invalid Xom stimulation")
+    end
+
+    local yred = ctx:get(player, component.RELIGION_YREDELEMNUL)
+
+    if yred and yred.pending_bonus_stars < 0 then
+        error("invalid Yredelemnul bonus")
+    end
+
     history("penance", state.penance, nil, known)
     history("worshipped", state.worshipped, 100, known)
     history("piety maximum", state.piety_max, limits.MAX, known)

@@ -10,6 +10,7 @@ local definition = {
     name = "Gozag",
     temple_eligible = true,
     starting_piety = 15,
+    wrath_penance = 50,
     piety_mode = modes.NONE,
     behavior_module = "policy.religion.gods.gozag",
 }

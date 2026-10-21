@@ -3,6 +3,7 @@
 -- counter; this god module owns the fee formula and its eligibility message.
 local component = require("constants.component")
 local jobs = require("ids.jobs")
+local sources = require("constants.religion_sources")
 
 local gozag = {}
 
@@ -58,6 +59,26 @@ function gozag.check(ctx, player, temporary)
     end
 
     return nil
+end
+
+-- Charge the entry fee only after the common owner has selected this god.
+-- The ecumenical altar temporarily ignores generated gold in the source,
+-- so it also waives the fee while keeping the actual wallet untouched.
+function gozag.join(ctx, player, _, source)
+    if source == sources.ECUMENICAL then
+        return
+    end
+
+    local fee = gozag.fee(ctx, player)
+    local wallet = ctx:get(player, component.WALLET)
+
+    if wallet.gold < fee then
+        error("Gozag requires a service fee of " .. fee .. " gold.")
+    end
+
+    wallet.gold = wallet.gold - fee
+    wallet.gozag_gold_used = wallet.gozag_gold_used + fee
+    ctx:set(player, component.WALLET, wallet)
 end
 
 return gozag

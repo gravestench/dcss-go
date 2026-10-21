@@ -10,6 +10,7 @@ local definition = {
     name = "Sif Muna",
     temple_eligible = true,
     starting_piety = 15,
+    wrath_penance = 30,
     piety_mode = modes.ORDINARY,
     rejects_innate_caster = true,
 }

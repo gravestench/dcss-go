@@ -10,6 +10,7 @@ local definition = {
     name = "Beogh",
     temple_eligible = false,
     starting_piety = 15,
+    wrath_penance = 50,
     piety_mode = modes.ORDINARY,
     requires_orc = true,
     requires_love = true,

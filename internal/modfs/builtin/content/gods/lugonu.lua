@@ -10,7 +10,9 @@ local definition = {
     name = "Lugonu",
     temple_eligible = false,
     starting_piety = 15,
+    wrath_penance = 50,
     piety_mode = modes.ORDINARY,
+    behavior_module = "policy.religion.gods.lugonu",
 }
 
 register.definition(categories.GODS, definition)

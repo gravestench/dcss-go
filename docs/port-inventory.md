@@ -302,8 +302,15 @@ All 26 active gods now have layered Lua definitions. The shared Lua
 eligibility rule covers species, mutation, form, and Gozag fee restrictions;
 Gozag's fee reads saved gold generated on non-Abyss floors. The piety owner
 stores changes in the player ECS component and signals rank and gift checks;
-its random draws replay after save/restore. Altar prayer, conversion, god
-conduct, abilities, gifts, passives, and wrath remain to port.
+its random draws replay after save/restore. One Lua transition path now joins
+or renounces any registered god, preserves good-god piety transfer, records
+source penance, charges Gozag, and preserves Ignis's spent reserve. Ru,
+Ashenzari, Yredelemnul, and Xom entry exceptions retain typed pending state.
+Altar prayer and the terminal confirmation flow remain to port. The pending
+entry rewards, Zin tithe, Trog training lockout, Okawaru summon dismissal,
+Fedhas plant attitude, and god-specific leave cleanup still need their
+behavior owners. Conduct, abilities, gifts, passives, and wrath execution
+remain separate religion slices.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 vault families beyond D:1 arrivals and their Lua scripts,

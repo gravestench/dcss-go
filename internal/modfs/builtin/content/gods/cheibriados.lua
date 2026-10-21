@@ -10,6 +10,7 @@ local definition = {
     name = "Cheibriados",
     temple_eligible = true,
     starting_piety = 15,
+    wrath_penance = 25,
     piety_mode = modes.ORDINARY,
 }
 
