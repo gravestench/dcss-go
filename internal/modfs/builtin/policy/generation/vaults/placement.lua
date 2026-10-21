@@ -652,7 +652,8 @@ function placement.place(_, builder, vault, player, options)
     local cells, map_width, map_height = matrix(vault.rows)
     local width_before = map_width
     local height_before = map_height
-    local source_records = operations.apply(vault, cells, builder, 0, player)
+    local source_records, helper_ids = operations.apply(vault,
+        cells, builder, 0, player)
     local overridden = keyed_overrides(source_records)
     local turns = 0
 
@@ -721,6 +722,7 @@ function placement.place(_, builder, vault, player, options)
         entry = entry,
         exits = exits,
         occupied = occupied,
+        vault_ids = helper_ids,
         records = filtered,
         bounds = {
             x = left,

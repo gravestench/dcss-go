@@ -56,6 +56,18 @@ func TestLayoutMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/layout_mod_test.lua")
 }
 
+// An overlay end map tests PLACE selection through the production catalog.
+func TestLayoutPlaceSelection(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/layout-place")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/layout_place_selection_test.lua")
+	runLuaRule(t, rules, "tests/des_composition_test.lua")
+}
+
 // Overflow altar maps are discovered from layered source-format DES files.
 func TestOverflowAltarMod(t *testing.T) {
 	base, err := modfs.Load("testdata/lua")

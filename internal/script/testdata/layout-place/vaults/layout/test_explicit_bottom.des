@@ -1,0 +1,12 @@
+# An explicit end map must win the matching floor without joining ordinary draws.
+NAME: test_explicit_bottom
+PLACE: Vaults:$
+WEIGHT: 1
+TAGS: layout layout_type_vaults
+ORIENT: encompass
+MAP
+xxxxxxxx
+x......x
+x..<...x
+xxxxxxxx
+ENDMAP

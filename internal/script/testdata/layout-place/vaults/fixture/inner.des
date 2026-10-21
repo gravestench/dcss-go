@@ -1,0 +1,6 @@
+# The nested child marks the first region and enters local selection history.
+NAME: fixture_inner
+TAGS: fixture_inner
+MAP
+x
+ENDMAP

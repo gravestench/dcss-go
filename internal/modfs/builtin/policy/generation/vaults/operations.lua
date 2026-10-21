@@ -5,6 +5,7 @@ local hooks = require("policy.generation.vaults.hooks")
 local transforms = require("policy.generation.vaults.transforms")
 local catalog = require("policy.generation.vaults.catalog")
 local selection = require("policy.generation.vaults.selection")
+local used = require("policy.generation.vaults.used")
 local entity_specs = require("policy.generation.vaults.specs.validate")
 
 -- Walk declarations in source order. Hooks insert operations at their exact
@@ -255,7 +256,7 @@ end
 -- A SUBVAULT tag selects a weighted map from the same effective catalog as
 -- other tagged child requests. Depth and branch still constrain nested
 -- helpers; file order must not silently make the first helper permanent.
-local function helper_for_tag(tag, random, player)
+local function helper_for_tag(tag, random, player, state)
     if not player or not player.branch_id then
         error("SUBVAULT requires current branch and depth")
     end
@@ -267,6 +268,7 @@ local function helper_for_tag(tag, random, player)
         absolute_depth = player.absolute_depth,
         layout_family = player.layout_family,
         player = player,
+        used = state.used,
         ignore_chance = true,
     })
 
@@ -346,7 +348,8 @@ local function localize_helper_records(records, cells, low_x, low_y)
 end
 
 -- Resolve helper maps before glyph transformations so substitutions operate on the composed cell matrix.
-local function embed_helper(cells, source, helper, random, depth, player)
+local function embed_helper(cells, source, helper, random, depth, player,
+    state)
     if depth > 4 then
         error("SUBVAULT recursion exceeds four levels")
     end
@@ -372,6 +375,20 @@ local function embed_helper(cells, source, helper, random, depth, player)
     local region_width = high_x - low_x + 1
     local region_height = high_y - low_y + 1
 
+    -- An empty source MAP delegates its exact geometry to the parent glyph
+    -- region. The named hook can then paint only that local rectangle.
+    if #helper_cells == 0 then
+        helper_width = region_width
+
+        for y = 1, region_height do
+            helper_cells[y] = {}
+
+            for x = 1, region_width do
+                helper_cells[y][x] = " "
+            end
+        end
+    end
+
     if helper_width > region_width or #helper_cells > region_height then
         for turns = 1, 3 do
             local rotated = transforms.rotate(helper_cells, turns)
@@ -393,7 +410,8 @@ local function embed_helper(cells, source, helper, random, depth, player)
             region_width, region_height))
     end
 
-    local nested_records = operations.apply(helper, helper_cells, random, depth + 1, player)
+    local nested_records = operations.apply(helper, helper_cells,
+        random, depth + 1, player, state)
 
     -- A helper's rectangular bounds may cross another SUBVAULT region.
     -- Only cells carrying this source glyph belong to this helper;
@@ -421,7 +439,8 @@ local function embed_helper(cells, source, helper, random, depth, player)
 end
 
 -- A missing helper fit is a source error rather than a silently skipped decoration.
-local function apply_subvault(vault, cells, operation, random, depth, player)
+local function apply_subvault(vault, cells, operation, random, depth,
+    player, state)
     local source, options, total = helper_options(operation.argument)
 
     -- Some source maps declare a shared set of optional helper glyphs.
@@ -440,23 +459,60 @@ local function apply_subvault(vault, cells, operation, random, depth, player)
     end
 
     local tag = helper_choice(options, total, random)
-    local helper = helper_for_tag(tag, random, player)
+    local helper = helper_for_tag(tag, random, player, state)
     local ok, result, claimed = pcall(embed_helper,
-        cells, source, helper, random, depth, player)
+        cells, source, helper, random, depth, player, state)
 
     if not ok then
         error(string.format("%s:%d: vault %s: SUBVAULT %s: %s",
             vault.path, operation.line or 0, vault.id, helper.id, result))
     end
 
+    -- A failed fit must never reserve a name or tag. Commit the successful
+    -- helper only after its cells and nested effects have been embedded.
+    state.used:add(helper)
+
+    for selected_tag in pairs(helper.tags) do
+        state.selected_tags[selected_tag] = true
+    end
+
     return result, claimed
 end
 
 -- Expose only controlled random, context, and emission methods to ported vault hooks.
-local function hook_api(random, events, line, player)
+local function hook_api(random, events, line, player, cells, state)
     local api = {}
 
     player = player or {}
+
+    -- Source-sized helpers receive a local matrix, never the parent level.
+    function api:map_size()
+        return cells[1] and #cells[1] or 0, #cells
+    end
+
+    -- Paint only a cell owned by this hook's current MAP. Coordinates are
+    -- zero-based because the source DES Lua API used zero-based map points.
+    function api:set_cell(x, y, glyph)
+        local width, height = self:map_size()
+
+        if type(x) ~= "number" or type(y) ~= "number" or
+            x % 1 ~= 0 or y % 1 ~= 0 or
+            x < 0 or y < 0 or x >= width or y >= height then
+            error("vault hook cell is outside its local MAP")
+        end
+
+        if type(glyph) ~= "string" or #glyph ~= 1 then
+            error("vault hook cell needs one glyph")
+        end
+
+        cells[y + 1][x + 1] = glyph
+    end
+
+    -- A later quadrant can see successful earlier children without any
+    -- process-global rune or helper registry.
+    function api:has_placed_tag(tag)
+        return state.selected_tags[tag] == true
+    end
 
     -- Avoid a draw for a bound of one while exposing hook-safe layout randomness.
     function api:roll(bound)
@@ -648,8 +704,12 @@ local function hook_api(random, events, line, player)
 end
 
 -- Walk source operations in order so hook emissions and substitutions see preceding edits.
-function operations.apply(vault, cells, random, depth, player)
+function operations.apply(vault, cells, random, depth, player, state)
     depth = depth or 0
+    state = state or {
+        used = used.new(player and player.prior_vault_ids),
+        selected_tags = {},
+    }
     local records = {}
     local array_slots = {
         [directives.MONS] = 1,
@@ -669,7 +729,7 @@ function operations.apply(vault, cells, random, depth, player)
             }
         elseif operation.kind == directives.SUBVAULT then
             local nested, claimed = apply_subvault(vault, cells,
-                operation, random, depth, player)
+                operation, random, depth, player, state)
 
             -- Earlier keyed declarations belong to the parent map.
             -- A nested helper owns the cells it replaces, including a
@@ -724,7 +784,8 @@ function operations.apply(vault, cells, random, depth, player)
     for _, operation in ipairs(vault.operations) do
         if operation.kind == directives.HOOK_RUN then
             local events = {}
-            local api = hook_api(random, events, operation.line, player)
+            local api = hook_api(random, events, operation.line,
+                player, cells, state)
 
             hooks.run(vault, operation.argument, api)
 
@@ -758,7 +819,7 @@ function operations.apply(vault, cells, random, depth, player)
         record.path = record.path or vault.path
     end
 
-    return records
+    return records, state.used:ids()
 end
 
 return operations

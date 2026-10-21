@@ -1,0 +1,8 @@
+# A hook must not paint outside the source region it was given.
+NAME: fixture_bad
+TAGS: fixture_bad
+: vault.run("paint")
+MAP
+..
+..
+ENDMAP

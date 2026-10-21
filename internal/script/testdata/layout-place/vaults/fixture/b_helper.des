@@ -1,0 +1,6 @@
+# A second helper reads tags from the earlier successful nested placement.
+NAME: fixture_b_helper
+TAGS: fixture_helper
+: vault.run("paint")
+MAP
+ENDMAP

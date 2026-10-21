@@ -17,13 +17,23 @@ function authored.execute(api)
         depth = api.depth,
         branch_bottom = api.branch_bottom,
         absolute_depth = api.absolute_depth,
+        prior_vault_ids = api.prior_vault_ids,
     }
     local placed = placement.place(nil, builder, api.definition, player)
+    local protected = {}
+
+    -- Later extra vaults cannot replace cells belonging to this whole-map
+    -- layout or its nested helpers, including their typed source records.
+    for _, point in ipairs(placed.occupied) do
+        protected[point.x .. ":" .. point.y] = true
+    end
 
     return {
         builder = builder,
         rows = builder:rows(),
         records = placed.records,
+        vault_ids = placed.vault_ids,
+        protected = protected,
     }
 end
 

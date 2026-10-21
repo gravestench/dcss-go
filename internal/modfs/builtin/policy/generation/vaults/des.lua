@@ -248,8 +248,7 @@ function des.parse(path, source)
     if in_map or continuing or
         (not map_seen and not post_place and
             not (vault.family == "layout" and layout_run)) or
-        (#vault.rows == 0 and not post_place and
-            not (vault.family == "layout" and layout_run)) then
+        (#vault.rows == 0 and not post_place and not layout_run) then
         fail(path, #source_lines(source), vault.id, "incomplete DES map or directive")
     end
 

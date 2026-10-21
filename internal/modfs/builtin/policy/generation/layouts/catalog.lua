@@ -119,7 +119,8 @@ function catalog.load()
 
         methods(definition)
 
-        if weights.for_branch(definition, branches.BRANCH_DUNGEON) > 0 then
+        if weights.for_branch(definition, branches.BRANCH_DUNGEON) > 0 or
+            #definition.places > 0 then
             hooks.validate(definition)
         end
 
@@ -130,6 +131,7 @@ function catalog.load()
             weight = definition.weight,
             weights = definition.weights,
             depths = definition.depths,
+            places = definition.places,
         })
 
         definitions[definition.id] = definition
@@ -197,8 +199,38 @@ local function candidates_for(branch_id, local_depth, branch_bottom,
         local weight = weights.for_branch(definition, branch_id,
             local_depth, branch_bottom)
 
-        if weight > 0 and
+        if #definition.places == 0 and weight > 0 and
             depth_rules.eligible(definition, branch_id,
+                local_depth, branch_bottom) and
+            catalog.compatible(definition, primary_tags) then
+            total = total + weight
+            candidates[#candidates + 1] = {
+                definition = definition,
+                weight = weight,
+            }
+        end
+    end
+
+    return candidates, total
+end
+
+-- PLACE names a specific floor. Draw among matching authored layouts
+-- before the ordinary DEPTH pool; explicit maps never leak into that pool.
+local function placed_candidates(branch_id, local_depth, branch_bottom,
+    primary_tags)
+    local candidates = {}
+    local total = 0
+
+    for _, id in ipairs(catalog.ids()) do
+        local definition = catalog.get(id)
+        local weight = weights.for_branch(definition, branch_id,
+            local_depth, branch_bottom)
+        local place = {
+            depths = definition.places,
+        }
+
+        if #definition.places > 0 and weight > 0 and
+            depth_rules.eligible(place, branch_id,
                 local_depth, branch_bottom) and
             catalog.compatible(definition, primary_tags) then
             total = total + weight
@@ -217,15 +249,23 @@ end
 -- from the effective DES catalog, including overlays, not a branch switch.
 function catalog.has_candidates(branch_id, local_depth)
     local branch = register.get(categories.BRANCHES, branch_id)
-    local _, total = candidates_for(branch_id, local_depth, branch.depth)
+    local _, placed_total = placed_candidates(branch_id, local_depth,
+        branch.depth)
+    local _, ordinary_total = candidates_for(branch_id, local_depth,
+        branch.depth)
 
-    return total > 0
+    return placed_total > 0 or ordinary_total > 0
 end
 
 function catalog.choose(random, branch_id, local_depth, branch_bottom,
     primary_tags)
-    local candidates, total = candidates_for(branch_id, local_depth,
+    local candidates, total = placed_candidates(branch_id, local_depth,
         branch_bottom, primary_tags)
+
+    if total == 0 then
+        candidates, total = candidates_for(branch_id, local_depth,
+            branch_bottom, primary_tags)
+    end
 
     if total == 0 then
         error("no weighted layout for this branch, depth, and primary map")

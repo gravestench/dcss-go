@@ -1,0 +1,9 @@
+# Two differently sized regions select two helpers without reusing a name.
+NAME: fixture_parent
+TAGS: fixture_parent
+SUBVAULT: A : fixture_helper
+SUBVAULT: B : fixture_helper
+MAP
+AAAxBBBB
+AAAxBBBB
+ENDMAP

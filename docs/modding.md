@@ -2019,6 +2019,11 @@ and four remain registered with weight zero. To add a layout, create
 builds the whole grid. The module returns a local table with that method;
 see `layout_rooms` for an example.
 
+A layout with `PLACE: Vaults:$` (or another branch floor) wins that exact
+floor before the ordinary `DEPTH` weighted draw. It is not part of the
+ordinary layout pool on other floors. This is how an end-level map owns its
+fixed location without a branch-specific Go switch.
+
 An authored layout keeps its terrain under `MAP` and needs no run hook.
 The layout owner places it through the ordinary vault operation engine,
 then completes connected stairs. The two `layout_pan_divisions_*` maps
@@ -2495,6 +2500,19 @@ second system just to make the source modifiers work.
 | `api:random_name()` | Generated name from the layout stream. |
 | `api:emit(directive, argument)` | Queue a DES directive; import its kind from `constants.vault_directives`. |
 | `api:record(kind, arguments)` | Queue a typed placement effect; import its kind from `constants.vault_effects`. |
+| `api:map_size()` | Return local width and height; an empty-MAP child gets its parent region's size. |
+| `api:set_cell(x, y, glyph)` | Paint one zero-based local cell; out-of-bounds positions raise an error. |
+| `api:has_placed_tag(tag)` | Check whether an earlier successful child map in this composition carried the tag. |
+
+An empty `MAP` can be useful for a `SUBVAULT` helper whose shape comes
+from its parent's placeholder region. Give that helper a named `vault.run`
+method, read `api:map_size()`, and paint with `api:set_cell`. The coordinates
+are local to the helper and start at zero. A child can inspect earlier
+successful child tags with `api:has_placed_tag`; the game keeps this history
+for one generation call, so it does not depend on file load order or a Lua
+global. A failed helper fit never claims a name or tag. The selected helper
+IDs and protected cells pass through the authored layout result for level
+population and saves.
 
 Use positive random bounds, nonempty arrays for `random_from`, and a
 `subset` count no greater than the array length. Hook randomness uses the

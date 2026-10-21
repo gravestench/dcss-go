@@ -1,0 +1,6 @@
+# A source-sized helper paints its assigned region and nests one child.
+NAME: fixture_a_helper
+TAGS: fixture_helper
+: vault.run("paint")
+MAP
+ENDMAP
