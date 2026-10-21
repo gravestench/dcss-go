@@ -244,6 +244,24 @@ local function transform(ctx, target, source, definition, stream)
     ctx:set(target, component.ACTOR, actor)
     ctx:set(target, component.HEALTH, health)
 
+    -- An ugly thing's ghost profile is individual actor state. A new body
+    -- rolls it once; a departed body cannot keep stale colour or attacks.
+    local ugly_thing = require("policy.monsters.ugly_thing")
+    local old_ugly = ctx:get(target, component.UGLY_THING)
+
+    if ugly_thing.kind(definition.id) then
+        local generated = ugly_thing.roll(ctx, definition, nil, nil,
+            stream or streams.SPELL)
+
+        if old_ugly then
+            ctx:set(target, component.UGLY_THING, generated)
+        else
+            ctx:add(target, component.UGLY_THING, generated)
+        end
+    elseif old_ugly then
+        ctx:remove(target, component.UGLY_THING)
+    end
+
     local energy = ctx:get(target, component.MONSTER_ENERGY)
 
     if energy then
@@ -370,6 +388,16 @@ function polymorph.cast(ctx, player, intent, spell, power)
         return
     end
 
+    -- Source monster::polymorph routes ugly things into their own gated
+    -- colour mutation and never chooses another species for this cast.
+    local ugly_thing = require("policy.monsters.ugly_thing")
+
+    if ugly_thing.kind(source.id) then
+        ugly_thing.try_mutate(ctx, target, source, streams.SPELL)
+
+        return
+    end
+
     local position = ctx:get(target, component.POSITION)
     local choices = weighted_candidates(ctx, source, position)
 
@@ -397,6 +425,14 @@ end
 -- resistance check; later shape changes use this same actor transition.
 function polymorph.shapeshift(ctx, target, source, stream)
     local source_stream = stream or "melee"
+    local ugly_thing = require("policy.monsters.ugly_thing")
+
+    if ugly_thing.kind(source.id) then
+        ugly_thing.try_mutate(ctx, target, source, source_stream)
+
+        return true
+    end
+
     local position = ctx:get(target, component.POSITION)
     local choices = weighted_candidates(ctx, source, position,
         source_stream)

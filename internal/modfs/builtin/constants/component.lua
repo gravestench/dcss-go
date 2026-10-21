@@ -17,6 +17,7 @@ local component = {
     MONSTER_PATROL = "world.monster_patrol",
     MONSTER_HYDRA_HEADS = "monster.hydra_heads",
     PANDEMONIUM_LORD = "monster.pan_lord",
+    UGLY_THING = "monster.ugly_thing",
     PLAYER = "core.player",
     PLAYER_TURN = "core.player_turn",
     POSITION = "core.position",

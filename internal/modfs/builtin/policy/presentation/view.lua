@@ -61,12 +61,17 @@ function view.entity(ctx, input)
 
             name = monster_display.name(ctx, actor)
             local generated = ctx:get(actor, component.PANDEMONIUM_LORD)
+            local ugly = ctx:get(actor, component.UGLY_THING)
 
             if generated and generated.colour_id ~= "" then
                 color_id = generated.colour_id
             end
 
-            if overrides and overrides.colour ~= "" then
+            if ugly then
+                color_id = ugly.colour_id
+            end
+
+            if overrides and overrides.colour ~= "" and not ugly then
                 color_id = overrides.colour
             end
         end

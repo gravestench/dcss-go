@@ -8,6 +8,7 @@ local monsters = require("ids.monsters")
 local roll = require("policy.combat.roll")
 local senses = require("policy.character.senses")
 local streams = require("constants.rng_streams")
+local ugly_thing = require("policy.monsters.ugly_thing")
 
 local malmutation = {}
 
@@ -77,17 +78,22 @@ local function wretched_duration(ctx, target, stream)
 end
 
 -- Repeated mutation extends the existing saved Wretched duration. Source
--- abominations reroll a tile. Ugly things reroll attack and resistance
--- traits as well as colour; their per-actor trait model is still missing.
+-- abominations reroll a tile. Ugly things instead replace their saved
+-- colour, attack, and resistance while preserving HP and HD.
 function malmutation.apply(ctx, target, definition, stream)
     if not malmutation.can_mutate(definition) then
         return false
     end
 
     if definition.id == monsters.MONS_ABOMINATION_SMALL or
-        definition.id == monsters.MONS_ABOMINATION_LARGE or
-        definition.id == monsters.MONS_UGLY_THING or
-        definition.id == monsters.MONS_VERY_UGLY_THING then
+        definition.id == monsters.MONS_ABOMINATION_LARGE then
+        return true
+    end
+
+    if ugly_thing.kind(definition.id) then
+        ugly_thing.try_mutate(ctx, target, definition,
+            stream or streams.MUTATION)
+
         return true
     end
 

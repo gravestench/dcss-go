@@ -1505,6 +1505,8 @@ category names for mod-defined catalogs. For example,
 ```lua
 local categories = require("constants.catalog")
 local habitats = require("constants.monster_habitats")
+local attacks = require("constants.monster_attack_types")
+local flavours = require("constants.attack_flavours")
 local spellbooks = require("ids.monster_spellbooks")
 local my_ids = require("my_mod.ids")
 
@@ -1520,8 +1522,8 @@ local definition = {
     hd = 1,
     attacks = {
         {
-            type_id = my_ids.BITE,
-            flavour_id = my_ids.PLAIN,
+            type_id = attacks.BITE,
+            flavour_id = flavours.PLAIN,
             damage = 3,
         },
     },
@@ -1542,10 +1544,22 @@ return definition
 ```
 
 Here `my_mod/ids.lua` is a small module owned by the mod that returns
-`MOSS = "MY_MOD_MOSS"`, `BITE = "AT_BITE"`, `PLAIN = "AF_PLAIN"`, and
+`MOSS = "MY_MOD_MOSS"` and
 `MOSS_POPULATION = "MY_MOD_MOSS_POPULATION"`. Import it in every mod
-file that uses those identifiers. Existing bundled IDs come from their
-`constants.*` or `ids.*` modules instead.
+file that uses those identifiers. Existing bundled attack types and flavours
+come from `constants.monster_attack_types` and
+`constants.attack_flavours`; other bundled IDs come from their matching
+`constants.*` or `ids.*` modules.
+
+A catalog monster describes traits shared by every instance. If one actor
+can change its own colour, attack, resistance, or other durable trait,
+register a component under `schemas/`, attach it when that actor is made,
+and project it at the relevant combat and presentation reads. The bundled
+ugly thing shows this pattern in `schemas/monster_ugly_thing.lua` and
+`policy/monsters/ugly_thing.lua`. Its profile is stored on the ECS actor,
+so mutation and save/restore use the same state. Avoid changing a catalog
+table to represent one creature's mutation; that would change every
+creature of its kind.
 
 The monster file is loaded automatically. It describes the creature, while
 `content/populations/` decides where ambient generation may choose it.

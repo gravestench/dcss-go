@@ -1,17 +1,68 @@
--- Most monsters use immutable catalog definitions. A player illusion is the
--- exception: the saved actor owns a ghost snapshot made when Mara cast.
+-- Most monsters use immutable catalog definitions. Generated lords, ugly
+-- things, constructs, and player illusions overlay saved per-actor traits
+-- before combat reads the same effective definition shape.
 local component = require("constants.component")
 local monster_flags = require("constants.monster_flags")
 
 local constructs = require("constants.monster_construct_components")
 
 local resistance = require("policy.combat.monster_summons.resistance")
+local ugly_thing = require("policy.monsters.ugly_thing")
 
 local profile = {}
+
+-- Overlay an ugly actor's mutable source traits without changing the
+-- shared catalog row. Elemental damage and terminal display both consume
+-- this same projected view.
+local function project_ugly(definition, ugly)
+    local generated = {}
+
+    for key, value in pairs(definition) do
+        generated[key] = value
+    end
+
+    generated.name = ugly_thing.name(ugly, definition.name)
+    generated.colour_id = ugly.colour_id
+    generated.attacks = {
+        {
+            type_id = ugly.attack_type_id,
+            flavour_id = ugly.flavour_id,
+            damage = ugly.damage,
+        },
+    }
+    generated.resistances = {}
+
+    for _, entry in ipairs(definition.resistances or {}) do
+        generated.resistances[#generated.resistances + 1] = entry
+    end
+
+    local ids = {}
+
+    for id in pairs(ugly.resistances) do
+        ids[#ids + 1] = id
+    end
+
+    table.sort(ids)
+
+    for _, id in ipairs(ids) do
+        generated.resistances[#generated.resistances + 1] = {
+            id = id,
+            level = ugly.resistances[id],
+        }
+    end
+
+    return generated
+end
 
 -- Project saved per-actor values into the same read shape as a catalog
 -- monster. Consumers use their ordinary combat rules after this one read.
 function profile.definition(ctx, entity, definition)
+    local ugly = ctx:get(entity, component.UGLY_THING)
+
+    if ugly then
+        definition = project_ugly(definition, ugly)
+    end
+
     local lord = ctx:get(entity, component.PANDEMONIUM_LORD)
 
     if lord then

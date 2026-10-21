@@ -29,6 +29,7 @@ local attitudes = require("constants.attitude")
 local statues = require("constants.monster_statues")
 local behaviors = require("constants.ai_behaviors")
 local pan_lord = require("policy.population.pan_lord")
+local ugly_thing = require("policy.monsters.ugly_thing")
 local cloud_ring = require("policy.combat.monster_cloud_ring")
 
 local factory = {}
@@ -367,10 +368,16 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
 
     local profile = roster.profile(source.id)
     local generated_lord
+    local generated_ugly
 
     if kind_id == monsters.MONS_PANDEMONIUM_LORD then
         generated_lord = pan_lord.roll(ctx,
             options.attitude == attitudes.FRIENDLY)
+    end
+
+    if ugly_thing.kind(kind_id) then
+        generated_ugly = ugly_thing.roll(ctx, definition,
+            options.colour)
     end
 
     local hp = options.hp or
@@ -409,6 +416,10 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
         -- The roller returns exactly the saved schema fields. Passing its
         -- record through avoids a second list of traits drifting out of sync.
         ctx:add(monster, component.PANDEMONIUM_LORD, generated_lord)
+    end
+
+    if generated_ugly then
+        ctx:add(monster, component.UGLY_THING, generated_ugly)
     end
     ctx:add(monster, "core.health", {
         current = hp,

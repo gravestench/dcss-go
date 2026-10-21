@@ -3,6 +3,7 @@
 -- its choice so reloading never draws another trait.
 local brands = require("constants.weapon_brands")
 local attacks = require("constants.monster_attack_types")
+local flavours = require("constants.attack_flavours")
 local resistance = require("constants.resistance_ids")
 local clouds = require("ids.clouds")
 
@@ -11,7 +12,7 @@ local traits = {
     cold = resistance.COLD,
     electricity = resistance.ELECTRICITY,
 
-    plain = "AF_PLAIN",
+    plain = flavours.PLAIN,
     drain_strength = "AF_DRAIN_STR",
     drain_intelligence = "AF_DRAIN_INT",
     drain_dexterity = "AF_DRAIN_DEX",

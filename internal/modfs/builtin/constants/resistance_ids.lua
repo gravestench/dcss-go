@@ -2,6 +2,7 @@
 
 local resistances = {
     FIRE = "MR_RES_FIRE",
+    STICKY_FLAME = "MR_RES_STICKY_FLAME",
     COLD = "MR_RES_COLD",
     ELECTRICITY = "MR_RES_ELEC",
     ACID = "MR_RES_ACID",

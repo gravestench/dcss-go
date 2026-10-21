@@ -625,6 +625,8 @@ function actions.monster_target(ctx, attacker, target)
             defender_definition = target_def,
             hit_dice = monster_stats.hit_dice(ctx, attacker, attacker_def),
             damage_done = actual_dealt,
+            player_credit = targets.allied(ctx, attacker) or
+                statuses.frenzied(ctx, attacker),
         }
 
         attack_flavours.apply(ctx, attack.flavour_id, flavour_hit)

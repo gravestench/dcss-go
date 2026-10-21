@@ -58,7 +58,7 @@ local function duration(ctx, speed, degree)
 end
 
 -- A landed hit can add flame even with zero damage; levels and duration stack up to degree four.
-function sticky.apply(ctx, source, target, definition, dealt)
+function sticky.apply(ctx, source, target, definition, dealt, degree)
     -- beam.cc:napalm_monster excludes insubstantial and sticky-flame immune
     -- monsters; the on-hit damage may be zero and still add one degree.
     if has_flag(definition, "M_INSUBSTANTIAL") or
@@ -66,9 +66,9 @@ function sticky.apply(ctx, source, target, definition, dealt)
         return false
     end
 
-    local levels = 1
+    local levels = degree or 1
 
-    if dealt > 1 then
+    if not degree and dealt > 1 then
         levels = math.min(4, 1 + math.floor(
             ctx:random("spell", dealt) / 2))
     end
@@ -187,14 +187,16 @@ end
 
 -- player.cc:napalm_player stores a capped duration, separate from the
 -- degree-based monster enchantment but in the same saved ECS state.
-function sticky.apply_player(ctx, source, target)
+function sticky.apply_player(ctx, source, target, stream)
     if player_immune(ctx, target) then
         return false
     end
 
-    local amount = 1 + math.floor((ctx:random("monster_spell", 7) +
-        ctx:random("monster_spell", 7) +
-        ctx:random("monster_spell", 7)) / 3)
+    stream = stream or "monster_spell"
+
+    local amount = 1 + math.floor((ctx:random(stream, 7) +
+        ctx:random(stream, 7) +
+        ctx:random(stream, 7)) / 3)
     local current = ctx:get(target, component.STICKY_FLAME)
     local remaining = math.min(1000,
         (current and current.remaining_aut or 0) + amount * 10)

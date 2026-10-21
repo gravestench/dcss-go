@@ -2,6 +2,7 @@
 -- delegates durable state to its normal owner, so generated Pan lords and
 -- catalog monsters use the same saved status rules.
 local component = require("constants.component")
+local attack_ids = require("constants.attack_flavours")
 local channels = require("constants.message_channels")
 local enfeeble = require("policy.magic.effects.statuses.enfeeble")
 local monster_enchant = require("policy.combat.monster_enchant")
@@ -16,9 +17,11 @@ local stat_loss = require("policy.character.stat_loss")
 local stats = require("constants.stats")
 local streams = require("constants.rng_streams")
 local traits = require("constants.pan_lord_traits")
+local resistances = require("constants.resistance_ids")
 local trample = require("policy.combat.trample")
 local water = require("policy.combat.monster_beams.water")
 local web = require("policy.combat.monster_area.web")
+local sticky_flame = require("policy.combat.sticky_flame")
 
 local flavours = {}
 
@@ -27,6 +30,126 @@ local drained_stat = {
     [traits.drain_intelligence] = stats.INTELLIGENCE,
     [traits.drain_dexterity] = stats.DEXTERITY,
 }
+
+-- A monster ally's extra flavour packet can make the killing blow after
+-- the physical strike. Award it through the same signal as ordinary melee.
+local function damage_monster(ctx, hit, amount)
+    local health, dealt = monster_health.damage(ctx, hit.defender,
+        amount, hit.attacker)
+
+    if hit.player_credit and dealt > 0 and health.current == 0 then
+        ctx:signal("player_kill", hit.defender)
+    end
+
+    return dealt > 0
+end
+
+-- Source flavour_damage rolls an extra elemental packet after physical
+-- contact. It is separate HP loss, so existing player and monster damage
+-- owners still apply death, reflection, and temporary resistance rules.
+local function elemental(ctx, hit, kind)
+    if hit.damage_done <= 0 then
+        return false
+    end
+
+    local hd = hit.hit_dice
+    local raw
+    local resistance_id
+
+    if kind == attack_ids.FIRE then
+        raw = hd + roll.melee(ctx, hd)
+        resistance_id = resistances.FIRE
+    elseif kind == attack_ids.COLD then
+        raw = hd + roll.melee(ctx, hd * 2)
+        resistance_id = resistances.COLD
+    else
+        raw = hd + roll.melee(ctx, math.floor(hd / 2))
+        resistance_id = resistances.ELECTRICITY
+    end
+
+    -- Loading this owner at impact avoids a module cycle through fighter,
+    -- which also resolves ordinary melee before the flavour packet.
+    local damage = require("policy.magic.damage")
+    local amount
+
+    if ctx:has(hit.defender, component.PLAYER) then
+        amount = damage.player_elemental(ctx, hit.defender, raw,
+            resistance_id)
+        player_health.damage(ctx, hit.defender, amount,
+            false, hit.attacker)
+    else
+        amount = damage.monster_elemental(ctx, hit.defender,
+            raw, resistance_id)
+
+        return damage_monster(ctx, hit, amount)
+    end
+
+    return amount > 0
+end
+
+-- Keep each dispatch target named so a modder can find the colour's rule.
+local function fire(ctx, hit)
+    return elemental(ctx, hit, attack_ids.FIRE)
+end
+
+-- Cold has a wider second roll than fire at the same monster HD.
+local function cold(ctx, hit)
+    return elemental(ctx, hit, attack_ids.COLD)
+end
+
+-- Electricity has a shorter bonus roll and a stronger resistance divisor.
+local function electricity(ctx, hit)
+    return elemental(ctx, hit, attack_ids.ELECTRICITY)
+end
+
+-- Source AF_ACID calls splash_with_acid rather than equipment corrosion
+-- alone. Players take a 4d3 packet; monsters take 2d4. Both use their
+-- existing corrosion owner after the separate elemental resistance check.
+local function acid(ctx, hit)
+    if hit.damage_done <= 0 then
+        return false
+    end
+
+    if ctx:has(hit.defender, component.PLAYER) then
+        require("policy.combat.brands.acid").apply(ctx, hit)
+
+        return true
+    end
+
+    for _, entry in ipairs(hit.defender_definition.resistances or {}) do
+        if entry.id == resistances.ACID and entry.level >= 3 then
+            return false
+        end
+    end
+
+    local damage = require("policy.magic.damage")
+    local raw = 2 + roll.melee(ctx, 4) + roll.melee(ctx, 4)
+    local amount = damage.monster_elemental(ctx, hit.defender,
+        raw, resistances.ACID)
+
+    monster_enchant.corrode(ctx, hit.defender,
+        hit.defender_definition)
+    return damage_monster(ctx, hit, amount)
+end
+
+-- Very ugly red things replace a fire packet with the source one-in-three
+-- liquid-flame application. The saved status owner handles later burns.
+local function napalm(ctx, hit)
+    if hit.damage_done <= 0 or roll.melee(ctx, 3) ~= 0 then
+        return false
+    end
+
+    if ctx:has(hit.defender, component.PLAYER) then
+        return sticky_flame.apply_player(ctx, hit.attacker,
+            hit.defender, streams.MELEE)
+    end
+
+    local degree = math.min(4,
+        1 + math.floor(roll.melee(ctx, hit.hit_dice) / 2))
+
+    return sticky_flame.apply(ctx, hit.attacker, hit.defender,
+        hit.defender_definition, hit.damage_done, degree)
+end
 
 -- Source melee-attack.cc gives stat drain a rare first chance and a wider
 -- fallback chance. A monster has no drainable attributes in the source, but
@@ -127,6 +250,11 @@ local function weaken(ctx, hit)
 end
 
 local effects = {
+    [attack_ids.FIRE] = fire,
+    [attack_ids.COLD] = cold,
+    [attack_ids.ELECTRICITY] = electricity,
+    [attack_ids.ACID] = acid,
+    [attack_ids.STICKY_FLAME] = napalm,
     [traits.corrode] = corrode,
     [traits.ensnare] = ensnare,
     [traits.drain_speed] = drain_speed,

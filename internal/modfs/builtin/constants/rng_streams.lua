@@ -10,6 +10,7 @@ local streams = {
     ITEM_GENERATION = "item_generation",
     MELEE = "melee",
     MONSTER_HP = "monster_hp",
+    MONSTER_TRAITS = "monster_traits",
     MONSTER_SPELL = "monster_spell",
     PAN_LORD = "pan_lord",
     MUTATION = "mutation",

@@ -21,6 +21,7 @@ local monster_profile = require("policy.combat.monster_profile")
 local monster_spells = require("policy.combat.monster_spells")
 local pan_traits = require("constants.pan_lord_traits")
 local pan_colours = require("constants.pan_lord_colours")
+local ugly_thing = require("policy.monsters.ugly_thing")
 
 -- Banished monsters have different location requirements from level residents.
 local function validate_banishment(ctx, entity, position)
@@ -546,6 +547,9 @@ function module.run(ctx, input)
             error("monster " .. ctx:id(entity) ..
                 " has invalid rolling duration")
         end
+
+        ugly_thing.validate(ctx, entity,
+            catalog.get("monsters", actor.kind_id))
 
         validate_banishment(ctx, entity, position)
         validate_summon_cast_state(ctx, entity)

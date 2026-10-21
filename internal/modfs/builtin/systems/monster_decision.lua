@@ -16,6 +16,7 @@ local allies = require("policy.character.allies")
 local awareness = require("policy.ai.awareness")
 local invisibility = require("policy.potions.invisibility")
 local component = require("constants.component")
+local ugly_thing = require("policy.monsters.ugly_thing")
 local behaviors = require("constants.ai_behaviors")
 
 -- Allied casters offer spells against a visible enemy before routing toward
@@ -254,6 +255,18 @@ function system.update(ctx, entity)
     if held then
         net.struggle(ctx, entity, held)
         ctx:add(entity, "core.intent", {
+            kind = 6,
+        })
+
+        return
+    end
+
+    -- A source ugly-thing mutation is a natural special ability, so it
+    -- spends this monster action rather than running before a second move
+    -- or attack. Malmutate uses the same policy outside this turn phase.
+    if ctx:has(entity, component.UGLY_THING) and
+        ugly_thing.tick(ctx, entity) then
+        ctx:add(entity, component.INTENT, {
             kind = 6,
         })
 

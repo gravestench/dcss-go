@@ -309,9 +309,11 @@ complete item and equipment system. The committed monster spellbook IDs
 now have Lua effect resolvers. Several effects still need source parity
 follow-ups, tracked in the monster spellbook slice; Porkalator now releases
 Kirke's band and spell-transformed victims when she dies.
-Malmutate's abomination tile reroll and ugly-thing combat trait reroll need
-per-actor state; ugly-thing attack flavour, magenta damage, and resistance
-are unmodeled both at spawn and after mutation.
+Malmutate's abomination tile reroll remains. Ugly things now save their own
+colour, attack, damage, resistance, and spontaneous kin mutation traits;
+combat and display read that actor state after spawn, polymorph, and
+Malmutate. Source-wide band colour coordination and exact mutation RNG
+draw order remain follow-ups.
 Native C++ saves, tiles, and network
 client compatibility are outside this Go port.
 

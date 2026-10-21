@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local slime_blob = require("policy.monsters.slime_blob")
+local ugly_thing = require("policy.monsters.ugly_thing")
 
 local display = {}
 
@@ -17,6 +18,12 @@ function display.name(ctx, monster)
     local generated = ctx:get(monster, component.PANDEMONIUM_LORD)
     local actor_name = generated and generated.name ~= "" and
         generated.name or definition.name
+    local ugly = ctx:get(monster, component.UGLY_THING)
+
+    if ugly then
+        actor_name = ugly_thing.name(ugly, actor_name)
+    end
+
     local base_name = slime_blob.name(ctx, monster, actor_name)
     local authored = ctx:get(monster, component.VAULT_ACTOR_OVERRIDES)
 
