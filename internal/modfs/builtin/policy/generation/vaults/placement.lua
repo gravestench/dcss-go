@@ -115,6 +115,27 @@ end
 local function origin(vault, cells, map_width, map_height, builder, options)
     local protected = options and options.protected
 
+    -- A procedural layout has already chosen the room's connecting wall.
+    -- Check the entire candidate before drawing, so a rejected room cannot
+    -- erase stairs or records belonging to an earlier placement.
+    if options and (options.left ~= nil or options.top ~= nil) then
+        local left = options.left
+        local top = options.top
+
+        if type(left) ~= "number" or type(top) ~= "number" or
+            left % 1 ~= 0 or top % 1 ~= 0 or
+            left < 1 or top < 1 or
+            left + map_width >= width or top + map_height >= height then
+            error(vault.path .. ": invalid exact room origin")
+        end
+
+        if protected_cell(builder, cells, left, top, protected or {}) then
+            error(vault.path .. ": exact room origin overlaps protected terrain")
+        end
+
+        return left, top
+    end
+
     -- A one-cell source `overwrite_floor_cell` map expects connected floor.
     -- Pick from legal existing floor cells instead of opening a rock wall.
     if vault.tags and vault.tags.overwrite_floor_cell then
@@ -631,7 +652,18 @@ function placement.place(_, builder, vault, player, options)
     local overridden = keyed_overrides(source_records)
     local turns = 0
 
-    if vault.orientation == "float" and
+    if options and options.turns ~= nil then
+        if type(options.turns) ~= "number" or
+            options.turns % 1 ~= 0 or
+            options.turns < 0 or options.turns > 3 then
+            error(vault.path .. ": invalid exact room rotation")
+        end
+
+        turns = options.turns
+        cells = transforms.rotate(cells, turns)
+        map_width = #cells[1]
+        map_height = #cells
+    elseif vault.orientation == "float" and
         not (vault.tags and vault.tags.no_rotate) then
         turns = builder:roll(4)
         cells = transforms.rotate(cells, turns)
