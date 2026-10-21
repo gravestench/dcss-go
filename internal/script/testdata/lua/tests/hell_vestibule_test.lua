@@ -4,6 +4,9 @@
 -- into a parsed-but-unused collection.
 local branches = require("ids.branches")
 local monsters = require("ids.monsters")
+local terrain = require("constants.terrain")
+local effects = require("constants.vault_effects")
+local features = require("content.terrain_features")
 local catalog = require("policy.generation.layouts.catalog")
 local grid = require("policy.generation.grid")
 local harness = require("tests.harness")
@@ -21,6 +24,49 @@ local wing_tags = {
     vestibule_geh = true,
     vestibule_geryon = true,
 }
+
+local hell_features = {
+    enter_hell = terrain.DNGN_ENTER_HELL,
+    exit_hell = terrain.DNGN_EXIT_HELL,
+    enter_dis = terrain.DNGN_ENTER_DIS,
+    exit_dis = terrain.DNGN_EXIT_DIS,
+    enter_gehenna = terrain.DNGN_ENTER_GEHENNA,
+    exit_gehenna = terrain.DNGN_EXIT_GEHENNA,
+    enter_cocytus = terrain.DNGN_ENTER_COCYTUS,
+    exit_cocytus = terrain.DNGN_EXIT_COCYTUS,
+    enter_tartarus = terrain.DNGN_ENTER_TARTARUS,
+    exit_tartarus = terrain.DNGN_EXIT_TARTARUS,
+}
+
+-- A source KFEAT must project its destination into typed terrain so travel
+-- can act on the cell without searching a pending vault record.
+local function check_hell_feature_projection()
+    local projected = 0
+
+    for name, expected in pairs(hell_features) do
+        projected = projected + 1
+        local cells = {
+            { terrain.DNGN_FLOOR },
+        }
+        local records = {
+            {
+                kind = effects.FEATURE,
+                identity = name,
+                x = 0,
+                y = 0,
+                pending = true,
+            },
+        }
+        local pending = features.apply_vault_terrain(cells, records)
+
+        harness.equal(cells[1][1], expected,
+            name .. " projects to its source portal ID")
+        harness.equal(#pending, 0,
+            name .. " no longer needs a pending record")
+    end
+
+    harness.equal(projected, 10, "all source Hell portal kinds project")
+end
 
 -- Use the production grid RNG contract with a repeatable seed. The test
 -- inspects placed wings rather than reimplementing source tag selection.
@@ -102,6 +148,7 @@ end
 -- The source map family is complete before generation chooses a wing.
 -- Each chosen wing must contribute its actual authored map to the result.
 function test.run()
+    check_hell_feature_projection()
     check_undead_roster()
     harness.equal(#mod.paths("vaults/hell_entry", ".des"), 23,
         "pinned Hell entrance count")

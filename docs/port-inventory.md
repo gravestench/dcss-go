@@ -414,9 +414,11 @@ Hell portal gameplay still needs its destination branch. The 60 maps from
 `hell.des` are now committed as 23 entrance maps, one required Vestibule
 layout, and 36 tagged wing maps. Their original geometry and directives
 place through the production DES engine; the Big Baal shop and two random
-Vestibule choices run through named Lua hooks. Hell terrain features,
-gate travel, source branch exits, and the four subbranch map families remain
-to be integrated before Hell is playable.
+Vestibule choices run through named Lua hooks. All ten Hell entrance and
+exit features now project to distinct walkable terrain IDs, preserving
+their destinations through the grid and save format. Gate travel, source
+branch exits, and the four subbranch map families remain to be integrated
+before Hell is playable.
 
 The fifty-three-definition aquarium family retains the source controller
 and all fifty-two authored child maps. One Lua controller picks a shared

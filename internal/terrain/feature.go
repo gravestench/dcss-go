@@ -44,6 +44,16 @@ const (
 	TransitPandemonium ID = "DNGN_TRANSIT_PANDEMONIUM"
 	ExitPandemonium    ID = "DNGN_EXIT_PANDEMONIUM"
 	ExitThroughAbyss   ID = "DNGN_EXIT_THROUGH_ABYSS"
+	EnterHell          ID = "DNGN_ENTER_HELL"
+	ExitHell           ID = "DNGN_EXIT_HELL"
+	EnterDis           ID = "DNGN_ENTER_DIS"
+	ExitDis            ID = "DNGN_EXIT_DIS"
+	EnterGehenna       ID = "DNGN_ENTER_GEHENNA"
+	ExitGehenna        ID = "DNGN_EXIT_GEHENNA"
+	EnterCocytus       ID = "DNGN_ENTER_COCYTUS"
+	ExitCocytus        ID = "DNGN_EXIT_COCYTUS"
+	EnterTartarus      ID = "DNGN_ENTER_TARTARUS"
+	ExitTartarus       ID = "DNGN_EXIT_TARTARUS"
 	SealedStairsUp     ID = "DNGN_SEALED_STAIRS_UP"
 	SealedStairsDown   ID = "DNGN_SEALED_STAIRS_DOWN"
 	MalignGateway      ID = "DNGN_MALIGN_GATEWAY"
@@ -229,6 +239,58 @@ var definitions = map[ID]Feature{
 	},
 
 	ExitThroughAbyss: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	// The Vestibule and each of its four branches use source portal arches.
+	// Distinct IDs preserve the branch destination through save and restore.
+	EnterHell: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitHell: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	EnterDis: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitDis: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	EnterGehenna: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitGehenna: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	EnterCocytus: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitCocytus: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	EnterTartarus: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitTartarus: {
 		Glyph:    '∩',
 		Walkable: true,
 	},
