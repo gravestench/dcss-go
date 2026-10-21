@@ -28,6 +28,7 @@ local vault_enchantments = require("policy.monsters.vault_enchantments")
 local attitudes = require("constants.attitude")
 local statues = require("constants.monster_statues")
 local behaviors = require("constants.ai_behaviors")
+local pan_lord = require("policy.population.pan_lord")
 
 local factory = {}
 
@@ -364,7 +365,16 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
     end
 
     local profile = roster.profile(source.id)
-    local hp = options.hp or hit_points.roll(ctx, source.average_hp_10x)
+    local generated_lord
+
+    if kind_id == monsters.MONS_PANDEMONIUM_LORD then
+        generated_lord = pan_lord.roll(ctx,
+            options.attitude == attitudes.FRIENDLY)
+    end
+
+    local hp = options.hp or
+        (generated_lord and generated_lord.hp) or
+        hit_points.roll(ctx, source.average_hp_10x)
     local blob_size = options.blob_size or 1
 
     if blob_size ~= 1 and
@@ -373,7 +383,8 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
         error("invalid slime creature size " .. blob_size)
     end
 
-    if not options.hp and (hp < profile.minimum or hp > profile.maximum) then
+    if not options.hp and not generated_lord and
+        (hp < profile.minimum or hp > profile.maximum) then
         error("invalid " .. kind_id .. " HP " .. hp)
     end
 
@@ -388,9 +399,16 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
     local monster = ctx:create()
     ctx:add(monster, "core.actor", {
         kind_id = kind_id,
-        speed = definition.speed or source.speed or 0,
+        speed = generated_lord and generated_lord.speed or
+            definition.speed or source.speed or 0,
     })
     ctx:add(monster, "core.monster_energy", { points = energy.initial })
+
+    if generated_lord then
+        -- The roller returns exactly the saved schema fields. Passing its
+        -- record through avoids a second list of traits drifting out of sync.
+        ctx:add(monster, component.PANDEMONIUM_LORD, generated_lord)
+    end
     ctx:add(monster, "core.health", {
         current = hp,
         max = hp,

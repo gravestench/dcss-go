@@ -356,8 +356,10 @@ function vaults.materialize(ctx, level, excluded)
             local gear
 
             if not ctx:walkable(level.id, record.x, record.y) then
-                error(string.format("%s:%d: vault %s: blocked authored %s cell",
-                    arguments.path, record.line, record.source_id, record.kind))
+                error(string.format("%s:%d: vault %s: blocked authored %s cell (%d,%d) feature %s source %s",
+                    arguments.path, record.line, record.source_id, record.kind,
+                    record.x, record.y, tostring(ctx:cell(level.id, record.x, record.y)),
+                    tostring(record.source)))
             end
 
             -- Skip an occupied cell or duplicate unique before spawning the requested vault actor.

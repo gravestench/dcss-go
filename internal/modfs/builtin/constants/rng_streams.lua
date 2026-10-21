@@ -11,6 +11,7 @@ local streams = {
     MELEE = "melee",
     MONSTER_HP = "monster_hp",
     MONSTER_SPELL = "monster_spell",
+    PAN_LORD = "pan_lord",
     MUTATION = "mutation",
     POTION = "potion",
     PLACEMENT = "placement",

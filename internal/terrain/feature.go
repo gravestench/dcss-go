@@ -40,6 +40,10 @@ const (
 	SealedClearDoor    ID = "DNGN_SEALED_CLEAR_DOOR"
 	StairsUp           ID = "DNGN_STONE_STAIRS_UP_I"
 	StairsDown         ID = "DNGN_STONE_STAIRS_DOWN_I"
+	EnterPandemonium   ID = "DNGN_ENTER_PANDEMONIUM"
+	TransitPandemonium ID = "DNGN_TRANSIT_PANDEMONIUM"
+	ExitPandemonium    ID = "DNGN_EXIT_PANDEMONIUM"
+	ExitThroughAbyss   ID = "DNGN_EXIT_THROUGH_ABYSS"
 	SealedStairsUp     ID = "DNGN_SEALED_STAIRS_UP"
 	SealedStairsDown   ID = "DNGN_SEALED_STAIRS_DOWN"
 	MalignGateway      ID = "DNGN_MALIGN_GATEWAY"
@@ -204,6 +208,28 @@ var definitions = map[ID]Feature{
 
 	StairsDown: {
 		Glyph:    '>',
+		Walkable: true,
+	},
+
+	// DCSS draws these portals as arches. Their IDs remain distinct so
+	// Lua policy can route each gate without inspecting a vault record.
+	EnterPandemonium: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	TransitPandemonium: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitPandemonium: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitThroughAbyss: {
+		Glyph:    '∩',
 		Walkable: true,
 	},
 

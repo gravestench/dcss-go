@@ -178,14 +178,16 @@ func (g *Game) Snapshot() save.Snapshot {
 
 		for _, link := range level.StairLinks() {
 			record.Stairs = append(record.Stairs, save.StairRecord{
-				X:              link.X,
-				Y:              link.Y,
-				ToLevelID:      link.ToLevelID,
-				ToX:            link.ToX,
-				ToY:            link.ToY,
-				Pending:        link.Pending,
-				Exit:           link.Exit,
-				Unavailable:    link.Unavailable,
+				X:         link.X,
+				Y:         link.Y,
+				ToLevelID: link.ToLevelID,
+				ToX:       link.ToX,
+				ToY:       link.ToY,
+
+				Pending:     link.Pending,
+				Exit:        link.Exit,
+				Unavailable: link.Unavailable,
+
 				TargetBranchID: link.TargetBranchID,
 				SourceFeature:  link.SourceFeature,
 			})
@@ -383,7 +385,7 @@ func RestoreWithRules(
 		return nil, err
 	}
 
-	if err := g.restoreLevels(snapshot.Levels, snapshot.CurrentAut); err != nil {
+	if err := g.restoreLevels(snapshot.Levels, snapshot.CurrentAut, snapshot.PanState); err != nil {
 		return nil, err
 	}
 

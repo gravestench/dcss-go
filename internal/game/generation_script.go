@@ -161,7 +161,11 @@ func (g *Game) decodeLuaLevelRecords(
 
 		localDepth, err := decisionInteger(record, "local_depth")
 
-		if err != nil || localDepth < 1 {
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		if localDepth < 1 {
 			return nil, nil, nil, fmt.Errorf("Lua level %d has invalid local depth", id)
 		}
 
@@ -253,10 +257,12 @@ func (g *Game) decodeLuaLevelRecords(
 			y: entryY,
 		}
 
-		stairs, ok := record["stairs"].([]any)
+		// A portal destination may have only terrain arches and no paired
+		// stairs. Empty Lua arrays cross the VM boundary as empty tables.
+		stairs, err := luaScenarioList(record["stairs"], "stair links")
 
-		if !ok {
-			return nil, nil, nil, fmt.Errorf("Lua level %d has no stair links", id)
+		if err != nil {
+			return nil, nil, nil, fmt.Errorf("Lua level %d: %w", id, err)
 		}
 
 		links[id] = stairs
@@ -428,14 +434,16 @@ func luaScenarioStair(value any) (StairLink, error) {
 	}
 
 	return StairLink{
-		X:              numbers[0],
-		Y:              numbers[1],
-		ToLevelID:      numbers[2],
-		ToX:            numbers[3],
-		ToY:            numbers[4],
-		Pending:        pending,
-		Exit:           exit,
-		Unavailable:    unavailable,
+		X:         numbers[0],
+		Y:         numbers[1],
+		ToLevelID: numbers[2],
+		ToX:       numbers[3],
+		ToY:       numbers[4],
+
+		Pending:     pending,
+		Exit:        exit,
+		Unavailable: unavailable,
+
 		TargetBranchID: targetBranchID,
 		SourceFeature:  sourceFeature,
 	}, nil

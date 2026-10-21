@@ -1,6 +1,7 @@
 package game
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -74,7 +75,7 @@ type TurnContext struct {
 	Events []Event
 }
 
-func (g *Game) Step(command Command) (StepResult, error) {
+func (g *Game) Step(command Command) (result StepResult, err error) {
 	if outcome, err := g.outcome(); err != nil {
 		return StepResult{}, err
 	} else if outcome != "" {
@@ -104,6 +105,31 @@ func (g *Game) Step(command Command) (StepResult, error) {
 			prepared.response.Events...)
 
 		return prepared.response, nil
+	}
+
+	var portal *panPortal
+
+	if prepared.portal != nil {
+		// Travel changes the player, clocks, region history, and old-floor
+		// entities. Restore all of them if any subsequent action phase fails.
+		checkpoint := g.Snapshot()
+
+		defer func() {
+			if portal != nil && portal.stage != nil {
+				err = errors.Join(err, portal.stage.rollback())
+			}
+
+			if err != nil {
+				err = errors.Join(err, g.restoreCheckpoint(checkpoint))
+				result = StepResult{}
+			}
+		}()
+
+		portal, err = g.preparePanPortal(prepared.portal, position)
+
+		if err != nil {
+			return StepResult{}, err
+		}
 	}
 
 	if err := g.populateStairDestination(prepared.intent.Kind, position); err != nil {
@@ -172,9 +198,28 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		}, nil
 	}
 
+	if portal != nil {
+		travelEvent, travelErr := g.commitPanPortal(portal)
+
+		if travelErr != nil {
+			return StepResult{}, travelErr
+		}
+
+		if travelEvent.Text != "" {
+			events = append(events, travelEvent)
+			g.messages = append(g.messages, travelEvent.Text)
+		}
+	}
+
 	if arrived, found := g.stores.Positions.Get(g.player); found &&
 		arrived.LevelID != position.LevelID {
 		if err := g.activateTransition(position.LevelID, arrived.LevelID, startAut); err != nil {
+			return StepResult{}, err
+		}
+	}
+
+	if portal != nil && portal.retireID != 0 {
+		if err := g.retireLevel(portal.retireID); err != nil {
 			return StepResult{}, err
 		}
 	}
@@ -192,7 +237,7 @@ func (g *Game) Step(command Command) (StepResult, error) {
 		}, nil
 	}
 
-	result, err := g.finishTurn(startAut, cost, events)
+	result, err = g.finishTurn(startAut, cost, events)
 
 	if err != nil ||
 		result.View.PlayerDead {
@@ -210,6 +255,7 @@ type preparedCommand struct {
 	spendsTime       bool
 	equipment        *ecs.EquipmentDelay
 	attackTarget     akara.Entity
+	portal           map[string]any
 	waitedExplicitly bool
 }
 

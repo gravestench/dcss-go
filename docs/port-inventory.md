@@ -407,8 +407,8 @@ ruined-city shapes. Shared Lua setup applies the source pillar, hut,
 portal, and Depths water rules; source MAP rows stay unchanged. The rare
 controller mode stores its whole-level floor and rock tile choice as a
 typed level record. Solid `no_exits` decorations now place without
-inventing an entry corridor. Hell and Pandemonium portal gameplay still
-depends on those destination branches being implemented.
+inventing an entry corridor. Pan portal travel now has a live destination;
+Hell portal gameplay still needs its destination branch.
 
 The fifty-three-definition aquarium family retains the source controller
 and all fifty-two authored child maps. One Lua controller picks a shared
@@ -437,8 +437,13 @@ Pan veto hooks read saved rune progress and Ignacio's one-time decision.
 Boris releases his unique claim on death and gets a one-in-six replacement offer
 on a new Depths, Vaults, Tomb, or Crypt floor. Natasha's first two deaths
 create distant replacement actors with her carried equipment and saved
-revival count; her third death is final. Live Pan level generation and
-full encounter verification remain in this domain slice.
+revival count; her third death is final. Pan now selects and populates an
+authored primary, saves one current region, and replaces it through entry,
+transit, ordinary exit, and Abyss exit portals. Source upward stairs become
+transit portals after DES terrain resolution. The random lord owns its rolled
+body, resistances, attack form, brand, flight, spell slots, and ring choice
+in an Akara component. Continuous cloud-ring effects and full encounter
+parity remain for the next Pan combat pass.
 
 Intrinsic death effects now use the actor death phase for Ball Lightning,
 Fulminant Prism, Bloated Husk, Lurking Horror, and Bennu. Construct timeout
@@ -463,7 +468,8 @@ remain future work. The deep Dungeon decoration controller now draws from
 the effective `decor` tagged map pool at source chance and depth. All 22
 Pandemonium division definitions are committed: two authored layouts and
 twenty weighted helpers. Both parent layouts assemble and complete stairs
-through the production layout owner. Pan's branch flow is still pending.
+through the production layout owner. Pan's repeated-region flow now uses
+those layouts alongside its authored primary maps.
 Forest generation exposed a missing bow and crossbow missile policy;
 arrows and bolts now use one Lua launcher resolver with their catalog
 projectile values.
@@ -486,7 +492,8 @@ shared connected-stair postpass. Depths travel remains future work.
 The Worley cave category now includes source Chambers for Snake, Spider,
 and Pan, plus Cocytus Water Paths and Ice Bergs. Their branch weights,
 depth rules, water terrain, and connected stair landings run through the
-same effective layout catalog. Cocytus and Pan travel are still pending.
+same effective layout catalog. Pan uses its layouts during portal travel;
+Cocytus travel remains pending.
 The remaining noise-based Cave Shapes and Gehenna Lava Caves layouts are
 also registered. Cave Shapes selects one of four source silhouettes before
 adding cave-edge noise; Gehenna grades simplex noise into floor, lava, and

@@ -93,10 +93,35 @@ function spellbook.for_actor(ctx, entity)
         return { slots = slots }
     end
 
+    -- MST_GHOST has no static catalog row. Pan lords keep their selected
+    -- spell slots on the actor, just as source ghost demons do.
+    local lord = ctx:get(entity, component.PANDEMONIUM_LORD)
+
+    if lord then
+        if #lord.spell_ids ~= #lord.frequencies then
+            error("Pan lord spell IDs and frequencies differ")
+        end
+
+        local slots = {}
+
+        for index, id in ipairs(lord.spell_ids) do
+            slots[index] = {
+                spell_id = id,
+                frequency = lord.frequencies[index],
+                flags = {
+                    spell_flags.MAGICAL,
+                },
+            }
+        end
+
+        return #slots > 0 and { slots = slots } or nil
+    end
+
     local monster = catalog.get("monsters", actor.kind_id)
 
     if not monster.spellbook_id or monster.spellbook_id == "" or
-        monster.spellbook_id == book_ids.MST_NO_SPELLS then
+        monster.spellbook_id == book_ids.MST_NO_SPELLS or
+        monster.spellbook_id == book_ids.MST_GHOST then
         return nil
     end
 

@@ -86,6 +86,14 @@ function flight.active(ctx, actor)
         return false
     end
 
+    -- A random Pan lord owns this trait per actor. The shared habitat and
+    -- flight rules must read its saved roll instead of the static species.
+    local lord = ctx:get(actor, component.PANDEMONIUM_LORD)
+
+    if lord then
+        return lord.flies
+    end
+
     local definition = catalog.get("monsters", identity.kind_id)
 
     return definition ~= nil and has_flag(definition.flags, "M_FLIES")

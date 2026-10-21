@@ -12,9 +12,23 @@ local nearest = require("policy.generation.nearest")
 local placement = require("policy.generation.vaults.placement")
 local selection = require("policy.generation.pan.selection")
 local streams = require("constants.rng_streams")
+local pan_constants = require("constants.pan_region")
 local vaults = require("policy.generation.vaults.catalog")
 
 local region = {}
+
+-- A new visit gets a fresh storage ID while the previous region is still
+-- present. The branch and local depth remain Pan:1; only the opaque Go grid
+-- key changes. Portal commit discards the previous region after success.
+function region.level_id(regions_seen)
+    if type(regions_seen) ~= "number" or regions_seen < 0 or
+        regions_seen % 1 ~= 0 then
+        error("Pan region count must be a nonnegative integer")
+    end
+
+    return branch_levels.id(branches.BRANCH_PANDEMONIUM, 1) +
+        regions_seen * pan_constants.LEVEL_ID_STRIDE
+end
 
 -- Hooks read a snapshot of saved player facts while the region is planned.
 -- Passing these facts explicitly keeps generation independent of a mutable
@@ -45,6 +59,30 @@ local function protected_cells(placed)
     end
 
     return protected
+end
+
+-- A later opaque vault replaces the terrain and entities beneath each of
+-- its cells. Retire older cell records too: a source wall record from the
+-- base layout must not repaint a keyed monster's floor after DES carving.
+-- Level-wide style records have no cell and remain in source order.
+local function overlay_records(records, placed)
+    local occupied = protected_cells(placed)
+    local combined = {}
+
+    for _, record in ipairs(records) do
+        local coordinate = record.x and record.y and
+            (record.x .. ":" .. record.y)
+
+        if not coordinate or not occupied[coordinate] then
+            combined[#combined + 1] = record
+        end
+    end
+
+    for _, record in ipairs(placed.records or {}) do
+        combined[#combined + 1] = record
+    end
+
+    return combined
 end
 
 -- Only placement conflicts can ask for a new procedural base layout. A
@@ -135,15 +173,7 @@ function region.build_primary(ctx, map, history)
             build_regular(ctx, map, player, history)
     end
 
-    local records = {}
-
-    for _, record in ipairs(layout_records) do
-        records[#records + 1] = record
-    end
-
-    for _, record in ipairs(placed.records) do
-        records[#records + 1] = record
-    end
+    local records = overlay_records(layout_records, placed)
 
     -- A source entry glyph may itself be a portal or stair. Arrival uses
     -- nearby open floor so it never replaces the authored exit feature.
@@ -236,9 +266,7 @@ function region.generate(ctx, history)
     end
 
     for _, map in ipairs(extras) do
-        for _, record in ipairs(map.records or {}) do
-            records[#records + 1] = record
-        end
+        records = overlay_records(records, map)
     end
 
     for _, id in ipairs(extra_ids) do
@@ -247,14 +275,20 @@ function region.generate(ctx, history)
 
     local branch_id = branches.BRANCH_PANDEMONIUM
 
+    -- Extras can replace open cells outside the protected primary. Choose
+    -- the landing from the finished map, anchored to the primary's authored
+    -- entry, so a late extra cannot strand the arriving player in rock.
+    local entry = nearest.open_floor(built.builder:rows(),
+        built.map.entry, nil, 1)
+
     return {
-        id = branch_levels.id(branch_id, 1),
+        id = region.level_id(history.levels_seen or 0),
         branch_id = branch_id,
         local_depth = 1,
         rows = built.builder:rows(),
         stairs = {},
-        entry_x = built.entry.x,
-        entry_y = built.entry.y,
+        entry_x = entry.x,
+        entry_y = entry.y,
         initial_monsters = monster_count(ctx),
         vault_id = built.map.id,
         vault_ids = ids,

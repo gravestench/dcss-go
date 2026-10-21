@@ -23,6 +23,11 @@ local hit_points = require("policy.population.hit_points")
 local slime_blob = require("policy.monsters.slime_blob")
 local display = require("policy.combat.monster_support.display")
 local monster_stats = require("policy.combat.monster_stats")
+local monster_profile = require("policy.combat.monster_profile")
+local flight = require("policy.combat.flight")
+local traits = require("constants.pan_lord_traits")
+local brands = require("constants.weapon_brands")
+local monster_spellbook = require("policy.combat.monster_spellbook")
 local presentation = require("policy.presentation.view")
 local permanent = require("constants.vault_monster_enchantments")
 local attitudes = require("constants.attitude")
@@ -834,6 +839,47 @@ local function authored_spawn_roles(ctx)
         "woken monster produced no decision")
 end
 
+-- A random Pan lord owns its rolled body and magic on the actor. A static
+-- MST_GHOST catalog lookup would lose that state and fail on its first turn.
+local function pandemonium_lord_owns_profile(ctx)
+    local world = world_context(ctx)
+    local lord = factory.spawn(world,
+        monsters.MONS_PANDEMONIUM_LORD, 1, 41, 10)
+    local state = ctx:get(lord, component.PANDEMONIUM_LORD)
+    local health = ctx:get(lord, component.HEALTH)
+    local actor = ctx:get(lord, component.ACTOR)
+    local definition = catalog.get(categories.MONSTERS,
+        monsters.MONS_PANDEMONIUM_LORD)
+    local profile = monster_profile.definition(ctx, lord, definition)
+    local book = monster_spellbook.for_actor(ctx, lord)
+
+    harness.truthy(state, "Pan lord has no saved generated profile")
+    harness.equal(health.max, 103, "source three HP dice")
+    harness.equal(monster_stats.base_hit_dice(ctx, lord, definition),
+        12, "source two HD dice")
+    harness.truthy(actor.speed >= 8, "generated speed")
+    harness.truthy(profile.ac >= 0 and profile.ev >= 0,
+        "generated defenses")
+    harness.truthy(profile.attacks[1].damage >= 22,
+        "generated melee damage")
+    harness.equal(flight.active(ctx, lord), state.flies,
+        "the lord's rolled flight controls terrain access")
+    harness.equal(state.resistances[traits.fire], -1,
+        "source fire vulnerability roll is actor-owned")
+    harness.equal(state.resistances[traits.electricity], 0,
+        "source electricity resistance roll is actor-owned")
+    harness.equal(profile.attacks[1].type_id, state.attack_type_id,
+        "rolled attack type reaches combat")
+    harness.equal(profile.attacks[1].flavour_id, state.flavour_id,
+        "rolled attack flavour reaches combat")
+    harness.equal(state.brand_id, brands.VENOM,
+        "source special attack selects its weighted brand")
+    harness.equal(state.ring_id, traits.no_ring,
+        "unrolled cloud ring remains explicitly absent")
+    harness.truthy(book and #book.slots > 0,
+        "generated caster has saved spells")
+end
+
 -- Exercise factory provenance, source overrides, habitat writes, and atomic
 -- failure in one world.
 function test.run(ctx)
@@ -856,6 +902,7 @@ function test.run(ctx)
     merged_slime_is_one_actor(ctx)
     unique_claim_is_atomic(ctx)
     authored_spawn_roles(ctx)
+    pandemonium_lord_owns_profile(ctx)
 end
 
 return test

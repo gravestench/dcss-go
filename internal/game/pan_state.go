@@ -14,10 +14,12 @@ func clonePanState(source *save.PanStateRecord) *save.PanStateRecord {
 	}
 
 	copy := *source
+
 	copy.VaultIDs = append([]string(nil), source.VaultIDs...)
 
 	if source.Return != nil {
 		origin := *source.Return
+
 		copy.Return = &origin
 	}
 
@@ -68,4 +70,34 @@ func (g *Game) acceptPanState(source *save.PanStateRecord) error {
 	g.panState = clonePanState(source)
 
 	return nil
+}
+
+// luaPanState passes durable history to Lua command policy without sharing a
+// mutable Go slice. Lua decides the next portal operation from this snapshot.
+func luaPanState(source *save.PanStateRecord) map[string]any {
+	if source == nil {
+		return nil
+	}
+
+	ids := make([]any, 0, len(source.VaultIDs))
+
+	for _, id := range source.VaultIDs {
+		ids = append(ids, id)
+	}
+
+	state := map[string]any{
+		"regions_seen":    source.RegionsSeen,
+		"vault_ids":       ids,
+		"active_level_id": source.ActiveLevelID,
+	}
+
+	if source.Return != nil {
+		state["return_site"] = map[string]any{
+			"level_id": source.Return.LevelID,
+			"x":        source.Return.X,
+			"y":        source.Return.Y,
+		}
+	}
+
+	return state
 }

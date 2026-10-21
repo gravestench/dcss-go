@@ -8,6 +8,7 @@ local effects = require("constants.vault_effects")
 local trap_placement = require("policy.traps.placement")
 local glyphs = require("constants.vault_glyphs")
 local fill = require("constants.vault_border_fill")
+local terrain = require("constants.terrain")
 
 features.from_source_glyph = {
     ["#"] = "DNGN_ROCK_WALL",
@@ -51,6 +52,10 @@ features.vault_terrain = {
     DNGN_STONE_STAIRS_UP_II = "DNGN_STONE_STAIRS_UP_I",
     DNGN_STONE_STAIRS_UP_III = "DNGN_STONE_STAIRS_UP_I",
     DNGN_STONE_STAIRS_DOWN_I = "DNGN_STONE_STAIRS_DOWN_I",
+    [terrain.DNGN_ENTER_PANDEMONIUM] = terrain.DNGN_ENTER_PANDEMONIUM,
+    [terrain.DNGN_TRANSIT_PANDEMONIUM] = terrain.DNGN_TRANSIT_PANDEMONIUM,
+    [terrain.DNGN_EXIT_PANDEMONIUM] = terrain.DNGN_EXIT_PANDEMONIUM,
+    [terrain.DNGN_EXIT_THROUGH_ABYSS] = terrain.DNGN_EXIT_THROUGH_ABYSS,
     DNGN_STONE_STAIRS_DOWN_II = "DNGN_STONE_STAIRS_DOWN_I",
     DNGN_STONE_STAIRS_DOWN_III = "DNGN_STONE_STAIRS_DOWN_I",
     DNGN_ESCAPE_HATCH_UP = "DNGN_STONE_STAIRS_UP_I",
@@ -87,6 +92,12 @@ features.named_vault_terrain = {
     closed_door = "DNGN_CLOSED_DOOR",
     closed_clear_door = "DNGN_CLOSED_CLEAR_DOOR",
     open_door = "DNGN_OPEN_DOOR",
+    -- Pan KFEAT names become live arch cells. Their original source names
+    -- are mapped once here so every authored vault and Lua hook agrees.
+    enter_pandemonium = terrain.DNGN_ENTER_PANDEMONIUM,
+    transit_pandemonium = terrain.DNGN_TRANSIT_PANDEMONIUM,
+    exit_pandemonium = terrain.DNGN_EXIT_PANDEMONIUM,
+    exit_through_abyss = terrain.DNGN_EXIT_THROUGH_ABYSS,
     shallow_water = "DNGN_SHALLOW_WATER",
     deep_water = "DNGN_DEEP_WATER",
     lava = "DNGN_LAVA",

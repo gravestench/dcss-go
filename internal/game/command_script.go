@@ -20,18 +20,29 @@ func (g *Game) prepareScriptCommand(
 		}
 	}()
 
+	activePanIDs := []any{}
+
+	if g.panState != nil &&
+		g.panState.ActiveLevelID == position.LevelID {
+		for _, id := range g.levels[position.LevelID].VaultIDs() {
+			activePanIDs = append(activePanIDs, id)
+		}
+	}
+
 	decision, err := g.scripts.Policy("command.prepare", map[string]any{
-		"kind":               int(command.Kind),
-		"dx":                 command.DX,
-		"dy":                 command.DY,
-		"item_id":            command.ItemID,
-		"quantity":           command.Quantity,
-		"spell_id":           command.SpellID,
-		"ability_id":         command.AbilityID,
-		"target_id":          command.TargetID,
-		"cancelled":          command.Cancelled,
-		"forced":             command.Forced,
-		"pending_vault_item": g.pendingVaultItemAt(position),
+		"pan_state":             luaPanState(g.panState),
+		"pan_current_vault_ids": activePanIDs,
+		"kind":                  int(command.Kind),
+		"dx":                    command.DX,
+		"dy":                    command.DY,
+		"item_id":               command.ItemID,
+		"quantity":              command.Quantity,
+		"spell_id":              command.SpellID,
+		"ability_id":            command.AbilityID,
+		"target_id":             command.TargetID,
+		"cancelled":             command.Cancelled,
+		"forced":                command.Forced,
+		"pending_vault_item":    g.pendingVaultItemAt(position),
 	})
 
 	if err != nil {
@@ -93,6 +104,37 @@ func (g *Game) prepareScriptCommand(
 		}
 
 		return freeCommand(g.noTimeEvent(event)), nil
+	}
+
+	if portal, found := decision["portal"]; found {
+		if decision["intent"] != nil ||
+			decision["selection"] != nil ||
+			decision["message"] != nil ||
+			decision["confirmation"] != nil {
+			return preparedCommand{}, fmt.Errorf("Lua portal conflicts with another decision")
+		}
+
+		values, okay := portal.(map[string]any)
+
+		if !okay {
+			return preparedCommand{}, fmt.Errorf("Lua portal is not a record")
+		}
+
+		cost, err := decisionInteger(decision, "cost")
+
+		if err != nil {
+			return preparedCommand{}, err
+		}
+
+		if cost <= 0 {
+			return preparedCommand{}, fmt.Errorf("Lua portal has invalid action cost")
+		}
+
+		prepared := spendingCommand(ecs.Intent{Kind: ecs.IntentWait}, Aut(cost))
+
+		prepared.portal = values
+
+		return prepared, nil
 	}
 
 	if _, found := decision["intent"]; !found {

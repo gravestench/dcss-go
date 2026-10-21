@@ -7,7 +7,9 @@ import (
 	"crawl/internal/save"
 )
 
-func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error {
+func (g *Game) restoreLevels(
+	records []save.LevelRecord, currentAut int64, panState *save.PanStateRecord,
+) error {
 	for _, record := range records {
 		if _, duplicate := g.levels[record.ID]; duplicate {
 			return fmt.Errorf("duplicate level %d", record.ID)
@@ -98,14 +100,16 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 
 		for _, savedLink := range record.Stairs {
 			if linkErr := level.AddStairLink(StairLink{
-				X:              savedLink.X,
-				Y:              savedLink.Y,
-				ToLevelID:      savedLink.ToLevelID,
-				ToX:            savedLink.ToX,
-				ToY:            savedLink.ToY,
-				Pending:        savedLink.Pending,
-				Exit:           savedLink.Exit,
-				Unavailable:    savedLink.Unavailable,
+				X:         savedLink.X,
+				Y:         savedLink.Y,
+				ToLevelID: savedLink.ToLevelID,
+				ToX:       savedLink.ToX,
+				ToY:       savedLink.ToY,
+
+				Pending:     savedLink.Pending,
+				Exit:        savedLink.Exit,
+				Unavailable: savedLink.Unavailable,
+
 				TargetBranchID: savedLink.TargetBranchID,
 				SourceFeature:  savedLink.SourceFeature,
 			}); linkErr != nil {
@@ -134,6 +138,7 @@ func (g *Game) restoreLevels(records []save.LevelRecord, currentAut int64) error
 		"scenario_id":     g.scenarioID,
 		"levels":          scenarioLevelPolicyRecords(g.levels),
 		"branch_schedule": branchSchedulePolicyInput(g.branchSchedule),
+		"pan_state":       luaPanState(panState),
 	}); err != nil {
 		return err
 	}

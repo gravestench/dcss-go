@@ -6,6 +6,7 @@ local branch_schedule = require("policy.generation.branch_schedule")
 local branch_levels = require("policy.generation.branch_levels")
 local availability = require("policy.generation.floor_availability")
 local temple_catalog = require("policy.generation.temple.catalog")
+local pan_levels = require("policy.save.pan_levels")
 
 local up_features = {}
 local down_features = {}
@@ -131,8 +132,9 @@ end
 -- Only floors the player has reached exist in a fresh generated save. Every
 -- earlier stair is paired; the current frontier alone may point to a floor
 -- that will be built on first entry. Fully built saves remain valid too.
-function generated.validate(levels, by_id, chosen_schedule)
+function generated.validate(levels, by_id, chosen_schedule, pan_state)
     branch_schedule.validate(chosen_schedule)
+    pan_levels.validate(levels, pan_state)
     local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
     local floors = 0
 
@@ -246,6 +248,7 @@ function generated.validate(levels, by_id, chosen_schedule)
     -- graph rather than counting them as part of the Dungeon prefix.
     for _, level in ipairs(levels) do
         if level.branch_id ~= branches.BRANCH_DUNGEON and
+            level.branch_id ~= branches.BRANCH_PANDEMONIUM and
             level.id ~= abyss.level_id then
             local depth = level.local_depth
             local scheduled = chosen_schedule.entries[level.branch_id]

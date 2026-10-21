@@ -6,6 +6,10 @@ local pan = require("policy.generation.pan.region")
 local features = require("content.terrain_features")
 local transporters = require("policy.generation.transporters")
 local item_ids = require("ids.items")
+local component = require("constants.component")
+local runes = require("policy.character.runes")
+local nearest = require("policy.generation.nearest")
+local terrain = require("constants.terrain")
 
 local module = {}
 
@@ -21,6 +25,20 @@ local function decode_level(ctx, level)
     end
 
     level.rows = nil
+end
+
+-- DCSS rewrites every upward stone stair and escape hatch on a Pan
+-- level into a transit portal after vault terrain is resolved. The source
+-- DES still owns the stair glyph; this branch pass gives it Pan's travel
+-- meaning and prevents an unlinked ordinary stair from entering the save.
+local function fixup_pan_stairs(level)
+    for _, row in ipairs(level.cells) do
+        for x, feature in ipairs(row) do
+            if feature == terrain.DNGN_STONE_STAIRS_UP_I then
+                row[x] = terrain.DNGN_TRANSIT_PANDEMONIUM
+            end
+        end
+    end
 end
 
 -- Fixed fixtures keep their authored maps for engine tests. Ordinary play
@@ -100,9 +118,38 @@ end
 -- the same terrain decoder as first-entry branch floors so the generic Go
 -- installer never has to interpret source DES glyphs or Pan map IDs.
 function module.pan(ctx, input)
+    -- Live portal travel supplies only saved region history. Read character
+    -- identity and collected runes from the player ECS component so a rune
+    -- picked up on this region changes the next region's source hooks.
+    if input.collected_runes == nil then
+        local player = ctx:player()
+        local identity = ctx:get(player, component.PLAYER)
+        local progress = ctx:get(player, component.PLAYER_RUNES)
+
+        if not identity or not progress then
+            error("Pan generation needs player identity and rune progress")
+        end
+
+        input.species_id = identity.species_id
+        input.player_name = identity.name
+        input.collected_runes = progress.collected
+        input.pan_rune_count = runes.pan_count(ctx, player)
+    end
+
     local level = pan.generate(ctx, input)
 
     decode_level(ctx, level)
+    fixup_pan_stairs(level)
+
+    -- KFEAT and BORDER_FILL records can replace a raw floor glyph after
+    -- carving. Select the arrival from the final typed terrain grid.
+    local entry = nearest.open_feature(level.cells, {
+        x = level.entry_x,
+        y = level.entry_y,
+    }, terrain.DNGN_FLOOR)
+
+    level.entry_x = entry.x
+    level.entry_y = entry.y
 
     return {
         level = level,

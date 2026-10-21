@@ -1,5 +1,6 @@
 local monsters = require("ids.monsters")
 local component = require("constants.component")
+local weapon_brands = require("constants.weapon_brands")
 local catalog = require("policy.catalog")
 local equipment = require("policy.combat.equipment")
 local defense = require("policy.combat.monster_defense")
@@ -232,9 +233,12 @@ function summon_melee.attack(ctx, summon, target)
 
             local illusion = ctx:get(summon,
                 component.PLAYER_ILLUSION)
+            local lord = ctx:get(summon, component.PANDEMONIUM_LORD)
+            local lord_brand = lord and
+                lord.brand_id ~= weapon_brands.NORMAL and lord.brand_id
             local brand_id = weapon and weapon.brand or
                 strike.type_id == "AT_HIT" and illusion and
-                illusion.brand_id
+                illusion.brand_id or lord_brand
 
             if outcome.kind == "hit" and brand_id then
                 local hit = {

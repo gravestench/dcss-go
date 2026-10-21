@@ -5,6 +5,9 @@ local catalog = require("policy.generation.vaults.catalog")
 local harness = require("tests.harness")
 local region = require("policy.generation.pan.region")
 local scenario = require("policy.generation.scenario")
+local component = require("constants.component")
+local rune_ids = require("constants.runes")
+local species = require("ids.species")
 
 local test = {}
 
@@ -113,6 +116,60 @@ local function check_generated_region()
         generated.initial_monsters <= 24, "Pan uses three eight-sided dice")
 end
 
+-- Live generation reads the saved ECS rune set rather than trusting a
+-- duplicate Go-side rune count. This is the call shape portal travel uses.
+local function check_live_player_facts()
+    local source = context()
+    local player = 7
+    local progress = {
+        collected = {
+            [rune_ids.DEMONIC] = true,
+        },
+    }
+
+    function source:player()
+        return player
+    end
+
+    function source:get(entity, schema)
+        harness.equal(entity, player, "Pan reads the live player")
+
+        if schema == component.PLAYER then
+            return {
+                species_id = species.SP_HUMAN,
+                name = "Pan Tester",
+            }
+        end
+
+        if schema == component.PLAYER_RUNES then
+            return progress
+        end
+
+        return nil
+    end
+
+    local result = scenario.pan(source, {
+        levels_seen = 1,
+        prior_vault_ids = {},
+    })
+
+    harness.truthy(result.level.vault_id,
+        "Pan generation accepts live character facts")
+    harness.equal(result.level.id, region.level_id(1),
+        "a later live region uses its own storage ID")
+end
+
+-- Staging a second region beside the still-live first one requires a
+-- distinct storage ID. The old region is retired only after population and
+-- travel succeed, so generation cannot overwrite its level in place.
+local function check_region_ids()
+    local first = region.level_id(0)
+    local second = region.level_id(1)
+
+    harness.truthy(first ~= second,
+        "successive Pan regions have distinct storage IDs")
+end
+
 function test.run()
     harness.truthy(branches.BRANCH_PANDEMONIUM, "Pan branch exists")
     catalog.load()
@@ -120,6 +177,8 @@ function test.run()
     check_encompassing_primary()
     check_lord_primaries()
     check_generated_region()
+    check_live_player_facts()
+    check_region_ids()
 end
 
 return test

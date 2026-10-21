@@ -60,4 +60,37 @@ function nearest.open_floor(rows, start, exclude, depth)
     error(string.format("Dungeon:%d has no reachable open floor", depth))
 end
 
+-- Feature overlays run after glyph carving. If they turn a proposed entry
+-- into a wall, find the closest final floor without treating raw glyphs as
+-- authoritative terrain. Equal distances use row then column order.
+function nearest.open_feature(cells, start, feature)
+    local best
+    local best_distance
+
+    for row_index, row in ipairs(cells) do
+        for column_index, actual in ipairs(row) do
+            if actual == feature then
+                local x = column_index - 1
+                local y = row_index - 1
+                local distance = math.abs(x - start.x) +
+                    math.abs(y - start.y)
+
+                if best_distance == nil or distance < best_distance then
+                    best = {
+                        x = x,
+                        y = y,
+                    }
+                    best_distance = distance
+                end
+            end
+        end
+    end
+
+    if not best then
+        error("generated level has no open floor after feature placement")
+    end
+
+    return best
+end
+
 return nearest

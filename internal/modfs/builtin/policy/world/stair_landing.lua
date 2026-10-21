@@ -58,4 +58,21 @@ function landing.find(ctx, level_id, start_x, start_y)
     error("stair destination has no free connected landing")
 end
 
+-- Population can put an authored monster on a region's preferred entry.
+-- Reuse the same connected landing search before the portal publishes that
+-- region, so the player never materializes on an occupied grid cell.
+function landing.run(ctx, input)
+    local x, y = landing.find(ctx, input.level_id, input.x, input.y)
+
+    return {
+        x = x,
+        y = y,
+    }
+end
+
+register.policy({
+    id = "world.find_safe_landing",
+    run = landing.run,
+})
+
 return landing

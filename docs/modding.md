@@ -2097,8 +2097,9 @@ then completes connected stairs. The two `layout_pan_divisions_*` maps
 show this path: they request weighted helpers by `SUBVAULT` tag, while
 each helper lives in its own `vaults/builder/*.des` file. Source cells
 outside a helper's tagged region stay with the parent, even when their
-rectangles overlap. This Pan family is executable through the layout
-catalog; the Pan game mode still needs its branch generation flow.
+rectangles overlap. The layout catalog can select these two ordinary
+Pandemonium layouts; the Pan region generator also selects its primary
+Pan map and optional supporting maps from the effective `.des` catalog.
 
 The run method receives `api.ctx`, `api.branch`, `api.depth`, and
 `api.absolute_depth`. Build the 80×70 grid with
@@ -3042,6 +3043,30 @@ generator supplies saved player rune facts. The count includes the demonic
 rune and the four named lord runes. The five fixed rune/lure maps also read
 `api:map_tag()`; their controller request tag decides whether O contains
 the real demonic rune or a decoy. Do not infer that choice from file order.
+
+`policy/generation/pan/region.lua` chooses the next region from the
+effective Pan catalog. It uses the saved visit count and prior vault IDs,
+not directory order, to make unique maps eligible or ineligible. The active
+region is one level at Pan:1; a transit retires that level and its entities,
+then installs a freshly generated one. `policy/world/pan/travel.lua` decides
+what each source portal does. The game records the original entry cell once,
+so a normal exit can find a free landing near that cell. An Abyss exit also
+records the original return site for later Abyss escape. The saved Pan state
+keeps the visit count, retired map IDs, active level ID, and return site;
+restoring it does not regenerate the map or reroll its actors. After DES
+terrain and KFEAT choices are resolved, the Pan generator converts source
+upstairs and escape hatches into transit portals, matching the original
+branch's final terrain pass. Mod maps can therefore use the original stair
+glyphs without creating ordinary stair links on Pan:1.
+
+For a new Pan map, add `vaults/pan/<name>.des` with the appropriate `DEPTH`,
+`WEIGHT`, and source group tags. If the map needs calculated directives, add
+`policy/generation/vaults/pan/<name>.lua` and name its method in the `.des`
+file with `: vault.run("method")`. A same-path file in a later mod layer
+replaces either file independently. The hook receives the generation `api`,
+not a live game `ctx`; persistent behavior belongs in a saved component and
+a Lua system or policy. New maps join their weighted group through catalog
+discovery, without an engine registry edit.
 
 Generation hooks can attach an `ENTRY_MESSAGE` record for a lord realm or
 rune site. The record is level data, so a future entry or a restored game

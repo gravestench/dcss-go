@@ -23,6 +23,7 @@ local monster_profile = require("policy.combat.monster_profile")
 local monster_roll = require("policy.combat.monster_roll")
 local roll = require("policy.combat.roll")
 local attack_types = require("constants.monster_attack_types")
+local weapon_brands = require("constants.weapon_brands")
 local stab = require("policy.combat.stab")
 local vampire = require("policy.character.vampire")
 local auxiliary_attacks = require("constants.auxiliary_attacks")
@@ -418,8 +419,11 @@ function actions.monster(ctx, attacker)
     ctx:emit("combat", message)
 
     local illusion = ctx:get(attacker, component.PLAYER_ILLUSION)
+    local lord = ctx:get(attacker, component.PANDEMONIUM_LORD)
+    local lord_brand = lord and lord.brand_id ~= weapon_brands.NORMAL and
+        lord.brand_id
     local brand_id = weapon and weapon.brand or
-        illusion and illusion.brand_id
+        illusion and illusion.brand_id or lord_brand
 
     if outcome.kind == "hit" and brand_id and
         (health.current > 0 or brands.after_death(brand_id)) then
@@ -568,8 +572,12 @@ function actions.monster_target(ctx, attacker, target)
     end
 
     local illusion = ctx:get(attacker, component.PLAYER_ILLUSION)
+    local lord = ctx:get(attacker, component.PANDEMONIUM_LORD)
+    local lord_brand = lord and lord.brand_id ~= weapon_brands.NORMAL and
+        lord.brand_id
     local brand_id = weapon and weapon.brand or
-        attack.type_id == "AT_HIT" and illusion and illusion.brand_id
+        attack.type_id == attack_types.HIT and illusion and
+        illusion.brand_id or lord_brand
 
     if outcome.kind == "hit" and brand_id then
         local hit = {

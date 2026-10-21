@@ -157,6 +157,17 @@ func TestZotHallDisabledMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/zot_hall_disabled_test.lua")
 }
 
+// A sparse Pan layer adds a primary and overrides one source hook by path.
+func TestPanVaultMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/pan-vault-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/pan_vault_mod_test.lua")
+}
+
 // A sparse layer extends Spider entries, ordinary maps, and jumping helpers.
 func TestSpiderVaultMod(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/spider-vault-mod")

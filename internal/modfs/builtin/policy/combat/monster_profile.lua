@@ -1,6 +1,7 @@
 -- Most monsters use immutable catalog definitions. A player illusion is the
 -- exception: the saved actor owns a ghost snapshot made when Mara cast.
 local component = require("constants.component")
+local monster_flags = require("constants.monster_flags")
 
 local constructs = require("constants.monster_construct_components")
 
@@ -11,6 +12,60 @@ local profile = {}
 -- Project saved per-actor values into the same read shape as a catalog
 -- monster. Consumers use their ordinary combat rules after this one read.
 function profile.definition(ctx, entity, definition)
+    local lord = ctx:get(entity, component.PANDEMONIUM_LORD)
+
+    if lord then
+        local generated = {}
+
+        for key, value in pairs(definition) do
+            generated[key] = value
+        end
+
+        generated.speed = lord.speed
+        generated.ac = lord.ac
+        generated.ev = lord.ev
+        generated.flags = {}
+
+        for _, flag in ipairs(definition.flags or {}) do
+            generated.flags[#generated.flags + 1] = flag
+        end
+
+        if lord.flies then
+            generated.flags[#generated.flags + 1] = monster_flags.FLIES
+        end
+
+        generated.resistances = {}
+
+        for _, resistance in ipairs(definition.resistances or {}) do
+            generated.resistances[#generated.resistances + 1] = resistance
+        end
+
+        local resistance_ids = {}
+
+        for id in pairs(lord.resistances) do
+            resistance_ids[#resistance_ids + 1] = id
+        end
+
+        table.sort(resistance_ids)
+
+        for _, id in ipairs(resistance_ids) do
+            generated.resistances[#generated.resistances + 1] = {
+                id = id,
+                level = lord.resistances[id],
+            }
+        end
+
+        generated.attacks = {
+            {
+                type_id = lord.attack_type_id,
+                flavour_id = lord.flavour_id,
+                damage = lord.damage,
+            },
+        }
+
+        definition = generated
+    end
+
     definition = resistance.project(ctx, entity, definition)
 
     local ghost = ctx:get(entity, component.PLAYER_ILLUSION)

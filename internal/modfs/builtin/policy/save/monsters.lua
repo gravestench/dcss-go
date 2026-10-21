@@ -17,6 +17,9 @@ local tactical = require("constants.monster_tactical")
 local band_members = require("policy.population.band_members")
 local branches = require("ids.branches")
 local ai_validation = require("policy.ai.validation")
+local monster_profile = require("policy.combat.monster_profile")
+local monster_spells = require("policy.combat.monster_spells")
+local pan_traits = require("constants.pan_lord_traits")
 
 -- Banished monsters have different location requirements from level residents.
 local function validate_banishment(ctx, entity, position)
@@ -148,6 +151,93 @@ local function validate_summon_cast_state(ctx, entity)
     end
 end
 
+-- Source ghost demons own their rolled profile. Compare the saved actor to
+-- that profile and to the source bounds; a catalog HP/speed check would reject
+-- legitimate lords and an unvalidated component could forge an impossible one.
+local function validate_pan_lord(ctx, entity, actor, health, definition, overrides)
+    local lord = ctx:get(entity, component.PANDEMONIUM_LORD)
+
+    if not lord then
+        return false
+    end
+
+    local lowest_hp = lord.spellcaster and 103 or 154
+    local highest_hp = lord.spellcaster and 250 or 375
+    local lowest_hd = lord.spellcaster and 12 or 17
+    local highest_hd = lord.spellcaster and 30 or 35
+    local lowest_speed = lord.spellcaster and 10 or 13
+    local highest_speed = lord.spellcaster and 18 or 19
+    local lowest_damage = lord.spellcaster and 22 or 32
+    local highest_damage = lord.spellcaster and 60 or 70
+
+    if actor.kind_id ~= monsters.MONS_PANDEMONIUM_LORD or
+        lord.hp < lowest_hp or lord.hp > highest_hp or
+        lord.hd < lowest_hd or lord.hd > highest_hd or
+        lord.speed < lowest_speed or lord.speed > highest_speed or
+        lord.damage < lowest_damage or lord.damage > highest_damage or
+        lord.ac < 0 or lord.ev < 0 or
+        #lord.spell_ids ~= #lord.frequencies or
+        #lord.spell_ids > 5 or
+        (not overrides or overrides.fixed_hp == 0) and
+        health.max ~= lord.hp then
+        error("Pan lord " .. ctx:id(entity) ..
+            " has an invalid generated profile")
+    end
+
+    local resistance_bounds = {
+        [pan_traits.fire] = { minimum = -1, maximum = 3 },
+        [pan_traits.cold] = { minimum = -1, maximum = 3 },
+        [pan_traits.electricity] = { minimum = 0, maximum = 3 },
+    }
+    local resistance_count = 0
+
+    for id, level in pairs(lord.resistances) do
+        local bounds = resistance_bounds[id]
+
+        if not bounds or level < bounds.minimum or
+            level > bounds.maximum then
+            error("Pan lord " .. ctx:id(entity) ..
+                " has invalid generated resistance")
+        end
+
+        resistance_count = resistance_count + 1
+    end
+
+    if resistance_count ~= 3 or
+        not pan_traits.valid_attack_types[lord.attack_type_id] or
+        not pan_traits.valid_flavours[lord.flavour_id] or
+        not pan_traits.valid_brands[lord.brand_id] or
+        not pan_traits.valid_rings[lord.ring_id] then
+        error("Pan lord " .. ctx:id(entity) ..
+            " has invalid generated melee or cloud ring")
+    end
+
+    local total = 0
+
+    for index, id in ipairs(lord.spell_ids) do
+        local frequency = lord.frequencies[index]
+        local ok, effect = pcall(monster_spells.effect, id)
+
+        if not ok or not effect or
+            type(effect.plan) ~= "function" or
+            type(effect.resolve) ~= "function" or
+            frequency < 1 or frequency > 100 then
+            error("Pan lord " .. ctx:id(entity) ..
+                " has an invalid generated spell")
+        end
+
+        total = total + frequency
+    end
+
+    if total > 200 or not valid_speed(ctx, entity,
+        monster_profile.definition(ctx, entity, definition), actor) then
+        error("Pan lord " .. ctx:id(entity) ..
+            " has invalid speed or spell frequency")
+    end
+
+    return true
+end
+
 -- Vault actors are validated against authored origin overrides instead of roster limits.
 local function validate_vault_monster(ctx, entity, actor, health, position,
     ai, current_aut)
@@ -159,11 +249,17 @@ local function validate_vault_monster(ctx, entity, actor, health, position,
     local fixed_hp = overrides and overrides.fixed_hp or 0
     local blob = ctx:get(entity, component.SLIME_BLOB)
     local blob_size = blob and blob.size or 1
+    local generated = ctx:get(entity, component.PANDEMONIUM_LORD)
     local invalid_health = fixed_hp > 0 and
         health.max ~= fixed_hp * blob_size or
-        fixed_hp == 0 and
+        fixed_hp == 0 and not generated and
         (health.max < profile.minimum * blob_size or
             health.max > profile.maximum * blob_size)
+
+    if generated then
+        validate_pan_lord(ctx, entity, actor, health, definition, overrides)
+        definition = monster_profile.definition(ctx, entity, definition)
+    end
 
     if invalid_health then
         error("vault monster " .. ctx:id(entity) .. " has impossible HP")
@@ -462,7 +558,8 @@ function module.run(ctx, input)
         elseif ctx:get(entity, doom_howl.ARRIVAL) then
             validate_doom_arrival(ctx, entity, actor, health,
                 position, ai, input.current_aut)
-        elseif ctx:get(entity, component.VAULT_ORIGIN) or
+        elseif ctx:get(entity, component.PANDEMONIUM_LORD) or
+            ctx:get(entity, component.VAULT_ORIGIN) or
             ctx:get(entity, component.WORLD_VAULT_SPAWN) then
             validate_vault_monster(ctx, entity, actor, health,
                 position, ai, input.current_aut)

@@ -10,6 +10,7 @@ local branches = require("ids.branches")
 local runes = require("policy.character.runes")
 local endgame = require("policy.character.endgame")
 local phases = require("constants.endgame")
+local pan_travel = require("policy.world.pan.travel")
 
 -- Rooted movement is rejected before checking the destination cell.
 local function rooted(ctx)
@@ -90,7 +91,8 @@ function navigation.move(ctx, position, dx, dy)
 end
 
 -- Stair travel checks the current cell's feature before switching levels.
-function navigation.stairs(ctx, position, downstairs, actor, forced)
+function navigation.stairs(ctx, position, downstairs, actor, forced,
+    pan_state, pan_current_vault_ids)
     if rooted(ctx) then
         return {
             message = "Your roots keep you in place.",
@@ -102,6 +104,12 @@ function navigation.stairs(ctx, position, downstairs, actor, forced)
     local missing = downstairs and "There are no stairs down here." or
         "There are no stairs up here."
     local cell = ctx:cell(position.level_id, position.x, position.y)
+    local portal = pan_travel.prepare(ctx, position, downstairs,
+        pan_state, pan_current_vault_ids)
+
+    if portal then
+        return portal
+    end
 
     if cell == terrain.DNGN_TRANSPORTER then
         local destination, refusal = transporters.prepare(ctx, position)

@@ -1,0 +1,11 @@
+# One sparse mod map joins the mandatory Pan primary pool by path.
+NAME: modded_pan_alcove
+DEPTH: Pan
+WEIGHT: 7
+ORIENT: float
+: vault.run("configure")
+MAP
+.....
+..a..
+.....
+ENDMAP

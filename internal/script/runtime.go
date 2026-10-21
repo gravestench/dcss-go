@@ -214,6 +214,14 @@ func newRuntime(
 	return runtime, nil
 }
 
+// RebindServices points a restored runtime at the stable Game object that
+// owns it. The restored ECS stores stay the same; only callbacks that
+// captured the temporary restore object need replacement.
+func (r *Runtime) RebindServices(services Services) {
+	r.services = services
+	r.hostComponents = services.HostComponents
+}
+
 func (r *Runtime) Close() {
 	if r != nil && r.state != nil {
 		r.state.Close()
