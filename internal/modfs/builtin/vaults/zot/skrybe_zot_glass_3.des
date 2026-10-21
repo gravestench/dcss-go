@@ -1,0 +1,30 @@
+# skrybe_zot_glass_3 keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   skrybe_zot_glass_3
+TAGS:   transparent decor no_pool_fixup
+DEPTH:  Zot
+SUBST:  l : Wwl
+SUBST:  ( : ([{.
+KMASK:  Wwl = no_monster_gen
+KPROP:  l = no_cloud_gen
+: vault.run("shared.coloured_glass")
+# Source Lua: : coloured_glass(_G)
+MAP
+xxxxxx@@@xxxxxx
+xlllll...lllllx
+xlrrrl...looolx
+xlrrll...lloolx
+xlrll.....llolx
+xlll.......lllx
+@.............@
+@......(......@
+@.............@
+xlll.......lllx
+xlyll.....llglx
+xlyyll...llgglx
+xlyyyl...lggglx
+xlllll...lllllx
+xxxxxx@@@xxxxxx
+ENDMAP

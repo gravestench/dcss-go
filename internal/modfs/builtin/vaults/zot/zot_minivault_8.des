@@ -1,0 +1,31 @@
+# zot_minivault_8 keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:    zot_minivault_8
+TAGS:    transparent
+WEIGHT:  5
+DEPTH:   Zot, !Zot:$
+SUBST:   > = }]}
+MAP
+ xxxxxxxxx
+xxxx...xxxx
+xxx0...0xxx
+xxx..>..xxx
+xxx0...0xxx
+xxxx...xxxx
+xxxx0.0xxxx
+x00x...x00x
+x..x...x..x
+@..x0.0x..@
+x..x...x..x
+x..x...x..x
+x..x0.0x..x
+x.0x...x0.x
+x.0x...x0.x
+x..x0.0x..x
+x..x...x..x
+x.........x
+xx.......xx
+ xxxxxxxxx
+ENDMAP

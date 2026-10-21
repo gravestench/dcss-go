@@ -1,0 +1,10 @@
+# A same-path mod can tune the source dummy's chance without copying the
+# bundled family or changing the ordinary-vault selector.
+NAME: dummy_balancer_zot
+DEPTH: Zot:$
+TAGS: dummy
+ORIENT: float
+WEIGHT: 1
+MAP
+x
+ENDMAP

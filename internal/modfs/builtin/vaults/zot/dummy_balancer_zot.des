@@ -1,0 +1,12 @@
+# dummy_balancer_zot keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME: dummy_balancer_zot
+DEPTH: Zot:$
+TAGS: dummy
+ORIENT: float
+WEIGHT: 60
+MAP
+x
+ENDMAP

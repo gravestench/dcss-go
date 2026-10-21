@@ -1,0 +1,38 @@
+# lemuel_firehouse keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   lemuel_firehouse
+DEPTH:  Zot, !Zot:$
+ORIENT: centre
+MONS:   orb of fire
+MONS:   fire elemental
+MONS:   red draconian
+MONS:   any nonbase red draconian
+MONS:   efreet
+SUBST:  1=122, 3=322
+SUBST:  4 = 2:20 4:5 3:15 .:20
+MAP
+          lllll
+       lllllllllll
+     lllll.....lllll
+    llll....x....llll
+   llll....xxx....llll
+   llll...xx}xx...llll
+  llll...xx]2)xx...llll
+  llll..xx2...2xx..llll
+ llll..xx...5...xx..llll
+ llll..x...2.2...x..llll
+llll...x.2xx+xx2.x...llll
+llll...x.xx444xx.x...llll
+llll...x.x44444x.x...llll
+ llll..x.x44F44x.x..llll
+ llll..x.x44444x.x..llll
+  llll.x.xx444xx.x.llll
+  llll.x.1x...x1.x.llll
+   llllxxxx+++xxxxllll
+    llll333...333llll
+     lllll.....lllll
+       lllll.lllll
+          ll@ll
+ENDMAP

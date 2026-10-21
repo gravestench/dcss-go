@@ -1,0 +1,50 @@
+# nicolae_zot_draconian_monastery keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME: nicolae_zot_draconian_monastery
+DEPTH: Zot, !Zot:$
+ORIENT: float
+TAGS: no_trap_gen no_monster_gen no_item_gen
+MONS: draconian monk / base draconian w:15, patrolling draconian stormcaller, patrolling draconian knight
+MONS: patrolling draconian scorcher
+SHUFFLE: ]}), rybgmq, DZF
+MARKER: + = lua:restrict_door()
+# The choice of altar might matter more once monster gods are better implemented.
+# Till then, it's just a style thing.
+KFEAT: _ = altar_xom / altar_lugonu / altar_zin / altar_the_shining_one / \
+           altar_makhleb / altar_qazlal / altar_yredelemnul
+SUBST: 1 = 1.
+# What kind of holy books would draconians have?
+KITEM: D = book of the Dragon
+KITEM: Z = randbook numspells:4 spells:ignition&fireball&animate_dead&airstrike title:the_Zealot
+KITEM: F = randbook numspells:4 spells:starburst&fireball&sticky_flame&conjure_flame title:Fire_and_Brimstone
+KITEM: _ = manual of invocations
+COLOUR: r = red, y = yellow, b = blue, g = green, m = magenta, q = cyan, c = magenta
+TILE: r = dngn_transparent_stone_red, y = dngn_transparent_stone_yellow, \
+      b = dngn_transparent_stone_blue, m = dngn_transparent_stone_magenta, \
+      g = dngn_transparent_stone_green, q = dngn_transparent_stone
+KFEAT: rybgmq = n
+MAP
+           @.......................@
+ccccccccccccqqcrrcyycbbcggcmmcqqcrrccccccccccc
+cG............G..G..G..G..G..G..G..ccc.ccc.ccc
+c...ccccc..T.......................cc...c...ccl
+c]2.cccDccccc..1..1..1..1..1..1..1.c..1...1..cl
+c...cc...cc........................cc.......ccll
+cG..+..2....c.cc.cc.cc.cc.cc.cc.cc.cT........clll
+cccccc...cccc.cc.cc.cc.cc.cc.cc.cc.ccc.......clllll
+ccccTc...cccc......................ccc..1..1.c....l
+@qc......1.........................+.........+..3.@
+@mF.4.._......1..1..1..1..1..1..1..+.........+.T..@
+@qc......1.........................+.........+..3.@
+ccccTc...cccc......................ccc..1..1.c....l
+cccccc...cccc.cc.cc.cc.cc.cc.cc.cc.ccc.......clllll
+cG..+..2....c.cc.cc.cc.cc.cc.cc.cc.cT........clll
+c...cc...cc........................cc.......ccll
+c}2.cccZccccc..1..1..1..1..1..1..1.c..1...1..cl
+c...ccccc..T.......................cc...c...ccl
+cG............G..G..G..G..G..G..G..ccc.ccc.ccc
+ccccccccccccqqcrrcyycbbcggcmmcqqcrrccccccccccc
+           @.......................@
+ENDMAP

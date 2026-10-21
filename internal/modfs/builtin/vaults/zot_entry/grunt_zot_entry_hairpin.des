@@ -1,0 +1,31 @@
+# grunt_zot_entry_hairpin is an authored Zot entrance from pinned DCSS.
+# Its geometry and fixed directives stay in DES; any source script
+# decision is called as a named Lua hook at its original position.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   grunt_zot_entry_hairpin
+PLACE: Depths:$
+ORIENT: float
+TAGS:   no_monster_gen zot_entry patrolling
+COLOUR: ABC-_ = magenta
+FTILE:  ABC-_O = floor_hall
+SUBST:  _ = ., A = 2, B = 3, C = c, - = +
+NSUBST: 3 = 1:993 / *:3
+: vault.run("shared.entry_setup")
+# Source Lua: : zot_entry_setup(_G)
+MAP
+      cccccccccccccccccccc
+    ccc..................cc
+   cc...........0.........cc
+  cc.....cccccccccccccc....c
+  c.....cc...........ccc...c
+ cc..1.cc1.CCCCCCCCC..c.1..c
+@+....cc..CC_____A_CC.c...cc
+@+..3.c.3.-____B__O_C0+2.cc
+@+....cc..CC_____A_CC.c...cc
+ cc..1.cc1.CCCCCCCCC..c.1..c
+  c.....cc...........ccc...c
+  cc.....cccccccccccccc....c
+   cc...........0.........cc
+    ccc..................cc
+      cccccccccccccccccccc
+ENDMAP

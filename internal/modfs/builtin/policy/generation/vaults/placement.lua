@@ -71,7 +71,11 @@ end
 
 -- Nonfloating vaults honor their side preference before random-fit attempts.
 local function preferred_origin(vault, map_width, map_height, random)
-    local whole_level = vault.orientation == "encompass"
+    -- An explicit PLACE layout is the source floor, even if its source
+    -- orientation says north rather than encompass. The Hall of Zot uses
+    -- all 80 columns while ordinary fixed vaults still need a margin.
+    local whole_level = vault.orientation == "encompass" or
+        (vault.family == "layout" and #vault.places > 0)
     local maximum_width = whole_level and width or width - 4
     local maximum_height = whole_level and height or height - 4
 

@@ -2037,6 +2037,21 @@ community town hall rolls its house count before the map's substitutions,
 then places that many child houses after the town hall fits. The value is
 discarded with the placement attempt; it is not a persistent game setting.
 
+Zot gives three concrete lookup examples. A Depths-side file under
+`vaults/zot_entry/` calls `vault.run("shared.entry_setup")`, so the resolver
+loads `policy/generation/vaults/zot_entry/shared.lua` and calls its
+`entry_setup(api)` method. `vaults/zot/grunt_zot_stairs_overgrown.des` calls
+`vault.run("configure_trigger")`, which resolves to the same-named module
+under `policy/generation/vaults/zot/`. That generation hook writes typed
+markers; `policy/world/zot_overgrown.lua` and the saved
+`world.zot_overgrown` ECS component own the later LOS and turn behavior.
+The `vault.validate("orb_exit")` declaration in
+`vaults/layout/hall_of_Zot.des` resolves to
+`policy/generation/layouts/hall_of_Zot.lua` and checks the final Orb map.
+These are ordinary relative paths inside the effective mod layer. Replacing
+one module at the same relative path replaces that hook without editing the
+engine or another vault file.
+
 ### Dungeon layouts
 
 The effective `vaults/layout/*.des` files are also a live catalog. All 21
@@ -2053,6 +2068,12 @@ A layout with `PLACE: Vaults:$` (or another branch floor) wins that exact
 floor before the ordinary `DEPTH` weighted draw. It is not part of the
 ordinary layout pool on other floors. This is how an end-level map owns its
 fixed location without a branch-specific Go switch.
+
+Some branches also name one required end layout in their content definition.
+Zot names `hall_of_Zot`, because that map owns the Orb. An added
+`PLACE: Zot:$` layout cannot displace it, and giving the effective Hall
+weight zero closes Zot:5. To change that contract deliberately, override
+the branch content definition as well as supplying the replacement layout.
 
 An authored layout keeps its terrain under `MAP` and needs no run hook.
 The layout owner places it through the ordinary vault operation engine,

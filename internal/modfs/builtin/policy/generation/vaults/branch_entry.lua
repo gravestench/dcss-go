@@ -35,6 +35,12 @@ local source_entries = {
         tag = tags.DEPTHS_ENTRY,
         feature = features.ENTER_DEPTHS,
     },
+    [branches.BRANCH_ZOT] = {
+        family = families.ZOT_ENTRY,
+        tag = tags.ZOT_ENTRY,
+        feature = features.ENTER_ZOT,
+        requires_place = true,
+    },
     [branches.BRANCH_SWAMP] = {
         family = families.SWAMP_ENTRY,
         tag = tags.SWAMP_ENTRY,
@@ -109,10 +115,12 @@ end
 -- inspection API useful to older source-family tests.
 function entry.candidates(branch_id, floor)
     local choices = {}
+    local specification = source_entries[branch_id]
 
     for _, definition in ipairs(definitions(branch_id)) do
         local map_weight = definition.weight
-        local allowed = true
+        local allowed = not specification or
+            not specification.requires_place or #definition.places > 0
 
         if floor then
             map_weight = weights.for_branch(definition, floor.branch_id,

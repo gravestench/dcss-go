@@ -1,0 +1,42 @@
+# grunt_zot_entry_alcove is an authored Zot entrance from pinned DCSS.
+# Its geometry and fixed directives stay in DES; any source script
+# decision is called as a named Lua hook at its original position.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   grunt_zot_entry_alcove
+PLACE: Depths:$
+ORIENT: float
+TAGS:   no_monster_gen zot_entry transparent patrolling
+COLOUR: 29C-_ = magenta
+FTILE:  29C-_O = floor_hall
+SUBST:  _ = ., C = c
+NSUBST: @ = 1:@ / *:.
+: vault.run("shared.entry_setup")
+# Source Lua: : zot_entry_setup(_G)
+MAP
+     ccccccc
+    ccCCCCCcc
+    cCC_9_CCc
+    cC_____Cc
+    cC2_O_2Cc
+    cC__2__Cc
+    cCC___CCc
+   cc.......cc
+  cc..3...3..cc
+ cc.1...0...1.cc
+cc...1.....1...cc
+.................
+@.......T.......@
+ ....1.....1....
+   ....0.0....
+       .@.
+ENDMAP
+
+##############################################################################
+##############################################################################
+#
+# Zot petite vaults
+#
+##############################################################################
+##############################################################################
+
+# There's few vaults on Zot:5, tone down their chances.

@@ -1,0 +1,33 @@
+# grunt_zot_entry_bicorn is an authored Zot entrance from pinned DCSS.
+# Its geometry and fixed directives stay in DES; any source script
+# decision is called as a named Lua hook at its original position.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   grunt_zot_entry_bicorn
+PLACE: Depths:$
+ORIENT: float
+TAGS:   no_monster_gen zot_entry transparent patrolling
+COLOUR: 0123c+_ = magenta
+FTILE:  0123+_OT = floor_hall
+SUBST:  _ = .
+NSUBST: 3 = 1:9 / *:3
+: vault.run("shared.entry_setup")
+# Source Lua: : zot_entry_setup(_G)
+MAP
+            .....
+          ...ccc...
+         ..ccc_ccc..
+        ..cc_____cc..
+       ..cc_2_O_2_cc..
+      ..cc___2_2___cc..
+     ..cc___________cc..
+    ..cc_____________cc..
+    .cc____3__T__3____cc.
+   ..c______1___1______c..
+  ..cc_0_____________0_cc..
+ ..cc_3___ccccccccc___3_cc..
+..cc_1__ccc.......ccc__1_cc..
+.cc___ccc...     ...ccc___cc.
+.c__ccc...         ...ccc__c.
+.c+cc...             ...cc+c.
+..@...                 ...@..
+ENDMAP

@@ -1,0 +1,29 @@
+# lemuel_draconian_sentries keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   lemuel_draconian_sentries
+DEPTH:  Zot, !Zot:$
+ORIENT: float
+TAGS:   no_rotate uniq_draconian_sentries
+MONS:   draconian scorcher w:5 / draconian stormcaller
+SUBST:  } = }:80 >, ) = ):80 > , ] = ]:80 >
+SUBST:  w:w., w=Ww
+KFEAT:  m = iron_grate
+MAP
+............................
+..mmm..................mmm..
+..m1m..................m1m..
+..mmm...mmmwwwwwwmmm...mmm..
+........m1mwwwwwwm1m........
+........mmmwwwwwwmmm........
+mmm.....www...}..www.....mmm
+m1m.....www..)...www.....m1m
+mmm.....www...]..www.....mmm
+........mmmwwwwwwmmm........
+........m1mwwwwwwm1m........
+..mmm...mmmwwwwwwmmm...mmm..
+..m1m..................m1m..
+..mmm..................mmm..
+............................
+ENDMAP

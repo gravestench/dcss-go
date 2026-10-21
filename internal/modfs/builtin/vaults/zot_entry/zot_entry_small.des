@@ -1,0 +1,22 @@
+# zot_entry_small is an authored Zot entrance from pinned DCSS.
+# Its geometry and fixed directives stay in DES; any source script
+# decision is called as a named Lua hook at its original position.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   zot_entry_small
+TAGS:   zot_entry
+KFEAT:  O = enter_zot
+COLOUR: c = lightmagenta
+COLOUR: .+ = magenta
+TILE:   c = wall_zot_magenta
+FTILE:  .O+ = floor_hall
+MAP
+xxxxxxxxx
+xxxcccxxx
+xxcc.ccxx
+xcc...ccx
+xc..O..+@
+xcc...ccx
+xxcc.ccxx
+xxxcccxxx
+xxxxxxxxx
+ENDMAP

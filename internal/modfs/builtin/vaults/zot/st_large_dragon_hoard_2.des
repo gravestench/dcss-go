@@ -1,0 +1,25 @@
+# st_large_dragon_hoard_2 keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   st_large_dragon_hoard_2
+DEPTH: Zot, !Zot:$
+TAGS: no_item_gen
+SUBST:  D = D$
+KITEM:  D = $
+: vault.run("shared.dragon_hoard_setup")
+# Source Lua: : st_zot_vaults_setup(_G)
+MAP
+xxxxxxxxxxxxxxxxxxxxxxx
+xxxxD$$Dxxxxxxxxxxxxxxx
+xxxY*xx$$D$$xxxx...xxxx
+xxx|$$|D$x*$$.x..x...xx
+xxD$x|Y|D$Y*$...xxx.$$x
+xxx$$D*$x$|$xx..xxx*$xx
+xx$D$|$D$*xxxx.xxD|Y*xx
+xxx$xY*$*Dxxx..xx$x|xDx
+xxxxx|$D$xxx....xxD$Dxx
+xxxxxxxxxxx..xx.xxxxxxx
+xxxxxxxxxx..xxx...xxxxx
+xxxxxxxx..x@xxxx.x..xxx
+ENDMAP

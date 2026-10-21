@@ -1,0 +1,13 @@
+# lemuel_baited_zot_trap keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   lemuel_baited_zot_trap
+TAGS:   allow_dup extra luniq
+DEPTH:  Zot
+WEIGHT: 20
+KFEAT:  * = zot trap
+KITEM:  * = any good_item
+MAP
+*
+ENDMAP

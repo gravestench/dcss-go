@@ -1,0 +1,76 @@
+# evilmike_zot_entry_gauntlet is an authored Zot entrance from pinned DCSS.
+# Its geometry and fixed directives stay in DES; any source script
+# decision is called as a named Lua hook at its original position.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   evilmike_zot_entry_gauntlet
+TAGS:   no_monster_gen zot_entry
+PLACE:  Depths:$
+ORIENT: float
+WEIGHT: 8
+SUBST:  b: v.., v: c.
+TILE:   X = wall_zot_magenta
+FTILE:  -OD = floor_hall
+COLOUR: -D = magenta
+COLOUR: X = lightmagenta
+KPROP:  O-X = no_tele_into
+SUBST:  X = x
+SUBST:  - = ., D = +
+KFEAT:  O = enter_zot
+# easy: 1, 2
+: vault.run("choose_easy")
+# Source Lua: : if crawl.coinflip() then
+# Source Lua: MONS:   pale draconian, steam dragon
+# Source Lua: : else
+# Source Lua: MONS:   grey draconian, wyvern
+# Source Lua: : end
+# medium: 3, 4
+: vault.run("choose_medium")
+# Source Lua: : if crawl.coinflip() then
+# Source Lua: MONS:   yellow draconian, acid dragon
+# Source Lua: : else
+# Source Lua: MONS:   green draconian, swamp dragon
+# Source Lua: : end
+# hard: 5, 6
+: vault.run("choose_hard")
+# Source Lua: : if crawl.coinflip() then
+# Source Lua: MONS:   red draconian, fire dragon
+# Source Lua: : else
+# Source Lua: MONS:   white draconian, ice dragon
+# Source Lua: : end
+# harder: 7, 8
+: vault.run("choose_boss")
+# Source Lua: : if crawl.coinflip() then
+# Source Lua: MONS:   black draconian
+# Source Lua: KMONS:  8 = storm dragon
+# Source Lua: : else
+# Source Lua: MONS:   purple draconian
+# Source Lua: KMONS:  8 = quicksilver dragon
+# Source Lua: : end
+# boss: 9, 0
+KMONS:  9 = nonbase draconian
+KMONS:  0 = golden dragon
+MAP
+ccc+ccccccccccccccccccc
+cvb.bvcccvb.bvccccccccc
+cb...bcccb.9.bccccccccc
+c.1.1.ccc.0...+.ccccccc
+cb222bcccb.9.bc..cccccc
+cvb.bvcccvb.bvcc..ccccc
+ccc+ccccccc+ccccc..cccc
+ccc.ccccccc.cccccc..ccc
+ccc+ccccccXDXcccccc+ccc
+cvb.bvcccXX-XXcccvb.bvc
+cb...bccXX---XXccb.8.bc
+c.3.3.ccX--O--Xcc.7.7.c
+cb444bccXX---XXccb...bc
+cvb.bvcccXX-XXcccvb.bvc
+ccc+ccccccXXXcccccc+ccc
+ccc..ccccccccccccc..ccc
+cccc..ccccccccccc..cccc
+ccccc..ccvb.bvcc..ccccc
+cccccc..cb.56bc..cccccc
+ccccccc.+.....+.ccccccc
+cccccccccb.56bccccccccc
+cccccccccvb.bvccccccccc
+ccccccccccccccccccccccc
+ENDMAP

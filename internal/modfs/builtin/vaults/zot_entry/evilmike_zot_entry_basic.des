@@ -1,0 +1,27 @@
+# evilmike_zot_entry_basic is an authored Zot entrance from pinned DCSS.
+# Its geometry and fixed directives stay in DES; any source script
+# decision is called as a named Lua hook at its original position.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   evilmike_zot_entry_basic
+PLACE: Depths:$
+ORIENT: float
+TAGS:   no_monster_gen zot_entry transparent
+TILE:   c = wall_zot_magenta
+COLOUR: c+- = magenta
+FTILE:  O-+c = floor_hall
+KPROP:  O- = no_tele_into
+SUBST:  - = .
+NSUBST: d = 1:0 / 4:1 / 2:2 / 1:3
+: vault.run("shared.entry_setup")
+# Source Lua: : zot_entry_setup(_G)
+MAP
+....d....
+.dcc+ccd.
+.cc---cc.
+.c-----c.
+dc--O--cd
+.c-----c.
+.cc---cc.
+.dcccccd.
+....d....
+ENDMAP

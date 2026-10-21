@@ -1,0 +1,51 @@
+# evilmike_zot_entry_argh is an authored Zot entrance from pinned DCSS.
+# Its geometry and fixed directives stay in DES; any source script
+# decision is called as a named Lua hook at its original position.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   evilmike_zot_entry_argh
+PLACE: Depths:$
+ORIENT: float
+TAGS:   no_monster_gen zot_entry patrolling transparent
+# Grey dracs can escape from the islands if they have water. This is intentional.
+SUBST:  G: GXm., m: mmlw
+KMASK:  4 = opaque
+KFEAT:  m = iron_grate
+SUBST:  x: Xccv
+NSUBST: 2 = 2:2 / *:-
+TILE:   X = wall_zot_magenta
+COLOUR: X = lightmagenta
+SUBST:  X = x
+COLOUR: . = white
+FTILE:  -12O = floor_hall
+SUBST:  - = .
+KMONS:  O = nonbase draconian
+: vault.run("shared.entry_setup")
+# Source Lua: : zot_entry_setup(_G)
+MONS:   draconian stormcaller
+MAP
+xxxxxxxxxxxx@xxxxxxxxxxxx
+xxx........---........xxx
+xxmmm.....G.-.G.....mmmxx
+x.m4m.......-.......m4m.x
+x.mmm...G...-...G...mmm.x
+x..........---..........x
+x.....G....---....G.....x
+x..........---..........x
+x...G.....-----.....G...x
+x........XX---XX........x
+x.G.....-X1---1X-.....G.x
+x-...------2-2------...-x
+@-----------O-----------@
+x-...------2-2------...-x
+x.G.....-X1---1X-.....G.x
+x........XX---XX........x
+x...G.....-----.....G...x
+x..........---..........x
+x.....G....---....G.....x
+x..........---..........x
+x.mmm...G...-...G...mmm.x
+x.m4m.......-.......m4m.x
+xxmmm.....G.-.G.....mmmxx
+xxx........---........xxx
+xxxxxxxxxxxx@xxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,51 @@
+# grunt_zot_stairs_overgrown keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   grunt_zot_stairs_overgrown
+DEPTH:  Zot, !Zot:$
+ORIENT: float
+MONS:   oklob plant, plant, bush, fungus
+SUBST:  2 = 23
+SUBST:  . = .:30 2 3 4
+SUBST:  : = .
+: vault.run("configure_trigger")
+# Source Lua: {{
+# Source Lua: local sm = TriggerableFunction:new {
+# Source Lua:   func="callback.grunt_zot_stairs_overgrown_start", triggered=false }
+# Source Lua: sm:add_triggerer(DgnTriggerer:new { type = "player_los" })
+# Source Lua: lua_marker('1', sm)
+# Source Lua:
+# Source Lua: local tm = TriggerableFunction:new {
+# Source Lua:   func="callback.grunt_zot_stairs_overgrown_oklobify",
+# Source Lua:   repeated=true,
+# Source Lua:   data={warned = false, count = 0} }
+# Source Lua: tm:add_triggerer(DgnTriggerer:new { type="turn", delay_min=30, delay_max=100 })
+# Source Lua: lua_marker('}', tm)
+# Source Lua: }}
+MARKER: 2 = lua:props_marker { oklobify=1 }
+SHUFFLE: }])
+SUBST: ] = ]>, ) = )>
+MAP
+      xxxxxxxxx
+    xxxcccccccxxx
+  xxxccc.....cccxxx
+  xccc.........cccx
+ xxc....:.:......cxx
+ xcc...:.:.:.....ccx
+xxc...:.222:2.....cx
+xcc....:2:::2.....ccx
+xc....:.2:222......cx
+xc.....:2:}:2......cx
+xc....:.2:1:2......cx
+xc.....:2]:)2......cx
+xc....:.22222......cx
+xcc....:..........ccx
+xxc.....:.........cxx
+ xcc.....:.......ccx
+ xxc......:......cxx
+  xccc....:....cccx
+  xxxccc:::::cccxxx
+    xxccc+++cccxx
+     xxxx@@@xxxx
+ENDMAP

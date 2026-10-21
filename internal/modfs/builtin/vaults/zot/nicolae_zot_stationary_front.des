@@ -1,0 +1,32 @@
+# nicolae_zot_stationary_front keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME: nicolae_zot_stationary_front
+DEPTH: Zot
+ORIENT: float
+TAGS: transparent no_pool_fixup patrolling
+SHUFFLE: Gg/Gg/Gg/Hh, Pp/Pp/Pp/Qq
+SUBST: GP = x, g = r, p = c, HQ = @, hq = .
+COLOUR: r = red, c = blue
+KMONS: R = red draconian scorcher
+KMONS: C = white draconian stormcaller
+KMONS: D = fire dragon
+KMONS: I = ice dragon
+KFEAT: r = c
+MAP
+    xxx                   xxx
+   xxrxx                 xxrxx
+  xxrrrxx               xxrrrxx
+ xxrrlrrxx             xxrrlrrxx
+xxrrlllrrxx           xxrrlllrrxx
+xrrllDllrrxxxxxxPxxxxxxrrllDllrrxxxxxxPxxxxx
+rrll...llrrcccccpcccccrrll...llrrcccccpccccc
+@....R..........C..........R..........C....@
+rrrrrgrrrrrccw.....wccrrrrrgrrrrrccw.....wcc
+xxxxxGxxxxxxcww...wwcxxxxxxGxxxxxxcww...wwcx
+           xccwwIwwccx           xccwwIwwccx
+           xxccwwwccxx           xxccwwwccxx
+            xxcccccxx             xxcccccxx
+             xxxxxxx               xxxxxxx
+ENDMAP

@@ -1,0 +1,34 @@
+# evilmike_zot_entry_hall is an authored Zot entrance from pinned DCSS.
+# Its geometry and fixed directives stay in DES; any source script
+# decision is called as a named Lua hook at its original position.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   evilmike_zot_entry_hall
+PLACE: Depths:$
+ORIENT: float
+TAGS:   no_monster_gen zot_entry patrolling
+TILE:   X = wall_zot_magenta
+COLOUR: X+- = magenta
+SUBST:  X = c
+FTILE:  -O+ = floor_hall
+KPROP:  O- = no_tele_into
+SUBST:  - = .
+SUBST:  v: ....cnXblw, z:..cnXblw
+NSUBST: d = 1:0 / 4:1 / 2:2 / *:.
+SUBST:  D = +
+: vault.run("shared.entry_setup")
+# Source Lua: : zot_entry_setup(_G)
+MAP
+                   cccccccccccc
+                   cc..3....ccc
+cccccccccccccccccccc.........cc
+ccccccdccdccdccdccc..2XXXXX...c
+ccc..............dc..XX---XX..c
+D...vv.zz.vv.zz..cc..X-----X..c
+D...vv.zz.vv.zz..+...X--O--+..c
+D...vv.zz.vv.zz..cc..X-----X..c
+ccc..............dc..XX---XX..c
+ccccccdccdccdccdccc..2XXXXX...c
+cccccccccccccccccccc.........cc
+                  ccc..3....ccc
+                  ccccccccccccc
+ENDMAP

@@ -1,0 +1,12 @@
+# A single new file joins Zot's ordinary map pool. Its named hook follows
+# the same relative module rule as the bundled source maps.
+NAME: modded_zot_shrine
+DEPTH: Zot:2-, !Zot:$
+ORIENT: float
+WEIGHT: 7
+: vault.run("configure")
+MAP
+xxx
+x.x
+xxx
+ENDMAP

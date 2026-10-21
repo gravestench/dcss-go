@@ -1,0 +1,36 @@
+# evilmike_crystal_ball_defense keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   evilmike_crystal_ball_defense
+TAGS:   no_rotate no_monster_gen
+DEPTH:  Zot, !Zot:$
+ORIENT: float
+WEIGHT: 5
+MONS:   oklob plant w:4 / lightning spire w:3
+MONS:   obsidian statue / orange crystal statue / curse skull
+# Not quite the orb, but but close enough
+ITEM:   tin of tremorstones
+NSUBST: 1 = 1:1 / 6 = 11. / *:., 3 = 1:1 / 4 = 11....... / *:.
+SUBST:  } = }:80 >, ) = ):80 >, ] = ]:80 >
+MAP
+        xxxxxxxxx
+        xxx.2.xxx
+        xxx...xxx
+        xx..1..xx
+xxxxxxxxx1.....1xxxxxxxxx
+xxxxxxx.....).....xxxxxxx
+xxx.....1..}d]..1.....xxx
+xx...xx.....>.....xx...xx
+@x..xxxxx1.....1xxxxx..x@
+.x.3xxxxxx..1..xxxxxx3.x.
+.x..xxxxxxx...xxxxxxx..x.
+.x..xxxxxxx...xxxxxxx..x.
+.x..xxxxxxxx.xxxxxxxx..x.
+.x..xxxxxxxx2xxxxxxxx..x.
+.x..xxxxxxxx.xxxxxxxx..x.
+.xx3.................3xx.
+...x.................x...
+...x......3.3.3......x...
+xxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

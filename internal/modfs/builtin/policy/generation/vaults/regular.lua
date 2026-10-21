@@ -75,6 +75,14 @@ function regular.place(ctx, builder, context, placed, fit)
 
     while #candidates > 0 do
         local selected = draw(builder, candidates)
+
+        -- A source dummy participates in the same weighted draw but means
+        -- "place no ordinary vault" when chosen. Retrying would defeat its
+        -- purpose of lowering Zot:5 map density.
+        if selected.tags.dummy then
+            return nil
+        end
+
         local vault = catalog.get(selected.id)
         local map = fit(ctx, builder, vault, context)
 

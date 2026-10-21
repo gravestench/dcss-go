@@ -1,0 +1,32 @@
+# st_grand_hoard_of_tiamat keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   st_grand_hoard_of_tiamat
+DEPTH: Zot, !Zot:$
+TAGS: no_item_gen
+TAGS:   no_monster_gen
+KMONS:  1 = patrolling Tiamat, patrolling golden dragon
+SUBST:  D = DDD$
+KITEM:  D = $
+KITEM:  $ = gold q:1
+: vault.run("shared.dragon_hoard_setup")
+# Source Lua: : st_zot_vaults_setup(_G)
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxx*x$$x$x$$xxxxxxxxx
+xxxxx*xxD*$xxD$$$xD$x$xxxxx
+xxx$xD$x$$$$$$x$*$$$$x$$xxx
+xx$$x$$$*xx$$$$*Yx$$$$$xxxx
+xx$x*$x*Y*$D$$$$*$$xD$x$*xx
+xxxxD$x$*$$$D|DD$$$x$$$$Dxx
+xx$$x$$$$$DD*|*$DD$$$x$$xx.
+xxx$$$$D$$$||1||$$$$$$$$$..
+xx$x$x$$$$$D*|*$D$D$x$$$x.@
+xxxD*$$x$*$D$|DD$$x*$$$xxx.
+xx*xx$$$xY*xxD$$$$*Y*xxD$xx
+xxx$$$x$$*$$$$Dx$xx*$x$$xxx
+xxxxx$$xDxx$$x$$x$$x$$xxxxx
+xxxxxxxxx$$x$$xx*Dxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

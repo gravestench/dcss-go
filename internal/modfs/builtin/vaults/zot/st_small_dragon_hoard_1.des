@@ -1,0 +1,23 @@
+# st_small_dragon_hoard_1 keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   st_small_dragon_hoard_1
+DEPTH: Zot, !Zot:$
+TAGS: no_item_gen
+TAGS:   extra
+KITEM:  D = $
+: vault.run("shared.dragon_hoard_setup")
+# Source Lua: : st_zot_vaults_setup(_G)
+MAP
+xxxxxxxx
+xxx*$xDx
+xx*Y*x$x
+xxx*$$xx
+xD$$$x.x
+xx$...xx
+x.x....x
+xx....xx
+xxx..xxx
+xxx@xxxx
+ENDMAP

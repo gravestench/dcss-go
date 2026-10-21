@@ -1,0 +1,10 @@
+# This intentionally high-weight alternative proves that adding a PLACE
+# layout cannot displace the branch's required Hall of Zot.
+NAME: impostor_zot_end
+TAGS: layout layout_type_zot_end
+PLACE: Zot:$
+WEIGHT: 1000
+ORIENT: north
+MAP
+{..}
+ENDMAP

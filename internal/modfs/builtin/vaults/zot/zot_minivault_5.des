@@ -1,0 +1,20 @@
+# zot_minivault_5 keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:    zot_minivault_5
+TAGS:    transparent
+DEPTH:   Zot, !Zot:$
+COLOUR:  n = magenta
+TILE:    n = dngn_transparent_stone_magenta
+MAP
+ xxxxxxxxxxx
+xxxnn...0.xxx
+xxnn0.0.n..xx
+xnnn....nn.0x
+@.nn0.0.0nn.@
+x0.nn....nnnx
+xx..n.0.0nnxx
+xxx.0...nnxxx
+ xxxxxxxxxxx
+ENDMAP

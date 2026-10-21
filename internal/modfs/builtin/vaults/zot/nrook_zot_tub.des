@@ -1,0 +1,34 @@
+# nrook_zot_tub keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME: nrook_zot_tub
+DEPTH: Zot
+KFEAT: X = W
+MARKER: X = lua:fog_machine { cloud_type="steam", \
+            pow_min = 2, pow_max = 10, delay = 25, \
+            size = 2, walk_dist = 3, spread_rate= 10 }
+KMONS: M = patrolling red draconian att:neutral / \
+      patrolling red draconian scorcher att:neutral w:2 / \
+      patrolling red draconian stormcaller att:neutral w:2 / \
+      patrolling red draconian shifter att:neutral w:2 / \
+      patrolling red draconian annihilator att:neutral w:2 / \
+      patrolling red draconian knight att:neutral w:2 / \
+      patrolling red draconian monk att:neutral w:2
+KFEAT: M = W
+KMONS: F = orb of fire att:neutral
+KFEAT: F = W
+MAP
+     @
+xxxxx+xxxxx
+xWWWWWWWWWx
+xWMWWMWWMWx
+xWWXWXWXWWx
+xWWWmmmWWWx
+xWMXmFmXMWx
+xWWWmmmWWWx
+xWWXWXWXWWx
+xWMWWMWWMWx
+xWWWWWWWWWx
+xxxxxxxxxxx
+ENDMAP

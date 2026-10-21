@@ -1,0 +1,33 @@
+# lemuel_acid_trip keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   lemuel_acid_trip
+DEPTH:  Zot, !Zot:$
+ORIENT: centre
+MONS:   oklob plant, acid blob, jelly, yellow draconian
+MONS:   any nonbase yellow draconian
+SUBST:  1 = 1:2 .
+SUBST:  . = .:20 3:3 2:1
+SUBST:  } = }:80 >, ) = ):80 >, ] = ]:80 >
+MAP
+       xx++xx
+     xxx....xxx
+   xxx..4444..xxx
+  xx....4554....xx
+ xx.....cccc.....xx
+ x....ccc..ccc....x
+xx...cc......cc...xx
+x...cc..1111..cc...x
+x...c...1}11...c...x
+x.5.c...11]1...c.5.x
+x...c...1)11...c...x
+x...cc..1111..cc...x
+xx...cc......cc...xx
+ x....cc....cc....x
+ xx....c....c....xx
+  xx............xx
+   xxx..4444..xxx
+     xxx4554xxx
+       xxxxxx
+ENDMAP

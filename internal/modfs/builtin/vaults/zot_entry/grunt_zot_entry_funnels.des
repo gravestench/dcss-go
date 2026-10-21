@@ -1,0 +1,36 @@
+# grunt_zot_entry_funnels is an authored Zot entrance from pinned DCSS.
+# Its geometry and fixed directives stay in DES; any source script
+# decision is called as a named Lua hook at its original position.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   grunt_zot_entry_funnels
+PLACE: Depths:$
+ORIENT: float
+TAGS:   no_monster_gen zot_entry patrolling transparent
+COLOUR: 123c+. = magenta
+FTILE:  123c+.O = floor_hall
+NSUBST: 3 = 1:9 / *:3, 1 = 2:0 / *:1
+: vault.run("shared.entry_setup")
+# Source Lua: : zot_entry_setup(_G)
+MAP
+      @       @
+    cc+cc   cc+cc
+    c...ccccc...c
+    cc...ccc...cc
+ cccxcc.1.c.1.ccxccc
+ c.ccxcc.....ccxcc.c
+@+..ccxcc.3.ccxcc..+@
+ c...ccxcc+ccxcc...c
+ cc.1.ccc...ccc.1.cc
+  cc...c..2..c...cc
+  ccc.3+.2O2.+3.ccc
+  cc...c..2..c...cc
+ cc.1.ccc...ccc.1.cc
+ c...ccxcc+ccxcc...c
+@+..ccxcc.3.ccxcc..+@
+ c.ccxcc.....ccxcc.c
+ cccxcc.1.c.1.ccxccc
+    cc...ccc...cc
+    c...ccccc...c
+    cc+cc   cc+cc
+      @       @
+ENDMAP

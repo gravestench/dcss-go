@@ -1,0 +1,22 @@
+# amethyst_zot_foddershock keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME: amethyst_zot_foddershock
+DEPTH: Zot, !Zot:$
+TAGS: no_monster_gen transparent
+MONS: lightning spire, patrolling electric golem
+NSUBST: % = 2:!, % = 2:a
+KMONS: ! = patrolling death cob
+: vault.run("deferred_corpse_decay")
+# Source Lua: :dgn.delayed_decay(_G, 'a', 'random draconian corpse')
+MAP
+@xxxxx@
+.......
+x.....x
+x.%%%.x
+x.%1%.x
+x2%%%2x
+xx...xx
+ xxxxx
+ENDMAP

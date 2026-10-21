@@ -10,6 +10,9 @@ local definition = {
     min_depth = 4,
     max_depth = 4,
     depth = 5,
+    -- The source Hall of Zot owns the last floor and its single Orb.
+    end_layout_required = true,
+    end_layout_id = "hall_of_Zot",
     absolute_depth = 27,
     flags = {
         "dangerous_end",

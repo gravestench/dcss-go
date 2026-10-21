@@ -1,0 +1,25 @@
+# bh_zot_levy_curve keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   bh_zot_levy_curve
+TAGS:   extra
+DEPTH:  Zot
+SUBST:  W = Ww
+MAP
+          WWW.
+          W.W..
+          W.WWW
+          ....W
+         .....W
+        ....WWW
+       .......W
+      ..www...W
+     ...w.w.WWW
+    ....wwwWW..
+WWW.......W...
+W........WW..
+WWW..W..WW..
+..W..W..W..
+ .WWWWWWW.
+ENDMAP

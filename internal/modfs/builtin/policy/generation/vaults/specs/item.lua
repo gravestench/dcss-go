@@ -126,6 +126,17 @@ local function parse_term(text, expression, site)
             -- The visible item is an illusion. Keep its kind for rendering,
             -- but give population a separate persisted ECS marker.
             result.mimic = true
+        elseif key == "mimic" then
+            -- Source mimic:N marks one in N generated items as disguised
+            -- monsters. Resolve that roll when the item is materialized.
+            local denominator = tonumber(value)
+
+            if not denominator or denominator % 1 ~= 0 or
+                denominator < 1 then
+                choice.fail(site, expression, "invalid item mimic " .. token)
+            end
+
+            result.mimic = denominator
         elseif key then
             choice.fail(site, expression, "unknown item modifier " .. key)
         else

@@ -1,0 +1,21 @@
+# bh_zot_lava_cross keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   bh_zot_lava_cross
+TAGS:   extra
+DEPTH:  Zot
+MAP
+     @@
+    x..x
+    x..x
+    x..x
+ xxxxllxxxx
+@...l..l...@
+@...l..l...@
+ xxxxllxxxx
+    x..x
+    x..x
+    x..x
+     @@
+ENDMAP

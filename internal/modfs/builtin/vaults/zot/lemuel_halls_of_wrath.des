@@ -1,0 +1,30 @@
+# lemuel_halls_of_wrath keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   lemuel_halls_of_wrath
+DEPTH:  Zot, !Zot:$
+ORIENT: float
+NSUBST: 1 = 6:2 / *=1
+SUBST:  1 = 1 .:5
+SUBST:  1 = 1 3
+MONS:   troll / deep troll / iron troll / ogre / two-headed ogre
+MONS:   moth of wrath
+MONS:   stone giant / fire giant / frost giant / ettin / \
+        w:5 efreet / w:3 titan
+SUBST:  } = }:80 >, ) = ):80 >
+MAP
+cccccccccccccccccccccccc
+c111111111111111111.n..c
+c111111111111111111.n.)c
+ccnnccccccccccccc++cc..c
+c....G....G....G....c..c
++...................+..c
++...................+.}c
++...................+..c
+c....G....G....G....c..c
+ccnnccccccccccccc++cc..c
+c111111111111111111.n.]c
+c111111111111111111.n..c
+cccccccccccccccccccccccc
+ENDMAP

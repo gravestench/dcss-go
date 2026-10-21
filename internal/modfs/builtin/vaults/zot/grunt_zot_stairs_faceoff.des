@@ -1,0 +1,50 @@
+# grunt_zot_stairs_faceoff keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME: grunt_zot_stairs_faceoff
+DEPTH: Zot, !Zot:$
+ORIENT: float
+# The competitors:
+: vault.run("choose_teams")
+# Source Lua: {{
+# Source Lua:   local teams = { "black", "yellow", "green", "purple", "red", "white", }
+# Source Lua:
+# Source Lua:   local team1num = crawl.random2(#teams) + 1
+# Source Lua:   local team1 = teams[team1num]
+# Source Lua:
+# Source Lua:   -- ensures we can't roll the same team twice
+# Source Lua:   teams[team1num] = teams[#teams]
+# Source Lua:
+# Source Lua:   local team2 = teams[crawl.random2(#teams - 1) + 1]
+# Source Lua:
+# Source Lua:   mons(team1 .. " draconian")
+# Source Lua:   mons(team1 .. " draconian knight")
+# Source Lua:   mons(team2 .. " draconian")
+# Source Lua:   mons(team2 .. " draconian knight")
+# Source Lua: }}
+# The refs:
+MONS:   Killer Klown
+# The ball / puck / whatever:
+ITEM:   tin of tremorstones
+
+KFEAT:  K = iron_grate
+NSUBST: @ = 2:@ / *:x
+SUBST:  } = }:80 >, ] = ]:80 >, ) = ):80 >
+MAP
+  xxxxxxxxxxxxxxxxxxxxxxx
+ xx.....................xx
+xx..mmmmmm.mmmmm.mmmmmm..xx
+x..mm........5........mm..x
+@.mm...................mm.@
+x.m.KK.....1...3.....KK.m.x
+x.m.K}..1.........3...K.m.x
+x.m.K.1....2.d.4....3)K.m.x
+x.m.K]..1.........3...K.m.x
+x.m.KK.....1...3.....KK.m.x
+@.mm...................mm.@
+x..mm........5........mm..x
+xx..mmmmmm.mmmmm.mmmmmm..xx
+ xx.....................xx
+  xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

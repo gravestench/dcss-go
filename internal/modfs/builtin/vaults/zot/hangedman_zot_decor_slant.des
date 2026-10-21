@@ -1,0 +1,44 @@
+# hangedman_zot_decor_slant keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:    hangedman_zot_decor_slant
+TAGS:    extra transparent
+DEPTH:   Zot
+WEIGHT:  8
+KFEAT:   zZ = zot trap
+KFEAT:   fF = floor
+SHUFFLE: BVfF / VBFf, BV / BV / BV / wl, bv / bv / cc
+SHUFFLE: aAuU / aAuU / aAuU / uUaA
+SHUFFLE: AU / "", fF / fF / zz / '' / '', @! / !@ / ?? / ??
+SUBST:   aAB = b, uUV = v, Z = ()G .:45 Z:25, '"!? = .
+KMASK:   wlfF = no_monster_gen
+COLOUR:  fF = darkgray
+FTILE:   fF = floor_rough_darkgray
+MARKER:  f = lua:fog_machine {cloud_type = "freezing vapour", \
+             pow_min = 9, pow_max = 10, delay = 2, size_min = 1, size_max = 1, \
+             start_clouds = 1, excl_rad = 0 }
+MARKER:  F = lua:fog_machine {cloud_type = "flame", \
+             pow_min = 9, pow_max = 10, delay = 2, size_min = 1, size_max = 1, \
+             start_clouds = 1, excl_rad = 0 }
+MAP
+            ...!..
+           ........
+           ..UuuU..
+         ....uuuu.!
+         @vv.uuuu..
+         .vv.uuuU..
+      ......F......
+      .vv.VV.vv...
+      .vv.VV.vv.
+   .@....Z....@.
+   .bb.BB.bb.
+ ...bb.BB.bb.
+......f......
+..Aaaa.bb.
+..aaaa.bb@
+!.aaaa....
+..AaaA..
+........
+ ..!...
+ENDMAP

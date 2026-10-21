@@ -1,0 +1,40 @@
+# hangedman_zot_diagonal_lockstep keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:    hangedman_zot_diagonal_lockstep
+TAGS:    transparent extra decor
+DEPTH:   Zot
+ITEM:    % no_pickup
+KFEAT:   Z = zot trap
+SHUFFLE: ABCDEFG, defg / hijk / mnop / qrst, defg, hjik, mnop
+SUBST:   A : xbvcZ, B : xbvc, C : xxbvc, D : xxbvc, EFG = x
+SUBST:   d : xxZ, h = x, e : xx., i : xx., f : x.., j : x.., m : x..
+SUBST:   gknopqrst = .
+: vault.run("choose_depth_stairs")
+# Source Lua: :  if you.depth() == dgn.br_depth(you.branch()) then
+# Source Lua: SUBST:  { = {([ <:5 Z:5
+# Source Lua: :  elseif you.depth() == "1" then
+# Source Lua: SUBST:  { = {:40 })]> d:20 Z:20
+# Source Lua: :  else
+# Source Lua: SUBST:  { = {([<})]> d:20 Z:20
+# Source Lua: :  end
+MAP
+             Dq...iC
+        .....rD...Ch..
+        .......x.x...p
+        ...mF...x...o.
+       Es..F...x.x....
+ ......tE.x..kx...x..eB
+ ........x...Cj....x.xd
+A..fB...x.x.....G...x..
+.A.xg.nG...{...Gn.gx.A.
+..x...G.....x.x...Bf..A
+dx.x....jC...x........
+Be..x...Ck..x.Et......
+ ....x.x...F..sE
+ .o...x...Fm...
+ p...x.x.......
+ ..hC...Dr.....
+   Ci...qD
+ENDMAP

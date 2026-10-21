@@ -1,0 +1,45 @@
+# hangedman_zot_decor_unnerving_road keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:    hangedman_zot_decor_unnerving_road
+TAGS:    extra transparent no_pool_fixup
+DEPTH:   Zot
+WEIGHT:  8
+SHUFFLE: @&, (), vb / vb / vb / bv / cc, lw / lw / lw / '', JK / LM / NO
+SHUFFLE: JK / JK / JK / !!, LM / ??, NO / `` / `` / `` / ``, JKLMNO / JKLMNO / KJMLON
+SUBST:   '!?`& = ., X : xxc, JLN = F, KMO = f
+SUBST:   ( = (:1 .:14, ) = ):1 .:14
+KMASK:   wlfF = no_monster_gen
+COLOUR:  fF = darkgray
+FTILE:   fF = floor_rough_darkgray
+MARKER:  f = lua:fog_machine {cloud_type = "freezing vapour", \
+             pow_min = 9, pow_max = 10, delay = 20, size_min = 1, size_max = 1, \
+             start_clouds = 1, excl_rad = 0 }
+MARKER:  F = lua:fog_machine {cloud_type = "flame", \
+             pow_min = 9, pow_max = 10, delay = 20, size_min = 1, size_max = 1, \
+             start_clouds = 1, excl_rad = 0 }
+KPROP:   l = no_cloud_gen
+MAP
+      XXXX...&&.
+      Xllvv......
+    XXXlv..v....@
+   XXlllv..v....@
+   Xllvv.vvJ.....
+ XXXlv..v.......
+XXlllv..v....XXXX
+Xllvv(vvL..ObbwwX
+Xlv..v.....b..bwXXX
+Xlv..v.....b..bwwwXX
+Xllvv.vv....bb.bbwwX
+XXlllv..v.....b..bwX
+ XXXlv..v.....b..bwX
+   XllvvN..Mbb)bbwwX
+   XXXX....b..bwwwXX
+    .......b..bwXXX
+   .....Kbb.bbwwX
+   @....b..bwwwXX
+   @....b..bwXXX
+   ......bbwwX
+    .&&...XXXX
+ENDMAP

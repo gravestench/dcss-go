@@ -1,0 +1,63 @@
+# hangedman_xom_zot_hilarity keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:    hangedman_xom_zot_hilarity
+TAGS:    no_monster_gen no_trap_gen no_pool_fixup patrolling transparent
+DEPTH:   Zot, !Zot:$
+WEIGHT:  3
+# Gifts, too.
+KMONS:   1 = guardian mummy ; randart dire flail ego:chaos | \
+             randart great mace ego:chaos | randart battleaxe ego:chaos| \
+             randart great sword ego:chaos | randart glaive ego:chaos | \
+             randart dire flail | randart great mace | randart battleaxe | \
+             randart great sword | randart glaive
+KMONS:   3 = guardian mummy ; randart hand crossbow ego:chaos / \
+             guardian mummy ; randart longbow ego:chaos / \
+             guardian mummy ; randart triple crossbow / \
+             guardian mummy ; randart hand crossbow / \
+             guardian mummy ; randart longbow / \
+             guardian mummy ; randart arbalest
+KMONS:   5 = guardian mummy ; any beam wand | scroll of summoning
+KMONS:   7 = guardian mummy ; randart ring mail | randart scale mail | \
+             randart chain mail | randart robe . scroll of summoning
+KMONS:   2468 = killer klown
+KMONS:   _ = ghost moth
+KMONS:   90 = moth of wrath / butterfly w:30
+KFEAT:   0 = zot trap
+KFEAT:   ^~ = teleport trap / dispersal trap
+KFEAT:   _ = altar_xom
+KFEAT:   > = } mimic
+KFEAT:   m = iron_grate
+SUBST:   d = tGmcc, y = c`, c = cccccbbvvx, l = wl
+NSUBST:  > = 1 = }:80 > / 1 = ):80 > / 1 = ]:80 > / >, 9 = 0 / 9
+NSUBST:  ^ = ' / ^, ~ = " / ~, ` = 2=f / .
+SHUFFLE: 12 / 34 / 56 / 78, 56, 78, ^' / ~"
+MARKER:  f = lua:fog_machine { cloud_type = "seething chaos", pow_max = 17, \
+             delay_min = 450, delay_max = 700, size = 1, excl_rad = 0 }
+FTILE:   f = floor_pebble_lightmagenta
+MAP
+        ccccccc
+     cccc2.1.2cccc
+  @@ccyycm+m+mcyycc@@
+  @..cl`yl```ly`lc..@
+  c.c.```````````.c.c
+ ccc.l````.c.````l.ccc
+ cyl``c..`.>.`..c``lyc
+ cy```.>.`d..`d>.```yc
+cccy``.d.^~~^`...``yccc
+c3ml`````m==mm^````lm6c
+c.+``...^m999=~d..``+.c
+c4m``c>.~=9_9=~.>c``m5c
+c.+``..d~=999m^...``+.c
+c3ml````^mm==m`````lm6c
+cccy``...`^~~^.d.``yccc
+ cy```.>d`..d`.>.```yc
+ cyl``c..`.>.`..c``lyc
+ ccc.l````.c.````l.ccc
+  c.c.```````````.c.c
+  @..cl`yl```ly`lc..@
+  @@ccyycm+m+mcyycc@@
+     cccc8.7.8cccc
+        ccccccc
+ENDMAP

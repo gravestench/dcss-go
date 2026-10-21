@@ -17,6 +17,7 @@ local streams = {
     SHOP = "shop",
     SPELL = "spell",
     TRAPS = "traps",
+    ZOT_OVERGROWN = "zot_overgrown",
     TEMPLE_PLAN = "temple_plan",
 }
 

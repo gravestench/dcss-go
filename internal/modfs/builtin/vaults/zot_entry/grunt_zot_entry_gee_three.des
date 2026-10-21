@@ -1,0 +1,48 @@
+# grunt_zot_entry_gee_three is an authored Zot entrance from pinned DCSS.
+# Its geometry and fixed directives stay in DES; any source script
+# decision is called as a named Lua hook at its original position.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   grunt_zot_entry_gee_three
+PLACE: Depths:$
+ORIENT: float
+TAGS:   no_monster_gen zot_entry transparent patrolling
+COLOUR: ABC_ = magenta
+FTILE:  ABC-_O = floor_hall
+SUBST:  _ = ., A = 2, B = 1, C = c, - = +
+NSUBST: 1 = 3:0 / 7:1 / *:., 3 = 1:9 / *:3
+: vault.run("shared.entry_setup")
+# Source Lua: : zot_entry_setup(_G)
+MAP
+           .........
+         ...ccccccc...
+        ..ccc.CCC.ccc..
+       ..cc...-_-...cc..
+      ..cc...cC_Cc...cc..
+     ..cc.1.cCC_CCc.1.cc..
+     .cc....cC___Cc....cc.
+    ..c..3.ccC___Ccc.3..c..
+    .cc1...ccC___Ccc...1cc.
+   ..c.....ccC___Ccc.....c..
+.....c..T1.ccC_B_Ccc.1T..c.....
+.ccccc.....ccC___Ccc.....ccccc.
+@+..c......ccCA_ACcc......c..+@
+.ccc....1..ccC___Ccc..1....ccc.
+...ccc..T..ccC_O_Ccc..T..ccc...
+.cccc.......cCC_CCc.......cccc.
+@+......2...ccCCCcc...2......+@
+.ccc.......1..c.c..1.......ccc.
+...ccccc..T..1.3.1..T..ccccc...
+  ....cc.......T.......cc....
+  ..ccc..1..cc.1.cc..1..ccc..
+ ..cc......ccc...ccc......cc..
+ .cc...ccccc.c...c.ccccc...cc.
+ @+.cccc.....c...c.....cccc.+@
+ .ccc....   .c.1.c.   ....ccc.
+ .....      .c...c.      .....
+            .c...c.
+            .cc.cc.
+            ..c.c..
+             .c.c.
+             .c+c.
+             ..@..
+ENDMAP

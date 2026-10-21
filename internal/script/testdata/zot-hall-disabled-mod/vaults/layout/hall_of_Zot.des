@@ -1,0 +1,10 @@
+# A disabled same-path Hall must close Zot:5 even when a different modded
+# PLACE layout is available. The source Orb has no replacement here.
+NAME: hall_of_Zot
+TAGS: layout layout_type_zot_end
+PLACE: Zot:$
+WEIGHT: 0
+ORIENT: north
+MAP
+{..}
+ENDMAP

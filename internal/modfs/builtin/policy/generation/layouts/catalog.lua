@@ -224,6 +224,8 @@ local function placed_candidates(branch_id, local_depth, branch_bottom,
     primary_tags)
     local candidates = {}
     local total = 0
+    local branch = register.get(categories.BRANCHES, branch_id)
+    local required = local_depth == branch.depth and branch.end_layout_id
 
     for _, id in ipairs(catalog.ids()) do
         local definition = catalog.get(id)
@@ -233,7 +235,8 @@ local function placed_candidates(branch_id, local_depth, branch_bottom,
             depths = definition.places,
         }
 
-        if #definition.places > 0 and weight > 0 and
+        if (not required or id == required) and
+            #definition.places > 0 and weight > 0 and
             depth_rules.eligible(place, branch_id,
                 local_depth, branch_bottom) and
             catalog.compatible(definition, primary_tags) then
@@ -276,8 +279,15 @@ function catalog.choose(random, branch_id, local_depth, branch_bottom,
     primary_tags)
     local candidates, total = placed_candidates(branch_id, local_depth,
         branch_bottom, primary_tags)
+    local branch = register.get(categories.BRANCHES, branch_id)
 
     if total == 0 then
+        -- Some source finales own a specific map and item. An unrelated
+        -- modded PLACE layout cannot silently replace that requirement.
+        if local_depth == branch.depth and branch.end_layout_id then
+            error("missing required end layout " .. branch.end_layout_id)
+        end
+
         candidates, total = candidates_for(branch_id, local_depth,
             branch_bottom, primary_tags)
     end

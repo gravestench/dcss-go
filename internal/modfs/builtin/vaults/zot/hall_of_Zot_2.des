@@ -1,0 +1,15 @@
+# hall_of_Zot_2 keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:       hall_of_Zot_2
+DEPTH:      Zot:2
+CHANCE:     100%
+TAGS:       extra transparent allow_dup no_dump
+LFLOORCOL:  white
+LROCKCOL:   blue
+LFLOORTILE: floor_rough_white
+LROCKTILE:  wall_zot_blue
+MAP
+.
+ENDMAP

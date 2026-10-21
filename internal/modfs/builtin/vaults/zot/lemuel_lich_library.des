@@ -1,0 +1,40 @@
+# lemuel_lich_library keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   lemuel_lich_library
+DEPTH:  Zot, !Zot:$
+TAGS:   no_monster_gen
+MONS:   flying skull, lich, ancient lich / dread lich, necromancer
+MONS:   vampire mage
+ITEM:   any book mimic:10 w:20 / any scroll mimic:10
+SUBST:  w:w?
+SUBST:  ?=. 1:1
+SUBST:  x:xc
+SUBST:  4 = 4 5:2 .:4
+MAP
+wwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwww
+wwxxxxxxxxx+xxxxxxxxxww
+wwx....x.......x....xww
+wwx....+...G...+....xww
+wwx.4..x.......x..4.xww
+wwx4.4.xxxx+xxxx.4.4xww
+wwx.4.4xxx...xxx4.4.xww
+wwx4.4.xxx.2.xxx.4.4xww
+wwxxxxxxxxx+xxxxxxx+xww
+wwxxxxxxxxx.xxxxxx$$xww
+wwxdddxxxxx.x...xx$$xww
+wwx.2.xxxxx.+.G.xxxxxww
+wwx...xxxxx.x...xxxxxww
+wwx...xxxxx.xxxxxxxxxww
+wwxx+xxxxxx.xxxdddddxww
+wwxx.xxxxxx.xxxd232dxww
+wwxx.xxxxxx.xxxd...dxww
+wwxx......+...+....dxww
+wwxxxxxxxxxmxxxd...dxww
+wwxxxxxxxxxGxxxdddddxww
+wwxxxxxxxxxxxxxxxxxxxww
+wwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwww
+ENDMAP

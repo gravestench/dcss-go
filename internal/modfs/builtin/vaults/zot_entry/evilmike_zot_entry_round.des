@@ -1,0 +1,42 @@
+# evilmike_zot_entry_round is an authored Zot entrance from pinned DCSS.
+# Its geometry and fixed directives stay in DES; any source script
+# decision is called as a named Lua hook at its original position.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   evilmike_zot_entry_round
+PLACE: Depths:$
+ORIENT: float
+TAGS:   no_monster_gen zot_entry
+SUBST:  = = nnn+
+SUBST:  c: c:70 v:20 b:10
+SUBST:  v: vcxlmb, n: nnnnvbcx
+FTILE:  O.4G : floor_marble
+SUBST:  4 = 122223
+: vault.run("shared.entry_setup")
+# Source Lua: : zot_entry_setup(_G)
+MAP
+xxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxcccccccxxxxxxx
+xxxcccccc..0..ccccccxx
+xxcc......vvv......ccx
+xxc.v......1......v.cx
+xxc.2v...nn=nn...v..cx
+xxc...nnnn...nnnn...cx
+xxc...n....G....n..1cx
+xcc...n.G..4..G.n...cc
+xc.3.nn....v....nn...c
+xc.v.n....v.v....n.v.+
+xc.v.+.G.v.O.v.G.=.v.+
+xc.v.n....v.v....n.v.+
+xc.3.nn....v....nn...c
+xcc...n.G..4..G.n...cc
+xxc...n....G....n..1cx
+xxc...nnnn...nnnn...cx
+xxc.2v...nn=nn...v..cx
+xxc.v......1......v.cx
+xxcc......vvv......ccx
+xxxcccccc..0..ccccccxx
+xxxxxxxxcccccccxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
+
+# Sorry, no wand of wishing in this one

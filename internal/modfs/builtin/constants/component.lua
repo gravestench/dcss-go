@@ -7,6 +7,7 @@ local component = {
     VAULT_ORIGIN = "vault.origin",
     WORLD_TRAP = "world.trap",
     WORLD_VAULT_TRIGGER = "world.vault_trigger",
+    WORLD_ZOT_OVERGROWN = "world.zot_overgrown",
     WORLD_VAULT_SPAWN = "world.vault_spawn",
     TRAP_MARK = "trap.sentinel_mark",
     TRAP_HELD = "trap.held",

@@ -14,6 +14,8 @@ return {
     ELF_END = "elf_end",
     DEPTHS_ENTRY = "depths_entry",
     DEPTHS_ENCOMPASS = "depths_encompass",
+    ZOT = "zot",
+    ZOT_ENTRY = "zot_entry",
     SPIDER = "spider",
     SPIDER_ENTRY = "spider_entry",
     SPIDER_END = "spider_end",

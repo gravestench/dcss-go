@@ -1,0 +1,47 @@
+# grunt_zot_stairs_mandelzot keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   grunt_zot_stairs_mandelzot
+TAGS:   no_monster_gen
+DEPTH:  Zot, !Zot:$
+ORIENT: east
+SUBST:  } = }:80 >, ] = ]:80 >, ) = ):80 >
+MONS:   nonbase draconian, base draconian w:30 / nothing, moth of wrath
+MONS:   fire dragon w:30 / ice dragon w:30 / shadow dragon w:20 / \
+        storm dragon w:50 / bone dragon w:30 / golden dragon w:35
+MONS:   Killer Klown / electric golem w:5 / curse toe w:5 / nothing
+MONS:   orb of fire
+MAP
+                   xxxx
+                   xllxxx
+                   xllllx
+                  xxllllxx
+                 xxll.lllxx
+              xxxxll.].lllxxxxx
+              xllllll..lllllllx
+             xxl3l.......lllllx
+             xll...2.1.2...3llx
+     xxxxxxxxx.l...........lllx
+     xllxllxxll.....2.2.....llx
+    xxllllllll..............llx
+   xxlll....ll...5...........lx
+  xxlll.2.2..l............4.llx
+xxxlll......................llx
+@......2.1.2.3......5..4.}6lllx
+xxxlll......................llx
+  xxlll.2.2..l............4.llx
+   xxlll....ll...5...........lx
+    xxllllllll..............llx
+     xllxllxxll.....2.2.....llx
+     xxxxxxxxx.l...........lllx
+             xll...2.1.2...3llx
+             xxl3l.......lllllx
+              xllllll..lllllllx
+              xxxxll.).lllxxxxx
+                 xxll.lllxx
+                  xxllllxx
+                   xllllx
+                   xllxxx
+                   xxxx
+ENDMAP

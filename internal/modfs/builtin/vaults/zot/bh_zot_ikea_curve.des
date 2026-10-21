@@ -1,0 +1,21 @@
+# bh_zot_ikea_curve keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   bh_zot_ikea_curve
+TAGS:   extra transparent
+DEPTH:  Zot
+MAP
+xxxxxxxxxxxxx
+@.....x.....@
+@.....x.....@
+xxxx..x..xxxx
+x.....x.....x
+x.....x.....x
+x..xxxxxxx..x
+x..x.....x..x
+x..x.....x..x
+x.....x.....x
+x.....x.....x
+xxxxxxxxxxxxx
+ENDMAP

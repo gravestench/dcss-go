@@ -99,6 +99,73 @@ local function spectral_species_identity()
         "literal spectral thing is not a spectral form of another species")
 end
 
+-- Source Zot places a klown-shaped salt pillar, and mapdef.cc derives a
+-- generic pillar plus its base monster. Both identities must survive
+-- selection so the visible statue retains the authored shape.
+local function shaped_salt_pillar_identity()
+    local name = "killer klown-shaped pillar of salt"
+    local selected = monster.parse(name, site)[1][1]
+
+    resolve.validate_monster(selected, site)
+
+    local resolved = resolve.monster(random_context(), selected, 25, site)
+
+    harness.equal(resolved.kind_id, monster_ids.MONS_PILLAR_OF_SALT,
+        "salt pillar species")
+    harness.equal(resolved.base_id, monster_ids.MONS_KILLER_KLOWN,
+        "authored salt pillar shape")
+    harness.equal(resolved.custom_name, name,
+        "source-shaped name survives materialization")
+end
+
+-- The source Zot spectrum uses colour-prefixed ugly things. Its colour is
+-- actor state, while the catalog still owns just the shared ugly species.
+local function coloured_ugly_identity()
+    local selected = monster.parse("red very ugly thing", site)[1][1]
+
+    resolve.validate_monster(selected, site)
+
+    local resolved = resolve.monster(random_context(), selected, 25, site)
+
+    harness.equal(resolved.kind_id, monster_ids.MONS_VERY_UGLY_THING)
+    harness.equal(resolved.colour, "red")
+end
+
+-- A source Zot encounter can fix a draconian colour while drawing its
+-- nonbase job. The colour belongs to base identity, not the role name.
+local function coloured_random_draconian_identity()
+    local selected = monster.parse(
+        "any nonbase yellow draconian", site)[1][1]
+
+    resolve.validate_monster(selected, site)
+
+    local resolved = resolve.monster(random_context(), selected, 25, site)
+
+    harness.truthy(resolved.kind_id, "source draconian role is chosen")
+    harness.equal(resolved.base_id,
+        monster_ids.MONS_YELLOW_DRACONIAN,
+        "source draconian colour stays fixed")
+
+    local any_base = monster.parse("any base draconian", site)[1][1]
+
+    resolve.validate_monster(any_base, site)
+    harness.truthy(resolve.monster(random_context(), any_base, 25, site).kind_id,
+        "source base draconian request is accepted")
+end
+
+-- Source item mimic:N means one chance in N at generation, whereas bare
+-- mimic is certain. The saved ECS marker stores the resolved result.
+local function weighted_item_mimic()
+    local selected = item.parse(
+        "scroll of teleportation mimic:10", site)[1][1]
+
+    harness.equal(selected.mimic, 10, "source mimic denominator")
+    harness.truthy(resolve.item(random_context({ 0 }), selected,
+        25, site).mimic, "winning mimic roll")
+    harness.falsy(resolve.item(random_context({ 1 }), selected,
+        25, site).mimic, "ordinary item on other rolls")
+end
+
 -- DES god annotations belong to the individual selected monster, and an
 -- unknown god must fail before a pending vault record reaches population.
 local function authored_monster_god()
@@ -452,6 +519,10 @@ function test.run()
     random_colour_is_selected_once()
     named_and_variant_identities()
     spectral_species_identity()
+    shaped_salt_pillar_identity()
+    coloured_ugly_identity()
+    coloured_random_draconian_identity()
+    weighted_item_mimic()
     authored_monster_god()
     random_requests_use_source_depth()
     every_static_arrival_name_resolves()

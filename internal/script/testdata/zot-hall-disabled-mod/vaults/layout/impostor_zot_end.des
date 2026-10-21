@@ -1,0 +1,9 @@
+# This other end layout must not satisfy Zot's explicit Hall requirement.
+NAME: impostor_zot_end
+TAGS: layout layout_type_zot_end
+PLACE: Zot:$
+WEIGHT: 1000
+ORIENT: north
+MAP
+{..}
+ENDMAP

@@ -1,0 +1,56 @@
+# hangedman_zot_spectrum keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:    hangedman_zot_spectrum
+TAGS:    no_monster_gen
+DEPTH:   Zot, !Zot:$
+KMONS:   A = red very ugly thing
+KMONS:   B = red draconian
+KMONS:   C = balrug / red draconian scorcher w:6
+KMONS:   D = cyan very ugly thing
+KMONS:   E = black draconian
+KMONS:   F = electric golem / black draconian knight w:6
+KMONS:   G = green very ugly thing
+KMONS:   H = green draconian
+KMONS:   I = green death / green draconian monk w:6
+KMONS:   J = white very ugly thing
+KMONS:   K = white draconian
+KMONS:   L = shard shrike / white draconian stormcaller w:6
+KMONS:   M = brown very ugly thing
+KMONS:   N = yellow draconian
+KMONS:   O = acid blob / yellow draconian annihilator w:6
+KMONS:   Z = golden dragon / killer klown / Tiamat, golden dragon / killer klown
+KITEM:   BEHKN = $ w:15 / % w:25 / *
+KITEM:   z = any good_item
+KITEM:   Z = superb_item
+# Rotates out loot, upstairs, downstairs,
+# both (in an enclosed bubble), or nothing, at either end.
+SHUFFLE: defg{>Z' / defg{<'' / fgde>{'Z / fgde<{'' / defg'|Z' / fgde|''Z / \
+         fgfg''() / fgfg'')( / dede'''' / dede'''' / dede''''
+SHUFFLE: ABC / DEF / GHI / JKL / MNO
+SUBST:   d = @, e = ., f = x, g = c, c : ccb, Z = z Z:6, {' = .
+NSUBST:  < = 1:{ / 1:[, > = 1:} / 1:]
+MAP
+ ddddxxxx
+ddeeeecxxxxxxxx
+dee{..cxxxccccx
+de{'c+cccccBBcx
+de.cc.......Acxxx
+xe.+.......Accccx
+xccc..Cc+ccccEEcx
+xxxc..cc......Dcxxx
+xxxc..+......Dccccx
+ xxc..c..Fc+cccHHcx
+ xcc..c..cc.....Gcxxx
+ xcB.Ac..+.....Gccccx
+ xcBAcc..c..Ic+ccKKcx
+ xccccE.Dc..cc....Jcx
+ xxxxcEDcc..+....Jccx
+    xccccH.Gc..Lc+cgx
+    xxxxcHGcc..cc.>gf
+       xccccK.J+.Z.gf
+       xxxxcKJcc>.ggf
+          xccccggggff
+          xxxxxxffff
+ENDMAP

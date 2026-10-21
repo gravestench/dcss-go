@@ -1,0 +1,20 @@
+# lemuel_golem_globe keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:  lemuel_golem_globe
+DEPTH: Zot
+TAGS:  no_rotate no_exits
+KFEAT: ^ = permanent teleport trap / dispersal trap
+KFEAT: m = iron_grate
+SUBST: 1 = 1.
+MONS:  electric golem
+MAP
+  mmmm
+ mm..mm
+mm.11.mm
+m.1^^1.m
+mm.11.mm
+ mm..mm
+  mmmm
+ENDMAP

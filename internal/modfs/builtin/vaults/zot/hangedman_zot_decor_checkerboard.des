@@ -1,0 +1,31 @@
+# hangedman_zot_decor_checkerboard keeps its authored Zot geometry and source selectors.
+# Named Lua hooks below perform only the source decisions that
+# cannot remain static DES directives.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:    hangedman_zot_decor_checkerboard
+TAGS:    extra transparent
+DEPTH:   Zot
+WEIGHT:  8
+KFEAT:   Z = zot trap
+SHUFFLE: @' / '@ / "" / "", defg / jkhi / HIJK / NOLM
+SUBST:   d : wbb, e : wwb, g : lvv, f : llv
+SUBST:   h : lvv, i : llv, j : wbb, k : wwb
+SUBST:   H : wwwwb, I : wwwwb, J : llllv, K : llllv
+SUBST:   L : lvvvv, M : lvvvv, N : wbbbb, O : wbbbb
+SHUFFLE: bv / bv / bv / vb / xx / cc
+NSUBST:  Z = 1 = (:1 Z:14 / 1 = ):1 Z:14 / Z
+SUBST:   Z = ZZUG..., '" = .
+KPROP:   l = no_cloud_gen
+KMASK:   wl = no_monster_gen
+MAP
+.......     ...'...
+.dw.lf.     .Hw.lJ.
+.we.gl.     .wI.Kl.
+@..Z...........Z.........
+.lg.ew.hl.wj.lK.Iw.Ll.wN.
+.fl.wd.li.kw.Jl.wH.lM.Ow.
+.........Z...........Z..@
+      .wk.il.     .wO.Ml.
+      .jw.lh.     .Nw.lL.
+      ...'...     .......
+ENDMAP

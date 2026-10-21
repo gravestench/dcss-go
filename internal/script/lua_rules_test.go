@@ -134,6 +134,29 @@ func TestDepthsEncompassMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/depths_encompass_mod_test.lua")
 }
 
+// A Zot layer replaces one weighted source file and adds a discoverable
+// ordinary map with a same-path Lua hook.
+func TestZotVaultMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/zot-vault-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/zot_vault_mod_test.lua")
+}
+
+// Disabling the effective Hall closes Zot:5 despite another explicit map.
+func TestZotHallDisabledMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/zot-hall-disabled-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/zot_hall_disabled_test.lua")
+}
+
 // A sparse layer extends Spider entries, ordinary maps, and jumping helpers.
 func TestSpiderVaultMod(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/spider-vault-mod")

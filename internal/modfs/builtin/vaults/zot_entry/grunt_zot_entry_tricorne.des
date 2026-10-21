@@ -1,0 +1,42 @@
+# grunt_zot_entry_tricorne is an authored Zot entrance from pinned DCSS.
+# Its geometry and fixed directives stay in DES; any source script
+# decision is called as a named Lua hook at its original position.
+# Source: crawl-ref/source/dat/des/branches/zot.des.
+NAME:   grunt_zot_entry_tricorne
+PLACE: Depths:$
+ORIENT: float
+TAGS:   no_monster_gen zot_entry transparent patrolling
+COLOUR: ABC_ = magenta
+FTILE:  ABC-_O = floor_hall
+SUBST:  _ = ., A = 2, B = 110, C = c, - = +
+NSUBST: 3 = 1:9 / *:3
+: vault.run("shared.entry_setup")
+# Source Lua: : zot_entry_setup(_G)
+MAP
+@......               ......@
+.+cccc.................cccc+.
+.c...ccccccccccccccccccc...c.
+.cc...........c...........cc.
+..cc...1....CCCCC....0...cc..
+ ..c.0T...CCC___CCC...T1.c..
+  .cc...3.C___A___C.3...cc.
+  ..cc...C-_B___B_-C...cc..
+   ..cc..C_________C..cc..
+    ..c..C____O____C.cc..
+     .cc.C_________C.cc.
+     ..ccCC_A___A_CCcc..
+      ..ccC___B___Ccc..
+       .ccCCC___CCCcc.
+       ..c..CC-CC..c..
+        .cc.......cc.
+        ..c...3...c..
+         .cc..T..cc.
+         ..c.1.0.c..
+          .cc...cc.
+          ..c...c..
+           .c...c.
+           .cc.cc.
+           ..c.c..
+            .c+c.
+            ..@..
+ENDMAP

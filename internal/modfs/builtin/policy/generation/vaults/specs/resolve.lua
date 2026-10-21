@@ -224,6 +224,18 @@ local function draconian_names(name)
     end
 end
 
+-- mapdef.cc treats the leading colour of an ugly thing as an actor
+-- property, not part of its species name. Require a known source colour
+-- and one of the two catalog species before accepting that shorthand.
+local function ugly_names(name)
+    local colour, species = name:match("^([a-z]+) (.+ ugly thing)$")
+
+    if (species == "ugly thing" or species == "very ugly thing") and
+        colours.VALID[colour] then
+        return colour, species
+    end
+end
+
 -- DES names some unrand artefacts by their source tile token rather than
 -- their displayed title. Resolve those tokens through the same catalog
 -- used by item generation, so no room owns a private artefact name table.
@@ -390,6 +402,39 @@ function resolve.validate_monster(selected, site)
         return
     end
 
+    -- mapdef.cc accepts any known base monster followed by this source
+    -- suffix and creates a permanent, shaped pillar of salt. The base is
+    -- catalog data, not a second pillar species name.
+    local salt_base = name:match("^(.-)%-shaped pillar of salt$")
+
+    if salt_base then
+        find_name(categories.MONSTERS, salt_base, site)
+
+        return
+    end
+
+    if name == monster_requests.ANY_BASE_DRACONIAN then
+        return
+    end
+
+    local fixed_draconian = name:match(
+        "^any nonbase ([a-z]+) draconian$")
+
+    if fixed_draconian then
+        find_name(categories.MONSTERS,
+            fixed_draconian .. " draconian", site)
+
+        return
+    end
+
+    local ugly_colour, ugly_species = ugly_names(name)
+
+    if ugly_colour then
+        find_name(categories.MONSTERS, ugly_species, site)
+
+        return
+    end
+
     local source_name = base_name or name
     local draconian_base, draconian_role = draconian_names(source_name)
 
@@ -499,9 +544,14 @@ function resolve.monster(ctx, selected, depth, site)
     local head_count = hydra_heads.from_name(base_name or name)
     local draconian_base, draconian_role = draconian_names(name)
     local band_name = name:match("^(.-) band$")
+    local salt_base = name:match("^(.-)%-shaped pillar of salt$")
+    local ugly_colour, ugly_species = ugly_names(name)
+    local fixed_draconian = name:match(
+        "^any nonbase ([a-z]+) draconian$")
     local kind_id
     local base_id
-    local colour = selected.colour and selected.colour:lower()
+    local colour = selected.colour and selected.colour:lower() or
+        ugly_colour
 
     if colour == colours.ANY then
         colour = colours.RANDOM[ctx:random("vault_colour", #colours.RANDOM) + 1]
@@ -513,6 +563,14 @@ function resolve.monster(ctx, selected, depth, site)
         kind_id = variant == "spectral" and
             monster_ids.MONS_SPECTRAL_THING or monster_ids.MONS_SIMULACRUM
         base_id = random_undead_base(ctx, selected, depth, site)
+    elseif name == monster_requests.ANY_BASE_DRACONIAN then
+        kind_id = random_monsters.pick(ctx,
+            monster_requests.BASE_DRACONIAN, depth, site)
+    elseif fixed_draconian then
+        kind_id = random_monsters.pick(ctx,
+            monster_requests.NONBASE_DRACONIAN, depth, site)
+        base_id = find_name(categories.MONSTERS,
+            fixed_draconian .. " draconian", site)
     elseif random_monster_names[name] then
         kind_id = random_monsters.pick(ctx, name,
             source_depth(selected, depth), site, selected.place)
@@ -543,6 +601,11 @@ function resolve.monster(ctx, selected, depth, site)
             head_count and "hydra" or base_name, site)
     elseif head_count then
         kind_id = monster_ids.MONS_HYDRA
+    elseif salt_base then
+        kind_id = monster_ids.MONS_PILLAR_OF_SALT
+        base_id = find_name(categories.MONSTERS, salt_base, site)
+    elseif ugly_species then
+        kind_id = find_name(categories.MONSTERS, ugly_species, site)
     elseif draconian_role then
         kind_id = find_name(categories.MONSTERS, draconian_role, site)
         base_id = find_name(categories.MONSTERS, draconian_base, site)
@@ -588,7 +651,7 @@ function resolve.monster(ctx, selected, depth, site)
         generate_awake = selected.generate_awake or false,
         patrolling = selected.patrolling or false,
         database_name = selected.database_name,
-        custom_name = selected.custom_name,
+        custom_name = selected.custom_name or (salt_base and name),
         name_adjective = selected.name_adjective or false,
         tile = selected.tile,
         hp = selected.hp,
@@ -658,6 +721,7 @@ function resolve.item(ctx, selected, depth, site)
     local generation_depth = selected.level or source_depth(selected, depth)
     local manual_skill_id
     local request
+    local mimic = selected.mimic
 
     if name == "randbook" or name == "any randbook" then
         kind_id = item_ids.BOOK_RANDART_THEME
@@ -700,6 +764,13 @@ function resolve.item(ctx, selected, depth, site)
         kind_id = find_name(categories.ITEMS, name, site)
     end
 
+    -- C++ first chooses the concrete item type, then rolls mimic chance.
+    -- Preserve that ordering so a random book does not consume its mimic
+    -- draw before its subtype and appearance are known.
+    if type(mimic) == "number" then
+        mimic = ctx:random(streams.PLACEMENT, mimic) == 0
+    end
+
     return {
         kind_id = kind_id,
         unique_id = unique_id,
@@ -726,7 +797,7 @@ function resolve.item(ctx, selected, depth, site)
         weapon_tile = selected.wtile,
         item_name = selected.itemname,
         no_pickup = selected.no_pickup,
-        mimic = selected.mimic,
+        mimic = mimic,
     }
 end
 
