@@ -2025,8 +2025,9 @@ The run method receives `api.ctx`, `api.branch`, `api.depth`, and
 `builder` and `rows = builder:rows()`. The catalog calls a named
 `vault.validate` method if the `.des` file declares one, then places missing
 ordinary stairs in a connected region. A failed source validator gets up to
-eight draws of the same layout; malformed hooks fail at startup. Import the
-shared geometry helpers you use from `policy.generation.layouts` and keep
+64 draws of the same layout. Positive-weight Dungeon hooks are checked at
+startup; a hook from another branch is checked when that layout runs.
+Import the shared geometry helpers from `policy.generation.layouts` and keep
 source-specific choices in your layout module.
 
 Selection reads only effective `.des` depth and branch weight rules. It
@@ -2048,7 +2049,7 @@ For a map that must have one contiguous playable region, use the shared
 
 ### Authored vaults
 
-Vault geometry remains in original `.des` syntax under `vaults/arrival/`,
+Vault geometry remains in DCSS DES map syntax under `vaults/arrival/`,
 `vaults/shop/`, or `vaults/serial/`. A map has `NAME`, tags, optional
 orientation and directives, then `MAP` and `ENDMAP`. A controller with a
 post-place hook may omit MAP when it has no cells. The `.des` file is the
