@@ -6,6 +6,7 @@ local streams = {
     BRANCH_SCHEDULE = "branch_schedule",
     BANDS = "bands",
     CLOUDS = "clouds",
+    FOG_MACHINES = "fog_machines",
     ITEM_GENERATION = "item_generation",
     MELEE = "melee",
     MONSTER_HP = "monster_hp",

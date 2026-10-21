@@ -258,6 +258,15 @@ func newScenarioWithRules(
 		return nil, err
 	}
 
+	if err = g.runWorldPolicy("world.fog_machines", map[string]any{
+		"source_level_id":      position.LevelID,
+		"destination_level_id": position.LevelID,
+		"elapsed_aut":          int64(0),
+		"enter":                true,
+	}); err != nil {
+		return nil, err
+	}
+
 	if err = registerSystems(g); err != nil {
 		return nil, err
 	}

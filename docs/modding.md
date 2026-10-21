@@ -1818,6 +1818,29 @@ poison or another rule and return the damage amount, or `nil` for none.
 The field and placement policies own cloud duration, location, and source
 attribution. Reuse them rather than storing those facts in a Lua global.
 
+A vault can also generate clouds over time with a fog machine marker in its
+`.des` file. The original map syntax remains the authoring interface:
+
+```text
+MARKER: f = lua:fog_machine { cloud_type = "thin mist", \
+    pow_max = 5, delay_min = 10, delay_max = 150, size = 5 }
+```
+
+The marker lives at each `f` map cell. `pow_max`, a fixed `size` or
+`size_min`/`size_max`, and a fixed `delay` or `delay_min`/`delay_max` are
+required. Optional fields are `cloud_type`, `walk_dist`, `pow_min`,
+`pow_rolls`, `spread_rate`, `start_clouds`, `excl_rad`, and size or spread
+buildup amount/time pairs. Use the source cloud names resolved by
+`constants/fog_clouds.lua`; add a registered cloud definition and name
+mapping before inventing a new name. The marker reader rejects expressions
+and unknown fields. The Lua world policy creates a saved
+`world.fog_machine` entity for each marker. It resets the clock and emits
+`start_clouds` on level entry, counts down in aut while that floor is active,
+and places later clouds through the same cloud owner as spells. Restoring a
+save preserves the clock and does not repeat the entry burst. For a new fog
+rule, edit `policy/world/fog_machines.lua`; the `.des` file only selects its
+existing parameters.
+
 For a **trap**, add a definition under `content/traps/` with an `effect`
 module path. `content/traps/alarm.lua` and
 `policy/traps/effects/alarm.lua` show the pair. On entry to a trap cell, the

@@ -207,6 +207,7 @@ func populationVaultRecords(level *Level) []any {
 			record.Overridden ||
 			(record.Kind != vault.KindItem &&
 				record.Kind != vault.KindMonster &&
+				record.Kind != vault.KindMarker &&
 				record.Kind != vault.KindFeature &&
 				record.Kind != vault.KindSourceFeature) {
 			continue
@@ -305,6 +306,7 @@ func (g *Game) markMaterializedVaultRecords(value any) error {
 		if !record.Pending ||
 			(record.Kind != vault.KindItem &&
 				record.Kind != vault.KindMonster &&
+				record.Kind != vault.KindMarker &&
 				record.Kind != vault.KindFeature &&
 				record.Kind != vault.KindSourceFeature) {
 			return fmt.Errorf("Lua population materialized an invalid vault record")

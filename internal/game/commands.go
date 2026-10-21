@@ -328,6 +328,15 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 		return StepResult{}, err
 	}
 
+	if err := g.runWorldPolicy("world.fog_machines", map[string]any{
+		"source_level_id":      activeLevelID,
+		"destination_level_id": fieldLevelID,
+		"elapsed_aut":          int64(cost),
+		"enter":                fieldLevelID != activeLevelID,
+	}); err != nil {
+		return StepResult{}, err
+	}
+
 	if err := g.refreshVisibility(); err != nil {
 		return StepResult{}, err
 	}

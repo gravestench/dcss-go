@@ -15,8 +15,8 @@ local cocytus_monsters = '.- = simulacrum w:30 / ice fiend w:1 / ' ..
     'ice beast w:20 / ice dragon w:5 / ' ..
     'ice dragon simulacrum w:5 / w:2000 nothing'
 
--- Record a typed fog instruction at the surviving ! glyph. The marker
--- remains in the level and save even before cloud machines are playable.
+-- Record a typed fog instruction at the surviving ! glyph. Population
+-- turns that instruction into a saved ECS machine on the selected floor.
 local function fog_seed(api, cloud_type)
     local marker = 'lua:fog_machine { cloud_type = "' .. cloud_type ..
         '", pow_max = 15, delay_min = 50, delay_max = 100, ' ..

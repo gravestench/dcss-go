@@ -193,6 +193,7 @@ local component = {
     -- World cloud and Zot clock state belong to the level or branch, while
     -- CHANNEL is a lasting player magic effect.
     WORLD_CLOUD = "world.cloud",
+    FOG_MACHINE = "world.fog_machine",
     CHANNEL = "magic.channel",
     ZOT_CLOCK = "world.zot_clock",
 }

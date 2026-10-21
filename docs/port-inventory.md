@@ -392,9 +392,10 @@ pool width and requests bridge, window, view, balcony, and pool pieces in
 source order. Each child keeps its exact `.des` MAP rows and calls the
 shared ecology hook at the authored point. Nested bridge helpers use their
 original 3:2:1 weights. All nine Dungeon depth bands and Elf are placed;
-fog-machine instructions remain typed marker records until that marker
-effect runs. Source-sized slime creatures now use a shared Akara component
-for HP, natural damage, and display, including Planerend summons.
+fog-machine instructions now create saved ECS clocks and live cloud sources
+when the selected floor is populated. Source-sized slime creatures now use a
+shared Akara component for HP, natural damage, and display, including
+Planerend summons.
 
 All 80 unique-placement source definitions are now individual `.des` files.
 The 11 source MAP blocks remain byte-for-byte unchanged; 69 inline source
@@ -556,6 +557,10 @@ saved temporary-terrain state. Cloud damage, statuses, source credit, acid
 corrosion, and deterministic spread have source-backed implementations.
 Wind, sanctuary, and terrain-destruction veto need their neighboring world
 systems to supply live conditions before those interactions are complete.
+Committed fog-machine markers use a Lua reader and saved ECS clock. Level
+entry emits their opening burst; active turns emit later clouds offscreen as
+well as in view. The shared cloud owner handles decay and attribution. A
+restore checks each machine against its realized source marker.
 
 All seven active magical staves now use one base weapon profile and Lua
 metadata in their individual item definitions. Wielded staves enhance their

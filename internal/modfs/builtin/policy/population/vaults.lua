@@ -15,6 +15,7 @@ local streams = require("constants.rng_streams")
 local bands = require("policy.population.bands")
 local choice = require("policy.generation.vaults.specs.choice")
 local resolve = require("policy.generation.vaults.specs.resolve")
+local fog = require("policy.world.fog_machine_definitions")
 
 local vaults = {}
 
@@ -272,7 +273,26 @@ function vaults.materialize(ctx, level, excluded)
     for _, record in ipairs(level.vault_records or {}) do
         local arguments = record.arguments or {}
 
-        if record.kind == effects.FEATURE and
+        if record.kind == effects.MARKER and
+            fog.is_marker(record.identity) then
+            local state = fog.parse(record.identity, record)
+
+            state.level_id = level.id
+            state.x = record.x
+            state.y = record.y
+            state.vault_id = record.source_id
+            state.record_index = record.index
+            state.countdown_aut = 0
+            state.buildup_aut = 0
+
+            local entity = ctx:create()
+
+            ctx:add(entity, component.FOG_MACHINE, state)
+            materialized[#materialized + 1] = {
+                level_id = level.id,
+                index = record.index,
+            }
+        elseif record.kind == effects.FEATURE and
             shop_spec.is_shop(record.identity) then
             materialized[#materialized + 1] =
                 materialize_shop(ctx, level, record)
@@ -288,9 +308,10 @@ function vaults.materialize(ctx, level, excluded)
                     kind_id = kind_id,
                 }
             end
-        elseif (arguments.kind_id and arguments.kind_id ~= "") or
-            (record.kind == effects.MONSTER and
-                (arguments.monster_slots or 0) > 1) then
+        elseif record.kind ~= effects.MARKER and
+            ((arguments.kind_id and arguments.kind_id ~= "") or
+                (record.kind == effects.MONSTER and
+                    (arguments.monster_slots or 0) > 1)) then
             local no_spawn = false
             local gear
 

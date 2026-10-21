@@ -149,8 +149,8 @@ local function first_lava(api, empty)
         "w:5 generate_awake lava snake")
 end
 
--- The deepest lava exhibit can carry flame-cloud machines, whose intent
--- remains typed level data even before the marker effect is activated.
+-- The deepest lava exhibit can carry flame-cloud machines. Its marker
+-- creates a saved cloud source when this selected map is populated.
 local function deep_lava(api, empty)
     api:emit(directives.SUBST, "w = l:25 !:1")
     api:emit(directives.KFEAT, "l = l")

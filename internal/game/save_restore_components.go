@@ -274,6 +274,12 @@ func (g *Game) validateRestoredPlacement() error {
 		return err
 	}
 
+	if _, err := g.scripts.Policy("save.validate_fog_machines", map[string]any{
+		"levels": g.vaultValidationLevels(),
+	}); err != nil {
+		return err
+	}
+
 	if _, err := g.scripts.Policy("save.validate_traps", map[string]any{
 		"levels": g.vaultValidationLevels(),
 	}); err != nil {

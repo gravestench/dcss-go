@@ -5,8 +5,8 @@ local directives = require("constants.vault_directives")
 
 local handler = {}
 
--- Choose the J-cell feature before count substitutions. The fog machine
--- remains a typed marker instruction until marker gameplay is installed.
+-- Choose the J-cell feature before count substitutions. The selected
+-- marker becomes a saved cloud source when the Temple is populated.
 local function choose_storm(api)
     if api:roll(25) == 0 then
         api:emit(directives.KMONS, "J = diamond obelisk")
