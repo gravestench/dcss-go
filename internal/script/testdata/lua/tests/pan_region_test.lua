@@ -6,6 +6,7 @@ local harness = require("tests.harness")
 local region = require("policy.generation.pan.region")
 local scenario = require("policy.generation.scenario")
 local component = require("constants.component")
+local effects = require("constants.vault_effects")
 local rune_ids = require("constants.runes")
 local species = require("ids.species")
 
@@ -69,27 +70,64 @@ local function check_encompassing_primary()
         "encompassing Pan entry is traversable")
 end
 
--- Each named lord realm must fit a source Pan base independently. These
--- four paths exercise source orientation and lord hook facts before travel
--- can request one of them from the mandatory primary selector.
+-- Each named lord realm must fit a source Pan base and produce exactly one
+-- matching rune record. A walkable map alone would miss a broken DES hook
+-- or an O cell that failed to become a real collectible item.
 local function check_lord_primaries()
-    local ids = {
-        "mnoleg",
-        "lom_lobon",
-        "cerebov",
-        "gloorx_vloq",
+    local rune_kinds = {
+        [rune_ids.DEMONIC] = true,
+        [rune_ids.GLOWING] = true,
+        [rune_ids.MAGICAL] = true,
+        [rune_ids.FIERY] = true,
+        [rune_ids.DARK] = true,
+    }
+    local cases = {
+        {
+            id = "mnoleg",
+            rune = rune_ids.GLOWING,
+        },
+        {
+            id = "lom_lobon",
+            rune = rune_ids.MAGICAL,
+        },
+        {
+            id = "cerebov",
+            rune = rune_ids.FIERY,
+        },
+        {
+            id = "gloorx_vloq",
+            rune = rune_ids.DARK,
+        },
     }
 
-    for _, id in ipairs(ids) do
-        local built = region.build_primary(context(), catalog.get(id), {
+    for _, case in ipairs(cases) do
+        local built = region.build_primary(context(), catalog.get(case.id), {
             prior_vault_ids = {},
             collected_runes = {},
             pan_rune_count = 0,
         })
 
-        harness.equal(built.map.id, id, "Pan lord primary " .. id)
+        harness.equal(built.map.id, case.id,
+            "Pan lord primary " .. case.id)
         harness.truthy(built.builder:cell(built.entry.x, built.entry.y) == ".",
-            "Pan lord entry is traversable " .. id)
+            "Pan lord entry is traversable " .. case.id)
+
+        local rune_count = 0
+
+        for _, record in ipairs(built.records) do
+            if record.kind == effects.ITEM and record.arguments and
+                rune_kinds[record.arguments.kind_id] and
+                not record.arguments.mimic then
+                harness.equal(record.arguments.kind_id, case.rune,
+                    "Pan lord rune matches its realm " .. case.id)
+                harness.equal(record.vault_id, case.id,
+                    "Pan lord rune comes from its primary " .. case.id)
+                rune_count = rune_count + 1
+            end
+        end
+
+        harness.equal(rune_count, 1,
+            "Pan lord places exactly one real rune " .. case.id)
     end
 end
 

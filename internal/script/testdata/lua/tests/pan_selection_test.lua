@@ -52,22 +52,32 @@ local function check_primary_pool()
 end
 
 -- On the first region a successful one-in-twenty pressure roll selects
--- one of the four unseen lord families before the ordinary weighted pool.
+-- each of the four unseen lord families before the ordinary weighted pool.
 local function check_lord_pressure()
-    local source = random({ 0, 0, 0 })
-    local map = selector.choose(source, {
-        levels_seen = 0,
-        prior_vault_ids = {},
-    })
+    local lords = {
+        tags.PAN_LORD_MNOLEG,
+        tags.PAN_LORD_LOM_LOBON,
+        tags.PAN_LORD_CEREBOV,
+        tags.PAN_LORD_GLOORX_VLOQ,
+    }
 
-    harness.truthy(map.tags[tags.PAN_LORD_MNOLEG],
-        "first unseen lord should be Mnoleg")
-    harness.equal(source.index, 3, "pressure, lord, and map draws")
+    for index, tag in ipairs(lords) do
+        local source = random({ 0, index - 1, 0 })
+        local map = selector.choose(source, {
+            levels_seen = 0,
+            prior_vault_ids = {},
+        })
+
+        harness.truthy(map.tags[tag],
+            "lord draw selects a map tagged " .. tag)
+        harness.equal(source.index, 3,
+            "pressure, lord, and map draws for " .. tag)
+    end
 
     local next_source = random({ 0, 1, 0 })
     local next_map = selector.choose(next_source, {
         levels_seen = 1,
-        prior_vault_ids = { map.id },
+        prior_vault_ids = { "mnoleg" },
     })
 
     harness.falsy(next_map.tags[tags.PAN_LORD_MNOLEG],
