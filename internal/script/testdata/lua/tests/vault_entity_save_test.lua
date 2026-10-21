@@ -175,6 +175,50 @@ function test.run(ctx)
     harness.falsy(decay_ok, "forged decayed corpse species was accepted")
     ctx:destroy(decayed)
 
+    -- An authored false rune cannot lose its pickup guard in a save. The
+    -- guard is valid only while the corresponding source choice is a mimic.
+    local mimic_input = level_input()
+    local mimic_record = mimic_input.levels[1].vault_records[3]
+
+    mimic_record.identity = "barnacled rune of Zot mimic"
+    mimic_record.arguments = {
+        kind_id = item_ids.RUNE_SHOALS,
+        mimic = true,
+    }
+
+    local mimic_origin = origin_fields()
+
+    mimic_origin.record_index = 3
+    mimic_origin.kind_id = item_ids.RUNE_SHOALS
+    mimic_origin.spawn_x = 16
+
+    local mimic = ctx:create()
+
+    ctx:add(mimic, component.ITEM, {
+        kind_id = item_ids.RUNE_SHOALS,
+        quantity = 1,
+        plus = 0,
+        charges = 0,
+        ego = "",
+    })
+    ctx:add(mimic, component.VAULT_ORIGIN, mimic_origin)
+    ctx:add(mimic, component.VAULT_ITEM_MIMIC, {
+        active = true,
+    })
+    save.validate_vault_entities(ctx, mimic_input)
+
+    ctx:remove(mimic, component.VAULT_ITEM_MIMIC)
+    harness.falsy(pcall(save.validate_vault_entities, ctx, mimic_input),
+        "saved false rune without mimic marker was accepted")
+
+    ctx:add(mimic, component.VAULT_ITEM_MIMIC, {
+        active = true,
+    })
+    mimic_record.arguments.mimic = false
+    harness.falsy(pcall(save.validate_vault_entities, ctx, mimic_input),
+        "saved real rune with mimic marker was accepted")
+    ctx:destroy(mimic)
+
     -- Secondary vault gear must match an item occurrence from the source.
     local gear_input = level_input()
 

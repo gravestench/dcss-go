@@ -89,6 +89,17 @@ func TestSpiderEndMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/spider_end_mod_test.lua")
 }
 
+// A sparse mod extends Shoals' end pool through the same DES discovery path.
+func TestShoalsEndMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/shoals-end-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/shoals_end_mod_test.lua")
+}
+
 // An overlay end map tests PLACE selection through the production catalog.
 func TestLayoutPlaceSelection(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/layout-place")

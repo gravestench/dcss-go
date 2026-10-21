@@ -470,6 +470,7 @@ local function select_entities(record, vault, random, depth, player)
         arguments.allow_uniques = resolved.allow_uniques ~= false
         arguments.unique_id = resolved.unique_id or ""
         arguments.no_pickup = resolved.no_pickup or false
+        arguments.mimic = resolved.mimic or false
         arguments.ident = resolved.ident or ""
         arguments.tile = resolved.tile or ""
         arguments.weapon_tile = resolved.weapon_tile or ""

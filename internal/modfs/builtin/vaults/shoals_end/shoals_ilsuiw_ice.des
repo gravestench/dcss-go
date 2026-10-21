@@ -1,0 +1,25 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# shoals_ilsuiw_ice is a tagged shoals finale helper. Its directives retain source order.
+NAME:   shoals_ilsuiw_ice
+TAGS:   shoal_guardian
+KMONS:  e = Ilsuiw band, merfolk avatar
+MONS:   merfolk aquamancer / merfolk javelineer
+NSUBST: 1 = 2:1 / *:.
+NSUBST: A = 1:. / 1:x. / *:x
+# Apply the source ice palette at this exact directive position.
+: vault.run("shared.ice")
+MAP
+   .......
+  ..-----..
+ ...xxxxx...
+...A.---.A...
+.-x..1w1..x-.
+.-x-1x.x1-x-.
+.-x-w.e.w-x-.
+.-x-1x.x1-x-.
+.-x..1w1..x-.
+...A.---.A...
+ ...xxxxx...
+  ..-----..
+   .......
+ENDMAP

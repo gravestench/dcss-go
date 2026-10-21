@@ -1,0 +1,68 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# shoals_end_hellmonk_lost_city is a authored shoals finale. Its directives retain source order.
+NAME:   shoals_end_hellmonk_lost_city
+# Keep the source open-sea border as typed level intent.
+: vault.run("border_fill")
+ORIENT: encompass
+PLACE:  Shoals:$
+WEIGHT: 4
+KITEM:  O = barnacled rune of Zot
+MONS:   faun w:15 / manticore / harpy, satyr, minotaur, sphinx
+KMONS:  O = sphinx
+KMONS:  P = plant
+SUBST:  1 = 1.., 2 = 2.., 3 = 334, G = G.
+SUBST:  ; : W.., p : W.., q : W.., r : W.., s : W.., y : W.., z : W..
+NSUBST: | = 1:O / *:|, . = 16 = 0. / *=.........W
+SUBST:  D = x., c = ccc.
+NSUBST: ' = 1:( / 1:[ / 1:{ / 2 = <.. / *=P......
+MAP
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxDDDxxwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwxDx1112xxxxwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwxDx2.....rrrxwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwxxD...xxxrrrccccccwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwxxDpppDDxrrrccc1..1cccwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwxDDpppxDDrrrrcc.......|ccDDDwwwwwwwwwwwwww
+wwwwwwwwwwWWWWWWWWWDDpppxDD...xrr+...2...3.cc1.xxwwwwwwwwwwwww
+wwwwwwwwwWWWWWWWWWDxpppxD...xxxrrcc.......|cc...xxwwwwwwwwwwww
+wwwwwwwwWWWWWWWWWDxpppxx...xxxxrrrccc1..1ccc.....xDwwwwwwwwwww
+wwwwwwwWWWWWWWWWDxpppxx...xxxxxxxrrrcccccc....2..2Dwwwwwwwwwww
+wwwwwwWWW'''WWWDxpppxx.....yyyy2DDDrrrr......2GD..Dwwwwwwwwwww
+wwwwwwWW''''''WDxpppDxxxDDDxxyyyDxrrr1.....1DxxD..Dwwwwwwwwwww
+wwwwwwW'''''''WDD..pDxD1..1DxyyyyxrrxxDDxx..xxxx..Dwwwwwwwwwww
+wwwwwwW''cc''.WDD..pDx......Dyyyxxxxx2..2x..DxxD..Dwwwwwwwwwww
+wwwwwwW''cc''.WDD..pDx1....1+yy...2xD....D...2.2.1Dwwwwwwwwwww
+wwwwwwW''''''.W+...pDx......Dyy.....D....D...ccccccccwwwwwwwww
+wwwwwwW'''''..W+...ppxD1..1DxyyDD1..x1..2x.ccc1....1cccwwwwwww
+wwwwwwW''''..ccccc..pxDDDDxxxxxDD...xD++Dxcc1.........ccwwwwww
+wwwwwwW'''..cc..1cc..G....G.....G....G....Gc.....2.....|cwwwww
+wwwwwwW'''..+....2+;;;;;;;;;;;;;;;;;;;;;;;;+..2......3.|cwwwww
+wwwwwwW'''..cc..1cc..G....G.....G....G....Gc.....2.....|cwwwww
+wwwwwwW''''..ccccc..qxDDDDxxxxxDD...xD++Dxcc1.........ccwwwwww
+wwwwwwW'''''..W+...qqxD1..1DxzzDD1..x1..2x.ccc1....1cccwwwwwww
+wwwwwwW''''''.W+...qDx......Dzz.....D....D...ccccccccwwwwwwwww
+wwwwwwW''cc''.WDD..qDx1....1+zz...2xD....D...2.2.1Dwwwwwwwwwww
+wwwwwwW''cc''.WDD..qDx......Dzzzxxxxx2..2x..DxxD..Dwwwwwwwwwww
+wwwwwwW'''''''WDD..qDxD1..1DxzzzzxssxxDDxx..xxxx..Dwwwwwwwwwww
+wwwwwwWW''''''WDxqqqDxxxDDDxxzzzxxsss......1DxxD..Dwwwwwwwwwww
+wwwwwwWWW'''WWWDxqqqxx.....zzzz2DDDssss1.....2GD..Dwwwwwwwwwww
+wwwwwwWWWWWWWWWWDxqqqxx...xxxxxxxssscccccc....2..2Dwwwwwwwwwww
+wwwwwwwWWWWWWWWWWDxqqqxx...xxxxsssccc1..1ccc.....xDwwwwwwwwwww
+wwwwwwwwWWWWWWWWWWDxqqqxD...xxxsscc.......|cc...xxwwwwwwwwwwww
+wwwwwwwwwWWWWWWWWWWDDqqqxDD...xss+...2...3.cc1.xxwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwxDDqqqxDDsssscc.......|ccDDDwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwxxD...DDxsssccc1..1cccwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwxxD2..xxxsssccccccwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwxDx......sssxwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwxDx1112xxxxwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxDDDxxwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+ENDMAP

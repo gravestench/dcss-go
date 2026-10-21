@@ -46,6 +46,7 @@ context rather than a handler API for each game domain.
 | Snake Pit end | All nine source Snake:4 end maps are committed as DES, with named Lua script hooks, mandatory weighted placement, a collectible serpentine rune, and save validation | `vaults/snake_end`, `policy/generation/vaults/end.lua`, `policy/save/vaults.lua` |
 | Swamp end | All eleven source Swamp:4 end maps are committed as DES with source-position Lua hooks, mandatory weighted placement, one decaying rune, and saved end-map validation | `vaults/swamp_end`, `policy/generation/vaults/end.lua`, `policy/save/vaults.lua` |
 | Spider end | All nine source Spider:4 end maps are committed as DES with Lua theme and loot hooks, mandatory weighted placement, one gossamer rune, and saved end-map validation | `vaults/spider_end`, `policy/generation/vaults/end.lua`, `policy/save/vaults.lua` |
+| Shoals end | All 26 source Shoals finale and helper definitions are committed as DES; six weighted endings compose four island controllers or two encompass maps. The Lua island-height layout opens normal Shoals travel and supplies elevations to the tide system. Rune, false-rune, and saved helper ownership are checked through Lua policy | `vaults/shoals_end`, `policy/generation/vaults/shoals_end`, `policy/generation/layouts/layout_shoals.lua` |
 | Arrival vault population | All 337 selectable source arrivals resolve authored monster and item expressions through Lua content catalogs, place Akara entities with vault origins, and retain source selection in level records; a mod can add a monster and arrival file by path | `policy/generation/vaults/specs`, `policy/population/vaults.lua`, `schemas/vault_origin.lua` |
 | Item generation | Source-backed class and subtype selection feeds floor loot, monster equipment, vault requests, and acquirement; selected generated state is committed to saves | `policy/item_generation`, `systems/item_*` |
 | Shops | Ten active source shop types, 70 committed source shop vault definitions, scripted shop maps, authored stock and supplemental D:1–15 placement, saved wallet and stock, gold pickup, fixed shop scenario, prices, shopping list, purchase, and terminal menu | `vaults/shop`, `policy/generation/vaults/shop`, `policy/shops`, `schemas/*shop*` |
@@ -68,6 +69,10 @@ context rather than a handler API for each game domain.
 | Player mutations | Source definitions and Lua-owned mutation records, transitions, passive effects, abilities, and saved state; Vampire blood rituals and Bat Form are implemented; source consumers in other unported domains remain inventoried below | `content/mutations`, `policy/mutations`, `policy/abilities`, `schemas/character_*` |
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `policy/input`, `internal/terminal` |
 | Persistence | Version-33 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
+
+The Shoals layout uses source island counts and height bands. Exact source
+contour planning and flora are still fidelity work; the current heightmap
+feeds the already saved tide rules.
 
 Items support pickup, drop, wielding, armour delays, and put-on/removal of all
 24 active jewellery records. All 17 active potions and 19 active scrolls have

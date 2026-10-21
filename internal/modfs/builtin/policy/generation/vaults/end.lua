@@ -5,6 +5,9 @@ local catalog = require("policy.generation.vaults.catalog")
 local categories = require("constants.catalog")
 local depth = require("policy.generation.vaults.depth")
 local effects = require("constants.vault_effects")
+local directives = require("constants.vault_directives")
+local hooks = require("policy.generation.vaults.hooks")
+local controller = require("policy.generation.vaults.controller")
 local weights = require("policy.generation.vaults.weight")
 
 local end_vault = {}
@@ -91,7 +94,8 @@ local function validate_runes(map, branch)
 
         for _, record in ipairs(map.records or {}) do
             if record.kind == effects.ITEM and record.arguments and
-                record.arguments.kind_id == rune_id then
+                record.arguments.kind_id == rune_id and
+                not record.arguments.mimic then
                 count = count + 1
             end
         end
@@ -99,6 +103,43 @@ local function validate_runes(map, branch)
         if count ~= 1 then
             error("end vault rejected rune selection: " .. rune_id ..
                 " count " .. count)
+        end
+    end
+end
+
+-- A source finale may be a mapless controller. It reserves the primary ID,
+-- then its post-place hook composes tagged child maps before optional vaults
+-- can take their space. Validate the assembled history, including the child
+-- that supplied the real rune, before publishing the floor.
+local function place_controller(builder, context, placed, fit, vault, branch)
+    context.used:add(vault)
+
+    local api = controller.new(builder, context, placed, fit, vault.id)
+
+    for _, operation in ipairs(vault.operations) do
+        if operation.kind == directives.HOOK_POST_PLACE then
+            hooks.run(vault, operation.argument, api)
+        end
+    end
+
+    local result = {
+        vault_ids = {},
+        records = {},
+    }
+
+    for _, map in ipairs(placed) do
+        result.vault_ids[#result.vault_ids + 1] = map.id
+
+        for _, record in ipairs(map.records or {}) do
+            result.records[#result.records + 1] = record
+        end
+    end
+
+    validate_runes(result, branch)
+
+    for _, operation in ipairs(vault.operations) do
+        if operation.kind == directives.HOOK_VALIDATE then
+            hooks.run(vault, operation.argument, result)
         end
     end
 end
@@ -143,14 +184,19 @@ function end_vault.place(ctx, builder, context, placed, fit)
     end
 
     local vault = catalog.get(selected.id)
+    local branch = register.get(categories.BRANCHES, context.branch_id)
+
+    if #vault.rows == 0 then
+        place_controller(builder, context, placed, fit, vault, branch)
+        return vault.id
+    end
+
     local map, reason = fit(ctx, builder, vault, context)
 
     if not map then
         error("end vault could not fit on base layout: " ..
             tostring(reason))
     end
-
-    local branch = register.get(categories.BRANCHES, context.branch_id)
 
     validate_runes(map, branch)
 

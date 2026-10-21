@@ -2053,6 +2053,17 @@ startup; a hook from another branch is checked when that layout runs.
 Import the shared geometry helpers from `policy.generation.layouts` and keep
 source-specific choices in your layout module.
 
+For Shoals layouts, return a `heightmap` beside `builder` and `rows`.
+It is an 80×70 array of integer elevation rows. The level saves these
+values separately from visible terrain so rising and falling tides can
+change water without losing the underlying coast. The bundled
+`layout_shoals.des` declares `vault.run("layout_shoals.generate")`;
+`policy/generation/layouts/layout_shoals.lua` builds the array and grid.
+If a mod omits the heightmap, the engine derives threshold elevations from
+its initial terrain, then applies placed vault terrain and keyed `FHEIGHT`
+and `KPROP: ... = no_tide` declarations. This keeps authored rune huts safe
+from tides even when a mod provides its own Shoals layout.
+
 Selection reads only effective `.des` depth and branch weight rules. It
 sorts IDs before each weighted draw, so discovery order does not change a
 seed. On D:1, arrival tags `layout_<family>` request a family and
@@ -2105,11 +2116,13 @@ modder wants to preserve.
 ### Branch end vaults
 
 A branch ending that fits inside an ordinary generated floor uses an end
-vault family. Snake, Swamp, and Spider declare `end_vault_required = true`
-and name `snake_end`, `swamp_end`, or `spider_end` in their branch files.
-The nine Snake, eleven Swamp, and nine Spider source maps live in matching
-`vaults/` subdirectories. Every file keeps its own `NAME`, final-floor
-`PLACE`, `ORIENT`, keyed entity directives, and `MAP`.
+vault family. Snake, Swamp, Spider, and Shoals declare
+`end_vault_required = true` and name their matching `*_end` family in the
+branch file. The nine Snake, eleven Swamp, nine Spider, and 26 Shoals source
+definitions live in matching `vaults/` subdirectories. Every file keeps
+its `NAME`, final-floor `PLACE` when it is a selectable ending, and its
+authored directives and MAP rows. Shoals also has four mapless controllers
+that select child maps through source tags.
 
 The end selector discovers all effective files in the declared family,
 sorts candidates by `NAME`, and makes a weighted draw before optional
@@ -2133,11 +2146,35 @@ map's `: vault.validate("method")` receives `api.cells`, the final DES
 matrix before it touches the level grid. Return `true` to accept or `false`
 to redraw the map; Snake Hunt uses this to keep its rune connected.
 
+A mapless Shoals-style ending can instead declare
+`: vault.post_place("assemble")` and `: vault.validate("require_rune")`.
+Its `assemble(api)` method receives a controller API with
+`api:place_maps(tag, count)`, `api:one_in(n)`, and
+`api:random_range(first, last)`. `place_maps` selects from all effective
+DES files with that tag, including files added by sparse mods, and returns
+the number that fit. Check that return value for required children; an
+error beginning `end vault could not fit on base layout:` asks generation
+to redraw the floor while keeping the selected controller. Put the child
+tags in `constants.vault_tags` and import them where used. For example,
+`shoals_end_simple.des` names `assemble`, which is defined in
+`policy/generation/vaults/shoals_end/shoals_end_simple.lua` and delegates
+the shared probabilities to `shoals_end/finale.lua`.
+
+For a mapless controller, the validation method receives the composed
+`vault_ids` and either live `records` or saved `vault_records`. Check the
+real rune's owning child ID and matching tag. The same method runs after
+generation and during restore, so the rule cannot drift between them.
+An authored full-map ending still owns its rune directly. A false-rune
+item may use the source `mimic` modifier on `KITEM`; population then adds
+the saved `vault.item_mimic` component. Pickup reveals the illusion
+without granting rune progress.
+
 The successful end map becomes the floor's primary vault ID and remains in
 `vault_ids`. Its typed rune record is historical: picking up the ECS item
 does not erase it. Restore checks the selected map's family and `PLACE`
 rule, that ID in history, and exactly one matching rune record owned by the
-selected map. Changing a saved map's relative path or removing its
+selected map, or by the selected controller's validated child. Changing a
+saved map's relative path or removing its
 definition changes the ruleset and cannot silently rewrite that floor.
 
 

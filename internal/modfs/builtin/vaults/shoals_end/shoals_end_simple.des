@@ -1,0 +1,9 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# shoals_end_simple is a shoals finale controller. Its directives retain source order.
+NAME: shoals_end_simple
+ORIENT: float
+PLACE: Shoals:$
+# Assemble the source-matched rune, guardian, mimic, and decoy huts.
+: vault.post_place("assemble")
+# Check the child that owns the real rune during generation and restore.
+: vault.validate("require_rune")

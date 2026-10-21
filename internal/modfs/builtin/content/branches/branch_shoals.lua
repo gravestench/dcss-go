@@ -10,6 +10,9 @@ local definition = {
     min_depth = 2,
     max_depth = 3,
     depth = 4,
+    -- Source branch_ood_cap defaults to this branch's four levels. DES
+    -- out-of-depth monster requests must not sample an empty Shoals:12.
+    ood_cap = 4,
     absolute_depth = 15,
     flags = {
         "dangerous_end",
@@ -26,6 +29,8 @@ local definition = {
     runes = {
         "RUNE_SHOALS",
     },
+    end_vault_family = "shoals_end",
+    end_vault_required = true,
     ambient_noise = "loud",
     mon_die_size_expr = "DEFAULT_MON_DIE_SIZE",
 }

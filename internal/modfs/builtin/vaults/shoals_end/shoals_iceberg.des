@@ -1,0 +1,23 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# shoals_iceberg is a tagged shoals finale helper. Its directives retain source order.
+NAME:   shoals_iceberg
+TAGS:   shoal_hut_grunt_ice water_ok no_dump allow_dup transparent
+NSUBST: A = 1:. / 1:xx. / *:x
+NSUBST: 0 = 2:. / 2:0 / * = 0.
+# Apply the source ice palette at this exact directive position.
+: vault.run("shared.ice")
+MAP
+   .......
+  .-------.
+ ..xxxxxxx..
+.-xA.---.Ax-.
+.-x..0w0..x-.
+.-x-0x.x0-x-.
+.-x-w.|.w-x-.
+.-x-0x.x0-x-.
+.-x..0w0..x-.
+.-xA.---.Ax-.
+ ..xxxxxxx..
+  .-------.
+   .......
+ENDMAP

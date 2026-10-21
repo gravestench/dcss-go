@@ -4,6 +4,7 @@ local wallet = require("policy.shops.wallet")
 local catalog = require("policy.catalog")
 local classes = require("ids.object_classes")
 local runes = require("policy.character.runes")
+local component = require("constants.component")
 
 local system = {}
 
@@ -27,6 +28,16 @@ function system.update(ctx, actor)
             local item = ctx:get(entity, "core.item")
             local name = identification.name(ctx, ctx:player(), entity)
             local definition = catalog.get("items", item.kind_id)
+
+            -- A source mimic presents the authored item's appearance until
+            -- interaction. It vanishes before gold, rune, or stack handling
+            -- can grant the player anything from that false item.
+            if ctx:has(entity, component.VAULT_ITEM_MIMIC) then
+                ctx:destroy(entity)
+                ctx:emit("pickup", "The " .. name .. " was a mimic!")
+
+                return
+            end
 
             if definition.class == classes.OBJ_GOLD then
                 local amount = wallet.pickup(ctx, actor, entity)

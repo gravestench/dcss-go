@@ -1,0 +1,15 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# shoalhut is a tagged shoals finale helper. Its directives retain source order.
+NAME:   shoalhut
+TAGS:   shoal_hut_simple water_ok no_dump allow_dup transparent
+NSUBST: A = 1 = x:14 +:1 / *:x
+NSUBST: 0 = 2:. / 2:0 / * = 0.
+MAP
+ xxAxx
+xx.0.xx
+x.0.0.x
+A0.|.0A
+x.0.0.x
+xx.0.xx
+ xx+xx
+ENDMAP

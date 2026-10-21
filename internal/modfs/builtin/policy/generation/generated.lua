@@ -21,6 +21,7 @@ local temple_entry = require("policy.generation.temple.entry")
 local temple_floor = require("policy.generation.temple.floor")
 local altar_catalog = require("policy.generation.altar.catalog")
 local shop_spec = require("policy.generation.vaults.shop_spec")
+local shoals_heights = require("policy.generation.shoals_heights")
 
 local generated = {}
 
@@ -573,6 +574,7 @@ local function level_record(ctx, floor)
         branch_id = floor.branch_id,
         local_depth = floor.depth,
         rows = floor.layout.builder:rows(),
+        heightmap = shoals_heights.overlay(floor),
         stairs = floor.links,
         entry_x = entry.x,
         entry_y = entry.y,

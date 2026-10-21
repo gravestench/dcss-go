@@ -34,6 +34,9 @@ local intent_kinds = {
     [directives.TILE] = effects.TILE,
     [directives.KMASK] = effects.MASK,
     [directives.KPROP] = effects.PROPERTY,
+    -- Shoals tide-height declarations are keyed cell properties. The
+    -- Shoals overlay applies them after the map paints its terrain.
+    [directives.FHEIGHT] = effects.PROPERTY,
     [directives.MONS] = effects.MONSTER,
     [directives.ITEM] = effects.ITEM,
 }

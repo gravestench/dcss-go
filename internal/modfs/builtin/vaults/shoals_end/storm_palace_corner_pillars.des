@@ -1,0 +1,18 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# storm_palace_corner_pillars is a tagged shoals finale helper. Its directives retain source order.
+NAME:   storm_palace_corner_pillars
+TAGS:   storm_palace_corner allow_dup no_pool_fixup
+SUBST:  ; = AGG..., W : wWW
+MAP
+...........
+.WWWW;WWWW.
+.WccW.WccW.
+.WccW.WccW.
+.WWWW.WWWW.
+.;... ...;.
+.WWWW.WWWW.
+.WccW.WccW.
+.WccW.WccW.
+.WWWW.WWWW.
+..........
+ENDMAP

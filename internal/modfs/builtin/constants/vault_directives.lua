@@ -16,6 +16,7 @@ local directives = {
     KITEM = "KITEM",
     KMASK = "KMASK",
     KPROP = "KPROP",
+    FHEIGHT = "FHEIGHT",
     MONS = "MONS",
     ITEM = "ITEM",
     COLOUR = "COLOUR",

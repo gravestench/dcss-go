@@ -1,0 +1,18 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# storm_palace_corner_narrow is a tagged shoals finale helper. Its directives retain source order.
+NAME:   storm_palace_corner_narrow
+TAGS:   storm_palace_corner allow_dup no_pool_fixup
+SUBST:  . = W.., ; : wWW., + : ++.
+MAP
+G.........+
+.W........+
+..WWccc...c
+..WWWWcc++c
+..cWWWWc;;c
+..cWW Wc;;c
+..ccWWcc;;c
+...ccccc;;c
+...+;;;;;;c
+...+;;;;;;c
+++cccccccc
+ENDMAP

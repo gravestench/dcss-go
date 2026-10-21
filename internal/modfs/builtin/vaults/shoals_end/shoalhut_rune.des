@@ -1,0 +1,22 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# shoalhut_rune is a tagged shoals finale helper. Its directives retain source order.
+NAME:      shoalhut_rune
+TAGS:      shoal_rune_simple shoal_mimic_simple water_ok no_dump transparent \
+           allow_dup
+NSUBST:    A = 1:+ / 1 = x:19 +:1 / *:x
+SUBST:     0 = 0.
+SUBST:     e = e.
+KMONS:     ge = merfolk impaler / merfolk javelineer / merfolk aquamancer
+# Select a real or false rune from the requested child tag.
+: vault.run("shared.rune_o")
+KPROP:     O = no_tide
+LROCKTILE: wall_pebble_lightgray
+MAP
+ xxAxx
+xx.0.xx
+xe0g0ex
+A0gOg0A
+xe0g0ex
+xx.0.xx
+ xxAxx
+ENDMAP

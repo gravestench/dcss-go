@@ -1,0 +1,22 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# shoals_garden is a tagged shoals finale helper. Its directives retain source order.
+NAME:    shoals_garden
+TAGS:    shoal_hut_grunt_garden water_ok no_dump allow_dup transparent
+MONS:    faun w:6 / 0
+KMONS:   P = plant
+NSUBST:  1 = 2:1 / 2:1. / 2:1. / *:.
+SHUFFLE: abcdefghijk, ABCDEFGH
+SUBST:   abAB = x, cdeCDE = P, g : xP, h : P., ijkGH = .
+MAP
+   abcbd
+ kkaBAAdee
+ jCCB1HHGf
+ijD11111Gfg
+iED11111FFg
+hE111|111Eh
+gFF11111DEi
+gfG11111Dji
+ fGHH1BCCj
+ eedAABakk
+   dbcba
+ENDMAP

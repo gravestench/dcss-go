@@ -1,0 +1,68 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# shoals_end_hellmonk_storm_palace is a authored shoals finale. Its directives retain source order.
+NAME: shoals_end_hellmonk_storm_palace
+# Keep the source open-sea border as typed level intent.
+: vault.run("border_fill")
+ORIENT: encompass
+PLACE:  Shoals:$
+WEIGHT: 4
+MONS:   water elemental / air elemental w:5, wind drake / water nymph
+MONS:   merfolk impaler / merfolk javelineer w:5 / merfolk aquamancer w:5
+SUBST:  + : ++., p : ccc+., q : ccc+., r : ccc+., s = W.c
+SUBST:  1 = 011..., 2 = 2., 3 = 33.
+NSUBST: ; = 1:{ / 1:[ / 1:( / * = <.
+SUBVAULT: D : storm_palace_rune
+SUBVAULT: E : storm_palace_corner
+SUBVAULT: F : storm_palace_corner
+SUBVAULT: H : storm_palace_corner
+SUBVAULT: J : storm_palace_corner
+MAP
+cccccccccccccccccccccccccccccccccccccccccccccccc
+cccccccccccccccccccccccccccccccccccccccccccccccc
+ccEEEEEEEEEEE.....1...1..1...2.....FFFFFFFFFFFcc
+ccEEEEEEEEEEE.....2...1..1...1.....FFFFFFFFFFFcc
+ccEEEEEEEEEEEcccccccccc22ccccccccccFFFFFFFFFFFcc
+ccEEEEEEEEEEEcG1................1GcFFFFFFFFFFFcc
+ccEEEEEEEEEEEc1....ssWWWWWWss....1cFFFFFFFFFFFcc
+ccEEEEE;EEEEEc..sWWWWWsWWsWWWWWs..cFFFFF;FFFFFcc
+ccEEEEEEEEEEEc1sWWWssssssssssWWWs1cFFFFFFFFFFFcc
+ccEEEEEEEEEEEc..sWWWWWssssWWWWWs..cFFFFFFFFFFFcc
+ccEEEEEEEEEEEc1....ssWWWWWWss....1cFFFFFFFFFFFcc
+ccEEEEEEEEEEEcG3.......23.......3GcFFFFFFFFFFFcc
+ccEEEEEEEEEEcccccccccccppcccccccccccFFFFFFFFFFcc
+cc..cccccccccDDDDDDDDDDDDDDDDDDDDDDccccccccc..cc
+cc..cG1.1.1GcDDDDDDDDDDDDDDDDDDDDDDcG1.1.1Gc..cc
+cc..c1..s..3cDDDDDDDDDDDDDDDDDDDDDDc3..s..1c..cc
+cc..c..sWs..cDDDDDDDDDDDDDDDDDDDDDDc..sWs..c..cc
+cc..c..WWW..cDDDDDDDDDDDDDDDDDDDDDDc..WWW..c..cc
+cc21c..WWW..cDDDDDDDDDDDDDDDDDDDDDDc..WWW..c21cc
+cc..c.sWsWs.cDDDDDDDDDDDDDDDDDDDDDDc.sWsWs.c..cc
+cc..c.sWsWs.cDDDDDDDDDDDDDDDDDDDDDDc.sWsWs.c..cc
+cc..c.WWsWW.cDDDDDDDDDDDDDDDDDDDDDDc.WWsWW.c..cc
+cc11c.WsssW.cDDDDDDDDDDDDDDDDDDDDDDc.WsssW.c11cc
+cc..2.WWssW3rDDDDDDDDDDDDDDDDDDDDDDq2WssWW.2..cc
+cc..2.WWssW2rDDDDDDDDDDDDDDDDDDDDDDq3WssWW.2..cc
+cc11c.WsssW.cDDDDDDDDDDDDDDDDDDDDDDc.WsssW.c11cc
+cc..c.WWsWW.cDDDDDDDDDDDDDDDDDDDDDDc.WWsWW.c..cc
+cc..c.sWsWs.cDDDDDDDDDDDDDDDDDDDDDDc.sWsWs.c..cc
+cc..c.sWsWs.cDDDDDDDDDDDDDDDDDDDDDDc.sWsWs.c..cc
+cc12c..WWW..cDDDDDDDDDDDDDDDDDDDDDDc..WWW..c12cc
+cc..c..WWW..cDDDDDDDDDDDDDDDDDDDDDDc..WWW..c..cc
+cc..c..sWs..cDDDDDDDDDDDDDDDDDDDDDDc..sWs..c..cc
+cc..c1..s..3cDDDDDDDDDDDDDDDDDDDDDDc3..s..1c..cc
+cc..cG1.1.1GcDDDDDDDDDDDDDDDDDDDDDDcG1.1.1Gc..cc
+cc..cccccccccDDDDDDDDDDDDDDDDDDDDDDccccccccc..cc
+ccHHHHHHHHHHccccccccccc++cccccccccccJJJJJJJJJJcc
+ccHHHHHHHHHHHcG3.......32.......3GcJJJJJJJJJJJcc
+ccHHHHHHHHHHHc1....ssWWWWWWss....1cJJJJJJJJJJJcc
+ccHHHHHHHHHHHc..sWWWWWssssWWWWWs..cJJJJJJJJJJJcc
+ccHHHHHHHHHHHc1sWWWssssssssssWWWs1cJJJJJJJJJJJcc
+ccHHHHH;HHHHHc..sWWWWWsWWsWWWWWs..cJJJJJ;JJJJJcc
+ccHHHHHHHHHHHc1....ssWWWWWWss....1cJJJJJJJJJJJcc
+ccHHHHHHHHHHHcG1................1GcJJJJJJJJJJJcc
+ccHHHHHHHHHHHcccccccccc22ccccccccccJJJJJJJJJJJcc
+ccHHHHHHHHHHH.....1...1..1...2.....JJJJJJJJJJJcc
+ccHHHHHHHHHHH.....2...1..1...1.....JJJJJJJJJJJcc
+cccccccccccccccccccccccccccccccccccccccccccccccc
+cccccccccccccccccccccccccccccccccccccccccccccccc
+ENDMAP

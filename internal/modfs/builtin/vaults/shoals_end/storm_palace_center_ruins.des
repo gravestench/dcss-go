@@ -1,0 +1,33 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# storm_palace_center_ruins is a tagged shoals finale helper. Its directives retain source order.
+NAME:   storm_palace_center_ruins
+TAGS:   storm_palace_rune
+KITEM:  O = barnacled rune of Zot
+MONS:   merfolk aquamancer / merfolk javelineer / merfolk impaler
+KMONS:  O = patrolling storm dragon / patrolling titan
+NSUBST: | = 1:O / *:|, 1 = 4 = 8. / * = 1..
+SUBST:  p : W., q: W., . = W..., c = cc.
+MAP
+c....................c
+1.cccccccccccccccccc.1
+.cc................cc.
+..cccc.cc1cc1cc.cccc..
+.....cccqqccqqccc.....
+....ccqqqqccqqqqcc....
+.c....GqqccccqqG....c.
+.cccc1..cccccc..1cccc.
+....ccccc||||cccccppc.
+.cppc.......1cc..cppc.
+.cppc.ccccc.cccc.1ppc.
+.cpp1.cccc.ccccc.cppc.
+.cppc..cc1.......cppc.
+.cppccccc||||ccccc....
+.cccc1..cccccc..1cccc.
+.c....GqqccccqqG....c.
+....ccqqqqccqqqqcc....
+.....cccqqccqqccc.....
+..cccc.cc1cc1cc.cccc..
+.cc................cc.
+1.cccccccccccccccccc.1
+c....................c
+ENDMAP

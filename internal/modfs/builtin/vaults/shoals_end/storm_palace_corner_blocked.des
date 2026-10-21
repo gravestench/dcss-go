@@ -1,0 +1,19 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# storm_palace_corner_blocked is a tagged shoals finale helper. Its directives retain source order.
+NAME:   storm_palace_corner_blocked
+TAGS:   storm_palace_corner no_pool_fixup
+KMONS:  P = plant
+SUBST:  . = P......., G = GG., W : wW
+MAP
+WWWW.......
+WWW........
+WW........c
+W..G...G..c
+..........c
+..... ....c
+..........c
+...G...G..c
+..........c
+.........Gc
+cccccccccc
+ENDMAP

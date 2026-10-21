@@ -48,6 +48,24 @@ local function validate_end_vault(level, branch)
         error(label .. " needs its selected end vault in history")
     end
 
+    if #selected.rows == 0 then
+        local validator
+
+        for _, operation in ipairs(selected.operations) do
+            if operation.kind == directives.HOOK_VALIDATE then
+                validator = operation.argument
+                break
+            end
+        end
+
+        if not validator then
+            error(label .. " controller needs a validation hook")
+        end
+
+        hooks.run(selected, validator, level)
+        return
+    end
+
     for _, rune_id in ipairs(branch.runes or {}) do
         local count = 0
         local source_id

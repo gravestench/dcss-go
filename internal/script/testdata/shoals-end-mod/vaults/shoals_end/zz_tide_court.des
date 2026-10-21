@@ -1,0 +1,11 @@
+# A sparse mod adds one authored Shoals finale without engine registration.
+NAME:   zz_tide_court
+PLACE:  Shoals:$
+WEIGHT: 1
+ORIENT: north
+KITEM:  O = barnacled rune of Zot
+MAP
+ccccccccc
+c@.....Oc
+ccccccccc
+ENDMAP

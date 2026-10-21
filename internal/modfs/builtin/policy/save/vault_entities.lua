@@ -169,6 +169,18 @@ local function validate_origin(ctx, entity, origin, levels, seen)
             tostring(origin.record_index))
     end
 
+    -- Pickup trusts this marker to withhold a rune. Its presence must
+    -- match the authored DES choice even for a moved or saved floor item.
+    local mimic = ctx:get(entity, component.VAULT_ITEM_MIMIC)
+    local expected_mimic = origin.occurrence == 1 and
+        record.kind == effects.ITEM and arguments.mimic == true
+
+    if expected_mimic ~= (mimic ~= nil) or
+        (mimic and not mimic.active) then
+        error("entity " .. ctx:id(entity) ..
+            " has forged vault item mimic state")
+    end
+
     -- One record can yield an actor, corpse, and gear, but their occurrence numbers must remain distinct.
     if origin.occurrence == 1 then
         if (source_kind ~= arguments.kind_id and not

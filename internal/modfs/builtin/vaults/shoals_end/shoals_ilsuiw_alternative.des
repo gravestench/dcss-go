@@ -1,0 +1,27 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# shoals_ilsuiw_alternative is a tagged shoals finale helper. Its directives retain source order.
+NAME:    shoals_ilsuiw_alternative
+TAGS:    shoal_guardian water_ok
+WEIGHT:  8
+KMONS:   1 = Ilsuiw, merfolk avatar
+KMONS:   2 = merfolk impaler / merfolk javelineer
+KMONS:   3 = merfolk aquamancer / merfolk impaler / merfolk javelineer
+KMONS:   4 = Ilsuiw band
+KMONS:   5 = merfolk aquamancer / merfolk javelineer
+KFEAT:   123456 = w
+SHUFFLE: 123 / 123 / 123 / 456 / 456
+SHUFFLE: AB / AB / BA, CD / CD / DC
+SUBST:   AC = x, B = w, D = .
+MAP
+  .@xxxx
+ .x....xx
+.x.CD..2xx
+@.C..wxw3xx
+x.D.wAwx..x
+x..wA1Bw..x
+x..xwBw.D.x
+xx3wxw..C.@
+ xx2..DC.x.
+  xx....x.
+   xxxx@.
+ENDMAP

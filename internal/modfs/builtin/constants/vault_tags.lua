@@ -41,6 +41,19 @@ local tags = {
     VAULTS_END_QUADRANT_PRIZE_MALL = "vaults_end_quadrant_prize_mall",
     VAULTS_END_ROOM = "vaults_end_room",
     VAULTS_END_ROOM_RUNE = "vaults_end_room_rune",
+    SHOAL_RUNE_SIMPLE = "shoal_rune_simple",
+    SHOAL_MIMIC_SIMPLE = "shoal_mimic_simple",
+    SHOAL_HUT_SIMPLE = "shoal_hut_simple",
+    SHOAL_RUNE_HANGEDMAN = "shoal_rune_hangedman",
+    SHOAL_MIMIC_HANGEDMAN = "shoal_mimic_hangedman",
+    SHOAL_HUT_HANGEDMAN = "shoal_hut_hangedman",
+    SHOAL_RUNE_GRUNT_ICE = "shoal_rune_grunt_ice",
+    SHOAL_MIMIC_GRUNT_ICE = "shoal_mimic_grunt_ice",
+    SHOAL_HUT_GRUNT_ICE = "shoal_hut_grunt_ice",
+    SHOAL_RUNE_GRUNT_GARDEN = "shoal_rune_grunt_garden",
+    SHOAL_MIMIC_GRUNT_GARDEN = "shoal_mimic_grunt_garden",
+    SHOAL_HUT_GRUNT_GARDEN = "shoal_hut_grunt_garden",
+    SHOAL_GUARDIAN = "shoal_guardian",
 }
 
 return tags

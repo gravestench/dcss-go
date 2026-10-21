@@ -1,0 +1,10 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# shoals_end_grunt_garden is a shoals finale controller. Its directives retain source order.
+NAME: shoals_end_grunt_garden
+ORIENT: float
+PLACE: Shoals:$
+WEIGHT: 4
+# Assemble the source-matched rune, guardian, mimic, and decoy huts.
+: vault.post_place("assemble")
+# Check the child that owns the real rune during generation and restore.
+: vault.validate("require_rune")

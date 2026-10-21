@@ -1,0 +1,20 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# shoal_ilsuiw is a tagged shoals finale helper. Its directives retain source order.
+NAME:    shoal_ilsuiw
+TAGS:    shoal_guardian
+KMONS:   1 = Ilsuiw, merfolk avatar
+KMONS:   2 = merfolk impaler / merfolk javelineer
+KMONS:   3 = merfolk aquamancer / merfolk impaler / merfolk javelineer
+KMONS:   A = Ilsuiw band
+KMONS:   B = merfolk aquamancer / merfolk javelineer
+KFEAT:   123ABC = w
+SHUFFLE: 123 / 123 / 123 / ABC / ABC
+MAP
+ wxwxw
+wxw2wxw
+xwwwwwx
+w3w1w3w
+xwwwwwx
+wxw2wxw
+ wxwxw
+ENDMAP

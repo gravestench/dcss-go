@@ -1,0 +1,21 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# shoals_rune_alternative_decoy is a tagged shoals finale helper. Its directives retain source order.
+NAME:    shoals_rune_alternative_decoy
+TAGS:    shoal_hut_hangedman water_ok allow_dup transparent no_dump
+SHUFFLE: AB / AB / BA, CD / CD / DC
+NSUBST:  0 = 2:0 / 2:. / * = 00...
+SUBST:   AC = x, B = w, D = .
+FHEIGHT: .d0@ = 15
+MAP
+  xxxxxxx
+ xxwwwwwxx
+xxwx00.0Wxx
+xwx|0ww..Wx
+xw00wAwx..x
+xw0wAxBw..x
+xw.wwBw.D.x
+xw0.xw..C.x
+xxW...DC.x@
+ xxW....x..
+  xxxxxx@.
+ENDMAP

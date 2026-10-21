@@ -1,0 +1,35 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# storm_palace_center_square is a tagged shoals finale helper. Its directives retain source order.
+NAME:   storm_palace_center_square
+TAGS:   storm_palace_rune
+KITEM:  O = barnacled rune of Zot
+KITEM:  | = superb_item
+MONS:   merfolk aquamancer / merfolk javelineer / merfolk impaler
+KMONS:  O = patrolling storm dragon / patrolling titan
+KFEAT:  |O = shallow_water
+NSUBST: | = 1:O / *:|, 1 = 4 = 8. / * = 1..
+SUBST:  p : W., q : W., r : W., S : W.
+MAP
+cccc..pppppppppp..cccc
+cWW..ppppccccpppp..WWc
+cW1...ppppccpppp...1Wc
+c..ccccppppppppcccc..c
+...cWW..pppppp..WWc...
+.r.cW.1...pp...1.Wc.s.
+rrrc.1ccccWWcccc1.csss
+rrrr..ccWWWWWWcc.sssss
+rrrrr.cWWWWWWWWc.sssss
+rcrrr1cWWc||cWWc1ssscs
+rccrrrWWWW||WWWWsssccs
+rccrrrWWWW||WWWWsssccs
+rcrrr1cWWc||cWWc1ssscs
+rrrrr.cWWWWWWWWc.sssss
+rrrr..ccWWWWWWcc..ssss
+rrrc.1ccccWWcccc1.csss
+.r.cW.1...qq...1.Wc.s.
+...cWW..qqqqqq..WWc...
+c..ccccqqqqqqqqcccc..c
+cW1...qqqqccqqqq...1Wc
+cWW..qqqqccccqqqq..WWc
+cccc..qqqqqqqqqq..cccc
+ENDMAP

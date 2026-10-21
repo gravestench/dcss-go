@@ -65,9 +65,42 @@ local function pickup_records_progress(ctx)
     end
 end
 
+-- A false Shoals rune is still drawn with the rune's item kind. Its ECS
+-- mimic marker must win before ordinary rune pickup grants progress.
+local function mimic_never_grants_progress(ctx)
+    local world, player = world_context(ctx)
+    local entity = ctx:create()
+
+    ctx:add(entity, component.ITEM, {
+        kind_id = item_ids.RUNE_SHOALS,
+        quantity = 1,
+        plus = 0,
+        charges = 0,
+        ego = "",
+    })
+    ctx:add(entity, component.POSITION, {
+        level_id = 1,
+        x = 4,
+        y = 5,
+    })
+    ctx:add(entity, component.VAULT_ITEM_MIMIC, {
+        active = true,
+    })
+
+    pickup.update(world, player)
+
+    harness.falsy(rune_policy.has(world, player, item_ids.RUNE_SHOALS),
+        "false Shoals rune granted progress")
+
+    for _, item in ipairs(ctx:query({ component.ITEM })) do
+        harness.falsy(item == entity, "revealed mimic remained on floor")
+    end
+end
+
 -- Exercise the live pickup system, not a duplicate test-only rune grant.
 function test.run(ctx)
     pickup_records_progress(ctx)
+    mimic_never_grants_progress(ctx)
 end
 
 return test

@@ -1,0 +1,30 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/branches/shoals.des
+# shoals_rune_alternative is a tagged shoals finale helper. Its directives retain source order.
+NAME:      shoals_rune_alternative
+TAGS:      shoal_rune_hangedman shoal_mimic_hangedman water_ok allow_dup \
+           transparent no_dump
+KMONS:     12 = merfolk impaler / merfolk javelineer / merfolk aquamancer
+KMONS:     3 = kraken / harpy band w:15
+KMONS:     d = merfolk avatar / water nymph w:5
+# Select a real or false rune from the requested child tag.
+: vault.run("shared.rune_d")
+KFEAT:     123 = w
+KPROP:     d = no_tide
+SHUFFLE:   AB / AB / BA, CD / CD / DC
+NSUBST:    2 = 2 = 22w / * = 22www, 0 = 2:0 / 1:. / * = 00...
+SUBST:     AC = x, B = w, D = .
+LROCKTILE: wall_pebble_lightgray
+FHEIGHT: .d0@ = 15
+MAP
+  xxxxxxx
+ xx12wwwxx
+xx2x..00Wxx
+x1xd02w..Wx
+x2.03Awx..x
+xw.2AxBw..x
+xw0wwBw.D.x
+xw0.xw..C.x
+xxW...DC.x@
+ xxW....x..
+  xxxxxx@.
+ENDMAP

@@ -74,6 +74,12 @@ function vault_items.create(ctx, resolved, level_id, x, y, origin)
         },
     })
 
+    if resolved.mimic then
+        ctx:add(entity, component.VAULT_ITEM_MIMIC, {
+            active = true,
+        })
+    end
+
     if resolved.item_name or resolved.tile or resolved.weapon_tile then
         ctx:add(entity, component.VAULT_ITEM_APPEARANCE, {
             name = resolved.item_name or "",

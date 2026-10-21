@@ -1,0 +1,11 @@
+# Pinned DCSS source: crawl-ref/source/dat/des/builder/layout_cc.des
+# The named hook ports the source Shoals island builder; DES retains the
+# source branch, weight, orientation, and layout-family declaration.
+NAME:   layout_shoals
+DEPTH:  Shoals
+WEIGHT: 10
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_shoals
+: vault.run("layout_shoals.generate")
+MAP
+ENDMAP
