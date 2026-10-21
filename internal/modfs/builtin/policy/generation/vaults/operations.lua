@@ -560,6 +560,39 @@ local function hook_api(random, events, line, player, cells, state,
         return cells[1] and #cells[1] or 0, #cells
     end
 
+    -- Procedural DES parents begin with an empty MAP. Resize that local
+    -- matrix before emitting SUBVAULT so the ordinary placement and save
+    -- paths see the same authored cells as a fixed-size map.
+    function api:resize(width, height, fill)
+        if type(width) ~= "number" or type(height) ~= "number" or
+            width % 1 ~= 0 or height % 1 ~= 0 or
+            width < 1 or height < 1 or width > 80 or height > 70 then
+            error("vault hook resize needs a positive level-sized rectangle")
+        end
+
+        if type(fill) ~= "string" or #fill ~= 1 then
+            error("vault hook resize needs one fill glyph")
+        end
+
+        local resized = {}
+
+        for y = 1, height do
+            resized[y] = {}
+
+            for x = 1, width do
+                resized[y][x] = cells[y] and cells[y][x] or fill
+            end
+        end
+
+        for index = #cells, 1, -1 do
+            cells[index] = nil
+        end
+
+        for y, row in ipairs(resized) do
+            cells[y] = row
+        end
+    end
+
     -- Read the current local glyph after earlier source substitutions and
     -- hook edits. Maze scripts need to inspect their own evolving map.
     function api:cell(x, y)

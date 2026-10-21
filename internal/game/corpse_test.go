@@ -325,6 +325,62 @@ func TestCorpseDecaysAtTwoHundredAutAndSurvivesSave(t *testing.T) {
 	}
 }
 
+// A source never_decay specimen keeps its body and freshness across timer
+// boundaries and save/restore; the flag belongs to this item, not the kind.
+func TestNeverDecayingCorpseSurvivesTimeAndRestore(t *testing.T) {
+	g := newStepGame(t)
+	rat := ratID(t, g)
+
+	if err := g.levels[1].RemoveActor(rat); err != nil {
+		t.Fatal(err)
+	}
+
+	if !g.world.DestroyEntity(rat) {
+		t.Fatal("rat removal")
+	}
+
+	id := testCorpseAt(t, g, "CORPSE_BODY", ecs.Position{
+		LevelID: 1,
+		X:       4,
+		Y:       1,
+	})
+
+	corpse, _ := g.stores.Corpses.Get(id)
+
+	corpse.NeverDecays = true
+
+	if _, err := g.stores.Corpses.Set(id, *corpse); err != nil {
+		t.Fatal(err)
+	}
+
+	snapshot := g.Snapshot()
+	loaded, err := Restore(snapshot)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer loaded.Close()
+
+	for range 60 {
+		if _, err := loaded.Step(Command{Kind: CommandWait}); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	item, found := loaded.stores.Items.Get(id)
+	corpse, corpseFound := loaded.stores.Corpses.Get(id)
+
+	if !found ||
+		!corpseFound ||
+		item.KindID != "CORPSE_BODY" ||
+		corpse.Freshness != 110 ||
+		!corpse.NeverDecays {
+		t.Fatalf("never-decay corpse changed: item %+v, corpse %+v",
+			item, corpse)
+	}
+}
+
 func TestInactiveCorpseGetsOneCatchUpOnReturn(t *testing.T) {
 	g := newStepGame(t)
 	rat := ratID(t, g)

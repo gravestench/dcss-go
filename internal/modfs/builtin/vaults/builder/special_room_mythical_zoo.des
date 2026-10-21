@@ -1,0 +1,8 @@
+# Source: crawl-ref/source/dat/des/builder/rooms.des
+NAME:   special_room_mythical_zoo
+DEPTH:  D:14-, Depths, Lair:3-, Elf
+TAGS:   special_room allow_dup unrand
+WEIGHT: 20 (D:14-, Lair:3-4), 25 (Depths:1-2, Lair:$, Elf), 28
+: vault.run("special_room_mythical_zoo.fill")
+MAP
+ENDMAP

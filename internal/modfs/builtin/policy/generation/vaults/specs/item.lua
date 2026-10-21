@@ -122,6 +122,9 @@ local function parse_term(text, expression, site)
         elseif token == "no_pickup" then
             -- Authored display items can be seen but cannot be taken.
             result.no_pickup = true
+        elseif token == "never_decay" then
+            -- Source corpse specimens can remain on a level indefinitely.
+            result.never_decay = true
         elseif token == "mimic" then
             -- The visible item is an illusion. Keep its kind for rendering,
             -- but give population a separate persisted ECS marker.

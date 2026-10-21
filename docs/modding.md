@@ -2054,6 +2054,18 @@ this repository), so a layered mod can replace a handler at the same path.
 The `.des` line declares when to call a method; the actual Lua function is
 assigned to the table returned by that module.
 
+A procedural map can leave `MAP` empty and put `procedural_map` in its
+`TAGS`. Its named run hook calls `api:resize(width, height, fill)` to create
+the local cell matrix, then `api:set_cell` to paint it. Subsequent emitted
+directives operate on those cells at the hook's position. The bundled
+`vaults/variable/special_room.des` is a complete example: its hook builds a
+variable rectangle, emits `SUBVAULT: O : special_room`, and a weighted
+`vaults/builder/special_room_*.des` helper fills that region. The engine
+places the result through the same path as an authored map, including
+monster population, saved parent and helper IDs, and sparse mod overrides.
+Use this pattern when a map's dimensions or geometry depend on a generation
+draw; a fixed map should keep its cells in `MAP`.
+
 For Hell, source entrance maps live under `vaults/hell_entry/`. They carry
 `chance_enter_hell`, `DEPTH: Depths`, and a keyed `enter_hell` feature.
 The ordinary chance stage discovers them by tag and selects one eligible
@@ -3031,6 +3043,7 @@ second system just to make the source modifiers work.
 | `api:record(kind, arguments)` | Queue a typed placement effect; import its kind from `constants.vault_effects`. |
 | `api:remember(name, value)`, `api:recall(name)` | Carry a source script value between hooks in one map placement; recall errors if the first hook did not run. |
 | `api:map_size()` | Return local width and height; an empty-MAP child gets its parent region's size. |
+| `api:resize(width, height, glyph)` | Resize a procedural map's local matrix, filling new cells with one glyph; its final dimensions are used for placement. |
 | `api:cell(x, y)` | Read the current zero-based local glyph, including earlier substitutions and hook edits. |
 | `api:set_cell(x, y, glyph)` | Paint one zero-based local cell; out-of-bounds positions raise an error. |
 | `api:run_choice(key)` | Read a saved player choice supplied to generation; return `nil` when unset. |

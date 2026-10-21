@@ -1,0 +1,8 @@
+# Source: crawl-ref/source/dat/des/builder/rooms.des
+NAME:   special_room_orc
+DEPTH:  D:8-, Orc, !Orc:$, Elf, Vaults
+TAGS:   special_room allow_dup unrand
+WEIGHT: 59 (D:8-12, Orc), 40 (D:13-, Elf:1), 32
+: vault.run("special_room_orc.fill")
+MAP
+ENDMAP

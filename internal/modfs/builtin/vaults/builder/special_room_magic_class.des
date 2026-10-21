@@ -1,0 +1,7 @@
+# Source: crawl-ref/source/dat/des/builder/rooms.des
+NAME:   special_room_magic_class
+DEPTH:  Depths
+TAGS:   special_room allow_dup unrand
+: vault.run("special_room_magic_class.fill")
+MAP
+ENDMAP

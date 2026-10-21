@@ -497,6 +497,7 @@ local function select_entities(record, vault, random, depth, player)
         arguments.allow_uniques = resolved.allow_uniques ~= false
         arguments.unique_id = resolved.unique_id or ""
         arguments.no_pickup = resolved.no_pickup or false
+        arguments.never_decay = resolved.never_decay or false
         arguments.mimic = resolved.mimic or false
         arguments.ident = resolved.ident or ""
         arguments.tile = resolved.tile or ""
@@ -702,10 +703,16 @@ end
 function placement.place(_, builder, vault, player, options)
     local depth = player and (player.absolute_depth or player.depth) or 1
     local cells, map_width, map_height = matrix(vault.rows)
-    local width_before = map_width
-    local height_before = map_height
     local source_records, helper_ids, hook_values = operations.apply(vault,
         cells, builder, 0, player)
+
+    -- A procedural hook may supply the MAP geometry that the source left
+    -- empty. Record its final unrotated size for source-cell localization.
+    map_width = cells[1] and #cells[1] or 0
+    map_height = #cells
+
+    local width_before = map_width
+    local height_before = map_height
 
     validate_cells(vault, cells)
 

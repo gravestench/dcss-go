@@ -26,6 +26,7 @@ function policy.roll(ctx, _, request, result)
         monster_id = request.base_id,
         freshness = 110,
         appearance = ctx:random(streams.ITEM_GENERATION, 255) + 1,
+        never_decays = request.never_decay or false,
     }
 end
 

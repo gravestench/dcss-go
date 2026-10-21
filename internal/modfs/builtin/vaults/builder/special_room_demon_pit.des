@@ -1,0 +1,8 @@
+# Source: crawl-ref/source/dat/des/builder/rooms.des
+NAME:   special_room_demon_pit
+DEPTH:  Pan
+TAGS:   special_room allow_dup unrand
+WEIGHT: 20
+: vault.run("special_room_demon_pit.fill")
+MAP
+ENDMAP

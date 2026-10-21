@@ -962,6 +962,7 @@ function resolve.item(ctx, selected, depth, site)
         weapon_tile = selected.wtile,
         item_name = selected.itemname,
         no_pickup = selected.no_pickup,
+        never_decay = selected.never_decay,
         mimic = mimic,
     }
 end

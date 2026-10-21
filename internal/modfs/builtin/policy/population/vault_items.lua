@@ -37,6 +37,7 @@ local function request_from(resolved, level_id, origin)
         purpose = purpose.VAULT,
         quantity = resolved.quantity,
         base_id = resolved.base_id,
+        never_decay = resolved.never_decay or false,
         disc = resolved.disc,
         disc2 = resolved.disc2,
         manual_skill_id = resolved.manual_skill_id,

@@ -1,0 +1,8 @@
+# Source: crawl-ref/source/dat/des/builder/rooms.des
+NAME:   special_room_jelly
+DEPTH:  Depths, Lair:$, Slime
+TAGS:   special_room allow_dup unrand
+WEIGHT: 9 (Lair:$), 13 (Depths:1-2), 40
+: vault.run("special_room_jelly.fill")
+MAP
+ENDMAP

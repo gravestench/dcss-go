@@ -1,0 +1,15 @@
+# Source: crawl-ref/source/dat/des/variable/mini_monsters.des
+# The hook builds the source's variable rectangle and selects one room recipe.
+# The legacy DEPTH line repeats Geh and omits Tar, although its CHANCE rule
+# includes Tar and the morgue recipe handles Tar. Use the intended Tar depth.
+NAME:   special_room
+TAGS:   allow_dup luniq no_item_gen ruin_spider ruin_slime procedural_map
+TAGS:   no_monster_gen layout_rooms layout_corridors layout_passages
+TAGS:   layout_narrow_caves layout_open_caves
+CHANCE: 1% (Geh, Coc, Dis, Tar, Pan), 2%
+DEPTH:  D:8-, Depths, Orc, Elf, Lair, Snake, Spider, Slime, Crypt, \
+        Geh, !Geh:$, Coc, !Coc:$, Dis, !Dis:$, Tar, !Tar:$, Pan
+KFEAT:  X = slimy_wall
+: vault.run("special_rooms.normal")
+MAP
+ENDMAP

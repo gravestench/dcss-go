@@ -148,9 +148,10 @@ type Item struct {
 
 // Corpse records source freshness and appearance for a floor corpse or skeleton.
 type Corpse struct {
-	MonsterID  string
-	Freshness  int
-	Appearance int
+	MonsterID   string
+	Freshness   int
+	Appearance  int
+	NeverDecays bool
 }
 
 // An item has exactly one location: Position, CarriedBy, or ReservedBy.

@@ -1,0 +1,8 @@
+# Test-only depth override. The production kobold hook still supplies content.
+NAME:   special_room_kobold
+DEPTH:  D:1
+TAGS:   special_room unrand
+WEIGHT: 11
+: vault.run("special_room_kobold.fill")
+MAP
+ENDMAP

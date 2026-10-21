@@ -1,0 +1,8 @@
+# Test-only source override: force the production hook on the first floor.
+NAME:   special_room
+PLACE:  D:1
+DEPTH:  D:1
+TAGS:   allow_dup luniq no_item_gen layout_rooms procedural_map
+: vault.run("special_rooms.normal")
+MAP
+ENDMAP

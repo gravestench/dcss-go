@@ -1,0 +1,9 @@
+# Source: crawl-ref/source/dat/des/variable/mini_monsters.des
+# Vaults uses the same child recipes but fills the entire random rectangle.
+NAME:   special_room_vaults
+TAGS:   allow_dup luniq unrand no_item_gen vaults_hard procedural_map
+CHANCE: 1%
+DEPTH:  Vaults, !Vaults:$
+: vault.run("special_rooms.vaults")
+MAP
+ENDMAP

@@ -517,17 +517,19 @@ the presentation parity pass. Xom and Jiyva poof variants still need
 per-monster god state from the religion domain.
 
 An audit of the pinned `builder/` and `serial/` DES files finds 600 unique
-`NAME` values, of which 575 occur in the committed vault catalog. The 25
-missing names comprise 17 procedural layouts from `layout_cc`,
-`layout_cellular`, `layout_delve`, `layout_geoelf`, `layout_geoelf_castle`,
-and `layout_halls`, plus all eight monster recipes from `builder/rooms.des`.
-The latter are mapless helpers: source `variable/mini_monsters.des` builds a
-variable-size room in `special_room` or `special_room_vaults`, then fills its
-`O` region from a weighted `special_room` helper. Both parent maps are also
-absent. Completing this family requires those parents, the eight Lua room
-recipes, dynamic local geometry, tagged child selection, monster placement,
-and a live save/restore check together; merely registering the helper names
-would leave them inert.
+`NAME` values, of which 583 occur in the committed vault catalog. The 17
+remaining names are procedural layouts from `layout_cc`, `layout_cellular`,
+`layout_delve`, `layout_geoelf`, `layout_geoelf_castle`, and `layout_halls`.
+All eight monster recipes from `builder/rooms.des` now have committed DES
+definitions and Lua hooks. The two source parents from
+`variable/mini_monsters.des` build variable-size local maps and select one
+weighted room recipe through the ordinary tagged SUBVAULT path. The same
+placement owner records parent and helper IDs, resolves monster and item
+records, and saves their ECS origins. A live Dungeon fixture verifies one
+room through population and restore; Lua tests exercise all eight recipes
+and both parent forms. The bee recipe's `never_decay` corpse modifier now
+reaches the saved corpse component and prevents timed decay. Morgue remains
+retain typed delayed-decay records until that separate gameplay effect runs.
 
 All 22 source arena builder maps are committed as individual `.des` files.
 Their original

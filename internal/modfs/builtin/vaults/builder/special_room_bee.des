@@ -1,0 +1,8 @@
+# Source: crawl-ref/source/dat/des/builder/rooms.des
+NAME:   special_room_bee
+DEPTH:  D:9-, Lair, Orc, !Orc:$, Spider
+TAGS:   special_room unrand uniq_beehive
+WEIGHT: 30 (D:9-12, Orc, Lair:1-3), 24 (D:13-, Lair:4-), 20
+: vault.run("special_room_bee.fill")
+MAP
+ENDMAP

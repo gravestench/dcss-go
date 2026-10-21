@@ -129,6 +129,7 @@ local function item_selection(record)
         allow_uniques = arguments.allow_uniques,
         unique_id = arguments.unique_id ~= "" and arguments.unique_id or nil,
         no_pickup = arguments.no_pickup or false,
+        never_decay = arguments.never_decay or false,
         mimic = arguments.mimic or false,
         ident = arguments.ident ~= "" and arguments.ident or nil,
         tile = arguments.tile ~= "" and arguments.tile or nil,

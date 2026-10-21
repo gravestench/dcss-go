@@ -80,7 +80,7 @@ function place.place(ctx, builder, context, placed, fit, place_controller)
 
     -- Source PLACE can select a mapless serial controller. Its post-place
     -- hook owns child selection, so it must not enter the geometry fitter.
-    if #vault.rows == 0 then
+    if #vault.rows == 0 and not vault.tags.procedural_map then
         if not place_controller then
             error("mapless PLACE vault needs a controller runner")
         end

@@ -13,6 +13,51 @@ local function has_flag(definition, wanted)
     return false
 end
 
+-- Corpse lifetime is item-owned. A never-decaying vault specimen still has
+-- a valid corpse shape, but spends no freshness and never becomes a skeleton.
+local function age_one_corpse(ctx, entity, corpse, item, elapsed)
+    if corpse.freshness < 1 or corpse.freshness > 110 or
+        (item.kind_id ~= item_ids.CORPSE_BODY and
+            item.kind_id ~= item_ids.CORPSE_SKELETON) then
+        error("corpse " .. ctx:id(entity) .. " has invalid decay state")
+    end
+
+    if corpse.never_decays then
+        return
+    end
+
+    local freshness = corpse.freshness - math.floor(elapsed / 20)
+
+    if freshness > 0 then
+        corpse.freshness = freshness
+        ctx:set(entity, "core.corpse", corpse)
+
+        return
+    end
+
+    local definition = catalog.get("monsters", corpse.monster_id)
+
+    if item.kind_id == item_ids.CORPSE_SKELETON or
+        has_flag(definition, "M_NO_SKELETON") then
+        ctx:destroy(entity)
+
+        return
+    end
+
+    item.kind_id = item_ids.CORPSE_SKELETON
+    corpse.freshness = 110
+    corpse.appearance = ctx:random("corpse", 255) + 1
+    ctx:set(entity, "core.item", item)
+    ctx:set(entity, "core.corpse", corpse)
+
+    local origin = ctx:get(entity, component.VAULT_ORIGIN)
+
+    if origin then
+        origin.kind_id = item_ids.CORPSE_SKELETON
+        ctx:set(entity, component.VAULT_ORIGIN, origin)
+    end
+end
+
 -- Re-entry ages a floor corpse from the last 200-aut boundary; a body either remains or becomes a skeleton.
 -- Example: age_corpses(ctx, { level_id = floor, elapsed = 200 }) advances corpse decay on re-entry.
 local function age_corpses(ctx, input)
@@ -47,35 +92,7 @@ local function age_corpses(ctx, input)
         end
 
         if position.level_id == level_id then
-            local definition = catalog.get("monsters", corpse.monster_id)
-
-            if corpse.freshness < 1 or corpse.freshness > 110 or
-                (item.kind_id ~= "CORPSE_BODY" and item.kind_id ~= "CORPSE_SKELETON") then
-                error("corpse " .. ctx:id(entity) .. " has invalid decay state")
-            end
-
-            local freshness = corpse.freshness - math.floor(elapsed / 20)
-
-            if freshness > 0 then
-                corpse.freshness = freshness
-                ctx:set(entity, "core.corpse", corpse)
-            elseif item.kind_id == "CORPSE_SKELETON" or
-                has_flag(definition, "M_NO_SKELETON") then
-                ctx:destroy(entity)
-            else
-                item.kind_id = "CORPSE_SKELETON"
-                corpse.freshness = 110
-                corpse.appearance = ctx:random("corpse", 255) + 1
-                ctx:set(entity, "core.item", item)
-                ctx:set(entity, "core.corpse", corpse)
-
-                local origin = ctx:get(entity, component.VAULT_ORIGIN)
-
-                if origin then
-                    origin.kind_id = item_ids.CORPSE_SKELETON
-                    ctx:set(entity, component.VAULT_ORIGIN, origin)
-                end
-            end
+            age_one_corpse(ctx, entity, corpse, item, elapsed)
         end
     end
 

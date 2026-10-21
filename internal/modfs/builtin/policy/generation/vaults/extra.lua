@@ -135,7 +135,7 @@ end
 local function place_chance_map(ctx, builder, context, placed, vault)
     local map
 
-    if #vault.rows > 0 then
+    if #vault.rows > 0 or vault.tags.procedural_map then
         map = extra.place(ctx, builder, vault, context)
 
         if not map then
