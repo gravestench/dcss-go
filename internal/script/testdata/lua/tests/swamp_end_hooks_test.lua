@@ -50,20 +50,31 @@ function test.run()
     harness.equal(#standard_rare, 1, "standard rare substitution")
     harness.equal(standard_rare[1].kind, directives.SUBST,
         "standard substitutes source guardian")
+    harness.equal(standard_rare[1].argument, "4 = .:999 4:1, O = &",
+        "standard rare branch makes the Lernaean hydra slot")
     harness.equal(#standard_common, 0, "standard common declarations remain")
     harness.equal(#alternative_rare, 1, "alternative rare substitution")
     harness.equal(alternative_rare[1].kind, directives.SUBST,
         "alternative substitutes source guardian")
+    harness.equal(alternative_rare[1].argument, "6 = .:999 6:1, OP = &",
+        "alternative rare branch makes the Lernaean hydra slot")
     harness.equal(#alternative_common, 0,
         "alternative common declarations remain")
     harness.equal(#basic_rare, 1, "basic rare guardian")
     harness.equal(basic_rare[1].kind, directives.KMONS,
         "basic rare guardian is keyed")
+    harness.equal(basic_rare[1].argument, "O = the lernaean hydra",
+        "basic rare branch names the unique guardian")
     harness.equal(#basic_common, 2, "basic common guard and prize")
     harness.equal(basic_common[1].kind, directives.KMONS,
         "basic common guardians are keyed")
+    harness.equal(basic_common[1].argument,
+        "O* = thorn hunter / shambling mangrove / spriggan berserker",
+        "basic common branch names its possible guardians")
     harness.equal(basic_common[2].kind, directives.KITEM,
         "basic common prize is keyed")
+    harness.equal(basic_common[2].argument, "* = *",
+        "basic common branch keeps its separate prize")
 
     local recorded = {}
     local api = {}
