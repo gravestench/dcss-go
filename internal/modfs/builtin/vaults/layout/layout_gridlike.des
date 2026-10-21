@@ -1,0 +1,12 @@
+# Gridlike uses the original branch weights and a Lua cellular renderer.
+# Its room, corridor, and wall tiles share the source omnigrid family.
+NAME:   layout_gridlike
+DEPTH:  Elf, Lair, Snake, Crypt, Depths, Zot, Pan
+WEIGHT: 20 (Elf), 10 (Lair), 10 (Snake), 15 (Crypt)
+WEIGHT: 20 (Depths), 20 (Zot), 15 (Pan)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_rooms
+TAGS:   no_rotate no_vmirror no_hmirror
+: vault.run("layout_gridlike")
+MAP
+ENDMAP

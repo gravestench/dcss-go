@@ -1,0 +1,12 @@
+# Test-only eligibility change: execute the production Lua hook on D:2.
+# A named PLACE makes the layout deterministic without copying its renderer.
+NAME:   layout_gridlike
+PLACE:  D:2
+DEPTH:  D:2
+WEIGHT: 100
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_rooms
+TAGS:   no_rotate no_vmirror no_hmirror
+: vault.run("layout_gridlike")
+MAP
+ENDMAP

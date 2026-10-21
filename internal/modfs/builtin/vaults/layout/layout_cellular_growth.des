@@ -1,0 +1,10 @@
+# A padded irregular cell grid grows separate rock groups through the
+# source's weighted seed and adjacency rules. Terrain is drawn in Lua.
+NAME:   layout_cellular_growth
+DEPTH:  Lair, Zot, Pan
+WEIGHT: 2 (Lair), 5 (Zot), 10 (Pan)
+ORIENT: encompass
+TAGS:   overwritable layout allow_dup unrand layout_type_passages
+: vault.run("layout_cellular_growth")
+MAP
+ENDMAP

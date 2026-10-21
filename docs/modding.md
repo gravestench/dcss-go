@@ -2198,8 +2198,9 @@ Pandemonium layouts; the Pan region generator also selects its primary
 Pan map and optional supporting maps from the effective `.des` catalog.
 
 The run method receives `api.ctx`, `api.branch`, `api.depth`, and
-`api.absolute_depth`. Build the 80×70 grid with
-`policy.generation.grid.new(api.ctx)`, carve it, and return a table containing
+`api.absolute_depth`, plus `api.width` and `api.height` for this floor's
+builder extent. Build the grid with
+`policy.generation.grid.new(api.ctx, api.width, api.height)`, carve it, and return a table containing
 `builder` and `rows = builder:rows()`. The catalog calls a named
 `vault.validate` method if the `.des` file declares one, then places missing
 ordinary stairs in a connected region. A failed source validator gets up to
@@ -2207,6 +2208,20 @@ ordinary stairs in a connected region. A failed source validator gets up to
 startup; a hook from another branch is checked when that layout runs.
 Import the shared geometry helpers from `policy.generation.layouts` and keep
 source-specific choices in your layout module.
+
+For a cellular map, `policy.generation.layouts.subdivision` partitions the
+grid, `cell_graph.edges` finds shared borders, and `cellular_groups.new`
+tracks cardinal and diagonal neighbors without global state. The bundled
+Cellular Growth and Gridlike hooks show two uses: one spreads wall groups;
+the other weights room, corridor, and wall tiles before painting branch
+variants. Gridlike's weighted room materials live in
+`policy/generation/layouts/gridlike_materials.lua`. Override that path to
+change the pairs, or add a separate layout to use a different tiler.
+If a procedural layout places keyed effects or monsters, return typed
+`records` beside `builder`. Gridlike's fill module shows how source plant
+glyphs become ECS monster records and how keyed terrain properties survive
+Go save/restore. Use the shared effect IDs from `constants.vault_effects`
+and stable monster IDs from `ids.monsters` at the point of use.
 
 For Shoals layouts, return a `heightmap` beside `builder` and `rows`.
 It is an 80×70 array of integer elevation rows. The level saves these

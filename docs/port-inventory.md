@@ -517,11 +517,15 @@ the presentation parity pass. Xom and Jiyva poof variants still need
 per-monster god state from the religion domain.
 
 An audit of the pinned `builder/` and `serial/` DES files finds 600 unique
-`NAME` values, of which 584 occur in the committed vault catalog. The 16
-remaining names are procedural layouts from `layout_cellular`, `layout_delve`,
-`layout_geoelf`, `layout_geoelf_castle`, and `layout_halls`. The completed
-`layout_cc` family now includes Chaotic City: its Lua hook draws separated
-buildings and an optional market with the source Lair and Crypt weights.
+`NAME` values, of which 586 occur in the committed vault catalog. The 14
+remaining names are procedural layouts from `layout_delve`, `layout_geoelf`,
+`layout_geoelf_castle`, and `layout_halls`. The completed `layout_cc` family
+includes Chaotic City. The completed `layout_cellular` family now includes
+Cellular Growth's weighted wall islands and Gridlike's branch-specific
+rooms, corridors, keyed material fills, and plant records. Both use one
+local grouped-cell model and preserve source branch weights. A forced
+Gridlike game fixture exercises its plant records through ECS population
+and Go save/restore.
 All eight monster recipes from `builder/rooms.des` now have committed DES
 definitions and Lua hooks. The two source parents from
 `variable/mini_monsters.des` build variable-size local maps and select one
