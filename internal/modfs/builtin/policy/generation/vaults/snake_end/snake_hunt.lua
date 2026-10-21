@@ -2,6 +2,8 @@
 -- wing of the Hunt. The source validator rejects a generated variant when
 -- no surviving entrance stair can reach the rune. We inspect final DES
 -- cells before they are projected onto the whole floor.
+local glyphs = require("constants.vault_glyphs")
+
 local handler = {}
 
 local directions = {
@@ -21,13 +23,30 @@ local directions = {
         x = 0,
         y = -1,
     },
+    {
+        x = 1,
+        y = 1,
+    },
+    {
+        x = -1,
+        y = 1,
+    },
+    {
+        x = 1,
+        y = -1,
+    },
+    {
+        x = -1,
+        y = -1,
+    },
 }
 
--- The source's x/c walls and blank padding block a path; doors and feature
--- placeholders remain traversable after the normal terrain projection.
+-- Source glyphs_connected uses ordinary feature traversability and all
+-- eight neighbors. Wall glyphs, deep water, lava, and blank padding cannot
+-- join an entrance to the rune; doors and floor placeholders can.
 local function passable(glyph)
     return glyph ~= nil and glyph ~= " " and
-        glyph ~= "x" and glyph ~= "c"
+        not glyphs.wall[glyph] and glyph ~= "w" and glyph ~= "l"
 end
 
 -- Begin at every surviving `{` so the optional source stair substitution

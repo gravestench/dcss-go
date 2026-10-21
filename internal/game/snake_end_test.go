@@ -141,7 +141,7 @@ func snakeRuneRecord(record vault.Record) bool {
 // Neither an extra source rune nor a deleted one may be accepted as a
 // valid branch ending, even though the live floor item can later disappear.
 func rejectChangedSnakeRuneHistory(t *testing.T, g *Game,
-	end *Level, duplicate bool) {
+	end *Level, duplicate bool, otherSource string) {
 	t.Helper()
 
 	forged := g.Snapshot()
@@ -160,6 +160,10 @@ func rejectChangedSnakeRuneHistory(t *testing.T, g *Game,
 			}
 
 			if duplicate {
+				if otherSource != "" {
+					record.SourceID = otherSource
+				}
+
 				floor.VaultRecords = append(floor.VaultRecords, record)
 			} else {
 				floor.VaultRecords = append(floor.VaultRecords[:recordIndex],
@@ -371,11 +375,62 @@ func TestSnakeEndVaultAppearsOnTravel(t *testing.T) {
 	}
 
 	t.Run("missing rune record", func(t *testing.T) {
-		rejectChangedSnakeRuneHistory(t, g, end, false)
+		rejectChangedSnakeRuneHistory(t, g, end, false, "")
 	})
 
 	t.Run("duplicate rune record", func(t *testing.T) {
-		rejectChangedSnakeRuneHistory(t, g, end, true)
+		rejectChangedSnakeRuneHistory(t, g, end, true, "")
+	})
+
+	t.Run("rune record from unselected map", func(t *testing.T) {
+		other := "snake_pit"
+
+		if end.VaultID() == other {
+			other = "snake_hunt"
+		}
+
+		if slices.Contains(end.VaultIDs(), other) {
+			t.Fatalf("unexpected second Snake end %s", other)
+		}
+
+		rejectChangedSnakeRuneHistory(t, g, end, true, other)
+	})
+
+	t.Run("rune owned by another historical map", func(t *testing.T) {
+		other := "snake_pit"
+
+		if end.VaultID() == other {
+			other = "snake_hunt"
+		}
+
+		forged := g.Snapshot()
+
+		for index := range forged.Levels {
+			floor := &forged.Levels[index]
+
+			if floor.ID != end.ID {
+				continue
+			}
+
+			floor.VaultIDs = append(floor.VaultIDs, other)
+
+			for recordIndex, record := range floor.VaultRecords {
+				if snakeRuneRecord(record) {
+					floor.VaultRecords[recordIndex].SourceID = other
+					break
+				}
+			}
+		}
+
+		bad, err := Restore(forged)
+
+		if bad != nil {
+			_ = bad.Close()
+		}
+
+		if err == nil || !strings.Contains(err.Error(), "Snake end") {
+			t.Fatalf("rune from wrong historical end = %v", err)
+		}
 	})
 
 	// The generated end map still uses the branch's exact paired stairs.

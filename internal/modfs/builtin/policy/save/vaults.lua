@@ -50,18 +50,22 @@ local function validate_end_vault(level, branch)
 
     for _, rune_id in ipairs(branch.runes or {}) do
         local count = 0
+        local source_id
 
         for _, record in ipairs(level.vault_records or {}) do
             if record.kind == effects.ITEM and record.arguments and
-                record.arguments.kind_id == rune_id and
-                selected_ids[record.source_id] then
+                record.arguments.kind_id == rune_id then
                 count = count + 1
+                source_id = record.source_id
             end
         end
 
-        if count ~= 1 then
+        -- Count every real rune, even if its source map is absent from
+        -- history. The sole rune must come from the selected ending itself;
+        -- merely listing a different map in history cannot grant ownership.
+        if count ~= 1 or source_id ~= selected.id then
             error(label .. " needs exactly one " .. rune_id ..
-                " source record")
+                " source record from " .. selected.id)
         end
     end
 end

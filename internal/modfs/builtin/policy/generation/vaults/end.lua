@@ -111,12 +111,35 @@ function end_vault.place(ctx, builder, context, placed, fit)
         return nil
     end
 
-    local selected = end_vault.choose(builder,
-        end_vault.candidates(context))
+    local candidates = end_vault.candidates(context)
+    local choice = context.end_choice
+    local selected
 
-    if not selected then
-        error("end vault catalog has no eligible map for " ..
-            context.end_vault_family)
+    if choice and choice.id then
+        for _, candidate in ipairs(candidates) do
+            if candidate.definition.id == choice.id then
+                selected = candidate.definition
+                break
+            end
+        end
+
+        if not selected then
+            error("previously selected end vault is no longer eligible: " ..
+                choice.id)
+        end
+    else
+        selected = end_vault.choose(builder, candidates)
+
+        if not selected then
+            error("end vault catalog has no eligible map for " ..
+                context.end_vault_family)
+        end
+
+        -- Keep this weighted choice across whole-floor redraws. A failed
+        -- geometric fit must not change the source map's probability.
+        if choice then
+            choice.id = selected.id
+        end
     end
 
     local vault = catalog.get(selected.id)

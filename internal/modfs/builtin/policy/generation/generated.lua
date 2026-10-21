@@ -341,7 +341,7 @@ end
 -- Generate one floor before pairing its stairs with neighboring floors.
 -- The arrival only belongs to D:1; supplemental vaults use actual depth.
 local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
-    chosen_schedule, temple)
+    chosen_schedule, temple, end_choice)
     if branch_id == branches.BRANCH_TEMPLE then
         return temple_floor.build(ctx, temple, player)
     end
@@ -404,6 +404,7 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
             absolute_depth = absolute_depth,
             end_vault_family = branch.end_vault_required and
                 depth == bottom and branch.end_vault_family or nil,
+            end_choice = end_choice,
             layout_family = layout_family(layout),
             prior_vault_ids = prior_vault_ids,
             primary_room_ids = layout.room_ids,
@@ -501,10 +502,12 @@ local function build_floor(ctx, player, branch_id, depth, prior_vault_ids,
     end
 
     local last_fit_error
+    local end_choice = {}
 
     for _ = 1, 32 do
         local okay, result = pcall(build_floor_once, ctx, player,
-            branch_id, depth, prior_vault_ids, chosen_schedule, temple)
+            branch_id, depth, prior_vault_ids, chosen_schedule,
+            temple, end_choice)
 
         if okay then
             return result

@@ -95,8 +95,51 @@ function test.run()
     harness.equal(#context.used:ids(), 0,
         "invalid end map never enters save history")
 
+    -- A rejected base layout must not reroll the authored end map. Only
+    -- geometry changes on retry; otherwise a cramped map biases weights.
+    local retry_choice = {}
+    local retry_context = snake_context()
+
+    retry_context.used = used.new({})
+    retry_context.end_choice = retry_choice
+
+    local retry_random = { draws = 0 }
+
+    function retry_random:roll(bound)
+        self.draws = self.draws + 1
+        return bound - 1
+    end
+
+    local rejected = pcall(end_vault.place, nil, retry_random,
+        retry_context, {}, function()
+            return nil, "stair conflict"
+        end)
+
+    harness.falsy(rejected, "first base layout rejects end map")
+    harness.truthy(retry_choice.id, "selected end survives rejection")
+
     local branch = register.get(categories.BRANCHES,
         branches.BRANCH_SNAKE)
+    local retry_placed = {}
+    local retry_id = end_vault.place(nil, retry_random,
+        retry_context, retry_placed, function(_, _, map)
+            return {
+                id = map.id,
+                records = {
+                    {
+                        kind = require("constants.vault_effects").ITEM,
+                        arguments = {
+                            kind_id = branch.runes[1],
+                        },
+                    },
+                },
+            }
+        end)
+
+    harness.equal(retry_id, retry_choice.id,
+        "retry keeps original end vault")
+    harness.equal(retry_random.draws, 1,
+        "retry does not spend a second weighted draw")
 
     harness.equal(branch.end_vault_family, "snake_end",
         "Snake declares its end family")

@@ -4,6 +4,7 @@ local directives = require("constants.vault_directives")
 local handler = require(
     "policy.generation.vaults.snake_end.grunt_snake_rune_pools")
 local harness = require("tests.harness")
+local hunt = require("policy.generation.vaults.snake_end.snake_hunt")
 
 local test = {}
 
@@ -45,6 +46,21 @@ function test.run()
     harness.equal(water[5].kind, directives.KFEAT,
         "water keyed terrain")
     harness.equal(water[5].argument, "7 = w", "water paints water")
+
+    -- The source glyphs_connected validator uses feature traversability
+    -- and eight neighbors. Crystal walls cannot bridge a rune path, while
+    -- a diagonal opening can connect otherwise separated floor cells.
+    harness.falsy(hunt.connected_rune({
+        cells = {
+            { "{", "b", "O" },
+        },
+    }), "crystal wall blocks rune path")
+    harness.truthy(hunt.connected_rune({
+        cells = {
+            { "{", "x" },
+            { "x", "O" },
+        },
+    }), "diagonal path reaches rune")
 end
 
 return test
