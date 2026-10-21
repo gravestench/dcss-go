@@ -1234,6 +1234,7 @@ policy uses these values while the grid keeps the changing floor and water.
 | `ctx:shoals_tide_clock(level_id)` | Raw height, velocity, and last update aut; three `nil` values if absent. |
 | `ctx:set_shoals_tide_clock(level_id, height, velocity, last_aut)` | Save an advanced Shoals tide clock. |
 | `ctx:cell(level_id, x, y)` | Terrain ID at the cell, or `nil` when missing. Includes staged terrain changes. |
+| `ctx:records_at(level_id, x, y)` | Fresh array of saved vault records at the cell, or an empty array. Each record has `kind`, `source_id`, `identity`, `x`, `y`, `pending`, `overridden`, and typed `arguments`. |
 | `ctx:walkable(level_id, x, y)` | Whether an actor can walk on the current or staged terrain. |
 | `ctx:actor_at(level_id, x, y)` | Occupying actor handle, or `nil`; includes staged moves. |
 | `ctx:stair_at(level_id, x, y)` | Link `{ to_level_id, to_x, to_y, unavailable }`, or `nil`. |
@@ -1248,6 +1249,14 @@ policy uses these values while the grid keeps the changing floor and water.
 | `ctx:map_cell(level_id, x, y)` | Mark an unseen cell in map memory; `true` if newly mapped, `false` if known. |
 | `ctx:place_actor(entity, level_id, x, y)` | Put an unpositioned actor on a valid, unoccupied cell. |
 | `ctx:move_actor(entity, level_id, x, y)` | Move a positioned actor to a valid, unoccupied cell. |
+
+`records_at` exposes source placement facts without giving a mod a mutable
+reference to the level. For example, an altar record's `arguments.god_id`
+identifies its assigned god even when its terrain is the generic altar cell.
+Changing a returned table does not change the level or a later query.
+Overridden source records are omitted; generated Temple assignments remain
+available after save and restore. Interpret each record in Lua policy rather
+than branching on its identity in Go.
 | `ctx:remove_actor(entity, level_id)` | Remove a positioned actor from that level's spatial index. |
 | `ctx:move_actors(moves)` | Atomically stage simultaneous moves; see the shape below. |
 

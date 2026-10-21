@@ -126,6 +126,41 @@ func (grid scriptGrid) Cell(levelID, x, y int) (terrain.ID, bool) {
 	return level.terrain[y][x], true
 }
 
+// Keep the level's stored record order while copying typed arguments into a
+// generic view. Go exposes placement facts, never god-specific decisions.
+func (grid scriptGrid) RecordsAt(levelID, x, y int) []script.SpatialRecord {
+	level := grid.levels[levelID]
+
+	if level == nil || !level.inBounds(x, y) {
+		return nil
+	}
+
+	result := []script.SpatialRecord{}
+
+	for _, record := range level.vaultRecords {
+		if record.Overridden {
+			continue
+		}
+
+		if record.X != x || record.Y != y {
+			continue
+		}
+
+		result = append(result, script.SpatialRecord{
+			Kind:       string(record.Kind),
+			SourceID:   record.SourceID,
+			Identity:   record.Identity,
+			X:          record.X,
+			Y:          record.Y,
+			Pending:    record.Pending,
+			Overridden: record.Overridden,
+			Arguments:  vaultRecordArguments(record),
+		})
+	}
+
+	return result
+}
+
 func (grid scriptGrid) MarkerProperty(levelID, x, y int, key string) (string, bool) {
 	level := grid.levels[levelID]
 

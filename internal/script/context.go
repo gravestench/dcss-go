@@ -24,6 +24,7 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "entity", r.state.NewFunction(r.luaEntityByID))
 	r.state.SetField(context, "id", r.state.NewFunction(r.luaEntityID))
 	r.state.SetField(context, "cell", r.state.NewFunction(r.luaGridCell))
+	r.state.SetField(context, "records_at", r.state.NewFunction(r.luaGridRecordsAt))
 	r.state.SetField(context, "marker_property", r.state.NewFunction(r.luaGridMarkerProperty))
 	r.state.SetField(context, "level_size", r.state.NewFunction(r.luaGridLevelSize))
 	r.state.SetField(context, "level_branch", r.state.NewFunction(r.luaGridLevelBranch))
@@ -279,6 +280,39 @@ func (r *Runtime) luaGridCell(state *lua.LState) int {
 	} else {
 		state.Push(lua.LString(string(cell)))
 	}
+
+	return 1
+}
+
+// Return saved placement facts at one cell without giving Lua a mutable
+// reference to the level's record slice. Rules interpret the typed facts.
+func (r *Runtime) luaGridRecordsAt(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	records := r.services.Grid.RecordsAt(levelID, x, y)
+	entries := make([]any, 0, len(records))
+
+	for _, record := range records {
+		entries = append(entries, map[string]any{
+			"kind":       record.Kind,
+			"source_id":  record.SourceID,
+			"identity":   record.Identity,
+			"x":          record.X,
+			"y":          record.Y,
+			"pending":    record.Pending,
+			"overridden": record.Overridden,
+			"arguments":  record.Arguments,
+		})
+	}
+
+	converted, err := r.policyValue(entries)
+
+	if err != nil {
+		state.RaiseError("records at (%d,%d): %v", x, y, err)
+
+		return 0
+	}
+
+	state.Push(converted)
 
 	return 1
 }

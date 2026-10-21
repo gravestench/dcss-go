@@ -34,6 +34,7 @@ type Services struct {
 // terrain features, stair links, occupancy, and walkability.
 type Grid interface {
 	Cell(levelID, x, y int) (terrain.ID, bool)
+	RecordsAt(levelID, x, y int) []SpatialRecord
 	MarkerProperty(levelID, x, y int, key string) (string, bool)
 	Remembered(levelID, x, y int) (terrain.ID, bool)
 	MapCell(levelID, x, y int) error
@@ -63,6 +64,19 @@ type Grid interface {
 	MoveActors(moves []ActorMove) error
 	PlaceActor(entity akara.Entity, levelID, x, y int) error
 	RemoveActor(entity akara.Entity, levelID int) error
+}
+
+// SpatialRecord is a read-only, content-neutral view of a saved level record.
+// The game owns the source record; Lua receives a fresh table for each query.
+type SpatialRecord struct {
+	Kind       string
+	SourceID   string
+	Identity   string
+	X          int
+	Y          int
+	Pending    bool
+	Overridden bool
+	Arguments  map[string]any
 }
 
 // VisibleCell is one grid coordinate in a line-of-sight result.

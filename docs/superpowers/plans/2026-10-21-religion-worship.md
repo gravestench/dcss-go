@@ -88,26 +88,27 @@ and the terminal's primitive input and display.
 
 **Files:**
 - Modify: `internal/script/context.go`
-- Modify: the active grid host file implementing `luaGridCell`
-- Modify: `internal/game` runtime context binding for the active level
-- Test: `internal/script/host_components_test.go`
+- Modify: `internal/script/runtime.go`
+- Modify: `internal/game/script_services.go`
+- Test: `internal/game/religion_records_test.go`
 - Test: `internal/game/temple_travel_test.go`
+- Fixture: `internal/game/testdata/religion-record-probe/policy/test/records_at_test.lua`
 
 **Interfaces:**
-- Produces `ctx:records_at(level_id, x, y)` returning a fresh sorted Lua
+- Produces `ctx:records_at(level_id, x, y)` returning a fresh Lua
   array of generic record tables (`kind`, `identity`, `arguments`, `x`, `y`,
   `pending`). No god-specific branch enters Go.
 - The query reads authoritative `Level.VaultRecords()` and does not expose
   a mutable Go record to Lua.
 
-- [ ] Write a failing host test for several typed records on one cell,
+- [x] Write a failing host test for several typed records on one cell,
       including altar `god_id` and defensive copying of returned tables.
-- [ ] Run that test and verify the missing API failure.
-- [ ] Implement the generic query through the existing context/grid host
+- [x] Run that test and verify the missing API failure.
+- [x] Implement the generic query through the existing context/grid host
       boundary, preserving record order and typed arguments.
-- [ ] Add a generated Temple integration test that queries a saved altar
+- [x] Add a generated Temple integration test that queries a saved altar
       before and after restore; reject unknown saved altar god IDs.
-- [ ] Run both focused tests.
+- [x] Run both focused tests.
 
 ### Task 3: Implement eligibility and common piety owner
 
