@@ -168,4 +168,54 @@ func TestJiyvaRewardOpensSlimePitOnEntryAfterRestore(t *testing.T) {
 	if !reflect.DeepEqual(before, restored.Snapshot()) {
 		t.Fatal("Jiyva-unsealed Slime floor changed across restore")
 	}
+
+	protected := 0
+
+	for _, record := range restored.levels[end.ID].VaultRecords() {
+		if record.Kind == vault.KindProperty &&
+			record.SourceID == "slime_pit" &&
+			record.Identity == "no_jiyva" {
+			protected++
+		}
+	}
+
+	if protected == 0 {
+		t.Fatal("generated Slime:5 lost its source no-Jiyva cells")
+	}
+
+	clock, found := restored.scripts.Components()["religion.jiyva_ecology"].Get(restored.player)
+
+	if !found {
+		t.Fatal("Slime:5 run has no Jiyva ecology clock")
+	}
+
+	if err := clock.Set("next_due_aut", int64(restored.currentAut+10)); err != nil {
+		t.Fatal(err)
+	}
+
+	forceJiyvaSpawnRoll(t, restored)
+
+	restoredHealth, _ := restored.stores.Health.Get(restored.player)
+
+	restoredHealth.Max = 10000
+	restoredHealth.Current = restoredHealth.Max
+
+	if _, err := restored.Step(Command{Kind: CommandWait}); err != nil {
+		t.Fatal(err)
+	}
+
+	if len(restored.scripts.Components()["religion.jiyva_spawn"].Entities()) == 0 {
+		t.Fatal("Jiyva timer created no jelly on unsealed Slime:5")
+	}
+
+	restoredHealth.Max = 18
+	restoredHealth.Current = restoredHealth.Max
+
+	spawnedSave, err := Restore(restored.Snapshot())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer spawnedSave.Close()
 }

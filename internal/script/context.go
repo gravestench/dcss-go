@@ -29,6 +29,7 @@ func (r *Runtime) installContextAPI() {
 		r.state.NewFunction(r.luaGridReplaceRecordString))
 	r.state.SetField(context, "marker_property", r.state.NewFunction(r.luaGridMarkerProperty))
 	r.state.SetField(context, "level_size", r.state.NewFunction(r.luaGridLevelSize))
+	r.state.SetField(context, "level_ids", r.state.NewFunction(r.luaGridLevelIDs))
 	r.state.SetField(context, "level_branch", r.state.NewFunction(r.luaGridLevelBranch))
 	r.state.SetField(context, "level_depth", r.state.NewFunction(r.luaGridLevelDepth))
 	r.state.SetField(context, "shoals_height", r.state.NewFunction(r.luaGridShoalsHeight))
@@ -402,6 +403,26 @@ func (r *Runtime) luaGridLevelSize(state *lua.LState) int {
 	state.Push(lua.LNumber(height))
 
 	return 2
+}
+
+// Lua sees only saved levels already held by this game session. Returning
+// sorted IDs keeps off-floor policy independent of Go map iteration order.
+func (r *Runtime) luaGridLevelIDs(state *lua.LState) int {
+	if r.services.Grid == nil {
+		state.RaiseError("level IDs require a grid service")
+
+		return 0
+	}
+
+	result := state.NewTable()
+
+	for _, levelID := range r.services.Grid.LevelIDs() {
+		result.Append(lua.LNumber(levelID))
+	}
+
+	state.Push(result)
+
+	return 1
 }
 
 func (r *Runtime) luaGridLevelBranch(state *lua.LState) int {

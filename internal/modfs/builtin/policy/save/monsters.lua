@@ -24,6 +24,8 @@ local pan_colours = require("constants.pan_lord_colours")
 local ugly_thing = require("policy.monsters.ugly_thing")
 local fedhas = require("policy.religion.gods.fedhas")
 local jiyva = require("policy.religion.gods.jiyva")
+local jiyva_growth = require("policy.religion.jiyva.growth")
+local gods = require("constants.gods")
 
 -- Banished monsters have different location requirements from level residents.
 local function validate_banishment(ctx, entity, position)
@@ -70,8 +72,10 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     local banishment = ctx:get(entity, component.BANISHMENT)
     local level_id = banishment and banishment.origin_level_id or
         position.level_id
+    local growth = ctx:get(entity, component.JIYVA_GROWTH)
+    local born_from_split = growth and growth.born_from_split
 
-    if not state.fixed and not clone then
+    if not state.fixed and not clone and not born_from_split then
         local count = (state.live_by_level[level_id] or 0) + 1
 
         if count > (state.budgets[level_id] or 0) then
@@ -86,13 +90,15 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     -- source kind; the catalog/profile checks below still validate it.
     local allowed = state.allowed_by_level[level_id] or state.allowed
 
-    if not clone and not allowed[roster_id] then
+    if not clone and not born_from_split and not allowed[roster_id] then
         error("unsupported melee attacker " .. roster_id ..
             " on level " .. tostring(level_id))
     end
 
     local definition = catalog.get("monsters", actor.kind_id)
-    local profile = roster.profile(roster_id)
+    -- A polymorph rolls the live body's HP afresh. If that body later feeds,
+    -- its Jiyva birth HP belongs to the new species, not its roster origin.
+    local profile = roster.profile(growth and actor.kind_id or roster_id)
 
     if state.fixed and state.seen[roster_id] and not clone then
         error("duplicate fixed animal " .. roster_id)
@@ -107,7 +113,9 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
         error("invalid polymorphed monster " .. ctx:id(entity))
     end
 
-    if not polymorph and not clone and
+    if growth then
+        jiyva_growth.validate(ctx, entity, health, profile, 0)
+    elseif not polymorph and not clone and
         (health.max < profile.minimum or health.max > profile.maximum) then
         error("impossible fixed monster maximum HP " .. health.max)
     end
@@ -259,7 +267,10 @@ local function validate_vault_monster(ctx, entity, actor, health, position,
     local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
     local profile_id = overrides and overrides.base_id ~= "" and
         overrides.base_id or actor.kind_id
+    local polymorph = ctx:get(entity, component.MONSTER_POLYMORPH)
+    local growth_profile_id = polymorph and actor.kind_id or profile_id
     local profile = roster.profile(profile_id)
+    local growth_profile = roster.profile(growth_profile_id)
     local fixed_hp = overrides and overrides.fixed_hp or 0
     local blob = ctx:get(entity, component.SLIME_BLOB)
     local blob_size = blob and blob.size or 1
@@ -275,7 +286,19 @@ local function validate_vault_monster(ctx, entity, actor, health, position,
         definition = monster_profile.definition(ctx, entity, definition)
     end
 
-    if invalid_health then
+    if ctx:has(entity, component.JIYVA_GROWTH) then
+        -- Authored large slime creatures multiply their rolled or fixed HP
+        -- by the saved blob size before the first meal records birth_max.
+        local growth_size = polymorph and 1 or blob_size
+
+        local growth_fixed_hp = polymorph and 0 or
+            fixed_hp * growth_size
+
+        jiyva_growth.validate(ctx, entity, health, {
+            minimum = growth_profile.minimum * growth_size,
+            maximum = growth_profile.maximum * growth_size,
+        }, growth_fixed_hp)
+    elseif invalid_health then
         error("vault monster " .. ctx:id(entity) .. " has impossible HP")
     end
 
@@ -521,6 +544,37 @@ function module.run(ctx, input)
         jiyva.validate(ctx, entity)
     end
 
+    -- The fed/split marker must belong to a complete monster, even when a
+    -- malformed save omits AI and would miss the monster loop below.
+    for _, entity in ipairs(ctx:query({ component.JIYVA_GROWTH })) do
+        if not ctx:has(entity, component.ACTOR) or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("orphan Jiyva growth " .. ctx:id(entity))
+        end
+    end
+
+    -- A spawned jelly is outside the original population count, but its
+    -- saved origin must still prove species, creation time, and ownership.
+    for _, entity in ipairs(ctx:query({ component.JIYVA_SPAWN })) do
+        local origin = ctx:get(entity, component.JIYVA_SPAWN)
+        local actor = ctx:get(entity, component.ACTOR)
+        local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
+
+        if not actor or actor.kind_id ~= monsters.MONS_JELLY or
+            not overrides or overrides.god_id ~= gods.JIYVA or
+            overrides.fixed_hp ~= 0 or
+            origin.created_aut < 1 or
+            origin.created_aut > input.current_aut or
+            not ctx:has(entity, component.JIYVA_SLIME) or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("invalid Jiyva jelly origin " .. ctx:id(entity))
+        end
+    end
+
     -- A custom ghost profile may not be detached from its live actor. The
     -- ordinary AI loop below only visits complete monsters, so catch orphan
     -- profile entities before they could bypass summon validation.
@@ -585,7 +639,8 @@ function module.run(ctx, input)
         elseif ctx:get(entity, doom_howl.ARRIVAL) then
             validate_doom_arrival(ctx, entity, actor, health,
                 position, ai, input.current_aut)
-        elseif ctx:get(entity, component.PANDEMONIUM_LORD) or
+        elseif ctx:get(entity, component.JIYVA_SPAWN) or
+            ctx:get(entity, component.PANDEMONIUM_LORD) or
             ctx:get(entity, component.VAULT_ORIGIN) or
             ctx:get(entity, component.WORLD_VAULT_SPAWN) then
             validate_vault_monster(ctx, entity, actor, health,

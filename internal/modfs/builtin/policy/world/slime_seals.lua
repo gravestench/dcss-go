@@ -105,4 +105,25 @@ function seals.enter(ctx, level_id)
     return released > 0
 end
 
+-- The source fixup clears its inner no-Jiyva property only after every
+-- authored seal has fallen. Keep the saved wall markers as the one owner of
+-- this fact, including after save/restore and repeated floor entry.
+function seals.opened(ctx, level_id)
+    local found = false
+
+    for _, entity in ipairs(ctx:query({ component.SLIME_SEAL })) do
+        local state = ctx:get(entity, component.SLIME_SEAL)
+
+        if state.level_id == level_id then
+            found = true
+
+            if not state.released then
+                return false
+            end
+        end
+    end
+
+    return found
+end
+
 return seals

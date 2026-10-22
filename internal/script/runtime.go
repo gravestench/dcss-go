@@ -46,6 +46,7 @@ type Grid interface {
 	MapCell(levelID, x, y int) error
 	RestoreRemembered(levelID, x, y int, feature terrain.ID) error
 	Size(levelID int) (int, int, bool)
+	LevelIDs() []int
 	Branch(levelID int) (string, bool)
 	Depth(levelID int) (int, bool)
 	ShoalsHeight(levelID, x, y int) (int, bool)

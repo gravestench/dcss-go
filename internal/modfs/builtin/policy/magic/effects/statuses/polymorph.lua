@@ -244,6 +244,13 @@ local function transform(ctx, target, source, definition, stream)
     ctx:set(target, component.ACTOR, actor)
     ctx:set(target, component.HEALTH, health)
 
+    -- Polymorph rolls a new body and maximum HP. Any meal or split history
+    -- belonged to the old body; a new slime begins its own history when it
+    -- next eats. Keeping the old marker would misvalidate the saved roll.
+    if ctx:has(target, component.JIYVA_GROWTH) then
+        ctx:remove(target, component.JIYVA_GROWTH)
+    end
+
     -- An ugly thing's ghost profile is individual actor state. A new body
     -- rolls it once; a departed body cannot keep stale colour or attacks.
     local ugly_thing = require("policy.monsters.ugly_thing")

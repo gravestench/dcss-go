@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"slices"
 
 	"crawl/internal/ecs"
 	"crawl/internal/script"
@@ -83,6 +84,20 @@ func (g *Game) scriptServices() (script.Services, error) {
 type scriptGrid struct {
 	levels map[int]*Level
 	opaque func(levelID int) map[point]bool
+}
+
+// Only visited levels live in this map. A Lua off-floor effect must never
+// create a new level merely to inspect possible item cells.
+func (grid scriptGrid) LevelIDs() []int {
+	ids := make([]int, 0, len(grid.levels))
+
+	for id := range grid.levels {
+		ids = append(ids, id)
+	}
+
+	slices.Sort(ids)
+
+	return ids
 }
 
 func (grid scriptGrid) Size(levelID int) (int, int, bool) {

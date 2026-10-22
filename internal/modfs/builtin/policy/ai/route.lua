@@ -49,7 +49,7 @@ end
 
 -- Try the direct route first so open corridors avoid detour RNG.
 local function direct_intent(ctx, entity, state, position,
-    target, attack_goal)
+    target, attack_goal, enter_goal)
     local dx = sign(state.target_x - position.x)
     local dy = sign(state.target_y - position.y)
     local steps = {
@@ -71,7 +71,9 @@ local function direct_intent(ctx, entity, state, position,
                         attack_goal)
                 end
 
-                return { kind = 6 }
+                if not enter_goal then
+                    return { kind = 6 }
+                end
             end
 
             if safe_move(ctx, entity, position, x, y) then
@@ -130,7 +132,7 @@ end
 -- Movement candidates are filtered for occupancy and walkability before the AI commits to a route step.
 -- Example: route.follow(ctx, monster, state, pos, target, player) picks a safe pursuit step.
 function route.follow(ctx, entity, state, position, target, target_entity,
-    attack_goal)
+    attack_goal, enter_goal)
     if attack_goal == nil then
         attack_goal = true
     end
@@ -141,7 +143,7 @@ function route.follow(ctx, entity, state, position, target, target_entity,
 
     if ctx:visible(level_id, position.x, position.y, 7, state.target_x, state.target_y) then
         local direct = direct_intent(ctx, entity, state, position, target,
-            attack_goal)
+            attack_goal, enter_goal)
 
         if direct then
             return direct

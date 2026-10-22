@@ -1237,8 +1237,10 @@ policy uses these values while the grid keeps the changing floor and water.
 
 | Call | Result and use |
 | --- | --- |
+| `ctx:level_ids()` | Sorted IDs of already created levels. Read inactive floors without generating them. |
 | `ctx:level_size(level_id)` | `width, height`, or `nil, nil` for a missing level. |
 | `ctx:level_branch(level_id)` | Branch ID, or `nil` for a missing level. |
+| `ctx:level_depth(level_id)` | Local branch depth, or `nil` for a missing level. |
 | `ctx:marker_property(level_id, x, y, key)` | A placed vault marker's named string property, or `nil`. |
 | `ctx:shoals_height(level_id, x, y)` | Authored Shoals elevation, or `nil` when absent. Water changes do not alter it. |
 | `ctx:shoals_tide_clock(level_id)` | Raw height, velocity, and last update aut; three `nil` values if absent. |
@@ -1581,6 +1583,22 @@ Conversion and desertion dismiss that slime's summons whose saved side no
 longer matches its owner. The common piety owner invokes `penance_ended` on a
 god's behavior module when it has that method. A new god can use the same
 method for its own actor state.
+
+Jiyva's jelly ecology is split into small Lua owners under
+`policy/religion/jiyva/`. `items.lua` decides whether an item can be eaten,
+`cells.lua` reads live per-cell `no_jiyva` properties, `targets.lua` gives
+good-neutral slimes a visible edible-item destination, and `feeding.lua`
+consumes real ECS item stacks before the slime's ordinary action. A meal
+can grow max HP and split a species carrying `M_SPLITS`; the saved growth
+component preserves that history through restore. The player-time system
+`systems/religion_jiyva_ecology.lua` runs `periodic.lua` on Jiyva's saved
+random 100–300 aut timer. That policy may spawn jellies on the active floor
+or destroy eligible items on an already visited, inactive floor. Off-floor
+checks use `ctx:level_ids()` to inspect existing levels; they never generate
+a new one. New monster definitions with the source slime genus, new ordinary
+item definitions, and new `M_SPLITS` species enter these common rules
+without a Go case or a second item allowlist. Override an individual policy
+file at the same relative path if its rule should change for a mod.
 
 Jiyva's six-star capstone shows the other kind of god callback.
 `piety.gain` saves the new rank before calling `rank_gained(ctx, player,
@@ -2527,6 +2545,18 @@ keep its stable `NAME` and the source rune and guardian records, or the
 validator will reject the map. Override its Lua handler path too if the
 replacement needs different marker logic. A sparse override test lives in
 `internal/script/testdata/slime-end-mod/`.
+
+To protect map cells from Jiyva, add a source-format property directive
+such as `KPROP: O = no_jiyva` to the `.des` file. `O` refers to every
+matching `MAP` cell after its map transform. The live jelly policies read
+the resulting typed records, so the same cell blocks item pursuit,
+feeding, active-floor spawning, and off-floor eating. The constant is
+`constants.vault_properties.NO_JIYVA`; use that import in Lua instead of
+repeating the string. Slime:5 is the one special case: after all its saved
+clear-stone seals open, only properties sourced from `slime_pit` cease to
+block Jiyva. A `no_jiyva` property from another map, such as Aquarium,
+continues to protect its own cell. A mod can add this directive to any
+ordinary vault without writing a hook.
 
 The other Slime maps live in two auto-discovered directories. Add a
 `vaults/slime_entry/<name>.des` file with `TAGS: slime_entry`, a positive

@@ -15,11 +15,14 @@ local statuses = require("policy.magic.effects.statuses.player")
 local allies = require("policy.character.allies")
 local fedhas = require("policy.religion.gods.fedhas")
 local jiyva = require("policy.religion.gods.jiyva")
+local jelly_feeding = require("policy.religion.jiyva.feeding")
+local jelly_targets = require("policy.religion.jiyva.targets")
 local awareness = require("policy.ai.awareness")
 local invisibility = require("policy.potions.invisibility")
 local component = require("constants.component")
 local ugly_thing = require("policy.monsters.ugly_thing")
 local behaviors = require("constants.ai_behaviors")
+local intents = require("constants.intent")
 
 -- Allied casters offer spells against a visible enemy before routing toward
 -- it. Frenzied and haunting hostiles retain the normal player awareness gate.
@@ -93,9 +96,23 @@ local function choose_intent(ctx, entity, state)
     -- Neutral actors have no player foe. Let them wander without offering
     -- a hostile spell, missile, or melee intent against that actor.
     if not targets.enemy(ctx, entity, player_entity) then
+        if state.behavior == behaviors.SLEEP then
+            return state, { kind = intents.WAIT }
+        end
+
         state.behavior = behaviors.WANDER
         state.target_x = 0
         state.target_y = 0
+        local item = jelly_targets.item(ctx, entity, position)
+
+        if item then
+            state.target_x = item.x
+            state.target_y = item.y
+
+            return state, route.follow(ctx, entity, state, position,
+                item, nil, false, true)
+        end
+
         wander.update(ctx, entity, state, position)
 
         if state.target_x == 0 and state.target_y == 0 then
@@ -263,6 +280,16 @@ function system.update(ctx, entity)
         net.struggle(ctx, entity, held)
         ctx:add(entity, "core.intent", {
             kind = 6,
+        })
+
+        return
+    end
+
+    -- Source slimes eat on their current cell before choosing a spell,
+    -- attack, or move. A meal spends exactly this monster action.
+    if jelly_feeding.act(ctx, entity) then
+        ctx:add(entity, component.INTENT, {
+            kind = intents.WAIT,
         })
 
         return

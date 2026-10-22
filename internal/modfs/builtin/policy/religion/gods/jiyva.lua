@@ -12,6 +12,7 @@ local gods = require("constants.gods")
 local flags = require("constants.monster_flags")
 local monsters = require("ids.monsters")
 local piety = require("policy.religion.piety")
+local identity = require("policy.religion.jiyva.identity")
 local allegiance = require(
     "policy.magic.effects.statuses.monster_allegiance")
 local summons = require("policy.magic.effects.summons.common")
@@ -21,35 +22,11 @@ local targets = require("policy.ai.targets")
 
 local jiyva = {}
 
-local slime_genera = {
-    [monsters.MONS_JELLY] = true,
-    [monsters.MONS_FLOATING_EYE] = true,
-    [monsters.MONS_GLOWING_ORANGE_BRAIN] = true,
-}
-
--- Source mons_class_is_slime uses these genera rather than holiness or
--- glyph. A modded member can join the family by using a source genus ID.
-local function is_slime(definition)
-    return slime_genera[definition.genus_id] or false
-end
-
--- The rank-minus-one passive survives penance. Only the actual conversion
--- waits; this matters because penance still consumes the actor's attempt.
-local function worship_state(ctx, player)
-    local state = ctx:get(player, component.RELIGION_WORSHIP)
-
-    if state and state.god_id == gods.JIYVA then
-        return state
-    end
-
-    return nil
-end
-
 -- The source grants the vault release once per character, even if Jiyva
 -- is later abandoned and rejoined. The saved per-god bit also makes a
 -- sixth-star reward independent of whether Slime:5 exists yet.
 local function unlock_vaults(ctx, player)
-    local state = worship_state(ctx, player)
+    local state = identity.worship(ctx, player)
     local spent = state and state.one_time_abilities or {}
 
     if not state or (state.penance[gods.JIYVA] or 0) > 0 or
@@ -112,7 +89,7 @@ end
 -- The source calls slime_convert just before the monster chooses an act.
 -- Temporary charm and already-neutral sides prevent another attempt.
 function jiyva.neutralise(ctx, player, entity)
-    local worship = worship_state(ctx, player)
+    local worship = identity.worship(ctx, player)
     local actor = ctx:get(entity, component.ACTOR)
 
     if not worship or not actor then
@@ -121,7 +98,7 @@ function jiyva.neutralise(ctx, player, entity)
 
     local definition = catalog.get(categories.MONSTERS, actor.kind_id)
 
-    if not is_slime(definition) or
+    if not identity.slime(definition) or
         targets.attitude(ctx, entity) ~= attitudes.HOSTILE then
         return false
     end
@@ -229,7 +206,7 @@ function jiyva.validate(ctx, entity)
     local valid_attitude = state.attitude == attitudes.HOSTILE or
         state.attitude == attitudes.GOOD_NEUTRAL
 
-    if not is_slime(definition) or not valid_attitude then
+    if not identity.slime(definition) or not valid_attitude then
         error("invalid saved Jiyva slime allegiance " .. ctx:id(entity))
     end
 end

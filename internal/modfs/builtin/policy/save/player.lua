@@ -11,6 +11,7 @@ local forms = require("policy.magic.effects.forms.player")
 local rage = require("policy.character.rage")
 local gods = require("constants.gods")
 local religion_validation = require("policy.religion.validation")
+local jiyva_ecology = require("policy.religion.jiyva.periodic")
 local mutation_effects = require("policy.mutations.effects.registry")
 local mutation_capabilities = require("constants.mutation_capabilities")
 local vampire = require("policy.character.vampire")
@@ -227,6 +228,7 @@ local function validate(ctx)
     evolution.validate(ctx, entity)
     spell_records.validate(ctx, entity)
     identification.validate(ctx, entity)
+    jiyva_ecology.validate(ctx, entity)
 end
 
 local module = {}
