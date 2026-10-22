@@ -440,6 +440,18 @@ trigger group in one event. Restore checks portal deadlines, reciprocal
 visits, source map identity, and the all-or-none wall group. Source sand
 messages and Silence hearing use Lua timer policy. Other authored effects
 remain subject to their respective gameplay domains.
+The Bailey now carries all nine source D:7–10 entrances and all 15 source
+axe and polearm destination maps. The mapless source dispatcher chooses one
+tagged child through the effective Lua/DES catalog. The entrance theme and
+600–800-turn lifetime are drawn once, saved in an ECS gate, and checked
+against the authored marker on restore. Time closes the gate even when its
+Dungeon floor is inactive. Entry stages the chosen map, spends the gate,
+and stores an exact return pointer; return retires the temporary floor and
+its entities. Source portcullis messages, Silence hearing, and five time
+bands run in Lua. Text snapshots under `docs/level-snapshots/bailey/` show
+every generated map and its test return connection. The broader effects of
+some authored monster equipment and feature records still depend on their
+respective gameplay domains.
 The four-map `serial_nicolae_subway` family adds its controller and three
 linked stations. Its named markers pair across separately placed stations,
 paint one-way transporters and landings, and retain their links in saved level

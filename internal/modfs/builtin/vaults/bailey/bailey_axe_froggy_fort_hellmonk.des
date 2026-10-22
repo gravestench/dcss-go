@@ -1,0 +1,54 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (bailey_axe_froggy_fort_hellmonk)
+# Authored Bailey geometry and content remain in this source map.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   bailey_axe_froggy_fort_hellmonk
+ORIENT: encompass
+TAGS:   bailey_axe no_item_gen no_monster_gen no_pool_fixup
+: vault.run("shared.loot_mix")
+: vault.run("shared.easy_axe_fighter")
+MONS:   human ; hand axe ego:vorpal | war axe . scale mail | ring mail
+MONS:   vault guard ; broad axe . chain mail | plate armour
+KMONS:  4 = bullfrog
+KMONS:  5 = prince ribbit, blink frog / cane toad w:1
+KFEAT:  4 = shallow_water
+SHUFFLE: AB
+SUBST:  ; = W:3 ., B = <
+NSUBST: ! = 24 = 1... / 20 = 2... / *:.
+NSUBST: W = 36 = 4WWW / *:W
+NSUBST: d = 4:d / *=dd*$
+: vault.run("shared.setup")
+MAP
+           ccccc
+          ccdddcc
+          cdd3ddc
+          c..5..c
+          c.....c
+          c..<..c
+        ccc.....ccc
+       ccwcc...ccWcc
+      ccwWWcc+ccWWWcc
+      cwWW;;!!!!!WWWc
+     ccwWW;;!;;;!!!!cc
+     cwWWW;;;;;;Wwww!c
+     cwWWW;;;;;Wwccc+c
+     cwWWW;;.;WwccW..c
+   cccwWWW;;.;WwcW..Wc
+  cc!cwWWW;;.Wwcc..Wcc
+ cc!!ccwWWW;.Wwcd..Wc
+cc!!!!cwWwwW.Wwcd3Wcc
+c!!!!!ccwccw.Wwccccc
+c!!!!!!ccccw..Wwc
+c!!!!!!+!!cw..Wwc
+ccc+cccc!!ccc+ccc
+ccWWWcc!!!c!!!!!c
+cWWWWWc!!!c!!!!!c
+cWWWWWc!!!cccc!!c
+cWWWWWc!!!!c!!!!c
+ccWWc+c+c!!!!!!cc
+ cccc...cc!!!!cc
+   c.....cccccc
+   c.A.B.c
+   c.....c
+   cc...cc
+    ccccc
+ENDMAP

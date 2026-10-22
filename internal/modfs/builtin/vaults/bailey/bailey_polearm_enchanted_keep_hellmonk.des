@@ -1,0 +1,54 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (bailey_polearm_enchanted_keep_hellmonk)
+# Authored Bailey geometry and content remain in this source map.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   bailey_polearm_enchanted_keep_hellmonk
+ORIENT: encompass
+TAGS:   bailey_polearm no_item_gen no_monster_gen no_pool_fixup
+: vault.run("shared.loot_mix")
+ITEM:   any weapon good_item w:40 / good_item ice dragon scales w:3 /\
+        good_item fire dragon scales w:3 / good_item swamp dragon scales w:3 /\
+        good_item acid dragon scales w:3 / good_item steam dragon scales w:3 /\
+        good_item quicksilver dragon scales w:3
+MONS:   ogre ; halberd | glaive w:3
+MONS:   spriggan ; spear | trident
+MONS:   two-headed ogre ; halberd | glaive w:3 | bardiche w:1 . \
+                          halberd | glaive w:3 | bardiche w:1
+KMONS:  D = steam dragon / acid dragon w:3
+KFEAT:  D = deep_water
+SUBST:  ! = t:20 x c:3, - = t c:30 x
+NSUBST: ' = 20 = 1... / 2 = 2... / *:.
+NSUBST: " = 1:2 / 12 = 2... / *:., 3 = 1:3 / *:.
+NSUBST:  d = 1:e / * = ddddddde
+FTILE:  ;tA< = floor_grass
+: vault.run("shared.setup")
+MAP
+      ccccccccc
+     ccccccccccc
+    ccc"""""""ccc
+   ccc''"""""''ccc
+  ccc'''"WWW"'''ccc
+ ccc''----W----''ccc
+ccc''--"""""""--''ccc
+cc''--""ttttt""--''cc
+cc''-""ttdddtt""-''cc
+cc''-""!ddwdd!""-''cc
+cc''-""!dwDwd!""-''cc
+cc''-""!..w..!""-''cc
+cc''-""tt...tt""-''cc
+cc''--""t!W!t""--''cc
+ccc''--3"""""3--''cc
+  cc''--""3""--''cc
+   cc''-------''cc
+    cc.........cc
+     cc.......cc
+      ccWWWWWcc
+       xWWWWWx
+     xxxWWWWWxxx
+    xx;;;;;;;;;xx
+   xx;;;;;;;;;;;xx
+   x;;;;A;;;<;;;;x
+   xx;;;;;;;;;;;xx
+    xx;;;;;;;;;xx
+     xxx;;;;;xxx
+       xxxxxxx
+ENDMAP

@@ -6,6 +6,7 @@ local pan = require("policy.generation.pan.region")
 local bazaar = require("policy.generation.bazaar.level")
 local sewer = require("policy.generation.sewer.level")
 local ossuary = require("policy.generation.ossuary.level")
+local bailey = require("policy.generation.bailey.level")
 local hell_vestibule = require("policy.generation.hell.vestibule")
 local branch_catalog = require("policy.catalog")
 local categories = require("constants.catalog")
@@ -206,6 +207,12 @@ function module.ossuary(ctx, input)
     return ossuary.generate(ctx, input)
 end
 
+-- Bailey's mapless controller chooses one saved-theme child before the
+-- generic staged-level transaction installs its temporary floor.
+function module.bailey(ctx, input)
+    return bailey.generate(ctx, input)
+end
+
 -- Stage one persistent Hell subbranch floor. Its source up exits become
 -- typed return arches only after keyed DES features have been projected.
 function module.hell_floor(ctx, input)
@@ -255,6 +262,11 @@ register.policy({
 register.policy({
     id = "world.generate_ossuary_level",
     run = module.ossuary,
+})
+
+register.policy({
+    id = "world.generate_bailey_level",
+    run = module.bailey,
 })
 
 register.policy({

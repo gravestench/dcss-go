@@ -15,6 +15,7 @@ local hell_travel = require("policy.world.hell.travel")
 local bazaar_travel = require("policy.world.bazaar.travel")
 local sewer_travel = require("policy.world.sewer.travel")
 local ossuary_travel = require("policy.world.ossuary.travel")
+local bailey_travel = require("policy.world.bailey.travel")
 
 -- Rooted movement is rejected before checking the destination cell.
 local function rooted(ctx)
@@ -134,6 +135,12 @@ function navigation.stairs(ctx, position, downstairs, actor, forced,
     end
 
     portal = ossuary_travel.prepare(ctx, position, downstairs)
+
+    if portal then
+        return portal
+    end
+
+    portal = bailey_travel.prepare(ctx, position, downstairs)
 
     if portal then
         return portal

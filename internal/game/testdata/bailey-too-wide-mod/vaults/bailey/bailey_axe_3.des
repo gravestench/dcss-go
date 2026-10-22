@@ -1,0 +1,10 @@
+# This source-shaped map parses but its 81-cell row cannot fit Bailey.
+NAME: bailey_axe_3
+DEPTH: Bailey
+WEIGHT: 1
+TAGS: bailey_axe no_monster_gen
+ORIENT: encompass
+KFEAT: < = exit_bailey
+MAP
+<xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

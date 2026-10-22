@@ -1,0 +1,16 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (enter_bailey_2)
+# A small room decorates its gate with the chosen weapon theme.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME: enter_bailey_2
+DEPTH: D:7-10
+TAGS: uniq_bailey chance_bailey
+CHANCE: 1000
+TAGS: transparent
+: vault.run("shared.entry_2")
+MAP
+.....
+..d..
+.dOd.
+..d..
+.....
+ENDMAP

@@ -1,0 +1,49 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (bailey_polearm_1)
+# Authored Bailey geometry and content remain in this source map.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   bailey_polearm_1
+ORIENT: encompass
+TAGS:   bailey_polearm no_rotate no_pool_fixup no_monster_gen
+NSUBST: D = 1:+ / *:c
+NSUBST: E = 1:+ / *:c
+: vault.run("shared.orc_with_polearm")
+: vault.run("shared.orc_warrior_with_polearm")
+: vault.run("shared.orc_knight_with_polearm")
+SUBST:  2 = 22223..
+SUBST:  1 = 1 2:1 .
+ITEM:   good_item crystal plate armour / good_item plate armour w:20 /\
+        good_item gold dragon scales w:3 / good_item ice dragon scales w:3 /\
+        good_item fire dragon scales w:3 / good_item storm dragon scales w:3 /\
+        good_item shadow dragon scales w:3
+ITEM:   good_item cloak / good_item pair of gloves /\
+        good_item helmet / good_item pair of boots /\
+        good_item tower shield / good_item kite shield
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xA<xxxxxxxxxx.........xxxxxxxxxxxxx
+xx..xxxxxxxx..WWWWWWW..xxxxxxxxxxxx
+x..xxxxxxxx..WW.1.1.WW..xxxxxxxxxxx
+xx..xxxxxx..WW..ccc..WW..xxxxxxxxxx
+x..........WW.1cc.cc1.WW..........x
+x.WWWWWWWWWW..ccd|ecc..WWWWWWWWWW.x
+x.W1..1..1..1cc.....cc1..1..1..1W.x
+x.W.ccncccccccccc+ccccccccccncc.W.x
+x.W1cc.$$$.cc.........cE....2cc1W.x
+x.W..nc.$.cc..lll.lll..EE...cn..W.x
+x.WW1.cc.cc..ll..2..ll..Ec.cc.1WW.x
+x<.WW..c+c..ll2..T..2ll..c+c..WW.xx
+xx.WW..c+c......T<T......c+c..WW.<x
+x.WW1.cc.cD..ll2...2ll..cc.cc.1WW.x
+x.W..cc...DD..lllllll..cc.$.cc..W.x
+x.W1cc2....Dc.........cc.$$$.cc1W.x
+x.W.ccccccccccccc+ccc+ccccccccc.W.x
+x.W1..1..1..1cc.....cc1..1..1..1W.x
+x.WWWWWWWWWW..cc.<.cc..WWWWWWWWWW.x
+x..........WW.1nc.cn1.WW..........x
+xxxxxxxxxx..WW..ccc..WW..xxxxxxxxxx
+xxxxxxxxxxx..WW.1.1.WW..xxxxxxxxxxx
+xxxxxxxxxxxx..WWWWWWW..xxxxxxxxxxxx
+xxxxxxxxxxxxx.........xxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

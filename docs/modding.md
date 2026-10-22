@@ -2252,6 +2252,72 @@ blocked return leaves that visit and floor intact. The timer, return, and
 save rules live under `policy/world/ossuary/`,
 `systems/world_ossuary_portals.lua`, and `policy/save/ossuary_*.lua`.
 
+### Bailey gates and themed maps
+
+Bailey is a one-floor portal branch reached from D:7–10. Its committed
+entrances are individual `.des` files under `vaults/bailey_entry/`. Each
+uses the source `uniq_bailey chance_bailey` tags, `CHANCE: 1000`, and a
+named `: vault.run("shared.entry_1")`-style hook at the source directive
+position. The hook in `policy/generation/vaults/bailey_entry/shared.lua`
+draws the axe or polearm theme first, then one 600–800-turn lifetime. Its
+`lua:timed_marker` declaration stores both values. Population creates a
+`world.bailey_portal` ECS component at the placed cell; the clock starts
+when the entrance floor is created, including before the player enters it.
+Global action time can close the gate while its Dungeon floor is inactive.
+The closed feature is a walkable `stone_arch`.
+
+Destinations live in `vaults/bailey/`. The source `bailey.des` is a mapless
+dispatcher with `vault.post_place("dispatch.run")`. Do not give it a `MAP`:
+`policy/generation/bailey/level.lua` runs its hook as a controller before
+asking the geometry fitter to place one child. To add a new axe layout,
+create a single file such as `vaults/bailey/my_fort.des` in a mod layer:
+
+```text
+NAME: my_fort
+DEPTH: Bailey
+WEIGHT: 10
+TAGS: bailey_axe no_monster_gen
+ORIENT: encompass
+KFEAT: < = exit_bailey
+MAP
+xxxxx
+x...x
+x.<.x
+x...x
+xxxxx
+ENDMAP
+```
+
+Use `bailey_polearm` for the other theme. A positive weight and matching
+tag put the map into the effective catalog without changing Go code or
+editing the dispatcher. Candidate IDs are sorted before weighting, so file
+enumeration order cannot alter a seeded draw. A map must have a usable
+`exit_bailey` arch; the player arrives there and uses the upstairs command
+to return to the exact saved entrance cell. The generic portal transaction
+stages the floor before spending the gate and retires the floor, its actors,
+and its items on return. If the outside cell is occupied, return waits and
+costs no time.
+
+Keep map-local decisions in named Lua hooks under
+`policy/generation/vaults/bailey/` and call them from the `.des` file at
+their authored position. A hook receives the same vault `api` documented in
+the vault hook section: `api:emit` adds a DES directive, `api:record` stores
+a typed effect, and `api:roll` draws from the layout stream. A mod can
+replace a bundled hook by supplying its exact relative Lua path; it can
+also add just one `.des` file. The runnable
+`internal/script/testdata/bailey-vault-mod/` example demonstrates both.
+Keep any new hook functions commented with the reason for their records
+and the stage at which they run. Avoid a second persistent Lua global for
+the theme: the marker, gate component, visit component, and saved floor are
+the source of truth. The `character.bailey_visit` component stores the
+outside coordinate, selected child ID, and theme. The gate's saved
+`closure_reason` is `entry` or `expiry` after it closes; both leave the
+same stone arch terrain. Restore checks those
+against the marker, deadline, selected tag, dispatcher history, and exit.
+The gate and travel rules live under `policy/world/bailey/`, its timer in
+`systems/world_bailey_portals.lua`, and integrity rules under
+`policy/save/bailey_*.lua`.
+
 All three categories validate their effective definitions at startup. A
 missing cloud or trap effect path fails before play; a malformed shop weight
 fails before stock generation. Import their IDs from `ids.clouds`,

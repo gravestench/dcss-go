@@ -123,6 +123,8 @@ features.named_vault_terrain = {
     exit_sewer = terrain.DNGN_EXIT_SEWER,
     enter_ossuary = terrain.DNGN_ENTER_OSSUARY,
     exit_ossuary = terrain.DNGN_EXIT_OSSUARY,
+    enter_bailey = terrain.DNGN_ENTER_BAILEY,
+    exit_bailey = terrain.DNGN_EXIT_BAILEY,
     expired_portal = terrain.DNGN_EXPIRED_PORTAL,
     open_sea = terrain.DNGN_OPEN_SEA,
     -- Pan KFEAT names become live arch cells. Their original source names

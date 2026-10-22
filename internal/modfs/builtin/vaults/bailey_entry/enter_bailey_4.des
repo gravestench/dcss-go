@@ -1,0 +1,22 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (enter_bailey_4)
+# The fort approach adds themed guards and returning weapons.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   enter_bailey_4
+DEPTH: D:7-10
+TAGS: uniq_bailey chance_bailey
+CHANCE: 1000
+TAGS:   transparent
+WEIGHT: 5
+: vault.run("shared.entry_4")
+KMASK: wW = no_monster_gen
+MAP
+...........
+.wwwwwwwww.
+.wcccccccw.
+.wc>...Ocw.
+.wc11111cw.
+.wcc+++ccw.
+.wwwwWwwww.
+.wwwwWwwww.
+...........
+ENDMAP

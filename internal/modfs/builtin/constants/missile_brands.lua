@@ -6,6 +6,10 @@ local brands = {
     CURARE = "curare",
     BLINDING = "blinding",
     FRENZY = "frenzy",
+    -- Source DES names the two dart coatings, while the engine stores
+    -- their effect brands. Both spellings must resolve to one saved ego.
+    ATROPA = "blinding",
+    DATURA = "frenzy",
     SILVER = "silver",
     DISPERSAL = "dispersal",
 }

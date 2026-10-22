@@ -11,6 +11,7 @@ local hell_levels = require("policy.save.hell_levels")
 local bazaar_levels = require("policy.save.bazaar_levels")
 local sewer_levels = require("policy.save.sewer_levels")
 local ossuary_levels = require("policy.save.ossuary_levels")
+local bailey_levels = require("policy.save.bailey_levels")
 local hell_size = require("policy.generation.hell.size")
 
 local up_features = {}
@@ -145,6 +146,7 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
     bazaar_levels.validate(levels)
     sewer_levels.validate(levels)
     ossuary_levels.validate(levels)
+    bailey_levels.validate(levels)
     local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
     local floors = 0
 
@@ -263,6 +265,7 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
             level.branch_id ~= branches.BRANCH_BAZAAR and
             level.branch_id ~= branches.BRANCH_SEWER and
             level.branch_id ~= branches.BRANCH_OSSUARY and
+            level.branch_id ~= branches.BRANCH_BAILEY and
             not hell_size.is_subbranch(register.get("branches",
                 level.branch_id)) and
             level.id ~= abyss.level_id then

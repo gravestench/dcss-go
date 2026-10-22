@@ -1,0 +1,19 @@
+Bailey source layouts, seed 88141
+Coordinates are zero-based: (x,y), origin at top left.
+The connection uses a Dungeon:1 test gate; live Bailey entrances spawn on D:7–10.
+
+axe  bailey_axe_3.txt  Bailey exit (39,20) -> Dungeon:1 (59,1), exact outside gate
+axe  bailey_axe_4.txt  Bailey exit (50,20) -> Dungeon:1 (59,1), exact outside gate
+axe  bailey_axe_bossmonster_kennysheep.txt  Bailey exit (25,32) -> Dungeon:1 (59,1), exact outside gate
+axe  bailey_axe_froggy_fort_hellmonk.txt  Bailey exit (42,23) -> Dungeon:1 (59,1), exact outside gate
+axe  bailey_axe_minmay_hex_keep.txt  Bailey exit (39,13) -> Dungeon:1 (59,1), exact outside gate
+axe  bailey_axe_of_yendor_kennysheep.txt  Bailey exit (39,20) -> Dungeon:1 (59,1), exact outside gate
+polearm  bailey_polearm_1.txt  Bailey exit (24,23) -> Dungeon:1 (59,1), exact outside gate
+polearm  bailey_polearm_2.txt  Bailey exit (20,18) -> Dungeon:1 (59,1), exact outside gate
+polearm  bailey_polearm_5.txt  Bailey exit (16,31) -> Dungeon:1 (59,1), exact outside gate
+polearm  bailey_polearm_elven_captive_hellmonk.txt  Bailey exit (40,48) -> Dungeon:1 (59,1), exact outside gate
+polearm  bailey_polearm_enchanted_keep_hellmonk.txt  Bailey exit (41,44) -> Dungeon:1 (59,1), exact outside gate
+polearm  bailey_polearm_flooded_kennysheep.txt  Bailey exit (52,34) -> Dungeon:1 (59,1), exact outside gate
+polearm  bailey_polearm_gnolls_kennysheep.txt  Bailey exit (39,49) -> Dungeon:1 (59,1), exact outside gate
+polearm  bailey_polearm_nasty_gnolls.txt  Bailey exit (34,29) -> Dungeon:1 (59,1), exact outside gate
+polearm  bailey_polearm_vampire_castle_hellmonk.txt  Bailey exit (35,52) -> Dungeon:1 (59,1), exact outside gate

@@ -1,0 +1,63 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (bailey_polearm_2)
+# Authored Bailey geometry and content remain in this source map.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   bailey_polearm_2
+ORIENT: encompass
+TAGS:   bailey_polearm no_rotate no_pool_fixup no_monster_gen
+MONS:   orc warrior w:5 ; arbalest  . ring mail | scale mail / \
+        orc ; arbalest . ring mail | scale mail
+: vault.run("shared.orc_with_polearm")
+: vault.run("shared.orc_warrior_with_polearm")
+: vault.run("shared.orc_knight_with_polearm")
+MONS:   orc knight
+SUBST:  1 = 111., 2 = 233.
+NSUBST: 4 = 1:4 / *=433322..
+SUBST:  W : W..
+SUBST:  X = I G C
+KFEAT:  C = altar_beogh
+ITEM:   manual of armour / manual of fighting / manual of shields /\
+        good_item bardiche / good_item executioner's axe /\
+        good_item triple sword / good_item arbalest / good_item triple crossbow
+ITEM:   potion of experience ident:type q:1 / \
+        scroll of acquirement ident:type q:1 /\
+        scroll of enchant armour ident:type q:2 / \
+        scroll of enchant weapon ident:type q:3
+NSUBST: d = 1:e / *:d|
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x<.....................................<x
+x.A.....................................x
+x.......................................x
+x.......................................x
+x.....WwwwwwWWWWWWWWWWWWWWWWWwwwwwW.....x
+x.....wwcncwwWWWWWWWWWWWWWWWwwcncww.....x
+x.....wcc1ccwWWWWWWWWWWWWWWWwcc1ccw.....x
+x.....wn111.WWWWWWWWWWWWWWWWW.111nw.....x
+x.....wcc1<cwWWWWWWWWWWWWWWWwc<1ccw.....x
+x.....wwc.ccwWWWWWWcccWWWWWWwcc.cww.....x
+x.....WwwWwwwWWWcccccccccWWWwwwWwwW.....x
+x.....WWWWWWWWWccWWWWWWWccWWWWWWWWW.....x
+x.....WWWWWWWWccWWc+c+cWWccWWWWWWWW.....x
+x.....WWWWWWWWcWWcc2c2ccWWcWWWWWWWW.....x
+x.....WWWWWWWccWccvvvvvccWccWWWWWWW.....x
+x.....WWWWWWWccW+2vd4dv2+WccWWWWWWW.....x
+x.....WWWWWWWccWccv4X4vccWccWWWWWWW.....x
+x.....WWWWWWWccW+2v.4.v2+WccWWWWWWW.....x
+x.....WWWWWWWccWccvv+vvccWccWWWWWWW.....x
+x.....WWWWWWWccWWcc<d<ccWWcWWWWWWWW.....x
+x.....WWWWWWWWWWWcc+++cWWccWWWWWWWW.....x
+x.....WWWWWWWWWWWccWWWWWccWWWWWWWWW.....x
+x.....WwwWwwwWWWWccWWWWccWWWwwwWwwW.....x
+x.....wwc.ccwWWWWcccccccWWWWwcc.cww.....x
+x.....wcc1<cwWWWWWWWWWWWWWWWwc<1ccw.....x
+x.....wn111.WWWWWWWWWWWWWWWWW.111nw.....x
+x.....wcc1ccwWWWWWWWWWWWWWWWwcc1ccw.....x
+x.....wwcncwwWWWWWWWWWWWWWWWwwcncww.....x
+x.....WwwwwwWWWWWWWWWWWWWWWWWwwwwwW.....x
+x.......................................x
+x.......................................x
+x.......................................x
+x<.....................................<x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

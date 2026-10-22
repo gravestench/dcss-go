@@ -1,0 +1,57 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (bailey_polearm_gnolls_kennysheep)
+# Authored Bailey geometry and content remain in this source map.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   bailey_polearm_gnolls_kennysheep
+ORIENT: encompass
+TAGS:   bailey_polearm no_item_gen no_monster_gen no_pool_fixup
+MONS:   gnoll ; spear | trident | halberd . \
+            ring mail | scale mail | chain mail . \
+            throwing net | nothing
+MONS:   gnoll sergeant ; halberd | glaive | bardiche w:1 . \
+            chain mail w:20 | plate armour | crystal plate armour w:1
+MONS:   gnoll bouda ; spear | trident | halberd . \
+            ring mail | scale mail
+MONS:   hound, wolf
+KMONS:  R = grum, gnoll sergeant ; halberd . plate armour
+ITEM:   any good_item
+FTILE:  4't = floor_grass
+KFEAT:  ' = floor
+NSUBST: _ = 40 = 1... / *:., 2 = 4:2 / * = 2., 3 = 4:3 / * = 3.
+NSUBST: R = 1:R22 / *:2, 5 = 2:5 / * = 5..
+SUBST:  d = dd|
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxx
+xtttttttttttttttttttttttttx
+xttttwwwwwwwwwwwwwwwwwttttx
+xtttww'''''''''''''''wwtttx
+xtttw'''''''''''''''''wtttx
+xtttw''ccccc_3_ccccc''wtttx
+xtttw'cc___c___c___cc'wtttx
+xtttwcc____+___+____ccwtttx
+xtttwc_____c___c_____cwtttx
+xtttwcG____cc+cc3___Gcwtttx
+xtttwc2___cc_3_cc___2cwtttx
+xtttwc___cc2___2cc___cwtttx
+xtttwc3__c_______c___cwtttx
+xtttwccc+c__$G$__c___cwtttx
+xtttwc___c_______c___cwtttx
+xtttwc___cc_____cc___cwtttx
+xtttwc__55cc___cc55__cwtttx
+xtttwcG5255cc+cc5525Gcwtttx
+xtttwc2353Rc___cR3532cwtttx
+xtttwccccc+c___c+cccccwtttx
+xtttw'cddd.c___c.dddc'wtttx
+xtttw'cccccc+++cccccc'wtttx
+xtttw''''''41.14''''''wtttx
+xtttww''''''...''''''wwtttx
+xttttwwwwwww...wwwwwwwttttx
+xttttt''''''...''''''tttttx
+xttttttt''''...''''tttttttx
+xtttttttt'''...'ttttttttttx
+xttttttttttt.A.tttttttttttx
+xtttttttttttt.ttttttttttttx
+xtttttttttttt.ttttttttttttx
+xtttttttttttt<ttttttttttttx
+xxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

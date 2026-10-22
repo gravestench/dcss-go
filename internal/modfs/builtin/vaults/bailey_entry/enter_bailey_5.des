@@ -1,0 +1,21 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (enter_bailey_5)
+# The shuffled guardhouse puts themed guards around its gate.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME: enter_bailey_5
+DEPTH: D:7-10
+TAGS: uniq_bailey chance_bailey
+CHANCE: 1000
+TAGS: transparent no_pool_fixup
+: vault.run("shared.entry_5")
+SHUFFLE: ABCD
+SUBST: A : W, BCD : wW
+KMASK: wW = no_monster_gen
+MAP
+.......
+.wwDww.
+.w1>1w.
+.C.O.A.
+.w1.1w.
+.wwBww.
+.......
+ENDMAP

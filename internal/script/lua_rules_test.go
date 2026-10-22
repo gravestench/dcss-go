@@ -170,6 +170,49 @@ func TestOssuaryVaultMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/ossuary_vault_mod_test.lua")
 }
 
+// A sparse themed child and a same-path Lua hook override use the same
+// effective Bailey catalog as ordinary portal generation.
+func TestBaileyVaultMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/bailey-vault-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/bailey_vault_mod_test.lua")
+}
+
+// A missing method in a same-path Bailey hook override is rejected at
+// catalog validation, before the one-use outside gate can be spent.
+func TestBaileyBrokenHookMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/bailey-broken-hook-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	world := akara.NewWorld()
+	defer world.Close()
+
+	runtime, err := newRuntimeWithHostComponents(t, world, rules, Services{})
+
+	if runtime != nil {
+		defer runtime.Close()
+	}
+
+	if err == nil {
+		_, err = runtime.runModule("tests/bailey_bad_hook_test.lua")
+	}
+
+	if err == nil {
+		t.Fatal("broken Bailey hook was accepted")
+	}
+
+	if !strings.Contains(err.Error(), "decay") {
+		t.Fatalf("broken Bailey hook was accepted: %v", err)
+	}
+}
+
 // A broken same-path handler is diagnosed when the effective map is
 // validated, before an entrance spends its one-time gate.
 func TestOssuaryBrokenHookMod(t *testing.T) {

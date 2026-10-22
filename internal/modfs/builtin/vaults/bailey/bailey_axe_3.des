@@ -1,0 +1,56 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (bailey_axe_3)
+# Authored Bailey geometry and content remain in this source map.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   bailey_axe_3
+ORIENT: encompass
+TAGS:   bailey_axe no_rotate no_item_gen no_monster_gen no_pool_fixup
+SUBST:  v : ccv
+ITEM:   any good_item
+ITEM:   dart ego:atropa q:4 / dart ego:datura q:4
+KFEAT:  _ = altar_trog / altar_okawaru / altar_makhleb
+: vault.run("shared.kobold_axe_returning")
+MONS: kobold brigand ; war axe . dart ego:poisoned | dart ego:curare w:5
+: vault.run("shared.hard_axe_fighter")
+SUBST:  2 = 2.
+NSUBST: 1 = 3:2 / *=1., 3 = 1:3 / *=3..
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxx.....xxxxxxxxxxx
+xxxxxxxxxx...A...xxxxxxxxxx
+xxxxxxxxxx.......xxxxxxxxxx
+xxxxxxxxxxx..<..xxxxxxxxxxx
+xxxxxxxxxxxc+++cxxxxxxxxxxx
+xxxxxxxxxxxc...cxxxxxxxxxxx
+xxxxxxxxcccc...ccccxxxxxxxx
+xxxxxxxxxxxc...cxxxxxxxxxxx
+xxxxxxxxcccc...ccccxxxxxxxx
+xxxxxxxccW.......Wccxxxxxxx
+xxxcccccWW.......WWcccccxxx
+xxxc1.1.WW.......WW.1.1cxxx
+xxxc.cccWW.......WWccc.cxxx
+xxxc1.1.WW.......WW.1.1cxxx
+xxxc.cccWW.......WWccc.cxxx
+xxxc1.1.WW.......WW.1.1cxxx
+xxxc.cccWW.......WWccc.cxxx
+xxxc1.1.WW.......WW.1.1cxxx
+xxxc.cccWW.......WWccc.cxxx
+xxxc1.1.WW.......WW.1.1cxxx
+xxxcccccWW.......WWcccccxxx
+xxxxxxxccW.......Wccxxxxxxx
+xxxxxxxxcccc+++ccccxxxxxxxx
+xxxxxxxxxcc.....ccxxxxxxxxx
+xxxxxxxxxc<d.3.d<cxxxxxxxxx
+xxxxxxxxxc...G...cxxxxxxxxx
+xxxxxxxxxcc3.e.3ccxxxxxxxxx
+xxxxxxxxxxcvv+vvcxxxxxxxxxx
+xxxxxxxxvvvv...vvvvxxxxxxxx
+xxxxxxvvv.........vvvxxxxxx
+xxxxxvv3...........3vvxxxxx
+xxxxxv....2..2..2....vxxxxx
+xxxxxv3......2......3vxxxxx
+xxxxxvv.2....3....2.vvxxxxx
+xxxxxxvvv.dd.e.dd.vvvxxxxxx
+xxxxxxxxvvvv3_3vvvvxxxxxxxx
+xxxxxxxxxxxvvvvvxxxxxxxxxxx
+ENDMAP

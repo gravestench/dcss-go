@@ -1,0 +1,52 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (bailey_axe_bossmonster_kennysheep)
+# Authored Bailey geometry and content remain in this source map.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   bailey_axe_bossmonster_kennysheep
+ORIENT: encompass
+TAGS:   bailey_axe no_item_gen no_monster_gen no_pool_fixup
+: vault.run("shared.loot_mix")
+ITEM:   potion of experience ident:type q:1 / \
+            scroll of acquirement ident:type q:1
+: vault.run("shared.easy_axe_fighter")
+: vault.run("shared.kobold_axe_returning")
+: vault.run("shared.hard_axe_fighter")
+: vault.run("shared.orc_warlord_with_axe")
+: vault.run("shared.setup")
+SUBST:  1 = 1.., 2 = 22.
+NSUBST: 3 = 2:3 / * = 3.
+NSUBST: e = 1:e / *:d
+MAP
+      ccccc         ccccc
+     ccd$1cc       cc1$dcc
+    ccd...1cc     cc1...dcc
+   cc.......ccccccc.......cc
+  ccd.G21G...31.13...G12G.dcc
+  cd..23...............32..dc
+  c$..1.................1..$c
+  c...G......c===c......G...c
+ttcc......cnncWWWcnnc......cctt
+tttcc1....cWWWWWWWWWc....1ccttt
+ttt2cc1...cW.G...G.Wc...1cc2ttt
+ttt.1ccc+ccc.......ccc+ccc1.ttt
+tt1..WWW.cWW.G...G.WWc.WWW..1tt
+tt...WWW.cW.........Wc.WWW...tt
+t<.2.WWW.cW....<....Wc.WWW.2.<t
+tt...WWW.cc..1...1..cc.WWW...tt
+tt1..WWW.cW..G...G..Wc.WWW..1tt
+ttt..ccc+cW.........Wc+ccc..ttt
+ttt2cc1..cW|eG.4.Ge|Wc..1cc2ttt
+tttcc....ccWWnnnnnWWcc....ccttt
+ttcc......cccn...nccc......cctt
+ttc21......1.......1......12ctt
+ttc..G..G.............G..G..ctt
+ttc21.....................12ctt
+ttcc.......................cctt
+ttwcc...G...cc+++cc...G...ccwtt
+ttwwcc.....cc.....cc.....ccwwtt
+ttwwwcc...cc.......cc...ccwwwtt
+tttwwwccccc.........cccccwwwttt
+ttttwwwwwww....A....wwwwwwwtttt
+tttttwwwwww.........wwwwwwttttt
+tttttttttttttt.<.tttttttttttttt
+ttttttttttttttttttttttttttttttt
+ENDMAP

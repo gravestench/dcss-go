@@ -1,0 +1,68 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (bailey_polearm_vampire_castle_hellmonk)
+# Authored Bailey geometry and content remain in this source map.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:    bailey_polearm_vampire_castle_hellmonk
+ORIENT:  encompass
+TAGS:    bailey_polearm no_item_gen no_monster_gen no_pool_fixup
+: vault.run("shared.loot_potions")
+ITEM:    any armour good_item
+MONS:    wolf zombie, vampire bat
+MONS:    orc zombie ; spear, orc warrior zombie ; trident | halberd
+MONS:    gargoyle
+MONS:    vampire ; halberd ego:vampirism w:15 | glaive ego:vampirism w:3 \
+             | bardiche ego:vampirism w:1 \
+             . scale mail | chain mail
+NSUBST:  d = 2=d / 2=e / | /  dde|, f = f / f..
+NSUBST:  ; = 20=t. / ., - = 4=G / 12=1. / .
+NSUBST:  2 = 5=2 / 2., 3 = 6=3 / 3..., 4 = 3=4 / 4., 5 = 5 / G
+NSUBST:  ! = 6 / G
+SHUFFLE: A<
+TILE:    t = dngn_tree_dead, G = dngn_gravestone
+COLOUR:  t = w:5 lightgrey / w:5 darkgrey / brown
+: vault.run("bailey_polearm_vampire_castle_hellmonk.decay")
+: vault.run("bailey_polearm_vampire_castle_hellmonk.dead_tree")
+: vault.run("bailey_polearm_vampire_castle_hellmonk.gravestone")
+: vault.run("shared.setup")
+MAP
+   cccccc
+  cc!dd!cc
+ ccdd..ddcc
+ c!..cc..!c
+ c..cccc..c
+ c..cccc..ccccccccccccc
+ c...cc...c5......5cddc
+ cc......cc.......5c44c
+  cc....cc...ccccccc33c
+  ccc++cc..3cc....5c..c
+  c......333c......c+cccc
+  c5......4........c.2.2c
+  ccccccccc....c...c.222c
+   c5....4cc..cc...+..2.c
+   c.......cccc....+.2.2c
+   c..;;;...c43.cccc.22.c
+ccccc..;;;..333.c34c....ct
+cdf4c.;;;.;;;...c43c+cc+ctt
+cfffc.;;;;.;;;..c33..c....tt
+cff4c..;;;;;;.;.c....c.---.t
+ccc+cc.;;.;;;;;.cccc+c.---.t
+  c43c.;.;;;.;;...333c.---.t
+  c33+..;;;.;.;;;...3c---.tt
+  cccc...;;;;;;;;...cc---.t
+   c........;;;.;...c.--..t
+   c.........;;;....c.--.tt
+   c...x..x........cc.--.t
+   c333x..xc+ccccc+c.---.tt
+   c...x..xc..333.4c.----.ttt
+   c...x33xc4.333..c.----.wwt
+ ttc...x..xccccccc+c.---.wwwt
+tttccccx..x.............wwwtt
+twwwwwwx..xwwwwwwwwwwwwwwwtt
+twwwwwwx..xwwwwwwwwwwwwwttt
+ttx....x..x....xttttttttt
+  xx..........xx
+   xxx......xxx
+    x........x
+    x..A..<..x
+    xx......xx
+     xxxxxxxx
+ENDMAP

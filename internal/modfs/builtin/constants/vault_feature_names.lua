@@ -20,6 +20,8 @@ local names = {
     DEFACED_CARVED_STONE_WALL = "defaced carved stone wall",
     HEAVILY_ETCHED_METAL_WALL = "heavily etched metal wall",
     HEAVILY_ETCHED_CRYSTAL_WALL = "heavily etched crystal wall",
+    BAILEY_AXE_STATUE = "granite statue wielding a mighty axe",
+    BAILEY_POLEARM_STATUE = "granite statue wielding a fearsome trident",
 }
 
 return names

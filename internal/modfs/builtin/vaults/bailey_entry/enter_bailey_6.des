@@ -1,0 +1,26 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (enter_bailey_6)
+# Statue names and tiles follow the gate weapon theme.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   enter_bailey_6
+DEPTH: D:7-10
+TAGS: uniq_bailey chance_bailey
+CHANCE: 1000
+TAGS:   transparent
+WEIGHT: 3
+COLOUR: ; : red / lightred
+SUBST:  ; = .
+KMASK:  d = no_item_gen
+KMASK:  d = no_monster_gen
+KPROP:  d = no_tele_into
+: vault.run("shared.entry_6")
+MAP
+.....G.....
+..G.....G..
+...........
+....;;;....
+G...;O;...G
+....;;;....
+...........
+..G.....G..
+.....G.....
+ENDMAP

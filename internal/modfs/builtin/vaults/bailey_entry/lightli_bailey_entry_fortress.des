@@ -1,0 +1,28 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (lightli_bailey_entry_fortress)
+# A larger fortress approach guards its central gate.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME: lightli_bailey_entry_fortress
+DEPTH: D:7-10
+TAGS: uniq_bailey chance_bailey
+CHANCE: 1000
+TAGS: transparent
+WEIGHT: 1
+: vault.run("shared.fortress")
+KMASK: W = no_monster_gen
+MAP
+WWWWWWWWWWWWWWW
+Wccc.2.1.2.cccW
+WcccccccccccccW
+WcccccccccccccW
+W.ccccccccccc.W
+W2ccccccccccc2W
+W.ccccccccccc.W
+W1ccccccccccc1W
+W.ccccccccccc.W
+W2ccccccccccc2W
+W.ccccccccccc.W
+WcccccccccccccW
+WcccccvOvcccccW
+Wccc.2.1.2.cccW
+WWWWWWWWWWWWWWW
+ENDMAP

@@ -1,0 +1,38 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (bailey_polearm_nasty_gnolls)
+# Authored Bailey geometry and content remain in this source map.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   bailey_polearm_nasty_gnolls
+ORIENT: encompass
+TAGS:   bailey_polearm no_rotate
+: vault.run("shared.orc_with_polearm")
+MONS:   gnoll ; halberd ego:draining | halberd ego:electrocution ident:type
+MONS:   orc warrior ; halberd ego:electrocution ident:type . plate armour /\
+        orc knight ; halberd
+NSUBST: d = 1:ddde / *:d, 1 = 5:1 / *=1., 2 = 5:2 / *=2.
+: vault.run("shared.loot_potions")
+ITEM:   potion of experience ident:type q:1 /\
+        scroll of acquirement ident:type q:1
+: vault.run("shared.setup")
+MAP
+ccc ccc ccccc ccc ccc
+cAccc1ccc2+2ccc1ccc1c
+cc+cc+cc+ccc+cc+cc+cc
+ cc.....cc cc.....cc
+ccc.....ccccc.....ccc
+c1+..<..+1c1+..T..+1c
+ccc.....ccccc.....ccc
+ cc....dcc ccd....cc
+cc+cc+cc+ccc+cc+cc+cc
+c1ccc1ccc2c2ccc1ccc2c
+ccc ccc ccncc ccc c+c
+c1ccc1ccc2c2ccc1ccc2c
+cc+cc+cc+ccc+cc+cc+cc
+ ccd.d.dcc ccd....cc
+ccc.d2d.ccccc.....ccc
+c1+d2U3d+1c1+..Y..+1c
+ccc.d2d.ccccc.....ccc
+ ccd.d.dcc cc.....cc
+cc+cc+cc+ccc+cc+cc+cc
+c<ccc1ccc2+2ccc1ccc1c
+ccc ccc ccccc ccc ccc
+ENDMAP

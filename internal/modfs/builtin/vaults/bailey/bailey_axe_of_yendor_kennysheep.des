@@ -1,0 +1,86 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (bailey_axe_of_yendor_kennysheep)
+# Authored Bailey geometry and content remain in this source map.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   bailey_axe_of_yendor_kennysheep
+ORIENT: encompass
+TAGS:   bailey_axe no_item_gen no_monster_gen no_pool_fixup
+: vault.run("shared.easy_axe_fighter")
+: vault.run("shared.hard_axe_fighter")
+KMONS:  3 = orc sorcerer ; war axe | broad axe w:2 | battleaxe w:1 . \
+            ring mail | scale mail  / \
+        orc high priest ; war axe | broad axe w:2 | battleaxe w:1 . \
+            ring mail | scale mail / \
+        kobold demonologist w:20 ; war axe | broad axe w:2 | battleaxe w:1 . \
+            ring mail | scale mail
+KMONS:  4 = electric eel
+KITEM:  d = any weapon
+KITEM:  D = any weapon good_item
+KITEM:  e = any armour
+KITEM:  E = any armour good_item
+: vault.run("shared.f_loot_mix")
+KITEM:  F = scroll of enchant weapon ident:type q:2 / \
+            scroll of enchant armour ident:type q:2 / \
+            potion of experience ident:type q:1 / \
+            scroll of acquirement ident:type q:1 / \
+            any good_item book w:30
+KITEM:  | = scroll of acquirement ident:type
+KITEM:  $ = gold
+NSUBST: | = 1:| / *:$
+KFEAT:  ^ = zot trap
+KFEAT:  B = altar_okawaru
+NSUBST: w = 10 = 4w / *:w
+NSUBST: 2 = 2:2 / * = 2..
+NSUBST: 1 = 6 = 2. / * = 11.
+NSUBST: 3 = 2:3 / * = 2
+SHUFFLE: defg
+NSUBST: d = 1:D
+NSUBST: e = 1:E
+NSUBST: f = 1:F
+SUBST:  g = .
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwx
+xwwwwwwwwccccccWWWWWWWWWWWccccccwwwwwwwwx
+xwwwwwwwwc|+1.......<.......1+|cwwwwwwwwx
+xwwwwwwwwccc2.ccnncc3ccnncc.2cccwwwwwwwwx
+xwwwwwwwwc2...cdd.c...c.eec...2cwwwwwwwwx
+xwwwwwwwwc....cdd.c...c.eec....cwwwwwwwwx
+xwwwwwwwwc+c+cc+cccG.Gccc+cc+c+cwwwwwwwwx
+xwwwwwwwwW.c11c...c.2.c...c11c.Wwwwwwwwwx
+xwwwwwwwwW.c11ccc+cG.Gc+ccc11c.Wwwwwwwwwx
+xwwwwwwwwW.c11cff.c...c.ggc11c.Wwwwwwwwwx
+xwwwwwwwwW.c11cff.c...c.ggc11c.Wwwwwwwwwx
+xwwwwwwwwW.c11c+nncc+ccnn+c11c.Wwwwwwwwwx
+xwwwwwwwwW.cc+c...1.1.1...c+cc.Wwwwwwwwwx
+xwwwwwwwwW.c..c.....B.....c..c.Wwwwwwwwwx
+xwwwwwwwwW.c2Gc.....1.....cG2c.Wwwwwwwwwx
+xwwwwwwwwW.c1.c....3.3....c.1c.Wwwwwwwwwx
+xwwwwwwwwW.c1GcccccccccccccG1c.Wwwwwwwwwx
+xwwwwwwwwW.c.1...ccccccc...1.c.Wwwwwwwwwx
+xwwwwwwwwW.c.G...c..1..c...G.c.Wwwwwwwwwx
+xwwwwwwwwW.c.....c.1.1.c.....c.Wwwwwwwwwx
+xwwwwwwwwc+cccc..c..T..c..cccc+cwwwwwwwwx
+xwwwwwwwwc....c..+.1.1.+..c....cwwwwwwwwx
+xwwwwwwwwc2...c..+.....+..c...2cwwwwwwwwx
+xwwwwwwwwccc2.ccccc+++ccccc.2cccwwwwwwwwx
+xwwwwwwwwc|+1.c...........c.1+|cwwwwwwwwx
+xwwwwwwwwccccccWWWW...WWWWccccccwwwwwwwwx
+xwwwwwwwwwwwwwwwwww...wwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwww...wwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwww...wwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwww...wwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwww.........wwwwwwwwwwwwwwwx
+xxxxxxxxxxxxxxxxx.......xxxxxxxxxxxxxxxxx
+                x.......x
+                x.......x
+                x...<...x
+                x.......x
+                xxx...xxx
+                  x.A.x
+                  xxxxx
+ENDMAP

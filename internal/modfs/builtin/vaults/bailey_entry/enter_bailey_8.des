@@ -1,0 +1,22 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (enter_bailey_8)
+# A second statue approach matches the gate weapon theme.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   enter_bailey_8
+DEPTH: D:7-10
+TAGS: uniq_bailey chance_bailey
+CHANCE: 1000
+WEIGHT: 3
+COLOUR: n = red
+KMASK:  d = no_item_gen
+KMASK:  d = no_monster_gen
+KPROP:  d = no_tele_into
+: vault.run("shared.entry_8")
+MAP
+ xxxxxxxxxxx
+ x.........@
+ ccccGcccGcc
+@+........OG
+ ccGcccGcccc
+ x.........@
+ xxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,22 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (enter_bailey_7)
+# The guard party can leave degeneration potions nearby.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   enter_bailey_7
+DEPTH: D:7-10
+TAGS: uniq_bailey chance_bailey
+CHANCE: 1000
+WEIGHT: 3
+: vault.run("shared.entry_7")
+COLOUR: ; = red
+KITEM:  ! = potion of degeneration q:2 ident:type
+KFEAT:  ! = floor
+SUBST:  ; = .
+MAP
+x@x  xxxxxxx
+x.x  x...1.x
+x.xxxx.1...x
+x....+..O..x
+x.xxxx...1.x
+x.x  x.1...x
+x@x  xxxxxxx
+ENDMAP

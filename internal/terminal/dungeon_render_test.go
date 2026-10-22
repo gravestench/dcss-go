@@ -45,6 +45,40 @@ func TestDrawDungeonOssuaryPortals(t *testing.T) {
 	}
 }
 
+// The live Bailey gate and its return arch use the original portal glyph
+// while Lua travel distinguishes their separate terrain identities.
+func TestDrawDungeonBaileyPortals(t *testing.T) {
+	for _, id := range []terrain.ID{
+		terrain.EnterBailey,
+		terrain.ExitBailey,
+		terrain.StoneArch,
+	} {
+		canvas := NewCanvas(79, 24)
+		region := Region{
+			X: 0,
+			Y: 0,
+			W: 37,
+			H: 17,
+		}
+
+		view := game.View{
+			Width: 1,
+			Cells: []game.CellView{
+				{
+					Glyph: terrain.Glyph(id),
+					State: game.Visible,
+				},
+			},
+		}
+
+		drawDungeon(canvas, region, view, testPresentationPolicy(t))
+
+		if got := canvas.cells[8*canvas.width+18].text; got != "∩" {
+			t.Errorf("Bailey portal %s drew %q", id, got)
+		}
+	}
+}
+
 func TestDrawDungeonKeepsPlayerAboveFloorItems(t *testing.T) {
 	canvas := NewCanvas(79, 24)
 	region := Region{

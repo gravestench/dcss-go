@@ -1,0 +1,13 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (enter_bailey_1)
+# A lone gate announces Bailey without surrounding cover.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME: enter_bailey_1
+DEPTH: D:7-10
+TAGS: uniq_bailey chance_bailey
+CHANCE: 1000
+TAGS: transparent
+WEIGHT: 1
+: vault.run("shared.entry_1")
+MAP
+O
+ENDMAP

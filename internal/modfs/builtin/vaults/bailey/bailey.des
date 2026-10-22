@@ -1,0 +1,10 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (bailey)
+# This source controller selects a themed destination, with no map of its own.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME:   bailey
+TAGS:   allow_dup
+PLACE:  Bailey
+ORIENT: encompass
+: vault.post_place("dispatch.run")
+MAP
+ENDMAP

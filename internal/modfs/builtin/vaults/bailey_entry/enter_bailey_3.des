@@ -1,0 +1,21 @@
+# Source: crawl-ref/source/dat/des/portals/bailey.des (enter_bailey_3)
+# A walled gate puts themed goblins around the entrance.
+# Named Lua hooks replace the source executable sites at their stage.
+NAME: enter_bailey_3
+DEPTH: D:7-10
+TAGS: uniq_bailey chance_bailey
+CHANCE: 1000
+TAGS: transparent
+: vault.run("shared.entry_3")
+KMASK: wW = no_monster_gen
+MAP
+.........
+.wwwwwww.
+.wcccccw.
+.wc.1.cw.
+.wc1O1cw.
+.wc.1.cw.
+.wcc.ccw.
+.wwwWwww.
+.........
+ENDMAP
