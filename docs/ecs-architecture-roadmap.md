@@ -90,6 +90,14 @@ for a mod-added arrival without a Go switch or central registration edit.
 Generation resolves random requests once; restore validates saved entities
 and records without rerunning Lua generation.
 
+TODO: Consolidate layout generation hooks into their owning `.des` files
+when the DES parser and Lua runtime can execute documented, map-local Lua
+bodies at their authored directive positions. For now, `.des` files keep
+their source-position `vault.run`, `vault.veto`, and related calls, while
+the handler bodies remain in separate Lua files. This migration must keep
+the current layered path override, deterministic draw order, and hook
+validation behavior. It must never embed Lua source in Go.
+
 Static definition and executable behavior are separate. A new monster file
 makes the monster available to Lua catalogs and shared ID imports. Spawn
 data may live in that definition; special actions use discoverable Lua files.

@@ -26,8 +26,8 @@ services, Bubble Tea terminal.
   require the C++ checkout or an importer.
 - Never put Lua source in Go strings. Source-position `:` hook calls belong
   in `.des`; DES-local Lua bodies are allowed but need explicit parser and
-  runtime support before use. This slice uses named Lua handlers for its
-  shared and substantial source scripts.
+  runtime support before use. This slice keeps handler bodies in separate
+  named Lua files; the roadmap records later DES consolidation.
 - Keep every Lua function's why/how comments, prefer 80-character lines,
   never exceed 120, and expand multi-field declarations.
 - Dynamic clocks and visits live in Akara ECS; terrain remains a dense grid.
