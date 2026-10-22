@@ -5,6 +5,7 @@ local classes = require("ids.object_classes")
 local terrain = require("constants.terrain")
 local effects = require("constants.vault_effects")
 local shop_spec = require("policy.generation.vaults.shop_spec")
+local branches = require("ids.branches")
 
 local shops = {}
 
@@ -62,9 +63,13 @@ local function authored_cells(ctx, input)
                 local key = string.format("%d:%d:%d",
                     level.id, record.x, record.y)
 
+                local populated_without_actors = level.branch_id ==
+                    branches.BRANCH_BAZAAR
+
                 if seen[key] or
                     (record.pending and level.initial_actors ~= 0) or
-                    (not record.pending and level.initial_actors == 0) then
+                    (not record.pending and level.initial_actors == 0 and
+                        not populated_without_actors) then
                     error("authored shop record has invalid population state " .. key)
                 end
 

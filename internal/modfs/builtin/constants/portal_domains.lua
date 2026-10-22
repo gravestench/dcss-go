@@ -3,4 +3,5 @@
 return {
     PAN = "pan",
     HELL = "hell",
+    LUA = "lua",
 }

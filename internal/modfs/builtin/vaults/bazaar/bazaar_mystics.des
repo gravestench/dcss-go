@@ -1,0 +1,28 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_mystics)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:    bazaar_mystics
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:    no_pool_fixup
+WEIGHT:  5
+ORIENT:  encompass
+SUBST:   w : wlx
+SHUFFLE: AB, def
+KFEAT:   A = scroll shop / book shop / book shop
+KFEAT:   B = jewellery shop
+ITEM:    any jewellery / good_item any jewellery
+ITEM:    any book / good_item any book, any magical staff
+SUBST:   d=.d, e=.e, f=.f
+: vault.run("shared.setup")
+: vault.run("configure_colour")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxwwwwwxxxxxx
+xxxxxxxxxxwwww...wwwxxxx
+xwwwwwwwwww....A...wwxxx
+xw<......d+....e....+f>x
+xwwwwwwwwww....B...wwxxx
+xxxxxxxxxxwwww...wwwxxxx
+xxxxxxxxxxxxxwwwwwxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

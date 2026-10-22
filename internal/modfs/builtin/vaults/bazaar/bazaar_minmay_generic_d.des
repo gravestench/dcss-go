@@ -1,0 +1,83 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_minmay_generic_d)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:       bazaar_minmay_generic_d
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:       no_rotate
+WEIGHT:     5
+ORIENT:     encompass
+: vault.run("swap_liquid_and_shops")
+KFEAT:      ! = jewellery shop / jewellery shop / antiques shop / scroll shop / \
+               book shop
+LFLOORCOL:  darkgrey
+: vault.run("shared.border_lava")
+: vault.run("shared.setup_plain")
+MAP
+lllllllllllllllllllllllllllllllllllll
+ll...lllllllllllllllll'''llllllllllll
+l.....lllllllllllllll'''''lllllllllll
+l..<...lllllllllllll'''B''lllllllllll
+l.......lllllllllll'''''''lllllllllll
+ll.......lllllllll'''''''llllllllllll
+lll.......lllllll'''''''lllllllllllll
+llll.......lllll'''''''llllllllllllll
+lllll.......lll'''''''lllllllllllllll
+llllll.......''''''''llllllllllllllll
+lllllll.......''''''lllllllllllllllll
+llllllll.......''''lllllllllllll"""ll
+lllllllll.......''lllllllllllll"""""l
+lllllllll".......'llllllllllll"""A""l
+lllllllll"".......lllllllllll"""""""l
+llllllll"""".......lllllllll"""""""ll
+lllllll"""""".......lllllll"""""""lll
+llllll"""""""".......lllll"""""""llll
+lllll"""""""lll.......lll"""""""lllll
+llll"""""""lllll.......""""""""llllll
+lll"""""""lllllll.......""""""lllllll
+ll"""""""lllllllll.......""""llllllll
+l"""""""lllllllllll.......""lllllllll
+l""A"""llllllllllll'......."lllllllll
+l"""""lllllllllllll''.......lllllllll
+ll"""lllllllllllll''''.......llllllll
+lllllllllllllllll''''''.......lllllll
+llllllllllllllll''''''''.......llllll
+lllllllllllllll'''''''lll.......lllll
+llllllllllllll'''''''lllll.......llll
+lllllllllllll...''''lllllll.......lll
+llllllllllll.....''lllllllll.......ll
+lllllllllll.......lllllllllll.......l
+lllllllllll...!...lllllllllll.......l
+lllllllllll.......lllllllllll.......l
+llllllllllll.....""lllllllll.......ll
+lllllllllllll...""""lllllll.......lll
+llllllllllllll"""""""lllll.......llll
+lllllllllllllll"""""""lll.......lllll
+llllllllllllllll"""""""".......llllll
+lllllllllllllllll"""""".......lllllll
+ll'''lllllllllllll"""".......llllllll
+l'''''lllllllllllll"".......lllllllll
+l''B'''llllllllllll".......'lllllllll
+l'''''''lllllllllll.......''lllllllll
+ll'''''''lllllllll.......''''llllllll
+lll'''''''lllllll.......''''''lllllll
+llll'''''''lllll.......''''''''llllll
+lllll'''''''lll.......lll'''''''lllll
+llllll''''''''.......lllll'''''''llll
+lllllll''''''.......lllllll'''''''lll
+llllllll''''.......lllllllll'''''''ll
+lllllllll''.......lllllllllll'''''''l
+lllllllll'......."llllllllllll'''B''l
+lllllllll.......""lllllllllllll'''''l
+llllllll.......""""lllllllllllll'''ll
+lllllll.......""""""lllllllllllllllll
+llllll.......""""""""llllllllllllllll
+lllll.......lll"""""""lllllllllllllll
+llll.......lllll"""""""llllllllllllll
+lll.......lllllll"""""""lllllllllllll
+ll.......lllllllll"""""""llllllllllll
+l.......lllllllllll"""""""lllllllllll
+l..>...lllllllllllll"""A""lllllllllll
+l.....lllllllllllllll"""""lllllllllll
+ll...lllllllllllllllll"""llllllllllll
+lllllllllllllllllllllllllllllllllllll
+ENDMAP

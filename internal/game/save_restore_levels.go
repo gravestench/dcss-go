@@ -199,6 +199,7 @@ func scenarioLevelPolicyRecords(levels map[int]*Level) []any {
 	for _, id := range ids {
 		level := levels[id]
 		stairs := make([]any, 0, len(level.stairs))
+		vaultRecords := make([]any, 0, len(level.vaultRecords))
 
 		for _, link := range level.StairLinks() {
 			stairs = append(stairs, map[string]any{
@@ -215,6 +216,14 @@ func scenarioLevelPolicyRecords(levels map[int]*Level) []any {
 			})
 		}
 
+		// Branch save policy needs the authored owner of retained vault
+		// records. The Bazaar uses it to reject a renamed primary layout.
+		for _, record := range level.vaultRecords {
+			vaultRecords = append(vaultRecords, map[string]any{
+				"source_id": record.SourceID,
+			})
+		}
+
 		records = append(records, map[string]any{
 			"id":               id,
 			"branch_id":        level.BranchID,
@@ -225,6 +234,7 @@ func scenarioLevelPolicyRecords(levels map[int]*Level) []any {
 			"initial_actors":   level.initialActors,
 			"vault_id":         level.VaultID(),
 			"vault_ids":        level.VaultIDs(),
+			"vault_records":    vaultRecords,
 		})
 	}
 

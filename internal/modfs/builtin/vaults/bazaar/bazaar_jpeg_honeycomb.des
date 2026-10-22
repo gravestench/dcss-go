@@ -1,0 +1,41 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_jpeg_honeycomb)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:    bazaar_jpeg_honeycomb
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+WEIGHT:  10
+TAGS:    no_rotate
+ORIENT:  encompass
+MONS:    plant
+SHUFFLE: ABCDEF
+SUBST:   A = >, B = >
+SUBST:   . = .:1000 $
+SUBST:   K = T:20 1 .:5
+KFEAT:   C = any shop / distillery shop
+KFEAT:   D = any shop / antiques shop
+KFEAT:   E = any shop / weapon shop / armour shop
+KFEAT:   F = any shop / book shop / scroll shop
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxK.....Kxxxxxxxxxxxxxx
+xxxxxxxxxxxxx.........xxxxxxxxxxxxx
+xxxxxxxxxxxx.....B.....xxxxxxxxxxxx
+xxxxxx....Kxx.........xxK....xxxxxx
+xxxx........xx.......xx........xxxx
+xxxK....A....xxxx+xxxx....C....Kxxx
+xxxx........xxK.....Kxx........xxxx
+xxxxx.....Kxx.........xxK....xxxxxx
+xxxxxxx....+.....<.....+....xxxxxxx
+xxxxx.....Kxx.........xxK....xxxxxx
+xxxx........xxK.....Kxx........xxxx
+xxxK....F....xxxx+xxxx....D....Kxxx
+xxxx........xx.......xx........xxxx
+xxxxxx....Kxx.........xxK....xxxxxx
+xxxxxxxxxxxx.....E.....xxxxxxxxxxxx
+xxxxxxxxxxxxx.........xxxxxxxxxxxxx
+xxxxxxxxxxxxxxK.....Kxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

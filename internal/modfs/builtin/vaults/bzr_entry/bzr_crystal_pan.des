@@ -1,0 +1,19 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bzr_crystal_pan)
+# The source entry map places a portal in its authored geometry.
+NAME:    bzr_crystal_pan
+TAGS:   bzr_entry
+TAGS:    extra
+DEPTH:   Pan
+COLOUR:  b = lightmagenta
+COLOUR:  . = magenta
+FTILE:   b.O = floor_crystal_squares
+RTILE:   b = dngn_crystal_lightmagenta
+: vault.run("shared.portal")
+: vault.run("shared.crystal_name")
+MAP
+bb@bb
+b...b
+@.O.@
+b...b
+bb@bb
+ENDMAP

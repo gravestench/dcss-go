@@ -2161,6 +2161,25 @@ rule; do not copy the full purchase flow into each shop type. Shop placement
 can also come from a `vaults/shop/` `.des` map and its optional hook, which
 uses the generation `api` described below, not a game `ctx`.
 
+The Bazaar map corpus is separate from ordinary shop maps. A portal entry
+belongs under `vaults/bzr_entry/` with a `bzr_entry` tag; a whole-floor
+market belongs under `vaults/bazaar/` with `DEPTH: Bazaar` and a source
+weight. The source maps use named Lua hooks under
+`policy/generation/vaults/bzr_entry/` and
+`policy/generation/vaults/bazaar/`. A map's own hook handles a calculated
+choice, while `bazaar/shared.lua` installs the common arrival arch, exit,
+and tileset. The 55 bundled maps show both authored MAP blocks and one
+procedural cavern. A source entrance can place a timed or permanent Bazaar
+arch. A timed arch has a saved `world.bazaar_portal` ECS clock and becomes a
+stone arch when global action time reaches its deadline, even if the player
+is elsewhere. Entering spends the arch, generates one weighted Bazaar map,
+and stores the return cell in the player's `character.bazaar_visit`
+component. The market's shops use Bazaar pricing and stock depth; leaving
+retires the floor and its stock. A keyed `any shop / T` choice uses the
+original DES `T` glyph as a blue fountain if the shop is not selected.
+`policy/world/bazaar/` owns these live rules. A `.des` hook configures a map
+during generation and receives `api`, never the live `ctx`.
+
 All three categories validate their effective definitions at startup. A
 missing cloud or trap effect path fails before play; a malformed shop weight
 fails before stock generation. Import their IDs from `ids.clouds`,

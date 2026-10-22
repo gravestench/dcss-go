@@ -1,0 +1,40 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_minmay_mutagenic_fog)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:   bazaar_minmay_mutagenic_fog
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:   no_rotate
+ORIENT: encompass
+WEIGHT: 1
+KFEAT:  ! = general shop
+MARKER: d = lua:fog_machine { cloud_type = "mutagenic fog", \
+             pow_min = 1, pow_max = 3, delay_min = 5, delay_max = 10, \
+             size = 1, walk_dist = 0, spread_rate= 0 }
+ITEM:   nothing
+NSUBST: < = 1:< / *:.
+: vault.run("shared.setup")
+MAP
+xxxxxxxxx     xxxxxxxxx
+x.......x     x.......x
+x.>...!.x     x.!...>.x
+x.......x     x.......x
+x...<...x     x...<...x
+x.......x     x.......x
+x.!.....xxx xxx.....!.x
+x.......x.xxx.x.......x
+xxxxxxxx.x.x.x.xxxxxxxx
+      x.xx...xx.x
+      xx.......xx
+       xx..d..xx
+      xx.......xx
+      x.xx...xx.x
+xxxxxxxx.x.x.x.xxxxxxxx
+x.......x.xxx.x.......x
+x.!.....xxx xxx.....!.x
+x.......x     x.......x
+x...<...x     x...<...x
+x.......x     x.......x
+x.>...!.x     x.!...>.x
+x.......x     x.......x
+xxxxxxxxx     xxxxxxxxx
+ENDMAP

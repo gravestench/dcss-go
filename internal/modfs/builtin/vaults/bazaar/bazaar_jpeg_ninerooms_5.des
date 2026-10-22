@@ -1,0 +1,40 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_jpeg_ninerooms_5)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:    bazaar_jpeg_ninerooms_5
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:    no_rotate
+WEIGHT:  1
+ORIENT:  encompass
+SUBST:   k : . x
+NSUBST:  A = 1:< / 1:> / 1:T C / 3=T:30 V / *:C
+SUBST:   B = > C:20
+KFEAT:   C = any shop
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xk.......kxxxxxxxxxk.......kxxxxxxxxxk.......kx
+x....A....xxxxxxxxx.........xxxxxxxxx....A....x
+x......................A............+.........x
+xk.......kxxxxxxxxxk.......kxxxxxxxxxk.......kx
+xxxxx+xxxxxxxxxxxxxxxxx+xxxxxxxxxxxxxxxxx+xxxxx
+xxxxx.xxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxx.xxxxx
+xxxxx.xxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxx.xxxxx
+xxxxx.xxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxx.xxxxx
+xxxxx.xxxxxxxxxxxxxxxxx+xxxxxxxxxxxxxxxxx.xxxxx
+xk.......kxxxxxxxxxk.......kxxxxxxxxxk.......kx
+x.........xxxxxxxxx.........xxxxxxxxx.........x
+x....A....+.......+....B....xxxxxxxxx....A....x
+x.........xxxxxxxxx.........xxxxxxxxx.........x
+xk.......kxxxxxxxxxk.......kxxxxxxxxxk.......kx
+xxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxx
+xxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxx
+xxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxx
+xxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxx
+xxxxx+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+xxxxx
+xk.......kxxxxxxxxxk.......kxxxxxxxxxk.......kx
+x.........+............A............+.........x
+x....A....xxxxxxxxx.........xxxxxxxxx....A....x
+xk.......kxxxxxxxxxk.......kxxxxxxxxxk.......kx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

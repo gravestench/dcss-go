@@ -12,6 +12,7 @@ local endgame = require("policy.character.endgame")
 local phases = require("constants.endgame")
 local pan_travel = require("policy.world.pan.travel")
 local hell_travel = require("policy.world.hell.travel")
+local bazaar_travel = require("policy.world.bazaar.travel")
 
 -- Rooted movement is rejected before checking the destination cell.
 local function rooted(ctx)
@@ -113,6 +114,12 @@ function navigation.stairs(ctx, position, downstairs, actor, forced,
     end
 
     portal = hell_travel.prepare(ctx, position, downstairs, hell_state)
+
+    if portal then
+        return portal
+    end
+
+    portal = bazaar_travel.prepare(ctx, position, downstairs)
 
     if portal then
         return portal

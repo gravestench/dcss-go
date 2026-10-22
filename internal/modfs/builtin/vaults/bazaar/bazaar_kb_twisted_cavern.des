@@ -1,0 +1,12 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_kb_twisted_cavern)
+# This rare Bazaar carves its shop sites from a generated cavern, so the
+# named Lua hook owns its geometry while the DES map owns its source weight.
+NAME:   bazaar_kb_twisted_cavern
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:   allow_dup procedural_map
+ORIENT: encompass
+WEIGHT: 50
+: vault.run("generate")
+MAP
+ENDMAP

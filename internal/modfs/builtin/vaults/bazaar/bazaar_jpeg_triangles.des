@@ -1,0 +1,25 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_jpeg_triangles)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:    bazaar_jpeg_triangles
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:    no_rotate
+ORIENT:  encompass
+WEIGHT:  1
+SHUFFLE: ACD
+SUBST:   A = <
+KFEAT:   B = any shop / antique armour shop / jewellery shop
+SUBST:   C = >
+SUBST:   D = T
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxAxxxC............+...xxxxxxxxx
+xxxxxxxx...xxx...........xxx...xxxxxxxx
+xxxxxxx.....xxx....B....xxx.....xxxxxxx
+xxxxxx.......xxx.......xxx.......xxxxxx
+xxxxx....B....xxx.....xxx....B....xxxxx
+xxxx...........xxx...xxx...........xxxx
+xxxA............+...xxxD...........Dxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

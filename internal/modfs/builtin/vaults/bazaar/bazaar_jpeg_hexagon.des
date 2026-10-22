@@ -1,0 +1,35 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_jpeg_hexagon)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:    bazaar_jpeg_hexagon
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:    no_rotate
+ORIENT:  encompass
+WEIGHT:  1
+SHUFFLE: AC, BD
+KFEAT:   A = armour shop / weapon shop / jewellery shop
+KFEAT:   B = general shop
+KFEAT:   C = scroll shop / book shop / distillery shop
+SUBST:   D = >
+SUBST:   = : +x
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxx.................===.xxxxxxxxx
+xxxxxxxx.............A...xxx...xxxxxxxx
+xxxxxxx.................xxx.....xxxxxxx
+xxxxxx........<........xxx.......xxxxxx
+xxxxx.................xxx....B....xxxxx
+xxxx...A.............xxx...........xxxx
+xxx.................xxx.............xxx
+xxx+xxxxxxxxxxxxxxx+xxxxxxxxxxxxxxx+xxx
+xxx+xxxxxxxxxxxxxxxx+xxxxxxxxxxxxxx+xxx
+xxx.............===.................xxx
+xxxx...........xxx.............C...xxxx
+xxxxx....D....xxx.................xxxxx
+xxxxxx.......xxx........>........xxxxxx
+xxxxxxx.....xxx.................xxxxxxx
+xxxxxxxx...xxx...C.............xxxxxxxx
+xxxxxxxxx.xxx.................xxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -8,10 +8,15 @@ type ID string
 const (
 	Unseen             ID = ""
 	Floor              ID = "DNGN_FLOOR"
+	BlueFountain       ID = "DNGN_FOUNTAIN_BLUE"
+	MagicFountain      ID = "DNGN_FOUNTAIN_MAGIC"
+	DryFountain        ID = "DNGN_FOUNTAIN_DRY"
+	BloodFountain      ID = "DNGN_FOUNTAIN_BLOOD"
 	Altar              ID = "DNGN_RANDOM_ALTAR"
 	ShopEntrance       ID = "DNGN_ENTER_SHOP"
 	RockWall           ID = "DNGN_ROCK_WALL"
 	StoneWall          ID = "DNGN_STONE_WALL"
+	StoneArch          ID = "DNGN_STONE_ARCH"
 	MetalWall          ID = "DNGN_METAL_WALL"
 	CrystalWall        ID = "DNGN_CRYSTAL_WALL"
 	PermaRockWall      ID = "DNGN_PERMAROCK_WALL"
@@ -40,6 +45,8 @@ const (
 	SealedClearDoor    ID = "DNGN_SEALED_CLEAR_DOOR"
 	StairsUp           ID = "DNGN_STONE_STAIRS_UP_I"
 	StairsDown         ID = "DNGN_STONE_STAIRS_DOWN_I"
+	EnterBazaar        ID = "DNGN_ENTER_BAZAAR"
+	ExitBazaar         ID = "DNGN_EXIT_BAZAAR"
 	EnterPandemonium   ID = "DNGN_ENTER_PANDEMONIUM"
 	TransitPandemonium ID = "DNGN_TRANSIT_PANDEMONIUM"
 	ExitPandemonium    ID = "DNGN_EXIT_PANDEMONIUM"
@@ -76,6 +83,26 @@ var definitions = map[ID]Feature{
 		Walkable: true,
 	},
 
+	BlueFountain: {
+		Glyph:    '⌠',
+		Walkable: true,
+	},
+
+	MagicFountain: {
+		Glyph:    '⌠',
+		Walkable: true,
+	},
+
+	DryFountain: {
+		Glyph:    '⌠',
+		Walkable: true,
+	},
+
+	BloodFountain: {
+		Glyph:    '⌠',
+		Walkable: true,
+	},
+
 	Altar: {
 		Glyph:    '_',
 		Walkable: true,
@@ -95,6 +122,11 @@ var definitions = map[ID]Feature{
 	StoneWall: {
 		Glyph:  '#',
 		Opaque: true,
+	},
+
+	StoneArch: {
+		Glyph:    '∩',
+		Walkable: true,
 	},
 
 	MetalWall: {
@@ -218,6 +250,18 @@ var definitions = map[ID]Feature{
 
 	StairsDown: {
 		Glyph:    '>',
+		Walkable: true,
+	},
+
+	// A Bazaar entrance is temporary or permanent according to saved Lua
+	// policy. Both gate directions remain distinct live terrain identities.
+	EnterBazaar: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitBazaar: {
+		Glyph:    '∩',
 		Walkable: true,
 	},
 

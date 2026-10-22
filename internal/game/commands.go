@@ -148,6 +148,7 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 
 	if _, err := g.scripts.Policy("command.action_start", map[string]any{
 		"waited_explicitly": prepared.waitedExplicitly,
+		"portal_travel":     prepared.portal != nil,
 	}); err != nil {
 		g.scripts.DiscardPending()
 

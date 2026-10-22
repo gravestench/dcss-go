@@ -10,6 +10,7 @@ local streams = require("constants.rng_streams")
 local terrain = require("constants.terrain")
 local stock_request = require("policy.shops.stock_request")
 local item_sets = require("policy.item_generation.item_sets")
+local branches = require("ids.branches")
 
 local generation = {}
 
@@ -86,21 +87,44 @@ end
 
 -- Antique shops use a higher greed formula because their stock is not
 -- identified up front; ordinary shops use the shallower identified formula.
-local function greed(ctx, definition, depth)
+local function greed(ctx, definition, depth, branch_id)
+    local base
+
     if not definition.identifies_stock then
-        return 15 + average(ctx, 19, 2) + ctx:random(streams.SHOP, depth)
+        base = 15 + average(ctx, 19, 2) +
+            ctx:random(streams.SHOP, depth)
+    else
+        base = 10 + ctx:random(streams.SHOP, 5) +
+            ctx:random(streams.SHOP,
+                math.max(1, math.floor(depth / 2)))
     end
 
-    return 10 + ctx:random(streams.SHOP, 5) +
-        ctx:random(streams.SHOP, math.max(1, math.floor(depth / 2)))
+    if branch_id == branches.BRANCH_BAZAAR then
+        -- Source bazaar bargains multiply base greed by one of 12..19
+        -- twentieths, giving prices from 60% through 95% of normal.
+        local factor = ctx:random(streams.SHOP, 8) + 12
+
+        return math.floor(factor * base / 20)
+    end
+
+    return base
 end
 
 -- Roll item quality from shop depth, with a larger multiplier for unknown
 -- stock, while keeping every draw on the isolated shop stream.
-local function item_depth(ctx, definition, depth)
+local function item_depth(ctx, definition, depth, branch_id)
     local multiplier = definition.identifies_stock and 2 or 3
+    local base = depth + ctx:random(streams.SHOP,
+        (depth + 1) * multiplier)
 
-    return depth + ctx:random(streams.SHOP, (depth + 1) * multiplier)
+    if branch_id == branches.BRANCH_BAZAAR then
+        -- Bazaar stock receives a second source draw, up to nearly twice
+        -- the base level, capped at five times the branch's depth.
+        return math.min(base + ctx:random(streams.SHOP, base) + 1,
+            depth * 5)
+    end
+
+    return base
 end
 
 -- Shop generation uses its own random stream so unrelated draws do not shift stock.
@@ -119,7 +143,8 @@ end
 -- Book shops reduce repeat subtypes; DES stock choices bypass the shop's default class-weight draw.
 local function candidate(ctx, definition, spec, index, stocked)
     local request = {
-        depth = item_depth(ctx, definition, spec.depth),
+        depth = item_depth(ctx, definition, spec.depth,
+            spec.branch_id),
         quality = ctx:random(streams.SHOP, 4) == 0 and
             quality.GOOD or quality.ORDINARY,
         allow_uniques = false,
@@ -274,7 +299,9 @@ function generation.place(ctx, spec)
     local count = spec.count or
         (spec.use_all and spec.items and #spec.items) or
         5 + average(ctx, 8, 3)
-    local shop_greed = spec.greed or greed(ctx, definition, spec.depth)
+    local rolled_greed = greed(ctx, definition, spec.depth,
+        spec.branch_id)
+    local shop_greed = spec.greed or rolled_greed
 
     if not positive_integer(count) or count > 64 or
         type(shop_greed) ~= "number" or shop_greed < 0 or

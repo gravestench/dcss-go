@@ -1,0 +1,20 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_jpeg_oval)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:    bazaar_jpeg_oval
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:    no_rotate
+WEIGHT:  5
+ORIENT:  encompass
+SUBST:   A = TVBG
+KFEAT:   B = any shop
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxx
+xxxB.....Bxxx
+xx.........xx
+x<....A....>x
+xx.........xx
+xxxB.....Bxxx
+xxxxxxxxxxxxx
+ENDMAP

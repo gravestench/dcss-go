@@ -1,0 +1,31 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_minmay_trees)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:       bazaar_minmay_trees
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:       no_rotate
+WEIGHT:     5
+ORIENT:     encompass
+MONS:       bush
+KFEAT:      ! = any shop
+KFEAT:      ? = any shop / .
+LFLOORTILE: floor_grass
+LFLOORCOL:  green
+: vault.run("shared.setup_plain")
+MAP
+ttttttttttttttt
+ttttttttttttttt
+tttttt.>.tttttt
+tttt.......tttt
+ttt.........ttt
+ttt..11.11..ttt
+tt...1!.!1...tt
+tt.?.1...1.?.tt
+tt...1!.!1...tt
+ttt..11111..ttt
+ttt.........ttt
+tttt.......tttt
+tttttt.<.tttttt
+ttttttttttttttt
+ttttttttttttttt
+ENDMAP

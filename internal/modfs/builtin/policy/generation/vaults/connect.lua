@@ -5,6 +5,7 @@ local glyphs = require("constants.vault_glyphs")
 local hooks = require("policy.generation.vaults.hooks")
 local history = require("policy.population.unique_history")
 local runes = require("policy.character.runes")
+local component = require("constants.component")
 
 -- The connector runs on several branch themes. Testing only rock would
 -- mistake Vaults metal or crystal walls for walkable floor.
@@ -216,6 +217,11 @@ end
 -- Run authored veto hooks after the candidate map has its final surrounding terrain.
 local function check_vetoes(ctx, builder, placed)
     local api = {}
+
+    -- The source dummy entry rejects a second Bazaar on the active travel
+    -- stack. Only this placement attempt sees the live ECS visit flag.
+    api.bazaar_active = ctx ~= nil and placed.family == "bzr_entry" and
+        ctx:get(ctx:player(), component.PLAYER_BAZAAR_VISIT) ~= nil
 
     -- Pan source hooks inspect saved run state after the candidate's map
     -- fits. Their decision reads the same player components as pickup and

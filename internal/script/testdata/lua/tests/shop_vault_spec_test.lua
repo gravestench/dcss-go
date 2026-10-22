@@ -1,6 +1,7 @@
 -- All static source shop specifications parse into selectable catalog entries.
 
 local ids = require("ids.shops")
+local terrain = require("constants.terrain")
 local harness = require("tests.harness")
 local shop_spec = require("policy.generation.vaults.shop_spec")
 local catalog = require("policy.generation.vaults.catalog")
@@ -54,6 +55,18 @@ local function weighted_alternatives()
     harness.equal(alternatives[2].weight, 5, "source alternative weight")
     harness.equal(alternatives[3].kind_id, ids.SHOP_ARMOUR_ANTIQUE,
         "antique armour ID")
+end
+
+-- Bazaar source maps may replace a shop with a fountain. Keep both choices
+-- in the same weighted draw so the map's authored odds still apply.
+local function shop_or_fountain()
+    local alternatives = shop_spec.parse("any shop / T", site)
+
+    harness.equal(#alternatives, 2, "shop or fountain alternatives")
+    harness.equal(alternatives[1].kind_id, ids.SHOP_RANDOM,
+        "Bazaar shop alternative")
+    harness.equal(alternatives[2].terrain_id,
+        terrain.DNGN_FOUNTAIN_BLUE, "Bazaar fountain alternative")
 end
 
 -- Source shop names encode spaces as underscores; decode each name field
@@ -178,6 +191,7 @@ end
 function test.run()
     clearance_and_fixed_stock()
     weighted_alternatives()
+    shop_or_fountain()
     source_name_spacing()
     randart_overrides_good_item()
     stock_egos_use_item_ids()

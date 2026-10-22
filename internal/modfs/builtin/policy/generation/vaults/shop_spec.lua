@@ -1,6 +1,7 @@
 -- Example: A shop item token trims spaces before quantity and stock flags are parsed.
 local ids = require("ids.shops")
 local item_specs = require("policy.generation.vaults.specs.item")
+local glyphs = require("constants.vault_glyphs")
 
 local shop_spec = {}
 
@@ -16,6 +17,13 @@ local kinds = {
     ["scroll shop"] = ids.SHOP_SCROLL,
     ["general shop"] = ids.SHOP_GENERAL,
     ["any shop"] = ids.SHOP_RANDOM,
+}
+
+-- A source KFEAT can draw terrain instead of a shop. Only terrain supported
+-- by the live grid belongs here; Bazaar's T is the blue-fountain DES glyph.
+local terrain_alternatives = {
+    ["."] = glyphs.terrain["."],
+    T = glyphs.terrain.T,
 }
 
 -- Strip surrounding DES whitespace before parsing shop tokens.
@@ -53,17 +61,20 @@ end
 
 -- Each slash alternative owns its stock, name, count, greed, and selection weight.
 local function alternative(text, items, site)
-    -- Source keyed features may choose bare floor instead of a shop.
-    -- Keep its ordinary weight in the same draw and create no stock.
-    if text == "." then
+    -- Source keyed features may choose terrain instead of a shop. Keep its
+    -- ordinary weight in the same draw and create no stock.
+    local terrain_id = terrain_alternatives[text]
+
+    if terrain_id then
         if #items > 0 then
-            fail(site, text, "floor alternative cannot carry shop stock")
+            fail(site, text, "terrain alternative cannot carry shop stock")
         end
 
         return {
             weight = 10,
             items = {},
             site = site,
+            terrain_id = terrain_id,
         }
     end
 

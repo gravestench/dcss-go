@@ -1,0 +1,12 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bzr_in_the_mist)
+# The source entry map places a portal in its authored geometry.
+NAME:   bzr_in_the_mist
+TAGS:   bzr_entry
+DEPTH:  D:11-, Depths, Orc:$, Elf, Snake, Shoals, Vaults:1-4
+MARKER: O = lua:fog_machine { cloud_type= "thin mist", \
+            pow_min = 6, pow_max = 12, delay_min = 15, delay_max = 35, \
+            size = 2, walk_dist = 2, spread_rate= 35 }
+: vault.run("shared.portal")
+MAP
+O
+ENDMAP

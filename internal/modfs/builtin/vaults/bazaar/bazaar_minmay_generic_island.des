@@ -1,0 +1,63 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_minmay_generic_island)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:      bazaar_minmay_generic_island
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:      no_rotate
+ORIENT:    encompass
+WEIGHT:    20
+KPROP:     w = no_tele_into
+SUBST:     w : wl
+SHUFFLE:   Aa/Bb/Cc/Dd, Cc/Ee, Dd/Ff
+COLOUR:    EeFf = yellow
+SUBST:     ab = !, AB = ., cd = !, CD = ., EeFf = $
+KFEAT:     ! = any shop
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxwwwwwwwwwwwwwwwwwxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxwwwwwwwwwwwwwwwwwwwxxxxxxxxxxxxxx
+xxxxxxxxxxxxxwwwwwwwwwwwwwwwwwwwwwxxxxxxxxxxxxx
+xxxxxxxxxxxxwwwwwwwwwwwwwwwwwwwwwwwxxxxxxxxxxxx
+xxxxxxxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxxxxxxx
+xxxxxxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxxxxxx
+xxxxxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxxxxx
+xxxxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxxxx
+xxxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxxx
+xxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxx
+xxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxx
+xxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxx
+xxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxx
+xxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxx
+xwwwwwwwwwwwwwwwwwwnnnnnnnnnwwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwwnn.......nnwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwnn....!....nnwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwnn...........nnwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwnn..AAA...BBB..nnwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwn...AaA...BbB...nwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwn...AAA...BBB...nwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwn.............<.nwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwn.>.............nwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwn...CCC...DDD...nwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwn...CcC...DdD...nwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwnn..CCC...DDD..nnwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwnn...........nnwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwnn....!....nnwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwwnn.......nnwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwwwnnnnnnnnnwwwwwwwwwwwwwwwwwwx
+xxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxx
+xxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxx
+xxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxx
+xxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxx
+xxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxx
+xxxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxxx
+xxxxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxxxx
+xxxxxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxxxxx
+xxxxxxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxxxxxx
+xxxxxxxxxxxwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxxxxxxx
+xxxxxxxxxxxxwwwwwwwwwwwwwwwwwwwwwwwxxxxxxxxxxxx
+xxxxxxxxxxxxxwwwwwwwwwwwwwwwwwwwwwxxxxxxxxxxxxx
+xxxxxxxxxxxxxxwwwwwwwwwwwwwwwwwwwxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxwwwwwwwwwwwwwwwwwxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

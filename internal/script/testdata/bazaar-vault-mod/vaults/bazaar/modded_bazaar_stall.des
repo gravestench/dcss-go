@@ -1,0 +1,15 @@
+# One added map joins the Bazaar pool by path, DEPTH, and source weight.
+NAME: modded_bazaar_stall
+DEPTH: Bazaar
+WEIGHT: 5000
+TAGS: no_monster_gen
+ORIENT: encompass
+KFEAT: A = general shop
+: vault.run("shared.setup")
+MAP
+xxxxxxx
+x.....x
+x.<A>.x
+x..>..x
+xxxxxxx
+ENDMAP

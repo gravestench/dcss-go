@@ -1,0 +1,44 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_minmay_challenge)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:    bazaar_minmay_challenge
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:    no_rotate
+WEIGHT:  1
+ORIENT:  encompass
+SUBST:   B = ., N = ., n = T, t = ., ' = ., " = .
+KITEM:   ? = wand of digging ident:type
+KFEAT:   ? = antiques shop
+KFEAT:   ! = any shop
+SUBST:   T = V T U:1
+SHUFFLE: XY
+SUBST:   X = T
+NSUBST:  Y = 1:< / *:>
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxx'''...'''xxxxxxxx
+xxxxxxx''''.X.''''xxxxxxx
+xxxxxx'''''...'''''xxxxxx
+xxxxx"""""".Y.""""""xxxxx
+xxxx.................xxxx
+xxx".BBBBBBNnNBBBBBB."xxx
+xx'".B.............B."'xx
+x''".B..bbbmmmbbb..B."''x
+x''".B..b.......b..B."''x
+x''".B..b.!...!.b..B."''x
+x....N..m.......m..N....x
+x..!.NTtm...>...mtTN.?..x
+x....N..m.......m..N....x
+x''".B..b.!...!.b..B."''x
+x''".B..b.......b..B."''x
+x''".B..bbbmmmbbb..B."''x
+xx'".B.............B."'xx
+xxx".BBBBBBNnNBBBBBB."xxx
+xxxx.................xxxx
+xxxxx"""""".Y.""""""xxxxx
+xxxxxx'''''...'''''xxxxxx
+xxxxxxx''''.X.''''xxxxxxx
+xxxxxxxx'''...'''xxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

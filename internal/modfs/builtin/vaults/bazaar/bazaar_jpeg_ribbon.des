@@ -1,0 +1,37 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_jpeg_ribbon)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:    bazaar_jpeg_ribbon
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:    no_rotate no_pool_fixup
+WEIGHT:  10
+ORIENT:  encompass
+SHUFFLE: zZ
+SUBST:   z = ., Z = w
+SHUFFLE: wl, ABCD
+SHUFFLE: AX
+SUBST:   X = <, A = >
+SUBST:   B : T G
+KFEAT:   C = any shop
+KFEAT:   D = weapon shop / book shop / jewellery shop
+: vault.run("shared.setup")
+: vault.run("configure_colour")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x.xxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxx.x
+x....xxxxxxxxxxxxxx...xxxxxxxxxxxxxx....x
+x..A..xxxxxxxxxxx.......xxxxxxxxxxx..A..x
+x......xxxxxxxxx....B....xxxxxxxxx......x
+xx......xxxxxx.............xxxxxx......xx
+xxx......xxxx.....wwZww.....xxxx......xxx
+xxxx.............ww...ww.............xxxx
+xxxxx......D.....w..X..z.....D......xxxxx
+xxxx.............ww...ww.............xxxx
+xxx......xxxx.....wwwww.....xxxx......xxx
+xx......xxxxxx.............xxxxxx......xx
+x......xxxxxxxxx....B....xxxxxxxxx......x
+x..C..xxxxxxxxxxx.......xxxxxxxxxxx..C..x
+x....xxxxxxxxxxxxxx...xxxxxxxxxxxxxx....x
+x.xxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxx.x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

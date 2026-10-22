@@ -19,6 +19,8 @@ local fog = require("policy.world.fog_machine_definitions")
 local slime_seal = require("policy.population.slime_seal")
 local vault_triggers = require("policy.world.vault_triggers")
 local zot_overgrown = require("policy.world.zot_overgrown")
+local bazaar_portal = require("policy.world.bazaar.portal")
+local branches = require("ids.branches")
 
 local vaults = {}
 
@@ -262,9 +264,11 @@ local function materialize_shop(ctx, level, record)
 
     local selected = shop_spec.choose(random, alternatives)
 
-    -- A keyed shop/floor choice spent its source draw but selected floor;
-    -- no shop entity or stock belongs at this cell.
+    -- A keyed shop/terrain choice spent its source draw. Project the
+    -- selected fountain or floor onto the live grid; neither owns stock.
     if not selected.kind_id then
+        ctx:set_cell(level.id, record.x, record.y, selected.terrain_id)
+
         return {
             level_id = level.id,
             index = record.index,
@@ -274,7 +278,16 @@ local function materialize_shop(ctx, level, record)
     selected.level_id = level.id
     selected.x = record.x
     selected.y = record.y
-    selected.depth = level.id
+    -- A level ID is an opaque storage key outside Dungeon. Source shop
+    -- greed and stock quality use the branch's actual absolute depth.
+    local branch_id = level.branch_id or branches.BRANCH_DUNGEON
+    local branch = catalog.get("branches", branch_id)
+    local local_depth = level.local_depth or level.id
+
+    selected.depth = branch_id == branches.BRANCH_DUNGEON and
+        local_depth or
+        branch.absolute_depth + local_depth - 1
+    selected.branch_id = branch_id
 
     local ok, reason = pcall(shop_generation.place, ctx, selected)
 
@@ -325,6 +338,10 @@ function vaults.materialize(ctx, level, excluded)
                 level_id = level.id,
                 index = record.index,
             }
+        elseif record.kind == effects.MARKER and
+            bazaar_portal.is_marker(record.identity) then
+            materialized[#materialized + 1] =
+                bazaar_portal.materialize(ctx, level, record)
         elseif record.kind == effects.MARKER and
             vault_triggers.is_record(record.identity) then
             materialized[#materialized + 1] =

@@ -5,6 +5,7 @@ local streams = {
     ACQUIREMENT = "acquirement",
     BRANCH_SCHEDULE = "branch_schedule",
     BANDS = "bands",
+    BAZAAR_PORTAL = "bazaar_portal",
     CLOUDS = "clouds",
     DAMAGE_REACTION = "damage_reaction",
     FOG_MACHINES = "fog_machines",

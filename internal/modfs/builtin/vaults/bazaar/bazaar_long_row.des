@@ -1,0 +1,33 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_long_row)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:    bazaar_long_row
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:    no_rotate
+ORIENT:  encompass
+WEIGHT:  20
+SHUFFLE: Aa/Bb/Cc/Dd/Ee/Ff/Gg/Hh
+SHUFFLE: Aa/Zz, Bb/Yy, Cc/Rr, Dd/Ss, Ee/Jj, Ff/Kk
+# two guaranteed shops, expected five shops
+SUBST:   B=A, C=A, D=A, E=A, F=A, G=A, H=A
+SUBST:   b=a, c=a, d=a, e=a, f=a, g=a, h=a
+SUBST:   Y=Z, R=Z, S=Z, J=Z, K=Z, M=Z
+SUBST:   y=z, r=z, s=z, j=z, k=z, m=z
+KFEAT:   A = any shop
+KFEAT:   Z = abandoned_shop
+SUBST:   a=T, z=V
+SHUFFLE: lw
+SUBST:   w:wWx, l:lx
+: vault.run("shared.setup")
+: vault.run("configure_colour")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxAxxxxxxxxxxxCxxxxxxxxxxxExxxxxxxxxxxGxxxxxxxxxxxxxxxx
+xxx.....xxxxxxx...xxxxxxxxx...xxxxxxxxx...xxxxxxxxx...xxxxxxx.....xxx
+xx..www..xxxxxx.a.xxxxxxxxx.c.xxxxxxxxx.e.xxxxxxxxx.g.xxxxxx..lll..xx
+x<.wwwww..+...........+...........+...........+...........+..lllll.>x
+xx..www..xxxxxx.b.xxxxxxxxx.d.xxxxxxxxx.f.xxxxxxxxx.h.xxxxxx..lll..xx
+xx......xxxxxxx...xxxxxxxxx...xxxxxxxxx...xxxxxxxxx...xxxxxxx.....xxx
+xxxxxxxxxxxxxxxxBxxxxxxxxxxxDxxxxxxxxxxxFxxxxxxxxxxxHxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

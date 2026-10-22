@@ -405,9 +405,15 @@ until the remaining source vault families are imported. The five-map `serial_cur
 path. Their tagged corridors, statue halls, streams, and ponds run through
 the shared selector. River monster-generation masks and bayou plant intent
 remain typed level records. Deeper branch placement needs the
-corresponding branch generator. The rare `bzr_entry` request has no imported bazaar entry
-maps yet; an empty eligible tag pool leaves that slot available for an
-ordinary shop instead of aborting the floor.
+corresponding branch generator. The rare `bzr_entry` request can now draw
+from all 13 committed source Bazaar entrances. All 42 Bazaar layouts are
+also in the effective DES catalog, with named Lua hooks for their source
+script sites and production placement coverage. Timed entrances use saved
+ECS portal clocks, and entering builds a weighted source Bazaar map with
+its authored shops and exit. Bazaar shops apply the source bargain and
+stock depth rules. The player's saved visit points to the outside arch;
+leaving retires the market and its stock. Restore validates portal markers,
+the active map, and the reciprocal return pointer.
 The four-map `serial_nicolae_subway` family adds its controller and three
 linked stations. Its named markers pair across separately placed stations,
 paint one-way transporters and landings, and retain their links in saved level

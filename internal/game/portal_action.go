@@ -45,6 +45,15 @@ func (g *Game) preparePortal(
 
 		return portal, nil
 
+	case "lua":
+		portal, err := g.prepareLuaPortal(plan, position)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return portal, nil
+
 	default:
 		return nil, fmt.Errorf("unknown Lua portal domain %q", domain)
 	}

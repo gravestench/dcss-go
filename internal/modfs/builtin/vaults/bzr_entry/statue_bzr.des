@@ -1,0 +1,15 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (statue_bzr)
+# The source entry map places a portal in its authored geometry.
+NAME:   statue_bzr
+TAGS:   bzr_entry
+DEPTH:  D:11-, Depths, Orc:$, Elf, Snake, Shoals, Vaults:1-4
+KPROP:  O = no_tele_into
+SUBST:  G = G111
+MONS:   orange crystal statue / obsidian statue / ice statue
+: vault.run("shared.permanent_portal")
+MAP
+ @
+cGc
+cOc
+ccc
+ENDMAP

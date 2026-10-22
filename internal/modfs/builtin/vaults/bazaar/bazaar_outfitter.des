@@ -1,0 +1,26 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_outfitter)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:    bazaar_outfitter
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+ORIENT:  encompass
+WEIGHT:  5
+KFEAT:   A = any shop
+SHUFFLE: ABC, de
+KFEAT:   A = weapon shop / armour shop
+KFEAT:   B = antique weapon shop / weapon shop
+KFEAT:   C = antique armour shop / armour shop
+ITEM:    any weapon / w:2 good_item any weapon
+ITEM:    any armour / w:2 good_item any armour
+: vault.run("shared.setup")
+MAP
+xxxxxxxxx
+xxxx>xxxx
+xx.....xx
+x.......x
+x.AdBeC.x
+x.......x
+xx.....xx
+xxxx<xxxx
+xxxxxxxxx
+ENDMAP

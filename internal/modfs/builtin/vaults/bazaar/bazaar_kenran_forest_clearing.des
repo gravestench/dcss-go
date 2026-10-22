@@ -1,0 +1,52 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_kenran_forest_clearing)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:       bazaar_kenran_forest_clearing
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+ORIENT:     encompass
+WEIGHT:     5
+KITEM:      h = human skeleton
+KITEM:      c = black bear skeleton
+KFEAT:      $ = any shop
+KFEAT:      # = antique weapon shop / antique armour shop / \
+                antiques shop / book shop
+KFEAT:      A = abandoned_shop
+NSUBST:     $ = 1=$A
+NSUBST:     H = 1=h / *=.
+SUBST:      $ = #:20 $
+SUBST:      R = t:20 .
+: vault.run("choose_forest")
+: vault.run("shared.setup")
+MAP
+ttttttttttttttttttttttttt
+tttttttttttttttttttttt>tt
+ttttttttttttttttttttt.ttt
+ttttttttttttttttttttt.ttt
+ttttttttttttttcttt.t..Rtt
+ttttttttttttttt.ttt..tttt
+tttt$.ttttttttt.....ttttt
+tt.t...ttttttt..t.ttRtttt
+tt...tRttttt..ttRtttt..tt
+tttt....ttt...tt..tt....t
+ttttRt.t.t....t..t...t.$t
+ttttt..t..t.F..ttttRttttt
+tttttt........tH.Attttttt
+tttttttt.tt..tHt..ttttttt
+tttttR....t..t.HHtR.$tttt
+tttttt.t...t..t.tt...tttt
+ttt......t.....t....ttttt
+ttG.t..tt....tt...ttttttt
+t......tttt..tRtttttttttt
+t$..t.tttttt....ttttttttt
+ttt....ttt...ttGttttttttt
+ttttttttt...ttttttttttttt
+ttttttttt..tttttttttttttt
+tttttttttt...tttttttttttt
+ttttttttttt..tttttttttttt
+ttttttttttt.t.ttttttttttt
+tttttttttt..ttttttttttttt
+ttttt.tt...tttttttttttttt
+ttt<.....tttttttttttttttt
+ttttttt.ttttttttttttttttt
+ttttttttttttttttttttttttt
+ENDMAP

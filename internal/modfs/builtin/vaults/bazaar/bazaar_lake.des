@@ -1,0 +1,60 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_lake)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:    bazaar_lake
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:    no_rotate
+ORIENT:  encompass
+WEIGHT:  20
+SUBST:   a = W.
+SHUFFLE: ABCDEF
+SUBST:   A = Y
+SHUFFLE: XY
+SUBST:   X = <, Y = >
+# high quality shops, pity they don't stay :p
+KFEAT:   B = general shop
+KFEAT:   C = book shop / jewellery shop
+KFEAT:   D = antique weapon shop
+KFEAT:   E = antique armour shop
+KFEAT:   F = scroll shop / distillery shop
+: vault.run("shared.setup")
+: vault.run("configure_colour")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxx.....X.....xxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx.................xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxx.......................xxxxxxxxxxxxxx
+xxxxxxxxxxx......T......F......T......xxxxxxxxxxxx
+xxxxxxxxxx.............................xxxxxxxxxxx
+xxxxxxxxx...............................xxxxxxxxxx
+xxxxxxxx..............aaaaa..............xxxxxxxxx
+xxxxxxxx.....E.......awwwwwaa......A.....xxxxxxxxx
+xxxxxxx............aawwwwwwwww............xxxxxxxx
+xxxxxxx...........awwwwwWwwwwa............xxxxxxxx
+xxxxxxx..........awwwwwWWWwwwa............xxxxxxxx
+xxxxxxxY.T........awwwwwwWWwwwa........T.Yxxxxxxxx
+xxxxxxx............awwwwwwwwaX............xxxxxxxx
+xxxxxxx.............aawwwwwwwwa...........xxxxxxxx
+xxxxxxx...............aaaaaaaa............xxxxxxxx
+xxxxxxxx.....D.....................B.....xxxxxxxxx
+xxxxxxxx.................................xxxxxxxxx
+xxxxxxxxx...............................xxxxxxxxxx
+xxxxxxxxxx.............................xxxxxxxxxxx
+xxxxxxxxxxx......T......C......T......xxxxxxxxxxxx
+xxxxxxxxxxxxx.......................xxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx.................xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxx.....X.....xxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,22 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bazaar_minmay_generic_box)
+# The source Bazaar map keeps its authored shops and exit cells.
+NAME:   bazaar_minmay_generic_box
+TAGS:   no_monster_gen
+DEPTH:  Bazaar
+TAGS:   no_rotate
+WEIGHT: 5
+ORIENT: encompass
+KFEAT:  ! = any shop
+KFEAT:  ? = any shop / T
+: vault.run("shared.setup")
+MAP
+xxxxxxxxx
+x.......x
+x.?.!.?.x
+x.......x
+x.<...>.x
+x.......x
+x.?.!.?.x
+x.......x
+xxxxxxxxx
+ENDMAP

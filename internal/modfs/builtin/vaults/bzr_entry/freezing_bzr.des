@@ -1,0 +1,16 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (freezing_bzr)
+# The source entry map places a portal in its authored geometry.
+NAME:   freezing_bzr
+TAGS:   bzr_entry
+DEPTH:  D:11-, Depths, Orc:$, Elf, Snake, Shoals, Vaults:1-4
+MARKER: W = lua:fog_machine { cloud_type = "freezing vapour", \
+             pow_min = 1, pow_max = 5, delay_min = 20, delay_max = 30, \
+             size = 2, walk_dist = 3, spread_rate= 20 }
+: vault.run("shared.portal")
+MAP
+  W
+ WWW
+WWOWW
+ WWW
+  W
+ENDMAP

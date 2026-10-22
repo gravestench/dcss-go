@@ -134,6 +134,18 @@ func TestDepthsEncompassMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/depths_encompass_mod_test.lua")
 }
 
+// A sparse mod adds one Bazaar map to the source weighted pool without
+// editing the built-in catalog or changing the file-order draw contract.
+func TestBazaarVaultMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/bazaar-vault-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/bazaar_vault_mod_test.lua")
+}
+
 // A Zot layer replaces one weighted source file and adds a discoverable
 // ordinary map with a same-path Lua hook.
 func TestZotVaultMod(t *testing.T) {

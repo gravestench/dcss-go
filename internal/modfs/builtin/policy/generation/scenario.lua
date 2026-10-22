@@ -3,6 +3,7 @@ local fixed = require("policy.generation.fixed")
 local generated = require("policy.generation.generated")
 local abyss = require("policy.generation.abyss")
 local pan = require("policy.generation.pan.region")
+local bazaar = require("policy.generation.bazaar.level")
 local hell_vestibule = require("policy.generation.hell.vestibule")
 local branch_catalog = require("policy.catalog")
 local categories = require("constants.catalog")
@@ -186,6 +187,12 @@ function module.hell_vestibule(ctx, input)
     return hell_vestibule.generate(ctx, input)
 end
 
+-- The Bazaar generator returns one ready-to-stage market floor. Its source
+-- map identity and shop records stay attached to that single saved level.
+function module.bazaar(ctx, input)
+    return bazaar.generate(ctx, input)
+end
+
 -- Stage one persistent Hell subbranch floor. Its source up exits become
 -- typed return arches only after keyed DES features have been projected.
 function module.hell_floor(ctx, input)
@@ -220,6 +227,11 @@ register.policy({
 register.policy({
     id = "world.generate_hell_vestibule",
     run = module.hell_vestibule,
+})
+
+register.policy({
+    id = "world.generate_bazaar_level",
+    run = module.bazaar,
 })
 
 register.policy({

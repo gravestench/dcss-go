@@ -1,0 +1,16 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bzr_entry_customers)
+# The source entry map places a portal in its authored geometry.
+NAME:    bzr_entry_customers
+TAGS:   bzr_entry
+DEPTH:  D:11-, Depths, Orc:$, Elf, Snake, Shoals, Vaults:1-4
+MONS:    human, orc, goblin, kobold
+SUBST:   . = .:150 1
+SHUFFLE: 1234
+: vault.run("shared.portal")
+MAP
+ .....
+.......
+...O...
+.......
+ .....
+ENDMAP

@@ -1,0 +1,24 @@
+# Source: crawl-ref/source/dat/des/portals/bazaar.des (bzr_firewalk)
+# The source entry map places a portal in its authored geometry.
+NAME:    bzr_firewalk
+TAGS:   bzr_entry
+DEPTH:  D:11-, Depths, Orc:$, Elf, Snake, Shoals, Vaults:1-4
+TAGS:    uniq_firewalk no_item_gen
+SUBST:   $ : $ .
+MARKER:  * = lua:fog_machine { cloud_type = "flame", \
+             pow_min = 2, pow_max = 4, delay_min = 5, delay_max = 10, \
+             size = 2, walk_dist = 0, spread_rate= 0 }
+SUBST:   * = .
+: vault.run("shared.portal")
+MAP
+c.@.$.@.c
+c.*...*.c
+c...$...c
+c.......c
+c.*.$.*.c
+c.......c
+c...$...c
+c.*...*.c
+c...O...c
+ccccccccc
+ENDMAP

@@ -8,6 +8,7 @@ local availability = require("policy.generation.floor_availability")
 local temple_catalog = require("policy.generation.temple.catalog")
 local pan_levels = require("policy.save.pan_levels")
 local hell_levels = require("policy.save.hell_levels")
+local bazaar_levels = require("policy.save.bazaar_levels")
 local hell_size = require("policy.generation.hell.size")
 
 local up_features = {}
@@ -139,6 +140,7 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
     branch_schedule.validate(chosen_schedule)
     pan_levels.validate(levels, pan_state)
     hell_levels.validate(by_id, hell_state)
+    bazaar_levels.validate(levels)
     local bottom = register.get("branches", branches.BRANCH_DUNGEON).depth
     local floors = 0
 
@@ -254,6 +256,7 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
         if level.branch_id ~= branches.BRANCH_DUNGEON and
             level.branch_id ~= branches.BRANCH_PANDEMONIUM and
             level.branch_id ~= branches.BRANCH_VESTIBULE and
+            level.branch_id ~= branches.BRANCH_BAZAAR and
             not hell_size.is_subbranch(register.get("branches",
                 level.branch_id)) and
             level.id ~= abyss.level_id then
