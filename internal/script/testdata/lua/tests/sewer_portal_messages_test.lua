@@ -105,9 +105,10 @@ function context:set_cell(_, x, y, feature)
     self.gate = feature
 end
 
--- The player stands on the drain for the visible collapse message.
+-- The primary case stands on the drain; other cases can turn off sight
+-- to verify the source marker's different unseen-collapse wording.
 function context:visible()
-    return true
+    return self.can_see ~= false
 end
 
 -- Run one accepted ten-aut action at an explicit start time. Large gaps
@@ -161,6 +162,39 @@ function test.run()
         "Sewer expired feature")
     harness.truthy(ctx.portal.spent,
         "Sewer saved clock becomes spent")
+
+    -- Source initial text is attempted once on entering the floor. A
+    -- distant player should later hear a rust check, not that initial text.
+    local distant = new_context()
+    distant.position.x = 39
+
+    action_at(distant, 0)
+    harness.equal(#distant.messages, 0,
+        "inaudible discovery remains silent")
+    harness.truthy(distant.portal.announced,
+        "source discovery attempt is not retried")
+
+    distant.position.x = 10
+    action_at(distant, 10)
+    harness.equal(#distant.messages, 0,
+        "approaching does not replay discovery")
+
+    action_at(distant, 500)
+    harness.equal(distant.messages[1],
+        "You hear the slow rusting of a drain.",
+        "approaching permits later timer sounds")
+
+    -- The disappearing marker's unseen text is separate from the timer's
+    -- final warning, even when the player is still on the same level.
+    local unseen = new_context()
+    unseen.portal.announced = true
+    unseen.portal.final_warning = true
+    unseen.can_see = false
+
+    action_at(unseen, 5990)
+    harness.equal(unseen.messages[1],
+        "The walls and floor vibrate strangely for a moment.",
+        "source unseen collapse")
 end
 
 return test

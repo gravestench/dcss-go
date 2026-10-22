@@ -421,8 +421,10 @@ the drain even while its Dungeon floor is inactive. An accepted entry stages
 one weighted source Sewer map through the ordinary vault population path;
 its exit returns to the saved outside cell and retires the temporary floor.
 Restore checks the source marker, deadline, selected layout, exit, and
-reciprocal visit. The two source discovery messages fire on first arrival;
-the saved timer emits the source rust-speed bands and final warning.
+reciprocal visit. The two source discovery messages are attempted on first
+arrival when the drain is audible; the saved timer emits the source
+rust-speed bands and final warning. Visible and unseen collapse use the
+source marker's different messages.
 Hearing distance currently uses the source timer's farthest distance band
 as a bound until the general DCSS sound rules are ported.
 Terrain, keyed entities, and other source records survive in the

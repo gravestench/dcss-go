@@ -106,9 +106,9 @@ local function warn(ctx, entity, state, position, now)
     ctx:set(entity, component.WORLD_SEWER_PORTAL, state)
 end
 
--- A visible drain uses the source disappearance line. A drain elsewhere
--- on the same floor uses the source hearing line; inactive floors change
--- their saved grid silently until the player returns.
+-- A visible drain uses its authored disappearance line. The source timed
+-- marker reports a brief vibration when the drain expires outside sight;
+-- inactive floors change their saved grid silently until the player returns.
 local function announce_expiry(ctx, state, player_position)
     if state.level_id ~= player_position.level_id then
         return
@@ -118,13 +118,14 @@ local function announce_expiry(ctx, state, player_position)
         player_position.y, 7, state.x, state.y) then
         ctx:emit("stairs", "The drain falls to bits.")
     else
-        ctx:emit("stairs", "You hear the drain falling apart.")
+        ctx:emit("stairs",
+            "The walls and floor vibrate strangely for a moment.")
     end
 end
 
--- The source's two discovery lines belong to the first player arrival on
--- this level. Population may happen before the player moves onto the new
--- floor, so announcing at materialization would lose the message.
+-- The source's two discovery lines get one chance on first arrival. Its
+-- timed messenger only emits when the portal is audible; moving closer
+-- afterward must not replay the initial announcement.
 local function announce(ctx, entity, state, player_position, now)
     if state.announced or state.spent or
         now >= state.expires_aut or
@@ -132,9 +133,12 @@ local function announce(ctx, entity, state, player_position, now)
         return
     end
 
-    ctx:emit("stairs", "You hear the sound of rushing water.")
-    ctx:emit("stairs", "There is an entrance to a sewer on this level. " ..
-        "Hurry and find it before the portal rusts away!")
+    if drain_description(state, player_position) then
+        ctx:emit("stairs", "You hear the sound of rushing water.")
+        ctx:emit("stairs",
+            "There is an entrance to a sewer on this level. " ..
+            "Hurry and find it before the portal rusts away!")
+    end
 
     state.announced = true
     ctx:set(entity, component.WORLD_SEWER_PORTAL, state)
