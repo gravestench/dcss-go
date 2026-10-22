@@ -340,6 +340,12 @@ At five stars, surviving monster-caused hits that take at least a quarter
 of maximum HP eject one to five friendly, short-lived source slime species.
 The hit source becomes their saved target when alive, and all four species
 and count tiers run through the Lua reaction and ordinary ECS summon owner.
+Xom's heavy-hit butterflies now use that saved summon path. Dithmenos,
+the cloak of the Thief, and Xom resolve hit smoke through one ordered Lua
+cloud policy. Worn `*Corrode` and `*Slow` artefacts react after mutation
+effects and use the saved corrosion and Slow statuses; poison excludes
+both drawbacks. Ru's hit retribution and Xom's damage amusement still
+belong to their broader god-action domains.
 Zin's entry and pickup tithes now share one Lua rule. Saved gold remembers
 whether it was seen before conversion or acquired, and the wallet keeps
 donations and fractional carry across piles and save/restore.

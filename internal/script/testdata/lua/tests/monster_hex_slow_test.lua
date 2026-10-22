@@ -5,6 +5,7 @@ local harness = require("tests.harness")
 local slow = require("policy.combat.monster_hexes.slow")
 local monsters = require("ids.monsters")
 local spells = require("ids.spells")
+local species = require("ids.species")
 
 local test = {}
 
@@ -21,7 +22,9 @@ function test.run()
             },
 
             [player] = {
-                [component.PLAYER] = {},
+                [component.PLAYER] = {
+                    species_id = species.SP_HUMAN,
+                },
             },
         },
     }
@@ -47,8 +50,8 @@ function test.run()
 
     local status = ctx:get(player, component.PLAYER_SLOW)
 
-    harness.equal(status.remaining_aut, 100,
-        "Slow applies the source minimum ten turns to a player")
+    harness.equal(status.remaining_aut, 150,
+        "source minimum ten turns saves fifteen slowed turns")
 end
 
 return test

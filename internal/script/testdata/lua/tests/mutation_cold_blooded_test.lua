@@ -50,11 +50,11 @@ function test.run(ctx)
         "cold resistance protects a cold-blooded player")
 
     cold.expose(world, player, 8, 0)
-    harness.equal(ctx:get(player, component.PLAYER_SLOW).remaining_aut, 80,
-        "unresisted cold adds a saved eight-turn slow")
+    harness.equal(ctx:get(player, component.PLAYER_SLOW).remaining_aut, 120,
+        "unresisted cold saves scaled twelve-turn slow")
 
     cold.expose(world, player, 8, 0)
-    harness.equal(ctx:get(player, component.PLAYER_SLOW).remaining_aut, 160,
+    harness.equal(ctx:get(player, component.PLAYER_SLOW).remaining_aut, 240,
         "further cold exposure extends the shared slow")
 
     ctx:add(player, component.DURATIONS, {
@@ -63,7 +63,7 @@ function test.run(ctx)
     cold.expose(world, player, 100, 0)
 
     harness.equal(ctx:get(player, component.PLAYER_SLOW).remaining_aut, 1500,
-        "haste raises the source slow-duration cap to 150 turns")
+        "source slow-duration cap is always 150 turns")
 end
 
 return test

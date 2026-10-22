@@ -169,12 +169,14 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
             state.source_id == items.SCR_BUTTERFLIES)
     local jiyva_source = state.source_category == categories.GODS and
         state.source_id == gods.JIYVA
+    local xom_source = state.source_category == categories.GODS and
+        state.source_id == gods.XOM
 
     if state.source_category ~= categories.SPELLS and
         state.source_category ~= categories.MUTATIONS and
         not trap_source and
         not item_source and not scroll_source and
-        not jiyva_source then
+        not jiyva_source and not xom_source then
         error("summon " .. ctx:id(entity) .. " has invalid origin category")
     end
 
@@ -183,6 +185,13 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
             state.attitude ~= attitudes.FRIENDLY or
             state.owner ~= ctx:player()) then
         error("summon " .. ctx:id(entity) .. " has invalid Jiyva origin")
+    end
+
+    if xom_source and
+        (actor.kind_id ~= monsters.MONS_BUTTERFLY or
+            state.attitude ~= attitudes.FRIENDLY or
+            state.owner ~= ctx:player()) then
+        error("summon " .. ctx:id(entity) .. " has invalid Xom origin")
     end
 
     catalog.get(state.source_category, state.source_id)
@@ -200,7 +209,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
 
     if haunting and
         (not (state.source_id == spells.SPELL_HAUNT or
-            jiyva_source) or
+            jiyva_source or xom_source) or
         not ctx:has(haunting.target, component.ACTOR)) then
         error("summon " .. ctx:id(entity) ..
             " has invalid Haunt target or origin")

@@ -11,6 +11,7 @@ local forms = {
     PIG = "pig",
     SPIDER = "spider",
     DRAGON = "dragon",
+    SHADOW = "shadow",
 }
 
 return forms

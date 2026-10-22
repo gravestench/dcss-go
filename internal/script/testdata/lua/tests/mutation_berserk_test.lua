@@ -125,7 +125,7 @@ function test.run(ctx)
         "rage expiry preserves current HP to source rounding")
     harness.equal(ctx:get(player, component.RAGE).cooldown_aut, 280,
         "source exhaustion cooldown lasts twice the slow duration")
-    harness.equal(ctx:get(player, component.PLAYER_SLOW).remaining_aut, 140,
+    harness.equal(ctx:get(player, component.PLAYER_SLOW).remaining_aut, 210,
         "rage expiry slows the player")
     harness.equal(rage.begin(world, player), false,
         "cooldown blocks another rage")

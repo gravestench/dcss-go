@@ -1642,6 +1642,21 @@ health owner does not need a Jiyva branch. The summon helper accepts an
 optional named random stream and a `silent_failure` flag so a passive
 whose surrounding cells are blocked does not print a spell-failure message.
 
+Other surviving-hit callbacks follow the same sorted registry. Xom's
+`policy/religion/gods/xom_hit.lua` ejects ordinary, saved butterfly
+summons when a monster's hit passes its source threshold and chance.
+`policy/combat/player_hit_fog.lua` chooses one fog source in order:
+Dithmenos's three-star smoke, the equipped cloak of the Thief, then Xom's
+colourful smoke. It writes clouds through the shared `policy/clouds/area.lua`
+owner. `policy/combat/player_artefact_hit.lua` scans only active worn
+artefacts for `ids.artefact_properties.CORRODE` and `SLOW`; corrosion and
+Slow remain ordinary saved player statuses. The shared Slow policy applies
+source three-halves duration and species or form stasis rules. Named priorities in
+`constants/damage_reaction_order.lua` preserve source timing independently
+of Lua file discovery. To change one response, override its policy file;
+keep its `on_damage(ctx, player, damage, cause, attacker)` callback contract
+and the source ordering of random draws and state changes.
+
 Jiyva's six-star capstone shows the other kind of god callback.
 `piety.gain` saves the new rank before calling `rank_gained(ctx, player,
 old_rank, new_rank)` on the god's behavior module. Jiyva records the spent

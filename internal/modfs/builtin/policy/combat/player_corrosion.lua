@@ -35,16 +35,34 @@ end
 -- splash chance. The equipment's rCorr protection still has its source
 -- one-in-two opportunity to prevent this degree of corrosion.
 function corrosion.corrode_equipment(ctx, player, source, stream,
-    channel)
+    channel, degree)
     stream = stream or streams.CLOUDS
+    degree = degree or 1
+
+    if degree < 1 then
+        return false
+    end
 
     -- Damage imports fighter, which imports this policy for AC. Load it only
     -- when corrosion reaches a player to keep the module graph acyclic.
     local damage = require("policy.magic.damage")
 
-    if damage.player_resistance(ctx, player, resistances.ACID) > 0 and
-        ctx:random(stream, 2) == 0 then
-        return false
+    if damage.player_resistance(ctx, player, resistances.ACID) > 0 then
+        local survived = 0
+
+        -- Source binomial(degree, 50) protects each corrosion degree
+        -- independently. A fully protected hit adds no duration.
+        for _ = 1, degree do
+            if ctx:random(stream, 2) == 1 then
+                survived = survived + 1
+            end
+        end
+
+        degree = survived
+
+        if degree == 0 then
+            return false
+        end
     end
 
     local state = ctx:get(player, component.CORROSION) or {
@@ -60,8 +78,10 @@ function corrosion.corrode_equipment(ctx, player, source, stream,
     state.remaining_aut = math.min(500,
         state.remaining_aut + duration * 10)
 
-    if ctx:random(stream, state.stacks + 7) >= state.stacks then
-        state.stacks = state.stacks + 1
+    for _ = 1, degree do
+        if ctx:random(stream, state.stacks + 7) >= state.stacks then
+            state.stacks = state.stacks + 1
+        end
     end
 
     if ctx:has(player, component.CORROSION) then

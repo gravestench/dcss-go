@@ -2,6 +2,8 @@
 local component = require("constants.component")
 local mutation_levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
+local order = require("constants.damage_reaction_order")
+local reactions = require("policy.combat.player_damage_reactions")
 
 local sanguine = {}
 
@@ -84,5 +86,10 @@ function sanguine.tick(ctx, player, aut)
 
     ctx:set(player, component.SANGUINE_ARMOUR, state)
 end
+
+-- The source refreshes Sanguine Armour after Powered by Pain and before
+-- the artefact drawbacks; registration keeps that order explicit.
+reactions.add(mutations.MUT_SANGUINE_ARMOUR,
+    order.SANGUINE_ARMOUR, sanguine.on_damage)
 
 return sanguine

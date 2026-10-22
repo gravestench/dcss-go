@@ -1,10 +1,15 @@
--- Example: Haste stretches an incoming Slow timer using integer rounding.
+-- Source slow_player stretches every incoming Slow timer because each
+-- slowed action itself takes longer. Haste only changes timer decay.
+local catalog = require("policy.catalog")
+local categories = require("constants.catalog")
+local channels = require("constants.message_channels")
 local component = require("constants.component")
+local traits = require("policy.character.species_traits")
 local time = require("constants.time")
 
 local slow = {}
 
--- Lengthen Slow duration under Haste using source integer rounding.
+-- Round the source's three-halves duration and hasted decay independently.
 local function haste_multiply(ctx, value)
     local numerator = value * 3
     local result = math.floor(numerator / 2)
@@ -23,23 +28,25 @@ function slow.active(ctx, player)
     return state ~= nil and state.remaining_aut > 0
 end
 
--- Source: player.cc:slow_player. Haste lengthens the duration because
--- slowed actions become shorter while haste is active.
+-- Source: player.cc:slow_player. Stasis rejects all Slow sources before
+-- timer writes; the three-halves conversion and cap apply even without Haste.
 function slow.apply(ctx, player, turns)
     if turns <= 0 then
         return false
     end
 
-    local duration = ctx:get(player, component.DURATIONS)
+    local identity = ctx:get(player, component.PLAYER)
+    local species = catalog.get(categories.SPECIES, identity.species_id)
+    local forms = require("policy.magic.effects.forms.player")
 
-    local hasted = duration and duration.haste_aut > 0
-
-    if hasted then
-        turns = haste_multiply(ctx, turns)
+    if traits.stasis(species) or forms.stasis(ctx, player) then
+        ctx:emit(channels.DURATION,
+            "Your stasis prevents you from being slowed.")
+        return false
     end
 
-    local added = turns * time.AUT_PER_TURN
-    local maximum = (hasted and 150 or 100) * time.AUT_PER_TURN
+    local added = haste_multiply(ctx, turns) * time.AUT_PER_TURN
+    local maximum = 150 * time.AUT_PER_TURN
     local state = ctx:get(player, component.PLAYER_SLOW)
 
     if state then
