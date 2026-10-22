@@ -64,6 +64,19 @@ local function rank(id)
     return value
 end
 
+-- Starting weapons obey the same grasp and body-size rules as later
+-- equipment. Gift policy uses this before deciding whether Fighting can
+-- upgrade a weapon that will actually be equipped.
+function equipment.can_wield(ctx, actor, species, kind)
+    if kind.class ~= "OBJ_WEAPONS" or not kind.weapon then
+        return false
+    end
+
+    return mutation_levels.effective(ctx, actor,
+        mutations.MUT_NO_GRASPING) == 0 and
+        rank(species.size) >= rank(kind.weapon.min_2h_size_id)
+end
+
 -- Species flags are an array in content, so check membership explicitly
 -- instead of treating the array as a set keyed by flag name.
 local function has_flag(species, id)

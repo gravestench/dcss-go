@@ -2192,6 +2192,23 @@ Gladiator ammunition live in discoverable
 `policy/character/starting_gear/jobs/` files and can be replaced at the
 same path. New jobs with ordinary fixed grants need no special rule file.
 
+Wanderer is deliberately different from fixed-grant jobs. Its
+`policy/character/wanderer.lua` owner selects roles and stats, then calls
+`wanderer_gifts.lua` for strong, decent, and extra gifts and
+`wanderer_spells.lua` for magic gifts. Those decisions use the named
+`constants.rng_streams.WANDERER` stream so an added gift draw does not shift
+unrelated character creation. The wand and concealment-scroll groups are
+chosen once earlier by `policy/item_generation/item_sets.lua` and saved on
+the player. Gift policies call `item_sets.choice(ctx, player, set_id)`;
+they must not choose another member of the set locally. A mod replacing a
+Wanderer gift policy should keep its grant shape (`kind_id`, `quantity`,
+`plus`, `ego`, `charges`) and return spells by registered ID. The normal
+starting-gear and spell-record owners then create and save those results.
+Wanderer derives player-book eligibility from the effective item catalog,
+so adding a registered spell to a book's `generation.spells` list makes it
+eligible for the appropriate gift school. Source spells use numeric IDs for
+their candidate order; a new mod spell without one sorts after them by ID.
+
 The `policy/character_choice.lua` file calls `register.choice_policy` once.
 Its function receives copied species and job tables and a boolean indicating
 whether the menu is species-first. It returns a restriction string

@@ -43,10 +43,7 @@ end
 -- Mutation and body restrictions are checked before a starting item can occupy equipment.
 local function can_use(ctx, player, species, kind)
     if kind.class == classes.OBJ_WEAPONS then
-        return mutation_levels.effective(ctx, player,
-            mutations.MUT_NO_GRASPING) == 0 and
-            size.rank[species.size] >=
-            size.rank[kind.weapon.min_2h_size_id]
+        return equipment.can_wield(ctx, player, species, kind)
     end
 
     if kind.class ~= classes.OBJ_ARMOUR then

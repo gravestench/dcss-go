@@ -25,6 +25,7 @@ local streams = {
     SLIME_WALL = "slime_wall",
     SPELL = "spell",
     TRAPS = "traps",
+    WANDERER = "wanderer",
     ZOT_OVERGROWN = "zot_overgrown",
     ORB_RUN = "orb_run",
     TEMPLE_PLAN = "temple_plan",

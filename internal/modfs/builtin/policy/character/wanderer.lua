@@ -5,6 +5,8 @@ local wanderer = {}
 local gifts = require("policy.character.wanderer_gifts")
 local mutation_levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
+local skill_ids = require("ids.skills")
+local streams = require("constants.rng_streams")
 
 -- Sort generated grants by ID to make starting skill order deterministic.
 local function grant_before(left, right)
@@ -12,32 +14,58 @@ local function grant_before(left, right)
 end
 
 local offense = {
-    "SK_AXES", "SK_MACES_FLAILS", "SK_RANGED_WEAPONS", "SK_POLEARMS",
-    "SK_SHORT_BLADES", "SK_LONG_BLADES", "SK_STAVES", "SK_UNARMED_COMBAT",
-    "SK_SUMMONINGS", "SK_NECROMANCY", "SK_TRANSLOCATIONS",
-    "SK_TRANSMUTATIONS", "SK_POISON_MAGIC", "SK_CONJURATIONS",
-    "SK_HEXES", "SK_FIRE_MAGIC", "SK_ICE_MAGIC", "SK_SPELLCASTING",
-    "SK_AIR_MAGIC", "SK_EARTH_MAGIC", "SK_FIGHTING",
+    skill_ids.SK_AXES,
+    skill_ids.SK_MACES_FLAILS,
+    skill_ids.SK_RANGED_WEAPONS,
+    skill_ids.SK_POLEARMS,
+    skill_ids.SK_SHORT_BLADES,
+    skill_ids.SK_LONG_BLADES,
+    skill_ids.SK_STAVES,
+    skill_ids.SK_UNARMED_COMBAT,
+    skill_ids.SK_SUMMONINGS,
+    skill_ids.SK_NECROMANCY,
+    skill_ids.SK_TRANSLOCATIONS,
+    skill_ids.SK_TRANSMUTATIONS,
+    skill_ids.SK_POISON_MAGIC,
+    skill_ids.SK_CONJURATIONS,
+    skill_ids.SK_HEXES,
+    skill_ids.SK_FIRE_MAGIC,
+    skill_ids.SK_ICE_MAGIC,
+    skill_ids.SK_SPELLCASTING,
+    skill_ids.SK_AIR_MAGIC,
+    skill_ids.SK_EARTH_MAGIC,
+    skill_ids.SK_FIGHTING,
 }
 
 local defense = {
-    "SK_FIGHTING", "SK_DODGING", "SK_ARMOUR", "SK_SHIELDS",
-    "SK_EVOCATIONS", "SK_STEALTH", "SK_THROWING",
+    skill_ids.SK_FIGHTING,
+    skill_ids.SK_DODGING,
+    skill_ids.SK_ARMOUR,
+    skill_ids.SK_SHIELDS,
+    skill_ids.SK_EVOCATIONS,
+    skill_ids.SK_STEALTH,
+    skill_ids.SK_THROWING,
 }
 
 local physical = {
-    "SK_AXES", "SK_MACES_FLAILS", "SK_RANGED_WEAPONS", "SK_POLEARMS",
-    "SK_SHORT_BLADES", "SK_LONG_BLADES", "SK_STAVES", "SK_UNARMED_COMBAT",
-    "SK_FIGHTING",
+    skill_ids.SK_AXES,
+    skill_ids.SK_MACES_FLAILS,
+    skill_ids.SK_RANGED_WEAPONS,
+    skill_ids.SK_POLEARMS,
+    skill_ids.SK_SHORT_BLADES,
+    skill_ids.SK_LONG_BLADES,
+    skill_ids.SK_STAVES,
+    skill_ids.SK_UNARMED_COMBAT,
+    skill_ids.SK_FIGHTING,
 }
 
 local mundane = {
-    SK_ARMOUR = true,
-    SK_DODGING = true,
-    SK_SHIELDS = true,
-    SK_EVOCATIONS = true,
-    SK_STEALTH = true,
-    SK_THROWING = true,
+    [skill_ids.SK_ARMOUR] = true,
+    [skill_ids.SK_DODGING] = true,
+    [skill_ids.SK_SHIELDS] = true,
+    [skill_ids.SK_EVOCATIONS] = true,
+    [skill_ids.SK_STEALTH] = true,
+    [skill_ids.SK_THROWING] = true,
 }
 
 for _, id in ipairs(physical) do
@@ -45,27 +73,27 @@ for _, id in ipairs(physical) do
 end
 
 local strength_skills = {
-    SK_AXES = true,
-    SK_MACES_FLAILS = true,
-    SK_ARMOUR = true,
+    [skill_ids.SK_AXES] = true,
+    [skill_ids.SK_MACES_FLAILS] = true,
+    [skill_ids.SK_ARMOUR] = true,
 }
 
 local dexterity_skills = {
-    SK_SHORT_BLADES = true,
-    SK_LONG_BLADES = true,
-    SK_RANGED_WEAPONS = true,
-    SK_STAVES = true,
-    SK_DODGING = true,
-    SK_SHIELDS = true,
-    SK_STEALTH = true,
+    [skill_ids.SK_SHORT_BLADES] = true,
+    [skill_ids.SK_LONG_BLADES] = true,
+    [skill_ids.SK_RANGED_WEAPONS] = true,
+    [skill_ids.SK_STAVES] = true,
+    [skill_ids.SK_DODGING] = true,
+    [skill_ids.SK_SHIELDS] = true,
+    [skill_ids.SK_STEALTH] = true,
 }
 
 local flexible_skills = {
-    SK_POLEARMS = true,
-    SK_UNARMED_COMBAT = true,
-    SK_FIGHTING = true,
-    SK_EVOCATIONS = true,
-    SK_THROWING = true,
+    [skill_ids.SK_POLEARMS] = true,
+    [skill_ids.SK_UNARMED_COMBAT] = true,
+    [skill_ids.SK_FIGHTING] = true,
+    [skill_ids.SK_EVOCATIONS] = true,
+    [skill_ids.SK_THROWING] = true,
 }
 
 -- Use effective mutation level when restricting a Wanderer role choice.
@@ -81,7 +109,7 @@ local function weighted(ctx, choices)
         total = total + choice.weight
     end
 
-    local roll = ctx:random("character", total)
+    local roll = ctx:random(streams.WANDERER, total)
 
     for _, choice in ipairs(choices) do
         if roll < choice.weight then
@@ -115,12 +143,12 @@ end
 -- Innate casters may be assigned Spellcasting before the ordinary offensive pool draw.
 local function offense_role(ctx, species)
     if mutation(ctx, mutations.MUT_INNATE_CASTER) and
-        ctx:random("character", 2) == 0 then
-        return "SK_SPELLCASTING"
+        ctx:random(streams.WANDERER, 2) == 0 then
+        return skill_ids.SK_SPELLCASTING
     end
 
     if mutation(ctx, mutations.MUT_NO_GRASPING) and
-        ctx:random("character", 3) == 0 then
+        ctx:random(streams.WANDERER, 3) == 0 then
         return role(ctx, species, physical)
     end
 
@@ -147,7 +175,8 @@ local function stat_bonus(ctx, species, roles)
         elseif dexterity_skills[id] then
             influence.dexterity = influence.dexterity + 1
         elseif flexible_skills[id] then
-            local field = ctx:random("character", 2) == 0 and "strength" or "dexterity"
+            local field = ctx:random(streams.WANDERER, 2) == 0 and
+                "strength" or "dexterity"
             influence[field] = influence[field] + 1
         else
             influence.intelligence = influence.intelligence + 1
@@ -157,7 +186,11 @@ local function stat_bonus(ctx, species, roles)
     for _ = 1, 12 do
         local choices = {}
 
-        for _, field in ipairs({ "strength", "intelligence", "dexterity" }) do
+        for _, field in ipairs({
+            "strength",
+            "intelligence",
+            "dexterity",
+        }) do
             local base = species[field] + bonus[field]
             choices[#choices + 1] = {
                 id = field,
@@ -188,17 +221,17 @@ local function skills(ctx, species, roles, has_spells)
 
             if mutation(ctx, mutations.MUT_INNATE_CASTER) and
                 id:match("_MAGIC$") then
-                target = "SK_SPELLCASTING"
+                target = skill_ids.SK_SPELLCASTING
             end
 
             levels[target] = (levels[target] or 0) + 1
 
             if mundane[id] then
                 martial = martial + 1
-            elseif id == "SK_SPELLCASTING" or id:match("_MAGIC$") or
-                id == "SK_CONJURATIONS" or id == "SK_HEXES" or
-                id == "SK_SUMMONINGS" or id == "SK_NECROMANCY" or
-                id == "SK_TRANSLOCATIONS" or id == "SK_TRANSMUTATIONS" then
+            elseif id == skill_ids.SK_SPELLCASTING or id:match("_MAGIC$") or
+                id == skill_ids.SK_CONJURATIONS or id == skill_ids.SK_HEXES or
+                id == skill_ids.SK_SUMMONINGS or id == skill_ids.SK_NECROMANCY or
+                id == skill_ids.SK_TRANSLOCATIONS or id == skill_ids.SK_TRANSMUTATIONS then
                 magical = magical + 1
             end
         end
@@ -207,7 +240,7 @@ local function skills(ctx, species, roles, has_spells)
     local remaining = (has_spells and 9 or 10) - 1
 
     if has_spells then
-        levels.SK_SPELLCASTING = (levels.SK_SPELLCASTING or 0) + 1
+        levels[skill_ids.SK_SPELLCASTING] = (levels[skill_ids.SK_SPELLCASTING] or 0) + 1
     end
 
     for _ in pairs(distinct) do
@@ -229,35 +262,35 @@ local function skills(ctx, species, roles, has_spells)
                 weight = 5,
             },
             {
-                id = "SK_FIGHTING",
+                id = skill_ids.SK_FIGHTING,
                 weight = 1 + 2 * martial,
             },
             {
-                id = "SK_ARMOUR",
+                id = skill_ids.SK_ARMOUR,
                 weight = 1 + martial,
             },
             {
-                id = "SK_DODGING",
+                id = skill_ids.SK_DODGING,
                 weight = 2 + math.floor(magical / 2),
             },
             {
-                id = "SK_THROWING",
+                id = skill_ids.SK_THROWING,
                 weight = 1,
             },
             {
-                id = "SK_STEALTH",
+                id = skill_ids.SK_STEALTH,
                 weight = 2,
             },
             {
-                id = "SK_SPELLCASTING",
+                id = skill_ids.SK_SPELLCASTING,
                 weight = 1 + magical,
             },
             {
-                id = "SK_EVOCATIONS",
+                id = skill_ids.SK_EVOCATIONS,
                 weight = 2,
             },
             {
-                id = "SK_INVOCATIONS",
+                id = skill_ids.SK_INVOCATIONS,
                 weight = 1,
             },
         }
@@ -292,7 +325,7 @@ end
 function wanderer.generate(ctx, species)
     local first
 
-    if ctx:random("character", 3) == 0 then
+    if ctx:random(streams.WANDERER, 3) == 0 then
         first = role(ctx, species, defense)
     else
         first = offense_role(ctx, species)
@@ -300,7 +333,11 @@ function wanderer.generate(ctx, species)
 
     local second = offense_role(ctx, species)
     local third = role(ctx, species, defense)
-    local roles = { first, second, third }
+    local roles = {
+        first,
+        second,
+        third,
+    }
     local bonus = stat_bonus(ctx, species, roles)
     local grants = {}
     local learned = {}
@@ -308,7 +345,7 @@ function wanderer.generate(ctx, species)
     local weapon_roles = {}
 
     for _, id in ipairs(physical) do
-        if id ~= "SK_FIGHTING" and species.aptitudes[id] and
+        if id ~= skill_ids.SK_FIGHTING and species.aptitudes[id] and
             species.aptitudes[id].allowed then
             weapon_roles[#weapon_roles + 1] = {
                 id = id,

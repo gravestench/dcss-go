@@ -474,6 +474,73 @@ func TestWandererGiftsAcrossSpeciesAndSeeds(t *testing.T) {
 	}
 }
 
+func TestWandererGiftStateSurvivesRestore(t *testing.T) {
+	started, err := NewDungeonGame(
+		13,
+		"SP_HUMAN",
+		"JOB_WANDERER",
+		"",
+		"Tester",
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer started.Close()
+
+	beforeSnapshot := started.Snapshot()
+	beforeInventory := started.View().Inventory
+	beforeStore := started.scripts.Components()["character.item_sets"]
+	beforeState, found := beforeStore.Get(started.player)
+
+	if !found {
+		t.Fatal("Wanderer has no saved item-set choices")
+	}
+
+	beforeChoices, err := beforeState.Get("choices")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	loaded, err := Restore(beforeSnapshot)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer loaded.Close()
+
+	afterStore := loaded.scripts.Components()["character.item_sets"]
+	afterState, found := afterStore.Get(loaded.player)
+
+	if !found {
+		t.Fatal("restored Wanderer lost item-set choices")
+	}
+
+	afterChoices, err := afterState.Get("choices")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(beforeChoices, afterChoices) {
+		t.Fatalf("item sets changed across restore: %v to %v",
+			beforeChoices,
+			afterChoices,
+		)
+	}
+
+	if !reflect.DeepEqual(beforeInventory, loaded.View().Inventory) {
+		t.Fatal("Wanderer gifts changed across restore")
+	}
+
+	if !reflect.DeepEqual(beforeSnapshot, loaded.Snapshot()) {
+		t.Fatal("Wanderer saved state changed across restore")
+	}
+}
+
 func TestEveryLegalCharacterStartReachesDungeon(t *testing.T) {
 	rules, err := modfs.Load()
 

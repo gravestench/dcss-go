@@ -279,8 +279,12 @@ Forced source weapon brands now use the source's weapon compatibility rule;
 ordinary brand roll weights do not restrict authored shop stock. This allows
 the good-god shop's holy club while rejecting melee-only brands on bows and
 ranged-only brands on clubs.
-Wanderer's broad gift branches are in Lua, but per-run item-set choices,
-minor themed books, and exact source RNG sequence still need parity work.
+Wanderer's gift branches now reuse saved per-run item-set choices for
+wand and concealment-scroll gifts. A dedicated Wanderer RNG stream drives
+its roles and gifts; minor themed books select a usable two-spell pair
+totaling four levels without preferring the 1+3 pattern over 2+2.
+The Go RNG does not reproduce the C++ subgenerator byte sequence, and
+source-wide spell usability still needs parity work.
 Djinni's future spell list is durable, but later innate spell acquisition
 and the complete source spell-usability filter remain to be ported.
 The D:1 arrival catalog contains all 339 source definitions: 337 selectable
