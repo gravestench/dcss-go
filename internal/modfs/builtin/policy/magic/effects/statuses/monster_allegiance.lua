@@ -281,6 +281,27 @@ function allegiance.charmed(ctx, target)
     return current ~= nil and current.charm_aut > 0
 end
 
+-- Religious desertion and No Love remove the same temporary charm. Keep
+-- independent frenzy, fatigue, and berserk health on the actor.
+function allegiance.clear_charm(ctx, target)
+    local current = state(ctx, target)
+
+    if not current or current.charm_aut <= 0 then
+        return false
+    end
+
+    current.charm_aut = 0
+
+    if current.frenzy_aut > 0 or current.fatigue_aut > 0 or
+        current.berserk_hp then
+        ctx:set(target, component.MONSTER_ALLEGIANCE, current)
+    else
+        ctx:remove(target, component.MONSTER_ALLEGIANCE)
+    end
+
+    return true
+end
+
 -- Combat speed and damage consult this timer, not fatigue or charm.
 function allegiance.frenzied(ctx, target)
     local current = state(ctx, target)

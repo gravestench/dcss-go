@@ -14,6 +14,7 @@ local targets = require("policy.ai.targets")
 local statuses = require("policy.magic.effects.statuses.player")
 local allies = require("policy.character.allies")
 local fedhas = require("policy.religion.gods.fedhas")
+local jiyva = require("policy.religion.gods.jiyva")
 local awareness = require("policy.ai.awareness")
 local invisibility = require("policy.potions.invisibility")
 local component = require("constants.component")
@@ -207,6 +208,7 @@ function system.update(ctx, entity)
     -- Source attitude-change policy runs before the monster chooses an
     -- action, so a newly neutral plant cannot attack on this same turn.
     fedhas.neutralise(ctx, ctx:player(), entity)
+    jiyva.neutralise(ctx, ctx:player(), entity)
 
     local combat = ctx:get(entity, "core.combat")
 

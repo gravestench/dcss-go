@@ -1570,6 +1570,18 @@ the current floor through the common summon cleanup path. A custom god can
 use the same `join` and `leave` methods, but
 actor state should remain on the affected entity rather than in module locals.
 
+Jiyva shows a passive whose timing differs from a join hook. Its
+`neutralise(ctx, player, slime)` runs before an eligible monster chooses an
+action, using source jelly and eye genera from the monster catalog. The
+`religion.jiyva_slime` component records both the monster's real side and
+whether conversion was attempted. An attempt under penance leaves it hostile;
+`penance_ended` clears attempted flags after the final debt point is paid.
+`leave` turns only Jiyva-converted slimes hostile and clears their charm.
+Conversion and desertion dismiss that slime's summons whose saved side no
+longer matches its owner. The common piety owner invokes `penance_ended` on a
+god's behavior module when it has that method. A new god can use the same
+method for its own actor state.
+
 `policy/religion/gods/zin.lua` taxes untithed carried gold on joining and
 floor gold on pickup. Its `mark_seen` method records whether each gold entity
 was first seen while worshipping Zin. That item state survives save and

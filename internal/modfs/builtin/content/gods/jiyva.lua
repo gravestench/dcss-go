@@ -13,6 +13,7 @@ local definition = {
     wrath_penance = 30,
     piety_mode = modes.ORDINARY,
     requires_love = true,
+    behavior_module = "policy.religion.gods.jiyva",
 }
 
 register.definition(categories.GODS, definition)

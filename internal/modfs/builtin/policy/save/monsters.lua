@@ -23,6 +23,7 @@ local pan_traits = require("constants.pan_lord_traits")
 local pan_colours = require("constants.pan_lord_colours")
 local ugly_thing = require("policy.monsters.ugly_thing")
 local fedhas = require("policy.religion.gods.fedhas")
+local jiyva = require("policy.religion.gods.jiyva")
 
 -- Banished monsters have different location requirements from level residents.
 local function validate_banishment(ctx, entity, position)
@@ -514,6 +515,10 @@ function module.run(ctx, input)
     -- every saved tag before the monster-only loop can skip an orphan.
     for _, entity in ipairs(ctx:query({ component.FEDHAS_PLANT })) do
         fedhas.validate(ctx, entity)
+    end
+
+    for _, entity in ipairs(ctx:query({ component.JIYVA_SLIME })) do
+        jiyva.validate(ctx, entity)
     end
 
     -- A custom ghost profile may not be detached from its live actor. The

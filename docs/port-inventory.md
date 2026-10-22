@@ -316,6 +316,10 @@ Fedhas now neutralises eligible hostile plants as they act, reverses plant
 allegiance across loaded levels on desertion, cancels an active forest on
 joining, and prevents hostile Awaken Forest under its passive. Okawaru now
 dismisses friendly player-owned summons on the current floor when joined.
+Jiyva now converts source jelly and eye genera on their monster turns.
+Attempted conversion under penance, retry when that debt ends, desertion,
+temporary charm removal, and off-level allegiance use saved actor state.
+Owned summons on the former side expire when a slime changes allegiance.
 Zin's entry and pickup tithes now share one Lua rule. Saved gold remembers
 whether it was seen before conversion or acquired, and the wallet keeps
 donations and fractional carry across piles and save/restore.

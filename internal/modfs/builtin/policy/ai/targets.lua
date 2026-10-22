@@ -30,6 +30,14 @@ function targets.real_attitude(ctx, entity)
         return plant.attitude
     end
 
+    -- Jiyva's neutralisation is likewise durable and takes precedence
+    -- over a monster's spawn or summon side.
+    local slime = ctx:get(entity, component.JIYVA_SLIME)
+
+    if slime then
+        return slime.attitude
+    end
+
     local summon = ctx:get(entity, component.SUMMON)
 
     if summon then

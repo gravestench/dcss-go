@@ -6,6 +6,8 @@ local effects = require("policy.mutations.effects.registry")
 local flags = require("constants.monster_flags")
 local attitude = require("constants.attitude")
 local targets = require("policy.ai.targets")
+local allegiance = require(
+    "policy.magic.effects.statuses.monster_allegiance")
 
 local allies = {}
 
@@ -82,17 +84,7 @@ function allies.on_monster_turn(ctx, entity)
         changed = true
     end
 
-    local allegiance = ctx:get(entity, component.MONSTER_ALLEGIANCE)
-
-    if allegiance and allegiance.charm_aut > 0 then
-        allegiance.charm_aut = 0
-
-        if allegiance.frenzy_aut > 0 or allegiance.fatigue_aut > 0 then
-            ctx:set(entity, component.MONSTER_ALLEGIANCE, allegiance)
-        else
-            ctx:remove(entity, component.MONSTER_ALLEGIANCE)
-        end
-
+    if allegiance.clear_charm(ctx, entity) then
         changed = true
     end
 

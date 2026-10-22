@@ -11,6 +11,8 @@ local component = require("constants.component")
 local gods = require("constants.gods")
 local holiness = require("constants.monster_holiness")
 local monsters = require("ids.monsters")
+local allegiance = require(
+    "policy.magic.effects.statuses.monster_allegiance")
 local targets = require("policy.ai.targets")
 
 local fedhas = {}
@@ -116,21 +118,7 @@ function fedhas.leave(ctx)
         if is_plant(definition) then
             -- Source desertion strips charm before restoring hostility.
             -- Preserve unrelated frenzy and berserk state on the actor.
-            local allegiance = ctx:get(entity,
-                component.MONSTER_ALLEGIANCE)
-
-            if allegiance and allegiance.charm_aut > 0 then
-                allegiance.charm_aut = 0
-
-                if allegiance.frenzy_aut > 0 or
-                    allegiance.fatigue_aut > 0 or
-                    allegiance.berserk_hp then
-                    ctx:set(entity, component.MONSTER_ALLEGIANCE,
-                        allegiance)
-                else
-                    ctx:remove(entity, component.MONSTER_ALLEGIANCE)
-                end
-            end
+            allegiance.clear_charm(ctx, entity)
 
             local state = {
                 attitude = attitudes.HOSTILE,

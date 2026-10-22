@@ -203,6 +203,7 @@ function piety.gain(ctx, player, numerator, denominator, scale)
     end
 
     local points = random_round(ctx, amount, denominator)
+    local old_penance = state.penance[state.god_id] or 0
 
     for _ = 1, points do
         gain_point(ctx, player, state)
@@ -214,6 +215,19 @@ function piety.gain(ctx, player, numerator, denominator, scale)
     end
 
     ctx:set(player, component.RELIGION_WORSHIP, state)
+
+    -- Some rank-minus-one passives stay active under penance but must
+    -- retry actor effects when the final debt point is paid. The god's
+    -- module owns that transition, not the common piety calculation.
+    if old_penance > 0 and
+        (state.penance[state.god_id] or 0) == 0 and
+        definition.behavior_module then
+        local handler = require(definition.behavior_module)
+
+        if handler.penance_ended then
+            handler.penance_ended(ctx, player)
+        end
+    end
 
     return true
 end
