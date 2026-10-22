@@ -77,6 +77,9 @@ type View struct {
 	PlayerSH     int
 	Gold         int64
 	DefenseKnown bool
+	GodName      string
+	PietyStars   string
+	Penance      int
 
 	CharacterName           string
 	SpeciesID               string
@@ -325,6 +328,11 @@ func (g *Game) fillTerrainView(view *View, level *Level) {
 
 func (g *Game) fillPlayerView(view *View) {
 	player, hasPlayer := g.stores.Players.Get(g.player)
+	worship := g.mustPresentationPolicy("presentation.religion", nil)
+
+	view.GodName = worship["god_name"].(string)
+	view.PietyStars = worship["piety_stars"].(string)
+	view.Penance = int(worship["penance"].(int64))
 
 	if store := g.scripts.Components()["character.wallet"]; store != nil {
 		if state, ok := store.Get(g.player); ok {

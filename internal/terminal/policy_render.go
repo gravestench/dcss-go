@@ -214,6 +214,9 @@ func hudInput(view game.View) map[string]any {
 		"player_ev":     view.PlayerEV,
 		"player_sh":     view.PlayerSH,
 		"gold":          view.Gold,
+		"god_name":      view.GodName,
+		"piety_stars":   view.PietyStars,
+		"penance":       view.Penance,
 		"defense_known": view.DefenseKnown,
 		"attributes": map[string]any{
 			"strength":     view.Attributes.Strength,

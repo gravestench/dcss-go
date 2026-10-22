@@ -134,11 +134,23 @@ function hud.rows(view, extras)
         place = branch.abbreviation .. ":" .. view.local_depth
     end
     write(18, 7, "Place: " .. place, colors.brown)
-    write(0, 8, "Noise: --", colors.brown)
+    if view.god_name and view.god_name ~= "" then
+        write(0, 8, "God: " .. view.god_name, colors.brown)
+    else
+        write(0, 8, "Noise: --", colors.brown)
+    end
     write(18, 8, string.format("Time: %.1f",
         view.current_aut / time.AUT_PER_TURN), colors.brown)
     write(0, 9, weapon_label(view.inventory), colors.light_grey)
-    write(0, 10, "Quiver: --", colors.brown)
+    if view.god_name and view.god_name ~= "" then
+        if view.penance and view.penance > 0 then
+            write(0, 10, "Penance: " .. view.penance, colors.red)
+        elseif view.piety_stars and view.piety_stars ~= "" then
+            write(0, 10, "Piety: " .. view.piety_stars, colors.brown)
+        end
+    else
+        write(0, 10, "Quiver: --", colors.brown)
+    end
     write(18, 10, "Gold: " .. (view.gold or 0), colors.brown)
 
     local statuses = {}

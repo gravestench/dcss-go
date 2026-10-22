@@ -112,7 +112,8 @@ func TestPrayerConversionUsesSavedAltarAndTurn(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if offer.Spent != 0 || offer.Confirmation == "" ||
+	if offer.Spent != 0 ||
+		offer.Confirmation == "" ||
 		offer.ConfirmationTarget != "GOD_ZIN" {
 		t.Fatalf("prayer offer: spent=%d prompt=%q target=%q events=%+v",
 			offer.Spent, offer.Confirmation, offer.ConfirmationTarget, offer.Events)

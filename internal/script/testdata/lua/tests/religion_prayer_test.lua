@@ -7,7 +7,9 @@ local gods = require("constants.gods")
 local harness = require("tests.harness")
 local intents = require("constants.intent")
 local jobs = require("ids.jobs")
+local mutations = require("ids.mutations")
 local prayer = require("policy.religion.prayer")
+local mutation_records = require("policy.mutations.records")
 local play = require("policy.input.play")
 local commands = require("policy.input.commands")
 local species = require("ids.species")
@@ -194,6 +196,22 @@ local function ecumenical(ctx)
     harness.truthy(worship.god_id ~= gods.ECUMENICAL)
 end
 
+-- A Forlorn character cannot worship any source god. The unknown altar must
+-- reject before offering a prompt or drawing a random god indefinitely.
+local function ecumenical_without_candidate(ctx)
+    local actor = player(ctx)
+    local site = altar(ctx, gods.ECUMENICAL)
+
+    mutation_records.grant_acquired(ctx, actor,
+        mutations.MUT_FORLORN, 1)
+
+    local decision = prayer.prepare(site, actor, {}, position)
+
+    harness.truthy(decision.message)
+    harness.falsy(decision.confirmation)
+    harness.equal(site:draws(), 0)
+end
+
 -- Stair keys on an altar request prayer before shop or stair routing.
 -- Without an altar, the existing stair key retains its original action.
 local function input_route()
@@ -218,6 +236,7 @@ function test.run(ctx)
     ordinary(ctx)
     forbidden(ctx)
     ecumenical(ctx)
+    ecumenical_without_candidate(ctx)
     input_route()
 end
 

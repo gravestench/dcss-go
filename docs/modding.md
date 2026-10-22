@@ -1530,8 +1530,8 @@ amulet of Faith before the final random division. `rank(god_id, points)`
 returns the displayed rank; `breakpoint(stars)` accepts one through six.
 The owner emits `constants.religion_signals.RANK_CHANGED` and `GIFT_CHECK`
 with the player and god IDs. Mod systems can use those signals for divine
-abilities, passives, and gifts; the current port does not yet implement
-those downstream god systems or altar prayer commands.
+abilities, passives, and gifts. Those downstream god systems remain separate
+work; altar prayer already uses this worship owner.
 
 #### Worship transitions and per-god entry rules
 
@@ -1567,6 +1567,41 @@ in its own component schema. The bundled Ashenzari, Ru, Xom, and
 Yredelemnul components illustrate this. Their pending rewards remain saved
 until those god systems are ported; the current engine does not yet resolve
 all divine abilities, gifts, passives, and wrath effects.
+
+#### Prayer, renunciation, and the HUD
+
+The source stair keys (`<` and `>`) request prayer when the player stands on
+an altar. `policy/input/play.lua` selects the command, and
+`policy/commands/entries_religion.lua` calls
+`policy/religion/prayer.lua:prepare`. That policy reads the altar's saved
+`god_id` through `ctx:records_at(level_id, x, y)`. It returns a free
+confirmation carrying the altar ID; only an accepted answer creates a timed
+prayer intent. `systems/religion_prayer.lua` then calls `prayer.resolve`,
+which rechecks the record and calls `worship.join`. The terminal supplies
+keys and prompts; it does not decide which god will accept the player.
+
+An ecumenical altar stays unidentified until the player accepts. Its chosen
+god comes from the named religion RNG stream over stable god IDs. The
+resolver updates both worship and the altar's saved typed record. A mod that
+replaces prayer policy should preserve that single accepted-choice boundary
+and use `ctx:replace_record_string` to change the saved record, rather than
+only changing a displayed name. A refusal or cancelled prompt spends no
+turn and leaves RNG and altar identity untouched.
+
+`ids.abilities.RENOUNCE_RELIGION` is registered by
+`policy/abilities/renounce_religion.lua`. It appears in the ordinary `a`
+ability menu only while a god is worshipped. Its two confirmation IDs bind
+both source prompts to the same live god; accepting the second prompt spends
+one turn and calls `worship.renounce`. Mods may replace the ability module at
+the same relative path. To add a separate divine ability, register its own
+ID and focused module through `policy.abilities.registry` rather than
+putting more cases in renunciation.
+
+`policy/presentation/religion.lua` reads `religion.worship` for god name,
+six-star piety, and current penance. It uses the effective god catalog, so a
+modded god's name and piety mode reach the HUD through its definition.
+Gozag's no-piety mode intentionally has no stars. The Go view and terminal
+render these Lua values without a second god-name table.
 
 If an existing category's field is unclear, search for the field name in its
 consumer policy. That tells you whether it is display data, generation data,

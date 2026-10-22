@@ -306,7 +306,9 @@ its random draws replay after save/restore. One Lua transition path now joins
 or renounces any registered god, preserves good-god piety transfer, records
 source penance, charges Gozag, and preserves Ignis's spent reserve. Ru,
 Ashenzari, Yredelemnul, and Xom entry exceptions retain typed pending state.
-Altar prayer and the terminal confirmation flow remain to port. The pending
+Both stair keys pray on an altar. Conversion, refusal, ecumenical identification,
+two-step renunciation, saved altar identity, and the god/piety/penance HUD now
+run through Lua command, system, and presentation rules. The pending
 entry rewards, Zin tithe, Trog training lockout, Okawaru summon dismissal,
 Fedhas plant attitude, and god-specific leave cleanup still need their
 behavior owners. Conduct, abilities, gifts, passives, and wrath execution

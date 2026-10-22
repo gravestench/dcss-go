@@ -15,6 +15,12 @@ function abilities.prepare(ctx, player, input)
 
     local rejection = definition.prepare(ctx, player, input)
 
+    -- An ability may request another free confirmation before it creates an
+    -- intent. Renunciation uses two source prompts with one shared bridge.
+    if type(rejection) == "table" then
+        return rejection
+    end
+
     if rejection then
         return { message = rejection }
     end

@@ -67,6 +67,20 @@ local function refusal(ctx, player, god_id)
     return eligibility.check(ctx, player, god_id, true)
 end
 
+-- An unknown altar must know that at least one patron can accept the
+-- player before prompting. This scan reads stable catalog IDs and no RNG.
+local function unknown_candidate(ctx, player)
+    for _, id in ipairs(register.ids(categories.GODS)) do
+        local temporary = id ~= gods.GOZAG
+
+        if not eligibility.check(ctx, player, id, temporary) then
+            return true
+        end
+    end
+
+    return false
+end
+
 -- The proposal carries the exact saved god ID to the terminal. No RNG is
 -- consumed here, including when an ecumenical altar remains unidentified.
 function prayer.prepare(ctx, player, input, position)
@@ -92,6 +106,11 @@ function prayer.prepare(ctx, player, input, position)
 
     if denied then
         return { message = denied }
+    end
+
+    if god_id == gods.ECUMENICAL and
+        not unknown_candidate(ctx, player) then
+        return { message = "No god will accept your worship." }
     end
 
     if not input.forced then
@@ -129,18 +148,8 @@ end
 -- appears. Sorted stable IDs keep file names and load order out of the draw.
 local function unknown_god(ctx, player)
     local ids = register.ids(categories.GODS)
-    local eligible = false
 
-    for _, id in ipairs(ids) do
-        local temporary = id ~= gods.GOZAG
-
-        if not eligibility.check(ctx, player, id, temporary) then
-            eligible = true
-            break
-        end
-    end
-
-    if not eligible then
+    if not unknown_candidate(ctx, player) then
         error("no god can accept this player at the unknown altar")
     end
 
