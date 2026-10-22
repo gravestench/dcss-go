@@ -425,8 +425,8 @@ reciprocal visit. The two source discovery messages are attempted on first
 arrival when the drain is audible; the saved timer emits the source
 rust-speed bands and final warning. Visible and unseen collapse use the
 source marker's different messages.
-Hearing distance currently uses the source timer's farthest distance band
-as a bound until the general DCSS sound rules are ported.
+Timer messages use the source hearing limit and the Lua Silence field at
+both the drain and player; source distance bands only change the wording.
 Terrain, keyed entities, and other source records survive in the
 saved level, but broader gameplay for some authored features remains tied
 to their respective domain slices.

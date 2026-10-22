@@ -42,11 +42,15 @@ function context:player()
     return 1
 end
 
--- The position and saved drain component are the only ECS reads needed by
--- the production timer; no duplicate component schema lives in this test.
+-- The fixture exposes only production component IDs. The Silence owner
+-- reads player status while deciding whether the portal is audible.
 function context:get(entity, id)
     if entity == 1 and id == component.POSITION then
         return self.position
+    end
+
+    if entity == 1 and id == component.PLAYER_STATUS then
+        return self.player_status
     end
 
     if entity == 2 and id == component.WORLD_SEWER_PORTAL then
@@ -56,12 +60,14 @@ function context:get(entity, id)
     return nil
 end
 
--- The focused world has one drain, so every query finds that same owner.
+-- The focused world has one drain and no mutation or monster entities.
+-- Those empty queries let the production Silence policy answer hearing.
 function context:query(ids)
-    harness.equal(ids[1], component.WORLD_SEWER_PORTAL,
-        "Sewer system queried its clock")
+    if ids[1] == component.WORLD_SEWER_PORTAL then
+        return { 2 }
+    end
 
-    return { 2 }
+    return {}
 end
 
 -- Real ECS writes retain announcement and next-check state across actions.
@@ -163,26 +169,42 @@ function test.run()
     harness.truthy(ctx.portal.spent,
         "Sewer saved clock becomes spent")
 
-    -- Source initial text is attempted once on entering the floor. A
-    -- distant player should later hear a rust check, not that initial text.
+    -- Source hear_pos permits distant sound across the whole Dungeon map;
+    -- twenty-eight cells only changes the wording to "very distant".
     local distant = new_context()
     distant.position.x = 39
 
     action_at(distant, 0)
-    harness.equal(#distant.messages, 0,
-        "inaudible discovery remains silent")
+    harness.equal(distant.messages[1],
+        "You hear the sound of rushing water.",
+        "distant drain remains audible")
     harness.truthy(distant.portal.announced,
         "source discovery attempt is not retried")
 
     distant.position.x = 10
     action_at(distant, 10)
-    harness.equal(#distant.messages, 0,
+    harness.equal(#distant.messages, 2,
         "approaching does not replay discovery")
 
     action_at(distant, 500)
-    harness.equal(distant.messages[1],
+    harness.equal(distant.messages[3],
         "You hear the slow rusting of a drain.",
         "approaching permits later timer sounds")
+
+    -- Silence blocks hearing at either endpoint. Clearing it later must
+    -- allow periodic rust, but it cannot replay the initial source text.
+    local silenced = new_context()
+    silenced.player_status = { silence_aut = 1000 }
+
+    action_at(silenced, 0)
+    harness.equal(#silenced.messages, 0,
+        "silence suppresses discovery")
+
+    silenced.player_status = nil
+    action_at(silenced, 500)
+    harness.equal(silenced.messages[1],
+        "You hear the slow rusting of a drain.",
+        "rust is audible after silence ends")
 
     -- The disappearing marker's unseen text is separate from the timer's
     -- final warning, even when the player is still on the same level.

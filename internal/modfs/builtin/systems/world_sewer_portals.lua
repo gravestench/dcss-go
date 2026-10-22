@@ -5,20 +5,33 @@
 local component = require("constants.component")
 local sewer = require("constants.sewer")
 local signals = require("constants.world_signals")
+local silence = require("policy.world.silence")
 local terrain = require("constants.terrain")
 
 local system = {}
 
--- Source timed_msg chooses the article around "drain" from distance to
--- the portal. The source's farthest distance band supplies a bounded
--- hearing approximation until the generic sound owner is ported.
-local function drain_description(state, position)
+-- Source player_can_hear tests Silence at both endpoints and allows a
+-- 999-cell distance by default. The adjective bands below do not limit
+-- hearing; they only describe how far away the drain sounds.
+local function audible(ctx, state, position)
+    if state.level_id ~= position.level_id then
+        return false
+    end
+
     local distance = math.max(math.abs(state.x - position.x),
         math.abs(state.y - position.y))
 
-    if distance > sewer.HEARING_RADIUS then
-        return nil
-    end
+    return distance <= sewer.MAX_HEARING_DISTANCE and
+        not silence.at(ctx, state.level_id, state.x, state.y) and
+        not silence.at(ctx, position.level_id,
+            position.x, position.y)
+end
+
+-- Source timed_msg chooses the article around "drain" from distance to
+-- the portal. Its farthest band covers every more distant audible cell.
+local function drain_description(state, position)
+    local distance = math.max(math.abs(state.x - position.x),
+        math.abs(state.y - position.y))
 
     if distance >= sewer.VERY_DISTANT_AT then
         return "a very distant drain"
@@ -78,14 +91,13 @@ local function warn(ctx, entity, state, position, now)
         not state.final_warning then
         state.final_warning = true
 
-        if state.level_id == position.level_id and
-            drain_description(state, position) then
+        if audible(ctx, state, position) then
             ctx:emit("stairs", "You hear the drain falling apart.")
         end
     elseif due then
         local description
 
-        if state.level_id == position.level_id then
+        if audible(ctx, state, position) then
             description = drain_description(state, position)
         end
 
@@ -133,7 +145,7 @@ local function announce(ctx, entity, state, player_position, now)
         return
     end
 
-    if drain_description(state, player_position) then
+    if audible(ctx, state, player_position) then
         ctx:emit("stairs", "You hear the sound of rushing water.")
         ctx:emit("stairs",
             "There is an entrance to a sewer on this level. " ..

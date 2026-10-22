@@ -21,7 +21,9 @@ local sewer = {
     BRISK_ABOVE_AUT = 2500,
     QUICK_ABOVE_AUT = 1500,
 
-    HEARING_RADIUS = 28,
+    -- player_can_hear defaults to 999 cells; the smaller thresholds below
+    -- change wording, not whether the sound reaches the player.
+    MAX_HEARING_DISTANCE = 999,
     VERY_DISTANT_AT = 28,
     DISTANT_AT = 21,
     NEARBY_AT = 14,
