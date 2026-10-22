@@ -467,7 +467,8 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
 
     if options.base_id or options.colour or options.attitude or
         options.god_id or options.spells or options.hp or options.hd or
-        options.custom_name or options.database_name or options.tile then
+        options.custom_name or options.name_adjective or
+        options.name_species or options.database_name or options.tile then
         ctx:add(monster, component.VAULT_ACTOR_OVERRIDES, {
             base_id = options.base_id or "",
             variant = options.variant or "",
@@ -483,6 +484,7 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
                 (not definition.hd and source.hd) or 0,
             custom_name = options.custom_name or "",
             name_adjective = options.name_adjective or false,
+            name_species = options.name_species or false,
             database_name = options.database_name or "",
             tile = options.tile or "",
         })

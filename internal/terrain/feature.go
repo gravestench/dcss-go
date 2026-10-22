@@ -47,6 +47,9 @@ const (
 	StairsDown         ID = "DNGN_STONE_STAIRS_DOWN_I"
 	EnterBazaar        ID = "DNGN_ENTER_BAZAAR"
 	ExitBazaar         ID = "DNGN_EXIT_BAZAAR"
+	EnterSewer         ID = "DNGN_ENTER_SEWER"
+	ExitSewer          ID = "DNGN_EXIT_SEWER"
+	ExpiredPortal      ID = "DNGN_EXPIRED_PORTAL"
 	EnterPandemonium   ID = "DNGN_ENTER_PANDEMONIUM"
 	TransitPandemonium ID = "DNGN_TRANSIT_PANDEMONIUM"
 	ExitPandemonium    ID = "DNGN_EXIT_PANDEMONIUM"
@@ -261,6 +264,21 @@ var definitions = map[ID]Feature{
 	},
 
 	ExitBazaar: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	EnterSewer: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitSewer: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExpiredPortal: {
 		Glyph:    '∩',
 		Walkable: true,
 	},

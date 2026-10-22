@@ -478,6 +478,7 @@ local function select_entities(record, vault, random, depth, player)
         arguments.database_name = resolved.database_name or ""
         arguments.custom_name = resolved.custom_name or ""
         arguments.name_adjective = resolved.name_adjective or false
+        arguments.name_species = resolved.name_species or false
         arguments.hp = resolved.hp or 0
         arguments.hd = resolved.hd or 0
         arguments.permanent_enchantments = resolved.permanent_enchantments and

@@ -1,0 +1,37 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (sewer_big_baddie)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:     sewer_big_baddie
+DEPTH: Sewer
+TAGS:     no_item_gen no_monster_gen no_pool_fixup
+ORIENT:   encompass
+: vault.run("shared.setup")
+SUBST:    2 = 23
+KMONS:    2 = water moccasin
+KMONS:    3 = Pargi, water moccasin
+ITEM:     potion of berserk rage ident:type / potion of haste ident:type w:5
+MONS:     bat
+SUBST:    - = 1....
+MAP
+ ccccccc
+cc$***$cc
+c..$*$..c
+c.......c
+c...2...c
+c.......c
+c.......c
+cc.....cc
+ ccc.ccc     ccccccc
+   cdc      cc---..cc
+   c.c     cc---w...cc
+   c.ccccccc---www...cc
+   c.......---wwwww.A<c
+   c.ccccccc---www...cc
+   c.c     cc---w...cc
+   c-c      cc---..cc
+   c-c       ccccccc
+   c-c
+   c-c
+   c<c
+   ccc
+ENDMAP

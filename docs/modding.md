@@ -2180,6 +2180,35 @@ original DES `T` glyph as a blue fountain if the shop is not selected.
 `policy/world/bazaar/` owns these live rules. A `.des` hook configures a map
 during generation and receives `api`, never the live `ctx`.
 
+The Sewer uses the same layered vault directories. Add a Dungeon entrance
+under `vaults/sewer_entry/` with `DEPTH: D:3-6`, `TAGS: chance_sewer
+uniq_sewer no_monster_gen`, and a source chance. Put its map-specific
+instructions and `vault.run("shared.portal")` in the `.des` file; the named
+hook is defined in `policy/generation/vaults/sewer_entry/shared.lua`. The
+hook draws the drain's 600–800-turn lifetime once, emits its keyed feature,
+and leaves a timed marker that population turns into `world.sewer_portal`.
+The marker's fixed draw and the ECS deadline must agree in a saved game.
+See the bundled entrance files for the full geometry and source directives.
+
+Add a destination under `vaults/sewer/` with `DEPTH: Sewer`, a source
+`WEIGHT`, an encompassing `MAP`, and at least one exit. The shared
+`vault.run("shared.setup")` hook maps the source `<` glyph to the Sewer
+return exit. A separate named Lua hook can emit map-specific keyed monsters,
+items, or terrain at its source position. The effective catalog discovers
+new maps by directory and chooses among positive weights in stable ID
+order. A sparse mod can therefore add one map without copying the 19
+built-ins; `internal/script/testdata/sewer-vault-mod/` is a minimal example.
+The live `policy/world/sewer/` rules own entry, expiry, and return, while
+the generic Go portal transaction stages and retires the temporary floor.
+An authored Lua portal may pass `layout_id` to
+`world.generate_sewer_level` to request one eligible map; ordinary drains
+omit it and use the source weighted draw. Invalid IDs fail generation
+before the portal is spent.
+An active visitor carries `character.sewer_visit`, which saves the exact
+outside drain cell. Use the ordinary vault record and population APIs for
+new Sewer content; a new content type belongs in its relevant shared owner
+instead of a new Sewer-specific Go branch.
+
 All three categories validate their effective definitions at startup. A
 missing cloud or trap effect path fails before play; a malformed shop weight
 fails before stock generation. Import their IDs from `ids.clouds`,

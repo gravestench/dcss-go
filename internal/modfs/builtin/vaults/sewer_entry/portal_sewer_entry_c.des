@@ -1,0 +1,24 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (portal_sewer_entry_c)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:   portal_sewer_entry_c
+DEPTH: D:3-6
+TAGS: uniq_sewer no_monster_gen chance_sewer
+CHANCE: 800
+WEIGHT: 4
+: vault.run("shared.portal")
+NSUBST: W = 8 = 111W / *:W
+NSUBST: n = 1:+ / 2:n / *:c
+TILE:   c = wall_stone_mossy
+KMONS:  1 = rat w:20 / river rat / ball python / adder w:2 / \
+            giant cockroach / worm w:3
+MAP
+.........
+.nnnnnnn.
+.nWWWWWn.
+.nWWOWWn.
+.nWWWWWn.
+.nWWWWWn.
+.nnnnnnn.
+.........
+ENDMAP

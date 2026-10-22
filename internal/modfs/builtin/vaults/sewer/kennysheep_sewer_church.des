@@ -1,0 +1,65 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (kennysheep_sewer_church)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:    kennysheep_sewer_church
+DEPTH: Sewer
+TAGS:    no_item_gen no_monster_gen no_pool_fixup
+ORIENT:  encompass
+WEIGHT:  5
+# Placed monsters.
+MONS:    kobold w:35 / shadow imp / ufetubus w:15 / nothing w:5
+# Randomly generated monsters.
+MONS:    kobold w:50 / kobold zombie / endoplasm / giant cockroach / \
+         giant cockroach zombie w:3 / ball python / adder zombie w:3 / \
+         bat / bat zombie w:3
+SUBST:   1 = 1.
+NSUBST:  . = 20 = 2. / *:.
+# Bosses and features for the temple
+: vault.run("shared.church_theme")
+KMONS:   6 = Grinder, shadow imp
+SHUFFLE: 456
+KITEM:   456 = star_item
+KFEAT:   - = deep_water
+KPROP:   W- = no_tele_into
+SUBST:   W = WWWw.
+SUBST:   - = wwwW-
+COLOUR: - = green
+: vault.run("shared.loot_mixed")
+NSUBST:  d = 1:*
+: vault.run("shared.setup")
+MAP
+                                          ccc
+                                          c<c
+                                         ccdcc
+                                        ccd4dcc
+                                        c-111-c
+               xxxxxxxxxxxxxxxxxxxxxxxxxc-.1.-c
+               x---wwwwwwwwwwwww-W.+1W-xc-...-c
+               x---wwwwwwwwwwwww-W.x1W-xc-...-c
+               x----wwwwwwwwwwww-W.x1W-xc-...-c
+               xWWW-wwwwwwwwwww--W.x1W-xc-...-c
+               xWWW-wwwwwwwwww--W..x1W-xcc+++cc
+               xWWW------------W...x.W-xc.....ccccccccc
+               xxWxxxx-xx-xx-xxx1xxxx.xcc..F...c------cc
+               x-W.x............1w-x...c..2.2F.+.....1dccc
+               x-W.............1www-...+.F.B3..+....115d<c
+               x-W.x............1w-x...c..2.2F.+.....1dccc
+               x-W.xxxx-x--xxx-x1xxxx.xcc..F...c------cc
+               x-W.x-----------W...x.W-xc.....ccccccccc
+               x-W.xwwwwwwwwww--W..x1W-xcc+++cc
+               x-W.xwwwwwwwwwww--W.x1W-xc-...-c
+               x-W.xwwwwwwwwwwww-W.x1W-xc-...-c
+               x-W.xwwwwwwwwwwww-W.x1W-xc-...-c
+               x-W1xwwwwwwwwwwww-W.+1W-xc-...-c
+xxxxxxxxxxxxxxxx-W.xxxxxxxxxxxxxxxxxxWxxc-.1.-c
+x----------------W1x-------------WWWWW-xc-111-c
+xWWWWWWWWWWWWWWWWW.W---wwwwwww---WWWWW-xccd6dcc
+x...............1.1x---wwwwwww---------x ccdcc
+xxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  c<c
+xx...xx                                   ccc
+x.....x
+x..A..x
+x..<..x
+xx...xx
+ xxxxx
+ENDMAP

@@ -2,7 +2,7 @@ local component = require("constants.component")
 
 local schema = {
     id = component.VAULT_ACTOR_OVERRIDES,
-    version = 4,
+    version = 5,
     -- Authored variant, colour, attitude, and spell overrides travel with the spawned vault actor.
     fields = {
         base_id = {
@@ -56,6 +56,13 @@ local schema = {
         },
 
         name_adjective = {
+            type = "bool",
+            default = false,
+        },
+
+        -- DES name_species preserves the corpse's authored species label;
+        -- it is independent of adjective grammar on the living monster.
+        name_species = {
             type = "bool",
             default = false,
         },

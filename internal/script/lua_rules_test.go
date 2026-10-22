@@ -146,6 +146,18 @@ func TestBazaarVaultMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/bazaar_vault_mod_test.lua")
 }
 
+// A sparse Sewer map joins the effective weighted catalog by directory,
+// without a Go branch switch or changing the built-in source files.
+func TestSewerVaultMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/sewer-vault-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/sewer_vault_mod_test.lua")
+}
+
 // A Zot layer replaces one weighted source file and adds a discoverable
 // ordinary map with a same-path Lua hook.
 func TestZotVaultMod(t *testing.T) {
@@ -415,6 +427,9 @@ func runLuaRule(t *testing.T, rules modfs.Ruleset, name string) {
 	} else if name == "tests/pan_all_placement_test.lua" {
 		// Every active Pan map executes placement and any named source hooks.
 		limitDuration = 60 * time.Second
+	} else if name == "tests/sewer_source_catalog_test.lua" {
+		// All 34 source maps execute hooks and full-grid placement in one test.
+		limitDuration = 30 * time.Second
 	}
 
 	limit, cancel := context.WithTimeout(context.Background(), limitDuration)

@@ -1,0 +1,59 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (sewer_hellmonk_slimy_pipes)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:   sewer_hellmonk_slimy_pipes
+DEPTH: Sewer
+TAGS:   no_item_gen no_monster_gen no_pool_fixup
+ORIENT: encompass
+: vault.run("shared.loot_mixed")
+MONS:   endoplasm w:25 / rat / ball python / giant cockroach / adder w:5 /\
+        river rat w:5 / frilled lizard / worm w:2
+KMONS:  2 = jelly
+SUBST:  . = W..
+NSUBST: - = 32 = 1W.. / * = W..
+NSUBST: ! = 60 = 1WW. / * = W.
+NSUBST: 2 = 1:2 / *= 2W
+NSUBST: d = 4:d / *= d..
+KFEAT:  B = altar_jiyva / altar_xom w:1
+: vault.run("shared.setup")
+MAP
+              ccccc
+             ccdddcc
+           ccc!!2!!ccc
+          cc!!!!!!!!!cc
+         cc!!!!!c!!!!!ccc
+  ccccc  c!!!ccccccc!!!!c
+ cc!!!cc c!!ccccccccc!!!c
+cc!!!!!cc!!!c!!!!ccccc!!ccccc
+c!!!c!!!c!!!!!!!!<cccc!!!2ddc
+c!!!cc!!!!!!!!cc!!!ccc!!!!dBc
+cc!!!cc!!!!!!!!cc!!ccc!!!2ddc
+ccc!!dc!!!!cc!ddc!!cc!!!!!ccc
+ccd!2cc!!!!!ccdcc!!!!!!cccc
+ccd!cc!!!!!!!ccc!!!!!!cc
+ccccc!!!!cc!!!!!!!!cccc
+ccc!!!!!cccc!!!!!!cc
+cc!!!!!ccddcc!!cccc
+cc!!!cccc2!!c!!c
+cc--cccccc!!!!!c
+c---ccccccc!!!cc
+c--cccccccccccc
+c--ccccccccccccccc
+c--cccccc--------c
+c--cccccc--------c
+c--cccccc--cccc--c
+c--cccccc--cccc..c
+c--cccccc--cccc..c
+c--cccccc--cccc..c
+c--cccccc--cccc..c
+c---ccccc--cccc..c
+cc--ccccc--cccc..c
+ c---cccc--cccc..c
+ c---------cccc..ccc
+ cc--------ccww..wwc
+  cccccccccccw....wc
+            cwA..<wc
+            cw....wc
+            cwwwwwwc
+            cccccccc
+ENDMAP

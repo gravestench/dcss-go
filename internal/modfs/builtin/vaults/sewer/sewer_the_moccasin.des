@@ -1,0 +1,49 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (sewer_the_moccasin)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:   sewer_the_moccasin
+DEPTH: Sewer
+TAGS:   no_item_gen no_monster_gen no_pool_fixup
+ORIENT: encompass
+SUBST:  - = WW...
+MONS:   kobold, jackal
+SUBST:  3 = 334
+KMONS:  3 = water moccasin
+KMONS:  4 = Pargi, water moccasin
+NSUBST: ! = 8 = 2..., 9 = 1..
+: vault.run("shared.loot_sparse")
+: vault.run("shared.setup")
+MAP
+   ccccccccc
+   c%*c3c*%c
+   c*-c-c-*c
+   ccc---ccc
+    cc---cc
+    c-----c
+   cc.---.cc
+   c..-c-..c
+  cc.-ccc-.cc
+  c.--ccc--.c
+  c--ccccc--c
+  c.-ccccc-.c
+  c.-ccccc-.c
+  c--ccccc--c
+  c.--ccc--.c
+  cc--ccc--cc
+   c.--c--.c
+   cc-----cc
+    c..-..c
+    cc---cc
+     c.-.c
+     cc-cc
+     cc-cc
+   cccc-cccc
+cccc..---..ccccc
+cWWWWWWWWWWWWWWc
+cccc...c...ccccc
+  ccc..c....cccxxxx
+  c....c!!!!!!cdddx
+  c.A<.c!!!!!!!dddx
+  c....c!!!!!!cxxxx
+  ccccccccccccc
+ENDMAP

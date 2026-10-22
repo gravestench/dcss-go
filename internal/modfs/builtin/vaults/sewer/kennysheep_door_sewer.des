@@ -1,0 +1,34 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (kennysheep_door_sewer)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:   kennysheep_door_sewer
+DEPTH: Sewer
+TAGS:   no_item_gen no_monster_gen no_pool_fixup
+ORIENT: encompass
+MONS:   kobold w:40 / bat / frilled lizard / giant cockroach / \
+        adder w:5 / kobold brigand w:1
+KMONS:  2 = pargi, water moccasin
+: vault.run("shared.loot_armour")
+NSUBST: e = 4:* / 6=d.. / *:.
+NSUBST: 0 = 10=1. / 1:2 / *:.
+KFEAT:  ' = deep_water
+COLOUR: ' = green
+KFEAT:  " = shallow_water
+COLOUR: " = lightgreen
+KPROP:  "' = no_tele_into
+: vault.run("shared.setup")
+MAP
+        ccccccccccccccccccccc
+        cecceccecceccecceccec
+        c0cc0cc0cc0cc0cc0cc0c
+        c+cc+cc+cc+cc+cc+cc+c
+ccccccccc...................ccccccccc
+c"""""""nWWWWWWWWW.WWWWWWWWWn"""""""c
+c'''''''nwwwwwwwwwAwwwwwwwwwn'''''''c
+c"""""""nWWWWWWWWW.WWWWWWWWWn"""""""c
+ccccccccc...................ccccccccc
+        c+cc+cc+cc.cc+cc+cc+c
+        c0cc0cc0cc.cc0cc0cc0c
+        cecceccecc<ccecceccec
+        ccccccccccccccccccccc
+ENDMAP

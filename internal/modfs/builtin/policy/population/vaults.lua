@@ -20,6 +20,7 @@ local slime_seal = require("policy.population.slime_seal")
 local vault_triggers = require("policy.world.vault_triggers")
 local zot_overgrown = require("policy.world.zot_overgrown")
 local bazaar_portal = require("policy.world.bazaar.portal")
+local sewer_portal = require("policy.world.sewer.portal")
 local branches = require("ids.branches")
 
 local vaults = {}
@@ -91,6 +92,7 @@ local function monster_options(record, level)
         custom_name = arguments.custom_name ~= "" and
             arguments.custom_name or nil,
         name_adjective = arguments.name_adjective or false,
+        name_species = arguments.name_species or false,
         database_name = arguments.database_name ~= "" and
             arguments.database_name or nil,
         tile = arguments.tile ~= "" and arguments.tile or nil,
@@ -205,6 +207,7 @@ local function fallback_monster(ctx, level, record)
             arguments.database_name = resolved.database_name or ""
             arguments.custom_name = resolved.custom_name or ""
             arguments.name_adjective = resolved.name_adjective or false
+            arguments.name_species = resolved.name_species or false
             arguments.hp = resolved.hp or 0
             arguments.hd = resolved.hd or 0
             arguments.permanent_enchantments = resolved.permanent_enchantments and
@@ -339,9 +342,13 @@ function vaults.materialize(ctx, level, excluded)
                 index = record.index,
             }
         elseif record.kind == effects.MARKER and
-            bazaar_portal.is_marker(record.identity) then
+            bazaar_portal.is_marker(record) then
             materialized[#materialized + 1] =
                 bazaar_portal.materialize(ctx, level, record)
+        elseif record.kind == effects.MARKER and
+            sewer_portal.is_marker(record) then
+            materialized[#materialized + 1] =
+                sewer_portal.materialize(ctx, level, record)
         elseif record.kind == effects.MARKER and
             vault_triggers.is_record(record.identity) then
             materialized[#materialized + 1] =

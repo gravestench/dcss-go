@@ -1,0 +1,69 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (sewer_co_cracked_pipes)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:    sewer_co_cracked_pipes
+DEPTH: Sewer
+TAGS:    no_item_gen no_monster_gen no_pool_fixup no_rotate no_vmirror
+ORIENT:  encompass
+#      water creatures
+MONS:    frilled lizard / ball python w:5 / adder w:5
+SUBST:   1 = 1.
+KMONS:   2 = adder
+KFEAT:   2 = W
+COLOUR:  2 = lightgreen
+#      generate first path.
+SHUFFLE: BC/DE/FG
+NSUBST:  B = 1:. / *:c
+NSUBST:  C = 1:. / *:c
+SUBST:   DEFG = c
+#      generate second path.
+SHUFFLE: HI/JK/LM
+NSUBST:  H = 1:. / *:c
+NSUBST:  I = 1:. / *:c
+SUBST:   LMKJ = c
+#      randomize environment
+KPROP:   V2 = no_tele_into
+SUBST:   . = .W
+SUBST:   V = .WWWW
+SUBST:   X = xx"
+#      rat path
+KPROP:   " = no_tele_into
+KMONS:   " = nothing w:50 / rat w:15 / river rat w:7
+KPROP:   w = no_tele_into
+#      loot
+SUBST:   e = !!!!!?????%
+KITEM:   ? = any potion
+KITEM:   ! = any scroll
+: vault.run("shared.setup")
+MAP
+ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ xcccccccccccccccccccccccccccccccccccccccccccccccx
+ xwwwwwwwwmwWe.....1.....1VVVVVVVVV......1.....<cx
+ xwwwwwwwwmwWe..1......1..VVVVVVVVV.1......1...ecx
+ xccccccccccccIIIIIIccccccccccKccccccMMMcccccMMMcx
+ xxxxxxxxxxxxxx"xx"xxxxxxxxxxcVcxxxxxx"xxxxxxx"xxx
+             xxx""xxxxxxxxxxxcVcxxxxxxx"xXxxx"xx
+             xXxx"xxxxxxxxxxxcVcxxxxxxxx"xX""Xx
+             xx""x"xxxxxxxxxxc2cxxxxxxxxx"x"xxx
+             x"xxXxxxXxXxxxxxcVcxxxxxxxxxX"x"xx
+             xx""""x"x"xxxxxxcVcxxxxxxxxx"xXx"xx
+             xXxxxx"x"x"xxxxxcVcxxxxxxxxxx"xxx"x
+ xxxxxxxxxxxxxxxxx"xxxxx"xxxxcVcxxxxxxxxxxx"Xx"xxxxxxxxxxxxx
+ xcccccccccccccccHHHcccHHHccccJcccccccccccLLLLLLcccccccccccx
+ xwwwwwwwwmwWe....1..1....VVVVVVVVV....1...1...eWwmwwwwwwwwx
+ xwwwwwwwwmwWe.1.......1..VVVVVVVVV..1.......1.eWwmwwwwwwwwx
+ xccccccccccCCCccCCCccccccccccEccccccccccGGGcGGGcccccccccccx
+ xxxxxxxxxxxx"xxxx"xxxxxxxxxxcVcxxxxxxxxxx"xxx"xxxxxxxxxxxxx
+          xxxx"xx"xxxxxxxxxxxcVcxxxxxxxxxxx"x"xx
+          xxxx"x"xxxxxxxxxxxxcVcxxxxxxxxxxxx""Xx
+          xX""x"xXxxxxxxxxxxxc2cxxxxxxxXx"xX"xxx
+          xxxx"xxxxxxxxxxxxxxcVcxxxxxxxx"xx"x"xx
+           xxx""xXxXxxxxxxxxxcVcxxxxxxxx"x"xxx"x
+           xxXxx"""xxxxxxxxxxcVcxxxxxxxxx"xxxXxx
+           xxxx"xxx"xxxxxxxxxcVcxxxxxxxx"x"xxxxxxxxxxxxxxxxx
+           xccBBBcBBBcccccccccDccccccccFFFFFcccccccccccccccx
+           xc<...........1VVVVVVVVV.1.......1..eWwmwwwwwwwwx
+           xcA........1...VVVVVVVVV.....1......eWwmwwwwwwwwx
+           xcccccccccccccccccccccccccccccccccccccccccccccccx
+           xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

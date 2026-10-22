@@ -1,0 +1,62 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (sewer_sea)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:   sewer_sea
+DEPTH: Sewer
+TAGS:   no_item_gen no_monster_gen no_rotate no_pool_fixup
+ORIENT: encompass
+WEIGHT: 5
+MONS:   rat, rat / river rat w:5
+KMONS:  G = merfolk siren hd:3 name:sickly name_adjective name_species
+KMONS:  H = merfolk avatar hd:3 name:malarious name_adjective name_species
+KMONS:  hJ = frilled lizard / ball python / adder
+KMONS:  g = frilled lizard / ball python / giant cockroach / quokka
+SUBST:  1 = 1., 2 = 2., J = Jn, h = hW, g = gggW
+KFEAT:  gsh = W
+KFEAT:  O = open_sea
+COLOUR: gh = lightgreen
+COLOUR: HJ = blue
+KFEAT:  GnHJ = w
+COLOUR: G = green
+COLOUR: s = cyan
+KITEM:  M = potion of flight q:4 ident:type
+KITEM:  N = scroll of teleportation q:2 ident:type
+: vault.run("shared.setup")
+MAP
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO                        cccc       cccccccc
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO                       ccW.cc      cWW1.21c
+OOOnnnnnnnnnnnnnnnnnnnOOOOOOOOOOOOOO                     cccWWW.ccccccccW..c..c
+OOOnnnnnnnnnJnnnJnnnnnOOOOOOOOOOOOOO                     c<AWWWW...12....1.cc.c
+OOOnnnnnnnnnnnnnnnnnnnOOOOOOOOOOOOOO                     cccccccccccccccccccc.c
+OOOnnnJnnnnnJnnnscccccccccccccc  cccccccccccccccc ccccccccccwhwwwwwwwWwwwww2.1c
+OOOnnnnnnnnnnnns.+.....+...%Wwc  c1....1cc$$$.1McccwwWWWgWWhWWWWW..W..WW.Www2.c
+OOOnnnnnnnnHnnsW.ccccccc...%*Wc  c2ccccc.c.1.W.NcccwWWccccccccccccc11cccc.gwWwcc
+OOOnnnnnJnnnnnsW.ccc.1cc...%*Wc  c2cwwcc.ccccWcccwwwc.c           cccc  cc1.WWwc
+OOOnnnnnnnnnJnsW.ccc.1cc...*WWc ccwWgcwc.cGwwWWWWWWcc1c                  ccccccc
+OOOnnnnnnnnnnssWWccc1.cc<..WwccccwgWccwc.chwgWW..1...1c
+OOOnnnnnnnnsssWWhWWc.1ccccccccwwwhW.1cwWWcWWW..2ccccccc
+OOOnnnnnnnsssWWWWWWWWsswwwwwwwcWh..1ccccWWgW1.2cc
+OOOnnnnnnnnssshWWWWc.2cccccccccW.1.cc  cch11.ccc
+OOOnnnnnnnnnnssWgccc12c  cwg22.11ccc    cccccc
+OOOnnnnnnnnnnnssWcccc1cc cgWcccccc
+OOOnnnnnnnnnnnnsccccc.1ccc.1c
+OOOnnnnnnnnnnnnnsccccc1.11.cc
+OOOnnnnnnnnnnnnnnnnnnccccccc
+OOOnnnnnnnnnnnnnnnnnnnOOOOOOOOOOOOOO
+OOOnnnnnnnnnnnnnnnnnnnOOOOOOOOOOOOOO
+OOOnnnnnnnnnnnnnnnnnnnOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+ENDMAP

@@ -59,6 +59,9 @@ features.vault_terrain = {
     DNGN_STONE_STAIRS_DOWN_I = "DNGN_STONE_STAIRS_DOWN_I",
     [terrain.DNGN_ENTER_BAZAAR] = terrain.DNGN_ENTER_BAZAAR,
     [terrain.DNGN_EXIT_BAZAAR] = terrain.DNGN_EXIT_BAZAAR,
+    [terrain.DNGN_ENTER_SEWER] = terrain.DNGN_ENTER_SEWER,
+    [terrain.DNGN_EXIT_SEWER] = terrain.DNGN_EXIT_SEWER,
+    [terrain.DNGN_EXPIRED_PORTAL] = terrain.DNGN_EXPIRED_PORTAL,
     [terrain.DNGN_ENTER_PANDEMONIUM] = terrain.DNGN_ENTER_PANDEMONIUM,
     [terrain.DNGN_TRANSIT_PANDEMONIUM] = terrain.DNGN_TRANSIT_PANDEMONIUM,
     [terrain.DNGN_EXIT_PANDEMONIUM] = terrain.DNGN_EXIT_PANDEMONIUM,
@@ -114,6 +117,10 @@ features.named_vault_terrain = {
     -- policy checks the cell under the player.
     enter_bazaar = terrain.DNGN_ENTER_BAZAAR,
     exit_bazaar = terrain.DNGN_EXIT_BAZAAR,
+    enter_sewer = terrain.DNGN_ENTER_SEWER,
+    exit_sewer = terrain.DNGN_EXIT_SEWER,
+    expired_portal = terrain.DNGN_EXPIRED_PORTAL,
+    open_sea = terrain.DNGN_OPEN_SEA,
     -- Pan KFEAT names become live arch cells. Their original source names
     -- are mapped once here so every authored vault and Lua hook agrees.
     enter_pandemonium = terrain.DNGN_ENTER_PANDEMONIUM,

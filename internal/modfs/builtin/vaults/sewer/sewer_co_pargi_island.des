@@ -1,0 +1,71 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (sewer_co_pargi_island)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:    sewer_co_pargi_island
+DEPTH: Sewer
+TAGS:    no_item_gen no_monster_gen no_pool_fixup
+ORIENT:  encompass
+# Placing Pargi, he appears in one of three places. The water moccasin serves
+# as the back-up, in case Pargi was already placed in the Dungeon.
+SHUFFLE: PQR
+KMONS:   P = Pargi, water moccasin
+SUBST:   Q = .
+SUBST:   R = .
+#      lesser monsters.
+SUBST:   1 = 1w
+KFEAT:   1 = w
+COLOUR:  1 = green
+KMONS:   1 = frilled lizard / ball python w:5 / adder w:2
+#      loot
+SUBST:   e = !!!!????%
+: vault.run("shared.question_potions")
+: vault.run("shared.bang_scrolls")
+#      Randomized environment
+SUBST:   . = .WW
+SUBST:   X = xx.
+SUBST:   Y = xw
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxYYxxxYYYxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxYwwYYwwwwwYYwwxxxxxxxxxxxxxxxx
+xxxxxxxxxxYwwwwwwwwwwwwwwwwwxxxxxxxxxxxxxxx
+xxxxxxxxxxYwwwwwwwwwwwwwwwwwwxxxxxxxxxxxxxx
+xxxxxxxxYYwwwwwwwww1wwwwwwwwwwYxxxxxxxxxxxx
+xxxxxxxYwwwwwwwwwwwwwwwwwww1wwwYxxxxxxxxxxx
+xxxxxxYwwwwwwwwwwwwwwwwwwwwwwwwwwxxxxxxxxxx
+xxxxxxwwwww1wwwww....wwwwwwwwwwwwYxxxxxxxxx
+xxxxxYwwwwwwwww..XXXX..wwwwwwwwwwwYxxxxxxxx
+xxxxxwww1wwwww.XXxxxxXXQ.wwwwwww1wwwYxxxxxx
+xxxxYwwwwwww...XxxxxxxxxX..wwwwwwwwwwxxxxxx
+xxxxYwwwwww.XXXxxxxxxxxxxxX..wwwwwwwwYxxxxx
+xxxYwwwwww.XxxxxxxxxxxxxxxxxX.www1wwwwYxxxx
+xxxYwwwww.XxxxxxxxxxxxxxxxxxxX.wwwwwwwwYxxx
+xxxxYwwww.XxxxxxxxxxxxxxxxxxxX.wwwwwwwwYxxx
+xxxxYwwwww.XxxxxxxxcccccxxxxxX.wwwwwwwYxxxx
+xxxYwwwwww.Xxxxxxxxceeeccccccc.wwwwwwwYxxxx
+xxxYwwwwwww.Xxxxxxxce<....P...wwwwwwwwYxxxx
+xxYwwwwwwwwwAXxxxxxceeeccccccc.wwww1wwYxxxx
+xxYwwww1wwww<XxxxxxcccccxxxxxX.wwwwwwwYxxxx
+xxxYwwwwwww.XxxxxxxxxxxxxxxxxxX.wwwwwwYxxxx
+xxxxwwwwww.XxxxxxxxxxxxxxxxxxxX.wwwwwwYxxxx
+xxxxYwwwwww.XXxxxxxxxxxxxxxxxX.wwwwwwwwYxxx
+xxxYwwwwwwww..XXxxxxxxxxxxxxX.wwwwwwwwYxxxx
+xxxYwwwwwwww..XXxxxxxxxxxxXXX.wwwwwwwwYxxxx
+xxxxwwwwwwwwww..XxxxxxxxxX...wwwww1wwwwYxxx
+xxxxYwwww1wwwwww.XxxxxxXX.wwwwwwwwwwwwwYxxx
+xxxxxwwwwwwwwwww.XxxxxXR.wwwwwwwwwwwwwYxxxx
+xxxxYwwwwwwwwwwww.XXXX.wwwwwww1wwwwwYYxxxxx
+xxxxxYwwwwwwwwwwww....wwwwwwwwwwwwwYxxxxxxx
+xxxxxxYwwwww1wwwwwwwwwwwwwwwwwwwwwYxxxxxxxx
+xxxxxxYwwwwwwwwwwwwwwwwww1wwwwwwwYxxxxxxxxx
+xxxxxxYwwwwwwwwww1wwwwwwwwwwwwwYYxxxxxxxxxx
+xxxxxxxYwwwwwwwwwwwwwwwwwwwwwwYxxxxxxxxxxxx
+xxxxxxxYwwwwwwwwwwwwwwwwwwwwwYxxxxxxxxxxxxx
+xxxxxxxxYxYwwwwwwYYwwwwwwwYYwYxxxxxxxxxxxxx
+xxxxxxxxxxxxYYYYxxxYYYxYYYxxYYxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

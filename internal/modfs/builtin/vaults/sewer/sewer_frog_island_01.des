@@ -1,0 +1,52 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (sewer_frog_island_01)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:     sewer_frog_island_01
+DEPTH: Sewer
+TAGS:     no_item_gen no_monster_gen no_pool_fixup
+ORIENT:   encompass
+SUBST:    - = WWW.
+SHUFFLE:  |de
+: vault.run("shared.loot_scrolls")
+ITEM:     scroll of blinking ident:all
+MONS:     frilled lizard w:20 / ball python / giant cockroach w:20 / \
+          quokka / adder w:8
+NSUBST:   . = 72 = 1.. / *:.
+NSUBST:   ! = 1:! / 1:!!!!. / *:w
+KFEAT:    ! = w
+COLOUR:   ! = green
+KMONS:    ! = bullfrog
+SUBST:    ~ = .
+: vault.run("shared.setup")
+MAP
+ccccccccccccccccccccccccccccccccccc
+c...---------.....................c
+c.WWW-ccccccccccccccccccccccc.WWW.c
+c.WwWWccccccccccccccccccccccc.WwW.c
+c.WwwWccccccccccccccccccccccc.WwW.c
+c.WwW.ccccccccccccccccccccccc.WwW-c
+c.WwwWccccccc!!!!!!cccccccccc-WwW-c
+c.Wwwwccccwwwwwwwww!!!ccccccc-WwW-c
+c-WwwwccwwwWwwwwwwwwww!cccccc-WwW-c
+c-WwwwcwwWW<-wwwwwwwwww!ccccc-WwW-c
+c-Wwwwwwww-..-ww.--wwwww!cccc-WwW-c
+c-WwWwwWww---.-e*.--wwwwwcccc-WwW-c
+c-WwWWWwWww-.--***.wwwwwwcccc-WwW.c
+c-WwWWwwwWww.---d-wwwwwwwcccc-WwW.c
+c-WwWWWwwwW------wwwwwwwwcccc.WwW.c
+c-WwWWWwwwwW---wwwwwwWwwccccc.WwW.c
+c-WwW.WwwwwwwwwwwwwwWwwwccccc-WwW.c
+c.WwW.WwwwwwWWwwwwwwwWccccccc-WwW-c
+c.WwWW..WWWWwwWwWW.........---Www-c
+c.WwwWWWWwwwWWwWWWWWWWWWWWWWWWWwW-c
+c.WWwwwwwwwwwwwwwwwwwwwwwwwwwwwwW.c
+c..WWWWWWWWWWWWWWWWWWWWWWWWWWWWwW-c
+cc........................----WwW-c
+ cccccccccccccccccccccccccccc-WwW-c
+                     cccccccc-WwW-c
+              cccccccc~----WWWWwW.ccccxxx
+              c~<~A~~--W-WWWWWWwwwwwwwwwx
+              cccccccc~-~~WW-.WWW.cccccxx
+                     cccccccc.....c
+                            ccccccc
+ENDMAP

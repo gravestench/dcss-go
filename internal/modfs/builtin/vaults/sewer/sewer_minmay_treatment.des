@@ -1,0 +1,56 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (sewer_minmay_treatment)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:   sewer_minmay_treatment
+DEPTH: Sewer
+TAGS:   no_item_gen no_monster_gen no_pool_fixup
+ORIENT: encompass
+MONS:   rat / river rat w:3
+MONS:   kobold / kobold brigand w:1
+MONS:   ball python / adder w:5 / frilled lizard w:2 / endoplasm w:1
+SUBST:   y : yyyyyyW., Y : YYYYYYWw
+SUBST:   y = W., Y = Ww
+: vault.run("shared.loot_mixed")
+: vault.run("shared.setup")
+: vault.run("shared.clear_stone_window")
+KFEAT:  C = deep_water
+SUBST:  1 = 1., 2 = 2.
+NSUBST: - = 64 = 1... / 32 = 3... / *:., d = 4:d / *=d.
+MAP
+vvvvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvvvv
+vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
+vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
+vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
+vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
+vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
+vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
+vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
+vwwvvvvvvvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvvvvvvvCCv
+vwwnddv..vxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx--v.2vddnCCv
+vwwnd222.v----xxxxxxx-----xxxxxxx--xxxxxx-------v.222dnCCv
+vwwvv222.+------xxxx--------xxxx-----xxx--------+.222vvCCv
+vwwnd222.v------------xxx-----------------------v.222dnCCv
+vwwnddv2.vyyy----------xxx-------xx-----------yyv..vddnCCv
+vwwvvvvvvvYYyy--xx-----xx--------xxxx------xxyyYvvvvvvvCCv
+vwwwwwwwwwwYYyyxxxx...............xx....yyxxYYYYwcwcCcCCCv
+vwwwwwwwwwwwYYYYYYxxyyyyyy.........yyyyyyYYYYwwwcwcwcCCCCv
+vwwwwwwwwwwwwwwwwYYYYYYYYyyyyyyyyyyyYYYYYYwwwwwwwcwcCcCCCv
+vwwwwwwwwwwwwwwwwwwwwwwwYYYYYYWYYYYYYwwwwwwwwwwwcwcwcCCCCv
+vwwwwwwwwwwwwwwwwwwwwwwwwwYYYWYYYYYwwwwwwwwwwwwwwcwcCcCCCv
+vwwwwwwwwwwwwwwwwwwwwwwwwYYyyyyyyyYYYYwwwwwwwwwwcwcwcCCCCv
+vwwvvvvvvvwwwwwYYYYYYYYYYYyy.....yyyyYYYYwwwwwwwvvvvvvvCCv
+vwwnd.v..vYYYYYYyyyyyyyyyyy........yyyyyYYYYYYYYv..v.dnCCv
+vwwn.22..vyyyyyyy......................yyyyyyyyyv...22nCCv
+vwwvv222.+......................................+.222vvCCv
+vwwn..2..v...........xx.........................v..2..nCCv
+vwwnd.v..vx..11111.xxxxx.......xx...............v..v.dnCCv
+vwwvvvvvvvxxxx111xxxxxx...xx..xxxxx.11111xxx..xxvvvvvvvCCv
+vwwvxxxxxxxxxxxxxxxxx<..xxxxx..xxxxxx111xxxxxxxxxxxxxxvCCv
+vwwvxxxxxxxxxxxxxxxxxxxxxxxxxx..AxxxxxxxxxxxxxxxxxxxxxvCCv
+vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
+vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
+vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
+vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
+vwwvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvCCv
+vvvvxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxvvvv
+ENDMAP

@@ -414,6 +414,18 @@ its authored shops and exit. Bazaar shops apply the source bargain and
 stock depth rules. The player's saved visit points to the outside arch;
 leaving retires the market and its stock. Restore validates portal markers,
 the active map, and the reciprocal return pointer.
+The Sewer portal corpus now includes all 15 source D:3–6 entrance maps and
+19 source one-floor Sewer maps. A `chance_sewer` entry creates one saved ECS
+drain clock for the source 600–800-turn lifetime. Global action time closes
+the drain even while its Dungeon floor is inactive. An accepted entry stages
+one weighted source Sewer map through the ordinary vault population path;
+its exit returns to the saved outside cell and retires the temporary floor.
+Restore checks the source marker, deadline, selected layout, exit, and
+reciprocal visit. The two source discovery messages fire on first arrival;
+the timer's changing rust-noise cadence is not yet connected to messaging.
+Terrain, keyed entities, and other source records survive in the
+saved level, but broader gameplay for some authored features remains tied
+to their respective domain slices.
 The four-map `serial_nicolae_subway` family adds its controller and three
 linked stations. Its named markers pair across separately placed stations,
 paint one-way transporters and landings, and retain their links in saved level

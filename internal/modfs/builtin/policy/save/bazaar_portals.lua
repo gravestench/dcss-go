@@ -29,7 +29,7 @@ local function expected_markers(levels)
 
         for index, record in ipairs(level.vault_records or {}) do
             if record.kind == effects.MARKER and
-                portal.is_marker(record.identity) and
+                portal.is_marker(record) and
                 not record.overridden and not record.pending then
                 if not used[record.source_id] then
                     error("Bazaar marker has no placed source vault")

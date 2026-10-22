@@ -1,0 +1,39 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (sewer_hellmonk_bad_rat)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:   sewer_hellmonk_bad_rat
+DEPTH: Sewer
+TAGS:   no_item_gen no_monster_gen no_pool_fixup
+ORIENT: encompass
+ITEM:   any potion / any scroll
+: vault.run("shared.loot_potions")
+: vault.run("shared.loot_scrolls")
+MONS:   rat, river rat
+KMONS:  3 = hell rat
+NSUBST: - = 20 = 1... / 8 = 2... / *:.
+SUBST:  . = WWW..
+SUBST:  d = ddddef*
+KFEAT:  3 = shallow_water
+COLOUR: 3 = lightgreen
+: vault.run("shared.setup")
+MAP
+    xxxxxxx
+  xxxx---xxxx
+  xx-------xx
+ xxx-------xxx
+ xx---ccc---xx
+xxx..cc.cc--xxx
+xx...c...c---xx
+xx..ccd.Wcc--xx
+xx..cddWW.c--xx
+xxA<c<d3WW+--xx
+xx..cddWW.c--xx
+xx..ccd.Wcc--xx
+xx...c...c---xx
+xxx..cc.cc--xxx
+ xx---ccc---xx
+ xxx-------xxx
+  xx-------xx
+  xxxx---xxxx
+    xxxxxxx
+ENDMAP

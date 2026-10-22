@@ -3,16 +3,23 @@
 local bazaar = require("constants.bazaar")
 local component = require("constants.component")
 local streams = require("constants.rng_streams")
+local vaults = require("policy.generation.vaults.catalog")
 
 local portal = {}
 
 -- Only source Bazaar marker constructors belong to this owner. Other
 -- legacy marker records remain available to their own domains.
-function portal.is_marker(identity)
-    return type(identity) == "string" and
-        (identity:sub(1, #bazaar.TIMED_MARKER) == bazaar.TIMED_MARKER or
-            identity:sub(1, #bazaar.ONE_WAY_MARKER) ==
-                bazaar.ONE_WAY_MARKER)
+function portal.is_marker(record)
+    local identity = record and record.identity
+
+    if type(identity) ~= "string" or
+        (identity:sub(1, #bazaar.TIMED_MARKER) ~= bazaar.TIMED_MARKER and
+            identity:sub(1, #bazaar.ONE_WAY_MARKER) ~=
+                bazaar.ONE_WAY_MARKER) then
+        return false
+    end
+
+    return vaults.get(record.source_id).family == "bzr_entry"
 end
 
 -- The DES hook already resolved source depth-dependent bounds. Parse their

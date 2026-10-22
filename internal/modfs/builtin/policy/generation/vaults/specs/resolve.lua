@@ -818,6 +818,7 @@ function resolve.monster(ctx, selected, depth, site)
         database_name = selected.database_name,
         custom_name = selected.custom_name or (salt_base and name),
         name_adjective = selected.name_adjective or false,
+        name_species = selected.name_species or false,
         tile = selected.tile,
         hp = selected.hp,
         hd = selected.hd,

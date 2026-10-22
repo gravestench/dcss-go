@@ -143,6 +143,10 @@ local function parse_term(text, expression, site)
             result.patrolling = true
         elseif token == "name_adjective" then
             result.name_adjective = true
+        elseif token == "name_species" then
+            -- Source corpses use the authored species name as-is, while
+            -- display still combines the adjective with the base species.
+            result.name_species = true
         elseif token == "generate_awake" then
             -- The source modifier is separate from the monster's display
             -- name. It overrides the ordinary sleeping start of a hostile

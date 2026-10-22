@@ -1,0 +1,25 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (cheibrodos_sewer_entry_drain)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME: cheibrodos_sewer_entry_drain
+DEPTH: D:3-6
+TAGS: uniq_sewer no_monster_gen chance_sewer
+CHANCE: 800
+TAGS: no_monster_gen
+ORIENT: float
+KMONS: 1 = rat / ball python / giant cockroach / worm
+NSUBST: 1 = 2:1 / 2=1.. / *:.
+: vault.run("shared.portal")
+MAP
+  ...@...
+ ..x1.1x..
+...WWWWW...
+.xWWWWWWWx.
+.1WWWWWWW1.
+@.WWWOWWW.@
+.1WWWWWWW1.
+.xWWWWWWWx.
+...WWWWW...
+ ..x1.1x..
+  ...@...
+ENDMAP

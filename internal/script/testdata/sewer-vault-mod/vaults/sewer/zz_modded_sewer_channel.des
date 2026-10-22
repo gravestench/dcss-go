@@ -1,0 +1,14 @@
+# One additional whole-floor Sewer joins the effective source pool by path.
+NAME: zz_modded_sewer_channel
+DEPTH: Sewer
+WEIGHT: 5000
+TAGS: no_monster_gen
+ORIENT: encompass
+KFEAT: < = exit_sewer
+MAP
+xxxxx
+x...x
+x.<.x
+x...x
+xxxxx
+ENDMAP

@@ -1,0 +1,69 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (sewer_co_tree)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:   sewer_co_tree
+DEPTH: Sewer
+TAGS:   no_item_gen no_monster_gen no_pool_fixup
+ORIENT: encompass
+MONS:   kobold / kobold brigand
+MONS:   adder / ball python / worm
+MONS:   endoplasm / rat / river rat w:5
+# less water in the middle, more at the endpoints.
+SUBST:  ~ = WWWW.
+SUBST:  - = WW...
+SUBST:  " = W...
+NSUBST: ? = 4=ef / *=112233
+: vault.run("shared.e_potions")
+: vault.run("shared.f_scrolls")
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxcccccccccccccccccccccxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxc?c?c?c?cxxxc?c?c?c?cxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxcWcWcWcWcxxxcWcWcWcWcxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxcWcWcWcWcxxxcWcWcWcWcxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxcWcWcWcWcxxxcWcWcWcWcxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxx~~~x~~~xxxxx~~~x~~~xxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx~xxx~xxxxxxx~xxx~xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx~xxx~xxxxxxx~xxx~xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx~xxx~xxxxxxx~xxx~xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx~~~~~xxxxxxx~~~~~xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxx~~~xxxxxxxxx~~~xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxx-~-xxxxxxxxx-~-xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxx-~-xxxxxxxxx-~-xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxx-~-xxxxxxxxx-~-xxxxxxxxxxxxxxxxx
+cccccxxxxxxxxxxxx-~--xxxxxxx--~-xxxxxxxxxxxxccccc
+c?WWW~xxxxxxxxxxx-~~--xxxxx--~~-xxxxxxxxxxx~WWW?c
+ccccc~~~~~xxxxxxxx--~-~~~~~-~--xxxxxxxx~~~~~ccccc
+c?WWW~xxx~~-----xxxx-~~~~~~~-xxxx-----~~xxx~WWW?c
+cccccxxxx~~~~~~~-xxxx---~---xxxx-~~~~~~~xxxxccccc
+c?WWW~xxx~~----~-xxxx~--~--~xxxx-~----~~xxx~WWW?c
+ccccc~~~~~xxxx--~-xx~---~---~xx-~--xxxx~~~~~ccccc
+c?WWW~xxxxxxxxx--~-~----~----~-~--xxxxxxxxx~WWW?c
+cccccxxxxxxxxxxx~~-----"""-----~~xxxxxxxxxxxccccc
+cxxxxxxxxxxxxxxx~~----"..."----~~xxxxxxxxxxxxxxxc
+cxxxxxxxxxxxxxxx~~~~~~"A.<"~~~~~~xxxxxxxxxxxxxxxc
+cxxxxxxxxxxxxxxx~~----"..."----~~xxxxxxxxxxxxxxxc
+cccccxxxxxxxxxxx~~-----"""-----~~xxxxxxxxxxxccccc
+c?WWW~xxxxxxxxx--~-~----~----~-~--xxxxxxxxx~WWW?c
+ccccc~~~~~xxxx--~-xx~---~---~xx-~--xxxx~~~~~ccccc
+c?WWW~xxx~~----~-xxxx~--~--~xxxx-~----~~xxx~WWW?c
+cccccxxxx~~~~~~~-xxxx~--~---xxxx-~~~~~~~xxxxccccc
+c?WWW~xxx~~-----xxxx-~~~~~~~-xxxx-----~~xxx~WWW?c
+ccccc~~~~~xxxxxxxx--~-~~~~~-~--xxxxxxxx~~~~~ccccc
+c?WWW~xxxxxxxxxxx-~~--xxxxx--~~-xxxxxxxxxxx~WWW?c
+cccccxxxxxxxxxxxx-~--xxxxxxx--~-xxxxxxxxxxxxccccc
+xxxxxxxxxxxxxxxxx-~-xxxxxxxxx-~-xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxx-~-xxxxxxxxx-~-xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxx-~-xxxxxxxxx-~-xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxx~~~xxxxxxxxx~~~xxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx~~~~~xxxxxxx~~~~~xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx~xxx~xxxxxxx~xxx~xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx~xxx~xxxxxxx~xxx~xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxx~xxx~xxxxxxx~xxx~xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxx~~~x~~~xxxxx~~~x~~~xxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxcWcWcWcWcxxxcWcWcWcWcxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxcWcWcWcWcxxxcWcWcWcWcxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxcWcWcWcWcxxxcWcWcWcWcxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxc?c?c?c?cxxxc?c?c?c?cxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxcccccccccccccccccccccxxxxxxxxxxxxxx
+ENDMAP

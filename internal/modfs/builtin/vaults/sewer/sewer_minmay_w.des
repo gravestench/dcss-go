@@ -1,0 +1,54 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (sewer_minmay_w)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME:    sewer_minmay_w
+DEPTH: Sewer
+TAGS:    no_item_gen no_monster_gen no_pool_fixup
+ORIENT:  encompass
+SHUFFLE: de
+MONS:    rat / river rat w:2
+MONS:    ball python / adder w:5 / frilled lizard w:2 / endoplasm w:1
+MONS:    bullfrog
+NSUBST:  - = 108 = 1... / *:.
+SUBST:   2 = 2.
+: vault.run("shared.loot_potions")
+: vault.run("shared.loot_scrolls")
+ITEM:    any scroll / any potion
+SUBST:   y : yyyyyyW., Y : YYYYYYWw, z = x., Z = wwwxx
+SUBST:   y = W., Y = Ww
+SUBST:   c = c x:1
+NSUBST:  d = 2:d / *=d..., e = 2:e / *=e...
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxcccccxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxcccccc2-2ccccccxxxxxxxxxxxxxxxx
+xccccccxxxxxxxxcc2--22---22--2ccxxxcccccccccccx
+cc....ccxxxxxxcc---------------ccxxcdedcc32.3cc
+c......cxxxxxxc-------c---------cxxce<e+22.222c
+c..<A..cxxxxxcc------cc+cc------ccxcdedc22..22c
+c......cxxxxxc------cccffcc------cxccccc222..2c
+czyyyyzcxxxxxczyyyyzcxcddcczyyyyzcxxxxxczyyyyzc
+cYYWYYYcxxxxxcYYWYYYcxcccccYYYYWYcxxxxxcYYZWYYc
+cwYWYYwcxxxxxcwYWYwwcxxxxxcwwwYWYcxxxxxcYYWYwYc
+cwYYWYwcxxxxxcwYWYYwcxxxxxcwwYYWYcxxxxxcwYWYYwc
+cwwYWYwcxxxxxcwwYWYwcxxxxxcwYYWYYcxxxxxcwYWWYwc
+cwwYWYwcxxxxxcwwYWZYcxxxxxcYWWYYwcxxxxxcwYYWZYc
+cwYZWYwcxxxxxcwwYZWYcxxxxxcWYYYwwcxxxxxcwwYZWYc
+cwYWZYwcxxxxxcwwwYWYcxxxxxcWWYYwwcxxxxxcwwwY.Yc
+cw.WYwwcxxxxxcwwwYYWcxxxxxcZyyyyZcxxxxxcwwwY.Yc
+cwYWZYwcxxxxxcwwwZY.cxxxxxcyy%%ywcxxxxxcwwYZWYc
+cwYZW.wcxxxxxcwwwYYWcxxxxxcZyyyyZcxxxxxcwwYWZYc
+cwwYWYwcxxxxxcwwwYWYcxxxxxcwwYYWWcxxxxxcwYYWYwc
+cwwYWYwcxxxxxcwwYZWYcxxxxxcwwwYYWcxxxxxcwYWWYwc
+cwwYWYwcxxxxxcwwYWZYcxxxxxcwYYWWYcxxxxxcwYWYYwc
+cwwYWYwcxxxxxcwYYWYwcxxxxxcwYWYYwcxxxxxcwYWYwYc
+cYYYWYYcxxxxxcwYWYwwcxxxxxcYYWYYYcxcccccYYWYYYc
+czyyyyzcxxxxxczyyyyzcxxxxxczyyyyzcxceecczyyyyzc
+c------ccxxxcc------cxxxxxc2-----cccffcc-----2c
+cc------ccxcc------ccxxxxxcc------cc+cc2-----cc
+xc-------ccc-------cxxxxxxxc2------c2-------2cx
+xcc------2-2------ccxxxxxxxcc2-------------2ccx
+xxcccc---------ccccxxxxxxxxxcccc-2------2ccccxx
+xxxxxcccc2-2ccccxxxxxxxxxxxxxxxcccc2-2ccccxxxxx
+xxxxxxxxcccccxxxxxxxxxxxxxxxxxxxxxcccccxxxxxxxx
+ENDMAP

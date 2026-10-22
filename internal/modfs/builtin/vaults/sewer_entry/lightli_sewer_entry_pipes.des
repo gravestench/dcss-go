@@ -1,0 +1,28 @@
+# Source: crawl-ref/source/dat/des/portals/sewer.des (lightli_sewer_entry_pipes)
+# This map retains source geometry and directive order; named Lua
+# hooks implement its executable source declarations.
+NAME: lightli_sewer_entry_pipes
+DEPTH: D:3-6
+TAGS: uniq_sewer no_monster_gen chance_sewer
+CHANCE: 800
+NSUBST: o = 1:O / *:W
+SUBST: W = WWWWW1
+KMONS: 1 = river rat / adder / rat / worm
+: vault.run("shared.portal")
+MAP
+vvvvvvvvvv
+vovWovWvvv
+vWvWvvWWWv
+vWvWvvWvWv
+vWvWWvWvWv
+vWvvWvWvWv
+vWWWWvWvWv
+vvvvWvWvWv
+vWWWWWWvov
+vWvvvvvvvv
+vWWWWWWWWW
+vvvvWvWvWW
+..WWWWW.W.
+....W.....
+..........
+ENDMAP

@@ -4,6 +4,7 @@ local generated = require("policy.generation.generated")
 local abyss = require("policy.generation.abyss")
 local pan = require("policy.generation.pan.region")
 local bazaar = require("policy.generation.bazaar.level")
+local sewer = require("policy.generation.sewer.level")
 local hell_vestibule = require("policy.generation.hell.vestibule")
 local branch_catalog = require("policy.catalog")
 local categories = require("constants.catalog")
@@ -193,6 +194,11 @@ function module.bazaar(ctx, input)
     return bazaar.generate(ctx, input)
 end
 
+-- A first Sewer visit stages one source map without adding ordinary stairs.
+function module.sewer(ctx, input)
+    return sewer.generate(ctx, input)
+end
+
 -- Stage one persistent Hell subbranch floor. Its source up exits become
 -- typed return arches only after keyed DES features have been projected.
 function module.hell_floor(ctx, input)
@@ -232,6 +238,11 @@ register.policy({
 register.policy({
     id = "world.generate_bazaar_level",
     run = module.bazaar,
+})
+
+register.policy({
+    id = "world.generate_sewer_level",
+    run = module.sewer,
 })
 
 register.policy({

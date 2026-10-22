@@ -2,6 +2,11 @@
 -- consumables. Keeping them together lets map hooks import one name rather
 -- than repeat ten item expressions and drift when the catalog changes.
 local loot = {
+    -- The source's ordinary auxiliary-armour pool has equal alternatives.
+    -- Keep it shared so DES hooks cannot drift on one equipment subtype.
+    AUX_ARMOUR =
+        "cloak / scarf / helmet / hat / pair of gloves / pair of boots",
+
     GOOD_SCROLLS =
         "w:120 scroll of identify no_pickup / " ..
         "w:55 scroll of identify no_pickup q:2 / " ..

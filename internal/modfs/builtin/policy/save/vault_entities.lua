@@ -90,6 +90,8 @@ local function validate_actor_overrides(ctx, entity, record, arguments)
         (arguments.god_id or "") ~= "" or #spells > 0
         or (arguments.hp or 0) > 0 or (arguments.hd or 0) > 0
         or (arguments.custom_name or "") ~= ""
+        or (arguments.name_adjective or false)
+        or (arguments.name_species or false)
         or (arguments.database_name or "") ~= ""
         or (arguments.tile or "") ~= ""
     local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
@@ -122,6 +124,7 @@ local function validate_actor_overrides(ctx, entity, record, arguments)
         overrides.hit_dice ~= expected_hd or
         overrides.custom_name ~= (arguments.custom_name or "") or
         overrides.name_adjective ~= (arguments.name_adjective or false) or
+        overrides.name_species ~= (arguments.name_species or false) or
         overrides.database_name ~= (arguments.database_name or "") or
         overrides.tile ~= (arguments.tile or "") or
         #overrides.spells ~= #spells then
