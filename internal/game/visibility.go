@@ -68,6 +68,7 @@ func (g *Game) refreshVisibility() error {
 	g.visibleLevelID = position.LevelID
 
 	seenKinds := make([]any, 0)
+	seenFloorItemIDs := make([]any, 0)
 
 	for _, entity := range g.stores.Positions.Entities() {
 		location, found := g.stores.Positions.Get(entity)
@@ -86,6 +87,7 @@ func (g *Game) refreshVisibility() error {
 
 		if item, found := g.stores.Items.Get(entity); found {
 			seenKinds = append(seenKinds, item.KindID)
+			seenFloorItemIDs = append(seenFloorItemIDs, uint64(entity))
 		}
 	}
 
@@ -102,7 +104,8 @@ func (g *Game) refreshVisibility() error {
 	}
 
 	if _, err := g.scripts.Policy("character.record_seen_items", map[string]any{
-		"kind_ids": seenKinds,
+		"kind_ids":       seenKinds,
+		"floor_item_ids": seenFloorItemIDs,
 	}); err != nil {
 		return err
 	}

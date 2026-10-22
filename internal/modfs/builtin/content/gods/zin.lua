@@ -14,6 +14,7 @@ local definition = {
     piety_mode = modes.ORDINARY,
     good = true,
     rejects_all_forms = true,
+    behavior_module = "policy.religion.gods.zin",
 }
 
 register.definition(categories.GODS, definition)

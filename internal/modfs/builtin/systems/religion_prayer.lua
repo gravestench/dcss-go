@@ -2,6 +2,7 @@
 -- that changes worship at an altar. The Lua owner validates the saved altar
 -- again, joins its god, and identifies unknown altars for later visits.
 local component = require("constants.component")
+local channels = require("constants.message_channels")
 local intents = require("constants.intent")
 local prayer = require("policy.religion.prayer")
 
@@ -22,7 +23,7 @@ function system.update(ctx, actor)
 
     local message = prayer.resolve(ctx, actor, intent)
 
-    ctx:emit("religion", message)
+    ctx:emit(channels.RELIGION, message)
 end
 
 register.system({

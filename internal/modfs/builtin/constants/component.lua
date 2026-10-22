@@ -33,6 +33,7 @@ local component = {
     FOLLOWER = "core.follower",
     INTENT = "core.intent",
     ITEM = "core.item",
+    GOLD_TITHE = "item.gold_tithe",
     -- Inventory and shop components distinguish a catalog kind from the
     -- particular stack, owner, stock offer, or identification state.
     WALLET = "character.wallet",

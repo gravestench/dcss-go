@@ -1,10 +1,12 @@
 local catalog = require("policy.catalog")
+local categories = require("constants.catalog")
 local component = require("constants.component")
 local classes = require("ids.object_classes")
-local item_ids = require("ids.items")
+local gods = require("constants.gods")
+local limits = require("constants.wallet_limits")
 
 local wallet = {}
-local maximum = 9007199254740991
+local maximum = limits.MAX_EXACT
 
 -- Require the saved wallet component for every transaction; silently
 -- starting from zero would erase the player's recorded purchases.
@@ -49,7 +51,8 @@ function wallet.record_level_gold(ctx, player, level_id)
         local item = ctx:get(entity, component.ITEM)
 
         if floor.level_id == level_id and
-            item.kind_id == item_ids.OBJ_GOLD and
+            catalog.get(categories.ITEMS, item.kind_id).class ==
+                classes.OBJ_GOLD and
             not ctx:has(entity, component.CARRIED_BY) and
             not ctx:has(entity, component.SHOP_STOCK) then
             if not valid_amount(item.quantity) or item.quantity == 0 or
@@ -98,6 +101,25 @@ function wallet.pickup(ctx, player, gold_entity)
         ctx:has(gold_entity, component.SHOP_STOCK) or
         not valid_amount(item.quantity) or item.quantity == 0 then
         error("gold pickup requires a floor gold item")
+    end
+
+    local worship = ctx:get(player, component.RELIGION_WORSHIP)
+
+    if worship and worship.god_id ~= gods.NO_GOD then
+        local definition = catalog.get(categories.GODS, worship.god_id)
+        local handler = definition.behavior_module and
+            require(definition.behavior_module)
+
+        -- A god may own a gold transaction without adding a case to the
+        -- common wallet. The named method receives the checked floor pile.
+        if handler and handler.gold_pickup then
+            local credited = handler.gold_pickup(ctx, player,
+                gold_entity, item.quantity)
+
+            ctx:destroy(gold_entity)
+
+            return credited
+        end
     end
 
     if state.gold > maximum - item.quantity then

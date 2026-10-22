@@ -1558,6 +1558,21 @@ exception method. For example, `policy/religion/gods/ru.lua` schedules a
 saved sacrifice offer instead of pretending Ru earns ordinary piety;
 `gozag.lua` deducts the source service fee from the saved wallet when joining.
 
+`policy/religion/gods/zin.lua` taxes untithed carried gold on joining and
+floor gold on pickup. Its `mark_seen` method records whether each gold entity
+was first seen while worshipping Zin. That item state survives save and
+conversion: a pile seen before joining still pays a cash tithe, but gives no
+piety. Gold from acquirement carries an `acquired` flag from item generation
+and uses Zin's capped piety formula. `character.wallet` keeps paid
+`donations` and the fractional `tithe_base` between piles, so ten single
+pieces owe the same one-piece tithe as a ten-piece stack. A mod introducing
+another gold source should put its source facts on `item.gold_tithe` and let
+the wallet pickup path invoke Zin; it should not duplicate tithe arithmetic.
+Import `constants.zin_tithe_state` for an exempt or late-donation pile.
+For a new god with a gold rule, export `gold_pickup(ctx, player, entity,
+quantity)` from its named behavior module. The wallet validates the floor
+pile and destroys it after this method returns the credited amount.
+
 The order matters: `prepare` runs after the new god is set; the Monk bonus
 and good-god transfer run next; `join` follows; then the ecumenical bonus is
 applied. A named `leave` runs after the shared owner has cleared current

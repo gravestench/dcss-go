@@ -44,7 +44,9 @@ function system.update(ctx, actor)
             if definition.class == classes.OBJ_GOLD then
                 local amount = wallet.pickup(ctx, actor, entity)
 
-                ctx:emit("pickup", "You pick up " .. amount .. " gold pieces.")
+                if amount > 0 then
+                    ctx:emit("pickup", "You pick up " .. amount .. " gold pieces.")
+                end
 
                 return
             end

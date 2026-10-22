@@ -7,6 +7,7 @@ local channels = {
     SPELL = "spell",
     SOUND = "sound",
     READ = "read",
+    RELIGION = "religion",
     MONSTER = "monster",
     VAULT = "vault",
     HELL_EFFECT = "hell_effect",

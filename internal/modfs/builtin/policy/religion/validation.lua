@@ -3,6 +3,8 @@
 local component = require("constants.component")
 local gods = require("constants.gods")
 local limits = require("constants.piety")
+local tithe_rules = require("constants.zin_tithe_rules")
+local wallet_limits = require("constants.wallet_limits")
 local categories = require("constants.catalog")
 
 local validation = {}
@@ -66,8 +68,16 @@ function validation.check(ctx, player)
 
     local wallet = ctx:get(player, component.WALLET)
 
-    if wallet and (wallet.gold < 0 or wallet.generated_gold < 0 or
-        wallet.gozag_gold_used < 0) then
+    if wallet and (wallet.gold < 0 or
+        wallet.gold > wallet_limits.MAX_EXACT or
+        wallet.generated_gold < 0 or
+        wallet.generated_gold > wallet_limits.MAX_EXACT or
+        wallet.gozag_gold_used < 0 or
+        wallet.gozag_gold_used > wallet_limits.MAX_EXACT or
+        wallet.donations < 0 or
+        wallet.donations > wallet_limits.MAX_EXACT or
+        wallet.tithe_base < 0 or
+        wallet.tithe_base >= tithe_rules.DIVISOR) then
         error("invalid worship wallet counters")
     end
 

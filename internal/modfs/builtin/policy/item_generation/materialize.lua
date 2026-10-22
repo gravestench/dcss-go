@@ -1,6 +1,8 @@
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local items = require("policy.inventory.items")
+local classes = require("ids.object_classes")
+local purpose = require("constants.item_generation_purpose")
 
 local materialize = {}
 
@@ -81,6 +83,22 @@ function materialize.create(ctx, result, location)
 
     for _, name in ipairs(names) do
         ctx:add(entity, name, result.components[name])
+    end
+
+    -- Acquirement gold pays the normal cash tithe but uses capped piety.
+    -- Merge this source fact with any mod-supplied gold state so the caller
+    -- can also mark stolen or otherwise exempt gold without a duplicate add.
+    if definition.class == classes.OBJ_GOLD and result.source and
+        result.source.purpose == purpose.ACQUIREMENT then
+        local metadata = ctx:get(entity, component.GOLD_TITHE) or {}
+
+        metadata.acquired = true
+
+        if ctx:has(entity, component.GOLD_TITHE) then
+            ctx:set(entity, component.GOLD_TITHE, metadata)
+        else
+            ctx:add(entity, component.GOLD_TITHE, metadata)
+        end
     end
 
     if location.position then

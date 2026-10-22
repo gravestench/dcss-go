@@ -171,7 +171,9 @@ local function god_exceptions(ctx)
 
     local allowed = observed(ctx)
 
-    worship.join(allowed, refused, gods.ZIN, sources.ALTAR)
+    -- Zin now tithes one of the ten carried pieces before Gozag evaluates
+    -- the later fee. Use the real RNG for that independent religion rule.
+    worship.join(ctx, refused, gods.ZIN, sources.ALTAR)
 
     local ok = pcall(worship.join, allowed, refused, gods.GOZAG,
         sources.ALTAR)
@@ -179,11 +181,11 @@ local function god_exceptions(ctx)
     harness.falsy(ok, "a refused Gozag fee cannot renounce the old god")
     harness.equal(ctx:get(refused, component.RELIGION_WORSHIP)
         .god_id, gods.ZIN)
-    harness.equal(ctx:get(refused, component.WALLET).gold, 10)
+    harness.equal(ctx:get(refused, component.WALLET).gold, 9)
 
     worship.join(allowed, refused, gods.GOZAG, sources.ECUMENICAL)
 
-    harness.equal(ctx:get(refused, component.WALLET).gold, 10)
+    harness.equal(ctx:get(refused, component.WALLET).gold, 9)
     harness.equal(ctx:get(refused, component.WALLET).gozag_gold_used, 0)
 
     local ember = player(ctx)

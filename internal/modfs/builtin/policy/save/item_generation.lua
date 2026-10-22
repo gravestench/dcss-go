@@ -8,8 +8,10 @@ local phases = require("constants.endgame")
 local branch_levels = require("policy.generation.branch_levels")
 local branches = require("ids.branches")
 local ids = require("ids.items")
+local classes = require("ids.object_classes")
 local item_sets = require("policy.item_generation.item_sets")
 local skills = require("ids.skills")
+local tithe_states = require("constants.zin_tithe_state")
 
 local validation = {}
 
@@ -123,6 +125,28 @@ local function validate_random_book(ctx, entity, item)
     end
 end
 
+-- A saved gold tag must belong to a real gold item and name one source
+-- tithe state. Otherwise restore could silently change tax or piety later.
+local function validate_gold_tithe(ctx, entity, item)
+    local tithe = ctx:get(entity, component.GOLD_TITHE)
+
+    if not tithe then
+        return
+    end
+
+    local state = tithe.state
+    local known = state == tithe_states.DEFAULT or
+        state == tithe_states.NO_PIETY or
+        state == tithe_states.FULL_TITHE or
+        state == tithe_states.NO_TITHE
+
+    if not item or
+        catalog.get("items", item.kind_id).class ~= classes.OBJ_GOLD or
+        not known then
+        error("invalid saved gold tithe state " .. ctx:id(entity))
+    end
+end
+
 -- Saved generation state preserves manuals and random-book metadata for future item use.
 -- Example: validation.run(ctx) rejects a saved random book with an invalid spell payload.
 function validation.run(ctx)
@@ -134,6 +158,7 @@ function validation.run(ctx)
 
         validate_manual(ctx, entity, item)
         validate_random_book(ctx, entity, item)
+        validate_gold_tithe(ctx, entity, item)
     end
 
     for _, entity in ipairs(ctx:query({ component.ITEM_MANUAL })) do
@@ -145,6 +170,12 @@ function validation.run(ctx)
     for _, entity in ipairs(ctx:query({ component.ITEM_RANDOM_BOOK })) do
         if not ctx:has(entity, component.ITEM) then
             error("non-item has saved random book state")
+        end
+    end
+
+    for _, entity in ipairs(ctx:query({ component.GOLD_TITHE })) do
+        if not ctx:has(entity, component.ITEM) then
+            error("non-item has saved gold tithe state")
         end
     end
 
