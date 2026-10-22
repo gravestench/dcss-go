@@ -2,6 +2,7 @@
 -- fixed 600–800-turn timed marker. Population turns that marker into one
 -- ECS clock; it never rerolls the duration or evaluates marker text.
 local component = require("constants.component")
+local sewer = require("constants.sewer")
 local vaults = require("policy.generation.vaults.catalog")
 
 local portal = {}
@@ -16,7 +17,7 @@ function portal.is_marker(record)
         return false
     end
 
-    return vaults.get(record.source_id).family == "sewer_entry"
+    return vaults.get(record.source_id).family == sewer.ENTRY_FAMILY
 end
 
 -- Only literal source duration bounds are accepted. The DES hook draws
@@ -26,9 +27,11 @@ function portal.parse(identity)
     local high = tonumber(identity:match("high%s*=%s*(%d+)"))
 
     if not low or not high or low ~= high or
-        low < 600 or low > 800 or
+        low < sewer.MIN_DURATION_TURNS or
+        low > sewer.MAX_DURATION_TURNS or
         not identity:find("single_timed = true", 1, true) or
-        not identity:find('floor = "expired_portal"', 1, true) then
+        not identity:find('floor = "' ..
+            sewer.EXPIRED_MARKER_FLOOR .. '"', 1, true) then
         error("invalid Sewer timed marker")
     end
 
@@ -52,6 +55,8 @@ function portal.materialize(ctx, level, record)
         expires_aut = ctx:aut() + turns * 10,
         spent = false,
         announced = false,
+        next_notice_aut = ctx:aut() + sewer.FIRST_NOTICE_AUT,
+        final_warning = false,
     })
 
     return {

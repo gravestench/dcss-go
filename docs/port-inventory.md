@@ -422,7 +422,9 @@ one weighted source Sewer map through the ordinary vault population path;
 its exit returns to the saved outside cell and retires the temporary floor.
 Restore checks the source marker, deadline, selected layout, exit, and
 reciprocal visit. The two source discovery messages fire on first arrival;
-the timer's changing rust-noise cadence is not yet connected to messaging.
+the saved timer emits the source rust-speed bands and final warning.
+Hearing distance currently uses the source timer's farthest distance band
+as a bound until the general DCSS sound rules are ported.
 Terrain, keyed entities, and other source records survive in the
 saved level, but broader gameplay for some authored features remains tied
 to their respective domain slices.

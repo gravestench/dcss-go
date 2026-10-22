@@ -5,6 +5,7 @@ local branches = require("ids.branches")
 local component = require("constants.component")
 local effects = require("constants.vault_effects")
 local portal = require("policy.world.sewer.portal")
+local sewer_rules = require("constants.sewer")
 local terrain = require("constants.terrain")
 
 local sewer = {}
@@ -59,7 +60,15 @@ local function validate_clock(ctx, state, expected)
         state.duration_turns ~= expected.turns or
         state.created_aut < 0 or state.created_aut > now or
         state.expires_aut ~= state.created_aut +
-            expected.turns * 10 then
+            expected.turns * 10 or
+        state.next_notice_aut < state.created_aut +
+            sewer_rules.FIRST_NOTICE_AUT or
+        state.next_notice_aut > state.expires_aut +
+            sewer_rules.SHORT_NOTICE_AUT or
+        (state.final_warning and
+            (not state.announced or
+                now < state.expires_aut -
+                    sewer_rules.FINAL_WARNING_AUT)) then
         error("Sewer portal changed its authored marker or deadline")
     end
 

@@ -146,16 +146,18 @@ func placeSewerPortalForTest(t *testing.T, g *Game) point {
 	store := g.scripts.Components()["world.sewer_portal"]
 
 	if _, err := store.Set(entity, map[string]any{
-		"level_id":       int64(1),
-		"x":              int64(site.x),
-		"y":              int64(site.y),
-		"vault_id":       "portal_sewer_entry_a",
-		"record_index":   int64(len(level.vaultRecords)),
-		"duration_turns": int64(600),
-		"created_aut":    int64(g.currentAut),
-		"expires_aut":    int64(g.currentAut) + 6000,
-		"spent":          false,
-		"announced":      false,
+		"level_id":        int64(1),
+		"x":               int64(site.x),
+		"y":               int64(site.y),
+		"vault_id":        "portal_sewer_entry_a",
+		"record_index":    int64(len(level.vaultRecords)),
+		"duration_turns":  int64(600),
+		"created_aut":     int64(g.currentAut),
+		"expires_aut":     int64(g.currentAut) + 6000,
+		"spent":           false,
+		"announced":       false,
+		"next_notice_aut": int64(g.currentAut) + 500,
+		"final_warning":   false,
 	}); err != nil {
 		t.Fatal(err)
 	}
@@ -412,6 +414,50 @@ func TestSewerRestoreRejectsForgedDeadline(t *testing.T) {
 	if _, err := Restore(changed); err == nil ||
 		!strings.Contains(err.Error(), "Sewer") {
 		t.Fatalf("forged Sewer deadline was accepted: %v", err)
+	}
+}
+
+// A saved warning schedule belongs to the same authored drain clock as its
+// expiry. Restore must reject edits that silence notices or claim a final
+// warning before the source deadline reaches its last ten turns.
+func TestSewerRestoreRejectsForgedWarningState(t *testing.T) {
+	g := newGeneratedTestGame(t, 88126)
+	placeSewerPortalForTest(t, g)
+
+	for _, tc := range []struct {
+		name  string
+		field string
+		value json.RawMessage
+	}{
+		{
+			name:  "notice after expiry",
+			field: "next_notice_aut",
+			value: json.RawMessage("7000"),
+		},
+		{
+			name:  "early final warning",
+			field: "final_warning",
+			value: json.RawMessage("true"),
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			changed := g.Snapshot()
+
+			for index := range changed.Entities {
+				for part := range changed.Entities[index].Dynamic {
+					entry := &changed.Entities[index].Dynamic[part]
+
+					if entry.Schema == "world.sewer_portal" {
+						entry.Values[tc.field] = tc.value
+					}
+				}
+			}
+
+			if _, err := Restore(changed); err == nil ||
+				!strings.Contains(err.Error(), "Sewer") {
+				t.Fatalf("forged Sewer warning state was accepted: %v", err)
+			}
+		})
 	}
 }
 

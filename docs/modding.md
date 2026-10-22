@@ -2188,6 +2188,11 @@ hook is defined in `policy/generation/vaults/sewer_entry/shared.lua`. The
 hook draws the drain's 600–800-turn lifetime once, emits its keyed feature,
 and leaves a timed marker that population turns into `world.sewer_portal`.
 The marker's fixed draw and the ECS deadline must agree in a saved game.
+`systems/world_sewer_portals.lua` owns the source discovery text, periodic
+rust warnings, final warning, and collapse; the next notice and final
+warning flag live on that same ECS component so reloading does not restart
+the sound sequence. Source timing and distance bands are named in
+`constants/sewer.lua` for map hooks and runtime rules to share.
 See the bundled entrance files for the full geometry and source directives.
 
 Add a destination under `vaults/sewer/` with `DEPTH: Sewer`, a source
