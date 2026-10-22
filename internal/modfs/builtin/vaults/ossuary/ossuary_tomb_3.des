@@ -1,0 +1,37 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (ossuary_tomb_3)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:    ossuary_tomb_3
+DEPTH: Ossuary
+WEIGHT:  40
+ORIENT:  encompass
+TAGS:    no_item_gen no_monster_gen no_rotate no_vmirror
+# zombies should be awake, so they march downwards in a line
+MONS:    generate_awake orc zombie / generate_awake kobold zombie / \
+         generate_awake hobgoblin zombie / generate_awake gnoll zombie
+MONS:    mummy
+MONS:    orc zombie / kobold zombie / hobgoblin zombie
+ITEM:    nothing / any scroll w:5 / any potion
+: vault.run("shared.setup")
+MAP
+cccccccccccccccccccccc
+cccc.....2..2.....cccc
+ccc..2...cccc...2..ccc
+cc......cc..cc......cc
+cc.....cc....cc.....cc
+cc........22........cc
+ccc..3....22....3..ccc
+cccc..............cccc
+cccc+cc........cc+cccc
+cccc..cc111111cc..cccc
+ccc....cc....cc....ccc
+ccd.....c....c.....dcc
+c$dd....c....c....dd$c
+c$dd....c....c....dd$c
+c$$d....c....c....d$$c
+cc$dd...c....c...dd$cc
+cc$$d..cc....cc..d$$cc
+ccc$d..cc....cc..d$ccc
+ccc$d.ccc.<A.ccc.d$ccc
+cccccccccccccccccccccc
+ENDMAP

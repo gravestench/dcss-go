@@ -1,0 +1,46 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (ossuary_minmay_tomb_2a)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:    ossuary_minmay_tomb_2a
+DEPTH: Ossuary
+WEIGHT:  20
+ORIENT:  encompass
+TAGS:    no_item_gen no_monster_gen no_rotate
+MONS:    rat zombie / jackal zombie / goblin zombie / hobgoblin zombie / \
+         adder zombie / gnoll zombie / orc zombie / kobold zombie / \
+         hound zombie / human zombie / elf zombie
+MONS:    mummy
+ITEM:    any scroll / any scroll q:2, any potion / any potion q:2
+SHUFFLE: $de*
+NSUBST:  B = 1:+ / *:n
+NSUBST:  C = 1:+ / *:n
+NSUBST:  D = 1:+ / *:n
+NSUBST:  E = 1:+ / *:n
+NSUBST:  X = 1:< / *:.
+: vault.run("shared.setup")
+MAP
+ccccccccccccccccccccccccccccccc
+c$$B...........<...........Cddc
+c$$B.......................Cddc
+cBBB.........ccccc.........CCCc
+c.............................c
+c....2.........1.........2....c
+c.....cc....1.....1....cc.....c
+c.....cc...............cc.....c
+c.........1.........1.........c
+c..c.......................c..c
+c..cc..........X..........cc..c
+c<.cc....1....XAX....1....cc.<c
+c..cc..........X..........cc..c
+c..c.......................c..c
+c.........1.........1.........c
+c.............................c
+c.....cc....1.....1....cc.....c
+c.....cc.......1.......cc.....c
+c....2...................2....c
+c.............................c
+cEEE.........ccccc.........DDDc
+c**E.......................Deec
+c**E...........<...........Deec
+ccccccccccccccccccccccccccccccc
+ENDMAP

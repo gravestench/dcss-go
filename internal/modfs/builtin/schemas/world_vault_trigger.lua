@@ -4,7 +4,7 @@ local component = require("constants.component")
 
 register.component({
     id = component.WORLD_VAULT_TRIGGER,
-    version = 3,
+    version = 4,
     fields = {
         level_id = {
             type = "int64",
@@ -47,6 +47,25 @@ register.component({
         target_y = {
             type = "int64",
             default = 0,
+        },
+        -- One explicit group joins several source trigger cells. Record
+        -- links and final coordinates let the callback act on oriented
+        -- walls and let save validation detect partial or forged changes.
+        group_id = {
+            type = "string",
+            default = "",
+        },
+        wall_record_indices = {
+            type = "list<int64>",
+            default = {},
+        },
+        wall_x = {
+            type = "list<int64>",
+            default = {},
+        },
+        wall_y = {
+            type = "list<int64>",
+            default = {},
         },
     },
 })

@@ -1,0 +1,19 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (chequers_ossuary_entry_cave)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME: chequers_ossuary_entry_cave
+DEPTH: D:4-8
+TAGS: transparent uniq_ossuary no_monster_gen chance_ossuary
+CHANCE: 500
+: vault.run("shared.portal")
+MAP
+xxxxxcccccccxxxxx
+xxxxcc'''''ccxxxx
+xxxxcG''O''Gcxxxx
+xxxxcc'''''ccxxxx
+xxxxxccc'cccxxxxx
+xxxxxxxc'cxxxxxxx
+xxxxxxxcAcxxxxxxx
+.................
+@@@@@@@@@@@@@@@@@
+ENDMAP

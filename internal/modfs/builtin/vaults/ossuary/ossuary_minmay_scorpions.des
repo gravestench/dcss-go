@@ -1,0 +1,44 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (ossuary_minmay_scorpions)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:   ossuary_minmay_scorpions
+DEPTH: Ossuary
+WEIGHT: 20
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen
+MONS:   scorpion
+MONS:   mummy
+MONS:   gnoll zombie / hobgoblin zombie / orc zombie / \
+        human zombie / kobold zombie / goblin zombie / \
+        centaur zombie / scorpion zombie w:20
+ITEM:   any scroll / any potion / any jewellery w:1 / nothing
+SUBST:  1 = 1.
+SUBST:  3 = 3.
+: vault.run("shared.setup")
+MAP
+ccccccccccccccccccccccccc
+c...c..3c..1c...ndddc131c
+c.A.c...G...+...nd2d+313c
+c...c3......c...ndddc131c
+cc+cccG...Gccc+ccccccc+cc
+c...c......3c...c3.1c...c
+c.<.+...G...c...G...c...c
+c...c...c3..c......3c...c
+ccccccccccccccG...Gcc...c
+c1.1cdddn...c3.....3c...c
+c.3.+d2dn...+...G...c...c
+c3.3cdddn...c..3c3.1c...c
+cc+ccccccc+ccccccccccc+cc
+c1...3c.....c...c...c3.1c
+c.....c.....c...+...G...c
+c.....G.....c...c......3c
+c...........cc+cccG...Gcc
+c3..........c3.3c3.....3c
+cccG..3..Gccc...c...G...c
+c3.........3c3.3c1.3c3.1c
+c...........cc+ccccccc+cc
+c.....G.....c...ndddc3.3c
+c.....c.....+...nd2d+.3.c
+c3...3c3...1c...ndddc1.1c
+ccccccccccccccccccccccccc
+ENDMAP

@@ -1,0 +1,21 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (nicolae_ossuary_entry_plus)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME: nicolae_ossuary_entry_plus
+DEPTH: D:4-8
+TAGS: transparent uniq_ossuary no_monster_gen chance_ossuary
+CHANCE: 500
+: vault.run("choose_plus")
+FTILE: + = floor_sandstone
+: vault.run("shared.portal")
+MAP
+.........
+...cDc...
+..'cpc'..
+.ccc'ccc.
+.Dp'o''d.
+.ccc'ccc.
+..'cpc'..
+...cDc...
+.........
+ENDMAP

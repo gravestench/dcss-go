@@ -5,6 +5,7 @@ local abyss = require("policy.generation.abyss")
 local pan = require("policy.generation.pan.region")
 local bazaar = require("policy.generation.bazaar.level")
 local sewer = require("policy.generation.sewer.level")
+local ossuary = require("policy.generation.ossuary.level")
 local hell_vestibule = require("policy.generation.hell.vestibule")
 local branch_catalog = require("policy.catalog")
 local categories = require("constants.catalog")
@@ -199,6 +200,12 @@ function module.sewer(ctx, input)
     return sewer.generate(ctx, input)
 end
 
+-- Ossuary is another one-floor portal domain. Keep its authored map choice
+-- in Lua while the generic stage owns commit and rollback of the floor.
+function module.ossuary(ctx, input)
+    return ossuary.generate(ctx, input)
+end
+
 -- Stage one persistent Hell subbranch floor. Its source up exits become
 -- typed return arches only after keyed DES features have been projected.
 function module.hell_floor(ctx, input)
@@ -243,6 +250,11 @@ register.policy({
 register.policy({
     id = "world.generate_sewer_level",
     run = module.sewer,
+})
+
+register.policy({
+    id = "world.generate_ossuary_level",
+    run = module.ossuary,
 })
 
 register.policy({

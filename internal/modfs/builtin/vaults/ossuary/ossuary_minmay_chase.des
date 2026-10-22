@@ -1,0 +1,42 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (ossuary_minmay_chase)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:   ossuary_minmay_chase
+DEPTH: Ossuary
+WEIGHT: 10
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen
+MONS:   rat zombie / quokka zombie / adder zombie /\
+        goblin zombie / hobgoblin zombie / kobold zombie / gnoll zombie w:2 /\
+        human zombie w:1 / elf zombie w:1 / orc zombie w:1
+MONS:   generate_awake mummy
+ITEM:   any scroll / any potion / gold w:4
+KFEAT:  ~ = net trap / floor
+: vault.run("shared.setup")
+MAP
+ccccc     ccc ccc ccc
+cdddccccccc1ccc1ccc1ccccccc
+cddd~~~~c.............c~~~c
+cd<d~~<~+.............+~<~c
+cddd~~~~c.............c~~~c
+cdddccccccc1ccc1ccc1cccc+cc
+ccccc     ccc ccc ccc c...c
+                     cc...cc
+                     c1...1c
+                     cc...cc
+                      c...c
+                     cc...cc
+                     c1...1c
+                     cc...cc
+                      c...c
+                     cc...cc
+                     c1...1c
+                     cc...cc
+cccc      ccc ccc ccc c...c
+c2.cccccccc1ccc1ccc1cccc+cc
+cc......c.............c~~~c
+c2..A.<.+.............+~<~c
+cc......c.............c~~~c
+c2.cccccccc1ccc1ccc1ccccccc
+cccc      ccc ccc ccc
+ENDMAP

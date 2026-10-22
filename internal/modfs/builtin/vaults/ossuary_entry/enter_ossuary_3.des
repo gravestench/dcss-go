@@ -1,0 +1,18 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (enter_ossuary_3)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:   enter_ossuary_3
+DEPTH: D:4-8
+TAGS:   transparent uniq_ossuary no_monster_gen chance_ossuary
+CHANCE: 500
+SUBST:  . = ' .
+MONS:   rat zombie / jackal zombie / worm zombie
+MONS:   kobold zombie / goblin zombie / hobgoblin zombie
+MONS:   orc zombie / gnoll zombie / human zombie
+SUBST:  . = .:100 11 2 3
+: vault.run("shared.portal")
+MAP
+...
+.O.
+...
+ENDMAP

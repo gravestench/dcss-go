@@ -1,0 +1,48 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (minmay_ossuary_two_tombs)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:    minmay_ossuary_two_tombs
+DEPTH: Ossuary
+WEIGHT:  20
+ORIENT:  encompass
+TAGS:    no_item_gen no_monster_gen
+# Loot: between 5 scrolls/potions and 9 scrolls/potions, with some gold.
+# The tomb close to the player is a bit easier than the other one, and is
+# more likely to be the one with less loot, giving weak players a chance.
+SHUFFLE: def$
+NSUBST:  d = 1:1 / *:d
+NSUBST:  e = 1:1 / *:e
+NSUBST:  $ = 1:1 / *:$
+SUBST:   2 = 2 3:1 .:1
+SUBST:   3 = 3 2:1 .:1
+ITEM:    any scroll, any potion
+MONS:    mummy
+MONS:    rat zombie / jackal zombie / quokka zombie / adder zombie / \
+         goblin zombie / hobgoblin zombie / kobold zombie
+MONS:    gnoll zombie / orc zombie / hound zombie / \
+         human zombie / elf zombie / centaur zombie
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxx
+x........<..A........x
+x....................x
+x......cccccccc......x
+x...cccc3223+ecccc...x
+x..cc.......ceec2cc..x
+x..c<.ccccc.cccc..+..x
+x..cc.+dddc.....2cc..x
+x..2ccccddc...cccc2..x
+x2.....cccccccc.....2x
+x..2....2.3.2.....2..x
+x..2.....2.3.2....2..x
+x2.....cccccccc.....2x
+x..2cccc3+ffc3cccc2..x
+x..cc2.2.cccc.c$$cc..x
+x..+..........+$$<c..x
+x..cc2.2.cccc.c$$cc..x
+x...cccc3+ffc3cccc...x
+x......cccccccc......x
+x.......2.3.2........x
+x........2.3.2.......x
+xxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

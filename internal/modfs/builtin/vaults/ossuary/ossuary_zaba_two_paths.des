@@ -1,0 +1,54 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (ossuary_zaba_two_paths)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:   ossuary_zaba_two_paths
+DEPTH: Ossuary
+# There is no way up in the end. This is to give the zombies in the beginning
+# more time to go for a walk and another chance to meet the player.
+ORIENT: encompass
+WEIGHT: 10
+TAGS:   no_item_gen no_monster_gen no_rotate
+#
+# Standard monsters: small zombies, large zombies, boss:
+MONS:   kobold zombie / goblin zombie / orc zombie / hobgoblin zombie
+MONS:   gnoll zombie
+MONS:   mummy
+#
+KFEAT:  F = floor
+COLOUR: F = cyan
+KMONS:  F = rat simulacrum / goblin simulacrum / kobold simulacrum /\
+            bat simulacrum / nothing w:80
+KFEAT:  S = floor
+COLOUR: S = green
+KMONS:  S = spectral rat / spectral goblin / spectral kobold /\
+            spectral bat / nothing w:80
+# Loot.
+ITEM:   any potion / any scroll / nothing w:1
+KFEAT:  ' = alarm trap / floor w:90
+#
+: vault.run("shared.setup")
+MAP
+ccccccccccccccccccccccccccc
+c2c2c2cc...........cc2c2c2c
+c+c+c+c.............c+c+c+c
+c..........G...G..........c
+c.........................c
+c+c+ccccccccc+ccccccccc+c+c
+bScc'ccG2+.......+2Gcc'ccFv
+bSScc'ccGc.......cGcc'ccFFv
+bSSScc'ccc.12321.ccc'ccFFFv
+bSSSScc'cc.......cc'ccFFFFv
+bSSSSScc'c.......c'ccFFFFFv
+bSSSSSS+'c...G...c'+FFFFFFv
+bSSSSScc'c.......c'ccFFFFFv
+bSSSScc'cc.......cc'ccFFFFv
+bSSScc'ccc..ddd..ccc'ccFFFv
+bSScc'ccGc..ddd..cGcc'ccFFv
+bScc'ccG2+..ddd..+2Gcc'ccFv
+ccc+ccccccccccccccccccc+ccc
+c11111cc1c1c1c1c1c1cc11111c
+c......c+c+c+c+c+c+c......c
+c.........................c
+c..........<.A.<..........c
+ccccccccccccccccccccccccccc
+ENDMAP

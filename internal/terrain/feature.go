@@ -49,6 +49,8 @@ const (
 	ExitBazaar         ID = "DNGN_EXIT_BAZAAR"
 	EnterSewer         ID = "DNGN_ENTER_SEWER"
 	ExitSewer          ID = "DNGN_EXIT_SEWER"
+	EnterOssuary       ID = "DNGN_ENTER_OSSUARY"
+	ExitOssuary        ID = "DNGN_EXIT_OSSUARY"
 	ExpiredPortal      ID = "DNGN_EXPIRED_PORTAL"
 	EnterPandemonium   ID = "DNGN_ENTER_PANDEMONIUM"
 	TransitPandemonium ID = "DNGN_TRANSIT_PANDEMONIUM"
@@ -274,6 +276,16 @@ var definitions = map[ID]Feature{
 	},
 
 	ExitSewer: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	EnterOssuary: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitOssuary: {
 		Glyph:    '∩',
 		Walkable: true,
 	},

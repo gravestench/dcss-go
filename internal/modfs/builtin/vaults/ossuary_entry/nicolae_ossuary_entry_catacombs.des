@@ -1,0 +1,24 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (nicolae_ossuary_entry_catacombs)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME: nicolae_ossuary_entry_catacombs
+DEPTH: D:4-8
+TAGS:   transparent uniq_ossuary no_monster_gen chance_ossuary
+CHANCE: 500
+FTILE: O1s+ABC = floor_sandstone
+COLOUR: 1s = yellow
+NSUBST: A = + / c, B = + / c, C = + / c, s = 1:O / 4:1 / *:1.....
+KMONS: O1 = orc skeleton / orc zombie w:5 / elf skeleton / elf zombie w:5 / \
+            human skeleton / human zombie w:5
+: vault.run("shared.portal")
+MAP
+ccccccccc
++'1'csAsc
+ccc+c+cAc
+cs+'''+sc
+ccc'''ccc
+cs+'''+sc
+cCc+c+cBc
+csCscsBsc
+ccccccccc
+ENDMAP

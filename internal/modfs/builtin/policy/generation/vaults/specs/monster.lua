@@ -141,7 +141,9 @@ local function parse_term(text, expression, site)
             -- A patrol is a property of the chosen actor, not a species
             -- named "patrolling quokka". Keep the source flag on the record.
             result.patrolling = true
-        elseif token == "name_adjective" then
+        elseif token == "name_adjective" or token == "n_adj" then
+            -- DES accepts the short source spelling on named vault actors.
+            -- It affects display and must not become part of the species.
             result.name_adjective = true
         elseif token == "name_species" then
             -- Source corpses use the authored species name as-is, while

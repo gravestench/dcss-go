@@ -158,6 +158,46 @@ func TestSewerVaultMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/sewer_vault_mod_test.lua")
 }
 
+// A sparse Ossuary layout and same-path hook override share the effective
+// VFS catalog used by normal portal generation.
+func TestOssuaryVaultMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/ossuary-vault-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/ossuary_vault_mod_test.lua")
+}
+
+// A broken same-path handler is diagnosed when the effective map is
+// validated, before an entrance spends its one-time gate.
+func TestOssuaryBrokenHookMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/ossuary-broken-hook-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	world := akara.NewWorld()
+	defer world.Close()
+
+	runtime, err := newRuntimeWithHostComponents(t, world, rules, Services{})
+
+	if runtime != nil {
+		defer runtime.Close()
+	}
+
+	if err == nil {
+		_, err = runtime.runModule("tests/ossuary_bad_hook_test.lua")
+	}
+
+	if err == nil ||
+		!strings.Contains(err.Error(), "loot_mix") {
+		t.Fatalf("broken Ossuary hook was accepted: %v", err)
+	}
+}
+
 // A Zot layer replaces one weighted source file and adds a discoverable
 // ordinary map with a same-path Lua hook.
 func TestZotVaultMod(t *testing.T) {

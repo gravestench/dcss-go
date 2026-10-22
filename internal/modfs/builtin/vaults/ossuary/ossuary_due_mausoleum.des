@@ -1,0 +1,55 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (ossuary_due_mausoleum)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:    ossuary_due_mausoleum
+DEPTH: Ossuary
+WEIGHT:  10
+ORIENT:  encompass
+TAGS:    no_item_gen no_monster_gen no_rotate no_vmirror
+MONS:    orc skeleton / kobold skeleton / gnoll skeleton / orc skeleton
+MONS:    mummy
+MONS:    wraith
+NSUBST:  = = 1:+ / *:c
+ITEM:    any scroll / any potion / nothing
+KITEM:   x = any scroll / any potion
+KMONS:   x = wraith
+: vault.run("shared.setup")
+MAP
+ccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccc
+cc1.1...................1.1cc
+cc.<.....................<.cc
+cc1.1....ccccc+ccccc....1.1cc
+cc......cc.........cc......cc
+cc.....cc...cc=cc...cc.....cc
+cc....cc...cm...mc...cc....cc
+cc....c...cm.ddd.mc...c....cc
+cc....+...=.ddxdd.=...+....cc
+cc....c...cm.ddd.mc...c....cc
+cc....cc...cm...mc...cc....cc
+cc.....cc...cc=cc...cc.....cc
+cc......cc.........cc......cc
+cc1.1....ccccc+ccccc....1.1cc
+cc.<.....................<.cc
+cc1.1...................1.1cc
+ccccccccccccc+++ccccccccccccc
+ccccccccccccc...ccccccccccccc
+ccccccccccdd+.2.+ddcccccccccc
+ccccccccccddc111cddcccccccccc
+ccccccccccccc111ccccccccccccc
+ccccccccccccc111ccccccccccccc
+ccccccccccccc...ccccccccccccc
+ccccccccccccc...ccccccccccccc
+ccccccccccccc...ccccccccccccc
+ccccccccccccc...ccccccccccccc
+ccccccccccccc+++ccccccccccccc
+cccccccccccc.....cccccccccccc
+ccccccccccc.......ccccccccccc
+cccccccc3o...<.A...o3cccccccc
+ccccccccccc.......ccccccccccc
+cccccccccccc.....cccccccccccc
+ccccccccccccc...ccccccccccccc
+ccccccccccccccocccccccccccccc
+cccccccccccccc3cccccccccccccc
+ccccccccccccccccccccccccccccc
+ENDMAP

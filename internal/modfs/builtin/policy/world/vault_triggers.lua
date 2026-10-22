@@ -62,10 +62,42 @@ local function shared_target(level, record)
     return found
 end
 
+-- A named marker group links source trigger cells to its authored wall
+-- records after orientation. The level record indexes are durable save
+-- identities, while the final coordinates let a callback act directly.
+local function linked_group(level, record)
+    local arguments = record.arguments or {}
+    local name = arguments.group
+
+    if not name then
+        return "", {}, {}, {}
+    end
+
+    local group_id = level.id .. ":" .. record.source_id .. ":" .. name
+    local indices = {}
+    local wall_x = {}
+    local wall_y = {}
+
+    for _, candidate in ipairs(level.vault_records or {}) do
+        local member = candidate.arguments or {}
+
+        if candidate.source_id == record.source_id and
+            member.group == name and member.role == "wall" then
+            indices[#indices + 1] = candidate.index
+            wall_x[#wall_x + 1] = candidate.x
+            wall_y[#wall_y + 1] = candidate.y
+        end
+    end
+
+    return group_id, indices, wall_x, wall_y
+end
+
 -- Create the saved trigger after DES orientation fixes its final cell.
 function triggers.materialize(ctx, level, record)
     local module_name, method_name = callback(record.identity)
     local target = shared_target(level, record)
+    local group_id, wall_indices, wall_x, wall_y =
+        linked_group(level, record)
     local entity = ctx:create()
 
     ctx:add(entity, component.WORLD_VAULT_TRIGGER, {
@@ -80,6 +112,10 @@ function triggers.materialize(ctx, level, record)
             trigger_ids.ENTER_EVENT,
         target_x = target and target.x or 0,
         target_y = target and target.y or 0,
+        group_id = group_id,
+        wall_record_indices = wall_indices,
+        wall_x = wall_x,
+        wall_y = wall_y,
     })
 
     return {
@@ -91,6 +127,10 @@ end
 -- The Lady's two source glyph types share one TriggerableFunction. Ordinary
 -- callbacks own only their own marker entity, even in the same vault.
 local function same_trigger_group(fired, other, identity)
+    if fired.group_id and fired.group_id ~= "" then
+        return other.group_id == fired.group_id
+    end
+
     return identity == trigger_ids.LADY_OF_LAKE_SPAWN and
         other.level_id == fired.level_id and
         other.vault_id == fired.vault_id and

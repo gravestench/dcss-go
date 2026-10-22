@@ -1,0 +1,20 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (enter_ossuary_5)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:   enter_ossuary_5
+DEPTH: D:4-8
+TAGS:   transparent uniq_ossuary no_monster_gen chance_ossuary
+CHANCE: 500
+COLOUR: c = white, + = white, ' = yellow
+: vault.run("shared.portal")
+MAP
+   ...
+  ..c..
+ ..cc+..
+..cc'cc..
+.cc'O'cc.
+..cc'cc..
+ ..ccc..
+  ..c..
+   ...
+ENDMAP

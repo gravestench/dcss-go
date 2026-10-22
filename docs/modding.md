@@ -2214,6 +2214,44 @@ outside drain cell. Use the ordinary vault record and population APIs for
 new Sewer content; a new content type belongs in its relevant shared owner
 instead of a new Sewer-specific Go branch.
 
+An Ossuary follows the same portal path with its own content directories.
+Put Dungeon entrances in `vaults/ossuary_entry/` with `DEPTH: D:4-8`,
+`TAGS: uniq_ossuary no_monster_gen chance_ossuary`, and a `CHANCE` value.
+Place `: vault.run("shared.portal")` where the gate should be configured.
+That method lives in `policy/generation/vaults/ossuary_entry/shared.lua` and
+receives the vault `api`. It draws one 600–800-turn lifetime, emits the
+`enter_ossuary` feature and a fixed timed marker, and applies sand styling.
+Population turns that marker into a `world.ossuary_portal` component when
+the Dungeon floor is placed. The component saves its source record index,
+creation time, deadline, next sound notice, and spent state. It starts at
+floor placement, before the player finds or steps on the gate.
+
+Put whole-floor destinations in `vaults/ossuary/` with `DEPTH: Ossuary`, a
+positive `WEIGHT`, an encompassing `MAP`, and a return `<` glyph. The
+`: vault.run("shared.setup")` method from
+`policy/generation/vaults/ossuary/shared.lua` turns `<` into the live return
+gate after the map's substitutions. Map-specific `: vault.run` methods use
+the matching Lua module in that directory. Keep the handler body in its
+Lua file for now; the roadmap has a TODO to support placing it in the DES.
+The runtime calls each hook at its authored directive position. Hook
+`api:emit` inserts a DES directive; `api:record` stores a typed effect at a
+source glyph. The `ossuary_boxes_badplayer` map illustrates a later event:
+its hook records each `:` trigger and `a`/`b` wall, while the live callback
+in `policy/world/vault_trigger_callbacks/ossuary_boxes.lua` opens the wall
+group. `world.vault_trigger` components save the group ID and complete wall
+record links; restore rejects partial wall openings or forged links.
+
+The effective catalog discovers new Ossuary maps by path and sorts eligible
+IDs before the weighted draw. A mod can therefore add just
+`vaults/ossuary/my_gallery.des`; it need not copy the bundled maps. It can
+replace one bundled hook by providing the same relative Lua path. See
+`internal/script/testdata/ossuary-vault-mod/` for both operations. The
+generic portal transaction stages the selected floor, then spends the
+outside gate and stores its exact cell on `character.ossuary_visit`. A
+blocked return leaves that visit and floor intact. The timer, return, and
+save rules live under `policy/world/ossuary/`,
+`systems/world_ossuary_portals.lua`, and `policy/save/ossuary_*.lua`.
+
 All three categories validate their effective definitions at startup. A
 missing cloud or trap effect path fails before play; a malformed shop weight
 fails before stock generation. Import their IDs from `ids.clouds`,

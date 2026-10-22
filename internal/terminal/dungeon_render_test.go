@@ -5,7 +5,45 @@ import (
 	"testing"
 
 	"crawl/internal/game"
+	"crawl/internal/terrain"
 )
+
+// Both directions of the Ossuary portal keep distinct terrain IDs, while
+// the dungeon renderer draws their shared arch glyph at the visible cell.
+func TestDrawDungeonOssuaryPortals(t *testing.T) {
+	for _, id := range []terrain.ID{
+		terrain.EnterOssuary,
+		terrain.ExitOssuary,
+	} {
+		t.Run(string(id), func(t *testing.T) {
+			canvas := NewCanvas(79, 24)
+			region := Region{
+				X: 0,
+				Y: 0,
+				W: 37,
+				H: 17,
+			}
+
+			view := game.View{
+				Width: 1,
+				Cells: []game.CellView{
+					{
+						Glyph: terrain.Glyph(id),
+						State: game.Visible,
+					},
+				},
+			}
+
+			drawDungeon(canvas, region, view, testPresentationPolicy(t))
+
+			cell := canvas.cells[8*canvas.width+18]
+
+			if cell.text != "∩" {
+				t.Fatalf("Ossuary portal %s drew %q", id, cell.text)
+			}
+		})
+	}
+}
 
 func TestDrawDungeonKeepsPlayerAboveFloorItems(t *testing.T) {
 	canvas := NewCanvas(79, 24)

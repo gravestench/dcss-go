@@ -1,0 +1,28 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (ossuary_the_hunt_dpeg)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:    ossuary_the_hunt_dpeg
+DEPTH: Ossuary
+WEIGHT:  10
+ORIENT:  encompass
+TAGS:    no_item_gen no_monster_gen
+# loot: 8 items of which 6 should be good.
+# Most of the loot helps right here, if need be.
+: vault.run("loot_mix")
+SUBST:   M = 111.
+MONS:    mummy
+MONS:    centaur zombie / hobgoblin zombie / nothing w:20
+KFEAT:   ~ = net trap / alarm trap / dispersal trap w:5 / floor w:100
+KFEAT:   ^ = net trap w:20 / dispersal trap w:5 / floor w:25
+: vault.run("shared.setup")
+MAP
+           ccccccccccccccccccccc
+ ccccccccccc2c2c2c2c2c2c2ccddddcc
+cc1.......~~~~~~~~~~~~~~~~^.....cc
+c.........~~~~~~~~~~~~~~~~^.....Mcc
+c1....A.<.~~~~~~~~~~~~~~~~^.....M<c
+c.........~~~~~~~~~~~~~~~~^.....Mcc
+cc1.......~~~~~~~~~~~~~~~~^.....cc
+ ccccccccccc2c2c2c2c2c2c2ccddddcc
+           ccccccccccccccccccccc
+ENDMAP

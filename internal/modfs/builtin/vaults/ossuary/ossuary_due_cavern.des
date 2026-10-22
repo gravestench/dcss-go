@@ -1,0 +1,54 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (ossuary_due_cavern)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:    ossuary_due_cavern
+DEPTH: Ossuary
+WEIGHT:  10
+ORIENT:  encompass
+TAGS:    no_item_gen no_monster_gen
+MONS:    centaur zombie w:1 / orc zombie / hobgoblin zombie /\
+         kobold zombie / adder zombie / orc skeleton / hobgoblin skeleton /\
+         ball python skeleton / nothing w:5
+MONS:    wight
+MONS:    flying skull
+MONS:    wraith
+ITEM:    any scroll / any potion
+ITEM:    any scroll / any potion / any wand w:4
+KMONS:   V = wraith
+KMONS:   X = flying skull
+SHUFFLE: VX
+SUBST:   x = c:20 n:8
+SUBST:   z = c:20 n:4
+SUBST:   y = c:20 n:1
+SUBST:   $ = 1:10 2:1
+NSUBST:  4 = 2:4 / *:2
+: vault.run("shared.setup")
+MAP
+  ccccccccc
+ cc.......cc
+cc.........c
+c...<..A..cc
+cc.......cc
+ ccc.....cc
+   cc...cc
+    cc.ccc
+     cc.cc
+     cc.cc
+     cc.cc
+    cc.cc
+   cc.cc                            ccccccccccccccccc
+   cc..ccc                          c...............c
+    cc...cc                         c.+cc..xxx..cc+.c
+  ccc...ccc                         c.c4c..x3x..c4c.c
+ cc......cccccccccccccccccccccccccccc.ccc..yzy..ccc.c
+cc........cc$c$c$c$c$cc.....cccccVccc...............c
+c..........c+c+c+c+c+cc.GdG.cccccoccc.cxy..eee..yxx.c
+c..c.......+..........+..d....+.....+.c3z..eee..z3x.c
+cc.cc......c+c+c+c+c+cc.GdG.cccccoccc.cxy..eee..yxx.c
+cc.c......cc$c$c$c$c$cc.....cccccXccc...............c
+cc.cc....cccccccccccccccccccccccccccc.ccc..yzy..ccc.c
+ cc.....cc                          c.c4c..x3x..c4c.c
+  cc...cc                           c.+cc..xxx..cc+.c
+   ccccc                            c...............c
+                                    ccccccccccccccccc
+ENDMAP

@@ -21,6 +21,7 @@ local vault_triggers = require("policy.world.vault_triggers")
 local zot_overgrown = require("policy.world.zot_overgrown")
 local bazaar_portal = require("policy.world.bazaar.portal")
 local sewer_portal = require("policy.world.sewer.portal")
+local ossuary_portal = require("policy.world.ossuary.portal")
 local branches = require("ids.branches")
 
 local vaults = {}
@@ -350,6 +351,10 @@ function vaults.materialize(ctx, level, excluded)
             materialized[#materialized + 1] =
                 sewer_portal.materialize(ctx, level, record)
         elseif record.kind == effects.MARKER and
+            ossuary_portal.is_marker(record) then
+            materialized[#materialized + 1] =
+                ossuary_portal.materialize(ctx, level, record)
+        elseif record.kind == effects.MARKER and
             vault_triggers.is_record(record.identity) then
             materialized[#materialized + 1] =
                 vault_triggers.materialize(ctx, level, record)
@@ -396,7 +401,9 @@ function vaults.materialize(ctx, level, excluded)
                     local prior_index = prior and prior.record_index or "none"
                     local prior_vault = prior and prior.vault_id or "none"
 
-                    error(string.format("%s:%d: vault %s: two actors at glyph %s (%d,%d); prior vault %s record %s, new record %s",
+                    error(string.format(
+                        "%s:%d: vault %s: two actors at glyph %s " ..
+                        "(%d,%d); prior vault %s record %s, new record %s",
                         arguments.path, record.line, record.source_id,
                         record.source, record.x, record.y, prior_vault, prior_index,
                         record.index))

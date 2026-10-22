@@ -1,0 +1,53 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (ossuary_zaba_flooded)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:    ossuary_zaba_flooded
+DEPTH: Ossuary
+WEIGHT:  20
+ORIENT:  encompass
+TAGS:    no_item_gen no_monster_gen
+: vault.run("flood")
+SHUFFLE: ABI/CDJ/EFK/GHL
+SUBST:   A : ., B : A, I : <
+SUBST:   EFKGHL : d
+SUBST:   CDJ = 1112
+MONS:    generate_awake zombie place:D:6 /\
+         w:5 generate_awake mummy
+MONS:    w:15 withered plant /\
+         mummy \
+         spells:throw_frost.18.wizard;slow.27.wizard \
+         name:bog n_adj col:green/\
+         w:5 nothing
+ITEM:    any potion / any scroll / any jewellery w:1
+KPROP:   w = no_tele_into
+: vault.run("shared.setup")
+: vault.run("rock_colour")
+MAP
+      xxxxxxxxxxxxxxx
+   xxxxxxxxxxxxxxxxxxxxx
+  xxxxxxxxxxxxxxxxxxxxxxx
+ xxxxxxxxxxxxxxxxxxxxxxxxx
+ xxxxxcccccccccccccccxxxxx
+ xxxxxc1c1c1c1c1c1c1cxxxxx
+xxxxccc+c+c+c+c+c+c+cccxxxx
+xxxxc1+.............+1cxxxx
+xxxxccc.vv+vv+vv+vv.cccxxxx
+xxxxc1+.vAAAv1vCCCv.+1cxxxx
+xxxxccc.vABAvvvCDCv.cccxxxx
+xxxxc1+.vAAIv1vJCCv.+1cxxxx
+xxxxccc.vvvvv+vvvvv.cccxxxx
+xxxxc1+.............+1cxxxx
+xxxxccc.vvvvv+vvvvv.cccxxxx
+xxxxc1+.vEEKv1vLGGv.+1cxxxx
+xxxxccc.vEFEvvvGHGv.cccxxxx
+xxxxc1+.vEEEv1vGGGv.+1cxxxx
+xxxxccc.vv+vv+vv+vv.cccxxxx
+xxxxc1+.............+1cxxxx
+xxxxccc+c+c+c+c+c+c+cccxxxx
+ xxxxxc1c1c1c1c1c1c1cxxxxx
+ xxxxxcccccccccccccccxxxxx
+ xxxxxxxxxxxxxxxxxxxxxxxxx
+  xxxxxxxxxxxxxxxxxxxxxxx
+   xxxxxxxxxxxxxxxxxxxxx
+      xxxxxxxxxxxxxxx
+ENDMAP

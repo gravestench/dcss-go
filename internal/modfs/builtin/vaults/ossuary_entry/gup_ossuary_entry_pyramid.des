@@ -1,0 +1,19 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (gup_ossuary_entry_pyramid)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:   gup_ossuary_entry_pyramid
+DEPTH: D:4-8
+TAGS:   transparent uniq_ossuary no_monster_gen chance_ossuary
+CHANCE: 500
+KMONS:  O = mummy
+: vault.run("shared.portal")
+MAP
+     ...
+    ..c..
+   ..ccc..
+  ..ccOcc..
+ ..cc...cc..
+..cc.....cc..
+.ccccc+ccccc.
+.............
+ENDMAP

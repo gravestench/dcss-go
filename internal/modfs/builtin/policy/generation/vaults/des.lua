@@ -88,6 +88,9 @@ local function add_directive(vault, kind, argument, line)
 end
 
 -- Recognize only named, ported hook stages; raw inline Lua cannot enter the runtime.
+-- TODO: Support map-local Lua bodies in DES, then move the separate layout
+-- hook modules into their owning files without changing hook order or VFS
+-- override behavior. Lua source must still live in DES, never in Go.
 local function add_hook(vault, text, line)
     local stage, method = text:match('^:%s*vault%.([a-z_]+)%s*%(%s*"([a-z][a-z0-9_%.]*)"%s*%)%s*$')
 

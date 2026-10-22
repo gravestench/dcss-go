@@ -1,0 +1,50 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (ossuary_tomb_2)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:    ossuary_tomb_2
+DEPTH: Ossuary
+WEIGHT:  40
+ORIENT:  encompass
+TAGS:    no_item_gen no_monster_gen no_rotate
+# Number of 1's is 53.
+: vault.run("choose_tomb")
+SUBST:   z = 1
+NSUBST:  B = 1:+ / *:c
+NSUBST:  C = 1:+ / *:c
+NSUBST:  D = 1:+ / *:c
+NSUBST:  E = 1:+ / *:c
+NSUBST:  F = 1:+ / *:c
+NSUBST:  G = 1:+ / *:c
+NSUBST:  H = 1:+ / *:c
+NSUBST:  I = 1:+ / *:c
+NSUBST:  J = 1:+ / *:c
+NSUBST:  K = 1:+ / *:c
+# loot: 12 items
+ITEM:    any scroll w:6 / any potion / any potion q:2 w:2
+MONS:    adder zombie / hobgoblin zombie / orc zombie / kobold zombie / nothing
+MONS:    water moccasin zombie / gnoll zombie / nothing
+MONS:    mummy
+: vault.run("shared.setup")
+MAP
+cccccccccccccccccccccc
+c<11H'''G1111F'''E111c
+c111H'''G1111F'''E111c
+c111H'''G1111F'''E111c
+cIIIccccccccccccccDDDc
+c'''c            c'''c
+c'''c            c'''c
+c'''c            c'''c
+c'''c            c'''c
+cJJJc            cCCCc
+c111c            c111c
+c111c            c111c
+c111c            c111c
+c111c            c111c
+cKKKc            cBBBc
+c'''c            c...c
+c'''cccccccccccccc...c
+c'''c...cddddc...c.z.c
+c'''+3<3+d**dn.A.+...c
+c'''c...cddddc...c.z<c
+cccccccccccccccccccccc
+ENDMAP

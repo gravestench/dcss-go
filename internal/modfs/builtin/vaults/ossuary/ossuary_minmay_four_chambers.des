@@ -1,0 +1,41 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (ossuary_minmay_four_chambers)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:   ossuary_minmay_four_chambers
+DEPTH: Ossuary
+WEIGHT: 10
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen
+MONS:   human zombie / elf zombie / centaur zombie
+MONS:   mummy
+ITEM:   any scroll / any potion / any scroll q:2 w:2 / any potion q:2 w:2
+: vault.run("shared.setup")
+MAP
+            ccc
+          cccdccc
+         ccdddddcc
+         c..ddd..c
+         c...d...c
+         c.......c
+         cc.....cc
+          ccc.ccc
+            c+c
+  ccccc   ccc.ccc   ccccc
+ cc1.1cc cc.....cc cc1.1cc
+ c.....c c.......c c.....c
+cc.....ccc...<...ccc.....cc
+c2......+...<A<...+......2c
+cc.....ccc...<...ccc.....cc
+ c.....c c.......c c.....c
+ cc1.1cc cc.....cc cc1.1cc
+  ccccc   ccc.ccc   ccccc
+            c+c
+          ccc.ccc
+         cc.....cc
+         c1.....1c
+         c.......c
+         c1.....1c
+         cc.....cc
+          ccc2ccc
+            ccc
+ENDMAP

@@ -430,6 +430,16 @@ both the drain and player; source distance bands only change the wording.
 Terrain, keyed entities, and other source records survive in the
 saved level, but broader gameplay for some authored features remains tied
 to their respective domain slices.
+The Ossuary now carries all 14 source D:4–8 entrances and 20 one-floor
+destinations as individually replaceable DES files. An entrance places one
+saved 600–800-turn ECS gate clock; global action time can bury it while the
+Dungeon floor is inactive. Entering stages a weighted source map with a
+return exit and saved exact outside cell. Return retires its temporary
+entities. The boxes layout opens its linked stone walls and consumes its
+trigger group in one event. Restore checks portal deadlines, reciprocal
+visits, source map identity, and the all-or-none wall group. Source sand
+messages and Silence hearing use Lua timer policy. Other authored effects
+remain subject to their respective gameplay domains.
 The four-map `serial_nicolae_subway` family adds its controller and three
 linked stations. Its named markers pair across separately placed stations,
 paint one-way transporters and landings, and retain their links in saved level

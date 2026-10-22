@@ -1,0 +1,28 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (minmay_ossuary_gauntlet)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:   minmay_ossuary_gauntlet
+DEPTH: Ossuary
+WEIGHT: 10
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen
+NSUBST: 1 = 2:1 / *:2
+MONS:   mummy
+MONS:   goblin zombie / hobgoblin zombie / gnoll zombie / \
+        orc zombie / human zombie w:2 / elf zombie w:2 / centaur zombie w:2
+: vault.run("shared.setup")
+MAP
+         ccccccccccccccccc
+         c1c1c1c1c1c1c1c1c
+  ccccc  c...............c
+ cc...cc c...............c   ccccc
+cc.....ccc...............cc cc$$$cc
+c.........................ccc$$$$$c
+c..<.A..................<....$$$$$c
+c.........................ccc$$$$$c
+cc.....ccc...............cc cc$$$cc
+ cc...cc c...............c   ccccc
+  ccccc  c...............c
+         c1c1c1c1c1c1c1c1c
+         ccccccccccccccccc
+ENDMAP

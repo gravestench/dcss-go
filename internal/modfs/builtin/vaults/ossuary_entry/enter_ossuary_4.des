@@ -1,0 +1,21 @@
+# Source: crawl-ref/source/dat/des/portals/ossuary.des (enter_ossuary_4)
+# Authored geometry and directives stay here; source-position Lua
+# hooks live in the matching policy/generation/vaults Lua files.
+NAME:   enter_ossuary_4
+DEPTH: D:4-8
+TAGS:   transparent uniq_ossuary no_monster_gen chance_ossuary
+CHANCE: 500
+COLOUR: 1 = yellow, x = white
+MONS:   rat zombie / quokka zombie / goblin zombie
+FTILE:  1 = floor_sandstone, x = floor_sandstone, O = floor_sandstone
+: vault.run("shared.portal")
+MAP
+.........
+.ccccccc.
+.c''O''c.
+.c'''''c.
+.c'c'c'c.
+.c1c'c1c.
+.ccc'ccc.
+....'....
+ENDMAP
