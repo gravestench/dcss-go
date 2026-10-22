@@ -6,6 +6,7 @@ local effects = require("policy.combat.monster_spells")
 local fixture = require("tests.fixtures.monster_status")
 local forest = require("policy.combat.monster_plants.forest")
 local harness = require("tests.harness")
+local gods = require("constants.gods")
 local monsters = require("ids.monsters")
 local spells = require("ids.spells")
 local terrain = require("constants.terrain")
@@ -75,6 +76,42 @@ function test.run(ctx)
 
     harness.falsy(ctx:has(caster, component.MONSTER_AWAKE_FOREST),
         "death removes the forest's only saved owner")
+
+    -- Fedhas' zero-star passive silences a hostile forest before its caster
+    -- rolls a new timer. The player is alive and still an enemy here.
+    health.current = 30
+    ctx:set(caster, component.HEALTH, health)
+    ctx:add(player, component.RELIGION_WORSHIP, {
+        god_id = gods.FEDHAS,
+        piety = 15,
+    })
+
+    local spoken = {}
+
+    -- The source tells the player when a visible hostile caster's command
+    -- fails; keep that explanation while suppressing the forest effect.
+    function live:emit(_, message)
+        spoken[#spoken + 1] = message
+    end
+
+    harness.equal(forest.awaken(live, caster), false)
+    harness.falsy(ctx:has(caster, component.MONSTER_AWAKE_FOREST))
+    harness.truthy(spoken[1] and spoken[1]:find(
+        "commands the forest to attack, but nothing happens", 1, true))
+
+    -- A charmed caster is currently friendly even if its permanent side is
+    -- hostile. It can command the forest against a hostile former ally.
+    ctx:add(caster, component.MONSTER_ALLEGIANCE, {
+        charm_aut = 40,
+    })
+
+    local summon = ctx:get(victim, component.SUMMON)
+
+    summon.attitude = attitudes.HOSTILE
+    ctx:set(victim, component.SUMMON, summon)
+
+    harness.truthy(forest.awaken(live, caster))
+    harness.truthy(ctx:has(caster, component.MONSTER_AWAKE_FOREST))
 end
 
 return test

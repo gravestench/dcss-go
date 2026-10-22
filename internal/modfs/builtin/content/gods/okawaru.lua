@@ -11,6 +11,7 @@ local definition = {
     temple_eligible = true,
     starting_piety = 15,
     wrath_penance = 25,
+    behavior_module = "policy.religion.gods.okawaru",
     piety_mode = modes.ORDINARY,
 }
 

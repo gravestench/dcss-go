@@ -309,10 +309,13 @@ Ashenzari, Yredelemnul, and Xom entry exceptions retain typed pending state.
 Both stair keys pray on an altar. Conversion, refusal, ecumenical identification,
 two-step renunciation, saved altar identity, and the god/piety/penance HUD now
 run through Lua command, system, and presentation rules. The pending
-entry rewards, Okawaru summon dismissal, Fedhas plant attitude, and
-god-specific leave cleanup still need their
+entry rewards and most god-specific leave cleanup still need their
 behavior owners. Conduct, abilities, gifts, passives, and wrath execution
 remain separate religion slices.
+Fedhas now neutralises eligible hostile plants as they act, reverses plant
+allegiance across loaded levels on desertion, cancels an active forest on
+joining, and prevents hostile Awaken Forest under its passive. Okawaru now
+dismisses friendly player-owned summons on the current floor when joined.
 Zin's entry and pickup tithes now share one Lua rule. Saved gold remembers
 whether it was seen before conversion or acquired, and the wallet keeps
 donations and fractional carry across piles and save/restore.

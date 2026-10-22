@@ -1558,6 +1558,18 @@ exception method. For example, `policy/religion/gods/ru.lua` schedules a
 saved sacrifice offer instead of pretending Ru earns ordinary piety;
 `gozag.lua` deducts the source service fee from the saved wallet when joining.
 
+Fedhas and Okawaru show two actor-facing entry hooks. Fedhas' `join` ends an
+awakened forest on the current floor; its `neutralise` method changes an
+eligible hostile plant to good-neutral before that monster chooses an action.
+The allegiance lives on the plant's `religion.fedhas_plant` component, so a
+save or level change keeps it. `leave` turns plants on every loaded floor
+hostile, clears their temporary charm, and allows rejoining to neutralise
+them again. Snaplasher vines are excluded from neutralisation, as in source
+DCSS. Okawaru's `join` dismisses currently friendly player-owned summons on
+the current floor through the common summon cleanup path. A custom god can
+use the same `join` and `leave` methods, but
+actor state should remain on the affected entity rather than in module locals.
+
 `policy/religion/gods/zin.lua` taxes untithed carried gold on joining and
 floor gold on pickup. Its `mark_seen` method records whether each gold entity
 was first seen while worshipping Zin. That item state survives save and

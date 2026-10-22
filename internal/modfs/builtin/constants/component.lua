@@ -25,6 +25,7 @@ local component = {
     RELIGION_RU = "religion.ru",
     RELIGION_XOM = "religion.xom",
     RELIGION_YREDELEMNUL = "religion.yredelemnul",
+    FEDHAS_PLANT = "religion.fedhas_plant",
     PLAYER_TURN = "core.player_turn",
     POSITION = "core.position",
     HEALTH = "core.health",

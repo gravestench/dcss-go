@@ -5,13 +5,17 @@
 -- Source: mon-cast.cc:SPELL_AWAKEN_FOREST and spl-damage.cc:forest_damage.
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
+local channels = require("constants.message_channels")
 local component = require("constants.component")
 local direct = require("policy.combat.monster_direct")
 local fighter = require("policy.combat.fighter")
 local monster_defense = require("policy.combat.monster_defense")
 local monster_stats = require("policy.combat.monster_stats")
 local proportional = require("policy.magic.damage")
+local senses = require("policy.character.senses")
 local targets = require("policy.ai.targets")
+local fedhas = require("policy.religion.gods.fedhas")
+local attitudes = require("constants.attitude")
 local trees = require("policy.combat.monster_plants.trees")
 local streams = require("constants.rng_streams")
 
@@ -100,6 +104,22 @@ end
 function forest.awaken(ctx, caster)
     local position = ctx:get(caster, component.POSITION)
 
+    -- Source hostile Awaken Forest fizzles under Fedhas' zero-star plant
+    -- passive before choosing a duration or changing the terrain's owner.
+    if fedhas.passive_active(ctx, ctx:player()) and
+        targets.attitude(ctx, caster) ~= attitudes.FRIENDLY then
+        if position and senses.player_sees_actor(ctx, caster) then
+            local actor = ctx:get(caster, component.ACTOR)
+            local definition = catalog.get(categories.MONSTERS,
+                actor.kind_id)
+
+            ctx:emit(channels.SPELL, "The " .. definition.name ..
+                " commands the forest to attack, but nothing happens.")
+        end
+
+        return false
+    end
+
     if not position or forest.active(ctx, position.level_id) or
         #forest.victims(ctx, caster) == 0 then
         return false
@@ -113,7 +133,7 @@ function forest.awaken(ctx, caster)
     ctx:add(caster, component.MONSTER_AWAKE_FOREST, {
         remaining_aut = duration,
     })
-    ctx:emit("spell", "The forest starts to sway and rumble!")
+    ctx:emit(channels.SPELL, "The forest starts to sway and rumble!")
 
     return true
 end

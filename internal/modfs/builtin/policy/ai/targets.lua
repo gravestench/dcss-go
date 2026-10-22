@@ -22,6 +22,14 @@ function targets.real_attitude(ctx, entity)
         return attitudes.GOOD_NEUTRAL
     end
 
+    -- Fedhas' conversion is a real, saved change to this plant's side.
+    -- It wins over an authored or summoned origin until another transition.
+    local plant = ctx:get(entity, component.FEDHAS_PLANT)
+
+    if plant then
+        return plant.attitude
+    end
+
     local summon = ctx:get(entity, component.SUMMON)
 
     if summon then
