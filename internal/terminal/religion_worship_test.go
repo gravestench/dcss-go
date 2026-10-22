@@ -28,9 +28,8 @@ func TestRenounceReligionMenuAndTwoPrompts(t *testing.T) {
 	m.game = g
 	m.screen = ScreenPlay
 
-	if rows := plainApp(m); !strings.Contains(rows, "God: Trog") ||
-		!strings.Contains(rows, "Piety: *.....") {
-		t.Fatalf("worship HUD missing god or stars:\n%s", rows)
+	if rows := plainApp(m); !strings.Contains(rows, "Human of Trog *.....") {
+		t.Fatalf("source worship title missing god or stars:\n%s", rows)
 	}
 
 	before := g.View().CurrentAut
@@ -73,5 +72,34 @@ func TestRenounceReligionMenuAndTwoPrompts(t *testing.T) {
 		g.View().CurrentAut <= before ||
 		g.View().GodName != "" {
 		t.Fatal("confirmed renunciation did not end worship on a turn")
+	}
+}
+
+// A long source species/patron title keeps its full name on the dedicated
+// second line and drops stars only when they would exceed the HUD width.
+func TestLongGodTitleDoesNotOverwriteOtherHUDFields(t *testing.T) {
+	view := playView(t)
+
+	view.SpeciesName = "Mottled Draconian"
+	view.GodName = "the Shining One"
+	view.PietyStars = "*....."
+
+	canvas := NewCanvas(79, 24)
+	layout, ok := ComputeLayout(79, 24)
+
+	if !ok {
+		t.Fatal("minimum HUD layout unavailable")
+	}
+
+	DrawPlay(canvas, layout, view, "", testPresentationPolicy(t))
+
+	line := canvas.PlainRows()[1]
+
+	if !strings.Contains(line, "Mottled Draconian of the Shining One") {
+		t.Fatalf("long god title was truncated: %q", line)
+	}
+
+	if strings.Contains(line, "*.....") {
+		t.Fatalf("piety stars overflowed the HUD: %q", line)
 	}
 }

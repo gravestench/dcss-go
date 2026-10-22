@@ -52,6 +52,23 @@ local function weapon_label(inventory)
     return "-) Unarmed"
 end
 
+-- Source DCSS prints species, patron, and piety on one 42-column line.
+-- Hide only the stars when the full source name would not fit that line.
+local function species_line(view)
+    if not view.god_name or view.god_name == "" then
+        return view.species_name
+    end
+
+    local line = view.species_name .. " of " .. view.god_name
+
+    if view.piety_stars and view.piety_stars ~= "" and
+        #line + #view.piety_stars + 1 <= 42 then
+        line = line .. " " .. view.piety_stars
+    end
+
+    return line
+end
+
 -- The HUD projects live vitals and equipment labels from the current player components.
 -- Example: hud.rows(player_view, { berserk = true }) returns writes and meters
 -- without touching ECS, which lets the terminal redraw on a resize.
@@ -71,7 +88,7 @@ function hud.rows(view, extras)
     end
 
     write(0, 0, view.player_name .. " the Shield-Bearer", colors.yellow)
-    write(0, 1, view.species_name, colors.yellow)
+    write(0, 1, species_line(view), colors.yellow)
 
     local vitals = {
         { y = 2, label = "Health: ", current = view.player_hp,
@@ -134,20 +151,12 @@ function hud.rows(view, extras)
         place = branch.abbreviation .. ":" .. view.local_depth
     end
     write(18, 7, "Place: " .. place, colors.brown)
-    if view.god_name and view.god_name ~= "" then
-        write(0, 8, "God: " .. view.god_name, colors.brown)
-    else
-        write(0, 8, "Noise: --", colors.brown)
-    end
+    write(0, 8, "Noise: --", colors.brown)
     write(18, 8, string.format("Time: %.1f",
         view.current_aut / time.AUT_PER_TURN), colors.brown)
     write(0, 9, weapon_label(view.inventory), colors.light_grey)
-    if view.god_name and view.god_name ~= "" then
-        if view.penance and view.penance > 0 then
-            write(0, 10, "Penance: " .. view.penance, colors.red)
-        elseif view.piety_stars and view.piety_stars ~= "" then
-            write(0, 10, "Piety: " .. view.piety_stars, colors.brown)
-        end
+    if view.penance and view.penance > 0 then
+        write(0, 10, "Penance: " .. view.penance, colors.red)
     else
         write(0, 10, "Quiver: --", colors.brown)
     end

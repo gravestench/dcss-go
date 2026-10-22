@@ -27,7 +27,12 @@ function religion.run(ctx)
     local definition = catalog.get(categories.GODS, state.god_id)
     local stars = ""
 
-    if definition.piety_mode ~= modes.NONE then
+    if definition.piety_mode == modes.XOM then
+        local rank = piety.rank(state.god_id, state.piety)
+
+        stars = string.rep(".", rank - 1) .. "*" ..
+            string.rep(".", 6 - rank)
+    elseif definition.piety_mode ~= modes.NONE then
         local rank = piety.rank(state.god_id, state.piety)
 
         stars = string.rep("*", rank) .. string.rep(".", 6 - rank)

@@ -1598,10 +1598,12 @@ ID and focused module through `policy.abilities.registry` rather than
 putting more cases in renunciation.
 
 `policy/presentation/religion.lua` reads `religion.worship` for god name,
-six-star piety, and current penance. It uses the effective god catalog, so a
+six-position piety, and current penance. Xom has one moving star rather than
+the ordinary cumulative stars. It uses the effective god catalog, so a
 modded god's name and piety mode reach the HUD through its definition.
-Gozag's no-piety mode intentionally has no stars. The Go view and terminal
-render these Lua values without a second god-name table.
+Gozag's no-piety mode intentionally has no stars. The terminal places patron
+and stars beside the species on the second HUD line, following source DCSS;
+the Go view renders Lua values without a second god-name table.
 
 If an existing category's field is unclear, search for the field name in its
 consumer policy. That tells you whether it is display data, generation data,

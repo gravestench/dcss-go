@@ -57,6 +57,13 @@ function test.run(ctx)
 
     harness.equal(gozag.god_name, "Gozag")
     harness.equal(gozag.piety_stars, "")
+
+    state = ctx:get(player, component.RELIGION_WORSHIP)
+    state.god_id = gods.XOM
+    state.piety = 51
+    ctx:set(player, component.RELIGION_WORSHIP, state)
+
+    harness.equal(religion.run(screen).piety_stars, "..*...")
 end
 
 return test
