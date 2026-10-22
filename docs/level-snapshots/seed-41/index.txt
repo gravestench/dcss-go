@@ -1,0 +1,129 @@
+Generated Dungeon, seed 41
+Coordinates are zero-based: (x,y), origin at top left.
+A pending stair generates its destination on first entry.
+
+Dungeon:1  D-01.txt  vault dpeg_arrival_three_same_balls
+  (67,19) > -> Dungeon:2 (35,27)
+  (11,29) > -> Dungeon:2 (64,51)
+  (50,36) > -> Dungeon:2 (55,62)
+  (10,43) < -> outside the dungeon
+  (34,44) < -> outside the dungeon
+  (37,46) < -> outside the dungeon
+  (34,56) < -> outside the dungeon
+
+Dungeon:2  D-02.txt  vault minmay_strange_pillars
+  (29,25) > -> Dungeon:3 (39,38)
+  (35,27) < -> Dungeon:1 (67,19)
+  (64,51) < -> Dungeon:1 (11,29)
+  (68,52) > -> Dungeon:3 (20,45)
+  (51,54) > -> Dungeon:3 (42,48)
+  (55,62) < -> Dungeon:1 (50,36)
+
+Dungeon:3  D-03.txt  vault serial_shops
+  (41,28) > -> Dungeon:4 (46,17)
+  (39,38) < -> Dungeon:2 (29,25)
+  (20,45) < -> Dungeon:2 (68,52)
+  (11,48) > -> Dungeon:4 (42,26)
+  (42,48) < -> Dungeon:2 (51,54)
+  (41,54) > -> Dungeon:4 (14,45)
+
+Dungeon:4  D-04.txt  vault serial_undead
+  (46,17) < -> Dungeon:3 (41,28)
+  (42,26) < -> Dungeon:3 (11,48)
+  (35,34) > -> Dungeon:5 (59,29)
+  (44,40) > -> Dungeon:5 (17,35)
+  (14,45) < -> Dungeon:3 (41,54)
+  (20,46) > -> Dungeon:5 (19,45)
+
+Dungeon:5  D-05.txt
+  (15,12) > -> Dungeon:6 (41,41)
+  (59,29) < -> Dungeon:4 (35,34)
+  (52,31) > -> Dungeon:6 (63,45)
+  (51,33) > -> Dungeon:6 (12,47)
+  (17,35) < -> Dungeon:4 (44,40)
+  (19,45) < -> Dungeon:4 (20,46)
+
+Dungeon:6  D-06.txt  vault chequers_serial_rivers_large_a
+  (33,32) > -> TEMPLE (level ID 101) (pending)
+  (61,36) > -> Dungeon:7 (52,31)
+  (41,41) < -> Dungeon:5 (15,12)
+  (63,45) < -> Dungeon:5 (52,31)
+  (12,47) < -> Dungeon:5 (51,33)
+  (45,52) > -> Dungeon:7 (67,31)
+  (25,54) > -> Dungeon:7 (38,36)
+
+Dungeon:7  D-07.txt
+  (46,17) > -> Dungeon:8 (38,14)
+  (29,18) > -> Dungeon:8 (38,24)
+  (52,31) < -> Dungeon:6 (61,36)
+  (67,31) < -> Dungeon:6 (45,52)
+  (38,36) < -> Dungeon:6 (25,54)
+  (33,61) > -> Dungeon:8 (25,43)
+
+Dungeon:8  D-08.txt  vault nicolae_inconvenience_store
+  (38,14) < -> Dungeon:7 (46,17)
+  (33,21) > -> Dungeon:9 (63,17)
+  (38,24) < -> Dungeon:7 (29,18)
+  (25,43) < -> Dungeon:7 (33,61)
+  (72,45) > -> Dungeon:9 (49,31)
+  (51,46) > -> Dungeon:9 (68,48)
+
+Dungeon:9  D-09.txt  vault guppyfry_shop_venom
+  (52,17) > -> Dungeon:10 (27,22)
+  (63,17) < -> Dungeon:8 (33,21)
+  (22,24) > -> Dungeon:10 (33,31)
+  (49,31) < -> Dungeon:8 (72,45)
+  (46,48) > -> Dungeon:10 (28,39)
+  (68,48) < -> Dungeon:8 (51,46)
+
+Dungeon:10  D-10.txt
+  (32,9) > -> LAIR (level ID 501) (pending)
+  (27,22) < -> Dungeon:9 (52,17)
+  (33,31) < -> Dungeon:9 (22,24)
+  (28,39) < -> Dungeon:9 (46,48)
+  (44,41) > -> Dungeon:11 (55,3)
+  (22,49) > -> Dungeon:11 (41,11)
+  (17,55) > -> Dungeon:11 (61,15)
+
+Dungeon:11  D-11.txt  vault minmay_shop_grid_forest
+  (55,3) < -> Dungeon:10 (44,41)
+  (41,11) < -> Dungeon:10 (22,49)
+  (61,15) < -> Dungeon:10 (17,55)
+  (64,17) > -> Dungeon:12 (67,18)
+  (16,22) > -> Dungeon:12 (69,24)
+  (63,35) > -> Dungeon:12 (69,26)
+  (21,56) > -> ORC (level ID 201) (pending)
+
+Dungeon:12  D-12.txt  vault chequers_serial_rivers_large_b
+  (63,10) > -> Dungeon:13 (50,16)
+  (67,18) < -> Dungeon:11 (64,17)
+  (69,24) < -> Dungeon:11 (16,22)
+  (69,26) < -> Dungeon:11 (63,35)
+  (17,38) > -> Dungeon:13 (17,19)
+  (29,41) > -> Dungeon:13 (17,20)
+
+Dungeon:13  D-13.txt  vault nicolae_alphabet_shops
+  (25,14) > -> Dungeon:14 (28,22)
+  (50,16) < -> Dungeon:12 (63,10)
+  (17,19) < -> Dungeon:12 (17,38)
+  (17,20) < -> Dungeon:12 (29,41)
+  (35,31) > -> Dungeon:14 (3,32)
+  (36,53) > -> Dungeon:14 (24,38)
+
+Dungeon:14  D-14.txt  vault dungeon_decor
+  (62,19) > -> Dungeon:15 (7,24)
+  (13,22) > -> Dungeon:15 (9,33)
+  (28,22) < -> Dungeon:13 (25,14)
+  (33,22) > -> VAULTS (level ID 1101) (pending)
+  (3,32) < -> Dungeon:13 (35,31)
+  (24,38) < -> Dungeon:13 (36,53)
+  (55,43) > -> Dungeon:15 (17,38)
+
+Dungeon:15  D-15.txt  vault serial_glass
+  (7,24) < -> Dungeon:14 (62,19)
+  (57,29) > -> unavailable: The Depths are unavailable in the Go port.
+  (30,31) > -> DEPTHS (level ID 3401) (pending)
+  (9,33) < -> Dungeon:14 (13,22)
+  (17,38) < -> Dungeon:14 (55,43)
+  (9,47) > -> unavailable: The Depths are unavailable in the Go port.
+  (53,56) > -> unavailable: The Depths are unavailable in the Go port.

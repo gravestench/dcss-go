@@ -1,6 +1,7 @@
 package game
 
 import (
+	"os"
 	"reflect"
 	"strings"
 	"testing"
@@ -512,6 +513,12 @@ func TestGeneratedDungeonReachesDepthFifteen(t *testing.T) {
 
 	if boundary < 3 {
 		t.Fatalf("Dungeon:15 has %d Depths entrances, want at least 3", boundary)
+	}
+
+	if directory := os.Getenv("CRAWL_LEVEL_SNAPSHOT_DIR"); directory != "" {
+		if err := writeGeneratedDungeonTextSnapshots(g.Snapshot(), directory); err != nil {
+			t.Fatal(err)
+		}
 	}
 }
 
