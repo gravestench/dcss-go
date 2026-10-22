@@ -27,8 +27,10 @@ dynamic marker; its generated equipment comes from its Lua starting rule.
 Normal launch and restore read neither the C++ checkout nor the generated
 JSON artifacts. Some JSON remains embedded by legacy Go catalog code and
 cross-check tests; Lua content is now edited directly.
-The player-book spell ID set is also committed as
-`data/player_book_spells.lua`; it is read at runtime without the C++ tree.
+The effective registered book definitions determine player-book spell
+membership through `policy/magic/player_book_catalog.lua`. The separate
+committed `data/player_invoked_spells.lua` holds source player spells that
+are invoked outside books. Neither rule reads the C++ tree at runtime.
 
 Optional mod directories replace bundled Lua files by relative path and may
 add files. Repeated `--mod-dir` flags apply sparse layers in order; the last

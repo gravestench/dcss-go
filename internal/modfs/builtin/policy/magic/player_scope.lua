@@ -1,5 +1,7 @@
 local catalog = require("policy.catalog")
-local player_ids = require("data.player_spell_ids")
+local books = require("policy.magic.player_book_catalog")
+local invoked = require("data.player_invoked_spells")
+local categories = require("constants.catalog")
 local scopes = require("constants.spell_scopes")
 
 local scope = {}
@@ -11,7 +13,7 @@ function scope.of(id)
         return scopes.NONE
     end
 
-    local found, spell = pcall(catalog.get, "spells", id)
+    local found, spell = pcall(catalog.get, categories.SPELLS, id)
 
     if not found or spell.status ~= "defined" then
         return scopes.NONE
@@ -21,11 +23,11 @@ function scope.of(id)
         return spell.player_scope
     end
 
-    if player_ids.books[id] then
+    if books.ids()[id] then
         return scopes.BOOK
     end
 
-    if player_ids.invoked[id] then
+    if invoked[id] then
         return scopes.INVOKED
     end
 

@@ -18,12 +18,21 @@ func (r *Runtime) installRegistrationAPI() {
 	r.state.SetField(register, "definition", r.state.NewFunction(r.luaRegisterDefinition))
 	r.state.SetField(register, "get", r.state.NewFunction(r.luaRegisteredDefinition))
 	r.state.SetField(register, "ids", r.state.NewFunction(r.luaRegisteredIDs))
+	r.state.SetField(register, "frozen", r.state.NewFunction(r.luaRegistrationFrozen))
 	r.state.SetField(register, "reference", r.state.NewFunction(r.luaRegisteredReference))
 	r.state.SetField(register, "validate_references", r.state.NewFunction(r.luaValidateDefinitionReferences))
 	r.state.SetField(register, "origin", r.state.NewFunction(r.luaRegisteredOrigin))
 	r.state.SetField(register, "choice_policy", r.state.NewFunction(r.luaRegisterChoicePolicy))
 	r.state.SetField(register, "policy", r.state.NewFunction(r.luaRegisterPolicy))
 	r.state.SetGlobal("register", register)
+}
+
+// luaRegistrationFrozen lets Lua policy cache derived catalog views only
+// after every layered definition has been registered.
+func (r *Runtime) luaRegistrationFrozen(state *lua.LState) int {
+	state.Push(lua.LBool(r.frozen))
+
+	return 1
 }
 
 func (r *Runtime) luaRegisterComponent(state *lua.LState) int {

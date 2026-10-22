@@ -1,8 +1,7 @@
 -- Example: A magic gift excludes spells the species cannot cast at the starting level.
 -- Source: ng-wanderer.cc. Magic gifts draw from the committed spell catalog.
 local spells = {}
-local catalog = require("policy.catalog")
-local categories = require("constants.catalog")
+local player_books = require("policy.magic.player_book_catalog")
 local school_ids = require("constants.spell_schools")
 local skill_ids = require("ids.skills")
 local streams = require("constants.rng_streams")
@@ -54,41 +53,6 @@ function spells.djinni_skill(ctx)
     return choices[ctx:random(streams.WANDERER, #choices) + 1]
 end
 
--- Numeric IDs preserve source spell enumeration rather than file names.
-local function ordered_spells()
-    local result = catalog.all(categories.SPELLS)
-
-    table.sort(result, function(left, right)
-        local left_order = left.numeric_id or math.huge
-        local right_order = right.numeric_id or math.huge
-
-        if left_order == right_order then
-            return left.id < right.id
-        end
-
-        return left_order < right_order
-    end)
-
-    return result
-end
-
--- Fixed books in the effective layered catalog define player-book
--- membership. A mod may add a spell or change a book without updating
--- the source snapshot in data/player_book_spells.lua.
-local function player_book_ids()
-    local ids = {}
-
-    for _, item in ipairs(catalog.all(categories.ITEMS)) do
-        local generation = item.generation or {}
-
-        for _, id in ipairs(generation.spells or {}) do
-            ids[id] = true
-        end
-    end
-
-    return ids
-end
-
 -- Check spell schools without assuming every spell lists that school.
 local function contains(values, wanted)
     for _, value in ipairs(values or {}) do
@@ -102,9 +66,8 @@ end
 
 -- Skip already chosen or species-forbidden spells before reservoir selection.
 local function eligible(ctx, species, spell, school, minimum, maximum,
-    seen, book_ids)
-    if spell.status ~= "defined" or not book_ids[spell.id] or
-        not traits.start_spell_usable(ctx, ctx:player(), species,
+    seen)
+    if not traits.start_spell_usable(ctx, ctx:player(), species,
             spell.id) or seen[spell.id] or
         spell.level < minimum or spell.level > maximum then
         return false
@@ -118,13 +81,14 @@ local function eligible(ctx, species, spell, school, minimum, maximum,
 end
 
 -- Major gifts reservoir-sample each source-ordered eligible spell.
-local function pick(ctx, species, school, minimum, maximum, seen, book_ids)
+local function pick(ctx, species, school, minimum, maximum, seen,
+    candidates)
     local chosen
     local count = 0
 
-    for _, spell in ipairs(ordered_spells()) do
+    for _, spell in ipairs(candidates) do
         if eligible(ctx, species, spell, school, minimum, maximum,
-            seen, book_ids) then
+            seen) then
             count = count + 1
 
             if ctx:random(streams.WANDERER, count) == 0 then
@@ -142,12 +106,11 @@ end
 
 -- The first minor-book spell must leave at least one distinct partner
 -- whose level completes four. Source then draws uniformly among partners.
-local function minor_pair(ctx, species, school, book_ids)
+local function minor_pair(ctx, species, school, candidates)
     local available = {}
 
-    for _, spell in ipairs(ordered_spells()) do
-        if eligible(ctx, species, spell, school, 1, 3, {},
-            book_ids) then
+    for _, spell in ipairs(candidates) do
+        if eligible(ctx, species, spell, school, 1, 3, {}) then
             available[#available + 1] = spell
         end
     end
@@ -191,7 +154,7 @@ function spells.gift(ctx, species, skill, good)
     local school = schools[skill]
     local chosen = {}
     local seen = {}
-    local book_ids = player_book_ids()
+    local candidates = player_books.ordered()
 
     if good then
         local count = skill == skill_ids.SK_SPELLCASTING and 4 or 3
@@ -200,7 +163,7 @@ function spells.gift(ctx, species, skill, good)
         for index = 1, count do
             local limit = index == 1 and 1 or maximum
             local id = pick(ctx, species, school, 1, limit, seen,
-                book_ids)
+                candidates)
 
             if id then
                 chosen[#chosen + 1] = id
@@ -214,7 +177,7 @@ function spells.gift(ctx, species, skill, good)
             school = schools[chosen_skill]
         end
 
-        chosen = minor_pair(ctx, species, school, book_ids)
+        chosen = minor_pair(ctx, species, school, candidates)
     end
 
     return chosen

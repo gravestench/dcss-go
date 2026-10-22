@@ -11,7 +11,7 @@ local ids = require("ids.items")
 local quality = require("constants.vault_item_quality")
 local skills = require("ids.skills")
 local gods = require("constants.gods")
-local god_names = require("constants.god_names")
+local god_names = require("policy.religion.names")
 local weapon_brands = require("constants.weapon_brands")
 
 local test = {}

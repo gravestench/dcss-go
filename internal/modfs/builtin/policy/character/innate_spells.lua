@@ -2,7 +2,7 @@
 -- Source: ng-setup.cc:_setup_innate_spells. Future Djinni spells are chosen
 -- when the character starts and saved, so leveling never rerolls them.
 local traits = require("policy.character.traits")
-local player_books = require("data.player_book_spells")
+local player_books = require("policy.magic.player_book_catalog")
 
 local innate = {}
 
@@ -29,15 +29,14 @@ function innate.generate(ctx, species, known)
     end
 
     local future = {}
-    local catalog = require("policy.catalog").all("spells")
+    local available = player_books.ordered()
 
     for index = 1, #minimum do
         local chosen
         local candidates = 0
 
-        for _, spell in ipairs(catalog) do
-            if player_books[spell.id] and spell.status == "defined" and
-                not seen[spell.id] and not forbidden_flags(spell) and
+        for _, spell in ipairs(available) do
+            if not seen[spell.id] and not forbidden_flags(spell) and
                 traits.start_spell_usable(ctx, ctx:player(), species,
                     spell.id) and
                 spell.level >= minimum[index] and

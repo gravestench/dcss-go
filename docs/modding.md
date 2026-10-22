@@ -1332,6 +1332,7 @@ ordinary new files require no central index edit.
 | `register.definition(category, definition)` | Add one content definition with a unique `id`. |
 | `register.get(category, id)` | Return a copy of a registered definition; an unknown category or ID is an error. |
 | `register.ids(category)` | Return sorted IDs; file discovery order is irrelevant. |
+| `register.frozen()` | Return whether startup registration is closed; derived catalog views may be cached after this becomes true. |
 | `register.reference(category, id)` | Record a definition reference for startup validation. |
 | `register.validate_references()` | Validate recorded references; the base bootstrap calls this. |
 | `register.origin(category, id)` | Return the effective relative source path; an unknown ID is an error. |
@@ -1904,14 +1905,26 @@ read `hit.player_moving`: an opportunity strike must not trample, ensnare,
 constrict, banish, or blink the moving player. The policy refunds up to ten
 attack-energy points, leaving slow attacks with their extra cost.
 
-For a player spell, set `player_scope = scopes.BOOK` or
+For a player-book spell, add its registered ID to a fixed book's
+`generation.spells` list in `content/items/book_*.lua`. The effective
+layered books then give it BOOK scope and make it eligible for Wanderer,
+Djinni, and random-book selection. `policy/magic/player_book_catalog.lua`
+builds that pool from the effective catalog, in source numeric-ID order
+followed by unnumbered mod spells in ID order. Membership is cached only
+after registration closes. Removing the last book
+reference removes that eligibility. A modded book with a misspelled spell
+ID fails when the pool is read.
+
+For a directly invoked spell that is not in a book, set
 `player_scope = scopes.INVOKED` in its definition and import
-`constants.spell_scopes` as `scopes` in that file. Put its resolver in a
-separate file under `policy/magic/effects/` and call
+`constants.spell_scopes` as `scopes` there. An explicit `player_scope`
+overrides automatic scope classification, but declaring BOOK alone does
+not put the spell into a book. Put the spell's resolver in a separate file
+under `policy/magic/effects/` and call
 `registry.add(spells.MY_SPELL, { resolve = effect.resolve })`, importing
 `ids.spells` and `policy.magic.effects.registry` there. Both files load
-automatically. Existing DCSS spell scope is supplied by the committed
-source catalog when the definition has no `player_scope` field.
+automatically. Book and invoked spells without resolvers appear in effect
+coverage diagnostics.
 
 ### Add a monster spell or summon
 

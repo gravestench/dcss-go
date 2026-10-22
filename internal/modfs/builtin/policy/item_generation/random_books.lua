@@ -6,6 +6,7 @@ local schools = require("constants.spell_schools")
 local source = require("policy.item_generation.source_roll")
 local kinds = require("constants.artefact_kinds")
 local names = require("policy.item_generation.artefacts.names")
+local player_books = require("policy.magic.player_book_catalog")
 
 local random_books = {}
 
@@ -24,34 +25,6 @@ local school_order = {
     schools.EARTH,
     schools.AIR,
 }
-
--- Rebuild the defined player-book pool after overlays, then sort by numeric spell ID for seeded draws.
-local function available_spells()
-    local selected = {}
-
-    -- A source player-book spell appears in at least one fixed template.
-    -- Derive this set from the effective layered catalog on every roll.
-    for _, definition in ipairs(catalog.all("items")) do
-        for _, spell_id in ipairs(definition.generation.spells or {}) do
-            selected[spell_id] = catalog.get("spells", spell_id)
-        end
-    end
-
-    local ordered = {}
-
-    for _, spell in pairs(selected) do
-        if spell.status == "defined" then
-            ordered[#ordered + 1] = spell
-        end
-    end
-
-    -- Numeric spell ID order keeps equivalent effective catalogs on the same seeded candidate sequence.
-    table.sort(ordered, function(left, right)
-        return left.numeric_id < right.numeric_id
-    end)
-
-    return ordered
-end
 
 -- A themed book accepts either selected discipline without counting a spell twice.
 local function has_school(spell, first, second)
@@ -100,7 +73,7 @@ local function themed_spells(ctx, request)
     local used = {}
     local levels = 0
     local level_budget = request.slevels or 20
-    local available = available_spells()
+    local available = player_books.ordered()
     local eligible = {}
 
     for _, spell in ipairs(available) do
@@ -170,7 +143,7 @@ local function level_spells(ctx, request)
 
     local candidates = {}
 
-    for _, spell in ipairs(available_spells()) do
+    for _, spell in ipairs(player_books.ordered()) do
         if spell.level == level then
             candidates[#candidates + 1] = spell.id
         end
