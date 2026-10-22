@@ -62,13 +62,13 @@ function reactions.before_hp(ctx, player, damage)
 end
 
 -- After-HP callbacks receive the final cause for mutation and retaliation effects.
-function reactions.after_hp(ctx, player, damage, cause)
+function reactions.after_hp(ctx, player, damage, cause, attacker)
     if damage <= 0 then
         return
     end
 
     for _, entry in ipairs(entries) do
-        entry.on_damage(ctx, player, damage, cause)
+        entry.on_damage(ctx, player, damage, cause, attacker)
     end
 end
 

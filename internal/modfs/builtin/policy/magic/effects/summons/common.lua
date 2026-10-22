@@ -193,15 +193,16 @@ function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
             return nil
         end
     else
-        local stream = owner == ctx:player() and "spell" or
-            streams.MONSTER_SPELL
+        local stream = options and options.stream or
+            (owner == ctx:player() and "spell" or streams.MONSTER_SPELL)
 
         x, y = open_cell(ctx, origin, kind_id, stream)
     end
 
     if not x then
-        if owner == ctx:player() or
-            visibility.player_sees(ctx, origin) then
+        if not (options and options.silent_failure) and
+            (owner == ctx:player() or
+                visibility.player_sees(ctx, origin)) then
             ctx:emit(channels.SPELL, "Nothing happens.")
         end
 

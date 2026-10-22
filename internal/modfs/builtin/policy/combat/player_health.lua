@@ -3,12 +3,17 @@ local sanguine = require("policy.character.sanguine_armour")
 local spirit_shield = require("policy.combat.spirit_shield")
 local causes = require("constants.damage_causes")
 local reactions = require("policy.combat.player_damage_reactions")
+local jiyva_retaliation = require("policy.religion.jiyva.retaliation")
 local curl = require("policy.character.curl")
 local extra_lives = require("policy.character.extra_lives")
 local petrification = require("policy.combat.player_petrification")
 local sleep = require("policy.character.sleep")
 
 local health_policy = {}
+
+-- Religion owns its reaction logic; this shared health boundary only
+-- installs it and passes through the real damage source after HP changes.
+jiyva_retaliation.register()
 
 -- All ordinary damage to the player passes through this rule. The source's
 -- ouch.cc exception is reserved for explicitly fatal environmental causes.
@@ -51,7 +56,7 @@ function health_policy.damage(ctx, player, amount, fatal_exception, attacker,
     ctx:set(player, "core.health", health)
 
     if health.current > 0 then
-        reactions.after_hp(ctx, player, dealt, damage_cause)
+        reactions.after_hp(ctx, player, dealt, damage_cause, attacker)
         sanguine.on_damage(ctx, player, dealt)
     else
         extra_lives.on_lethal(ctx, player)

@@ -1,4 +1,5 @@
 local component = require("constants.component")
+local causes = require("constants.damage_causes")
 local monster_health = require("policy.combat.monster_health")
 local player_health = require("policy.combat.player_health")
 
@@ -12,7 +13,8 @@ function damage.apply(ctx, caster, defender, amount)
     end
 
     if ctx:has(defender, component.PLAYER) then
-        player_health.damage(ctx, defender, amount, false, caster)
+        player_health.damage(ctx, defender, amount, false,
+            caster, causes.BLAST)
 
         return
     end

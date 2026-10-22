@@ -48,6 +48,19 @@ function test.run(ctx)
         "Curl clears before the next monster phase")
     harness.equal(armour(ctx, player), 0,
         "Curl AC disappears when uncurling")
+
+    -- A ray is an eligible impact, while smiting is not. Both used to
+    -- share the ordinary hit cause, so keep the distinction explicit.
+    health.damage(ctx, player, 1, false, nil, causes.BEAM)
+
+    harness.truthy(curl.active(ctx, player),
+        "a beam triggers Curl")
+
+    curl.reset(ctx, player)
+    health.damage(ctx, player, 1, false, nil, causes.BLAST)
+
+    harness.falsy(curl.active(ctx, player),
+        "a direct blast does not trigger Curl")
 end
 
 return test

@@ -336,6 +336,10 @@ and corrosion resistance. Slimy-wall terrain damages unprotected players
 and visible non-slime monsters after their actions; penance or departure removes
 the relevant passives immediately. The existing health, regeneration,
 corrosion, grid, and worship owners carry their saved state.
+At five stars, surviving monster-caused hits that take at least a quarter
+of maximum HP eject one to five friendly, short-lived source slime species.
+The hit source becomes their saved target when alive, and all four species
+and count tiers run through the Lua reaction and ordinary ECS summon owner.
 Zin's entry and pickup tithes now share one Lua rule. Saved gold remembers
 whether it was seen before conversion or acquired, and the wallet keeps
 donations and fractional carry across piles and save/restore.

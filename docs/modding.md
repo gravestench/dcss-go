@@ -1626,6 +1626,22 @@ recognizes it without a monster-name case. The Lua system in
 their separate timing while the saved grid and worship component remain
 the authoritative state.
 
+Jiyva's five-star heavy-hit response lives in
+`policy/religion/jiyva/retaliation.lua`. The shared player-health owner
+passes its final, surviving HP loss and the actual attacker to registered
+damage reactions. The Jiyva handler checks current worship, penance, and
+the fraction of maximum HP lost, then uses the ordinary summon owner to
+create one to five friendly slime entities. The four possible monster IDs
+live in `constants/jiyva_ejectable_monsters.lua`, shared with save
+validation; threshold rules live in the retaliation policy. Its actors
+carry `magic.summon` with `source_category = gods`, `source_id = GOD_JIYVA`,
+owner, attitude, and expiry; a living damager is kept as their saved target.
+To change this passive, override that policy file and keep its
+`on_damage(ctx, player, damage, cause, attacker)` contract. The shared
+health owner does not need a Jiyva branch. The summon helper accepts an
+optional named random stream and a `silent_failure` flag so a passive
+whose surrounding cells are blocked does not print a spell-failure message.
+
 Jiyva's six-star capstone shows the other kind of god callback.
 `piety.gain` saves the new rank before calling `rank_gained(ctx, player,
 old_rank, new_rank)` on the god's behavior module. Jiyva records the spent

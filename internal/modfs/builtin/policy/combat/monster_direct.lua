@@ -3,6 +3,7 @@
 -- source damage rule.
 local catalog = require("policy.catalog")
 local component = require("constants.component")
+local causes = require("constants.damage_causes")
 local fighter = require("policy.combat.fighter")
 local monster_defense = require("policy.combat.monster_defense")
 local monster_health = require("policy.combat.monster_health")
@@ -84,7 +85,8 @@ end
 -- Example: direct.damage(ctx, caster, foe, 7) lets Smiting bypass AC.
 function direct.damage(ctx, caster, foe, amount)
     if ctx:has(foe, component.PLAYER) then
-        player_health.damage(ctx, foe, amount, false, caster)
+        player_health.damage(ctx, foe, amount, false,
+            caster, causes.BLAST)
     else
         monster_health.damage(ctx, foe, amount, caster)
     end

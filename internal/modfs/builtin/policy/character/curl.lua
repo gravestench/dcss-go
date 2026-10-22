@@ -16,7 +16,8 @@ end
 -- Source: ouch.cc:_consider_curling responds to direct hits, beams, traps,
 -- and explosions. Ongoing poison and cloud damage do not curl the player.
 function curl.on_damage(ctx, player, amount, cause)
-    if amount <= 0 or cause ~= causes.HIT or
+    if amount <= 0 or
+        (cause ~= causes.HIT and cause ~= causes.BEAM) or
         levels.effective(ctx, player, mutations.MUT_CURL) == 0 or
         curl.active(ctx, player) then
         return

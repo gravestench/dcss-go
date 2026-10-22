@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local calculators = require("policy.combat.monster_beams.calculators")
 local component = require("constants.component")
+local causes = require("constants.damage_causes")
 local damage = require("policy.combat.monster_beams.damage")
 local defense = require("policy.combat.monster_beams.defense")
 local fighter = require("policy.combat.fighter")
@@ -56,7 +57,8 @@ end
 -- Dispatch to player or monster health so death credit and reactions stay in their own domains.
 local function deliver_hit(ctx, caster, defender, amount)
     if ctx:has(defender, component.PLAYER) then
-        player_health.damage(ctx, defender, amount, false, caster)
+        player_health.damage(ctx, defender, amount, false,
+            caster, causes.BEAM)
     else
         monster_health.damage(ctx, defender, amount, caster)
     end
