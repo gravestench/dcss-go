@@ -1,4 +1,5 @@
--- Trog starts with ordinary piety even though divine magic is forbidden by later conduct rules.
+-- Trog starts with ordinary piety and a focused behavior module that blocks
+-- magic training while worship lasts. Later conduct rules handle spell use.
 -- Its file registers one stable ID; the resolved catalog can replace this
 -- definition from a later mod layer without changing the engine.
 local categories = require("constants.catalog")
@@ -12,6 +13,7 @@ local definition = {
     starting_piety = 15,
     wrath_penance = 50,
     piety_mode = modes.ORDINARY,
+    behavior_module = "policy.religion.gods.trog",
 }
 
 register.definition(categories.GODS, definition)

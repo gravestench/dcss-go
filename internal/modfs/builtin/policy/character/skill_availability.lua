@@ -8,6 +8,8 @@ local forms = require("policy.magic.effects.forms.player")
 local rage = require("policy.character.rage")
 local mutation_levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
+local gods = require("constants.gods")
+local categories = require("constants.catalog")
 
 local availability = {}
 
@@ -15,6 +17,32 @@ local availability = {}
 function availability.forbidden_skill(ctx, player, skill_id)
     return effects.sum(ctx, player,
         capabilities.SKILL_FORBIDDEN, skill_id) > 0
+end
+
+-- A god may make training harmful only while worship lasts. Its optional
+-- behavior hook owns the named skill rule; permanent mutation sacrifices
+-- remain separate because they may erase learned points and saved choices.
+function availability.training_forbidden(ctx, player, skill_id)
+    if availability.forbidden_skill(ctx, player, skill_id) then
+        return true
+    end
+
+    local worship = ctx:get(player, component.RELIGION_WORSHIP)
+
+    if not worship or worship.god_id == gods.NO_GOD then
+        return false
+    end
+
+    local definition = catalog.get(categories.GODS, worship.god_id)
+
+    if not definition.behavior_module then
+        return false
+    end
+
+    local behavior = require(definition.behavior_module)
+
+    return behavior.forbids_training and
+        behavior.forbids_training(ctx, player, skill_id) or false
 end
 
 -- Species and mutation restrictions also apply before a learned spell can be cast.

@@ -35,7 +35,7 @@ local function count(queue, id)
 end
 
 -- Convert recent practice or manual focus into integer percentages with stable remainder ties.
-function weights.scaled(skills, training)
+function weights.scaled(skills, training, allowed)
     local values = {}
     local had_practice = false
 
@@ -43,7 +43,8 @@ function weights.scaled(skills, training)
         local setting = weights.setting(training, skill.id)
         local weight = 0
 
-        if setting and setting.enabled and skill.level < 27 then
+        if setting and setting.enabled and skill.level < 27 and
+            (not allowed or allowed(skill.id)) then
             if training.manual then
                 weight = setting.focused and 2 or 1
             else
@@ -67,7 +68,8 @@ function weights.scaled(skills, training)
         for index, skill in ipairs(skills) do
             local setting = weights.setting(training, skill.id)
 
-            if setting and setting.enabled and skill.level < 27 then
+            if setting and setting.enabled and skill.level < 27 and
+                (not allowed or allowed(skill.id)) then
                 values[index] = setting.focused and 2 or 1
             end
         end
@@ -77,7 +79,8 @@ function weights.scaled(skills, training)
         for index, skill in ipairs(skills) do
             local setting = weights.setting(training, skill.id)
 
-            if setting and setting.enabled and setting.focused and skill.level < 27 and
+            if setting and setting.enabled and setting.focused and
+                skill.level < 27 and (not allowed or allowed(skill.id)) and
                 values[index] < 20 then
                 values[index] = values[index] + 5 * (5 - math.floor(values[index] / 4))
             end

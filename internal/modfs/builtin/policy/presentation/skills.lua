@@ -4,6 +4,7 @@ local formulas = require("policy.character.formulas")
 local colors = require("policy.presentation.colors")
 local presentation = require("data.presentation")
 local distributed = require("policy.character.distributed_training")
+local availability = require("policy.character.skill_availability")
 
 local skills_policy = {}
 
@@ -91,11 +92,14 @@ function skills_policy.rows(ctx, input)
                 local setting = settings[id] or {}
                 local training = "--"
 
-                if setting.enabled then
+                local forbidden = availability.training_forbidden(ctx,
+                    player, id)
+
+                if setting.enabled and not forbidden then
                     training = (input.skill_percent[id] or 0) .. "%"
                 end
 
-                if setting.focused then
+                if setting.focused and not forbidden then
                     training = "*" .. training
                 end
 

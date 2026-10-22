@@ -38,6 +38,29 @@ local pinned = {
     skills.SK_EVOCATIONS,
 }
 
+local magic = {}
+local within_magic = false
+
+for _, id in ipairs(pinned) do
+    if id == skills.SK_SPELLCASTING then
+        within_magic = true
+    end
+
+    if within_magic then
+        magic[id] = true
+    end
+
+    if id == skills.SK_POISON_MAGIC then
+        within_magic = false
+    end
+end
+
+-- Source SK_LAST_MAGIC is Poison Magic. Keeping the group beside the pinned
+-- order prevents Trog's training rule from maintaining a second ID list.
+function order.is_magic(id)
+    return magic[id] == true
+end
+
 -- Return DCSS's pinned training order followed by mod-added skills by ID.
 -- Stable traversal matters for Gnoll XP allocation: changing file discovery
 -- order must never change which skill receives a limited XP remainder.

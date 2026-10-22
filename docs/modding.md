@@ -1568,6 +1568,16 @@ Yredelemnul components illustrate this. Their pending rewards remain saved
 until those god systems are ported; the current engine does not yet resolve
 all divine abilities, gifts, passives, and wrath effects.
 
+Trog's `policy/religion/gods/trog.lua` illustrates a temporary training
+restriction. It exports `forbids_training(ctx, player, skill_id)`, which the
+shared `policy/character/skill_availability.lua` asks when it calculates
+training controls, XP weights, direct skill experience, and the skills
+screen. `data.skill_order.is_magic(skill_id)` supplies the source magic
+group; Gnoll Distributed Training is Trog's source exception. A modded god
+may supply the same optional method through its `behavior_module`. Keep a
+temporary god restriction out of permanent mutation-skill rules: leaving
+the god must not erase learned points or the player's saved choices.
+
 #### Prayer, renunciation, and the HUD
 
 The source stair keys (`<` and `>`) request prayer when the player stands on

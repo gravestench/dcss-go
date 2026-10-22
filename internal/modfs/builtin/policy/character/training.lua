@@ -54,7 +54,7 @@ end
 -- Recent practice changes automatic weights before the next XP spending pass.
 function training_rules.record_practice(ctx, actor, skills, training,
     species, id)
-    if availability.forbidden_skill(ctx, actor, id) then
+    if availability.training_forbidden(ctx, actor, id) then
         return
     end
 
@@ -77,7 +77,7 @@ end
 function training_rules.change(ctx, actor, skills, training, species,
     id, focus)
     if distributed.active(ctx, actor) or
-        availability.forbidden_skill(ctx, actor, id) then
+        availability.training_forbidden(ctx, actor, id) then
         return false
     end
 
@@ -103,7 +103,7 @@ local function trainable(ctx, actor, skill, training)
     local setting = weights.setting(training, skill.id)
 
     return setting and setting.enabled and skill.level < 27 and
-        not availability.forbidden_skill(ctx, actor, skill.id)
+        not availability.training_forbidden(ctx, actor, skill.id)
 end
 
 -- Cap one allocation by budget, level-27 points, and the current cost level.
@@ -111,7 +111,7 @@ local function train_chunk(ctx, actor, skill, training, species, budget,
     forced)
     if (not forced and not trainable(ctx, actor, skill, training)) or
         skill.level >= 27 or
-        availability.forbidden_skill(ctx, actor, skill.id) then
+        availability.training_forbidden(ctx, actor, skill.id) then
         return 0
     end
 
@@ -175,7 +175,9 @@ local function spend_batch(ctx, actor, skills, training, species)
     end
 
     local batch_xp = batch_limit(training, cost)
-    local scaled = weights.scaled(skills, training)
+    local scaled = weights.scaled(skills, training, function(id)
+        return not availability.training_forbidden(ctx, actor, id)
+    end)
     local shares = {}
     local order = {}
     local skip_first = false
@@ -311,7 +313,7 @@ function training_rules.spend_experience(ctx, actor, id, budget)
     local aptitude = species.aptitudes[id]
 
     if not aptitude or not aptitude.allowed or
-        availability.forbidden_skill(ctx, actor, id) then
+        availability.training_forbidden(ctx, actor, id) then
         return 0
     end
 
@@ -456,7 +458,9 @@ function training_rules.training_percent(ctx, _)
     if distributed.active(ctx, actor) then
         scaled = distributed.percent(ctx, actor, skills.entries, training)
     else
-        scaled = weights.scaled(skills.entries, training)
+        scaled = weights.scaled(skills.entries, training, function(id)
+            return not availability.training_forbidden(ctx, actor, id)
+        end)
     end
     local percent = {}
 
