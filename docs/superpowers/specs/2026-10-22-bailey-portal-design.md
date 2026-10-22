@@ -25,8 +25,10 @@ under `vaults/bailey_entry/` or `vaults/bailey/`. Keep the original `MAP`
 rows, static directives, weights, tags, orientation, and directive order.
 The mapless dispatcher remains a real catalog definition with an empty map,
 not a fabricated terrain layout. Source-position executable sites become
-named `vault.run` hooks in the `.des` files. Their bodies live in documented
-Lua modules under `policy/generation/vaults/bailey_entry/` and
+named `vault.run` or `vault.post_place` hooks at their authored stage. The
+dispatcher uses `vault.post_place`, which the DES parser already accepts for
+an empty map. Hook bodies live in documented Lua modules under
+`policy/generation/vaults/bailey_entry/` and
 `policy/generation/vaults/bailey/`. The existing roadmap item for readable
 DES-local Lua remains; this slice does not add inline Lua to Go.
 Every new Lua function explains its purpose, source rationale, and effect
@@ -55,18 +57,24 @@ choice once. Any conditional entrance decorations use that same choice.
 The source stores `bailey_axe` or `bailey_polearm` in `dgn.persist`, then
 its mapless dispatcher selects a destination by matching tag. The Go port
 stores the theme on the entrance's saved ECS portal component. On entry,
-Lua runs the dispatcher and selects one positive-weight effective layout
-with the matching tag, using stable vault IDs to remove filesystem load
-order from seeded results. A live gate without a theme, or a theme with no
-eligible layout, is an error; the source's missing-theme Wizmode fallback
-does not replace normal gameplay state. The source dispatcher and selected
-child identities are both retained in the generated level's history.
+the Bailey level owner invokes the dispatcher's named controller hook
+before attempting any geometry placement. The hook selects one
+positive-weight effective layout with the matching tag. Stable vault IDs
+remove filesystem load order from seeded results. A live gate without a
+theme, or one whose theme has no eligible layout, is an error. The source's
+missing-theme Wizmode fallback does not replace normal gameplay state.
+Both the dispatcher and selected child are retained in level history.
+
+The empty dispatcher never enters the geometry fitter. Its selected child
+uses the same whole-floor placement, terrain projection, and population
+path as other portal destinations. Existing Lua mapless-controller rules
+provide the pattern; this does not add a Bailey branch to Go placement.
 
 Each selected child encompasses one temporary Bailey floor. Use ordinary
 DES placement and Akara entity population for its terrain, monsters,
-equipment, loose items, traps, and records. Every layout
-must yield a safe arrival and at least one live exit. All 15 children are
-selectable and must pass production placement. A modded child joins its
+equipment, loose items, traps, and records. Every layout must yield a safe
+arrival and at least one live exit. All 15 children are selectable and
+must pass production placement. A modded child joins its
 theme pool by tag without a Go content switch, hardcoded ID list, or
 `source_order` field. The effective ruleset hash and existing duplicate-ID
 checks apply to every `.des` and Lua hook.
@@ -128,7 +136,8 @@ records exact Bailey coverage and any wider gameplay gaps.
   schemas, and policy modules as production; do not redeclare them in
   a parallel test catalog.
 - Generate and populate each of the 15 playable layouts through the real
-  dispatcher and placement path. Exercise both themes, authored gear and
+  dispatcher and placement path. Reject direct geometry placement of the
+  empty dispatcher. Exercise both themes, authored gear and
   loot, traps, delayed decay, feature names, exits, and sparse mod addition.
 - Test theme and duration draw order, 600–800-turn bounds, source messages,
   Silence and hearing, on-floor and off-floor expiry, last-turn entry,
