@@ -7,8 +7,9 @@
 **Goal:** Make the 14 source Ossuary entrances and 20 destinations a playable,
 timed, saved D:4–8 portal domain, including the sliding-wall event.
 
-**Architecture:** Checked-in source `.des` maps own geometry and static
-selection metadata; named Lua hooks own source scripts. Lua owns selection,
+**Architecture:** Checked-in source `.des` maps own geometry, static
+selection metadata, and source-position hook calls. Documented Lua modules
+own the shared and substantial source scripts. Lua owns selection,
 ECS clocks, travel, triggers, and save invariants. Go reuses its staged
 `luaPortal` transaction and adds only generic terrain and save wiring.
 
@@ -23,8 +24,10 @@ services, Bubble Tea terminal.
   order, weights, tags, and orientation in committed assets.
 - Only intentional upstream refreshes read C++; neither builds nor play
   require the C++ checkout or an importer.
-- Put executable Lua in documented named `.lua` files, never Go strings or
-  inline `.des` scripts. Keep source map syntax for authored geometry.
+- Never put Lua source in Go strings. Source-position `:` hook calls belong
+  in `.des`; DES-local Lua bodies are allowed but need explicit parser and
+  runtime support before use. This slice uses named Lua handlers for its
+  shared and substantial source scripts.
 - Keep every Lua function's why/how comments, prefer 80-character lines,
   never exceed 120, and expand multi-field declarations.
 - Dynamic clocks and visits live in Akara ECS; terrain remains a dense grid.
@@ -51,7 +54,7 @@ services, Bubble Tea terminal.
 ## File Map
 
 - `internal/modfs/builtin/vaults/{ossuary_entry,ossuary}/*.des`: one source
-  definition per replaceable file.
+  definition per replaceable file, including source-position `:` calls.
 - `internal/modfs/builtin/policy/generation/vaults/{ossuary_entry,ossuary}/*.lua`:
   named source-position hooks; shared entry and exit helpers.
 - `internal/modfs/builtin/policy/generation/ossuary/level.lua`: stable
@@ -107,9 +110,9 @@ the production `api` object and emit typed directives or source records.
   new Lua test through the existing Lua rule harness if its file list is
   explicit.
 - [ ] **Step 3: Split and port the source.** Check in each source `NAME` as
-  one `.des` file, preserving geometry and static directive order. Replace
-  executable source lines with named Lua hook references at the same
-  positions. Implement `ossuary_portal`, `ossuary_setup_features`, and
+  one `.des` file, preserving geometry and static directive order. Keep
+  source-position `:` calls in the maps and point them to ported handlers.
+  Implement `ossuary_portal`, `ossuary_setup_features`, and
   local hooks for `nicolae_ossuary_entry_plus`, `ossuary_tomb_2`,
   `ossuary_crypta`, `ossuary_the_hunt_dpeg`, `ossuary_zaba_flooded`, and
   `ossuary_boxes_badplayer`. Preserve sand colours and tiles, one draw per

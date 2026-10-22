@@ -20,8 +20,10 @@ static directives, weights, tags, orientation, and directive order. Runtime
 and builds read only committed Go and Lua assets; no importer or C++ checkout
 is required to play.
 
-The source file's executable Lua becomes named, documented Lua handlers at
-the same generation stage. These include the shared `ossuary_portal` and
+The source file's executable Lua becomes documented Lua handlers at the
+same generation stage. Source-position `:` hook calls remain in each `.des`
+file; shared and substantial behavior uses named Lua modules so it can be
+read and tested directly. These include the shared `ossuary_portal` and
 `ossuary_setup_features` rules, the coin flip in
 `nicolae_ossuary_entry_plus`, the conditional substitutions in
 `ossuary_tomb_2`, the source loot expressions in `ossuary_crypta` and
@@ -30,7 +32,9 @@ the same generation stage. These include the shared `ossuary_portal` and
 `ossuary_boxes_badplayer`. Preserve their source draw order and
 probabilities. The flood chooses one floor seed by reservoir sampling,
 draws its source 6–16 range, and applies the source glyph replacement
-weights. Do not execute legacy inline DES Lua or place Lua source in Go.
+weights. DES-local Lua is permitted where it improves an authored layout;
+the current named-hook parser needs explicit support before executing such
+bodies. Never place Lua source in Go.
 
 The shared entry hook gives every entrance one keyed `O` gate, a timed
 marker, source sand colour and tile directives, and the source
