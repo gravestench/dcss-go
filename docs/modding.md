@@ -1582,6 +1582,18 @@ longer matches its owner. The common piety owner invokes `penance_ended` on a
 god's behavior module when it has that method. A new god can use the same
 method for its own actor state.
 
+Jiyva's six-star capstone shows the other kind of god callback.
+`piety.gain` saves the new rank before calling `rank_gained(ctx, player,
+old_rank, new_rank)` on the god's behavior module. Jiyva records the spent
+reward in `religion.worship.one_time_abilities`, keyed by its god ID, then
+opens any Slime:5 seals on the current floor. The generic
+`world.enter_level` policy checks saved rewards after later stair travel,
+so earning the capstone before Slime:5 opens that floor on arrival. The
+Royal Jelly death and Jiyva's reward both call `policy/world/slime_seals.lua`
+to change the same ECS seal markers and terrain cells. A modded god can
+implement `rank_gained` for its own threshold effect and store any
+one-time history in the worship component.
+
 `policy/religion/gods/zin.lua` taxes untithed carried gold on joining and
 floor gold on pickup. Its `mark_seen` method records whether each gold entity
 was first seen while worshipping Zin. That item state survives save and
@@ -2504,9 +2516,11 @@ stone wall. `: vault.validate("validate")` calls the same module's
 Royal Jelly and one real slimy rune. Generation turns the wall markers into
 saved `world.slime_seal` components. The Royal Jelly's death callback is a
 separate gameplay rule at `policy/combat/monster_death/slime_pit.lua`; it
-receives the live game `ctx` and opens those walls. The `.des` hook receives
-the generation `api` and does not have access to live actors. Restore also
-checks every seal marker against the effective authored `n` cell, so a
+receives the live game `ctx` and calls `policy/world/slime_seals.lua` to
+open those walls. Jiyva's one-time six-star reward uses that same owner;
+`world.enter_level` applies it if the reward predates this floor. The `.des`
+hook receives the generation `api` and does not have access to live actors.
+Restore checks every seal marker against the effective authored `n` cell, so a
 saved marker and component cannot both disappear unnoticed. To replace
 this floor, override `vaults/layout/slime_pit.des` at the same relative path;
 keep its stable `NAME` and the source rune and guardian records, or the

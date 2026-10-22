@@ -14,7 +14,9 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
-const bootstrapTimeout = 5 * time.Second
+// Loading the committed DES catalog validates every named hook before play.
+// Its cost grows with content, especially in focused tests on slower hosts.
+const bootstrapTimeout = 30 * time.Second
 
 // Services are the session operations made available to Lua callbacks.
 // A nil operation is unavailable to that particular runtime.

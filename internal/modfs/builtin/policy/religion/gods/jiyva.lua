@@ -11,9 +11,11 @@ local component = require("constants.component")
 local gods = require("constants.gods")
 local flags = require("constants.monster_flags")
 local monsters = require("ids.monsters")
+local piety = require("policy.religion.piety")
 local allegiance = require(
     "policy.magic.effects.statuses.monster_allegiance")
 local summons = require("policy.magic.effects.summons.common")
+local seals = require("policy.world.slime_seals")
 local senses = require("policy.character.senses")
 local targets = require("policy.ai.targets")
 
@@ -41,6 +43,41 @@ local function worship_state(ctx, player)
     end
 
     return nil
+end
+
+-- The source grants the vault release once per character, even if Jiyva
+-- is later abandoned and rejoined. The saved per-god bit also makes a
+-- sixth-star reward independent of whether Slime:5 exists yet.
+local function unlock_vaults(ctx, player)
+    local state = worship_state(ctx, player)
+    local spent = state and state.one_time_abilities or {}
+
+    if not state or (state.penance[gods.JIYVA] or 0) > 0 or
+        piety.rank(gods.JIYVA, state.piety) < 6 or
+        spent[gods.JIYVA] then
+        return false
+    end
+
+    spent[gods.JIYVA] = true
+    state.one_time_abilities = spent
+    ctx:set(player, component.RELIGION_WORSHIP, state)
+
+    ctx:emit(channels.RELIGION,
+        "Jiyva will now unseal the treasures of the Slime Pits.")
+
+    local position = ctx:get(player, component.POSITION)
+
+    if position then
+        seals.release(ctx, position.level_id)
+    end
+
+    return true
+end
+
+-- The common piety owner reports upward rank crossings after saving the
+-- new number. Reaching six stars spends Jiyva's one-time map reward.
+function jiyva.rank_gained(ctx, player)
+    return unlock_vaults(ctx, player)
 end
 
 -- A monster changing its real side loses only owned summons still on the
@@ -134,7 +171,7 @@ end
 
 -- The source's DACT_SLIME_NEW_ATTEMPT clears saved attempt flags on every
 -- slime after penance ends, including one that never converted.
-function jiyva.penance_ended(ctx)
+function jiyva.penance_ended(ctx, player)
     for _, entity in ipairs(ctx:query({ component.JIYVA_SLIME })) do
         local state = ctx:get(entity, component.JIYVA_SLIME)
 
@@ -143,6 +180,10 @@ function jiyva.penance_ended(ctx)
             ctx:set(entity, component.JIYVA_SLIME, state)
         end
     end
+
+    -- A sixth-star worshipper can finish penance without a rank change.
+    -- The capstone resumes as soon as Jiyva is back in good standing.
+    unlock_vaults(ctx, player)
 end
 
 -- Abandonment affects only good-neutral Jiyva converts, not unrelated

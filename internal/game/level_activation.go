@@ -44,6 +44,12 @@ func (g *Game) activateLevel(level *Level, now Aut) error {
 		}
 	}
 
+	if err := g.runWorldPolicy("world.enter_level", map[string]any{
+		"level_id": level.ID,
+	}); err != nil {
+		return err
+	}
+
 	level.awaySinceAut = nil
 
 	return nil

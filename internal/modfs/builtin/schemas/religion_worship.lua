@@ -42,6 +42,12 @@ local schema = {
             type = "map<string,int64>",
         },
 
+        -- A capstone remains spent after changing gods or losing piety.
+        -- Keys are god IDs so added gods need no new schema field.
+        one_time_abilities = {
+            type = "map<string,bool>",
+        },
+
         previous_good_god = {
             type = "string",
             default = gods.NO_GOD,

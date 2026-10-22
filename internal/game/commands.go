@@ -224,8 +224,15 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 
 	if arrived, found := g.stores.Positions.Get(g.player); found &&
 		arrived.LevelID != position.LevelID {
+		before := len(g.turn.Events)
+
 		if err := g.activateTransition(position.LevelID, arrived.LevelID, startAut); err != nil {
 			return StepResult{}, err
+		}
+
+		for _, event := range g.turn.Events[before:] {
+			events = append(events, event)
+			g.messages = append(g.messages, event.Text)
 		}
 	}
 
@@ -349,9 +356,16 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 		arrived, found := g.stores.Positions.Get(g.player)
 
 		if found && arrived.LevelID != activeLevelID {
+			before := len(g.turn.Events)
+
 			if err := g.activateTransition(activeLevelID, arrived.LevelID,
 				startAut+cost); err != nil {
 				return StepResult{}, err
+			}
+
+			for _, event := range g.turn.Events[before:] {
+				events = append(events, event)
+				g.messages = append(g.messages, event.Text)
 			}
 
 			break

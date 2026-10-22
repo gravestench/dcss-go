@@ -204,6 +204,7 @@ function piety.gain(ctx, player, numerator, denominator, scale)
 
     local points = random_round(ctx, amount, denominator)
     local old_penance = state.penance[state.god_id] or 0
+    local old_rank = piety.rank(state.god_id, state.piety)
 
     for _ = 1, points do
         gain_point(ctx, player, state)
@@ -215,6 +216,18 @@ function piety.gain(ctx, player, numerator, denominator, scale)
     end
 
     ctx:set(player, component.RELIGION_WORSHIP, state)
+
+    -- Rank effects read the committed worship state. A god's Lua module
+    -- decides whether a crossed threshold has a one-time consequence.
+    local new_rank = piety.rank(state.god_id, state.piety)
+
+    if new_rank > old_rank and definition.behavior_module then
+        local handler = require(definition.behavior_module)
+
+        if handler.rank_gained then
+            handler.rank_gained(ctx, player, old_rank, new_rank)
+        end
+    end
 
     -- Some rank-minus-one passives stay active under penance but must
     -- retry actor effects when the final debt point is paid. The god's
