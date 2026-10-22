@@ -7,6 +7,7 @@ local damage_causes = {
     INJURY_BOND = "injury_bond",
     HIT = "hit",
     CLOUD = "cloud",
+    ACID = "acid",
     REFLECTED = "reflected",
 }
 

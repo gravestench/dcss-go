@@ -330,6 +330,12 @@ source-filtered item destruction on visited inactive floors. Per-cell
 `no_jiyva` records protect all four paths. Source submerged state and the
 parent jelly's split experience bookkeeping are still outside the actor
 model; these remain explicit fidelity gaps rather than hidden substitutes.
+Jiyva's defensive ranks now use live worship queries: zero-star protection
+from adjacent slimy walls, one-star HP/MP regeneration, and two-star acid
+and corrosion resistance. Slimy-wall terrain damages unprotected players
+and visible non-slime monsters after their actions; penance or departure removes
+the relevant passives immediately. The existing health, regeneration,
+corrosion, grid, and worship owners carry their saved state.
 Zin's entry and pickup tithes now share one Lua rule. Saved gold remembers
 whether it was seen before conversion or acquired, and the wallet keeps
 donations and fractional carry across piles and save/restore.

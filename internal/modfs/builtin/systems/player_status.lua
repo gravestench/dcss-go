@@ -142,10 +142,12 @@ function system.regeneration(ctx, entity, aut)
 
     local hp_rate, mp_rate = regeneration.rates(ctx, entity,
         health.max, magic.max)
-    if statuses.hp_regen_allowed(ctx, entity) and
-        regeneration.hp_allowed(ctx, entity) then
+    if statuses.hp_regen_allowed(ctx, entity) then
+        local effective_hp_rate = regeneration.effective_hp_rate(
+            ctx, entity, hp_rate)
+
         progress.hp_progress = progress.hp_progress +
-            regeneration_count(ctx, hp_rate, aut)
+            regeneration_count(ctx, effective_hp_rate, aut)
     end
 
     -- Powered by Death can redirect an HP recovery point into MP before HP is increased.

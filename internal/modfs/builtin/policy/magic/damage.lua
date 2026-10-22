@@ -21,6 +21,7 @@ local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
 local artefacts = require("policy.item_generation.artefacts.properties")
 local artefact_properties = require("ids.artefact_properties")
+local jiyva_defenses = require("policy.religion.jiyva.defenses")
 
 local damage = {}
 
@@ -59,6 +60,18 @@ local function resistance_level(definition, resistance_id)
     end
 
     return resistance
+end
+
+-- Environmental effects sometimes need to skip all RNG for a fully
+-- immune monster. Read its live profile, including per-actor overrides.
+function damage.monster_resistance(ctx, target, resistance_id)
+    local definition = damage.monster(ctx, target)
+
+    if not definition then
+        error("resistance target is not a monster")
+    end
+
+    return resistance_level(definition, resistance_id)
 end
 
 -- Source: fight.cc:resist_adjust_damage for a wholly resistible flavour.
@@ -156,6 +169,10 @@ function damage.player_resistance(ctx, player, resistance_id)
     if jewellery_capability then
         value = value + jewellery_effects.sum(ctx, player,
             jewellery_capability)
+    end
+
+    if resistance_id == resistances.ACID then
+        value = value + jiyva_defenses.acid_resistance(ctx, player)
     end
 
     if potion_resistance.active(ctx, player) and

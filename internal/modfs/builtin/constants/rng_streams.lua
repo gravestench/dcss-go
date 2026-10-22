@@ -21,6 +21,7 @@ local streams = {
     PLACEMENT = "placement",
     POPULATION_COUNT = "population-count",
     SHOP = "shop",
+    SLIME_WALL = "slime_wall",
     SPELL = "spell",
     TRAPS = "traps",
     ZOT_OVERGROWN = "zot_overgrown",

@@ -1600,6 +1600,32 @@ item definitions, and new `M_SPLITS` species enter these common rules
 without a Go case or a second item allowlist. Override an individual policy
 file at the same relative path if its rule should change for a mod.
 
+Jiyva's defensive rank rules live in
+`policy/religion/jiyva/defenses.lua`. The methods `active(ctx, player, rank)`,
+`hp_bonus`, `mp_bonus`, and `acid_resistance` read the saved
+`religion.worship` component each time they are used. Rank zero protects a
+current worshipper from adjacent slimy walls; rank one adds HP and MP
+regeneration; rank two adds one level of acid resistance, which also gives
+the ordinary corrosion rule its protection chance. Penance suspends all of
+these benefits. For example, a mod can change Jiyva's rank-one regeneration
+by overriding this one Lua policy file and keeping its method signatures.
+The shared regeneration, acid, and corrosion owners call those methods;
+they do not need copies of the changed numbers.
+
+`policy/world/slime_walls.lua` reads the eight cells beside the acting
+entity after its cloud exposure. Each adjacent `DNGN_SLIMY_WALL` can add
+acid damage on that action, including a wait. The wall is a terrain cell,
+not a separate ECS entity. A monster whose catalog `genus_id` belongs to
+Jiyva's slime family, or whose effective acid resistance is fully immune,
+is unharmed. Source DCSS also spares a monster outside the player's
+no-transparency sight; the wall's dice still roll before that check. To
+make a new slime-family monster immune, give its definition
+the source slime genus (for example `MONS_JELLY`); the terrain policy then
+recognizes it without a monster-name case. The Lua system in
+`systems/world_slime_wall_damage.lua` gives player and monster actions
+their separate timing while the saved grid and worship component remain
+the authoritative state.
+
 Jiyva's six-star capstone shows the other kind of god callback.
 `piety.gain` saves the new rank before calling `rank_gained(ctx, player,
 old_rank, new_rank)` on the god's behavior module. Jiyva records the spent
