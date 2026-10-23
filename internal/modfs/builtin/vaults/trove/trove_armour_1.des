@@ -1,0 +1,28 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_armour_1)
+# The first armour room mixes acquisition with useful and ordinary armour rolls.
+# Those alternatives are resolved only when a real character enters.
+NAME:   trove_armour_1
+DEPTH: Trove
+WEIGHT: 15
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen allow_dup no_species_fe no_species_op
+# Loot: once again, 16 items.
+ITEM:   acquire armour / any useful armour good_item / any armour w:2
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+xxxxxxxx
+x......x
+x.<..A.x
+x......x
+xxx++xxx
+x......x
+x+o..o+x
+xdo..odx
+xdo..odx
+xdo..odx
+xdo..odx
+xdoooodx
+xddddddx
+xxxxxxxx
+ENDMAP

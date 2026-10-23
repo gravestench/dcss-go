@@ -1,0 +1,48 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_trog_arena)
+# Trog-themed weapon rewards and combat define this arena. The god-qualified
+# acquisition request remains authored in DES for policy to resolve.
+NAME:   trove_trog_arena
+DEPTH: Trove
+# Source Lua: veto {{ return crawl.game_started()
+# Source Lua:           and (trove.weapon_skills() < trove.spell_skills()
+# Source Lua:                or trove.weapon_skills() < you.base_skill("Unarmed Combat"))
+# Source Lua:           and not crawl.one_chance_in(3) }}
+: vault.veto("shared.weapon_eligible")
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen allow_dup no_species_fe
+ITEM:   acquire weapon w:5 / acquire:trog weapon w:5 / \
+        any useful weapon good_item / any weapon w:2
+ITEM:   acquire:trog weapon
+KFEAT:  _ = altar_trog
+KFEAT:  m = iron_grate
+NSUBST: ; = 2:d / 4:X / *:'
+NSUBST: $ = 13:d / *:'
+KPROP:  X = bloody
+SUBST:  X : '
+FTILE:  +<dem_' = floor_dirt
+COLOUR: +<dem_' = brown
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+      xxxxxxxxxxx
+     xx''''<''''xx
+     x'''''''''''x
+     x'''mmmmm'''x
+xxxxxx''mm;;;mm''xxxxxx
+x$$$$x''m;;;;;m''x$$$$x
+x$$$$+''+;;;;;+''+$$$$x
+x$$$$x''m;;;;;m''x$$$$x
+xxxxxx''mm;;;mm''xxxxxx
+     x'''mmmmm'''x
+     x'''''''''''x
+     xx'''''''''xx
+      xxx'''''xxx
+        x''_''x
+        x''e''x
+        xx'''xx
+         xx+xx
+         x...x
+         x.A.x
+         x...x
+         xxxxx
+ENDMAP

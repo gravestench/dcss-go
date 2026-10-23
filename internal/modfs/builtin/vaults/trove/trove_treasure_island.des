@@ -1,0 +1,52 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_treasure_island)
+# The island isolates valuable rewards behind terrain. Its low weight preserves
+# the surprise while each authored exit still returns to the paid gate.
+NAME:   trove_treasure_island
+DEPTH: Trove
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen allow_dup no_vmirror no_rotate no_pool_fixup
+WEIGHT: 2
+COLOUR: x = blue
+KFEAT:  1 = deep_water
+KMONS:  1 = generate_awake shining eye
+# 21 items, 'cos this one is *nasty*.
+# There are 4 extra potions of cure/mutation, anyway.
+ITEM:   any useful good_item / any
+ITEM:   any useful jewellery good_item / any useful good_item
+ITEM:   acquire weapon / acquire armour / any useful good_item
+ITEM:   potion of mutation q:3 ident:type
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+# Source Lua: : set_border_fill_type("open_sea")
+: vault.run("shared.open_sea")
+MAP
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwww1wwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwww.wwwwwwwwwwwwww
+wwwwwwwwwwww..g.wwwwwwwwwwwww
+wwwwwwwwww...ge...wwwwwwwwwww
+wwwwwwwwww..<dded.wwwwwwwwwww
+wwwwwwwww...d...d..wwwwwwwwww
+wwwwwwww.e.fd.A.d..dwwwwwwwww
+wwwwwwwww...d...df..wwwwwwwww
+wwwwwwwwww..gddd<d.wwwwwwwwww
+wwwwwwwwwww..g.dd..wwwwwwwwww
+wwwwwwwwwwwww.f..wwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwww1ww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwww
+ENDMAP

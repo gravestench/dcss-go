@@ -1,0 +1,12 @@
+# This authored map is wider than the fixed grid and must roll back staging.
+NAME: trove_simple
+DEPTH: Trove
+WEIGHT: 20
+TAGS: no_item_gen no_monster_gen
+ORIENT: encompass
+KFEAT: < = exit_trove
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x.<.x
+xxxxx
+ENDMAP

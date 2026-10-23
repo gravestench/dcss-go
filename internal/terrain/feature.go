@@ -32,6 +32,7 @@ const (
 	Mangrove           ID = "DNGN_MANGROVE"
 	DemonicTree        ID = "DNGN_DEMONIC_TREE"
 	OpenSea            ID = "DNGN_OPEN_SEA"
+	EndlessSalt        ID = "DNGN_ENDLESS_SALT"
 	LavaSea            ID = "DNGN_LAVA_SEA"
 	ShallowWater       ID = "DNGN_SHALLOW_WATER"
 	ToxicBog           ID = "DNGN_TOXIC_BOG"
@@ -57,6 +58,8 @@ const (
 	ExitIceCave        ID = "DNGN_EXIT_ICE_CAVE"
 	EnterVolcano       ID = "DNGN_ENTER_VOLCANO"
 	ExitVolcano        ID = "DNGN_EXIT_VOLCANO"
+	EnterTrove         ID = "DNGN_ENTER_TROVE"
+	ExitTrove          ID = "DNGN_EXIT_TROVE"
 	ExpiredPortal      ID = "DNGN_EXPIRED_PORTAL"
 	EnterPandemonium   ID = "DNGN_ENTER_PANDEMONIUM"
 	TransitPandemonium ID = "DNGN_TRANSIT_PANDEMONIUM"
@@ -324,6 +327,21 @@ var definitions = map[ID]Feature{
 	ExitVolcano: {
 		Glyph:    '∩',
 		Walkable: true,
+	},
+
+	EnterTrove: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitTrove: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	EndlessSalt: {
+		Glyph:  '#',
+		Opaque: true,
 	},
 
 	ExpiredPortal: {

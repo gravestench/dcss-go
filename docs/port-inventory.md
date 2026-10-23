@@ -478,6 +478,24 @@ the live staging owner; text maps and return connections are under
 `docs/level-snapshots/volcano/`. The source `no_cloud_gen` record is
 preserved; ambient lava/water cloud generation is a separate unported
 world effect, so this flag currently has no ambient producer to veto.
+Treasure Trove carries all 14 source entrances and 21 source reward rooms
+as individually replaceable DES files with exact MAP rows. Named Lua hooks
+retain the source directive sites and six character-dependent map vetoes.
+Population rolls one saved toll on its own RNG stream, then joins a source
+marker price witness to an Akara gate. Item, named rune, and no-piety paths
+confirm before a staged floor is committed; successful payment saves a
+receipt and the exact outside return address. The 21 reward rooms use
+source weights, authored exits, item requests, and character-aware
+acquirement for their placed rewards. Restore compares marker, gate,
+receipt, destination, and visitor without rerolling them. Text maps live
+under `docs/level-snapshots/trove/`. Sparse Lua price modules can add a
+new toll kind through the same saved gate and receipt contract. The source
+shop pool considers only remembered, high-value, nonstackable stock.
+The `useful` item request uses the current anatomy, artifice, potion, and
+book rules; remaining source `is_useless_item` cases will follow their item
+domains. God-qualified acquirement details and some wider authored
+monster/item effects still need their related domain
+policies; the corresponding source requests remain in saved records.
 The four-map `serial_nicolae_subway` family adds its controller and three
 linked stations. Its named markers pair across separately placed stations,
 paint one-way transporters and landings, and retain their links in saved level

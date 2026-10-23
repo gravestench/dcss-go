@@ -6,6 +6,10 @@ local hooks = require("policy.generation.vaults.hooks")
 local history = require("policy.population.unique_history")
 local runes = require("policy.character.runes")
 local component = require("constants.component")
+local fighter = require("policy.combat.fighter")
+local mutation_levels = require("policy.mutations.levels")
+local mutations = require("ids.mutations")
+local skills = require("ids.skills")
 
 -- The connector runs on several branch themes. Testing only rock would
 -- mistake Vaults metal or crystal walls for walkable floor.
@@ -214,9 +218,85 @@ local function bridge(builder, from, connected, carved, path)
     error("arrival source exit cannot reach the surrounding Dungeon")
 end
 
+-- Source Trove skill gates average only skills with nonzero base rank.
+-- This keeps one trained weapon school from being diluted by every
+-- other weapon school the player has never touched.
+local function average_skill(ctx, ids)
+    if not ctx then
+        return 0
+    end
+
+    local total = 0
+    local count = 0
+
+    for _, id in ipairs(ids) do
+        local rank = fighter.skill_level(ctx, id)
+
+        if rank > 0 then
+            total = total + rank
+            count = count + 1
+        end
+    end
+
+    return count > 0 and total / count or 0
+end
+
 -- Run authored veto hooks after the candidate map has its final surrounding terrain.
 local function check_vetoes(ctx, builder, placed)
     local api = {}
+
+    -- Before play there is no saved character to favor; source Trove vetoes
+    -- are disabled in that validation context.
+    function api:game_started()
+        return ctx ~= nil and ctx:player() ~= nil
+    end
+
+    -- The six source weapon schools exclude ranged and unarmed combat.
+    function api:weapon_skills()
+        return average_skill(ctx, {
+            skills.SK_SHORT_BLADES,
+            skills.SK_LONG_BLADES,
+            skills.SK_AXES,
+            skills.SK_MACES_FLAILS,
+            skills.SK_POLEARMS,
+            skills.SK_STAVES,
+        })
+    end
+
+    -- Spellcasting and the eleven original spell schools form one average.
+    function api:spell_skills()
+        return average_skill(ctx, {
+            skills.SK_SPELLCASTING,
+            skills.SK_CONJURATIONS,
+            skills.SK_HEXES,
+            skills.SK_SUMMONINGS,
+            skills.SK_NECROMANCY,
+            skills.SK_TRANSLOCATIONS,
+            skills.SK_TRANSMUTATIONS,
+            skills.SK_FIRE_MAGIC,
+            skills.SK_ICE_MAGIC,
+            skills.SK_AIR_MAGIC,
+            skills.SK_EARTH_MAGIC,
+            skills.SK_POISON_MAGIC,
+        })
+    end
+
+    -- Compare a trained unarmed character to the weapon theme directly.
+    function api:unarmed_skill()
+        return ctx and fighter.skill_level(ctx, skills.SK_UNARMED_COMBAT) or 0
+    end
+
+    -- The device room has a minimum useful Evocations level in source.
+    function api:evocations_skill()
+        return ctx and fighter.skill_level(ctx, skills.SK_EVOCATIONS) or 0
+    end
+
+    -- Ru's no-artifice sacrifice makes the device room unhelpful at any
+    -- Evocations rank, so the source veto treats it separately.
+    function api:cannot_use_devices()
+        return ctx and mutation_levels.base(ctx, ctx:player(),
+            mutations.MUT_NO_ARTIFICE) > 0 or false
+    end
 
     -- The source dummy entry rejects a second Bazaar on the active travel
     -- stack. Only this placement attempt sees the live ECS visit flag.
@@ -292,6 +372,10 @@ local function check_vetoes(ctx, builder, placed)
         end
     end
 end
+
+-- A whole-floor portal map has no outside corridor to carve. Its authored
+-- vetoes still need the same live-character decision as extra vaults.
+connect.check_vetoes = check_vetoes
 
 -- Every source exit must join ordinary Dungeon floor before the level can be accepted.
 function connect.finish(ctx, builder, placed, required)

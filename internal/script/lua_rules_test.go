@@ -33,6 +33,18 @@ func TestLuaRules(t *testing.T) {
 	}
 }
 
+// A sparse price kind joins the effective Lua policy set without changing
+// source Trove logic or adding a Go payment handler.
+func TestTroveModPrice(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/trove-price-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/trove_custom_price_test.lua")
+}
+
 func TestModJewelleryRule(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/mod-jewellery")
 

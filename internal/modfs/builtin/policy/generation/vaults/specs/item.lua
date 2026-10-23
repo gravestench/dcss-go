@@ -119,6 +119,10 @@ local function parse_term(text, expression, site)
             result.good_item = true
         elseif token == "randart" then
             result.randart = true
+        elseif token == "useful" then
+            -- Usefulness is a player-dependent source request; keep the
+            -- flag while the stable class name resolves in the catalog.
+            result.useful = true
         elseif token == "no_pickup" then
             -- Authored display items can be seen but cannot be taken.
             result.no_pickup = true
@@ -140,6 +144,10 @@ local function parse_term(text, expression, site)
             end
 
             result.mimic = denominator
+        elseif key == "acquire" then
+            -- Source Troves qualify an acquirement request with the god
+            -- that rolls it. Keep that qualifier in the request name.
+            names[#names + 1] = token
         elseif key then
             choice.fail(site, expression, "unknown item modifier " .. key)
         else

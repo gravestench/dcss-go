@@ -1,0 +1,33 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_nasty)
+# This deliberately rare room couples treasure with a harsher encounter. Its low
+# weight is part of source selection and should stay visible here.
+NAME:   trove_nasty
+DEPTH: Trove
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen allow_dup no_vmirror no_rotate
+WEIGHT: 2
+COLOUR: x = blue
+NSUBST: " = 1:+ / *:x
+NSUBST: ' = 1:+ / *:x
+MONS:   ynoxinul
+# 25 items, just because we're feeling generous.
+ITEM:   any useful good_item w:10 / any
+ITEM:   any useful jewellery good_item / any useful good_item
+ITEM:   acquire weapon / acquire armour / any useful good_item
+ITEM:   wand of digging ident:all
+KFEAT:  m = iron_grate
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+        mmmmmmmmmm
+        m..1mm1..m
+xxxxxxxxmmmmmmmmmmxxxxxxxx
+x........................x
+x.x'x'xxxxxxxxxxxxxxxxxx.x
+x.'edd+...............<x.x
+x.xdedx.mmmmmmmmmm.xx"xx"x
+x.'ddex.m..1mm1..m."dedddx
+x'xxxxx.mmmmmmmmmm.xededfx
+xA.g..............."fffedx
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

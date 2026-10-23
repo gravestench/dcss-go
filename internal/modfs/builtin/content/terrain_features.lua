@@ -53,6 +53,7 @@ features.vault_terrain = {
     DNGN_LAVA = "DNGN_LAVA",
     DNGN_OPEN_SEA = "DNGN_OPEN_SEA",
     DNGN_LAVA_SEA = "DNGN_LAVA_SEA",
+    DNGN_ENDLESS_SALT = terrain.DNGN_ENDLESS_SALT,
     DNGN_STONE_STAIRS_UP_I = "DNGN_STONE_STAIRS_UP_I",
     DNGN_STONE_STAIRS_UP_II = "DNGN_STONE_STAIRS_UP_I",
     DNGN_STONE_STAIRS_UP_III = "DNGN_STONE_STAIRS_UP_I",
@@ -67,6 +68,8 @@ features.vault_terrain = {
     [terrain.DNGN_EXIT_ICE_CAVE] = terrain.DNGN_EXIT_ICE_CAVE,
     [terrain.DNGN_ENTER_VOLCANO] = terrain.DNGN_ENTER_VOLCANO,
     [terrain.DNGN_EXIT_VOLCANO] = terrain.DNGN_EXIT_VOLCANO,
+    [terrain.DNGN_ENTER_TROVE] = terrain.DNGN_ENTER_TROVE,
+    [terrain.DNGN_EXIT_TROVE] = terrain.DNGN_EXIT_TROVE,
     [terrain.DNGN_EXPIRED_PORTAL] = terrain.DNGN_EXPIRED_PORTAL,
     [terrain.DNGN_ENTER_PANDEMONIUM] = terrain.DNGN_ENTER_PANDEMONIUM,
     [terrain.DNGN_TRANSIT_PANDEMONIUM] = terrain.DNGN_TRANSIT_PANDEMONIUM,
@@ -153,6 +156,9 @@ features.named_vault_terrain = {
     exit_cocytus = terrain.DNGN_EXIT_COCYTUS,
     enter_tartarus = terrain.DNGN_ENTER_TARTARUS,
     exit_tartarus = terrain.DNGN_EXIT_TARTARUS,
+    enter_trove = terrain.DNGN_ENTER_TROVE,
+    exit_trove = terrain.DNGN_EXIT_TROVE,
+    endless_salt = terrain.DNGN_ENDLESS_SALT,
     shallow_water = "DNGN_SHALLOW_WATER",
     deep_water = "DNGN_DEEP_WATER",
     lava = "DNGN_LAVA",
@@ -170,6 +176,8 @@ local function apply_border_fill(cells, record)
         feature = "DNGN_OPEN_SEA"
     elseif style == fill.ENDLESS_LAVA then
         feature = "DNGN_LAVA_SEA"
+    elseif style == fill.ENDLESS_SALT then
+        feature = terrain.DNGN_ENDLESS_SALT
     elseif style == fill.PERMAROCK_WALL then
         feature = terrain.DNGN_PERMAROCK_WALL
     else

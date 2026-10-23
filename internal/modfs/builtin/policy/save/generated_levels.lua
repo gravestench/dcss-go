@@ -272,6 +272,7 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
             level.branch_id ~= branches.BRANCH_BAILEY and
             level.branch_id ~= branches.BRANCH_ICE_CAVE and
             level.branch_id ~= branches.BRANCH_VOLCANO and
+            level.branch_id ~= branches.BRANCH_TROVE and
             not hell_size.is_subbranch(register.get("branches",
                 level.branch_id)) and
             level.id ~= abyss.level_id then

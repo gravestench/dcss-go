@@ -1,0 +1,22 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_jewel_2)
+# This companion jewellery map changes the physical search for rewards. It
+# shares item policy while remaining independently replaceable.
+NAME:   trove_jewel_2
+DEPTH: Trove
+WEIGHT: 20
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen allow_dup
+# Loot: 15 items this time.
+ITEM:   acquire jewellery / any useful jewellery good_item / any jewellery w:2
+COLOUR: x = blue
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+xxxxxxxx
+xddd+<Ax
+xdddxxxx
+xdddx
+xdddx
+xdddx
+xxxxx
+ENDMAP

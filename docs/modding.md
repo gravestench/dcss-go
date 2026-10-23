@@ -1246,6 +1246,7 @@ policy uses these values while the grid keeps the changing floor and water.
 | `ctx:shoals_tide_clock(level_id)` | Raw height, velocity, and last update aut; three `nil` values if absent. |
 | `ctx:set_shoals_tide_clock(level_id, height, velocity, last_aut)` | Save an advanced Shoals tide clock. |
 | `ctx:cell(level_id, x, y)` | Terrain ID at the cell, or `nil` when missing. Includes staged terrain changes. |
+| `ctx:remembered(level_id, x, y)` | Terrain ID in the player's saved map memory, or `nil` when unexplored. |
 | `ctx:records_at(level_id, x, y)` | Fresh array of saved vault records at the cell, or an empty array. Each record has `kind`, `source_id`, `identity`, `x`, `y`, `pending`, `overridden`, and typed `arguments`. |
 | `ctx:walkable(level_id, x, y)` | Whether an actor can walk on the current or staged terrain. |
 | `ctx:actor_at(level_id, x, y)` | Occupying actor handle, or `nil`; includes staged moves. |
@@ -2500,6 +2501,94 @@ Legacy Crawl uses it specifically to suppress ambient smoke or mist from
 lava and water. The port has no ambient terrain-cloud producer yet, so
 there is currently no such effect to suppress; authored fog machines and
 other explicit clouds remain active.
+
+### Treasure Trove entrances, tolls, and reward rooms
+
+Treasure Trove keeps its 14 source entrances in `vaults/trove_entry/` and
+its 21 whole-floor reward rooms in `vaults/trove/`. Each definition is one
+replaceable `.des` file. MAP rows and ordinary directives retain the source
+format. `: vault.run(...)` and `: vault.veto(...)` call readable Lua files
+under `policy/generation/vaults/trove_entry/` or
+`policy/generation/vaults/trove/`. Each hook receives the placement `api`.
+Use `api:emit` for a DES directive and `api:record` for a typed effect.
+The hook does not receive live `ctx` or directly change the player. The
+existing TODO to move hooks back into DES applies here too. No Lua is
+embedded in Go.
+
+To add an entrance, create a file under `vaults/trove_entry/` with a unique
+`NAME`, an eligible `DEPTH`, a `CHANCE`, and one `O` in its MAP. Call
+`: vault.run("shared.portal")` before MAP. The hook gives `O` the
+`enter_trove` feature and an empty typed `price` marker with identity
+`trove:toll`. Population requires one marker and one Akara gate; an
+entrance with a missing or malformed marker cannot become a free gate.
+
+To add a reward room, create a positive-weight file such as
+`vaults/trove/my_gallery.des` in your mod directory:
+
+```text
+NAME: my_gallery
+DEPTH: Trove
+WEIGHT: 20
+TAGS: no_item_gen no_monster_gen allow_dup
+ORIENT: encompass
+KFEAT: < = exit_trove
+ITEM: acquire weapon / any useful weapon good_item
+MAP
+xxxxx
+x...x
+x.<.x
+x...x
+xxxxx
+ENDMAP
+```
+
+Positive-weight effective `NAME`s enter a sorted weighted draw. Every
+walkable `<` returns through the one saved outside cell. A zero-weight
+replacement removes a room from selection. Replace a bundled map by
+using its exact relative path in a higher VFS layer; a new path adds a
+room. Trove's six source veto hooks show how a map can ask the narrow
+placement API about live player skills before it is selected.
+
+Population rolls a toll **once** on the saved `trove_toll` stream, after
+placing the entrance and before play. The source marker's canonical
+price string agrees with `world.trove_portal`, which owns price, spent
+state, receipt, and chosen destination. The default price owner is
+`policy/world/trove/toll.lua`; a mod can replace that Lua file while
+retaining its `roll`, `valid`, and `encode` contract. Item prices name an
+item ID, quantity, minimum plus, and optional ego and artefact. A rune
+price proves saved rune progress without consuming the rune. The
+no-piety route lowers current piety to 15 after accepted entry; conversion
+to Ashenzari after finding the gate blocks that route. Import shared
+item, species, god, and component IDs where they are used.
+
+To add a price kind, put one Lua module at
+`policy/world/trove/prices/<kind>.lua` in the mod directory. It returns an
+object with `id`, `valid(price)`, `name(gate)`, `match(ctx, player, gate)`,
+`commit(ctx, player, gate, accepted)`, and `valid_receipt(gate)`. Optional
+`describe(gate)` and `offer(gate)` supply inspection and confirmation text.
+The module uses the saved gate fields (`item_id`, `quantity`,
+`minimum_plus`, `ego_id`, `artefact_name`, `source_rune_index`) for its
+own price meaning. Its `commit` returns `{ kind, item_id, quantity }` as
+the saved receipt; `valid_receipt` checks it against the original price.
+Replace `policy/world/trove/toll.lua` to include that kind in the roll pool.
+The payment, save, and Go engine files discover the kind automatically.
+See `internal/script/testdata/trove-price-mod/policy/world/trove/prices/gold.lua`
+for a small working example that spends from the real wallet owner.
+
+The default source shop option reads only stock from shops whose entrance
+appears in the player's saved map memory. `ctx:remembered(level_id, x, y)`
+returns the remembered terrain ID or `nil` for an unexplored cell. This
+keeps an undiscovered shop from influencing a Trove's rolled price.
+
+Downstairs first presents a free confirmation tied to that gate's entity
+ID. The confirmed command rechecks the marker and live resource, then
+stages and populates a complete reward floor. Only after staging succeeds
+does `policy/world/trove/payment.lua` debit the resource and
+`policy/world/trove/travel.lua` save the exact return address in
+`character.trove_visit`. Save validation joins the marker, Akara gate,
+receipt, room, and visit without rerolling the price or destination. The
+[Trove snapshot index](level-snapshots/trove/index.txt) shows all 21
+reward floors as text for visual review.
 
 These content categories validate their effective definitions at startup. A
 missing cloud or trap effect path fails before play; a malformed shop weight

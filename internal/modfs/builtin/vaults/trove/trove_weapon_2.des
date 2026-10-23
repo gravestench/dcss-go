@@ -1,0 +1,26 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_weapon_2)
+# This second weapon room keeps its own geometry and the same authored reward
+# vocabulary. Mods can replace it without touching the first.
+NAME:   trove_weapon_2
+DEPTH: Trove
+# Source Lua: veto {{ return crawl.game_started()
+# Source Lua:           and (trove.weapon_skills() < trove.spell_skills()
+# Source Lua:                or trove.weapon_skills() < you.base_skill("Unarmed Combat"))
+# Source Lua:           and not crawl.one_chance_in(3) }}
+: vault.veto("shared.weapon_eligible")
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen allow_dup no_species_fe
+# Loot: 15 items.
+COLOUR: x = blue
+ITEM:   acquire weapon / any useful weapon good_item / any weapon w:2
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+xxxxxxxx
+xddd+<Ax
+xdddxxxx
+xdddx
+xdddx
+xdddx
+xxxxx
+ENDMAP

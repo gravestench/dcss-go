@@ -1,0 +1,24 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (nicolae_trove_entry_path_of_doom)
+# The dangerous path is part of the cost of reaching this gate, in addition to
+# its rolled toll. Its monsters and terrain are authored here.
+NAME: nicolae_trove_entry_path_of_doom
+DEPTH: D:10-, Depths, Elf, Vaults
+TAGS: transparent uniq_trove no_monster_gen chance_trove
+CHANCE: 5%
+KMONS: O = patrolling guardian mummy
+KMONS: m = patrolling guardian mummy / nothing w:20
+# Source Lua: : trove.portal(_G)
+: vault.run("shared.portal")
+COLOUR: $m = blue
+FTILE: $m = floor_marble
+MAP
+  ccccc
+ cc.O.cc
+cc.....cc
+c$.G.G.$c
+c$..m..$c
+c$.G.G.$c
+cc.....cc
+ cc...cc
+  cc+cc
+ENDMAP

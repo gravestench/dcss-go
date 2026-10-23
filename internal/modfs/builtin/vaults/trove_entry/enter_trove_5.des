@@ -1,0 +1,32 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (enter_trove_5)
+# Vault guards make this entrance a guarded encounter. Its depth-sensitive hook
+# adds the source defenders while the same O marker still owns the toll.
+NAME:   enter_trove_5
+DEPTH: D:10-, Depths, Elf, Vaults
+TAGS: transparent uniq_trove no_monster_gen chance_trove
+CHANCE: 5%
+# Source Lua: : trove.portal(_G)
+: vault.run("shared.portal")
+COLOUR: e = blue
+FTILE:  e = floor_marble
+# Source Lua: : if you.absdepth() <= 15 then
+# Source Lua: # Got drafted in from Vaults:$, while the mages try and close the portal down.
+# Source Lua: KMONS:  e = vault guard
+# Source Lua: : else
+# Source Lua: # And this time he brought some friends...
+# Source Lua: KMONS:  el = vault guard
+# Source Lua: COLOUR: l = blue
+# Source Lua: FTILE:  l = floor_marble
+# Source Lua: : end
+: vault.run("enter_trove_5.guardians")
+MAP
+ccccc
+c...c
+c.O.c
+c...c
+cc+cc
+cl.lc
+c.e.c
+cl.lc
+cc+cc
+ENDMAP

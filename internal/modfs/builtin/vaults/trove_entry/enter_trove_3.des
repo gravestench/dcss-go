@@ -1,0 +1,18 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (enter_trove_3)
+# This approach embeds the gate in its authored Dungeon terrain. The shared hook
+# handles the toll so this file remains a map rather than a second payment
+# policy.
+NAME:   enter_trove_3
+DEPTH: D:10-, Depths, Elf, Vaults
+TAGS: uniq_trove no_monster_gen no_wall_fixup transparent chance_trove
+CHANCE: 5%
+# Source Lua: : trove.portal(_G)
+: vault.run("shared.portal")
+COLOUR: c = blue
+MAP
+ccccc
+c...c
+c.O.c
+c...c
+cc+cc
+ENDMAP

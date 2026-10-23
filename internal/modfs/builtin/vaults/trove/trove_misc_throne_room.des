@@ -1,0 +1,38 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_misc_throne_room)
+# The throne room emphasizes evocables and wand acquirement. Its source veto
+# avoids offering a device room to characters unable to use it.
+NAME:    trove_misc_throne_room
+DEPTH: Trove
+ORIENT:  encompass
+WEIGHT:  15
+TAGS:    no_item_gen no_monster_gen allow_dup
+ITEM:    manual of evocations, tin of tremorstones, lightning rod
+ITEM:    condenser vane, phial of floods, box of beasts, phantom mirror
+ITEM:    acquire wand w:15 / acquire magical staff w:5
+SHUFFLE: efghij
+COLOUR:  x = blue
+COLOUR:  ' = yellow
+FTILE:   ' = floor_limestone
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+# Source Lua: veto {{ return crawl.game_started()
+# Source Lua:         and (you.base_skill("Evocations") < 4
+# Source Lua:              and not crawl.one_chance_in(3)
+# Source Lua:              or you.mutation("inability to use devices") == 1) }}
+: vault.veto("shared.misc_eligible")
+MAP
+   xxx
+   xdx
+ xxx+xxx
+ xk'''kx
+ xe'''fx
+ xk'''kx
+ xg'''hx
+ xk'''kx
+ xi'''jx
+ xk'''kx
+xxxx+xxxx
+x.......x
+x<..A..<x
+xxxxxxxxx
+ENDMAP

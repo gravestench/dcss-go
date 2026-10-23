@@ -1,0 +1,24 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_wands_scrolls)
+# Wands and good scrolls define this short reward hall. Wand acquirement uses
+# the source subtype weighting, separate from the scroll menu classes.
+NAME:   trove_wands_scrolls
+DEPTH: Trove
+TAGS:   no_item_gen no_monster_gen allow_dup
+ORIENT: encompass
+ITEM:   acquire wand
+SUBST:  e = eeed
+# Source Lua: : trove.good_scroll(_G)
+: vault.run("shared.good_scroll")
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+xxxxx
+x...xxxx
+x.A.eeexxxx
+x...exe...xxxx
+xxxxeee.x.eeexxxx
+   xxxx...exe...x
+      xxxxeee.<.x
+         xxxx...x
+            xxxxx
+ENDMAP

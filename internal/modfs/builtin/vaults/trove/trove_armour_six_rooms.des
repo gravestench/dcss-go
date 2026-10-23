@@ -1,0 +1,19 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_armour_six_rooms)
+# Six compartments spread armour rewards across the floor. Each source ITEM
+# record becomes a distinct generated item at population time.
+NAME:   trove_armour_six_rooms
+DEPTH: Trove
+TAGS:   no_item_gen no_monster_gen allow_dup no_species_fe no_species_op
+ORIENT: encompass
+ITEM:   acquire armour / any useful armour good_item / any armour w:2
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxx
+xdd+ddx.Ax
+xddxdd+..x
+x+xxxxxxxx
+xddxdd+..x
+xdd+ddx.<x
+xxxxxxxxxx
+ENDMAP

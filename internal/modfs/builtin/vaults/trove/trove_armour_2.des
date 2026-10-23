@@ -1,0 +1,22 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_armour_2)
+# This second armour layout uses the same reward alternatives in a different
+# shape. A separate file preserves independent map replacement.
+NAME:   trove_armour_2
+DEPTH: Trove
+WEIGHT: 15
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen allow_dup no_species_fe no_species_op
+# Loot: 15 items.
+COLOUR: x = blue
+ITEM:   acquire armour / any useful armour good_item / any armour w:2
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+xxxxxxxx
+xddd+<Ax
+xdddxxxx
+xdddx
+xdddx
+xdddx
+xxxxx
+ENDMAP

@@ -1,0 +1,30 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_books_scrolls)
+# Books and magical staves reward a spell-oriented character. God-qualified book
+# acquisition remains a source request on this authored floor.
+NAME:   trove_books_scrolls
+DEPTH: Trove
+TAGS:   no_item_gen no_monster_gen allow_dup
+ORIENT: encompass
+ITEM:   acquire magical staff / acquire book / acquire:sif_muna book / any book
+SUBST:  d = de
+# Source Lua: : trove.good_scroll(_G)
+: vault.run("shared.good_scroll")
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+     xxxxx
+     xd.dx
+     xx.xx
+     xd.dx
+    xxx+xxx
+xxxxx.....xxxxx
+xdxdx.....xdxdx
+x...+.<.A.+...x
+xdxdx.....xdxdx
+xxxxx.....xxxxx
+    xxx+xxx
+     xd.dx
+     xx.xx
+     xd.dx
+     xxxxx
+ENDMAP

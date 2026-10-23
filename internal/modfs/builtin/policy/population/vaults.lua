@@ -25,6 +25,7 @@ local ossuary_portal = require("policy.world.ossuary.portal")
 local bailey_portal = require("policy.world.bailey.portal")
 local ice_cave_portal = require("policy.world.ice_cave.portal")
 local volcano_portal = require("policy.world.volcano.portal")
+local trove_portal = require("policy.world.trove.portal")
 local volcano_hazards = require("policy.world.volcano.hazards")
 local branches = require("ids.branches")
 
@@ -123,6 +124,7 @@ local function item_selection(record)
         quantity = selected.quantity,
         quality = arguments.quality,
         request = arguments.request ~= "" and arguments.request or nil,
+        useful = selected.useful or false,
         generation_depth = arguments.generation_depth or 1,
         disc = arguments.disc ~= "" and arguments.disc or nil,
         disc2 = arguments.disc2 ~= "" and arguments.disc2 or nil,
@@ -316,6 +318,8 @@ end
 
 -- Process typed vault records in source order so terrain, actors, items, and shops see prior effects.
 function vaults.materialize(ctx, level, excluded)
+    trove_portal.validate_level(ctx, level)
+
     local actors = 0
     local followers = 0
     local materialized = {}
@@ -384,6 +388,9 @@ function vaults.materialize(ctx, level, excluded)
             volcano_portal.is_marker(record) then
             materialized[#materialized + 1] =
                 volcano_portal.materialize(ctx, level, record)
+        elseif trove_portal.is_marker(record) then
+            materialized[#materialized + 1] =
+                trove_portal.materialize(ctx, level, record)
         elseif volcano_hazards.is_marker(record) then
             materialized[#materialized + 1] =
                 volcano_hazards.materialize(ctx, level, record)
@@ -464,7 +471,13 @@ function vaults.materialize(ctx, level, excluded)
                 local _, actual_kind = vault_items.create(ctx,
                     item_selection(record), level.id,
                     record.x, record.y, origin(level, record))
-                arguments.kind_id = actual_kind
+
+                if actual_kind then
+                    arguments.kind_id = actual_kind
+                else
+                    arguments.kind_id = ""
+                    no_spawn = true
+                end
             end
 
             materialized[#materialized + 1] = {

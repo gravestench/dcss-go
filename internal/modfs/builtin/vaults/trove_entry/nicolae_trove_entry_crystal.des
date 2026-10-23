@@ -1,0 +1,19 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (nicolae_trove_entry_crystal)
+# Crystal terrain distinguishes this entrance from the stone approaches. The O
+# cell remains the sole priced gate despite the decorative surround.
+NAME: nicolae_trove_entry_crystal
+DEPTH: D:10-, Depths, Elf, Vaults
+TAGS: transparent uniq_trove no_monster_gen chance_trove
+CHANCE: 5%
+# Source Lua: : trove.portal(_G)
+: vault.run("shared.portal")
+FTILE: b = floor_marble
+MAP
+ccccccccccc
+cc.c.c.cccc
+c.......bbc
++.......Obc
+c.......bbc
+cc.c.c.cccc
+ccccccccccc
+ENDMAP

@@ -1,0 +1,21 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (nicolae_trove_entry_isolated)
+# An isolated approach separates the arch from ordinary traffic. Connector
+# placement must still make the gate reachable from the Dungeon.
+NAME: nicolae_trove_entry_isolated
+DEPTH: D:10-, Depths, Elf, Vaults
+TAGS: no_pool_fixup transparent uniq_trove no_monster_gen chance_trove
+CHANCE: 5%
+KPROP: .O = no_tele_into
+KMASK: .O = opaque
+KFEAT: ' = .
+# Source Lua: : trove.portal(_G)
+: vault.run("shared.portal")
+MAP
+'''''''
+'wwwww'
+'w...w'
+'w.O.w'
+'w...w'
+'wwwww'
+'''''''
+ENDMAP

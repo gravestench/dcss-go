@@ -17,6 +17,7 @@ local armour = require("policy.scrolls.acquirement.armour")
 local weapons = require("policy.scrolls.acquirement.weapons")
 local accessories = require("policy.scrolls.acquirement.accessories")
 local books = require("policy.scrolls.acquirement.books")
+local wands = require("policy.scrolls.acquirement.wands")
 local selection = require("policy.scrolls.acquirement.selection")
 local source = require("policy.item_generation.source_roll")
 local random_artefact = require("policy.item_generation.artefacts.random")
@@ -83,11 +84,12 @@ local subtype_picker = {
     [classes.OBJ_STAVES] = accessories.staff,
     [classes.OBJ_JEWELLERY] = accessories.jewellery,
     [classes.OBJ_BOOKS] = books.pick,
+    [classes.OBJ_WANDS] = wands.pick,
 }
 
 -- Rejected offers release a claimed unique artefact before retrying, so another class may still roll it.
 -- Retry incompatible rolls and release unique artefact claims so rejected items cannot consume uniques.
-local function roll_class(ctx, player, scroll, class_id, depth)
+local function roll_class(ctx, player, site, class_id, depth)
     local choice = ctx:get(player, component.PLAYER)
     local species = catalog.get("species", choice.species_id)
 
@@ -100,7 +102,7 @@ local function roll_class(ctx, player, scroll, class_id, depth)
             quality = quality.GOOD,
             allow_uniques = true,
             purpose = purpose.ACQUIREMENT,
-            site = "acquirement scroll " .. ctx:id(scroll),
+            site = site,
         }
 
         for key, value in pairs(extra or {}) do
@@ -135,8 +137,18 @@ local function roll_class(ctx, player, scroll, class_id, depth)
         end
     end
 
-    error("acquirement scroll " .. ctx:id(scroll) ..
-        " could not generate compatible " .. class_id)
+    error(site .. " could not generate compatible " .. class_id)
+end
+
+-- A DES `acquire` request uses the same class picker and post-roll policy
+-- as a scroll offer, but places its one result directly on a vault floor.
+-- This keeps source Trove rewards sensitive to the live character's skills.
+function offers.roll_for_vault(ctx, class_id, depth, site)
+    if not subtype_picker[class_id] then
+        error(site .. " has no acquirement class " .. tostring(class_id))
+    end
+
+    return roll_class(ctx, ctx:player(), site, class_id, depth)
 end
 
 -- Create the rolled item under scroll reservation; it must not appear on the floor before choice.
@@ -159,7 +171,8 @@ function offers.generate(ctx, player, scroll)
             break
         end
 
-        local rolled = roll_class(ctx, player, scroll, class_id,
+        local rolled = roll_class(ctx, player,
+            "acquirement scroll " .. ctx:id(scroll), class_id,
             position.level_id)
 
         state.offer_ids[#state.offer_ids + 1] = reserve(ctx, scroll, rolled)

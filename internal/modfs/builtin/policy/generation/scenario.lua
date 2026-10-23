@@ -9,6 +9,7 @@ local ossuary = require("policy.generation.ossuary.level")
 local bailey = require("policy.generation.bailey.level")
 local ice_cave = require("policy.generation.ice_cave.level")
 local volcano = require("policy.generation.volcano.level")
+local trove = require("policy.generation.trove.level")
 local hell_vestibule = require("policy.generation.hell.vestibule")
 local branch_catalog = require("policy.catalog")
 local categories = require("constants.catalog")
@@ -225,6 +226,11 @@ function module.volcano(ctx, input)
     return volcano.generate(ctx, input)
 end
 
+-- A Trove toll is paid only after this complete source floor is staged.
+function module.trove(ctx, input)
+    return trove.generate(ctx, input)
+end
+
 -- Stage one persistent Hell subbranch floor. Its source up exits become
 -- typed return arches only after keyed DES features have been projected.
 function module.hell_floor(ctx, input)
@@ -289,6 +295,11 @@ register.policy({
 register.policy({
     id = "world.generate_volcano_level",
     run = module.volcano,
+})
+
+register.policy({
+    id = "world.generate_trove_level",
+    run = module.trove,
 })
 
 register.policy({

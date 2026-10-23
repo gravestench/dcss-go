@@ -1,0 +1,34 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_hunter_1)
+# Hunter equipment and tougher armour shape this rare room. Source item
+# expressions, rather than fixed Go cases, choose its populated rewards.
+NAME:    trove_hunter_1
+DEPTH: Trove
+WEIGHT:  5
+ORIENT:  encompass
+TAGS:    no_item_gen no_monster_gen allow_dup no_species_fe no_species_op
+# Loot:  15 items, this time.
+COLOUR:  x = blue
+MONS:    storm dragon zombie
+MONS:    golden dragon zombie
+MONS:    fire dragon skeleton
+ITEM:    animal skin good_item / any armour good_item
+ITEM:    gold dragon scales / storm dragon scales / fire dragon scales / troll leather armour / any useful armour good_item
+ITEM:    javelin good_item / dart good_item
+ITEM:    longbow good_item / arbalest good_item / any useful weapon good_item
+SHUFFLE: 123
+SHUFFLE: defg
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+xxxxxxx
+x1x2x3x
+xooooox
+xdededx
+xfgfgfx
+xgfffgx
+xxx+xxx
+x.....x
+x.<.A.x
+x.....x
+xxxxxxx
+ENDMAP

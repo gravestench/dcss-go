@@ -1,6 +1,10 @@
 package game
 
-import "sort"
+import (
+	"sort"
+
+	"crawl/internal/terrain"
+)
 
 func (g *Game) vaultValidationLevels() []any {
 	ids := make([]int, 0, len(g.levels))
@@ -15,6 +19,15 @@ func (g *Game) vaultValidationLevels() []any {
 	for _, id := range ids {
 		level := g.levels[id]
 		records := make([]any, 0, len(level.vaultRecords))
+		troveExits := 0
+
+		for _, row := range level.terrain {
+			for _, cell := range row {
+				if cell == terrain.ExitTrove {
+					troveExits++
+				}
+			}
+		}
 
 		for _, record := range level.vaultRecords {
 			records = append(records, map[string]any{
@@ -30,13 +43,18 @@ func (g *Game) vaultValidationLevels() []any {
 		}
 
 		levels = append(levels, map[string]any{
-			"id":             level.ID,
-			"branch_id":      level.BranchID,
-			"local_depth":    level.LocalDepth,
-			"vault_id":       level.VaultID(),
-			"vault_ids":      level.VaultIDs(),
-			"initial_actors": level.initialActors,
-			"vault_records":  records,
+			"id":               level.ID,
+			"branch_id":        level.BranchID,
+			"local_depth":      level.LocalDepth,
+			"vault_id":         level.VaultID(),
+			"vault_ids":        level.VaultIDs(),
+			"initial_actors":   level.initialActors,
+			"initial_monsters": level.initialMonsters,
+			"width":            len(level.terrain[0]),
+			"height":           len(level.terrain),
+			"stair_count":      len(level.stairs),
+			"trove_exits":      troveExits,
+			"vault_records":    records,
 		})
 	}
 

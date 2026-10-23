@@ -18,6 +18,7 @@ local ossuary_travel = require("policy.world.ossuary.travel")
 local bailey_travel = require("policy.world.bailey.travel")
 local ice_cave_travel = require("policy.world.ice_cave.travel")
 local volcano_travel = require("policy.world.volcano.travel")
+local trove_travel = require("policy.world.trove.travel")
 
 -- Rooted movement is rejected before checking the destination cell.
 local function rooted(ctx)
@@ -99,7 +100,7 @@ end
 
 -- Stair travel checks the current cell's feature before switching levels.
 function navigation.stairs(ctx, position, downstairs, actor, forced,
-    pan_state, pan_current_vault_ids, hell_state)
+    pan_state, pan_current_vault_ids, hell_state, target_id)
     if rooted(ctx) then
         return {
             message = "Your roots keep you in place.",
@@ -155,6 +156,13 @@ function navigation.stairs(ctx, position, downstairs, actor, forced,
     end
 
     portal = volcano_travel.prepare(ctx, position, downstairs)
+
+    if portal then
+        return portal
+    end
+
+    portal = trove_travel.prepare(ctx, position, downstairs,
+        forced, target_id)
 
     if portal then
         return portal

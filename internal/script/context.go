@@ -24,6 +24,7 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "entity", r.state.NewFunction(r.luaEntityByID))
 	r.state.SetField(context, "id", r.state.NewFunction(r.luaEntityID))
 	r.state.SetField(context, "cell", r.state.NewFunction(r.luaGridCell))
+	r.state.SetField(context, "remembered", r.state.NewFunction(r.luaGridRemembered))
 	r.state.SetField(context, "records_at", r.state.NewFunction(r.luaGridRecordsAt))
 	r.state.SetField(context, "replace_record_string",
 		r.state.NewFunction(r.luaGridReplaceRecordString))
@@ -282,6 +283,21 @@ func (r *Runtime) luaGridCell(state *lua.LState) int {
 		state.Push(lua.LNil)
 	} else {
 		state.Push(lua.LString(string(cell)))
+	}
+
+	return 1
+}
+
+// Return the player's saved terrain memory at a coordinate. An unexplored
+// cell is nil, so Lua policies cannot mistake an unseen shop for a known one.
+func (r *Runtime) luaGridRemembered(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	feature, found := r.services.Grid.Remembered(levelID, x, y)
+
+	if !found || feature == terrain.Unseen {
+		state.Push(lua.LNil)
+	} else {
+		state.Push(lua.LString(string(feature)))
 	}
 
 	return 1

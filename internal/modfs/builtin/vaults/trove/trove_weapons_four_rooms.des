@@ -1,0 +1,33 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_weapons_four_rooms)
+# Four compartments distribute weapon rolls over the map. Keeping each ITEM
+# directive in place preserves the source reward locations.
+NAME:   trove_weapons_four_rooms
+DEPTH: Trove
+# Source Lua: veto {{ return crawl.game_started()
+# Source Lua:           and (trove.weapon_skills() < trove.spell_skills()
+# Source Lua:                or trove.weapon_skills() < you.base_skill("Unarmed Combat"))
+# Source Lua:           and not crawl.one_chance_in(3) }}
+: vault.veto("shared.weapon_eligible")
+TAGS:   no_item_gen no_monster_gen allow_dup no_species_fe
+ORIENT: encompass
+ITEM:   acquire weapon / any useful weapon good_item / any weapon w:2
+NSUBST: " = 16:d / *:.
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxx
+xA............x
+x.ccccc.ccccc.x
+x.c"""c.c"""c.x
+x.c"T"c.c"T"c.x
+x.c"""c.c"""c.x
+x.cc+cc.cc+cc.x
+x.............x
+x.cc+cc.cc+cc.x
+x.c"""c.c"""c.x
+x.c"T"c.c"T"c.x
+x.c"""c.c"""c.x
+x.ccccc.ccccc.x
+x............<x
+xxxxxxxxxxxxxxx
+ENDMAP

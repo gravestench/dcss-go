@@ -1,0 +1,39 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_jewellery_lava)
+# Lava makes movement part of the jewellery room challenge. Its authored
+# jewellery rolls use the same deferred generation as other Troves.
+NAME:   trove_jewellery_lava
+DEPTH: Trove
+TAGS:   no_item_gen no_monster_gen allow_dup
+ORIENT: encompass
+ITEM:   acquire jewellery / any useful jewellery good_item / any jewellery w:2
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xllllllllxxxmmmxxxllllllllx
+xllllllllxA.ddd.Axllllllllx
+xllllllllx...d...xllllllllx
+xllllllllmd.....dmllllllllx
+xllllllllmdd.<.ddmllllllllx
+xllllllllmd.....dmllllllllx
+xllllllllx...d...xllllllllx
+xllllllllxA.ddd.Axllllllllx
+xllllllllxxxmmmxxxllllllllx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xlllllllllllllllllllllllllx
+xxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

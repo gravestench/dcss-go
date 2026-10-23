@@ -16,7 +16,30 @@ function random_items.describe(name, depth)
         depth = depth,
     }
 
-    if name == requests.ANY_WEAPON then
+    -- A source acquirement request remains named in the saved record. The
+    -- class hints let ordinary vault population materialize a real item;
+    -- the distinct request stays available to acquirement policy.
+    local themed = name:match("^acquire[:%w_]* (.+)$")
+
+    if themed == "weapon" then
+        result.class_id = classes.OBJ_WEAPONS
+        result.quality = quality.SUPERB
+    elseif themed == "armour" then
+        result.class_id = classes.OBJ_ARMOUR
+        result.quality = quality.SUPERB
+    elseif themed == "jewellery" or themed == "amulet" then
+        result.class_id = classes.OBJ_JEWELLERY
+        result.quality = quality.SUPERB
+    elseif themed == "book" then
+        result.class_id = classes.OBJ_BOOKS
+        result.quality = quality.SUPERB
+    elseif themed == "magical staff" then
+        result.class_id = classes.OBJ_STAVES
+        result.quality = quality.SUPERB
+    elseif themed == "wand" then
+        result.class_id = classes.OBJ_WANDS
+        result.quality = quality.SUPERB
+    elseif name == requests.ANY_WEAPON then
         result.class_id = classes.OBJ_WEAPONS
     elseif name == requests.ANY_ARMOUR then
         result.class_id = classes.OBJ_ARMOUR

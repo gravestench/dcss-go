@@ -1,0 +1,13 @@
+# Unknown named hooks must fail at boot, with this source path in the error.
+NAME: trove_simple
+DEPTH: Trove
+WEIGHT: 20
+TAGS: no_item_gen no_monster_gen
+ORIENT: encompass
+: vault.run("missing_trove_hook")
+KFEAT: < = exit_trove
+MAP
+xxxxx
+x.<.x
+xxxxx
+ENDMAP

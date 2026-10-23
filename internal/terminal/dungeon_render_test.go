@@ -79,14 +79,16 @@ func TestDrawDungeonBaileyPortals(t *testing.T) {
 	}
 }
 
-// Timed portal source arches use the same terminal glyph; their feature IDs
-// remain distinct so Lua travel and expiry can read the actual grid state.
-func TestDrawDungeonTimedPortals(t *testing.T) {
+// Source portal arches share the glyph while separate feature IDs let Lua
+// distinguish paid entry, temporary return, and expired outside gates.
+func TestDrawDungeonPortals(t *testing.T) {
 	for _, id := range []terrain.ID{
 		terrain.EnterIceCave,
 		terrain.ExitIceCave,
 		terrain.EnterVolcano,
 		terrain.ExitVolcano,
+		terrain.EnterTrove,
+		terrain.ExitTrove,
 		terrain.ExpiredPortal,
 	} {
 		canvas := NewCanvas(79, 24)
@@ -110,7 +112,7 @@ func TestDrawDungeonTimedPortals(t *testing.T) {
 		drawDungeon(canvas, region, view, testPresentationPolicy(t))
 
 		if got := canvas.cells[8*canvas.width+18].text; got != "∩" {
-			t.Errorf("timed portal %s drew %q", id, got)
+			t.Errorf("portal %s drew %q", id, got)
 		}
 	}
 }

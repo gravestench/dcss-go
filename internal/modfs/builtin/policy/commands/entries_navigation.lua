@@ -10,6 +10,8 @@ local intent = require("constants.intent")
 local streams = require("constants.rng_streams")
 local display = require("policy.combat.monster_support.display")
 local terrain = require("constants.terrain")
+local trove_portal = require("policy.world.trove.portal")
+local trove_payment = require("policy.world.trove.payment")
 
 local entries = {}
 
@@ -83,7 +85,8 @@ function entries.upstairs(ctx, player, input, position)
     end
 
     return navigation.stairs(ctx, position, false, player, input.forced,
-        input.pan_state, input.pan_current_vault_ids, input.hell_state)
+        input.pan_state, input.pan_current_vault_ids, input.hell_state,
+        input.target_id)
 end
 
 -- Match a downstairs link at the current cell before changing floors.
@@ -99,7 +102,8 @@ function entries.downstairs(ctx, player, input, position)
     end
 
     return navigation.stairs(ctx, position, true, player, input.forced,
-        input.pan_state, input.pan_current_vault_ids, input.hell_state)
+        input.pan_state, input.pan_current_vault_ids, input.hell_state,
+        input.target_id)
 end
 
 -- Select floor items before charging pickup time or changing inventory.
@@ -125,8 +129,21 @@ function entries.wait(ctx, player, _, _, delay)
     return decision
 end
 
--- Inspection returns without an action cost because it cannot change world state.
-function entries.inspect()
+-- Inspection reads the saved Trove price at the current arch, so a player
+-- can learn the exact toll before starting its free entry confirmation.
+function entries.inspect(ctx, _, _, position)
+    if ctx:cell(position.level_id, position.x, position.y) ==
+        terrain.DNGN_ENTER_TROVE then
+        local _, gate = trove_portal.at(ctx, position.level_id,
+            position.x, position.y)
+
+        if gate and not gate.spent then
+            return {
+                message = trove_payment.describe(gate),
+            }
+        end
+    end
+
     return {}
 end
 

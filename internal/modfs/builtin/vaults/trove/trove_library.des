@@ -1,0 +1,36 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_library)
+# The library favors spell users: its source veto compares trained magic and
+# weapon skills. A rare exception can still admit other characters.
+NAME:   trove_library
+DEPTH: Trove
+WEIGHT: 30
+# Source Lua: veto {{ return crawl.game_started()
+# Source Lua:           and trove.spell_skills() < trove.weapon_skills()
+# Source Lua:           and not crawl.one_chance_in(6) }}
+: vault.veto("shared.library_eligible")
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen allow_dup
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+# Source Lua: : trove.good_scroll(_G)
+: vault.run("shared.good_scroll")
+ITEM:   acquire book
+ITEM:   acquire:sif_muna book
+MAP
+xxxxxxxxxxxxx
+xd.........dx
+xx.xxx.xxx.xx
+xf.dxe.dxe.dx
+xx.xxx.xxx.xx
+xe.fxd.fxd.ex
+xx.xxx.xxx.xx
+xe.........dx
+xxxxx+++xxxxx
+    x...x
+    x...x
+    x...x
+   xx...xx
+   x.....x
+   x.<.A.x
+   xxxxxxx
+ENDMAP

@@ -1,0 +1,29 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_simple)
+# The common mixed-reward room is a baseline Trove destination. Its high source
+# weight makes it useful for checking ordinary payment and return travel.
+NAME:    trove_simple
+DEPTH: Trove
+WEIGHT:  60
+ORIENT:  encompass
+TAGS:    no_item_gen no_monster_gen allow_dup
+# Loot: 16 items.
+ITEM:   any useful good_item
+ITEM:   acquire jewellery / any useful good_item
+ITEM:   acquire weapon / acquire armour / any useful good_item
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+xxxxxx
+xddddx
+xfeedx
+xefedx
+xdefdx
+xx++xx
+xx..xx
+xx..xx
+xx..xx
+x....x
+x.<A.x
+x....x
+xxxxxx
+ENDMAP

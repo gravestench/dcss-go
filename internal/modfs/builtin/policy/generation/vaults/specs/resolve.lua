@@ -92,6 +92,15 @@ local random_item_names = {
     star_item = true,
 }
 
+-- Trove's source DES uses acquirement as a deferred item request.
+-- The `useful` modifier is parsed separately and applied after rolling.
+local function random_item_request(name)
+    return random_item_names[name] or
+        name:match("^acquire[:%w_]* ") ~= nil or
+        name == "any jewellery" or
+        name == "any concealment scroll"
+end
+
 -- A themed random book must name a spell school understood by the same
 -- generator used for shop stock. Reject typos during vault catalog loading.
 local function valid_discipline(discipline)
@@ -611,7 +620,7 @@ function resolve.validate_item(selected, site)
             "unknown second book discipline " .. selected.disc2)
     end
 
-    if selected.no_spawn or random_item_names[name] or
+    if selected.no_spawn or random_item_request(name) or
         name == "randbook" or name == "any randbook" or
         name:match("^item_array_[1-8]$") then
         return
@@ -895,7 +904,7 @@ function resolve.item(ctx, selected, depth, site)
         kind_id = item_ids.BOOK_MANUAL
         manual_skill_id = manual_skill.from_name(
             name:sub(#"manual of " + 1), site)
-    elseif random_item_names[name] then
+    elseif random_item_request(name) then
         request = name
         local described = random_items.describe(name, generation_depth)
 

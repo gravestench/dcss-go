@@ -1,0 +1,31 @@
+# Source: crawl-ref/source/dat/des/portals/trove.des (trove_alchemists_storehouse)
+# Potions are the central reward in this small storehouse. The authored choices
+# stay in DES so a mod can replace the room without changing item generation.
+NAME:    trove_alchemists_storehouse
+DEPTH: Trove
+TAGS:    no_item_gen no_monster_gen allow_dup no_species_mu
+WEIGHT:  5
+ORIENT:  encompass
+ITEM:    potion of curing / potion of heal wounds / \
+         potion of curing q:2 / potion of heal wounds q:2
+ITEM:    potion of experience q:1
+ITEM:    potion of might / potion of resistance / \
+         potion of magic / potion of haste / \
+         potion of might q:2 / potion of resistance q:2 / \
+         potion of magic q:2 / potion of haste q:2
+ITEM:    potion of mutation
+SHUFFLE: df
+SHUFFLE: eg
+# Source Lua: : trove.setup_features(_G)
+: vault.run("shared.setup")
+MAP
+      xxx xxx xxx
+      xdx xfx xfx
+xxxxx xdx xfx xfx
+x.A.xxx+xxx+xxx+xxxxxx
+x...+.............+egx
+x.<.xxx+xxx+xxx+xxxxxx
+xxxxx xdx xfx xfx
+      xdx xfx xfx
+      xxx xxx xxx
+ENDMAP

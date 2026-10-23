@@ -1,0 +1,50 @@
+Treasure Trove source rooms, seed 88164 except source veto retries
+Coordinates are zero-based, origin at top left.
+Every exit returns to the exact outside test gate.
+
+nicolae_trove_salty  nicolae_trove_salty.txt  seed: 88164  return arches: 1
+Trove exit (27,34) -> Dungeon:1 (58,6), exact outside gate
+trove_alchemists_storehouse  trove_alchemists_storehouse.txt  seed: 88164  return arches: 1
+Trove exit (31,35) -> Dungeon:1 (58,6), exact outside gate
+trove_armour_1  trove_armour_1.txt  seed: 88164  return arches: 1
+Trove exit (38,30) -> Dungeon:1 (58,6), exact outside gate
+trove_armour_2  trove_armour_2.txt  seed: 88164  return arches: 1
+Trove exit (41,32) -> Dungeon:1 (58,6), exact outside gate
+trove_armour_six_rooms  trove_armour_six_rooms.txt  seed: 88164  return arches: 1
+Trove exit (43,36) -> Dungeon:1 (58,6), exact outside gate
+trove_books_scrolls  trove_books_scrolls.txt  seed: 88164  return arches: 1
+Trove exit (38,34) -> Dungeon:1 (58,6), exact outside gate
+trove_garden  trove_garden.txt  seed: 88164  return arches: 3
+Trove exit (60,16) -> Dungeon:1 (58,6), exact outside gate
+Trove exit (38,41) -> Dungeon:1 (58,6), exact outside gate
+Trove exit (19,52) -> Dungeon:1 (58,6), exact outside gate
+trove_hunter_1  trove_hunter_1.txt  seed: 88164  return arches: 1
+Trove exit (38,37) -> Dungeon:1 (58,6), exact outside gate
+trove_jewel_1  trove_jewel_1.txt  seed: 88164  return arches: 1
+Trove exit (38,30) -> Dungeon:1 (58,6), exact outside gate
+trove_jewel_2  trove_jewel_2.txt  seed: 88164  return arches: 1
+Trove exit (41,32) -> Dungeon:1 (58,6), exact outside gate
+trove_jewellery_lava  trove_jewellery_lava.txt  seed: 88164  return arches: 1
+Trove exit (39,34) -> Dungeon:1 (58,6), exact outside gate
+trove_library  trove_library.txt  seed: 88176  return arches: 1
+Trove exit (38,41) -> Dungeon:1 (35,13), exact outside gate
+trove_misc_throne_room  trove_misc_throne_room.txt  seed: 88164  return arches: 2
+Trove exit (36,40) -> Dungeon:1 (58,6), exact outside gate
+Trove exit (42,40) -> Dungeon:1 (58,6), exact outside gate
+trove_nasty  trove_nasty.txt  seed: 88164  return arches: 1
+Trove exit (49,34) -> Dungeon:1 (58,6), exact outside gate
+trove_simple  trove_simple.txt  seed: 88164  return arches: 1
+Trove exit (39,38) -> Dungeon:1 (58,6), exact outside gate
+trove_treasure_island  trove_treasure_island.txt  seed: 88164  return arches: 2
+Trove exit (37,32) -> Dungeon:1 (58,6), exact outside gate
+Trove exit (41,36) -> Dungeon:1 (58,6), exact outside gate
+trove_trog_arena  trove_trog_arena.txt  seed: 88164  return arches: 1
+Trove exit (39,25) -> Dungeon:1 (58,6), exact outside gate
+trove_wands_scrolls  trove_wands_scrolls.txt  seed: 88164  return arches: 1
+Trove exit (45,36) -> Dungeon:1 (58,6), exact outside gate
+trove_weapon_1  trove_weapon_1.txt  seed: 88164  return arches: 1
+Trove exit (38,30) -> Dungeon:1 (58,6), exact outside gate
+trove_weapon_2  trove_weapon_2.txt  seed: 88164  return arches: 1
+Trove exit (41,32) -> Dungeon:1 (58,6), exact outside gate
+trove_weapons_four_rooms  trove_weapons_four_rooms.txt  seed: 88164  return arches: 1
+Trove exit (45,40) -> Dungeon:1 (58,6), exact outside gate

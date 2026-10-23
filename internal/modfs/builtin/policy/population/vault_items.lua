@@ -10,6 +10,8 @@ local item_requests = require("constants.vault_item_requests")
 local item_sets = require("policy.item_generation.item_sets")
 local set_ids = require("constants.item_sets")
 local identification = require("policy.items.identification")
+local acquirement = require("policy.scrolls.acquirement_offers")
+local usefulness = require("policy.item_generation.usefulness")
 
 local vault_items = {}
 
@@ -81,7 +83,23 @@ function vault_items.create(ctx, resolved, level_id, x, y, origin)
             set_ids.CONCEALMENT_SCROLLS)
     end
 
-    local rolled = generation.roll(ctx, request)
+    local rolled
+
+    if resolved.request and
+        resolved.request:match("^acquire[:%w_]* ") then
+        rolled = acquirement.roll_for_vault(ctx, request.class_id,
+            request.depth, request.site)
+    else
+        rolled = generation.roll(ctx, request)
+    end
+
+    -- Source `useful` rejects the rolled item after generation. It does
+    -- not reroll into a higher quality tier or change the authored slot.
+    if resolved.useful and not usefulness.eligible(ctx,
+        ctx:player(), rolled) then
+        return nil, nil
+    end
+
     local definition = catalog.get("items", rolled.kind_id)
 
     if definition.class == classes.OBJ_CORPSES and
