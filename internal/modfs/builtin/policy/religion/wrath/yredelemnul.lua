@@ -1,8 +1,10 @@
 -- Yredelemnul sends permanent hostile servants from religion.cc's ordered
--- roster. Soul reclaim, zombie bases, and god-avatar spells need owners.
+-- roster. Soul reclaim and zombie bases still need source effect owners.
 local component = require("constants.component")
+local avatar = require("policy.religion.wrath.avatar")
 local gods = require("constants.gods")
 local monsters = require("ids.monsters")
+local spells = require("ids.spells")
 local streams = require("constants.rng_streams")
 local summons = require("policy.religion.wrath.summons")
 
@@ -68,7 +70,9 @@ function yredelemnul.apply(ctx, player)
         ctx:get(player, component.PROGRESSION).level)
 
     if ctx:random(streams.CARDS, 2) ~= 0 then
-        error("unimplemented Yredelemnul avatar draining wrath")
+        return avatar.cast(ctx, player, gods.YREDELEMNUL,
+            spells.SPELL_BOLT_OF_DRAINING,
+            "Yredelemnul's anger turns toward you for a moment.")
     end
 
     local worship = ctx:get(player, component.RELIGION_WORSHIP)

@@ -87,6 +87,13 @@ function resolution.resolve(ctx, caster, foe, profile, plan, hook)
         error("monster beam direction changed after planning")
     end
 
+    -- Divine spell wrath creates a temporary caster at the player's cell.
+    -- Its aimed-at-feet ray contacts the player without a travel step.
+    if plan.at_feet and (not ctx:has(foe, component.PLAYER) or
+        source.x ~= destination.x or source.y ~= destination.y) then
+        error("monster beam feet target is not the player at the source")
+    end
+
     local power = beam_power.caster_power(ctx, caster, profile)
     local reach = beam_power.spell_range(ctx, caster, profile)
     local to_hit = calculators.to_hit(profile, power)
@@ -99,7 +106,14 @@ function resolution.resolve(ctx, caster, foe, profile, plan, hook)
     -- ray path and remaining range for each reflected leg.
     local can_bounce = bounce.for_profile(profile, hook)
 
-    if profile.direct_explosion then
+    if plan.at_feet then
+        trace = {
+            contacts = {{ actor = foe, x = destination.x, y = destination.y }},
+            x = destination.x,
+            y = destination.y,
+            path = {{ x = destination.x, y = destination.y }},
+        }
+    elseif profile.direct_explosion then
         -- Source direct explosions are placed at the selected cell even
         -- when an actor or clear wall lies along the intervening ray.
         trace = {

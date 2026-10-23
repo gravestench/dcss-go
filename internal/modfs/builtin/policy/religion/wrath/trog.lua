@@ -1,10 +1,12 @@
 -- Trog's physical punishments use saved stat, paralysis, and Slow owners.
 -- Hostile berserk summons use the ordinary permanent god-summon owner.
 local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
+local avatar = require("policy.religion.wrath.avatar")
 local attributes = require("policy.character.attributes")
 local component = require("constants.component")
 local gods = require("constants.gods")
 local monsters = require("ids.monsters")
+local spells = require("ids.spells")
 local slow = require("policy.character.slow")
 local stat_loss = require("policy.character.stat_loss")
 local stats = require("constants.stats")
@@ -131,7 +133,7 @@ local function physical(ctx, player)
 end
 
 -- god-wrath.cc first chooses army versus direct wrath, then gives direct
--- wrath a two-in-three physical branch. Fireball needs god-avatar casting.
+-- wrath a two-in-three physical branch. Fireball uses the temporary avatar.
 function trog.apply(ctx, player)
     local level = math.max(1,
         ctx:get(player, component.PROGRESSION).level)
@@ -144,7 +146,8 @@ function trog.apply(ctx, player)
         return physical(ctx, player)
     end
 
-    error("unimplemented Trog god-avatar fireball wrath")
+    return avatar.cast(ctx, player, gods.TROG, spells.SPELL_FIREBALL,
+        "Trog hurls fiery rage upon you!")
 end
 
 return trog
