@@ -15,6 +15,7 @@ local statuses = require("policy.magic.effects.statuses.player")
 local allies = require("policy.character.allies")
 local fedhas = require("policy.religion.gods.fedhas")
 local jiyva = require("policy.religion.gods.jiyva")
+local beogh = require("policy.religion.gods.beogh")
 local jelly_feeding = require("policy.religion.jiyva.feeding")
 local jelly_targets = require("policy.religion.jiyva.targets")
 local awareness = require("policy.ai.awareness")
@@ -226,6 +227,7 @@ function system.update(ctx, entity)
     -- action, so a newly neutral plant cannot attack on this same turn.
     fedhas.neutralise(ctx, ctx:player(), entity)
     jiyva.neutralise(ctx, ctx:player(), entity)
+    beogh.convert_on_turn(ctx, ctx:player(), entity)
 
     local combat = ctx:get(entity, "core.combat")
 

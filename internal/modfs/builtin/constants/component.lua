@@ -57,6 +57,7 @@ local component = {
     RELIGION_XOM = "religion.xom",
     RELIGION_YREDELEMNUL = "religion.yredelemnul",
     FEDHAS_PLANT = "religion.fedhas_plant",
+    BEOGH_ORC = "religion.beogh_orc",
     JIYVA_SLIME = "religion.jiyva_slime",
     JIYVA_GROWTH = "religion.jiyva_growth",
     JIYVA_ECOLOGY = "religion.jiyva_ecology",

@@ -9,6 +9,7 @@ local monsters = require("ids.monsters")
 local streams = require("constants.rng_streams")
 local summons = require("policy.religion.wrath.summons")
 local brands = require("constants.weapon_brands")
+local companions = require("policy.religion.gods.beogh")
 
 local beogh = {}
 
@@ -116,7 +117,9 @@ function beogh.apply(ctx, player)
         end
     elseif choice <= 4 and
         ctx:get(player, component.RELIGION_WORSHIP).god_id == gods.BEOGH then
-        error("unimplemented Beogh follower abandonment wrath")
+        if not companions.abandon(ctx, player, streams.CARDS) then
+            send_orcs(ctx, player, level)
+        end
     else
         send_orcs(ctx, player, level)
     end

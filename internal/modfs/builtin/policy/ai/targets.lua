@@ -22,6 +22,14 @@ function targets.real_attitude(ctx, entity)
         return attitudes.GOOD_NEUTRAL
     end
 
+    -- Converted orcs keep a durable Beogh gift identity even after wrath
+    -- changes their real side; band links describe a different relation.
+    local orc = ctx:get(entity, component.BEOGH_ORC)
+
+    if orc and orc.gift then
+        return orc.attitude
+    end
+
     -- Fedhas' conversion is a real, saved change to this plant's side.
     -- It wins over an authored or summoned origin until another transition.
     local plant = ctx:get(entity, component.FEDHAS_PLANT)

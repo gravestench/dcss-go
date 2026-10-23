@@ -24,6 +24,7 @@ local pan_traits = require("constants.pan_lord_traits")
 local pan_colours = require("constants.pan_lord_colours")
 local ugly_thing = require("policy.monsters.ugly_thing")
 local fedhas = require("policy.religion.gods.fedhas")
+local beogh = require("policy.religion.gods.beogh")
 local jiyva = require("policy.religion.gods.jiyva")
 local jiyva_growth = require("policy.religion.jiyva.growth")
 local gods = require("constants.gods")
@@ -552,6 +553,10 @@ function module.run(ctx, input)
     -- every saved tag before the monster-only loop can skip an orphan.
     for _, entity in ipairs(ctx:query({ component.FEDHAS_PLANT })) do
         fedhas.validate(ctx, entity)
+    end
+
+    for _, entity in ipairs(ctx:query({ component.BEOGH_ORC })) do
+        beogh.validate(ctx, entity)
     end
 
     for _, entity in ipairs(ctx:query({ component.JIYVA_SLIME })) do

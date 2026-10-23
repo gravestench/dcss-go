@@ -88,6 +88,23 @@ function monster_health.damage(ctx, target, amount, source, cause)
     health.current = before - dealt
     ctx:set(target, component.HEALTH, health)
 
+    -- A player hit can offer Beogh's one ordinary conversion roll. A
+    -- killing hit instead uses the independent deathbed rescue contest.
+    if dealt > 0 and source and ctx:has(source, component.PLAYER) then
+        local beogh = require("policy.religion.gods.beogh")
+
+        if health.current > 0 then
+            beogh.convert_on_contact(ctx, source, target)
+        else
+            beogh.deathbed(ctx, target, source)
+        end
+
+        health = ctx:get(target, component.HEALTH)
+    elseif dealt > 0 and health.current == 0 and source then
+        require("policy.religion.gods.beogh").deathbed(ctx, target, source)
+        health = ctx:get(target, component.HEALTH)
+    end
+
     if dealt > 0 and health.current > 0 then
         awareness.wake_from_damage(ctx, target, source)
     end

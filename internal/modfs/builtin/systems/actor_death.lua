@@ -121,7 +121,8 @@ function system.update(ctx)
 
                 -- Only a credited, nonsummoned kill grants player XP and advances XP-driven recovery clocks.
                 if kills[ctx:id(entity)] and not summoned and
-                    not ctx:has(entity, component.PIKEL_BAND) then
+                    not ctx:has(entity, component.PIKEL_BAND) and
+                    not (ctx:get(entity, component.BEOGH_ORC) or {}).gift then
                     local xp = death.experience(definition, health.max)
                     local player = ctx:player()
                     local player_pos = ctx:get(player, "core.position")

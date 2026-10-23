@@ -14,6 +14,7 @@ local definition = {
     piety_mode = modes.ORDINARY,
     piety_decay_chance = 17,
     conduct_module = "policy.religion.conduct.beogh",
+    behavior_module = "policy.religion.gods.beogh",
     requires_orc = true,
     requires_love = true,
 }
