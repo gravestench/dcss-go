@@ -2,6 +2,7 @@
 -- for the branch. Their DES metadata selects distinct Lua carving hooks.
 local branches = require("ids.branches")
 local glyphs = require("constants.vault_glyphs")
+local tags = require("constants.vault_tags")
 local catalog = require("policy.generation.layouts.catalog")
 local graph = require("policy.generation.layouts.cell_graph")
 local geometry = require("policy.generation.layouts.vaults.geometry")
@@ -192,9 +193,12 @@ function test.run()
         for _, room_id in ipairs(result.room_ids) do
             local room = vaults.get(room_id)
 
-            harness.truthy(room.tags.vaults_room or
-                room.tags.vaults_empty or room.tags.vaults_hard,
-                room_id .. " comes from a Vaults room pool")
+            harness.truthy(room.tags[tags.VAULTS_ROOM] or
+                room.tags[tags.VAULTS_EMPTY] or
+                room.tags[tags.VAULTS_HARD] or
+                room.tags[tags.VAULTS_WIZLAB] or
+                room.tags[tags.VAULTS_DESOLATION],
+                room_id .. " comes from a Vaults room pool or special portal")
         end
 
         count = count + 1

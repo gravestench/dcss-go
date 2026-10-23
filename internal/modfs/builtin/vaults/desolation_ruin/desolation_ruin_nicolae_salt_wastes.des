@@ -1,0 +1,26 @@
+# desolation_ruin_nicolae_salt_wastes: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME: desolation_ruin_nicolae_salt_wastes
+TAGS: desolation_ruin transparent
+NSUBST: - = 2:c / 2:x / 2=c. / 2=x. / 4:% / 1:G. / 2:1 / 2:2 / 1:S / *:.
+SUBST: C = c.., c = ccccx
+MARKER: S = lua:fog_machine { cloud_type = "salt",  walk_dist=3, \
+                                  pow_min=6, pow_max=20, \
+                                  delay=5, size=5, spread_rate=5, }
+# Source Lua: : desolation_ruins_setup(_G)
+: vault.run("shared.setup")
+MAP
+C.........C.
+...cc.c.c..C
+..--.--%c--.
+.c--.-.ccc-.
+..----.%%c..
+C.--------..
+C--c%-----.c
+..-cc...--.c
+.c%%c-.---..
+.-%%.-c--G..
+..cc..c.....
+...c.....CC.
+ENDMAP

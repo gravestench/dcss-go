@@ -1,0 +1,28 @@
+-- Desolation's entrance timing and vault family names belong in one module.
+-- The individual DES files own their geometry and source weights.
+return {
+    ENTRY_FAMILY = "desolation_entry",
+    RUIN_FAMILY = "desolation_ruin",
+    DESTINATION_FAMILY = "desolation",
+    ENTRY_FEATURE = "enter_desolation",
+    EXIT_FEATURE = "exit_desolation",
+    EXPIRED_FEATURE = "expired_portal",
+    MIN_DURATION_TURNS = 600,
+    DURATION_RANGE_TURNS = 201,
+    MAX_DURATION_TURNS = 800,
+    VAULTS_CHANCE_PERCENT = 5,
+    FIRST_NOTICE_AUT = 500,
+    LONG_NOTICE_AUT = 500,
+    SHORT_NOTICE_AUT = 250,
+    SHORT_NOTICE_BELOW_AUT = 900,
+    FINAL_WARNING_AUT = 100,
+    FAINT_ABOVE_AUT = 5000,
+    QUIET_ABOVE_AUT = 4000,
+    PLAIN_ABOVE_AUT = 2500,
+    LOUD_ABOVE_AUT = 1500,
+    MAX_HEARING_DISTANCE = 999,
+    VERY_DISTANT_AT = 28,
+    DISTANT_AT = 21,
+    NEARBY_AT = 14,
+    VERY_NEARBY_AT = 7,
+}

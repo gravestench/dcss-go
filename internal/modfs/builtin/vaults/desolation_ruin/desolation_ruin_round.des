@@ -1,0 +1,29 @@
+# desolation_ruin_round: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME:       desolation_ruin_round
+TAGS:       desolation_ruin transparent
+WEIGHT:     20
+SHUFFLE:    AD
+SHUFFLE:    BE
+SHUFFLE:    CF
+SUBST:      ABC=c
+SUBST:      DEF=.
+SHUFFLE:    Cc
+SUBST:      C=c:50 .
+# Source Lua: : desolation_ruins_setup(_G)
+: vault.run("shared.setup")
+MAP
+............
+...cccccc.G.
+..cc%CC.cc..
+.cc%%....cc.
+.c%%.cc.2.B.
+.cC%cAAc..1.
+.cC%cAAc2...
+.c%%.cc...B.
+.cc%%....cc.
+..cc%CC.cc..
+...cccccc.G.
+............
+ENDMAP

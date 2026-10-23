@@ -60,3 +60,15 @@ CRAWL_WIZLAB_SNAPSHOT_DIR="$PWD/docs/level-snapshots/wizlab" \
   go test -run '^TestWizlabAllSourceMapsPopulate$' \
   -count=1 ./internal/game
 ```
+
+The [Desolation index](desolation/index.txt) shows all three source-authored
+floors after ruin selection. Each 80×70 terrain snapshot lists every
+Desolation return arch and the exact Dungeon:1 test gate it reaches. The
+test gate keeps export fast; live entrances appear in eligible Elf and
+Vaults floors. Regenerate the set with:
+
+```sh
+CRAWL_DESOLATION_SNAPSHOT_DIR="$PWD/docs/level-snapshots/desolation" \
+  go test -run '^TestDesolationAllSourceMapsPopulate$' \
+  -count=1 ./internal/game
+```

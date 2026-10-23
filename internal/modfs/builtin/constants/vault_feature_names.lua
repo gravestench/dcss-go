@@ -8,6 +8,7 @@ local names = {
     SILVER_WALL = "silver wall",
     WHITE_CRYSTAL_WALL = "wall of white crystal",
     WIZLAB_CRYSTAL_WALL = "wall of crystal",
+    DESOLATION_RUINED_IDOL = "ruined idol",
     WIZLAB_VISCOUS_FLUID = "Viscous fluid",
     WIZLAB_SINEWY_WALL = "sinewy wall",
     WIZLAB_THIN_MEMBRANE = "thin membrane",

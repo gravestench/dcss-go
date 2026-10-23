@@ -1,0 +1,23 @@
+# desolation_ruin_nicolae_wiztower_intact: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME: desolation_ruin_nicolae_wiztower_intact
+TAGS: desolation_ruin transparent uniq_salt_special
+WEIGHT: 1
+NSUBST: - = 1:1 / 1=1. / 1:2 / 3:3 / 2=23.. / *:.
+KITEM: % = randbook w:50 / any jewellery randart / any magical staff
+MONS: peacekeeper / crystal guardian, ironbound convoker, halazid warlock
+MAP
+.........ccc
+..ccccccc.1c
+.cc..G...c.c
+cc-------.c.
+c.-%c%c%-.c.
+c.-ccccc-.c.
+cG-%ccc%-Gc.
+c.-ccccc-.c.
+c.-%c%c%-.c.
+cc-------cc.
+.cc..G..cc..
+..ccccccc...
+ENDMAP

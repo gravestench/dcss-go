@@ -1,0 +1,24 @@
+# desolation_ruin_pillars_wrecked: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME:       desolation_ruin_pillars_wrecked
+TAGS:       desolation_ruin transparent
+SUBST:      A = c.
+SUBST:      B = x.
+NSUBST:     C = 7:G / *:.
+# Source Lua: : desolation_ruins_setup(_G)
+: vault.run("shared.setup")
+MAP
+............
+....C..C....
+..C......C..
+.1..AAAc%...
+.C.2c%%cB%C.
+...c2%xxB%..
+...A%%%xBB%.
+.C.AA%%ccBB.
+....cccc....
+..C......C..
+....C..C....
+............
+ENDMAP

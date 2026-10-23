@@ -1,0 +1,27 @@
+# desolation_ruin_nicolae_gargoyle_perch: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME:   desolation_ruin_nicolae_gargoyle_perch
+TAGS:   desolation_ruin patrolling
+KITEM:  L = |
+KMONS:  3L = molten gargoyle
+KMONS:  4 = war gargoyle
+KMONS:  5 = gargoyle
+# Source Lua: : desolation_ruins_setup(_G)
+: vault.run("shared.setup")
+NSUBST: 3 = 1=4 / 3., 3 = 3=L / 3, - = 4=. / .cc
+SUBST:  ` = c., c = c:50 x, G = GGG5
+MAP
+............
+...cc--cc...
+..Gc3..3cG..
+.ccc....ccc.
+.c3..``..3c.
+.-..`%%`..-.
+.-..`%%`..-.
+.c3..``..3c.
+.ccc....ccc.
+..Gc3..3cG..
+...cc--cc...
+............
+ENDMAP

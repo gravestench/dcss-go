@@ -681,10 +681,11 @@ local function locate_records(source_records, cells, left, top, entry,
         if count == 0 and not targets then
             local pending = copy_record(record, entry.x, entry.y)
 
-            -- A whole-map border instruction needs the final placed bounds,
-            -- not the source MAP's local coordinates. Clone its arguments
-            -- so another placement of the same definition stays independent.
-            if pending.kind == effects.BORDER_FILL then
+            -- Whole-map borders and feature names need the final placed
+            -- bounds. Clone their arguments so another placement of the
+            -- same definition stays independent after map transforms.
+            if pending.kind == effects.BORDER_FILL or
+                pending.kind == effects.FEATURE_NAME then
                 pending.arguments = copy_fields(pending.arguments or {})
                 pending.arguments.bounds_x = left
                 pending.arguments.bounds_y = top

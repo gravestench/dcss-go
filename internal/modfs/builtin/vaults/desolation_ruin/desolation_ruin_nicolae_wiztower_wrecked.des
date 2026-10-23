@@ -1,0 +1,23 @@
+# desolation_ruin_nicolae_wiztower_wrecked: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME: desolation_ruin_nicolae_wiztower_wrecked
+TAGS: desolation_ruin transparent
+SHUFFLE: AB
+SUBST: G = G., C = c., X = x., c = c:60 x
+# Source Lua: : desolation_ruins_setup(_G)
+: vault.run("shared.setup")
+MAP
+.........cCC
+.XCcccccc.xc
+Xcc..G...c.c
+xc1.....1.c.
+x%.%c%c...cX
+c%.ccCCc..Cx
+cG.%cCc..GCx
+c%..cc.c..CX
+c%.1.xc.1..X
+cc%..x.X..X.
+.ccx.%.Xc..X
+..ccccCC.X..
+ENDMAP

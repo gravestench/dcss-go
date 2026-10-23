@@ -1,0 +1,9 @@
+# A sparse mod adds one new ruin without replacing the source floor files.
+NAME: my_salt_ruin
+TAGS: desolation_ruin transparent
+WEIGHT: 3
+MAP
+...
+.#.
+...
+ENDMAP

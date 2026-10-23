@@ -1,0 +1,24 @@
+# desolation_ruin_twins_wrecked: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME:       desolation_ruin_twins_wrecked
+TAGS:       desolation_ruin transparent
+SUBST:      A=c.
+SUBST:      B=x.
+SUBST:      C=cx
+# Source Lua: : desolation_ruins_setup(_G)
+: vault.run("shared.setup")
+MAP
+...BBB..G...
+.cCCCBBcccc.
+.cc%Cxxc%cc.
+.c%%C..c..c.
+.c%cc..cc.c.
+.c....BxB2A.
+.c..2BxxB...
+.c%cc.BBc.A.
+.c%%c1.c..c.
+.c%%c..c%%c.
+.cccc..cccc.
+...G....G...
+ENDMAP

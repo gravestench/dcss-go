@@ -2684,6 +2684,68 @@ go test ./internal/script -run 'TestLuaRules/wizlab' -count=1
 go test ./internal/game -run 'TestWizlab' -count=1
 ```
 
+## Desolation of Salt maps and rules
+
+The Desolation of Salt is a one-floor timed portal branch. Its source content
+is split into nine entrance maps in `vaults/desolation_entry/`, 54 ruin helpers
+in `vaults/desolation_ruin/`, and three complete floors in
+`vaults/desolation/`. Each committed `.des` file retains its original MAP
+rows. The Lua owner under `policy/generation/desolation/` makes one weighted
+floor choice; the source `SUBVAULT` directives choose ruins from the effective
+`desolation_ruin` tag pool. Sorting candidate IDs makes the draw independent
+of file enumeration order.
+
+To add a ruin, add a single `.des` file under `vaults/desolation_ruin/` with a
+unique `NAME`, `TAGS: desolation_ruin`, and a MAP that fits the authored
+12-cell ruin slots. It does not need a depth declaration: the parent
+Desolation floor chooses it by tag. A larger helper cannot fit the source
+slots and will fail placement. To add a complete floor, add one `.des` under
+`vaults/desolation/` with `DEPTH: Desolation`, `ORIENT: encompass`, at least one
+`KFEAT: < = exit_desolation`, and a MAP that fits the 80×70 canvas. Source
+weights live in `WEIGHT` directives. Use the exact bundled relative path to
+replace a map in an overlay.
+
+Entrance files carry `DEPTH: Elf, !Elf:$, Vaults, !Vaults:$` and the
+`chance_desolation` and `vaults_desolation` tags. The former gives an ordinary
+five-percent chance in Elf; Vaults uses one special room draw after Wizard
+Lab's draw, so a successful Desolation roll replaces that choice. The Lua
+hook `: vault.run("shared.portal")` draws the 600–800-turn lifetime, attaches
+the timed marker to `O`, and gives that cell the live entry feature. Its
+saved ECS clock begins when that outside floor is populated, keeps running
+while the player is elsewhere, and replaces the gate with `expired_portal`
+when it ends. Every source exit returns to the precise outside gate cell.
+
+Named hooks in `policy/generation/vaults/desolation_entry/`,
+`desolation_ruin/`, and `desolation/` port source script statements at their
+original DES positions. A hook receives a placement `api` for emitting DES
+directives or typed effects; gameplay systems receive the live `ctx` described
+in [the context reference](#the-game-context-ctx). The ruin setup hook adds
+monster slots and sparse reward substitutions. Floor hooks describe the
+salt border and ruined-idol display name; the temple hook may shuffle three
+source groups. Salt fog machines stay as DES markers and run through the
+shared fog ECS system. Source hooks remain separate Lua files for now;
+the DES comments mark the planned consolidation.
+
+The slug entrance shows how to port a source `dgn.delayed_decay` call:
+its hook emits a real `never_decay` corpse item plus a typed
+`DELAYED_DECAY` record on the same keyed glyph. The generic Lua system
+reads that source record when the player sees the authored cell, clears
+the corpse's saved preservation flag, and lets ordinary corpse aging take
+over. A `FEATURE_NAME` hook stores the source feature alias and local name;
+generation resolves the alias and placed bounds, and the read-only cell
+view exposes the name without changing terrain collision or its glyph.
+
+The [Desolation snapshot index](level-snapshots/desolation/index.txt) opens
+all three generated floors and lists each return arch and its exact outside
+test gate. Regenerate them with the command in the
+[snapshot guide](level-snapshots/README.md). Run the source and live travel
+tests after editing this domain:
+
+```sh
+go test ./internal/script -run 'TestLuaRules/desolation' -count=1
+go test ./internal/game -run 'TestDesolation' -count=1
+```
+
 ## Character definitions and choices
 
 The embedded `content/species/` and `content/jobs/` trees contain one Lua file

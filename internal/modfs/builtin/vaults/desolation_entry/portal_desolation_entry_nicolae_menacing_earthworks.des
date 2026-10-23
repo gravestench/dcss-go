@@ -1,0 +1,38 @@
+# portal_desolation_entry_nicolae_menacing_earthworks: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME:   portal_desolation_entry_nicolae_menacing_earthworks
+DEPTH: Elf, !Elf:$, Vaults, !Vaults:$
+TAGS: uniq_desolation vaults_desolation no_monster_gen chance_desolation
+CHANCE: 500, 0 (Vaults)
+TAGS:   transparent no_monster_gen
+# Shape doesn't work as well as a Vaults room.
+WEIGHT: 0 (Vaults), 3
+# Source Lua: : desolation_portal(_G)
+: vault.run("shared.portal")
+SUBST:  - = ...;
+FTILE:  ;Oc = FLOOR_SALT
+MARKER: O = lua:fog_machine { cloud_type = "salt",  walk_dist=3, \
+                              pow_min=6, pow_max=20, \
+                              delay=5, size=5, spread_rate=5, }
+MAP
+         c
+        -cc
+       c;;c-
+      -cc;;cc
+     c;;c;cc;-
+    -cc;;;;;;cc
+   c;;c;;;;;cc;-
+  -cc;;;;;;;;;;cc
+ cc;c;;;;;;;;;cc;-
+cc;;;;;;;O;;;;;;;cc
+ -;cc;;;;;;;;;c;cc
+  cc;;;;;;;;;;cc-
+   -;cc;;;;;c;;c
+    cc;;;;;;cc-
+     -;cc;c;;c
+      cc;;cc-
+       -c;;c
+        cc-
+         c
+ENDMAP

@@ -21,6 +21,7 @@ type CellView struct {
 	State        CellState
 	DetectedItem bool
 	ColorID      string
+	Name         string
 }
 
 type EntityView struct {
@@ -148,6 +149,7 @@ func (g *Game) View() (view View) {
 	}
 
 	g.fillTerrainView(&view, level)
+	g.fillFeatureNameView(&view, level)
 	g.fillVaultView(&view, level)
 	g.fillCloudView(&view, level)
 	g.fillPlayerView(&view)
@@ -324,6 +326,87 @@ func (g *Game) fillTerrainView(view *View, level *Level) {
 			}
 		}
 	}
+}
+
+// A FEATURE_NAME changes how one vault's terrain is described, while the
+// terrain ID continues to own collision and its map glyph. The named region
+// was fixed after DES transforms and is retained in the saved level record.
+func (g *Game) fillFeatureNameView(view *View, level *Level) {
+	for _, record := range level.vaultRecords {
+		if record.Kind != vault.KindFeatureName || record.Overridden {
+			continue
+		}
+
+		rule, valid := featureNameFromRecord(record)
+
+		if !valid {
+			continue
+		}
+
+		for y := rule.top; y < rule.bottom && y < len(level.terrain); y++ {
+			for x := rule.left; x < rule.right && x < level.width; x++ {
+				index := y*level.width + x
+
+				if level.terrain[y][x] == rule.feature &&
+					view.Cells[index].State != Unknown {
+					view.Cells[index].Name = rule.name
+				}
+			}
+		}
+	}
+}
+
+type featureNameRule struct {
+	feature terrain.ID
+	name    string
+	left    int
+	top     int
+	right   int
+	bottom  int
+}
+
+// Decode the Lua-resolved feature ID and final room bounds. A malformed
+// record cannot rename another region merely because its source map loaded.
+func featureNameFromRecord(record vault.Record) (featureNameRule, bool) {
+	rule := featureNameRule{}
+	width := 0
+	height := 0
+
+	for _, argument := range record.Arguments {
+		switch argument.Name {
+		case "feature_id":
+			rule.feature = terrain.ID(argument.String)
+
+		case "name":
+			rule.name = argument.String
+
+		case "bounds_x":
+			rule.left = int(argument.Int)
+
+		case "bounds_y":
+			rule.top = int(argument.Int)
+
+		case "bounds_width":
+			width = int(argument.Int)
+
+		case "bounds_height":
+			height = int(argument.Int)
+		}
+	}
+
+	if rule.feature == "" ||
+		rule.name == "" ||
+		width < 1 ||
+		height < 1 ||
+		rule.left < 0 ||
+		rule.top < 0 {
+		return featureNameRule{}, false
+	}
+
+	rule.right = rule.left + width
+	rule.bottom = rule.top + height
+
+	return rule, true
 }
 
 func (g *Game) fillPlayerView(view *View) {

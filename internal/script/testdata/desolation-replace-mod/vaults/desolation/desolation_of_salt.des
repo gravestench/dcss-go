@@ -1,0 +1,10 @@
+# A sparse mod replaces only the matching relative DES path.
+NAME: desolation_of_salt
+DEPTH: Desolation
+ORIENT: encompass
+KFEAT: < = exit_desolation
+MAP
+.....
+..<..
+.....
+ENDMAP

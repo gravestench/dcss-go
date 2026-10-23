@@ -1,0 +1,25 @@
+# desolation_ruin_nicolae_armoury_intact: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME: desolation_ruin_nicolae_armoury_intact
+TAGS: desolation_ruin transparent uniq_salt_special
+WEIGHT: 1
+NSUBST: i = 8:i / *:s
+KITEM: i = any weapon good_item randart / any armour good_item randart
+KMONS: s = saltling
+# Source Lua: : desolation_ruins_setup(_G)
+: vault.run("shared.setup")
+MAP
+....G.2G....
+.cccc..cccc.
+.ccic..cicc.
+.ci......ic.
+.cc.1..1.cc.
+.ci......ic.
+.ci.2..2.ic.
+.cc..8...cc.
+.ci......ic.
+.cciciicicc.
+.cccccccccc.
+............
+ENDMAP

@@ -7,6 +7,7 @@ local bazaar = require("policy.generation.bazaar.level")
 local sewer = require("policy.generation.sewer.level")
 local ossuary = require("policy.generation.ossuary.level")
 local wizlab = require("policy.generation.wizlab.level")
+local desolation = require("policy.generation.desolation.level")
 local bailey = require("policy.generation.bailey.level")
 local ice_cave = require("policy.generation.ice_cave.level")
 local volcano = require("policy.generation.volcano.level")
@@ -217,6 +218,12 @@ function module.wizlab(ctx, input)
     return wizlab.generate(ctx, input)
 end
 
+-- Desolation keeps its source whole-floor layouts and ruin slots in DES.
+-- The staged transaction installs the one selected floor only on entry.
+function module.desolation(ctx, input)
+    return desolation.generate(ctx, input)
+end
+
 -- Bailey's mapless controller chooses one saved-theme child before the
 -- generic staged-level transaction installs its temporary floor.
 function module.bailey(ctx, input)
@@ -292,6 +299,11 @@ register.policy({
 register.policy({
     id = "world.generate_wizlab_level",
     run = module.wizlab,
+})
+
+register.policy({
+    id = "world.generate_desolation_level",
+    run = module.desolation,
 })
 
 register.policy({

@@ -1,0 +1,34 @@
+# desolation_ruin_nicolae_tomb_intact: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME:   desolation_ruin_nicolae_tomb_intact
+TAGS:   desolation_ruin uniq_salt_tomb uniq_salt_special
+WEIGHT: 1
+KPROP:  3456%!' = no_tele_into
+KITEM:  3 = % / * w:5
+KITEM:  45 = |
+KITEM:  6 = %
+KITEM:  d = wand of digging charges:2 no_pickup
+KMONS:  3 = ushabti
+KMONS:  4 = halazid warlock
+KMONS:  5 = crystal guardian
+KMONS:  6 = ragged hierophant
+KMONS:  p = withered plant perm_ench:petrified
+KFEAT:  ! = iron_grate
+NSUBST: - = d / .pp
+# Source Lua: : desolation_ruins_setup(_G)
+: vault.run("shared.setup")
+MAP
+...pcG----Gc
+.1ppcccccccc
+.ppGc3'''%3c
+ccccc'''''%c
+c'6'c''cc'%c
+!'c'!''c4'|c
+!'c'!''c5'|c
+c'6'c''cc'%c
+ccccc'''''%c
+.ppGc3'''%3c
+.1ppcccccccc
+...pcG----Gc
+ENDMAP

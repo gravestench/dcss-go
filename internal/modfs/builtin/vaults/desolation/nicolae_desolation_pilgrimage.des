@@ -1,0 +1,60 @@
+# nicolae_desolation_pilgrimage: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME:     nicolae_desolation_pilgrimage
+DEPTH: Desolation
+TAGS:     no_dump no_monster_gen
+ORIENT:   encompass
+MONS:     saltling band
+KFEAT:    t = petrified_tree
+KFEAT:    < = exit_desolation
+KFEAT:    H = stone_arch
+KFEAT:    P = endless_salt
+SUBVAULT: D : desolation_ruin
+SUBVAULT: E : desolation_ruin
+SUBVAULT: F : desolation_ruin
+NSUBST:   < = 1=< / S / -
+SUBST:    ` = x.., DEF = .:1000 x:2 G:2 t:2 S:1, . = .:1000 1:8
+COLOUR:   P = white
+# Source Lua: : set_border_fill_type('endless_salt')
+: vault.run("shared.border")
+# Source Lua: : set_feature_name("granite_statue", "ruined idol")
+: vault.run("shared.idol")
+TILE:     G = DNGN_CRUMBLED_COLUMN
+MARKER:   S = lua:fog_machine { cloud_type = "salt",  walk_dist=3, \
+              pow_min=6, pow_max=20, delay=5, size=15, spread_rate=10, }
+MAP
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+P.............................................................................P
+P..``......`..................................................................P
+P............`.....DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE..`...FFFFFFFFFFFFFFF..P
+P.............`....DDDDDDDDDDDDDDD..`...EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P....``.......`....DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P...`..............DDDDDDDDDDDDDDD..S...EEEEEEEEEEEEEEE...S`.FFFFFFFFFFFFFFF..P
+P..................DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P............``....DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P..``......``...S..DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE.`....FFFFFFFFFFFFFFF..P
+P...``.............DDDDDDDDDDDDDDD..`...EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P..................DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P...---------..`...DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE...`..FFFFFFFFFFFFFFF..P
+P...---------..`...DDDDDDDDDDDDDDD...`..EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P...----<----......DDDDDDDDDDDDDDD....`.EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P...---------...`..DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE..`...FFFFFFFFFFFFFFF..P
+P...--<-H-<--......DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P...---------......DDDDDDDDDDDDDDD.`....EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P...----<----...`..DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE...`..FFFFFFFFFFFFFFF..P
+P...---------......DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P...---------......DDDDDDDDDDDDDDD..`...EEEEEEEEEEEEEEE..`...FFFFFFFFFFFFFFF..P
+P..................DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P..................DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE....`.FFFFFFFFFFFFFFF..P
+P....````......`S..DDDDDDDDDDDDDDD...`..EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P.............``...DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P.........`........DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE.`....FFFFFFFFFFFFFFF..P
+P..``.....`........DDDDDDDDDDDDDDD..S...EEEEEEEEEEEEEEE...S..FFFFFFFFFFFFFFF..P
+P.`........`....`..DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P..................DDDDDDDDDDDDDDD......EEEEEEEEEEEEEEE...`..FFFFFFFFFFFFFFF..P
+P....`.`......`....DDDDDDDDDDDDDDD.`....EEEEEEEEEEEEEEE......FFFFFFFFFFFFFFF..P
+P........`............................`.......................................P
+P.............................................................................P
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+ENDMAP

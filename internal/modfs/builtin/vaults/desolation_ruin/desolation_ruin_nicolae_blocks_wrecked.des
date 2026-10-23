@@ -1,0 +1,23 @@
+# desolation_ruin_nicolae_blocks_wrecked: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME: desolation_ruin_nicolae_blocks_wrecked
+TAGS: desolation_ruin transparent
+NSUBST: D = . / 1:C / c, 1 = 3:1 / *:.
+SUBST: C = c., X = x., c = c:100 x
+# Source Lua: : desolation_ruins_setup(_G)
+: vault.run("shared.setup")
+MAP
+....X...cccc
+.X1.....C%%c
+..DDDD..C1%c
+..D%%D...CCc
+X.D%1D.1....
+..DDDx...x.X
+...xx...cx..
+x.....c1..X.
+Xcc.1.C%%C..
+c%1c...c%cX.
+C%%Cx..xxx..
+ccCc..X.....
+ENDMAP

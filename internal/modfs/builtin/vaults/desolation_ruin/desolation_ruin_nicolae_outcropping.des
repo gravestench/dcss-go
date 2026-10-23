@@ -1,0 +1,22 @@
+# desolation_ruin_nicolae_outcropping: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME: desolation_ruin_nicolae_outcropping
+TAGS: desolation_ruin transparent
+SUBST: X = x., C = c.
+# Source Lua: : desolation_ruins_setup(_G)
+: vault.run("shared.setup")
+MAP
+....XxxXX...
+..XxxxxxxX1.
+.Xxxxxxx%%..
+XxxccccccxX.
+Xxxcxx%xcxX.
+..xc%%%%cxxX
+...C...%%%xx
+.....2.%CxxX
+.Xx....CCxX.
+Xxc%xX......
+Xxcxx..1....
+..xX........
+ENDMAP

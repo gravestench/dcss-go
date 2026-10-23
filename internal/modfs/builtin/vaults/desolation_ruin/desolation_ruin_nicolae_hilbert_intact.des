@@ -1,0 +1,22 @@
+# desolation_ruin_nicolae_hilbert_intact: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME: desolation_ruin_nicolae_hilbert_intact
+TAGS: desolation_ruin transparent
+NSUBST: q = 2:1 / 2:2 / *:.
+# Source Lua: : desolation_ruins_setup(_G)
+: vault.run("shared.setup")
+MAP
+............
+.cccc..cccc.
+.c%%c.qc%%c.
+.c..c%%c..c.
+.c.qccccq.c.
+.c........c.
+.c........c.
+.cccc..cccc.
+..q%c..c%q..
+...%c..c%...
+.cccc..cccc.
+............
+ENDMAP

@@ -1,0 +1,26 @@
+# desolation_ruin_nicolae_collapsed_rooms: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME: desolation_ruin_nicolae_collapsed_rooms
+TAGS: desolation_ruin transparent
+SHUFFLE: AB, EF, PQ, RS, VW
+NSUBST: h = X / -, i = X / -, j = X / i, k = X / -, l = X / -, m = X / -, \
+        n = X / -, o = X / -
+SUBST: X = x--, AEPRV = c, BFQSW = ., U = Ccc, C = ccx-, c = c:45 x
+NSUBST: - = 7:% / 2:2 / 2:1 / *:.
+# Source Lua: : desolation_ruins_setup(_G)
+: vault.run("shared.setup")
+MAP
+............
+...Gccccccc.
+....PhhQiic.
+.G..QhhPiic.
+.cABUCCURSc.
+.cjjCkkCllc.
+.cjjCkkWllc.
+.cBAUCVUSRc.
+.cmmEnnFooc.
+.cmmFnnEooc.
+.cccccccccc.
+............
+ENDMAP

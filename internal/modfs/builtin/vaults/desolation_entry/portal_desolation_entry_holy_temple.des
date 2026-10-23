@@ -1,0 +1,36 @@
+# portal_desolation_entry_holy_temple: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME:       portal_desolation_entry_holy_temple
+DEPTH: Elf, !Elf:$, Vaults, !Vaults:$
+TAGS: uniq_desolation vaults_desolation no_monster_gen chance_desolation
+CHANCE: 500, 0 (Vaults)
+TAGS:       transparent no_monster_gen
+# XXX: no_item_gen?
+# Source Lua: : desolation_portal(_G)
+: vault.run("shared.portal")
+KFEAT:      B = altar_zin
+KFEAT:      C = altar_the_shining_one
+KFEAT:      D = altar_elyvilon
+SHUFFLE:    BCD
+MONS:       patrolling angel
+FTILE:      ;OBCD1 = FLOOR_LIMESTONE
+MAP
+.................
+.................
+.....cc+++cc.....
+.....c;;;;;c.....
+.....c;;;;;c.....
+..cccc;c;c;cccc..
+..c;;;;;;;;;;;c..
+..n;c;;;;;;;c;n..
+..n;;;1;O;1;;;n..
+..n;c;;;;;;;c;n..
+..c;;;;BCD;;;;c..
+..cccc;;;;;cccc..
+.....c;c;c;c.....
+.....c;;;;;c.....
+.....ccnnncc.....
+.................
+.................
+ENDMAP

@@ -134,6 +134,8 @@ features.named_vault_terrain = {
     exit_ossuary = terrain.DNGN_EXIT_OSSUARY,
     enter_wizlab = terrain.DNGN_ENTER_WIZLAB,
     exit_wizlab = terrain.DNGN_EXIT_WIZLAB,
+    enter_desolation = terrain.DNGN_ENTER_DESOLATION,
+    exit_desolation = terrain.DNGN_EXIT_DESOLATION,
     enter_bailey = terrain.DNGN_ENTER_BAILEY,
     exit_bailey = terrain.DNGN_EXIT_BAILEY,
     enter_ice_cave = terrain.DNGN_ENTER_ICE_CAVE,
@@ -264,6 +266,20 @@ function features.apply_vault_terrain(cells, records, ctx, depth)
                 cells[record.y + 1][record.x + 1] = feature
                 record.pending = false
                 keep = false
+            end
+        elseif record.kind == effects.FEATURE_NAME and not record.overridden then
+            -- Resolve the source's local alias once during generation. The
+            -- renderer reads this saved terrain ID without owning a Lua
+            -- content table or changing the underlying collision feature.
+            local arguments = record.arguments or {}
+            local source = arguments.feature
+            local feature = source and
+                (features.named_vault_terrain[source] or
+                    features.vault_terrain[source])
+
+            if feature then
+                arguments.feature_id = feature
+                record.arguments = arguments
             end
         elseif record.kind == effects.BORDER_FILL then
             apply_border_fill(cells, record)

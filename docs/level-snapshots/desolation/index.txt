@@ -1,0 +1,13 @@
+Desolation of Salt source layouts, seed 88143
+Coordinates are zero-based, origin at top left.
+Every return arch points to the saved outside gate.
+
+desolation_of_salt  desolation_of_salt.txt
+  ruins: desolation_ruin_nicolae_dome_wrecked, desolation_ruin_nicolae_tower_intact, desolation_ruin_pillars_intact
+Desolation exit (39,34) -> Dungeon:1 (5,1), exact outside gate
+nicolae_desolation_pilgrimage  nicolae_desolation_pilgrimage.txt
+  ruins: desolation_ruin_nicolae_legs_wrecked, desolation_ruin_diamond_wrecked, desolation_ruin_nicolae_wiztower_wrecked
+Desolation exit (10,34) -> Dungeon:1 (5,1), exact outside gate
+nicolae_desolation_temple  nicolae_desolation_temple.txt
+  ruins: none
+Desolation exit (17,15) -> Dungeon:1 (5,1), exact outside gate

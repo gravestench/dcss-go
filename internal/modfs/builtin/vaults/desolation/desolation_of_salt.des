@@ -1,0 +1,89 @@
+# desolation_of_salt: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME:     desolation_of_salt
+DEPTH: Desolation
+TAGS:     no_dump no_monster_gen
+ORIENT:   encompass
+SHUFFLE:  ABCDEF
+SUBVAULT: A : desolation_ruin
+SUBVAULT: B : desolation_ruin
+SUBVAULT: C : desolation_ruin
+SUBST:    DEF = .:1000 x:2 G:2 t:2 S:1
+SUBST:    . = .:1000 1:8
+SUBST:    X = x.
+KFEAT:    t = petrified_tree
+KFEAT:    < = exit_desolation
+KFEAT:    H = stone_arch
+KFEAT:    O = permarock_wall
+KFEAT:    P = endless_salt
+COLOUR:   P = white
+MONS:     saltling band
+# Source Lua: :         set_border_fill_type('endless_salt')
+: vault.run("shared.border")
+# Source Lua: :         set_feature_name("granite_statue", "ruined idol")
+: vault.run("shared.idol")
+MARKER:   S = lua:fog_machine { cloud_type = "salt",  walk_dist=3, \
+                                pow_min=6, pow_max=20, \
+                                delay=5, size=15, spread_rate=10, }
+TILE:     G = DNGN_CRUMBLED_COLUMN
+MAP
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+P...........................................................P
+P...............................XX..........................P
+P...AAAAAAAAAAAA..X.............................XX..........P
+P...AAAAAAAAAAAA.XX.........................................P
+P...AAAAAAAAAAAA...........CCCCCCCCCCCC..S..................P
+P...AAAAAAAAAAAA...........CCCCCCCCCCCC................S....P
+P.X.AAAAAAAAAAAA.........X.CCCCCCCCCCCC...X.................P
+P.X.AAAAAAAAAAAA.........X.CCCCCCCCCCCC.....................P
+P...AAAAAAAAAAAA........XX.CCCCCCCCCCCC...................X.P
+P...AAAAAAAAAAAA...........CCCCCCCCCCCC..................X..P
+P...AAAAAAAAAAAA...........CCCCCCCCCCCC.....DDDDDDDDDDDD.X..P
+P...AAAAAAAAAAAA...........CCCCCCCCCCCC.....DDDDDDDDDDDD....P
+P...AAAAAAAAAAAA....S......CCCCCCCCCCCC.....DDDDDDDDDDDD....P
+P...AAAAAAAAAAAA...........CCCCCCCCCCCC.....DDDDDDDDDDDD....P
+P..........................CCCCCCCCCCCC.....DDDDDDDDDDDD....P
+P..........................CCCCCCCCCCCC.....DDDDDDDDDDDD....P
+P...........................................DDDDDDDDDDDD....P
+P.................,,,,,,XX,,,,,,,,,,,,,..S..DDDDDDDDDDDD....P
+P.........XXX.....,,,,,,,X,,,,,,,,,,,,,.....DDDDDDDDDDDD....P
+P..........XX.....,,,,,,,,,,,,,,,,,,,,,.....DDDDDDDDDDDD.XX.P
+P.................,,,,,,,,,,,,,,,,,,,,,.....DDDDDDDDDDDD..X.P
+P.................,,,,,,,,,,,,,,,,,,,,,.....DDDDDDDDDDDD....P
+P...S.............,,,X,,,,,,,,,,,,,,,,,.....................P
+P.................,,,X,,,,,,,,,,,X,,,,,.....................P
+P.................,,,,,,,,,,,,,,,XX,,,,..X..................P
+P.................,,,,,,,,,,,,,,,,X,,,,..X..................P
+P.................,,,,,,,,,,,,,,,,,,,,,.XX..................P
+P.................,,,,,,,,,,H,<,,,,,,,,.....................P
+P.................,,,,,,,,,,,,,,,,,,,,,.....................P
+P............XX...,,,,,,,,,,,,,,,,,,,,,........S........XX..P
+P..XX.............,,,,,,,,,,,,,,,,,,,XX.................X...P
+P...X.............,,,,,,,,,,,,,,,,,,,X,.....................P
+P...X.............,,,,,,,XXX,,,,,,,,,,,.....................P
+P.................,,,,,,,,XX,,,,,,,,,,,....XX...............P
+P.................,,,,,,,,,,,,,,,,,,,,,.....................P
+P....XX.........X.,,,,,,,,,,,,,,,,,,,,,.....................P
+P................XX,,,,,,,,,,,,,,,,,,,,........EEEEEEEEEEEE.P
+P.................,,,,,,,,,,,,,,,,,,,,,........EEEEEEEEEEEE.P
+P.....FFFFFFFFFFFF.............XX..............EEEEEEEEEEEE.P
+P.....FFFFFFFFFFFF..............X..............EEEEEEEEEEEE.P
+P.....FFFFFFFFFFFF......................S......EEEEEEEEEEEE.P
+P.XX..FFFFFFFFFFFF...S.........................EEEEEEEEEEEE.P
+P..X..FFFFFFFFFFFF.............................EEEEEEEEEEEE.P
+P.....FFFFFFFFFFFF.....BBBBBBBBBBBB............EEEEEEEEEEEE.P
+P.....FFFFFFFFFFFF.....BBBBBBBBBBBB............EEEEEEEEEEEE.P
+P.....FFFFFFFFFFFF.....BBBBBBBBBBBB............EEEEEEEEEEEE.P
+P.....FFFFFFFFFFFF.....BBBBBBBBBBBB............EEEEEEEEEEEE.P
+P.....FFFFFFFFFFFF.....BBBBBBBBBBBB.....XX.....EEEEEEEEEEEE.P
+P.....FFFFFFFFFFFF.....BBBBBBBBBBBB......X..................P
+P.....FFFFFFFFFFFF.....BBBBBBBBBBBB.........................P
+P......................BBBBBBBBBBBB.........................P
+P......................BBBBBBBBBBBB....................XX...P
+P......S...XXXXX.......BBBBBBBBBBBB..............S......X...P
+P...........XX.........BBBBBBBBBBBB....XX...................P
+P......................BBBBBBBBBBBB.....X...................P
+P...........................................................P
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+ENDMAP

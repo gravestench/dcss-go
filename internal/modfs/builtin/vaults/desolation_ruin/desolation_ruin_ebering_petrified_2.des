@@ -1,0 +1,29 @@
+# desolation_ruin_ebering_petrified_2: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME:   desolation_ruin_ebering_petrified_2
+TAGS:   desolation_ruin transparent
+KFEAT:  t = petrified_tree
+KMONS:  p = withered plant perm_ench:petrified / plant-shaped pillar of salt
+SUBST:  X = tp.
+SUBST:  t = tt.
+SUBST:  p = p..
+MARKER: S = lua:fog_machine { cloud_type = "salt",  walk_dist=3, \
+                                  pow_min=6, pow_max=20, \
+                                  delay=5, size=5, spread_rate=5, }
+# Source Lua: : desolation_ruins_setup(_G)
+: vault.run("shared.setup")
+MAP
+tt..........
+.ttt....XXX.
+pp%tt...XXX.
+pp%2t...2...
+pp%tt.XXXX..
+.ttt%.XXXX..
+tt...1S.....
+...XX.%%%t..
+XX.XX.tp%ttt
+XX.XX.%tpt%.
+XX.XX..tt1..
+XX.XX..t....
+ENDMAP

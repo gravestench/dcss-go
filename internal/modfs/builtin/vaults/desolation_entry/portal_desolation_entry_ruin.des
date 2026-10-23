@@ -1,0 +1,26 @@
+# portal_desolation_entry_ruin: original Desolation of Salt source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/desolation.des.
+# TODO: consolidate named Lua hooks into this DES when DES-local Lua is supported.
+NAME:       portal_desolation_entry_ruin
+DEPTH: Elf, !Elf:$, Vaults, !Vaults:$
+TAGS: uniq_desolation vaults_desolation no_monster_gen chance_desolation
+CHANCE: 500, 0 (Vaults)
+TAGS:       transparent
+FTILE:      ;O = FLOOR_SALT
+# Source Lua: : desolation_portal(_G)
+: vault.run("shared.portal")
+MAP
+.............
+....;;..;....
+.;;;;;;;;cc..
+..c;;c;;;;c..
+..c;;;;;;;;;.
+..ccc;;;cc;..
+....c;O;c....
+..ccc;;;ccc..
+..c;;;;;;;c..
+..c;;ccc;;c..
+..cccc.cccc..
+.............
+.............
+ENDMAP

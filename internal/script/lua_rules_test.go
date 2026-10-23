@@ -45,6 +45,25 @@ func TestTroveModPrice(t *testing.T) {
 	runLuaRule(t, rules, "tests/trove_custom_price_test.lua")
 }
 
+// Desolation addons join the effective ruin pool, and a matching path
+// replaces one whole-floor map without requiring any Go registry edits.
+func TestDesolationSparseMods(t *testing.T) {
+	for _, directory := range []string{
+		"testdata/desolation-addon-mod",
+		"testdata/desolation-replace-mod",
+	} {
+		t.Run(path.Base(directory), func(t *testing.T) {
+			rules, err := modfs.Load("testdata/lua", directory)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			runLuaRule(t, rules, "tests/desolation_mod_test.lua")
+		})
+	}
+}
+
 // A sparse temporary-portal handler cannot silently replace an existing
 // feature owner with a different file path.
 func TestDuplicateTemporaryPortalHandler(t *testing.T) {

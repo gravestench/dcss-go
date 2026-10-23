@@ -14,6 +14,7 @@ local rooms = require("policy.generation.layouts.vaults.rooms")
 local catalog = require("policy.generation.vaults.catalog")
 local used = require("policy.generation.vaults.used")
 local wizlab = require("constants.wizlab")
+local desolation = require("constants.desolation")
 
 local population = {}
 
@@ -241,6 +242,9 @@ local function place_tagged(api, builder, generator, protected, state,
         absolute_depth = api.absolute_depth,
         layout_family = "vaults",
         used = state,
+        -- The special-room controller already made the chance draw.
+        -- Ordinary tagged rooms still use their own source chance.
+        ignore_chance = generator.ignore_chance,
     }
     local definition = rooms.choose(builder, generator.tag, context)
 
@@ -321,13 +325,24 @@ function population.run(api, builder)
     local placed_count = 0
     local failures = 0
 
-    -- Source Vaults room selection rolls Wizard Lab's five-percent
-    -- special attempt once per floor. The entrance DES files suppress
-    -- their ordinary CHANCE in Vaults, so a second draw would double
-    -- the actual portal rate.
+    -- The source tries Wizard Lab, then Desolation. A successful later
+    -- Desolation roll replaces the earlier special-room choice; these
+    -- portal entrances suppress their ordinary Vaults CHANCE to avoid
+    -- a second route to the same gate on this floor.
+    local special_tag
+
     if builder:chance_in(wizlab.VAULTS_CHANCE_PERCENT, 100) then
+        special_tag = tags.VAULTS_WIZLAB
+    end
+
+    if builder:chance_in(desolation.VAULTS_CHANCE_PERCENT, 100) then
+        special_tag = tags.VAULTS_DESOLATION
+    end
+
+    if special_tag then
         local placed = place_tagged(api, builder, {
-            tag = tags.VAULTS_WIZLAB,
+            tag = special_tag,
+            ignore_chance = true,
         }, protected, state, anchor)
 
         if placed then
