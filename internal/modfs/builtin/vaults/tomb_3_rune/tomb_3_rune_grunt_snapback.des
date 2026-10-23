@@ -1,0 +1,26 @@
+# tomb_3_rune_grunt_snapback is a source-authored tomb_3_rune map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME: tomb_3_rune_grunt_snapback
+TAGS: tomb_3_rune unrand
+: vault.run("shared.rune_setup")
+MAP
+ccccccccccccccccccccccccccccccccccccccccc
+cccccc......ccccccc.KO.ccccccc......ccccc
+cccc.1......1.ccccc....ccccc.1......1.ccc
+ccc.....3......cccc....cccc.....3......cc
+ccc....1..1....ccc......ccc....1..1....cc
+cc......cc......cc......cc......cc......c
+cc......cc......cc......cc......cc......c
+cc......cc......cc.1..1.cc......cc......c
+cc..2...cc...2...c......c...2...cc...2..c
+cc......cc.......c......c.......cc......c
+cc.....1.cc......c......c......cc.1.....c
+cc....1...cc....1........1....cc...1....c
+cc...c.....cc...1..3..3..1...cc.....c...c
+cc...cc..3..cccccc......cccccc..3..cc...c
+cc...ccc........1cccccccc1........ccc...c
+cc....ccc......1..........1......ccc....c
+ccc....ccc....2....3..3....2....ccc....cc
+cccc.....c...1..............1...c.....ccc
+cccccccc+cccc................cccc+ccccccc
+             ................
+ENDMAP

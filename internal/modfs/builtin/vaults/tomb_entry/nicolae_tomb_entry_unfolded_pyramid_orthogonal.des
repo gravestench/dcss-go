@@ -1,0 +1,27 @@
+# nicolae_tomb_entry_unfolded_pyramid_orthogonal is a source-authored tomb_entry map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME: nicolae_tomb_entry_unfolded_pyramid_orthogonal
+ORIENT: float
+TAGS: tomb_entry no_monster_gen no_item_gen transparent
+NSUBST: C = 1:. / *:c
+KMONS: 1 = mummy
+KMONS: O = guardian mummy
+KFEAT: O = enter_tomb
+MAP
+  .............
+ .......1.......
+..ccccccccccccc..
+..c....+++....c..
+..c.1.ccCcc.1.c..
+..c..cc...cc..c..
+..c.cc.....cc.c..
+..c+c...1...c+c..
+.1c+C..1O1..C+c1.
+..c+c...1...c+c..
+..c.cc.....cc.c..
+..c..cc...cc..c..
+..c.1.ccCcc.1.c..
+..c....+++....c..
+..cccccccccccc+..
+ .......1.......
+  .............
+ENDMAP

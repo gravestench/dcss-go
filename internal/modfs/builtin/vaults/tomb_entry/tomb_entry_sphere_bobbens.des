@@ -1,0 +1,27 @@
+# tomb_entry_sphere_bobbens is a source-authored tomb_entry map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:   tomb_entry_sphere_bobbens
+ORIENT: float
+TAGS:   tomb_entry no_monster_gen no_rotate transparent
+MONS:   w:1 mummy / w:9 guardian mummy
+MONS:   sphinx
+MONS:   mummy priest
+KFEAT:  O = enter_tomb
+MAP
+          ccccc
+       cccc.1.cccc
+     ccc.........ccc
+    cc......c......cc
+   cc....ccccccc....cc
+   c....cc.1.1.ccc..1c
+..cccc...........cc..cc
+.1c..cc...........c3O.c
+..+..2ccccc.F.ccccccccc
+.1c...c...............c
+..cc..cc.............cc
+   c...ccc.1..1.cc...c
+   cc....cccccccc...cc
+    cc......c......cc
+     ccc.........ccc
+       cccc.1.cccc
+          ccccc
+ENDMAP

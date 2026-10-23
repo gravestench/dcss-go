@@ -79,11 +79,13 @@ func (g *Game) populateStairDestination(
 
 	link, found := g.levels[position.LevelID].StairAt(position.X, position.Y)
 
-	if !found || link.Unavailable != "" || link.Exit {
+	if !found ||
+		link.Unavailable != "" ||
+		link.Exit {
 		return nil
 	}
 
-	var startingItems []any
+	var staged nextFloorResult
 	newlyGenerated := link.Pending
 
 	if link.Pending {
@@ -92,7 +94,7 @@ func (g *Game) populateStairDestination(
 		}
 
 		var err error
-		startingItems, err = g.generateNextFloor(position.LevelID, link)
+		staged, err = g.generateNextFloor(position.LevelID, link)
 
 		if err != nil {
 			return err
@@ -105,10 +107,27 @@ func (g *Game) populateStairDestination(
 		}
 	}
 
-	return g.populateGeneratedLevel(link.ToLevelID, point{
-		x: link.ToX,
-		y: link.ToY,
-	}, startingItems, newlyGenerated)
+	if !newlyGenerated {
+		return nil
+	}
+
+	// Install every new floor's actors before travel. The command's pending
+	// stair checkpoint covers the entire ECS population if one fails.
+	ids := make([]int, 0, len(staged.entries))
+
+	for id := range staged.entries {
+		ids = append(ids, id)
+	}
+
+	sort.Ints(ids)
+	records := make([]any, 0, len(ids))
+
+	for _, id := range ids {
+		records = append(records,
+			populationLevelRecord(g.levels[id], staged.entries[id]))
+	}
+
+	return g.runPopulation(records, staged.items)
 }
 
 // Carry the authored no-spawn mask with the level, including through saves.

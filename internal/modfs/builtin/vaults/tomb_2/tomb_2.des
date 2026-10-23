@@ -1,0 +1,93 @@
+# tomb_2 is a source-authored tomb_2 map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:     tomb_2
+PLACE:    Tomb:2
+# Can be rotated!
+ORIENT:   encompass
+TAGS:     no_dump no_trap_gen
+SUBVAULT: B : tomb_2_ambush
+MONS:     mummy
+: vault.run("shared.guardian")
+: vault.run("shared.mummy_priests")
+# Tomb:1 Hall entry hatch
+NSUBST:   A = A / '
+: vault.run("hatches.name_tomb1_hall_entry")
+SUBST:    A = <
+# Tomb:1 Hall exit destination
+: vault.run("hatches.dest_tomb1_hall_exit_2")
+SUBST:    C = .
+# Tomb:2 rooms exit hatch
+: vault.run("hatches.name_tomb2_exit")
+SUBST:    D = <
+# Tomb:2 Room features
+SHUFFLE:  Ww/Yy/Zz, Uu/Vv, Qq/Rr/Ss
+SUBST:    W=', w=c, Y=T, y=+, Z=T, z=+
+SUBST:    U=', u=c, V=T, v=+
+SUBST:    Q=', q=c, R=T, r=+, S=T, s=+
+# Tomb:3 ambush hatches
+SHUFFLE:  EH / FI
+: vault.run("hatches.name_tomb3_entry_1")
+: vault.run("hatches.name_tomb3_entry_2")
+SUBST:    EF = >
+# Tomb:3 exit destinations
+: vault.run("hatches.dest_tomb3_exit_1")
+: vault.run("hatches.dest_tomb3_exit_2")
+SUBST:    HI = .
+# Add traps near doors and both traps and monsters throughout both groups of
+# rooms.
+SUBST:    T = ^..., ' = ^ ':210, ' = 1:5 2:5 3:1 .:89
+SUBST:    " = ^ ":130, " = 2:3 3:1 .:96
+KFEAT:    ^ = alarm trap / net trap / zot trap / dispersal trap
+#
+# Number of ' symbols is 211+3=214, hence statistically in the lower
+# circumference we'll have 10.7 mummies, another 10.7 guardian mummies
+# and 2.1 mummy priests.
+# Number of " symbols is 205+3=208, hence the upper circumference
+# has in mean 4.0 mummy priests and 8.3 guardian mummies.
+#
+# Perhaps to do: use KFEAT to make mummies possibly appear at T spots.
+#                have clustering of 1, 2 in the lower area as before?
+#
+: vault.run("shared.permarock_border")
+: vault.run("shared.hatch_down_name")
+: vault.run("shared.hatch_up_name")
+#
+MAP
+ccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccc
+cc""""c""""""c"""""C""""c""""""""c"""""""cc
+cc""""c"""""TcT""""""""TcT""""""TcT""""""cc
+cc"H""c"""2"T+T""""""""T+T""2"""T+T"""I""cc
+cc"""TcT""""TcT""""""""TcT""""""TcT""""""cc
+cc""TT+T"""""c"""""D""""c""""""""c"""""""cc
+ccccc+ccccccccccccccccccccccccccccccc""""cc
+cc""TTcBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc"3""cc
+cc""""cBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc""""cc
+cc""3"cBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc""""cc
+cc""""cBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc""""cc
+cc""""cBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc"""Fcc
+cc""""cBBBBBBBBBBBBBBBBBBBBBBBBBBBBBccccccc
+cc""""cBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc''''cc
+cc""""cBBBBBBBBBBBBBBBBBBBBBBBBBBBBBcT'''cc
+cc""""cBBBBBBBBBBBBBBBBBBBBBBBBBBBBB+T'''cc
+ccE"""cBBBBBBBBBBBBBBBBBBBBBBBBBBBBBcT'''cc
+cccccccBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc''''cc
+cc''''cBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc'QQQcc
+cc'''TcBBBBBBBBBBBBBBBBBBBBBBBBBBBBBcccqccc
+cc'''T+BBBBBBBBBBBBBBBBBBBBBBBBBBBBBc'QQQcc
+cc'''TcBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc''''cc
+cc'ZZZcBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc''''cc
+cccczccBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc''''cc
+cc'ZZZcBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc''''cc
+ccA'''cBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc''''cc
+cc'YYYcBBBBBBBBBBBBBBBBBBBBBBBBBBBBBc''''cc
+ccccyccBBBBBBBBBBBBBBBBBBBBBBBBBBBBBcRRRAcc
+cc'YYYcBBBBBBBBBBBBBBBBBBBBBBBBBBBBBccrcccc
+cc''''ccccc+ccccccccccccccc+cccccccccRRR'cc
+cc''''''c'TTTc''''''''''''cTT''''''c'''''cc
+cc'''''WcW''UcU''''''''''VcV''''''ScS''''cc
+cc'''''WwW''UuU''''''''''VvV''''''SsS''''cc
+cc'''''WcW''UcU''''''''''VcV''''''ScS''''cc
+ccA'''''c''''cA'''''''''''c''''''''c''''Acc
+ccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccc
+ENDMAP

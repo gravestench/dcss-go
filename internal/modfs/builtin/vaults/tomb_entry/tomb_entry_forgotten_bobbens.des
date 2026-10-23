@@ -1,0 +1,19 @@
+# tomb_entry_forgotten_bobbens is a source-authored tomb_entry map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:   tomb_entry_forgotten_bobbens
+ORIENT: float
+TAGS:   tomb_entry no_monster_gen transparent
+KFEAT:  f = .
+KMONS:  f = withered plant
+SUBST:  p = f.
+KFEAT:  O = enter_tomb
+MAP
+cccccccccc
+cfffffppp.
+cfOfffppp.
+cffffppp..
+cffpppp..
+cppppp..
+cppp...
+cpp..
+c...
+ENDMAP

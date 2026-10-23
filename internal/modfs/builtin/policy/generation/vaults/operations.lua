@@ -364,7 +364,30 @@ local function localize_helper_records(records, cells, low_x, low_y)
             (record.arguments and record.arguments.glyph)
         local count = 0
 
-        if targets and targets ~= "" then
+        -- A hook marker was anchored before a later source SUBST changed
+        -- its glyph. Preserve that coordinate through the helper mask;
+        -- searching the final glyph would silently erase Tomb landings.
+        if record.kind == effects.MARKER and record.local_x and
+            record.local_y then
+            local x = record.local_x
+            local y = record.local_y
+            local glyph = cells[y] and cells[y][x]
+
+            if glyph and glyph ~= " " then
+                local copy = {}
+
+                for key, value in pairs(record) do
+                    copy[key] = value
+                end
+
+                copy.local_x = low_x + x - 1
+                copy.local_y = low_y + y - 1
+                copy.source = glyph
+                copy.excluded_cells = nil
+                located[#located + 1] = copy
+                count = 1
+            end
+        elseif targets and targets ~= "" then
             for y, row in ipairs(cells) do
                 for x, glyph in ipairs(row) do
                     local key = x .. ":" .. y

@@ -7,6 +7,7 @@ local branches = require("ids.branches")
 local layouts = require("policy.generation.layouts.catalog")
 local primary = require("policy.generation.vaults.primary")
 local temple = require("policy.generation.temple.catalog")
+local vaults = require("policy.generation.vaults.catalog")
 
 local availability = {}
 
@@ -20,6 +21,27 @@ function availability.can_build(branch_id, depth)
     -- the destination must pass this same availability gate on first use.
     if branch_id == branches.BRANCH_TEMPLE then
         return depth == 1 and #temple.main_ids() > 0
+    end
+
+    -- A bundled branch supplies its own complete set of authored floors.
+    -- Its root gate opens only while every required effective map exists;
+    -- the ordinary layout catalog is not involved in this topology.
+    if branch.bundle_generator then
+        if depth < 1 or depth > branch.depth then
+            return false
+        end
+
+        vaults.load()
+
+        for _, required in ipairs(branch.bundle_maps or {}) do
+            local okay, definition = pcall(vaults.get, required.id)
+
+            if not okay or definition.family ~= required.family then
+                return false
+            end
+        end
+
+        return true
     end
 
     if depth < 1 or depth > branch.depth or

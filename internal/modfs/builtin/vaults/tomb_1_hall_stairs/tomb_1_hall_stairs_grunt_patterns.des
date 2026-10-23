@@ -1,0 +1,24 @@
+# tomb_1_hall_stairs_grunt_patterns is a source-authored tomb_1_hall_stairs map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:    tomb_1_hall_stairs_grunt_patterns
+TAGS:    tomb_1_hall_stairs unrand
+SHUFFLE: PR
+SHUFFLE: ABCD / ACBD / ACDB / CABD / CADB / CDAB
+SHUFFLE: EFGH / EGFH / EGHF / GEFH / GEHF / GHEF
+SUBST:   ABEF = c, CDGH = .
+NSUBST:  P = P / Q / ., R = R / .
+: vault.run("shared.hall_setup")
+SUBST:   - = .
+MAP
+..                                   ..
+..c...D....c-P           R-c....G...c..
+..c...D....c--           --c....G...c..
+cc+........+cc           cc+........+cc
+......A.......           .......E......
+.....1A1......           ......1E1.....
+CC..BB2BB...CC           HH...FF2FF..HH
+.....1A1......           ......1E1.....
+......A.......           .......E......
+cc+........+cc           cc+........+cc
+--c...D....c--           --c....G...c--
+P-c...D....c-P           R-c....G...c-R
+ENDMAP

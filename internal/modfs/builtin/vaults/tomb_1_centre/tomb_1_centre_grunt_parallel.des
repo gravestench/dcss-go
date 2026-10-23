@@ -1,0 +1,33 @@
+# tomb_1_centre_grunt_parallel is a source-authored tomb_1_centre map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:    tomb_1_centre_grunt_parallel
+TAGS:    tomb_1_centre unrand no_hmirror
+TILE:    F  = dngn_sarcophagus_pedestal_left
+TILE:    M  = dngn_sarcophagus_pedestal_right
+COLOUR:  FM = yellow
+SUBST:   FM = G
+SUBST:   _  = V:70 5
+NSUBST:  >  = > / | / * / _
+: vault.run("shared.centre_setup")
+: vault.run("shared.sarcophagus")
+MAP
+>1..c..c.................c..c..1>
+1...c..c.4.............4.c..c...1
+....c..c..2...........2..c..c....
+....c..c...2.........2...c..c....
+c++cc.3c....4.......4....c3.cc++c
+....c..c..c...........c..c..c....
+....c..c.3c...........c3.c..c....
+F...c..c..c..F.....M..c..c..c...M
+.2.....c..c...........c..c.....2.
+..3..2.c..c...........c..c2...3..
+.2.....c..c..F.....M..c..c.....2.
+F...c..c..c.....3.....c..c..c...M
+....c..c..c...........c..c..c....
+....c..c..c..F.....M..c..c..c....
+c++cc.3c..c...2.2.2...c..c3.cc++c
+....c..c..c....2.2....c..c..c....
+....c..c3.c..F.....M..c.3c..c....
+1...c..2..c...........c..2..c...1
+>1..c.....c...........c.....c..1>
+             .......
+ENDMAP

@@ -18,9 +18,16 @@ local bailey_levels = require("policy.save.bailey_levels")
 local ice_cave_levels = require("policy.save.ice_cave_levels")
 local volcano_levels = require("policy.save.volcano_levels")
 local hell_size = require("policy.generation.hell.size")
+local terrain = require("constants.terrain")
 
 local up_features = {}
 local down_features = {}
+local bundle_landings = {
+    [terrain.DNGN_FLOOR] = true,
+    [terrain.DNGN_STONE_STAIRS_UP_I] = true,
+    [terrain.DNGN_STONE_STAIRS_DOWN_I] = true,
+    [terrain.DNGN_OPEN_DOOR] = true,
+}
 
 for glyph in pairs(glyphs.up) do
     up_features[glyphs.terrain[glyph]] = true
@@ -138,6 +145,32 @@ local function linked(levels, level, link, destination, upward)
 
     return upward and down_features[target_feature] or
         up_features[target_feature]
+end
+
+-- A bundled branch owns source-named one-way hatches. Their destination
+-- can be plain floor, so only the branch's external parent stair needs a
+-- reciprocal link. Go's level validator checks the exact landing too.
+local function bundled_link(by_id, level, link, parent_id, upward)
+    if link.pending or link.exit or link.unavailable ~= "" or
+        (link.target_branch_id and link.target_branch_id ~= "") then
+        return false
+    end
+
+    if level.local_depth == 1 and upward then
+        return linked(by_id, level, link, parent_id, true)
+    end
+
+    local destination = by_id[link.to_level_id]
+    local expected_depth = level.local_depth + (upward and -1 or 1)
+
+    if not destination or destination.branch_id ~= level.branch_id or
+        destination.local_depth ~= expected_depth then
+        return false
+    end
+
+    local row = destination.cells[link.to_y + 1]
+
+    return row and bundle_landings[row[link.to_x + 1]] == true
 end
 
 -- Only floors the player has reached exist in a fresh generated save. Every
@@ -310,6 +343,20 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
                     " lacks its parent floor")
             end
 
+            local branch = register.get("branches", level.branch_id)
+
+            if branch.bundle_generator then
+                for bundle_depth = 1, branch.depth do
+                    local bundle_id = branch_levels.id(level.branch_id,
+                        bundle_depth)
+
+                    if not by_id[bundle_id] then
+                        error("generated " .. level.branch_id ..
+                            " has an incomplete floor bundle")
+                    end
+                end
+            end
+
             local expected_entries = {}
             local seen_entries = {}
 
@@ -349,6 +396,12 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
                     link.target_branch_id ~= "" then
                     error("generated " .. level.branch_id ..
                         " has an unscheduled branch entrance")
+                elseif branch.bundle_generator then
+                    if not bundled_link(by_id, level, link,
+                        parent_id, upward) then
+                        error("generated " .. level.branch_id ..
+                            " has an invalid one-way hatch")
+                    end
                 elseif upward then
                     if link.unavailable == "" and
                         not linked(by_id, level, link, parent_id, true) then
@@ -394,9 +447,15 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
                 end
             end
 
-            if up_count < 1 or
-                (availability.can_build(level.branch_id,
-                    depth + 1) and down_count < 3) then
+            if branch.bundle_generator and
+                (up_count < 1 or
+                    (depth < branch.depth and down_count < 1)) then
+                error("generated " .. level.branch_id ..
+                    " has too few hatch links")
+            elseif not branch.bundle_generator and
+                (up_count < 1 or
+                    (availability.can_build(level.branch_id,
+                        depth + 1) and down_count < 3)) then
                 error("generated " .. level.branch_id ..
                     " has too few stair links")
             end

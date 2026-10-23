@@ -414,7 +414,7 @@ func TestCryptEveryEndingPopulates(t *testing.T) {
 			staged.rng.states["layout"] = layoutSeed
 
 			stagedParent := staged.levels[parent.ID]
-			items, err := staged.generateNextFloor(parent.ID, down)
+			generated, err := staged.generateNextFloor(parent.ID, down)
 
 			if err != nil {
 				staged.Close()
@@ -434,7 +434,7 @@ func TestCryptEveryEndingPopulates(t *testing.T) {
 			}
 
 			err = staged.populateGeneratedLevel(resolved.ToLevelID,
-				landing, items, true)
+				landing, generated.items, true)
 
 			if err != nil {
 				staged.Close()

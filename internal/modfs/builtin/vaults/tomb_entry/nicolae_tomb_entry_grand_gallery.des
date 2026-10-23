@@ -1,0 +1,23 @@
+# nicolae_tomb_entry_grand_gallery is a source-authored tomb_entry map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME: nicolae_tomb_entry_grand_gallery
+ORIENT: float
+TAGS: tomb_entry no_monster_gen
+SUBST: + = ++++., = = +
+KFEAT: O = enter_tomb
+KMONS: 1 = mummy
+KMONS: 2O = guardian mummy
+MAP
+cccc=cccccccc
+cccc.....cccc
+cccc..2..cccc
+cccccccc+cccc
+c..+.Oc1.+..c
+c..c1ccc1c..c
+c.2ccccccc2.c
+c..c1ccc1c..c
+c..+.1c1.+..c
+cccc+ccc+cccc
+cccc..2..cccc
+cccc.....cccc
+ccccccccccccc
+ENDMAP

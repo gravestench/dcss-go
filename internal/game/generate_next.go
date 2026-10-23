@@ -7,6 +7,13 @@ import (
 	"crawl/internal/terrain"
 )
 
+// A policy may stage one floor or a related bundle. Population remains a
+// separate step so a failed actor/item placement rolls back with travel.
+type nextFloorResult struct {
+	items   []any
+	entries map[int]point
+}
+
 // Prior successful map IDs let Lua reconstruct run-wide uniqueness without
 // saving a second copy of every source tag or consulting the C++ checkout.
 func (g *Game) priorVaultIDs() []any {
@@ -156,106 +163,81 @@ func installParentLinks(parent *Level, depth int, values []any) error {
 	return nil
 }
 
-// generateNextFloor installs a scheduled floor and its reciprocal stair
-// links. A malformed mod policy rolls back grid/link changes before returning.
-func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error) {
-	parent := g.levels[parentID]
+// nextFloorRecords keeps the legacy single-level policy contract and the new
+// bundle contract behind one validation point. Every staged ID must belong
+// to the scheduled branch before any Level or ECS store is changed.
+func (g *Game) nextFloorRecords(
+	result map[string]any,
+	branchID string,
+	localDepth int,
+	levelID int,
+) ([]any, error) {
+	var records []any
+
+	if bundled, present := result["levels"]; present {
+		var err error
+		records, err = luaScenarioList(bundled, "next levels")
+
+		if err != nil {
+			return nil, err
+		}
+
+		if len(records) == 0 {
+			return nil, fmt.Errorf("Lua next floor has no levels")
+		}
+	} else {
+		if result["level"] == nil {
+			return nil, fmt.Errorf("Lua next floor is not a level record")
+		}
+
+		records = []any{result["level"]}
+	}
+
+	for index, value := range records {
+		record, ok := value.(map[string]any)
+
+		if !ok {
+			return nil, fmt.Errorf("Lua next floor %d is not a level record", index)
+		}
+
+		returnedID, err := decisionInteger(record, "id")
+
+		if err != nil {
+			return nil, err
+		}
+
+		if returnedID != levelID+index || record["branch_id"] != branchID {
+			return nil, fmt.Errorf("Lua next floor has the wrong branch or ID")
+		}
+
+		returnedDepth, err := decisionInteger(record, "local_depth")
+
+		if err != nil {
+			return nil, err
+		}
+
+		if returnedDepth != localDepth+index {
+			return nil, fmt.Errorf("Lua next floor has the wrong local depth")
+		}
+
+		if g.levels[returnedID] != nil {
+			return nil, fmt.Errorf("Lua next floor %d already exists", returnedID)
+		}
+	}
+
+	return records, nil
+}
+
+// stageNextFloorRecords installs decoded grids and links together. Restore
+// the parent's terrain and pending stair if any modded child or patch is bad.
+func (g *Game) stageNextFloorRecords(
+	parent *Level,
+	selected StairLink,
+	records []any,
+	entry point,
+	patches []any,
+) (map[int]point, error) {
 	levelID := selected.ToLevelID
-
-	if parent == nil ||
-		!selected.Pending ||
-		levelID <= 0 ||
-		g.levels[levelID] != nil {
-		return nil, fmt.Errorf("invalid pending floor stair")
-	}
-
-	branchID := parent.BranchID
-	localDepth := parent.LocalDepth + 1
-
-	if selected.TargetBranchID != "" {
-		branchID = selected.TargetBranchID
-		localDepth = 1
-		found := false
-
-		for _, entry := range g.branchSchedule.Entries {
-			if entry.BranchID == branchID &&
-				entry.ParentID == parent.BranchID &&
-				entry.ParentDepth == parent.LocalDepth {
-				found = true
-				break
-			}
-		}
-
-		if !found {
-			return nil, fmt.Errorf("unscheduled branch entrance %s", branchID)
-		}
-	}
-
-	player, found := g.stores.Players.Get(g.player)
-
-	if !found {
-		return nil, fmt.Errorf("Dungeon player has no identity")
-	}
-
-	result, err := g.scripts.Policy("world.generate_next_floor", map[string]any{
-		"branch_id":         branchID,
-		"local_depth":       localDepth,
-		"level_id":          levelID,
-		"player_species_id": player.SpeciesID,
-		"player_name":       player.Name,
-		"from_x":            selected.X,
-		"from_y":            selected.Y,
-		"parent":            liveParentRecord(parent),
-		"prior_vault_ids":   g.priorVaultIDs(),
-		"branch_schedule":   luaBranchSchedule(g.branchSchedule),
-		"temple_plan":       luaTemplePlan(g.templePlan),
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	record, ok := result["level"].(map[string]any)
-
-	if !ok {
-		return nil, fmt.Errorf("Lua next floor is not a level record")
-	}
-
-	returnedID, err := decisionInteger(record, "id")
-
-	if err != nil {
-		return nil, err
-	}
-
-	if returnedID != levelID || record["branch_id"] != branchID {
-		return nil, fmt.Errorf("Lua next floor has the wrong branch or ID")
-	}
-
-	returnedDepth, err := decisionInteger(record, "local_depth")
-
-	if err != nil || returnedDepth != localDepth {
-		return nil, fmt.Errorf("Lua next floor has the wrong local depth")
-	}
-
-	entry, err := luaScenarioPoint(result["entry"])
-
-	if err != nil {
-		return nil, err
-	}
-
-	patches, err := luaScenarioList(result["parent_links"], "parent links")
-
-	if err != nil {
-		return nil, err
-	}
-
-	items, err := luaScenarioList(result["starting_items"], "starting items")
-
-	if err != nil {
-		return nil, err
-	}
-
-	// Keep the old parent intact if a mod returns a malformed floor or patch.
 	oldCells := parent.Cells()
 	oldRemembered := append([]terrain.ID(nil), parent.remembered...)
 	oldLinks := make(map[point]StairLink, len(parent.stairs))
@@ -271,31 +253,42 @@ func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error
 			return
 		}
 
-		delete(g.levels, levelID)
+		for index := range records {
+			delete(g.levels, levelID+index)
+		}
+
 		parent.terrain = oldCells
 		parent.remembered = oldRemembered
 		parent.stairs = oldLinks
 	}()
 
-	_, _, links, err := g.decodeLuaLevelRecords([]any{record}, g.stores.Positions)
+	entries, _, links, err := g.decodeLuaLevelRecords(records, g.stores.Positions)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if g.levels[levelID] == nil || len(links) != 1 {
-		return nil, fmt.Errorf("Lua next floor has the wrong ID")
+	if len(links) != len(records) {
+		return nil, fmt.Errorf("Lua next floor has the wrong level count")
 	}
 
-	for _, value := range links[levelID] {
-		link, decodeErr := luaScenarioStair(value)
+	for index := range records {
+		id := levelID + index
 
-		if decodeErr != nil {
-			return nil, decodeErr
+		if g.levels[id] == nil {
+			return nil, fmt.Errorf("Lua next floor %d was not installed", id)
 		}
 
-		if err := g.levels[levelID].AddStairLink(link); err != nil {
-			return nil, err
+		for _, value := range links[id] {
+			link, decodeErr := luaScenarioStair(value)
+
+			if decodeErr != nil {
+				return nil, decodeErr
+			}
+
+			if err := g.levels[id].AddStairLink(link); err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -317,7 +310,7 @@ func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error
 	}
 
 	for _, childLink := range g.levels[levelID].StairLinks() {
-		if childLink.ToLevelID != parentID || childLink.Pending {
+		if childLink.ToLevelID != parent.ID || childLink.Pending {
 			continue
 		}
 
@@ -334,5 +327,100 @@ func (g *Game) generateNextFloor(parentID int, selected StairLink) ([]any, error
 
 	installed = true
 
-	return items, nil
+	return entries, nil
+}
+
+// generateNextFloor asks Lua for the next floor or bundle, then installs it
+// as one transaction. Population follows under the caller's ECS checkpoint.
+func (g *Game) generateNextFloor(parentID int, selected StairLink) (nextFloorResult, error) {
+	parent := g.levels[parentID]
+	levelID := selected.ToLevelID
+
+	if parent == nil ||
+		!selected.Pending ||
+		levelID <= 0 ||
+		g.levels[levelID] != nil {
+		return nextFloorResult{}, fmt.Errorf("invalid pending floor stair")
+	}
+
+	branchID := parent.BranchID
+	localDepth := parent.LocalDepth + 1
+
+	if selected.TargetBranchID != "" {
+		branchID = selected.TargetBranchID
+		localDepth = 1
+		found := false
+
+		for _, entry := range g.branchSchedule.Entries {
+			if entry.BranchID == branchID &&
+				entry.ParentID == parent.BranchID &&
+				entry.ParentDepth == parent.LocalDepth {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			return nextFloorResult{}, fmt.Errorf("unscheduled branch entrance %s", branchID)
+		}
+	}
+
+	player, found := g.stores.Players.Get(g.player)
+
+	if !found {
+		return nextFloorResult{}, fmt.Errorf("Dungeon player has no identity")
+	}
+
+	result, err := g.scripts.Policy("world.generate_next_floor", map[string]any{
+		"branch_id":         branchID,
+		"local_depth":       localDepth,
+		"level_id":          levelID,
+		"player_species_id": player.SpeciesID,
+		"player_name":       player.Name,
+		"from_x":            selected.X,
+		"from_y":            selected.Y,
+		"parent":            liveParentRecord(parent),
+		"prior_vault_ids":   g.priorVaultIDs(),
+		"branch_schedule":   luaBranchSchedule(g.branchSchedule),
+		"temple_plan":       luaTemplePlan(g.templePlan),
+	})
+
+	if err != nil {
+		return nextFloorResult{}, err
+	}
+
+	records, err := g.nextFloorRecords(result, branchID, localDepth, levelID)
+
+	if err != nil {
+		return nextFloorResult{}, err
+	}
+
+	entry, err := luaScenarioPoint(result["entry"])
+
+	if err != nil {
+		return nextFloorResult{}, err
+	}
+
+	patches, err := luaScenarioList(result["parent_links"], "parent links")
+
+	if err != nil {
+		return nextFloorResult{}, err
+	}
+
+	items, err := luaScenarioList(result["starting_items"], "starting items")
+
+	if err != nil {
+		return nextFloorResult{}, err
+	}
+
+	entries, err := g.stageNextFloorRecords(parent, selected, records, entry, patches)
+
+	if err != nil {
+		return nextFloorResult{}, err
+	}
+
+	return nextFloorResult{
+		items:   items,
+		entries: entries,
+	}, nil
 }

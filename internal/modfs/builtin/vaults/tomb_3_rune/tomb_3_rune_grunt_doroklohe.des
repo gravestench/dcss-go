@@ -1,0 +1,28 @@
+# tomb_3_rune_grunt_doroklohe is a source-authored tomb_3_rune map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:   tomb_3_rune_grunt_doroklohe
+TAGS:   tomb_3_rune unrand
+: vault.run("shared.rune_setup")
+: vault.run("shared.khufu_rune")
+NSUBST: 3 = 1:O / *:3
+MAP
+ccccccccccccccccccccccccccccccccccccccccc
+cccccc..........1.......1...........ccccc
+cccc................2.................ccc
+ccc.............1.......1..............cc
+ccc....xxx..1..xxx.....xxx..1..xxx.....cc
+cc.....+3x.....x3+.....+3x.....x3+......c
+cc.....xxx..1..xxx..2..xxx..1..xxx......c
+cc......................................c
+cc......1..x+x..1..x+x..1..x+x..1.......c
+cc.........x3x.....x3x.....x3x..........c
+cc......1..xxx..1..xxx..1..xxx..1.......c
+cc......................................c
+cc.....+xx........1....1.......xx+......c
+cc.....x3x.......1......1......x3x......c
+ccc....xxx......2........2.....xxx.....cc
+ccc............1..........1............cc
+cccc..........2............2..........ccc
+cccccc.......1..............1.......ccccc
+cccccccc+cccc................cccc+ccccccc
+             ................
+ENDMAP

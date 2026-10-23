@@ -1,0 +1,31 @@
+# tomb_1_centre_nicolae_necropolis is a source-authored tomb_1_centre map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:    tomb_1_centre_nicolae_necropolis
+TAGS:    tomb_1_centre unrand
+SHUFFLE: AaBbQqDd/EeFfGgHh/IiJjKkLl/MmNnOoPp/RrSsUuVv
+SHUFFLE: Aa/Bb/Qq/Dd, Ee/Ff/Gg/Hh, Ii/Jj/Kk/Ll, Mm/Nn/Oo/Pp, Rr/Ss/Uu/Vv
+SUBST:   AEIMR = +, a = >, ei = *|, mr = %, bq = 4, dhlpv = 3
+SUBST:   BQDFGHJKLNOPSUV = c, fgjknosu = ', ' = ^--112
+: vault.run("shared.centre_setup")
+SUBST:   - = .
+MAP
+.................................
+..cccAccc.....2...2.....cccEccc..
+..cc'q'cc...............cc'g'cc..
+..c'''''c...............c'''''c..
+..Db'c'dB..3.........3..Hf'c'hF..
+..c'''''c...............c'''''c..
+..cc'a'cc....cccRccc....cc'e'cc..
+..cccQccc....cc'u'cc....cccGccc..
+.............c'''''c.............
+.....3...4...Vs'c'vS...4...3.....
+.............c'''''c.............
+..cccMccc....cc'r'cc....cccIccc..
+..cc'o'cc....cccUccc....cc'k'cc..
+..c'''''c...............c'''''c..
+..Pn'c'pN..3.........3..Lj'c'lJ..
+..c'''''c...............c'''''c..
+..cc'm'cc...............cc'i'cc..
+..cccOccc.....2...2.....cccKccc..
+.................................
+             .......
+ENDMAP

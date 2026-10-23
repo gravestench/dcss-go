@@ -1,0 +1,26 @@
+Tomb source floor snapshots
+Coordinates are zero-based; named hatches are one-way.
+
+tomb_1 name tomb2_entry at (32,28)
+tomb_1 dest tomb2_exit at (32,28)
+tomb_1 dest tomb1_hall_entry at (21,47)
+tomb_1 name tomb1_hall_exit_1 at (34,37)
+tomb_1 name tomb1_hall_exit_2 at (46,47)
+tomb_1: TOMB:1
+tomb_2 dest tomb2_entry at (39,34)
+tomb_2 dest tomb1_hall_exit_1 at (39,34)
+tomb_2 name tomb2_exit at (50,30)
+tomb_2 name tomb1_hall_entry at (58,44)
+tomb_2 dest tomb1_hall_exit_2 at (37,18)
+tomb_2 name tomb2_exit at (37,22)
+tomb_2 name tomb3_entry_1 at (58,28)
+tomb_2 name tomb3_entry_2 at (20,33)
+tomb_2 dest tomb3_exit_1 at (56,20)
+tomb_2 dest tomb3_exit_2 at (21,20)
+tomb_2: TOMB:2
+tomb_3 golden rune at (39,21)
+tomb_3 dest tomb3_entry_1 at (38,51)
+tomb_3 dest tomb3_entry_2 at (41,51)
+tomb_3 name tomb3_exit_1 at (32,39)
+tomb_3 name tomb3_exit_2 at (47,39)
+tomb_3: TOMB:3

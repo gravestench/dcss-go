@@ -1,0 +1,24 @@
+# tomb_entry_shell_bobbens is a source-authored tomb_entry map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:   tomb_entry_shell_bobbens
+TAGS:   tomb_entry no_monster_gen no_item_gen no_rotate transparent
+MONS:   guardian mummy
+MONS:   mummy priest
+KFEAT:  O = enter_tomb
+MAP
+          c
+        ccc..
+      ccc.c1.
+    ccc......
+   cc.....c1.
+  cc......cccc
+ cc.......c..ccc
+ c........c....cc
+cc1.......c.O2..c
+c.....1...c.....c
+c.....ccUcc.....c
+cc.....ccc1.....c
+ cc............cc
+  ccc........1cc
+    ccc.....ccc
+      ccccccc
+ENDMAP

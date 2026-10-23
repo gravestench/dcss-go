@@ -2,6 +2,8 @@
 -- Entry and depth are catalog facts; generated levels and stair links are saved separately.
 
 local categories = require("constants.catalog")
+local families = require("constants.vault_families")
+local maps = require("ids.tomb_maps")
 
 local definition = {
     id = "BRANCH_TOMB",
@@ -10,6 +12,23 @@ local definition = {
     min_depth = 3,
     max_depth = 3,
     depth = 3,
+    -- Source hatches name landings on other Tomb floors, so generation
+    -- stages the complete route before accepting its first Crypt gate.
+    bundle_generator = "policy.generation.tomb.level",
+    bundle_maps = {
+        {
+            id = maps.FIRST,
+            family = families.TOMB_1,
+        },
+        {
+            id = maps.SECOND,
+            family = families.TOMB_2,
+        },
+        {
+            id = maps.THIRD,
+            family = families.TOMB_3,
+        },
+    },
     absolute_depth = 21,
     flags = {
         "islanded",

@@ -1,0 +1,26 @@
+# tomb_3_rune_grunt_layered is a source-authored tomb_3_rune map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME: tomb_3_rune_grunt_layered
+TAGS: tomb_3_rune unrand
+: vault.run("shared.rune_setup")
+MAP
+ccccccccccccccccccccccccccccccccccccccccc
+cccccc..............1...............ccccc
+cccc1.......3................3.......1ccc
+ccc..2..............1...............2..cc
+ccc...1cccc...cccccccccccccc...cccc1...cc
+cc....cc..........................cc....c
+cc...cc............................cc...c
+cc...c.....cccccccccccccccccccc.....c...c
+cc...c....cc........O.........cc....c...c
+cc.3.c1.21c3.1ccccccccccccc1.3.c12.1c.3.c
+cc...c....cc..................cc....c...c
+cc...c.....cccccccc.K.ccccccccc.....c...c
+cc...cc.......1............1.......cc...c
+cc....cc......1............1......cc....c
+ccc...1cccccccccccccccccccccccccccc1...cc
+ccc..2..........1........1..........2..cc
+cccc1.......3................3.......1ccc
+cccccc........1............1........ccccc
+cccccccc+cccc................cccc+ccccccc
+             ................
+ENDMAP

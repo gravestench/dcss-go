@@ -1,0 +1,21 @@
+# tomb_1_hall_stairs_grunt_snakey is a source-authored tomb_1_hall_stairs map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:    tomb_1_hall_stairs_grunt_snakey
+TAGS:    tomb_1_hall_stairs unrand
+SHUFFLE: PQ / RS
+SUBST:   S = .
+: vault.run("shared.hall_setup")
+SUBST:   - = .
+MAP
+..                                   ..
+..............           ..............
+..............           ..............
+cccccccccccc..           ...ccccccccccc
+..............           ..............
+..............           ..............
+..cccccccccccc           cccccccccccc..
+..............           ..............
+..............           ..............
+cccccccccccc..           ..cccccccccccc
+--211.........           .........112--
+P--11........Q           R........11--S
+ENDMAP

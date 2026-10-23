@@ -1,0 +1,26 @@
+# tomb_3_rune_grunt_curves is a source-authored tomb_3_rune map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME: tomb_3_rune_grunt_curves
+TAGS: tomb_3_rune unrand
+: vault.run("shared.rune_setup")
+MAP
+ccccccccccccccccccccccccccccccccccccccccc
+cccccc............ccccccc...........ccccc
+cccc................ccc...............ccc
+ccc...............3..c..3..............cc
+ccc.....2........3.......3.......2.....cc
+cc.........ccccc..........ccccc.........c
+cc..2.....cc..ccccc.....cccc..cc.....2..c
+cc.....3.1......cccc...cccc.....1.3.....c
+cc..cc..1........ccccOcccc.......1..cc..c
+cc..cccc..........ccccccc.........cccc..c
+cc..ccccc.....1....ccccc...1.....ccccc..c
+cc..cccccc...2......ccc.....2...cccccc..c
+cc..cccccc..1.......ccc......1..cccccc..c
+cc..ccccccc..........c.........ccccccc..c
+cc..ccccccc......11..c..11.....ccccccc..c
+cc...ccccccc....3.........3...ccccccc...c
+ccc......ccc..11.....2.....11.ccc......cc
+cccc......cc.........2........cc......ccc
+cccccccc+cccc................cccc+ccccccc
+             ................
+ENDMAP

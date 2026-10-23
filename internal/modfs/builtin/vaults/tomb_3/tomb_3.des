@@ -1,0 +1,65 @@
+# tomb_3 is a source-authored tomb_3 map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:     tomb_3
+PLACE:    Tomb:3
+ORIENT:   encompass
+TAGS:     no_rotate no_dump no_trap_gen
+SUBVAULT: A : tomb_3_rune
+ITEM:     figurine of a ziggurat no_pickup
+KITEM:    $ = $ no_pickup
+KITEM:    * = * no_pickup
+KITEM:    | = | no_pickup
+: vault.run("shared.guardian")
+# Randomize some loot placement in the treasure rooms, and add the zig fig in
+# the loot pile. Add traps to treasure rooms and the arrival area.
+SUBST:    ' = $., $ = |:1 *:2 $:17, . = ^ .:240
+NSUBST:   | = d / |
+: vault.run("hatches.dest_tomb3_entry_1")
+: vault.run("hatches.dest_tomb3_entry_2")
+SUBST:    DE = .
+: vault.run("hatches.name_tomb3_exit_1")
+: vault.run("hatches.name_tomb3_exit_2")
+SUBST:    FH = <
+KFEAT:    ^ = alarm trap / net trap / zot trap / dispersal trap
+: vault.run("shared.permarock_border")
+: vault.run("shared.hatch_down_name")
+: vault.run("shared.hatch_up_name")
+MAP
+ccccccccccccccccccccccccccccccccccccccccccc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc
+cccccccc....ccAAAAAAAAAAAAAAAAcc....ccccccc
+cccccc.......cc11111111111111cc.....'$ccccc
+cccc..........cc............cc.......'$cccc
+cccc'.........Fcc..........ccH.......'$cccc
+ccc$''..........cc........cc.........'$$ccc
+ccc$$$'..........cc111111cc........''$$$ccc
+ccc|$$$''........cc......cc......''$$$$$ccc
+ccc||$$$$'........c......c......'$$$$$$$ccc
+ccc|||||$$'.......c......c.....'$$$$$$$$ccc
+cccc|||||$'.......+......+....'$$$$$$$$cccc
+ccccc||||$$'......c......c....'$$$$$$$ccccc
+cccccc||||$'......c......c....'$$$$$$cccccc
+ccccccc|||$$'....cc......cc..'$$$$$$ccccccc
+cccccccc|||$'....cc......cc..'$$$$$cccccccc
+ccccccccc||$'...ccc......ccc'$$$$$ccccccccc
+cccccccccc|$'..cccc.D..E.cccc$$$$cccccccccc
+ccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccc
+ENDMAP

@@ -1,0 +1,21 @@
+# tomb_entry_simple_bobbens is a source-authored tomb_entry map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:   tomb_entry_simple_bobbens
+ORIENT: float
+TAGS:   tomb_entry no_monster_gen no_item_gen transparent
+MONS:   guardian mummy
+MONS:   sphinx
+# crawl will rotate for the rest of possibilities
+SHUFFLE: AB
+SUBST:  A = +, B = c
+KFEAT:  O = enter_tomb
+MAP
+cccc.cccc
+c1.....1c
+c.ccccc.c
+c.c.2.c.c
+..c.O.c..
+c.c...c.c
+c.cABcc.c
+c1.....1c
+cccc.cccc
+ENDMAP

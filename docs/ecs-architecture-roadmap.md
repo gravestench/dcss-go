@@ -254,8 +254,11 @@ stair pairing, saved level records, and ECS population use the existing
 generic owners. Lua owns source-position map choices and two saved marker
 events, including a reusable player-visibility trigger. The Crypt:3 ending
 places exactly one scheduled Tomb link, using an authored gate when present.
-The Tomb branch itself is the next adjacent floor domain; its entrance stays
-unavailable until that branch can generate and validate its own floors.
+Tomb now builds its 31 active source maps as a three-floor Lua bundle at
+first entry. The generic Go installer stages all linked grids in one
+checkpoint, while Akara population materializes each floor before travel.
+Source hatch names connect one-way stairs to final landing cells, and the
+save validator checks the bundle without inventing reciprocal links.
 The broader monster and item domains still own exceptional effects used by
 Crypt inhabitants and prizes.
 

@@ -1,0 +1,21 @@
+# tomb_1_hall_stairs_old is a source-authored tomb_1_hall_stairs map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:    tomb_1_hall_stairs_old
+TAGS:    tomb_1_hall_stairs unrand
+SHUFFLE: PQ / RS
+SUBST:   S = .
+: vault.run("shared.hall_setup")
+SUBST:   - = .
+MAP
+..                                   ..
+..c...........           ...........c..
+..c...........           ...........c..
+..c..ccccccc..           ..ccccccc..c..
+..c..cc-211c..           ..c11--cc..c..
+..c..cP-c11c..           ..c11c-Rc..c..
+..c..cccc..c..           ..c2.cccc..c..
+..c........c..           ..c........c..
+..cQ.......c..           ..c.......Sc..
+..cccccccccc..           ..cccccccccc..
+..............           ..............
+..............           ..............
+ENDMAP

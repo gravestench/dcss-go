@@ -3103,8 +3103,10 @@ not persistent state: a saved map contains the resulting terrain and typed
 records, not a live hook object. A layout that paints source terrain such
 as shallow water returns a `SOURCE_FEATURE` record with `base_glyph` set to
 the collision glyph initially painted on the builder. The generation owner
-retires that record when a later authored map takes the cell, even if both
-maps render the same placeholder glyph.
+retires every earlier spatial record when a later authored map takes its
+cell, including monster and item spawns. This applies even if both maps
+render the same placeholder glyph. The retired record stays in saved map
+history with `overridden = true`, but population gives it no effect.
 
 For a cellular map, `policy.generation.layouts.subdivision` partitions the
 grid, `cell_graph.edges` finds shared borders, and `cellular_groups.new`
@@ -4359,9 +4361,9 @@ commented methods explain the map choice and its effect.
 One Crypt:3 ending is mandatory. If it includes an authored
 `KFEAT: <glyph> = enter_tomb`, generation binds the scheduled Tomb link to
 that final oriented glyph. An ending without that feature receives one
-connected fallback gate. This avoids an extra stair when a map already owns
-the entrance. Tomb gameplay remains a separate branch slice; the link is
-saved and marked unavailable until that branch is implemented.
+connected gate, using a fitting `tomb_entry` map when possible. This avoids
+an extra stair when a map already owns the entrance. The link enters the
+complete three-floor Tomb route described below.
 
 Crypt also illustrates a live marker. `grunt_crypt_arrival_guarded_gate.des`
 and `david_glass_crypt.des` call hooks that record a
@@ -4382,6 +4384,53 @@ The [Crypt snapshot index](level-snapshots/crypt/index.txt) shows a
 Vaults-side entrance, Crypt:1–3, and all eight possible endings. To write
 fresh examples from the current ruleset, run
 `CRAWL_CRYPT_SNAPSHOT_DIR=/path/to/output go test ./internal/game -run '^TestCrypt'`.
+
+### Tomb maps and named one-way hatches
+
+Tomb uses the original source MAP format in 31 active, individually layered
+`.des` files. Ten `vaults/tomb_entry/` files are eligible at the scheduled
+Crypt:3 gate. `vaults/tomb_1/tomb_1.des`, `vaults/tomb_2/tomb_2.des`, and
+`vaults/tomb_3/tomb_3.des` own the full floor grids. Their `SUBVAULT` lines
+select from four helper directories: `tomb_1_centre`,
+`tomb_1_hall_stairs`, `tomb_2_ambush`, and `tomb_3_rune`. Adding one `.des`
+file with the matching source tag contributes one choice to its helper
+pool. Replacing an existing relative path changes only that map. The four
+old-save compatibility maps in the original `tomb.des` are intentionally
+excluded from this new save format.
+
+Tomb's escape hatches are **one-way**. A named Lua hook records
+`hatch_name` on a stair glyph and `hatch_dest_name` on the target landing.
+Both use a route name from `ids/tomb_hatches.lua`. The engine resolves
+their final coordinates after `SHUFFLE`, `SUBST`, nested helper placement,
+and rotation. Several source hatches can share one name; each name needs
+one destination marker, and a landing can have several names. The landing
+may be ordinary floor, so it needs no reciprocal stair. A missing or
+duplicate destination, a blocked landing, or a link outside the authored
+branch rejects generation before the player's Crypt gate is spent.
+
+For example, a new Tomb:2 ambush helper belongs at
+`vaults/tomb_2_ambush/my_ambush.des` with
+`TAGS: tomb_2_ambush unrand`. Its `R` landing should call the shared
+`dest_tomb2_entry` and `dest_tomb1_hall_exit_1` methods at the source
+position before `R` becomes floor. Its chosen return stair should call
+`name_tomb2_exit_ambush` before the candidate `S` glyphs are substituted.
+Those methods live in `policy/generation/tomb/hatch_markers.lua`; the
+family-local `hatches.lua` exposes them to `vault.run`. Study a bundled
+ambush file before editing because placement masks any helper cell outside
+the parent `B` region. The source guardian-set counts are local to one
+three-floor build; do not put changing counters in module globals.
+
+The Lua bundle builder at `policy/generation/tomb/level.lua` builds all
+three maps on first entry so every named destination exists before travel.
+Go stages and populates them in one command checkpoint, then saves their
+terrain, actors, rune, and links. The `api` in a map hook is the temporary
+vault placement API (`api:emit`, `api:record`, and layout RNG methods). It is
+not the live game `ctx`; the builder receives `ctx` and passes its saved RNG
+streams into placement. Modders adding a source monster or rune rule put a
+named Lua method at the corresponding DES line, with a comment explaining
+the choice. The [Tomb snapshot index](level-snapshots/tomb/index.txt) shows
+the actual three floors and their connected one-way links. Regenerate it
+with `CRAWL_TOMB_SNAPSHOT_DIR=/absolute/output go test ./internal/game -run '^TestTombBranchStagesCompleteRoute$'`.
 
 ## Test a mod
 

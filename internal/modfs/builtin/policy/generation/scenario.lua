@@ -129,7 +129,15 @@ end
 function module.next(ctx, input)
     local result = generated.next(ctx, input)
 
-    decode_level(ctx, result.level)
+    if result.levels then
+        for _, level in ipairs(result.levels) do
+            if not level.cells then
+                decode_level(ctx, level)
+            end
+        end
+    else
+        decode_level(ctx, result.level)
+    end
 
     return result
 end

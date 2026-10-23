@@ -94,11 +94,22 @@ local function tracks_later_map_ownership()
         x = 1,
         y = 0,
     }
+    local plant = {
+        kind = effects.MONSTER,
+        identity = "plant",
+        source = "1",
+        x = 0,
+        y = 0,
+    }
     local records = {}
 
     generated.append_vault_records(records, {
         {
-            records = { water, rock },
+            records = {
+                water,
+                rock,
+                plant,
+            },
         },
         {
             records = {},
@@ -113,6 +124,8 @@ local function tracks_later_map_ownership()
 
     harness.truthy(water.overridden, "same-glyph authored overlay")
     harness.truthy(rock.overridden, "connector carve owns old wall")
+    harness.truthy(plant.overridden,
+        "authored overlay retires an earlier monster spawn")
 end
 
 -- Check the common decoder as a unit before live weighted layout selection.

@@ -98,7 +98,13 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     local definition = catalog.get("monsters", actor.kind_id)
     -- A polymorph rolls the live body's HP afresh. If that body later feeds,
     -- its Jiyva birth HP belongs to the new species, not its roster origin.
-    local profile = roster.profile(growth and actor.kind_id or roster_id)
+    -- Ambient corpse-form templates use a selected source body just as
+    -- authored undead do. Validate rolled HP against that saved base
+    -- instead of the template row, whose average HP is intentionally zero.
+    local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
+    local profile_id = overrides and overrides.base_id ~= "" and
+        overrides.base_id or roster_id
+    local profile = roster.profile(growth and actor.kind_id or profile_id)
 
     if state.fixed and state.seen[roster_id] and not clone then
         error("duplicate fixed animal " .. roster_id)

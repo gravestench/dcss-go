@@ -1,0 +1,21 @@
+# tomb_1_hall_stairs_nicolae_cartouches is a source-authored tomb_1_hall_stairs map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:    tomb_1_hall_stairs_nicolae_cartouches
+TAGS:    tomb_1_hall_stairs unrand
+SHUFFLE: PQ / RS
+SUBST:   S = .
+: vault.run("shared.hall_setup")
+SUBST:   - = .
+MAP
+..                                   ..
+..cc......cccc           cccc......cc..
+..c........ccc           ccc........c..
+.....cccc...cc           cc...cccc.....
+....cc...c...c           c...c...cc....
+...cc-...1c...           ...c1...-cc...
+..ccP-..211c.Q           S.c112..-Rcc..
+...cc-...1c...           ...c1...-cc...
+....cc...c...c           c...c...cc....
+.....cccc...cc           cc...cccc.....
+..c........ccc           ccc........c..
+..cc......cccc           cccc......cc..
+ENDMAP

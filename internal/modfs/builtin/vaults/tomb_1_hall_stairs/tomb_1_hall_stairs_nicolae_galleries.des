@@ -1,0 +1,22 @@
+# tomb_1_hall_stairs_nicolae_galleries is a source-authored tomb_1_hall_stairs map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME: tomb_1_hall_stairs_nicolae_galleries
+TAGS: tomb_1_hall_stairs unrand
+# First shuffle randomizes which side is entry/exit, second two shuffles
+# randomizes gallery configurations shared by both sides.
+SHUFFLE: ABDF / HIJK, ACDHJa / BEFIKb, pq
+SUBST: CJp = ., a = +, EFKbq = c, A = P, D = Q, BI = 2, H = R
+: vault.run("shared.hall_setup")
+MAP
+..                                   ..
+..EEEEEEEEFccc           cccKEEEEEEEE..
+..EEEEEEEEEccc           cccEEEEEEEEE..
+CCcccccccbbccc           cccbbcccccccCC
+CCc..qppq.Accc           cccH.qppq..cCC
+CCc....1...ccc           ccc...1....cCC
+CCcq.p..p.qccc           cccq.p..p.qcCC
+CCcp1.qq..pccc           cccp..qq.1pcCC
+CCcp..qq.1pccc           cccp1.qq..pcCC
+CCcq.p..p.qccc           cccq.p..p.qcCC
+CCa...1....ccc           ccc....1...aCC
+DCaB.qppq..ccc           ccc..qppq.IaCJ
+ENDMAP

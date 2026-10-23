@@ -879,8 +879,15 @@ each ending binds its authored Tomb gate or receives one connected fallback
 gate. Saved ECS trigger groups handle sarcophagus guards and the glass
 Crypt's grates when the player sees their trigger. The
 [Crypt snapshot index](level-snapshots/crypt/index.txt) shows connected
-floors and all eight endings. Tomb remains a future branch slice, so its
-saved entrance cannot yet be entered. Exceptional monster, item, and
+floors and all eight endings. Tomb now accepts that entrance and stages its
+three source floors together. Its 31 active DES maps include ten Crypt-side
+entries, three full floors, and 18 helpers; four old-save compatibility maps
+are excluded. Lua resolves source-named one-way hatch markers after final
+placement and shares the three active guardian pools across one build.
+The golden rune is placed and pickable, the full route travels in both
+directions through its separate hatches, and saves retain the floors and
+links. The [Tomb snapshot index](level-snapshots/tomb/index.txt) shows each
+floor and exact connections. Exceptional monster, item, and
 terrain effects in Crypt continue to depend on their broader rule domains.
 
 For each new domain, convert the full rule category in one pass. Put its

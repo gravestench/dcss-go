@@ -15,6 +15,38 @@ local boris_replacement = require("policy.population.boris_replacement")
 local branches = require("ids.branches")
 local sentinels = require("constants.population_sentinels")
 local scenarios = require("constants.scenarios")
+local monster_ids = require("ids.monsters")
+local monster_requests = require("constants.vault_monster_requests")
+local monster_resolve = require("policy.generation.vaults.specs.resolve")
+
+-- Ambient tables may request a corpse-form template. It has no fixed HP
+-- profile until a source body is chosen at the current branch depth.
+local corpse_forms = {
+    [monster_ids.MONS_ZOMBIE] = monster_requests.RANDOM_ZOMBIE,
+    [monster_ids.MONS_SKELETON] = monster_requests.RANDOM_SKELETON,
+    [monster_ids.MONS_SIMULACRUM] = monster_requests.RANDOM_SIMULACRUM,
+    [monster_ids.MONS_SPECTRAL_THING] = monster_requests.RANDOM_SPECTRAL,
+}
+
+-- Use the same source body selector as an authored vault request so ambient
+-- undead and keyed DES undead cannot drift to different species pools.
+local function ambient_spawn_request(ctx, monster_id, branch_id, depth)
+    local name = corpse_forms[monster_id]
+
+    if not name then
+        return monster_id, nil
+    end
+
+    local selected = monster_resolve.monster(ctx, {
+        name = name,
+        source = name,
+    }, depth, {
+        branch_id = branch_id,
+        local_depth = depth,
+    })
+
+    return selected.kind_id, selected
+end
 
 -- Visit levels by ID so shared population draws have stable order.
 local function level_order(left, right)
@@ -92,7 +124,10 @@ local function populate_level(ctx, level, allowed, scenario_id)
         -- The source table can spend a roll without placing an actor.
         if monster_id ~= sentinels.NO_MONSTER then
             local cell = cells[ctx:random("placement", #cells) + 1]
-            local leader = factory.spawn(ctx, monster_id, level.id, cell.x, cell.y)
+            local kind_id, options = ambient_spawn_request(ctx,
+                monster_id, branch_id, depth)
+            local leader = factory.spawn(ctx, kind_id, level.id,
+                cell.x, cell.y, options)
             actors = actors + 1
 
             -- A definition with a band owns its follower count and membership.

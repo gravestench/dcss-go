@@ -282,7 +282,8 @@ end
 
 -- A later authored MAP owns each occupied cell even when it draws the same
 -- placeholder glyph as the layout. Its connector also owns opened walls.
--- Retire older source features before appending the map's own records.
+-- Retire all older spatial effects, including monster and item spawns,
+-- before appending the map's own records.
 function generated.append_vault_records(target, maps)
     for _, map in ipairs(maps) do
         local covered = {}
@@ -296,7 +297,7 @@ function generated.append_vault_records(target, maps)
         end
 
         for _, record in ipairs(target) do
-            if record.kind == vault_effects.SOURCE_FEATURE and
+            if record.x ~= nil and record.y ~= nil and
                 covered[record.x .. ":" .. record.y] then
                 record.overridden = true
             end
@@ -1048,6 +1049,13 @@ function generated.next(ctx, input)
     elseif parent.branch_id ~= branch_id or
         parent.local_depth ~= depth - 1 then
         error("next branch floor needs its contiguous parent")
+    end
+
+    -- A branch may own several authored floors whose named exits cross
+    -- levels. Its Lua module returns the same next-floor transaction with
+    -- `levels` in place of one `level`.
+    if depth == 1 and branch.bundle_generator then
+        return require(branch.bundle_generator).generate(ctx, input)
     end
 
     local player = {

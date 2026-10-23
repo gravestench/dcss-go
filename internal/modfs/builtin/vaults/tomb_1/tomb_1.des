@@ -1,0 +1,96 @@
+# tomb_1 is a source-authored tomb_1 map. Its MAP is unchanged; named Lua hooks replace source script lines at their original positions.
+NAME:     tomb_1
+PLACE:    Tomb:1
+ORIENT:   encompass
+TAGS:     no_dump
+SUBVAULT: A : tomb_1_centre
+SUBVAULT: B : tomb_1_hall_stairs
+: vault.run("shared.guardian_optional")
+MONS:     royal mummy / nothing
+MONS:     sphinx / nothing
+MONS:     obsidian statue / orange crystal statue
+NSUBST:   ( = 1:( / *:.
+# Set up decorative statues.
+: vault.run("shared.choose_statues")
+SUBST:    FIJKLMNOPQ = G
+# Add greater mummies and traps to the long hall. About 16 greater mummies and
+# 6 traps on-average.
+SUBST:    ' = 2:24 ^ .:210
+KFEAT:    ^ = alarm trap / net trap / zot trap / dispersal trap
+COLOUR:   FIJKLMNOPQ = yellow
+TILE:     FIJKL = dngn_sarcophagus_pedestal_left
+TILE:     MNOPQ = dngn_sarcophagus_pedestal_right
+: vault.run("shared.sarcophagus")
+: vault.run("shared.hatch_down_name")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxx(.............................(..............................(xxxxxxxxx
+xxxxxxxxx..............................................................xxxxxxxxx
+xxxxxxxxx..............................................................xxxxxxxxx
+xxxxxxxxx..............................................................xxxxxxxxx
+xxxxxxxxx..............................................................xxxxxxxxx
+xxxxxxxxx..........ccccccccccccccccccccccccccccccccccccccccccc.........xxxxxxxxx
+xxxxxxxxx..........ccccccccccccccccccccccccccccccccccccccccccc.........xxxxxxxxx
+xxxxxxxxx..........cc'''''''''''''''''''''''''''''''''''''''cc.........xxxxxxxxx
+xxxxxxxxx..........cc'''''''''''''''''''''''''''''''''''''''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''ccccccccccccccccccccccccccccccccccc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........cc''cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAc''cc.........xxxxxxxxx
+xxxxxxxxx..........ccBBccccccccccccccAAAAAAAccccccccccccccBBcc.........xxxxxxxxx
+xxxxxxxxx..........ccBBBBBBBBBBBBBBccc+++++cccBBBBBBBBBBBBBBcc.........xxxxxxxxx
+xxxxxxxxx..........ccBBBBBBBBBBBBBBcc.1...1.ccBBBBBBBBBBBBBBcc.........xxxxxxxxx
+xxxxxxxxx..........ccBBBBBBBBBBBBBBcc.L...Q.ccBBBBBBBBBBBBBBcc.........xxxxxxxxx
+xxxxxxxxx..........ccBBBBBBBBBBBBBBcc.......ccBBBBBBBBBBBBBBcc.........xxxxxxxxx
+xxxxxxxxx..........ccBBBBBBBBBBBBBBcc.1...1.ccBBBBBBBBBBBBBBcc.........xxxxxxxxx
+xxxxxxxxx..........ccBBBBBBBBBBBBBBcc.K...P.ccBBBBBBBBBBBBBBcc.........xxxxxxxxx
+xxxxxxxxx..........ccBBBBBBBBBBBBBBcc.......ccBBBBBBBBBBBBBBcc.........xxxxxxxxx
+xxxxxxxxx..........ccBBBBBBBBBBBBBBcc.1...1.ccBBBBBBBBBBBBBBcc.........xxxxxxxxx
+xxxxxxxxx..........ccBBBBBBBBBBBBBBcc.J...O.ccBBBBBBBBBBBBBBcc.........xxxxxxxxx
+xxxxxxxxx..........ccBBBBBBBBBBBBBBcc.......ccBBBBBBBBBBBBBBcc.........xxxxxxxxx
+xxxxxxxxx..........ccBBBBBBBBBBBBBBcc.......ccBBBBBBBBBBBBBBcc.........xxxxxxxxx
+xxxxxxxxx..........cccccccccccccccccc.I...N.cccccccccccccccccc.........xxxxxxxxx
+xxxxxxxxx..........cccccccccccccccccc.......cccccccccccccccccc.........xxxxxxxxx
+xxxxxxxxx.............................3...3............................xxxxxxxxx
+xxxxxxxxx.............................F...M............................xxxxxxxxx
+xxxxxxxxx...........................3.3...3.3..........................xxxxxxxxx
+xxxxxxxxx..............................................................xxxxxxxxx
+xxxxxxxxx..............................................................xxxxxxxxx
+xxxxxxxxx...........................3..V.V..3..........................xxxxxxxxx
+xxxxxxxxx..............................................................xxxxxxxxx
+xxxxxxxxx.............................3...3............................xxxxxxxxx
+xxxxxxxxx..............................................................xxxxxxxxx
+xxxxxxxxx...........................3.......3..........................xxxxxxxxx
+xxxxxxxxx..............................................................xxxxxxxxx
+xxxxxxxxx..............................................................xxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP
