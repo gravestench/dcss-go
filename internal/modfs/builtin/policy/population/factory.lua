@@ -526,4 +526,12 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
     return monster
 end
 
+-- Summoned wrath monsters use the same saved weapon rolls as generated
+-- population. This entry point equips an already placed actor without
+-- creating a second monster or copying the loadout construction rules.
+function factory.equip_generated(ctx, monster, kind_id, depth)
+    create_loadout(ctx, monster,
+        gear.loadout(ctx, kind_id, depth), nil)
+end
+
 return factory
