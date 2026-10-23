@@ -1,0 +1,27 @@
+# nicolae_gauntlet_exit_dead_adventurers: authored Gauntlet gauntlet_exit map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:    nicolae_gauntlet_exit_dead_adventurers
+DEPTH: Gauntlet
+TAGS:    gauntlet_exit
+KMONS:   1 = patrolling minotaur
+KPROP:   DELM'1 = bloody
+KFEAT:   ' = floor
+SHUFFLE: bvc, DELM, DEFHJK, LMNOPQ
+# Source Lua: dead adventurer loot and remains.
+: vault.run("dead_adventurers.setup")
+MAP
+v.v.vvvvvvv.v.v
+v.v....v....v.v
+v.v.vv.v.vv.v.v
+v.............v
+v.v..bb+bb..v.v
+v.v..bG.Gb..v.v
+v....b...b....v
+vvvG.bG1Gb.Gvvv
+vvvvvbE'Mbvvvvv
+vvvvvbG'Gbvvvvv
+ vvvvbD'Lbvvvv
+ vvvvbG<Gbvvvv
+ vvvvbbbbbvvvv
+ENDMAP

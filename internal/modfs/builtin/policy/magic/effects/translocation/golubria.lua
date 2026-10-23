@@ -1,4 +1,5 @@
 local spells = require("ids.spells")
+local branches = require("ids.branches")
 local component = require("constants.component")
 local terrain_ids = require("constants.terrain")
 local net = require("policy.combat.net")
@@ -116,6 +117,14 @@ end
 -- terrain are saved; entering either end consumes only the entered end.
 function golubria.prepare(ctx, player, _, dx, dy)
     local origin = ctx:get(player, component.POSITION)
+
+    -- This source seal is specific to opening a Passage. Ordinary blink
+    -- still works inside Gauntlet; reject before checking target geometry
+    -- or spending the spell's placement draws.
+    if ctx:level_branch(origin.level_id) == branches.BRANCH_GAUNTLET then
+        return "A magic seal in the Gauntlet prevents you from opening a passage!"
+    end
+
     local aimed = { x = origin.x + dx, y = origin.y + dy }
 
     if not ctx:walkable(origin.level_id, aimed.x, aimed.y) then

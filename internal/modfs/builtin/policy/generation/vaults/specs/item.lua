@@ -126,7 +126,8 @@ local function parse_term(text, expression, site)
             -- flag while the stable class name resolves in the catalog.
             result.useful = true
         elseif token == "no_pickup" then
-            -- Authored display items can be seen but cannot be taken.
+            -- The source flag keeps monsters from taking an authored item.
+            -- The player may still collect it after reaching the cell.
             result.no_pickup = true
         elseif token == "never_decay" then
             -- Source corpse specimens can remain on a level indefinitely.

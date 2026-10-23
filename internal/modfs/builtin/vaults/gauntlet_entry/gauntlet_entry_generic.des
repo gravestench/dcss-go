@@ -1,0 +1,12 @@
+# gauntlet_entry_generic: authored Gauntlet gauntlet_entry map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   gauntlet_entry_generic
+TAGS:   transparent extra uniq_gauntlet
+CHANCE: 5%
+DEPTH:  D:11-, Orc:$, Lair
+# Source Lua: : gauntlet_portal(_G)
+: vault.run("shared.portal")
+MAP
+O
+ENDMAP

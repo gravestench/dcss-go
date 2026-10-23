@@ -56,6 +56,8 @@ const (
 	ExitWizlab         ID = "DNGN_EXIT_WIZLAB"
 	EnterDesolation    ID = "DNGN_ENTER_DESOLATION"
 	ExitDesolation     ID = "DNGN_EXIT_DESOLATION"
+	EnterGauntlet      ID = "DNGN_ENTER_GAUNTLET"
+	ExitGauntlet       ID = "DNGN_EXIT_GAUNTLET"
 	EnterBailey        ID = "DNGN_ENTER_BAILEY"
 	ExitBailey         ID = "DNGN_EXIT_BAILEY"
 	EnterIceCave       ID = "DNGN_ENTER_ICE_CAVE"
@@ -319,6 +321,16 @@ var definitions = map[ID]Feature{
 	},
 
 	ExitDesolation: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	EnterGauntlet: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitGauntlet: {
 		Glyph:    '∩',
 		Walkable: true,
 	},

@@ -1,0 +1,61 @@
+# minmay_gauntlet_mixed_oops_all_seconds: authored Gauntlet gauntlet map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   minmay_gauntlet_mixed_oops_all_seconds
+DEPTH: Gauntlet
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen no_trap_gen
+# Source Lua: : gauntlet_setup(_G, "DFJLNP", "EHKMOQ")
+: vault.run("minmay_gauntlet_mixed_oops_all_seconds.compose")
+MAP
+                 ccccccccccccc
+  cccccccccccccccclclclclclclcccccccccccccccc
+ cclclclclclclclc.............clclclclclclclcc
+ cl.................A..G..<.................lc
+ cc.G.....G.....G......F......G.....G.....G.cc
+ cl.......D.......nnnnnnnnnnn.......J.......lc
+ cc...nnnnnnnnn...ppppppppppp...nnnnnnnnn...cc
+ cl...aaaaaaaaa...ppppppppppp...qqqqqqqqq...lc
+ cc...aaaaaaaaa...ppppppppppp...qqqqqqqqq...cc
+ cl...aaaaaaaaa...ppppppppppp...qqqqqqqqq...lc
+ cc.G.aaaaaaaaa.G.ppppppppppp.G.qqqqqqqqq.G.cc
+ cl...aaaaaaaaa...ppppppppppp...qqqqqqqqq...lc
+ cc...naaaaaaan...npppppppppn...nqqqqqqqn...cc
+ cl...naaaaaaan...npppppppppn...nqqqqqqqn...lc
+ cc...nnnnnnnnn...npppppppppn...nnnnnnnnn...cc
+ cl.....n.E.n.....nnnnnnnnnnn.....n.K.n.....lc
+ cc.G...n.G.n...G....n.H.n....G...n.G.n...G.cc
+cc......n.L.n........n...n........n.P.n......cc
+cl...nnnnnnnnnnn.....n.N.n.....nnnnnnnnnnn...lc
+cc...rrrrrrrrrrr...nnnnnnnnn...uuuuuuuuuuu...cc
+cl...rrrrrrrrrrr...sssssssss...uuuuuuuuuuu...lc
+cc...rrrrrrrrrrr...sssssssss...uuuuuuuuuuu...cc
+cl...rrrrrrrrrrr...sssssssss...uuuuuuuuuuu...lc
+cc.G.rrrrrrrrrrr.G.sssssssss.G.uuuuuuuuuuu.G.cc
+cl...rrrrrrrrrrr...sssssssss...uuuuuuuuuuu...lc
+cc...nrrrrrrrrrn...nsssssssn...nuuuuuuuuun...cc
+cl...nrrrrrrrrrn...nsssssssn...nuuuuuuuuun...lc
+cc...nrrrrrrrrrn...nnnnnnnnn...nuuuuuuuuun...cc
+cl...nnnnnnnnnnn...............nnnnnnnnnnn...lc
+cc...............G.....G.....G...............cc
+cl.G......G.........................G......G.lc
+cc...............clcnnnnnnnclc...............cc
+ cclclclclclclclcccc.......cccclclclclclclclcc
+  cccccccccccccccvv..G.G.G..vvccccccccccccccc
+                vv...M.O.Q...vv
+               vv.............vv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vvyyyyyyyyyyyyyvv
+               vvyyyyyyyyyyyyyvv
+               vvyyyyyyyyyyyyyvv
+               vvvvvvvvvvvvvvvvv
+ENDMAP

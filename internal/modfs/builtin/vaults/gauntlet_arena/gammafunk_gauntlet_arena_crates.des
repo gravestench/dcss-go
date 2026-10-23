@@ -1,0 +1,22 @@
+# gammafunk_gauntlet_arena_crates: authored Gauntlet gauntlet_arena map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:    gammafunk_gauntlet_arena_crates
+DEPTH: Gauntlet
+TAGS:    gauntlet_arena_first gauntlet_arena_second
+# At least one open path, but usually not the one adjacent to the landing site.
+SHUFFLE: Pq / Rr / Ss
+SUBST:   a = ...^nn, q = ^nnn, r = .^nn, sRS = ., x = ^ x:150
+# Source Lua: : gauntlet_arena_setup(_G)
+: vault.run("shared.setup")
+MAP
+nxx3xx3xx3n
+nxx3xx3xx3n
+na3a33a33an
+nPxxRxxSxxn
+n.xx.xx.xxn
+n.a.a..a.an
+ x2nxrxn2x
+ xqnn1nnsx
+ 22ddQdd22
+ENDMAP

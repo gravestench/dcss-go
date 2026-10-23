@@ -1,6 +1,7 @@
 -- Shared player movement checks from player.cc:no_tele_reason and
 -- spl-transloc.cc:_find_cblink_target.
 local catalog = require("policy.catalog")
+local branches = require("ids.branches")
 local component = require("constants.component")
 local flight = require("policy.combat.flight")
 local hex_status = require("policy.combat.monster_hexes.status")
@@ -14,7 +15,18 @@ local translocation = {}
 local SIGHT_RADIUS = 7
 
 -- Check magical anchoring before innate or form stasis so the failure reason matches source priority.
-function translocation.restriction(ctx, player)
+function translocation.restriction(ctx, player, blinking)
+    local position = ctx:get(player, component.POSITION)
+
+    -- The source seal forbids long-range teleportation in Gauntlet while
+    -- leaving ordinary blinking available. Check before random draws so
+    -- a rejected scroll cannot change later encounter or map RNG.
+    if not blinking and position and
+        ctx:level_branch(position.level_id) ==
+            branches.BRANCH_GAUNTLET then
+        return "A magic seal in the Gauntlet prevents long-range teleports."
+    end
+
     if hex_status.anchored(ctx, player) then
         return "You are firmly anchored to this plane."
     end

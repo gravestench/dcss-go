@@ -1,0 +1,74 @@
+# minmay_gauntlet_77_indecision: authored Gauntlet gauntlet map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   minmay_gauntlet_77_indecision
+DEPTH: Gauntlet
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen no_trap_gen no_pool_fixup
+SUBST:  G : GT
+# Source Lua: : gauntlet_setup(_G, "DFJLNP", "EHKMOQ")
+: vault.run("minmay_gauntlet_77_indecision.compose")
+MAP
+             c
+            ccc
+           ccwcc
+          ccwwwcc
+ ccccccccccwwwwwcccccccccc
+ccwcccwccc.......cccwcccwcc
+cwwwcwwwc..A.G.<..cwwwcwwwc
+ccw.....D.........F.....wcc
+ccc.nnnnnnnnn.nnnnnnnnn.ccc
+ccw.aaaaaaaaa.ppppppppp.wcc
+cww.aaaaaaaaa.ppppppppp.wwc
+ccw.aaaaaaaaa.ppppppppp.wcc
+ccc.aaaaaaaaa.ppppppppp.ccc
+ccw.aaaaaaaaa.ppppppppp.wcc
+cww.naaaaaaan.npppppppn.wwc
+ccw.naaaaaaan.npppppppn.wcc
+ccc.nnnnnnnnnnnnnnnnnnn.ccc
+ccw....nE.........Hn....wcc
+cww..G.n.G.G.G.G.G.n.G..wwc
+ccw....nJ.........Ln....wcc
+ccc.nnnnnnnnn.nnnnnnnnn.ccc
+ccw.qqqqqqqqq.rrrrrrrrr.wcc
+cww.qqqqqqqqq.rrrrrrrrr.wwc
+ccw.qqqqqqqqq.rrrrrrrrr.wcc
+ccc.qqqqqqqqq.rrrrrrrrr.ccc
+ccw.qqqqqqqqq.rrrrrrrrr.wcc
+cww.nqqqqqqqn.nrrrrrrrn.wwc
+ccw.nqqqqqqqn.nrrrrrrrn.wcc
+ccc.nnnnnnnnnnnnnnnnnnn.ccc
+ccw....nK.........Mn....wcc
+cww..G.n.G.G.G.G.G.n.G..wwc
+ccw....nN.........Pn....wcc
+ccc.nnnnnnnnn.nnnnnnnnn.ccc
+ccw.sssssssss.uuuuuuuuu.wcc
+cww.sssssssss.uuuuuuuuu.wwc
+ccw.sssssssss.uuuuuuuuu.wcc
+ccc.sssssssssnuuuuuuuuu.ccc
+ccw.sssssssss.uuuuuuuuu.wcc
+cww.nsssssssn.nuuuuuuun.wwc
+ccw.nsssssssn.nuuuuuuun.wcc
+ccc.nnnnnnnnn.nnnnnnnnn.ccc
+ccw.....................wcc
+cwwwcwwwc..<.G.<..cwwwcwwwc
+ccwcccwccc.......cccwcccwcc
+ ccccccccccnnnnncccccccccc
+    v.................v
+    v.G.G.G.O.Q.G.G.G.v
+    v.................v
+    vvyyyyyyyyyyyyyyyvv
+     vyyyyyyyyyyyyyyyv
+     vyyyyyyyyyyyyyyyv
+     vyyyyyyyyyyyyyyyv
+     vyyyyyyyyyyyyyyyv
+     vyyyyyyyyyyyyyyyv
+     vyyyyyyyyyyyyyyyv
+     vyyyyyyyyyyyyyyyv
+     vyyyyyyyyyyyyyyyv
+     vyyyyyyyyyyyyyyyv
+     vvyyyyyyyyyyyyyvv
+     vvyyyyyyyyyyyyyvv
+     vvyyyyyyyyyyyyyvv
+     vvvvvvvvvvvvvvvvv
+ENDMAP

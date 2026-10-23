@@ -1,0 +1,27 @@
+# gauntlet_exit_hidden_loot: authored Gauntlet gauntlet_exit map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   gauntlet_exit_hidden_loot
+DEPTH: Gauntlet
+TAGS:   gauntlet_exit
+MONS:   patrolling minotaur, minotaur zombie
+SUBST:  d = 2%*
+SUBST:  b : bvv
+KFEAT:  < = exit_gauntlet
+# Source Lua: : gauntlet_exit_loot(_G)
+: vault.run("shared.loot")
+MAP
+vvv.vvv.vvv.vvv
+vvv.vvv.vvv.vvv
+v.............v
+v.vvv.vvv.vvv.v
+v.............v
+vvvvxxx+xxxxvvv
+vvvvxxx.xxxxvvv
+vvvvxx..<.xxvvv
+vvvvd+U...xxvvv
+vvvvxx...U+dvvv
+ vvvxx.U.1xxvv
+ vvvxxx+xxxxvv
+ vvvxxxdxxxxvv
+ENDMAP

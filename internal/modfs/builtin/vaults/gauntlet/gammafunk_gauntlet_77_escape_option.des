@@ -1,0 +1,58 @@
+# gammafunk_gauntlet_77_escape_option: authored Gauntlet gauntlet map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   gammafunk_gauntlet_77_escape_option
+DEPTH: Gauntlet
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen no_trap_gen no_pool_fixup
+# Source Lua: : gauntlet_setup(_G, "DFJLN", "EHKMO")
+# Separate hooks let the first arenas resolve before the source coin flip.
+: vault.run("gammafunk_gauntlet_77_escape_option.opening")
+: vault.run("gammafunk_gauntlet_77_escape_option.finish")
+# 1.5 items on-average for tier 1 difficulty
+# 50% chance for middle arena to be tier 2 difficulty.
+# 2 items for tier 2 difficulty
+MARKER:   P = lua:transp_loc("escape_option_1")
+MARKER:   Q = lua:transp_dest_loc("escape_option_1")
+MARKER:   R = lua:transp_loc("escape_option_2")
+MARKER:   S = lua:transp_dest_loc("escape_option_2")
+MARKER:   Z = lua:transp_loc("escape_option_3")
+MARKER:   - = lua:transp_dest_loc("escape_option_3")
+MARKER:   u = lua:transp_loc("escape_option_4")
+MARKER:   z = lua:transp_dest_loc("escape_option_4")
+MAP
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccwcccwcccwcccwcccwcccwcccwcccwcccwcccwcccwcccwcccwcccwcccwcccwcccwcc
+cwwwcwwwcwwwcwwwcwwwcwwwcwwwcwwwcwwwcwwwcwwwcwwwcwwwcwwwcwwwcwwwcwwwc
+ccw...............................................................wcc
+ccc...naaaaannn...npppppnnn...nqqqqqnnn...nrrrrrnnn...nsssssnnn...ccc
+ccw...naaaaaaan.G.npppppppn.G.nqqqqqqqn.G.nrrrrrrrn.G.nsssssssn...wcc
+cwwA..naaaaaaan...npppppppn...nqqqqqqqn...nrrrrrrrn...nsssssssn...wwc
+ccw...naaaaaaannnnnpppppppnnnnnqqqqqqqnnnnnrrrrrrrnnnnnsssssssn...wcc
+ccc..DnaaaaaaanE.FnpppppppnH.JnqqqqqqqnK.LnrrrrrrrnM.Nnsssssssn...ccc
+ccw...naaaaaaan...npppppppn...nqqqqqqqn...nrrrrrrrn...nsssssssn...wcc
+cww<..naaaaaaan...npppppppn...nqqqqqqqn...nrrrrrrrn...nsssssssn...wwc
+ccw...naaaaaaanGPGnpppppppnGRGnqqqqqqqnGZGnrrrrrrrnGuGnsssssssn...wcc
+ccc...naaaaannnnnnnpppppnnnnnnnqqqqqnnnnnnnrrrrrnnnnnnnsssssnnn...ccc
+ccw...............................................................wcc
+cwwwcwwwcwwwcwwwcwwwcwwwc...GUG..G<G..GUG...cwwwcwwwcwwwcwwwcwwwcwwwc
+ccwcccwcccwcccwcccwcccwccc.................cccwcccwcccwcccwcccwcccwcc
+cccccccccccccccccccccccccvvnnnnnnnnnnnnnnnvvccccccccccccccccccccccccc
+                        vvw...............wvv
+                       vvww..GQGSG-GzGOG..wwvv
+                        vvw...............wvv
+                        vvvyyyyyyyyyyyyyyyvvv
+                          vyyyyyyyyyyyyyyyv
+                          vyyyyyyyyyyyyyyyv
+                          vyyyyyyyyyyyyyyyv
+                          vyyyyyyyyyyyyyyyv
+                          vyyyyyyyyyyyyyyyv
+                          vyyyyyyyyyyyyyyyv
+                          vyyyyyyyyyyyyyyyv
+                          vyyyyyyyyyyyyyyyv
+                          vyyyyyyyyyyyyyyyv
+                          vvyyyyyyyyyyyyyvv
+                          vvyyyyyyyyyyyyyvv
+                          vvyyyyyyyyyyyyyvv
+                          vvvvvvvvvvvvvvvvv
+ENDMAP

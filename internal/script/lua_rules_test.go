@@ -564,6 +564,12 @@ func runLuaRule(t *testing.T, rules modfs.Ruleset, name string) {
 	} else if name == "tests/sewer_source_catalog_test.lua" {
 		// All 34 source maps execute hooks and full-grid placement in one test.
 		limitDuration = 30 * time.Second
+	} else if name == "tests/gauntlet_placement_test.lua" {
+		// Ten source parents compose many arena helpers on full grids.
+		limitDuration = 90 * time.Second
+	} else if name == "tests/gauntlet_level_test.lua" {
+		// A complete parent also decodes all arena records and route links.
+		limitDuration = 30 * time.Second
 	}
 
 	limit, cancel := context.WithTimeout(context.Background(), limitDuration)

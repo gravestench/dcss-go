@@ -1,0 +1,17 @@
+# minmay_gauntlet_arena_77_chump_sandwich: authored Gauntlet gauntlet_arena map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   minmay_gauntlet_arena_77_chump_sandwich
+DEPTH: Gauntlet
+TAGS:   gauntlet_arena_77_first gauntlet_arena_77_second
+# Source Lua: : gauntlet_arena_setup(_G)
+: vault.run("shared.setup")
+MAP
+n3322233n
+n2332332n
+n3xxnxx3n
+n...P...n
+n.xxnxx.n
+ ...1...
+ .ddQdd.
+ENDMAP

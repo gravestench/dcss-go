@@ -4273,6 +4273,65 @@ for an authored vault. Ambient monster placement uses the same definition
 when it chooses that leader. Exceptional member rules can be placed in a
 named Lua `member_policy` module; Tiamat's draconians are the bundled example.
 
+## Add or replace a Gauntlet map
+
+Gauntlet keeps its source `.des` maps in four layered directories:
+`vaults/gauntlet_entry/` for timed gates,
+`vaults/gauntlet/` for complete parent floors,
+`vaults/gauntlet_arena/` for encounter chambers, and
+`vaults/gauntlet_exit/` for minotaur rooms. Add one file with a new `NAME`
+to extend a category. Use the same relative path in a higher `--mod-dir`
+layer to replace an existing file. The game discovers these files through
+the effective VFS and sorts eligible IDs before a seeded choice. Builds do
+not run a source importer.
+
+A parent `.des` owns visible geometry and its `SUBVAULT` sites. A named
+Lua hook under `policy/generation/vaults/gauntlet/` may emit these
+directives at the `: vault.run("name")` site. The generic nested-vault
+API passes three values to the selected child's hook:
+
+* `api:subvault_tag()` returns the exact tag selected by the parent, such
+  as `gauntlet_arena_77_first`. Use it to distinguish chamber size and tier.
+* `api:subvault_ordinal()` is the parent's station number for this helper.
+  The arena hook uses it to name transporter endpoints on both sides.
+* `api:subvault_setting("extra_items")` reads an optional value passed by
+  that one `SUBVAULT` call. It does not persist between arenas or floors.
+
+For example, a parent hook can call
+`api:emit(directives.SUBVAULT, "a:gauntlet_arena_first", {
+    extra_items = "fg|* / .",
+})`. The production helper in
+`policy/generation/vaults/gauntlet/shared.lua` supplies `shared.arena` so
+a new parent can name a glyph, tier tag, and optional prize pattern without
+reimplementing station numbers. Keep all script statements in a readable
+Lua file for now; the paired `.des` contains a TODO to consolidate these
+hooks into the map later. Lua remains outside Go source.
+
+`api:emit` queues a directive until the current hook returns. When a later
+choice depends on which helpers the first directives selected, place two
+`: vault.run(...)` lines in the `.des`: an `opening` hook that emits those
+helpers and a `finish` hook that draws the choice. The engine applies the
+opening directives between the two calls. The four conditional bundled
+parents show this pattern. A single hook would draw too early.
+
+A replacement arena should retain its entry `P` and return `Q` marker
+sites. A replacement exit needs exactly one live boss-room return arch,
+normally declared with `KFEAT: < = exit_gauntlet`, and a viable minotaur
+room. The parent map's own `<` arches do not count toward this requirement.
+Generation checks named transporter sources and destinations
+as a complete graph; save restore checks their exact cells and resolved
+coordinates again. A malformed overlay fails before the staged level is
+installed. Gauntlet rewards with `no_pickup` are protected from monsters,
+while the player can still take them. The gate's duration is drawn when the
+outside map is populated, and world time continues while that floor is
+inactive. Long-range teleportation and Passage of Golubria are sealed
+inside Gauntlet, but blinking remains legal.
+
+For a visual check, run
+`CRAWL_GAUNTLET_SNAPSHOT_DIR=/path/to/output go test ./internal/game -run TestGauntletAllParentLayoutsPopulate`.
+The test writes an 80 by 70 text floor and a source-to-landing transporter
+index for every parent map.
+
 ## Test a mod
 
 Use a file ending in `_test.lua` under `tests/`. Import production modules

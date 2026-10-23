@@ -1,0 +1,17 @@
+# minmay_gauntlet_arena_77_p_blocks: authored Gauntlet gauntlet_arena map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   minmay_gauntlet_arena_77_p_blocks
+DEPTH: Gauntlet
+TAGS:   gauntlet_arena_77_first gauntlet_arena_77_second
+# Source Lua: : gauntlet_arena_setup(_G)
+: vault.run("shared.setup")
+MAP
+n33332xxn
+n3xxx2xxn
+n3xx.^x3n
+n22.P.22n
+n3x^.xx3n
+ xxdxxx3
+ xxdQdd1
+ENDMAP

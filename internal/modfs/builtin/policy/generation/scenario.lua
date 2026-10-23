@@ -8,6 +8,7 @@ local sewer = require("policy.generation.sewer.level")
 local ossuary = require("policy.generation.ossuary.level")
 local wizlab = require("policy.generation.wizlab.level")
 local desolation = require("policy.generation.desolation.level")
+local gauntlet = require("policy.generation.gauntlet.level")
 local bailey = require("policy.generation.bailey.level")
 local ice_cave = require("policy.generation.ice_cave.level")
 local volcano = require("policy.generation.volcano.level")
@@ -224,6 +225,12 @@ function module.desolation(ctx, input)
     return desolation.generate(ctx, input)
 end
 
+-- The source Gauntlet parent owns its arena choices; stage the complete
+-- floor and all transporter links before an accepted timed entry commits.
+function module.gauntlet(ctx, input)
+    return gauntlet.generate(ctx, input)
+end
+
 -- Bailey's mapless controller chooses one saved-theme child before the
 -- generic staged-level transaction installs its temporary floor.
 function module.bailey(ctx, input)
@@ -304,6 +311,11 @@ register.policy({
 register.policy({
     id = "world.generate_desolation_level",
     run = module.desolation,
+})
+
+register.policy({
+    id = "world.generate_gauntlet_level",
+    run = module.gauntlet,
 })
 
 register.policy({

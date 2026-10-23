@@ -1,0 +1,78 @@
+# gammafunk_gauntlet_hard_choice: authored Gauntlet gauntlet map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   gammafunk_gauntlet_hard_choice
+DEPTH: Gauntlet
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen no_trap_gen
+# Source Lua: : gauntlet_setup(_G, "DFJLNP", "EHKMOQ")
+# Separate hooks let the first two arenas resolve before the source coin flip.
+: vault.run("gammafunk_gauntlet_hard_choice.opening")
+: vault.run("gammafunk_gauntlet_hard_choice.finish")
+# 50% chance to make the second fight harder.
+MAP
+ccccccccccccccccccccccccccccccccccc
+cccccGcccGcccGcccGcccGcccGcccGccccc
+cccccncccncccncccncccncccncccnccccc
+cccl............l<l............lccc
+cGn.......D.............F.......nGc
+ccc..nnnnnnnnnnn...nnnnnnnnnnn..ccc
+ccc..aaaaaaaaaaa...ppppppppppp..ccc
+ccc..aaaaaaaaaaa.A.ppppppppppp..ccc
+cGn..aaaaaaaaaaa...ppppppppppp..nGc
+ccc..aaaaaaaaaaa...ppppppppppp..ccc
+ccc..aaaaaaaaaaa...ppppppppppp..ccc
+ccc..aaaaaaaaaaa...ppppppppppp..ccc
+cGn..naaaaaaaaan...npppppppppn..nGc
+ccc..naaaaaaaaan...npppppppppn..ccc
+ccc..naaaaaaaaan...npppppppppn..ccc
+ccc..nnnnnnnnnnn...nnnnnnnnnnn..ccc
+cGn.....n.E.n....l....n.H.n.....nGc
+ccc...G.n...n...lGl...n...n.G...ccc
+ccc.....n.J.n....l....n.L.n.....ccc
+ccc..nnnnnnnnnnn...nnnnnnnnnnn..ccc
+cGn..qqqqqqqqqqq...rrrrrrrrrrr..nGc
+ccc..qqqqqqqqqqq...rrrrrrrrrrr..ccc
+ccc..qqqqqqqqqqq...rrrrrrrrrrr..ccc
+ccc..qqqqqqqqqqq...rrrrrrrrrrr..ccc
+cGn..qqqqqqqqqqq...rrrrrrrrrrr..nGc
+ccc..qqqqqqqqqqq...rrrrrrrrrrr..ccc
+ccc..nqqqqqqqqqn...nrrrrrrrrrn..ccc
+ccc..nqqqqqqqqqn...nrrrrrrrrrn..ccc
+cGn..nqqqqqqqqqn...nrrrrrrrrrn..nGc
+ccc..nnnnnnnnnnn...nnnnnnnnnnn..ccc
+ccc.....n.K.n....l....n.M.n.....ccc
+ccc...G.n...n...lGl...n...n.G...ccc
+cGn.....n.N.n....l....n.P.n.....nGc
+ccc..nnnnnnnnnnn...nnnnnnnnnnn..ccc
+ccc..sssssssssss...uuuuuuuuuuu..ccc
+ccc..sssssssssss...uuuuuuuuuuu..ccc
+cGn..sssssssssss...uuuuuuuuuuu..nGc
+ccc..sssssssssss...uuuuuuuuuuu..ccc
+ccc..sssssssssss...uuuuuuuuuuu..ccc
+ccc..sssssssssss...uuuuuuuuuuu..ccc
+cGn..nsssssssssn...nuuuuuuuuun..nGc
+ccc..nsssssssssn...nuuuuuuuuun..ccc
+ccc..nsssssssssn...nuuuuuuuuun..ccc
+ccc..nnnnnnnnnnn...nnnnnnnnnnn..ccc
+cGn.............................nGc
+cccl............l<l............lccc
+cccccnccccnnnnnnnnnnnnnnnccccnccccc
+    cGc vl...............lv cGc
+    ccc vG.G.G..O.Q..G.G.Gv ccc
+        vl...............lv
+        vvyyyyyyyyyyyyyyyvv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vvyyyyyyyyyyyyyvv
+         vvyyyyyyyyyyyyyvv
+         vvyyyyyyyyyyyyyvv
+         vvvvvvvvvvvvvvvvv
+ENDMAP

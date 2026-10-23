@@ -12,6 +12,11 @@ local loot = {
         "hat good_item / pair of gloves good_item / " ..
         "pair of boots good_item",
 
+    -- Scarves cannot be randart in the pinned source's auxiliary pool.
+    RANDART_AUX_ARMOUR =
+        "cloak randart / helmet randart / hat randart / " ..
+        "pair of gloves randart / pair of boots randart",
+
     GOOD_SCROLLS =
         "w:120 scroll of identify no_pickup / " ..
         "w:55 scroll of identify no_pickup q:2 / " ..

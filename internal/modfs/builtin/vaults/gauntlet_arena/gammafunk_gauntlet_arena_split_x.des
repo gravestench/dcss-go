@@ -1,0 +1,20 @@
+# gammafunk_gauntlet_arena_split_x: authored Gauntlet gauntlet_arena map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:  gammafunk_gauntlet_arena_split_x
+DEPTH: Gauntlet
+TAGS:  gauntlet_arena_first gauntlet_arena_second
+SUBST: ~ = ^..
+# Source Lua: : gauntlet_arena_setup(_G)
+: vault.run("shared.setup")
+MAP
+n3.3.3.3.3n
+n~x3.3.3x~n
+n.xx3.3xx.n
+n.~xx~xx~.n
+n....P....n
+n.^xxnxx^.n
+ .xx2.2xx.
+ !x~.1.~x!
+ 22ddQdd22
+ENDMAP

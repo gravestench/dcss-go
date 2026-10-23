@@ -1,0 +1,21 @@
+# nicolae_gauntlet_swirl: authored Gauntlet gauntlet_arena map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   nicolae_gauntlet_swirl
+DEPTH: Gauntlet
+TAGS:   gauntlet_arena_first gauntlet_arena_second
+NSUBST: P = P / -, - = 10=3 / ., ' = 6=2 / ., ! = ^.. / .
+SUBST:  ~ = ^.
+# Source Lua: : gauntlet_arena_setup(_G)
+: vault.run("shared.setup")
+MAP
+n--x~-----n
+n---x--~--n
+n-~-x~---xn
+n---PnPxx!n
+n--^nnn^--n
+n!xx'n''''n
+ x'''~x'~'
+ ''~'1x'''
+ d''dQdx'd
+ENDMAP

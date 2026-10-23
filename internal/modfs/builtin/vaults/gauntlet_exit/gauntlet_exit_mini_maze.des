@@ -1,0 +1,33 @@
+# gauntlet_exit_mini_maze: authored Gauntlet gauntlet_exit map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:    gauntlet_exit_mini_maze
+DEPTH: Gauntlet
+TAGS:    gauntlet_exit
+SHUFFLE: def, ghi, klm
+SUBST:   d : b, e : ., f : b
+SUBST:   g : b, h : ., i : b
+SUBST:   k = <, l = ., m = .
+KMONS:   < = patrolling minotaur
+KFEAT:   < = exit_gauntlet
+SUBST:   b : vvb
+# Source Lua: : gauntlet_exit_loot(_G)
+: vault.run("shared.loot")
+# should not be necessary
+# Source validate: the exit glyph must survive substitutions.
+: vault.validate("shared.has_exit")
+MAP
+vbfbbbbbebbbdbv
+vbfg.......b.bv
+vbfb.bhbdb.b.bv
+vbfb.b.b.g.b.bv
+vbfb.f.b.b.b.bv
+vbfbii.b.b...bv
+vbfb.h.b.bbebbv
+vb...b.b.....bv
+vbbbbb.bfbbb.bv
+vb.........b.bv
+ bfbbdbbbbebgb
+ bl....k....mb
+ bbbbbbbbbbbbb
+ENDMAP

@@ -855,6 +855,21 @@ vetoes, animated source map props, and every exceptional item/monster effect
 inside the labs; these are tracked with their neighboring systems rather than
 hidden behind an inert lab-specific adapter.
 
+Gauntlet now has its one source entrance, 43 arenas, six minotaur exits,
+and ten parent layouts as individual layered `.des` files. All 60 MAP
+blocks match pinned source geometry. The named Lua hooks choose source
+encounter tiers, reward slots, and route branches with local placement
+state. A timed gate starts on the outside floor, expires with world time,
+and enters one staged parent floor; each return arch leads to the saved
+outside cell. Akara stores the gate clock and visitor pointer. Source
+transporter markers resolve into exact links and restore validates them.
+Long-range teleportation, Passage of Golubria, and teleportitis are
+blocked inside Gauntlet, while blinking remains available. The
+[Gauntlet snapshot index](level-snapshots/gauntlet/index.txt) shows all
+ten generated parent floors and their transporter routes. Exceptional
+item and monster effects still follow their wider combat and equipment
+domains.
+
 For each new domain, convert the full rule category in one pass. Put its
 definitions, policies, and ECS systems in actual Lua files; extend Go only
 for reusable engine primitives. Delete the previous rule path in the same

@@ -2,6 +2,7 @@
 -- and spl-transloc.cc:_teleport_player. A failed landing or quiet landing
 -- consumes the trigger without relocating the player.
 local capabilities = require("constants.mutation_capabilities")
+local branches = require("ids.branches")
 local catalog = require("policy.catalog")
 local cloud = require("policy.clouds.placement")
 local cloud_ids = require("ids.clouds")
@@ -111,6 +112,15 @@ end
 -- active. A failed destination search still respects the source draw budget.
 function teleportitis.tick(ctx, player, aut)
     if aut <= 0 then
+        return
+    end
+
+    local position = ctx:get(player, component.POSITION)
+
+    -- Source teleportitis is disabled in the Gauntlet, even though a
+    -- manually requested blink is still legal there.
+    if position and ctx:level_branch(position.level_id) ==
+        branches.BRANCH_GAUNTLET then
         return
     end
 

@@ -1,0 +1,20 @@
+# nicolae_gauntlet_arena_x: authored Gauntlet gauntlet_arena map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:  nicolae_gauntlet_arena_x
+DEPTH: Gauntlet
+TAGS:  gauntlet_arena_first gauntlet_arena_second
+SUBST: ~ = ^..
+# Source Lua: : gauntlet_arena_setup(_G)
+: vault.run("shared.setup")
+MAP
+nx3333333xn
+n3x.....x3n
+n3~x...x~3n
+n..~xPx~..n
+n...^x^...n
+n..~x.x~..n
+ .~x2.2x~.
+ ~x2.1.2x~
+ x2ddQdd2x
+ENDMAP

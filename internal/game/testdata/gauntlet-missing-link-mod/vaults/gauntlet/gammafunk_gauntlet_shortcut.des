@@ -1,0 +1,64 @@
+# gammafunk_gauntlet_shortcut: authored Gauntlet gauntlet map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   gammafunk_gauntlet_shortcut
+DEPTH: Gauntlet
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen no_trap_gen
+# Source Lua: : gauntlet_setup(_G, "DFJLNP", "EHKMOQ")
+: vault.run("gammafunk_gauntlet_shortcut.compose")
+# 3.5 on average per arena (including the single guaranteed item), for 7 items
+# total on average.
+# 1.75 on average per arena for 7 items total on average.
+MAP
+ccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccGcccGcccGcccGcccGcccGcccGcccGcccGcccGcccGcccc
+ccccncccncccncccncccncccncccncccncccncccncccncccc
+cccl............l<l..........................lccc
+cGn.....................J.....................nGc
+ccc..nnnnnnnnnnn...nnnnnnnnnnn...nffffffnnnn..ccc
+ccc..aaaaaaaaaaa...eeeeeeeeeee.G.nfffffffffn..ccc
+ccc..aaaaaaaaaaa.A.eeeeeeeeeee...nfffffffffn..ccc
+cGn..aaaaaaaaaaa...eeeeeeeeeeennnnfffffffffn..nGc
+ccc..aaaaaaaaaaa...eeeeeeeeeee...nfffffffffn..ccc
+ccc..aaaaaaaaaaa...eeeeeeeeeeeK.Lnfffffffffn..ccc
+ccc..aaaaaaaaaaa...eeeeeeeeeee...nfffffffffn..ccc
+cGn..naaaaaaaaan...neeeeeeeeennnnnfffffffffn..nGc
+ccc..naaaaaaaaan...neeeeeeeeen...nfffffffffn..ccc
+ccc..naaaaaaaaan...neeeeeeeeen.G.nfffffffffn..ccc
+ccc..nnnnnnnnnnn...nnnnnnnnnnn...nffffffnnnn..ccc
+cGn.....n.E.n....l.............l....n.M.n.....nGc
+ccc...G.n...n...lGl...........lGl...n...n.G...ccc
+ccc.....n.F.n....l.............l....n.N.n.....ccc
+ccc..nnnnnnnnnnn...nnnnnnnnnnn...nnnnnnnnnnn..ccc
+cGn..ddddddddddd...hhhhhhhhhhh.G.ggggggggggg..nGc
+ccc..ddddddddddd...hhhhhhhhhhh...ggggggggggg..ccc
+ccc..ddddddddddd...hhhhhhhhhhhnnnggggggggggg..ccc
+ccc..ddddddddddd...hhhhhhhhhhh...ggggggggggg..ccc
+cGn..ddddddddddd...hhhhhhhhhhhP.Oggggggggggg..nGc
+ccc..ddddddddddd...hhhhhhhhhhh...ggggggggggg..ccc
+ccc..ndddddddddn...nhhhhhhhhhnnnnngggggggggn..ccc
+ccc..ndddddddddn...nhhhhhhhhhn...ngggggggggn..ccc
+cGn..ndddddddddn...nhhhhhhhhhn.G.ngggggggggn..nGc
+ccc..nnnnnnnnnnn...nnnnnnnnnnn...nnnnnnnnnnn..ccc
+  c...........................................c
+  cl............l<l..........................lc
+  ccccncccnnnnnnnnnnnnnnncccncccncccncccncccncc
+     cGcvl...............lvcGcccGcccGcccGcccGc
+     cccvG.G.G..H.Q..G.G.Gvccccccccccccccccccc
+        vl...............lv
+        vvyyyyyyyyyyyyyyyvv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vyyyyyyyyyyyyyyyv
+         vvyyyyyyyyyyyyyvv
+         vvyyyyyyyyyyyyyvv
+         vvyyyyyyyyyyyyyvv
+         vvvvvvvvvvvvvvvvv
+ENDMAP

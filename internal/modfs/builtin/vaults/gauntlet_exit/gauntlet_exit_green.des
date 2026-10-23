@@ -1,0 +1,25 @@
+# gauntlet_exit_green: authored Gauntlet gauntlet_exit map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   gauntlet_exit_green
+DEPTH: Gauntlet
+TAGS:   gauntlet_exit
+MONS:   patrolling minotaur
+KFEAT:  < = exit_gauntlet
+# Source Lua: : gauntlet_exit_loot(_G)
+: vault.run("shared.loot")
+MAP
+v.vv.vv.vv.vv.v
+v.vv.vv.vv.vv.v
+...............
+.vv.vv.vv.vv.vv
+.vv.vv.vv.vv.vv
+...............
+vv.vv.b+bvv.vv.
+vv.vv.b.bvv.vv.
+......b.b......
+v.vv.vb1bv.vv.v
+ .vv.vb<bv.vv.
+ .....bbb.....
+ vv.vv.vv.vv.v
+ENDMAP

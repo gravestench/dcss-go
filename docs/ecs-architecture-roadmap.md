@@ -237,6 +237,17 @@ Lua setup module without a Go map-ID handler. Import the remaining
 secondary-vault corpus so
 those stages select from the complete source pool.
 
+The Gauntlet portal domain now uses 60 committed source MAPs: one timed
+entrance, 43 arena helpers, six exits, and ten complete parent layouts.
+Lua hooks own tier encounters, prizes, minotaur exits, and parent route
+choices. Scoped nested-vault settings replace the source script's global
+tier and counter. Akara components own the outside gate clock and active
+visitor return pointer. The common transporter runtime resolves station
+links and validates them on restore. Ten generated floor snapshots make
+the routes inspectable. Remaining work across the wider port includes
+more source branch and vault families, complete spell and monster behavior,
+and UI parity for features beyond these currently playable domains.
+
 ## Slice checks
 
 At the integrated conversion boundary, verify deterministic turn and RNG

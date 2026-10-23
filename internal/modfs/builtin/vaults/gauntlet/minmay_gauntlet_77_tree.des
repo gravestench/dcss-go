@@ -1,0 +1,72 @@
+# minmay_gauntlet_77_tree: authored Gauntlet gauntlet map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   minmay_gauntlet_77_tree
+DEPTH: Gauntlet
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen no_trap_gen no_pool_fixup
+KMONS:  ' = plant
+SUBST:  ' = '.
+# Source Lua: : gauntlet_setup(_G, "DFJLNPR", "EHKMOQS")
+: vault.run("minmay_gauntlet_77_tree.compose")
+MAP
+                      ccc
+                     ccwcc
+                    ccwwwcc
+                 ccccwwwwwcccc
+                 cww...t...wwc
+                 cw..A...<..wc
+              cccc.....D.....cccc
+              cww..nnnnnnnnn..wwc
+              cw...aaaaaaaaa...wc
+           cccc..t.aaaaaaaaa.t..cccc
+           cww..''.aaaaaaaaa.''..wwc
+           cw..t''.aaaaaaaaa.''t..wc
+        cccc..''''.aaaaaaaaa.''''..cccc
+        cww..t'''t.naaaaaaan.t'''t..wwc
+        cw.........naaaaaaan.........wc
+     cccc...nnnnnnnnnnnnnnnnnnnnnnn...cccc
+     cww....nF.........E.........Jn....wwc
+     cw..nnnnnnnnnnnnnnnnnnnnnnnnnnnnn..wc
+  cccc...ppppppppp...........qqqqqqqqq...cccc
+  cww..t.ppppppppp..'cwcwc'..qqqqqqqqq.t..wwc
+  cw..''.ppppppppp.''wwwww''.qqqqqqqqq.''..wc
+ cc..''t.ppppppppp.t'cwcwc't.qqqqqqqqq.t''..cc
+ccw.''''.ppppppppp.''wwwww''.qqqqqqqqq.''''.wcc
+cww.'''t.npppppppn..'cwcwc'..nqqqqqqqn.t'''.wwc
+ccw.''...npppppppn...'''''...nqqqqqqqn...''.wcc
+ccc.'t.nnnnnnnnnnnnn..'t'..nnnnnnnnnnnnn.t'.ccc
+ccw....nL....H....Nn.......nP....K....Rn....wcc
+cww.nnnnnnnnnnnnnnnnnnn.nnnnnnnnnnnnnnnnnnn.wwc
+ccw.rrrrrrrrr.sssssssss.uuuuuuuuu.zzzzzzzzz.wcc
+ccc.rrrrrrrrr.sssssssss.uuuuuuuuu.zzzzzzzzz.ccc
+ccw.rrrrrrrrr.sssssssss.uuuuuuuuu.zzzzzzzzz.wcc
+cww.rrrrrrrrr.sssssssss.uuuuuuuuu.zzzzzzzzz.wwc
+ccw.rrrrrrrrr.sssssssss.uuuuuuuuu.zzzzzzzzz.wcc
+ccc.nrrrrrrrn.nsssssssn.nuuuuuuun.nzzzzzzzn.ccc
+ccw.nrrrrrrrn.nsssssssn.nuuuuuuun.nzzzzzzzn.wcc
+cww.nnnnnnnnn.nnnnnnnnn.nnnnnnnnn.nnnnnnnnn.wwc
+ccw.........................................wcc
+ cc.'t'.'t'.'t'.'t'.........'t'.'t'.'t'.'t'.cc
+ccw...............''...<...''...............wcc
+cwwwcwwwcwwwcwwwc..t'.....'t..cwwwcwwwcwwwcwwwc
+ccwcccwcccwcccwccc...........cccwcccwcccwcccwcc
+ ccc ccc ccc ccccccnnnnnnnnncccccc ccc ccc ccc
+              v.................v
+              v.t.t.M.O.Q.S.t.t.v
+              v.................v
+              vvyyyyyyyyyyyyyyyvv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vyyyyyyyyyyyyyyyv
+               vvyyyyyyyyyyyyyvv
+               vvyyyyyyyyyyyyyvv
+               vvyyyyyyyyyyyyyvv
+               vvvvvvvvvvvvvvvvv
+ENDMAP

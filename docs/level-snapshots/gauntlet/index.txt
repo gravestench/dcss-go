@@ -1,0 +1,13 @@
+Gauntlet parent layouts, seed 99144
+Coordinates are zero-based; all floors are 80 by 70.
+
+gammafunk_gauntlet_77_escape_option: 6 nested maps, 14 routes, 3 exits
+gammafunk_gauntlet_branching: 9 nested maps, 16 routes, 3 exits
+gammafunk_gauntlet_hard_choice: 7 nested maps, 12 routes, 3 exits
+gammafunk_gauntlet_mixed_choke_point: 8 nested maps, 14 routes, 3 exits
+gammafunk_gauntlet_one_two_three: 10 nested maps, 18 routes, 3 exits
+gammafunk_gauntlet_shortcut: 7 nested maps, 12 routes, 3 exits
+minmay_gauntlet_77_indecision: 7 nested maps, 12 routes, 4 exits
+minmay_gauntlet_77_tree: 8 nested maps, 14 routes, 3 exits
+minmay_gauntlet_mixed_big_or_small: 7 nested maps, 12 routes, 3 exits
+minmay_gauntlet_mixed_oops_all_seconds: 7 nested maps, 12 routes, 2 exits

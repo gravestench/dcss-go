@@ -1,0 +1,27 @@
+# gauntlet_exit_watery: authored Gauntlet gauntlet_exit map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:    gauntlet_exit_watery
+DEPTH: Gauntlet
+TAGS:    gauntlet_exit no_pool_fixup
+MONS:    patrolling minotaur
+KFEAT:   < = exit_gauntlet
+SHUFFLE: def, ghi
+SUBST:   dg = ., efhi = v
+# Source Lua: : gauntlet_exit_loot(_G)
+: vault.run("shared.loot")
+MAP
+vvv.vvv.vvv.vvv
+vvv.vvv.vvv.vvv
+v.............v
+v.vvv.vvv.vvv.v
+v.vvv.vvv.vvv.v
+v.............v
+vvvvbbb+bbbvvvv
+vvvvb.....bvvvv
+vvvvbbb1bbbvvvv
+vvvvbw...wbvvvv
+ vvvbww<wwbvvv
+ vvvbwwwwwbvvv
+ vvvbbbbbbbvvv
+ENDMAP

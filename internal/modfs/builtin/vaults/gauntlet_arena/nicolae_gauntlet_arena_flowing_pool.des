@@ -1,0 +1,20 @@
+# nicolae_gauntlet_arena_flowing_pool: authored Gauntlet gauntlet_arena map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   nicolae_gauntlet_arena_flowing_pool
+DEPTH: Gauntlet
+TAGS:   gauntlet_arena_first gauntlet_arena_second no_pool_fixup
+NSUBST: P = P / -, - = 10=3 / ^..., ' = 6=2 / ^..
+# Source Lua: : gauntlet_arena_setup(_G)
+: vault.run("shared.setup")
+MAP
+n.-ww-..w.n
+n-w--w--w-n
+nPw-ww-wwPn
+nw-w---w--n
+nw--wPw-wwn
+n-w-www-w-n
+ 'ww^'^w''
+ 'w''1w'w'
+ d'wdQd'wd
+ENDMAP

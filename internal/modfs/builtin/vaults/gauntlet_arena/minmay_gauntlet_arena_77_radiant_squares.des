@@ -1,0 +1,17 @@
+# minmay_gauntlet_arena_77_radiant_squares: authored Gauntlet gauntlet_arena map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   minmay_gauntlet_arena_77_radiant_squares
+DEPTH: Gauntlet
+TAGS:   gauntlet_arena_77_first gauntlet_arena_77_second
+# Source Lua: : gauntlet_arena_setup(_G)
+: vault.run("shared.setup")
+MAP
+n3332221n
+n.nxnx32n
+n^.3^3x2n
+nxnxP^n2n
+n.ddx3x3n
+ xddn.n3
+ Qx.x^.3
+ENDMAP

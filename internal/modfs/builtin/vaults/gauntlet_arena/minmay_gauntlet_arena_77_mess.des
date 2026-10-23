@@ -1,0 +1,20 @@
+# minmay_gauntlet_arena_77_mess: authored Gauntlet gauntlet_arena map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   minmay_gauntlet_arena_77_mess
+DEPTH: Gauntlet
+TAGS:   gauntlet_arena_77_first gauntlet_arena_77_second
+# there is one 3 on the map because a dispersal trap should not be on that
+# square
+NSUBST: ' = 9=3 / 6=2 / 1 / ^ / .
+# Source Lua: : gauntlet_arena_setup(_G)
+: vault.run("shared.setup")
+MAP
+nn''x'n'n
+n'xn'x3nn
+nn''xn'xn
+nx'xP'x'n
+n'n''xn'n
+ 'xnx''x
+ nddQddn
+ENDMAP

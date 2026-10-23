@@ -1,0 +1,22 @@
+# nicolae_gauntlet_arena_grate_2: authored Gauntlet gauntlet_arena map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   nicolae_gauntlet_arena_grate_2
+DEPTH: Gauntlet
+TAGS:   gauntlet_arena_first gauntlet_arena_second
+KFEAT:  qr = iron_grate
+NSUBST: "' = 10=3, - = 6=2 / ^.., ! = ^. / .
+SUBST:  r = rr^, ' = ^...
+# Source Lua: : gauntlet_arena_setup(_G)
+: vault.run("shared.setup")
+MAP
+n"""""""""n
+n'xrx'''x'n
+n...xqx'''n
+n!x...xrx'n
+n.xrxP..x'n
+n---xqx...n
+ -x---xrx.
+ -xrx1--x!
+ --ddQdd--
+ENDMAP

@@ -1,0 +1,64 @@
+# gammafunk_gauntlet_one_two_three: authored Gauntlet gauntlet map.
+# MAP geometry is preserved from the pinned DCSS gauntlet.des.
+# TODO: consolidate named Lua hooks into this DES when supported.
+NAME:   gammafunk_gauntlet_one_two_three
+DEPTH: Gauntlet
+ORIENT: encompass
+TAGS:   no_item_gen no_monster_gen no_trap_gen
+# Source Lua: : gauntlet_setup(_G, "DFJLNPRpr", "EHKMOQSqs")
+: vault.run("gammafunk_gauntlet_one_two_three.compose")
+# Just in case we ever add lava felids, prevent their revival in closets.
+KPROP:    lG = no_tele_into
+MAP
+                                     ccccc
+                    ccc ccc ccc ccc  cl<lc  ccc ccc ccc ccc
+                    cGc cGc cGc cGc  c...c  cGc cGc cGc cGc
+                   ccncccncccncccncccc.A.ccccncccncccncccncc
+                   cl.....................................lc
+                 ccc...................D...................ccc
+                 cGn..nnnnddddddn.nnnnnnnnnnn.neeeeeennnn..nGc
+                 cnn..ndddddddddn.aaaaaaaaaaa.neeeeeeeeen..nnc
+                 c....ndddddddddn.aaaaaaaaaaa.neeeeeeeeen....c
+               ccc....ndddddddddn.aaaaaaaaaaa.neeeeeeeeen....ccc
+               cGn..nnndddddddddn.aaaaaaaaaaa.neeeeeeeeennn..nGc
+               ccc..nHndddddddddn.aaaaaaaaaaa.neeeeeeeeenKn..ccc
+                 c..n.ndddddddddn.aaaaaaaaaaa.neeeeeeeeen.n..c
+       ccc ccc ccc..n.ndddddddddn.naaaaaaaaan.neeeeeeeeen.n..ccc ccc ccc
+       cGc cGc cGn..n.ndddddddddn.naaaaaaaaan.neeeeeeeeen.n..nGc cGc cGc
+   cccccncccncccnn..n.ndddddddddn.naaaaaaaaan.neeeeeeeeen.n..nncccncccnccccc
+   cGn..............n.nnnnddddddnnnnnnnnnnnnnnneeeeeennnn.n..............nGc
+  ccnn..............n.nllGllnF.........E.........JnllGlln.n..............nncc
+cccl....nnnnnnnnnnnnn.nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.nnnnnnnnnnnnn....lccc
+cGn.....nL...........N...........PnllllGllllnR...........p...........rn.....nGc
+ccc.nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn.ccc
+  c.fffffffffff.ggggggggggg.hhhhhhhhhhh.iiiiiiiiiii.jjjjjjjjjjj.kkkkkkkkkkk.c
+ccc.fffffffffff.ggggggggggg.hhhhhhhhhhh.iiiiiiiiiii.jjjjjjjjjjj.kkkkkkkkkkk.ccc
+cGn.fffffffffff.ggggggggggg.hhhhhhhhhhh.iiiiiiiiiii.jjjjjjjjjjj.kkkkkkkkkkk.nGc
+ccc.fffffffffff.ggggggggggg.hhhhhhhhhhh.iiiiiiiiiii.jjjjjjjjjjj.kkkkkkkkkkk.ccc
+  c.fffffffffff.ggggggggggg.hhhhhhhhhhh.iiiiiiiiiii.jjjjjjjjjjj.kkkkkkkkkkk.c
+ccc.fffffffffff.ggggggggggg.hhhhhhhhhhh.iiiiiiiiiii.jjjjjjjjjjj.kkkkkkkkkkk.ccc
+cGn.nfffffffffn.ngggggggggn.nhhhhhhhhhn.niiiiiiiiin.njjjjjjjjjn.nkkkkkkkkkn.nGc
+ccc.nfffffffffn.ngggggggggn.nhhhhhhhhhn.niiiiiiiiin.njjjjjjjjjn.nkkkkkkkkkn.ccc
+  c.nfffffffffn.ngggggggggn.nhhhhhhhhhn.niiiiiiiiin.njjjjjjjjjn.nkkkkkkkkkn.c
+ccc.nnnnnnnnnnn.nnnnnnnnnnn.nnnnnnnnnnn.nnnnnnnnnnn.nnnnnnnnnnn.nnnnnnnnnnn.ccc
+cGn.........................................................................nGc
+cccl..................................l<l..................................lccc
+  ccncccncccncccncccncccncccnccccnnnnnnnnnnnnnnnccncccncccncccncccncccncccncc
+   cGc cGc cGc cGc cGc cGc cGcvl...............lvcGc cGc cGc cGc cGc cGc cGc
+   ccc ccc ccc ccc ccc ccc cccvG..M.O.Q.S.q.s..Gvccc ccc ccc ccc ccc ccc ccc
+                              vl...............lv
+                              vvyyyyyyyyyyyyyyyvv
+                               vyyyyyyyyyyyyyyyv
+                               vyyyyyyyyyyyyyyyv
+                               vyyyyyyyyyyyyyyyv
+                               vyyyyyyyyyyyyyyyv
+                               vyyyyyyyyyyyyyyyv
+                               vyyyyyyyyyyyyyyyv
+                               vyyyyyyyyyyyyyyyv
+                               vyyyyyyyyyyyyyyyv
+                               vyyyyyyyyyyyyyyyv
+                               vvyyyyyyyyyyyyyvv
+                               vvyyyyyyyyyyyyyvv
+                               vvyyyyyyyyyyyyyvv
+                               vvvvvvvvvvvvvvvvv
+ENDMAP

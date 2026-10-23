@@ -389,7 +389,10 @@ local function localize_helper_records(records, cells, low_x, low_y)
             end
         end
 
-        if count == 0 then
+        -- A keyed declaration whose glyph was clipped by the parent mask
+        -- has no site. Keeping it as a pending record would place an item
+        -- or actor at the helper's corner, which may be a wall.
+        if count == 0 and (not targets or targets == "") then
             record.local_x = low_x
             record.local_y = low_y
             record.pending = true
@@ -458,7 +461,7 @@ end
 
 -- Resolve helper maps before glyph transformations so substitutions operate on the composed cell matrix.
 local function embed_helper(cells, source, helper, random, depth, player,
-    state)
+    state, tag, ordinal, settings)
     if depth > 4 then
         error("SUBVAULT recursion exceeds four levels")
     end
@@ -513,7 +516,11 @@ local function embed_helper(cells, source, helper, random, depth, player,
     low_y = fit.top
 
     local nested_records = operations.apply(helper, helper_cells,
-        random, depth + 1, player, state)
+        random, depth + 1, player, state, {
+            tag = tag,
+            ordinal = ordinal,
+            settings = settings,
+        })
 
     -- A helper's rectangular bounds may cross another SUBVAULT region.
     -- Only cells carrying one of the source glyphs belong to this helper;
@@ -543,7 +550,7 @@ end
 
 -- A missing helper fit is a source error rather than a silently skipped decoration.
 local function apply_subvault(vault, cells, operation, random, depth,
-    player, state)
+    player, state, ordinal)
     local source, options, total = helper_options(operation.argument)
 
     -- Some source maps declare a shared set of optional helper glyphs.
@@ -564,7 +571,8 @@ local function apply_subvault(vault, cells, operation, random, depth,
     local tag = helper_choice(options, total, random)
     local helper = helper_for_tag(tag, random, player, state)
     local ok, result, claimed = pcall(embed_helper,
-        cells, source, helper, random, depth, player, state)
+        cells, source, helper, random, depth, player, state,
+        tag, ordinal, operation.settings)
 
     if not ok then
         error(string.format("%s:%d: vault %s: SUBVAULT %s: %s",
@@ -584,7 +592,7 @@ end
 
 -- Expose only controlled random, context, and emission methods to ported vault hooks.
 local function hook_api(random, events, line, player, cells, state,
-    vault, hook_values)
+    vault, hook_values, nested_context)
     local api = {}
 
     player = player or {}
@@ -669,6 +677,29 @@ local function hook_api(random, events, line, player, cells, state,
     -- process-global rune or helper registry.
     function api:has_placed_tag(tag)
         return state.selected_tags[tag] == true
+    end
+
+    -- A child sees the tag chosen for this one SUBVAULT call. The source
+    -- Gauntlet uses first/second arena tags as its encounter tier, while
+    -- other nested maps may use the same fact for local variants.
+    function api:subvault_tag()
+        return nested_context and nested_context.tag
+    end
+
+    -- The ordinal counts this parent's helper declarations in source order.
+    -- Gauntlet names transporter pairs by that order, without a process
+    -- global counter that could leak across generation attempts.
+    function api:subvault_ordinal()
+        return nested_context and nested_context.ordinal
+    end
+
+    -- Parent hooks may assign one immutable option to a single child.
+    -- Gauntlet's source changes its prize pattern between arena groups;
+    -- the option travels with that call rather than a shared Lua global.
+    function api:subvault_setting(name)
+        local settings = nested_context and nested_context.settings
+
+        return settings and settings[name]
     end
 
     -- Avoid a draw for a bound of one while exposing hook-safe layout randomness.
@@ -879,13 +910,14 @@ local function hook_api(random, events, line, player, cells, state,
     end
 
     -- Queue a DES directive at this hook location before subsequent operations.
-    function api:emit(kind, argument)
+    function api:emit(kind, argument, settings)
         events[#events + 1] = {
             type = "directive",
             value = {
                 kind = kind,
                 argument = argument,
                 line = line,
+                settings = settings,
             },
         }
     end
@@ -929,7 +961,8 @@ local function hook_api(random, events, line, player, cells, state,
 end
 
 -- Walk source operations in order so hook emissions and substitutions see preceding edits.
-function operations.apply(vault, cells, random, depth, player, state)
+function operations.apply(vault, cells, random, depth, player, state,
+    nested_context)
     depth = depth or 0
     state = state or {
         used = used.new(player and player.prior_vault_ids),
@@ -942,6 +975,7 @@ function operations.apply(vault, cells, random, depth, player, state)
         [directives.ITEM] = 1,
     }
     local hook_values = {}
+    local child_count = 0
 
     -- Validate one source operation, then apply terrain or queue its typed effect.
     local function apply_operation(operation)
@@ -955,8 +989,11 @@ function operations.apply(vault, cells, random, depth, player, state)
                 vault_id = vault.id,
             }
         elseif operation.kind == directives.SUBVAULT then
+            child_count = child_count + 1
+
             local nested, claimed = apply_subvault(vault, cells,
-                operation, random, depth, player, state)
+                operation, random, depth, player, state,
+                child_count)
 
             -- The helper owns these cells even when a later parent hook
             -- declares a keyed monster for the same glyph. Apply the mask
@@ -1008,7 +1045,8 @@ function operations.apply(vault, cells, random, depth, player, state)
         if operation.kind == directives.HOOK_RUN then
             local events = {}
             local api = hook_api(random, events, operation.line,
-                player, cells, state, vault, hook_values)
+                player, cells, state, vault, hook_values,
+                nested_context)
 
             hooks.run(vault, operation.argument, api)
 

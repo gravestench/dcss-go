@@ -13,7 +13,7 @@ local effect = {}
 -- Example: Blink rejects a target that fails the shared translocation landing check.
 -- Known restrictions fail early; otherwise request a cell and validate range, sight, and landing.
 function effect.prepare(ctx, player, request)
-    local reason = translocation.restriction(ctx, player)
+    local reason = translocation.restriction(ctx, player, true)
 
     if reason then
         if request.known then
@@ -59,7 +59,7 @@ end
 
 -- Recheck translocation at execution, escape grasp, leave a cloud, then move to the chosen cell.
 function effect.apply(ctx, player, request)
-    local reason = translocation.restriction(ctx, player)
+    local reason = translocation.restriction(ctx, player, true)
 
     if reason then
         ctx:emit("read", reason)
