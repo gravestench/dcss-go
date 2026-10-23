@@ -95,13 +95,15 @@ function cancellation.available(ctx, player)
     return (contamination and contamination.amount > 0) or
         active_fields(ctx, player) or form_cancellable(ctx, player) or
         ctx:has(player, component.TELEPORT) or
+        ctx:has(player, component.PLAYER_TELEPORT) or
         ctx:has(player, component.STICKY_FLAME)
 end
 
 -- Source: spl-goditem.cc:debuff_player. Most magical durations fall to
 -- one aut; flight retains 11 aut to allow safe landing.
--- Example: Cancellation can shorten active buffs and reduce contamination in one potion action.
-function cancellation.purge(ctx, player)
+-- Both Sif Muna and cancellation use this effect; contamination reduction
+-- belongs only to the potion and therefore stays outside this method.
+function cancellation.debuff(ctx, player)
     local changed = shorten(ctx, player)
     local form = ctx:get(player, component.PLAYER_FORM)
 
@@ -111,8 +113,11 @@ function cancellation.purge(ctx, player)
         changed = true
     end
 
-    for _, id in ipairs({ component.TELEPORT,
-        component.STICKY_FLAME }) do
+    for _, id in ipairs({
+        component.TELEPORT,
+        component.PLAYER_TELEPORT,
+        component.STICKY_FLAME,
+    }) do
         if ctx:has(player, id) then
             ctx:remove(player, id)
             changed = true
@@ -122,6 +127,14 @@ function cancellation.purge(ctx, player)
     if changed then
         ctx:emit("duration", "Your magical effects are unravelling.")
     end
+
+    return changed
+end
+
+-- Cancellation adds a contamination reduction roll after debuff_player.
+-- This roll happens even when no contamination is currently stored.
+function cancellation.purge(ctx, player)
+    cancellation.debuff(ctx, player)
 
     local contamination = ctx:get(player,
         zap_ids.component.CONTAMINATION)

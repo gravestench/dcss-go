@@ -98,6 +98,17 @@ function test.run(ctx)
     effect.apply(tracked, dry)
     harness.equal(draws, 1,
         "cancellation consumes its roll without contamination")
+
+    -- A queued player teleport uses its own component and is dispellable
+    -- by the same debuff operation as Sif Muna's wrath.
+    local departing = ctx:create()
+
+    ctx:add(departing, component.PLAYER_TELEPORT, {
+        remaining_aut = 30,
+    })
+    harness.falsy(effect.can_quaff(ctx, departing))
+    effect.apply(ctx, departing)
+    harness.falsy(ctx:has(departing, component.PLAYER_TELEPORT))
 end
 
 return test

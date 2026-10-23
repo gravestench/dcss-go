@@ -209,8 +209,8 @@ local function sif_intelligence(ctx)
     harness.equal(owner:draws_used(), 2)
 end
 
--- Confusion uses its saved timer; the separate debuff slot is explicit
--- because the available potion owner would also remove contamination.
+-- Sif's debuff shares the potion's magic-duration owner but skips that
+-- potion's contamination reduction and potion-stream random draw.
 local function sif_statuses(ctx)
     local player = worshipper(ctx, gods.NO_GOD)
     local confusion_owner = with_draws(ctx, { 3, 0 })
@@ -220,13 +220,26 @@ local function sif_statuses(ctx)
     harness.equal(ctx:get(player,
         zap_ids.component.PLAYER_CONFUSION).remaining_aut, 50)
 
-    local debuff_owner = with_draws(ctx, { 9 })
-    local success, message = pcall(sif_muna.apply,
-        debuff_owner, player)
+    ctx:add(player, component.DURATIONS, {
+        haste_aut = 200,
+    })
+    ctx:add(player, component.PLAYER_TELEPORT, {
+        remaining_aut = 30,
+    })
+    ctx:add(player, zap_ids.component.CONTAMINATION, {
+        amount = 5000,
+    })
 
-    harness.falsy(success)
-    harness.truthy(string.find(message,
-        "unimplemented Sif Muna debuff_player wrath", 1, true))
+    local debuff_owner = with_draws(ctx, { 9 })
+
+    harness.truthy(sif_muna.apply(debuff_owner, player))
+    harness.equal(ctx:get(player, component.DURATIONS).haste_aut, 1)
+    harness.equal(ctx:get(player,
+        zap_ids.component.PLAYER_CONFUSION).remaining_aut, 1)
+    harness.falsy(ctx:has(player, component.PLAYER_TELEPORT))
+    harness.equal(ctx:get(player,
+        zap_ids.component.CONTAMINATION).amount, 5000)
+    harness.equal(debuff_owner:draws_used(), 1)
 end
 
 -- Use the normal summon placement fixture, with fixed card draws and all

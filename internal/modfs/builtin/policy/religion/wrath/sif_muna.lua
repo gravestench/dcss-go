@@ -3,6 +3,8 @@
 local component = require("constants.component")
 local confusion = require("policy.magic.player_confusion")
 local attributes = require("policy.character.attributes")
+local cancellation = require("policy.potions.cancellation")
+local channels = require("constants.message_channels")
 local stat_loss = require("policy.character.stat_loss")
 local stats = require("constants.stats")
 local streams = require("constants.rng_streams")
@@ -12,7 +14,7 @@ local sif_muna = {}
 -- The source chooses one of ten equally likely cases before any branch
 -- roll. All outcomes write existing saveable player resources or statuses.
 function sif_muna.apply(ctx, player)
-    ctx:emit("religion", "Sif Muna's wrath finds you.")
+    ctx:emit(channels.RELIGION, "Sif Muna's wrath finds you.")
 
     local choice = ctx:random(streams.CARDS, 10)
 
@@ -32,13 +34,12 @@ function sif_muna.apply(ctx, player)
         if magic.current > 0 then
             magic.current = 0
             ctx:set(player, component.MAGIC, magic)
-            ctx:emit("religion", "Your magic is drained!")
+            ctx:emit(channels.RELIGION, "Your magic is drained!")
         end
     else
-        -- cancellation.purge also drains contamination, whereas source
-        -- debuff_player only shortens magical durations. Until the shared
-        -- owner exposes that narrower operation, reject this outcome.
-        error("unimplemented Sif Muna debuff_player wrath")
+        -- Sif invokes the shared debuff operation without the potion's
+        -- separate contamination roll or reduction.
+        cancellation.debuff(ctx, player)
     end
 
     return true
