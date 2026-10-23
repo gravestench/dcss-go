@@ -3,6 +3,9 @@ local fighter = require("policy.combat.fighter")
 local poison = require("policy.combat.monster_poison")
 local slow = require("policy.combat.monster_slow")
 local dispersal = require("policy.combat.dispersal")
+local missile_egos = require("constants.missile_egos")
+local item_ids = require("ids.items")
+local skills = require("ids.skills")
 
 local effects = {}
 
@@ -10,12 +13,12 @@ local effects = {}
 -- effects.missile(ctx, ego, missile, monster, defender, damage, remaining_hp) -> ego damage and poison handling
 -- Dispatch a missile ego only after base damage, preserving its remaining-HP contact context.
 function effects.missile(ctx, ego, missile, monster, defender, damage, remaining_hp)
-    if missile.id == "MI_DART" then
-        local power = fighter.skill(ctx, "SK_THROWING", 1)
+    if missile.id == item_ids.MI_DART then
+        local power = fighter.skill(ctx, skills.SK_THROWING, 1)
 
-        if ego == "poisoned" then
+        if ego == missile_egos.POISONED then
             damage = roll.melee(ctx, 3 + power * 2)
-        elseif ego == "curare" then
+        elseif ego == missile_egos.CURARE then
             damage = 2
         else
             damage = 5 + roll.melee(ctx, power)
@@ -26,10 +29,10 @@ function effects.missile(ctx, ego, missile, monster, defender, damage, remaining
         return 0
     end
 
-    if ego == "poisoned" then
+    if ego == missile_egos.POISONED then
         local levels = 0
 
-        if missile.id == "MI_DART" then
+        if missile.id == item_ids.MI_DART then
             -- ranged-attack.cc: player poison darts carry duration
             -- power rather than ordinary hit-point damage.
             levels = damage
@@ -43,7 +46,7 @@ function effects.missile(ctx, ego, missile, monster, defender, damage, remaining
         return 0
     end
 
-    if ego == "curare" then
+    if ego == missile_egos.CURARE then
         -- beam.cc poisons, deals 2d6 asphyxiation damage, then
         -- slows a surviving non-resistant monster.
         if not poison.apply(ctx, monster, defender, 2, ctx:player()) then
@@ -60,7 +63,7 @@ function effects.missile(ctx, ego, missile, monster, defender, damage, remaining
         return extra
     end
 
-    if ego == "dispersal" then
+    if ego == missile_egos.DISPERSAL then
         if damage > 0 and remaining_hp > 0 then
             dispersal.blink(ctx, ctx:player(), monster, defender)
         end

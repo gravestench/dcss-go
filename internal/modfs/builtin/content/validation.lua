@@ -6,6 +6,7 @@
 local validation = {}
 local categories = require("constants.catalog")
 local gods = require("constants.gods")
+local conduct_kinds = require("constants.religion_conduct")
 local piety_limits = require("constants.piety")
 local books = require("ids.monster_spellbooks")
 local skill_ids = require("ids.skills")
@@ -784,6 +785,113 @@ end
 
 -- A god file owns its identity and ordinary join facts. Validate the
 -- effective overlay before game rules or altar planners consume those facts.
+-- Check a god's effective conduct module before play. Shape validation here
+-- catches a broken mod at boot rather than when a particular act first
+-- happens, and reports the winning VFS file a mod author can edit.
+local function validate_conduct_module(definition)
+    local module_id = definition.conduct_module
+
+    if module_id == nil then
+        return
+    end
+
+    if type(module_id) ~= "string" or
+        not module_id:match("^policy%.religion%.conduct%.[a-z0-9_]+$") then
+        fail(categories.GODS, definition.id,
+            "conduct_module must name policy.religion.conduct.<god>")
+    end
+
+    local path = module_id:gsub("%.", "/") .. ".lua"
+
+    if not pcall(mod.read, path) then
+        fail(categories.GODS, definition.id,
+            "missing conduct module " .. path)
+    end
+
+    local loaded, handler = pcall(require, module_id)
+
+    if not loaded or type(handler) ~= "table" then
+        fail(categories.GODS, definition.id,
+            "invalid conduct module " .. path .. ": " .. tostring(handler))
+    end
+
+    local known = {}
+
+    for _, event_id in pairs(conduct_kinds) do
+        known[event_id] = true
+    end
+
+    for _, family in ipairs({ "likes", "dislikes" }) do
+        local responses = handler[family]
+
+        if responses ~= nil and type(responses) ~= "table" then
+            error(path .. " " .. family .. " must be a table")
+        end
+
+        for event_id, response in pairs(responses or {}) do
+            if not known[event_id] then
+                error(path .. " unknown conduct event " .. tostring(event_id))
+            end
+
+            if type(response) ~= "table" then
+                error(path .. " " .. event_id .. " response must be a table")
+            end
+
+            local required_fields = family == "likes" and
+                { "bonus", "denom_bonus", "xl_denom" } or
+                { "loss_factor", "penance_factor" }
+
+            for _, field in ipairs(required_fields) do
+                local value = response[field]
+
+                if type(value) ~= "number" or value % 1 ~= 0 then
+                    error(path .. " " .. event_id .. " needs integer " ..
+                        field)
+                end
+            end
+
+            local nonnegative = family == "likes" and
+                { "denom_bonus", "xl_denom" } or
+                { "loss_factor", "penance_factor" }
+
+            for _, field in ipairs(nonnegative) do
+                if response[field] < 0 then
+                    error(path .. " " .. event_id .. " needs nonnegative " ..
+                        field)
+                end
+            end
+
+            if response.penance_offset ~= nil and
+                (type(response.penance_offset) ~= "number" or
+                    response.penance_offset % 1 ~= 0) then
+                error(path .. " " .. event_id ..
+                    " needs integer penance_offset")
+            end
+
+            for _, field in ipairs({ "description", "message",
+                "forgiveness" }) do
+                if response[field] ~= nil and
+                    type(response[field]) ~= "string" then
+                    error(path .. " " .. event_id .. " invalid " .. field)
+                end
+            end
+
+            for _, field in ipairs({ "filter", "special" }) do
+                if response[field] ~= nil and
+                    type(response[field]) ~= "function" then
+                    error(path .. " " .. event_id .. " invalid " .. field)
+                end
+            end
+        end
+    end
+
+    for _, field in ipairs({ "before", "after" }) do
+        if handler[field] ~= nil and type(handler[field]) ~= "function" then
+            error(path .. " " .. field .. " must be a function")
+        end
+    end
+end
+
 local function validate_god(definition)
     local category = categories.GODS
     local id = definition.id
@@ -826,6 +934,8 @@ local function validate_god(definition)
             definition.behavior_module == "") then
         fail(category, id, "behavior_module must name a Lua module")
     end
+
+    validate_conduct_module(definition)
 
     for _, field in ipairs({
         "good", "rejects_innate_caster", "requires_orc", "requires_love",

@@ -6,6 +6,7 @@ local spell_range = require("policy.magic.range")
 local trajectory = require("policy.combat.trajectory")
 local target = require("policy.magic.effects.direct.target")
 local spells = require("ids.spells")
+local attack_conduct = require("policy.religion.conduct.attack")
 local effect = {}
 
 -- Source: spl-zap.cc:SPELL_MAGIC_DART -> ZAP_MAGIC_DART and
@@ -33,6 +34,7 @@ local function resolve(ctx, player, intent, spell, spell_power)
     end
 
     local definition = catalog.get("monsters", actor.kind_id)
+    attack_conduct.report(ctx, target, definition)
     local sides = 3 + math.floor(spell_power / 5)
     local rolled = 1 + ctx:random("spell", sides)
     local ac = monster_defense.armour(ctx, target, definition)

@@ -13,14 +13,13 @@ local defense = require("policy.combat.monster_defense")
 local direct = require("policy.combat.monster_direct")
 local flags = require("constants.monster_flags")
 local magic_damage = require("policy.magic.damage")
+local contamination = require("policy.magic.contamination")
 local malmutation = require("policy.monsters.malmutation")
 local roll = require("policy.combat.roll")
 local streams = require("constants.rng_streams")
-local zap_ids = require("policy.magic.effects.zaps.ids")
 
 local irradiate = {}
 local DICE = 3
-local MAX_CONTAMINATION = 250000
 
 -- Source lists and flags are optional on some monster definitions. Missing
 -- lists grant no immunity to radiation or its Wretched consequence.
@@ -32,23 +31,6 @@ local function has(values, wanted)
     end
 
     return false
-end
-
--- Contamination is one saved player component regardless of whether a
--- monster hit, player cast, cloud, or trap caused the increase.
-local function contaminate(ctx, player, added)
-    local state = ctx:get(player, zap_ids.component.CONTAMINATION)
-    local amount = math.min(MAX_CONTAMINATION,
-        (state and state.amount or 0) + added)
-
-    if state then
-        state.amount = amount
-        ctx:set(player, zap_ids.component.CONTAMINATION, state)
-    else
-        ctx:add(player, zap_ids.component.CONTAMINATION, {
-            amount = amount,
-        })
-    end
 end
 
 -- Both commands and monster AI need the same live footprint. Terrain does
@@ -146,8 +128,8 @@ local function strike(ctx, caster, target, power, stream)
     end
 
     if is_player then
-        contaminate(ctx, target,
-            2000 + ctx:random(stream, 1000))
+        contamination.change(ctx, target,
+            2000 + ctx:random(stream, 1000), false)
     else
         malmutation.apply(ctx, target, definition, stream)
     end
@@ -163,8 +145,8 @@ function irradiate.resolve(ctx, caster, power, stream)
     end
 
     if ctx:has(caster, component.PLAYER) then
-        contaminate(ctx, caster,
-            1250 + ctx:random(stream, 750))
+        contamination.change(ctx, caster,
+            1250 + ctx:random(stream, 750), true)
     end
 end
 

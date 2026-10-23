@@ -32,7 +32,10 @@ function system.update(ctx, actor)
         error("unsupported potion " .. item.kind_id)
     end
 
-    local message = effect.apply(ctx, player)
+    -- Read knownness before quaff reveals the potion. Gods with accidental
+    -- act forgiveness need the player's knowledge at action time.
+    local known = identification.known(ctx, player, intent.item_id)
+    local message = effect.apply(ctx, player, known.type)
     identification.reveal_type(ctx, player, intent.item_id)
 
     if item.quantity == 1 then

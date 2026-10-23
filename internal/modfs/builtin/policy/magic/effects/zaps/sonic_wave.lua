@@ -3,6 +3,7 @@ local spells = require("ids.spells")
 local defense = require("policy.combat.monster_defense")
 local damage = require("policy.magic.damage")
 local registry = require("policy.magic.effects.registry")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local sonic_wave = {}
 
@@ -45,6 +46,7 @@ function sonic_wave.resolve(ctx, player, _, _, power)
                 ctx:visible(origin.level_id, origin.x, origin.y, 7,
                     location.x, location.y) then
                 local definition = damage.monster(ctx, target)
+                attack_conduct.report(ctx, target, definition)
                 local ac = defense.armour(ctx, target, definition)
                 local raw = roll_damage(ctx, power)
                 local amount = math.max(0, raw - ctx:random("spell", ac + 1))

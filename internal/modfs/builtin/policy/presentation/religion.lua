@@ -7,6 +7,7 @@ local gods = require("constants.gods")
 local modes = require("constants.god_piety_modes")
 local names = require("policy.religion.names")
 local piety = require("policy.religion.piety")
+local descriptions = require("policy.religion.conduct.description")
 
 local religion = {}
 
@@ -21,11 +22,14 @@ function religion.run(ctx)
             god_name = "",
             piety_stars = "",
             penance = 0,
+            likes = {},
+            dislikes = {},
         }
     end
 
     local definition = catalog.get(categories.GODS, state.god_id)
     local stars = ""
+    local conduct_text = descriptions.for_god(state.god_id)
 
     if definition.piety_mode == modes.XOM then
         local rank = piety.rank(state.god_id, state.piety)
@@ -42,6 +46,8 @@ function religion.run(ctx)
         god_name = names[state.god_id],
         piety_stars = stars,
         penance = state.penance[state.god_id] or 0,
+        likes = conduct_text.likes,
+        dislikes = conduct_text.dislikes,
     }
 end
 

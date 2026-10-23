@@ -5,6 +5,7 @@ local catalog = require("policy.catalog")
 local damage = require("policy.magic.damage")
 local poison = require("policy.combat.monster_poison")
 local common = require("policy.magic.effects.statuses.common")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local radiance = {}
 
@@ -20,8 +21,9 @@ local function status(ctx, player)
 end
 
 -- Example: a nearby susceptible monster receives poison each elapsed action
--- while the caster's saved radiance duration remains positive.
-local function emit_poison(ctx, player, power, aut)
+-- while the caster's saved radiance duration remains positive. Source
+-- conduct is reported only on the cast pulse, never on later status ticks.
+local function emit_poison(ctx, player, power, aut, on_cast)
     local origin = ctx:get(player, component.POSITION)
     local pulses = math.floor(aut / time.AUT_PER_TURN)
     local remainder = aut % time.AUT_PER_TURN
@@ -42,6 +44,10 @@ local function emit_poison(ctx, player, power, aut)
                 common.visible(ctx, origin, position) then
                 local actor = ctx:get(monster, component.ACTOR)
                 local definition = catalog.get("monsters", actor.kind_id)
+
+                if on_cast then
+                    attack_conduct.report(ctx, monster, definition)
+                end
 
                 if poison.resistance(definition) < 1 then
                     local raw = (1 + ctx:random("spell", 1 +
@@ -93,7 +99,7 @@ function radiance.cast(ctx, player, _, _, power)
     ctx:emit("spell", before == 0 and
         "You begin to radiate toxic energy." or
         "Your toxic radiance grows in intensity.")
-    emit_poison(ctx, player, power, time.AUT_PER_TURN)
+    emit_poison(ctx, player, power, time.AUT_PER_TURN, true)
 end
 
 -- Radiance continues poisoning nearby actors from a saved area-status duration.

@@ -172,6 +172,12 @@ function jiyva.leave(ctx)
         local state = ctx:get(entity, component.JIYVA_SLIME)
 
         if state.attitude == attitudes.GOOD_NEUTRAL then
+            if not ctx:has(entity, component.RELIGION_WAS_NEUTRAL) then
+                ctx:add(entity, component.RELIGION_WAS_NEUTRAL, {
+                    remembered = true,
+                })
+            end
+
             state.attitude = attitudes.HOSTILE
             state.attempted = false
             ctx:set(entity, component.JIYVA_SLIME, state)

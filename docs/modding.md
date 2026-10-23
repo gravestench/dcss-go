@@ -4511,6 +4511,116 @@ and travel destinations. Each text file marks whether those destinations
 and the rune are reachable from the player. Regenerate them with
 `CRAWL_ABYSS_SNAPSHOT_DIR=/absolute/output go test ./internal/game -run '^TestAbyssTextSnapshots$'`.
 
+## Add or change a god's conduct
+
+Conduct is the reaction to an action, such as killing a monster, casting a
+spell, exploring, or drinking a known Haste potion. The ordinary piety and
+penance numbers are stored in the player's `religion.worship` component.
+The action owner reports a named fact to `policy.religion.conduct`; the
+current god's rule module decides whether that fact matters. Keep the
+action producer beside the action. A god module should never scan the
+world each turn to guess whether an action happened.
+
+To replace a bundled god's rules, create the same relative path in your
+overlay, for example
+`policy/religion/conduct/zin.lua`. To add a god, register one
+`content/gods/<name>.lua` definition with `conduct_module` set to the
+dotted path of its rule file. See the bundled Zin definition and rule for
+the required identity fields and the rule table shape. A god may omit
+`conduct_module` when it has no conduct responses. The winning layered
+file is validated at boot; misspelled event IDs, absent modules, negative
+factors, and malformed fields fail before a game starts.
+
+Import `constants.religion_conduct` wherever an event is declared or
+reported. The constants are stable IDs; filenames, directory traversal,
+and registration order do not assign event IDs or affect seeded rolls.
+Each rule file returns one local table. Assign named methods to that table
+when a god needs an exception, and describe why the exception exists in a
+comment. The following is the shape of a small, hypothetical rule file:
+
+```lua
+local kinds = require("constants.religion_conduct")
+
+local patron = {}
+
+-- This patron only values kills with actual player credit.
+local function eligible(_, _, event)
+    return event.credit ~= false
+end
+
+patron.likes = {
+    [kinds.KILL_DEMON] = {
+        description = "you kill demons",
+        bonus = -4,
+        denom_bonus = 18,
+        xl_denom = 2,
+        filter = eligible,
+    },
+}
+
+return patron
+```
+
+For a like, `bonus`, `denom_bonus`, and `xl_denom` are integer source-curve
+parameters. The conduct owner begins with `denom_bonus + event.level`,
+subtracts `floor(player XL / xl_denom)` when the divisor is positive,
+then offers `max(0, denominator + bonus) / max(1, denominator)` piety.
+The piety owner handles Faith, penance debt, gift timeout, upper taper,
+hysteresis, rank changes, and named religion RNG. A `special` method may
+return changed numerator and denominator plus optional response text.
+Keep exceptional math with the god, as Okawaru and Cheibriados do.
+
+For a dislike, provide nonnegative integer `loss_factor` and
+`penance_factor`. Each multiplies `event.level`; optional integer
+`penance_offset` adjusts the latter. `forgiveness` text pardons an act
+reported with `known = false` before piety or RNG changes. Optional
+`filter(ctx, player, event)` excludes a victim; `before` may return false
+to stop a response, as Uskayaw does while pooling hit damage. The owner
+evaluates a dislike before a like when a god has both for the same event.
+
+The action owner calls `conduct.record(ctx, event)` synchronously while
+its target still exists. Every event needs `id`, nonnegative integer
+`level`, and boolean `known`. A kill may also provide `victim`, `credit`,
+`was_neutral`, `no_reward`, and structured monster traits. `credit = false`
+prevents ordinary like piety but still lets a god object to a forbidden
+kill. A damage event carries the actual HP lost, maximum HP, and victim XP.
+For a new player attack, call `policy.religion.conduct.attack.report` at
+the actual target contact before hit, resistance, or death changes the
+actor. It reads allegiance, holy status, and player sight from live ECS.
+Do not infer an attack from damage alone: a miss can still be an offense,
+while persistent terrain and constriction damage are not fresh attack
+events. Toxic Radiance is a useful timing example: its cast pulse reports
+an attack, but later poison ticks do not.
+The contamination owner reports Zin's first severe glow as an unknown
+zero-severity event, then reports controlled additions while already glowing
+with the new contamination tier. The Abyss banishment owner reports a
+separate event only for a player-credited, rewardable hostile target. If a
+mod adds another way to change either state, call those owners instead of
+writing their saved components directly. Do not save a victim entity ID in
+a Lua module global or postpone a death event until after the actor is
+removed.
+
+`ctx` is the current action's game context, not global state. Use
+`ctx:player()` for the ECS player entity; `ctx:get`, `ctx:set`, `ctx:has`,
+`ctx:add`, and `ctx:remove` for saved components; `ctx:random(stream, n)`
+for a zero-based draw from a named saved stream; `ctx:emit(channel, text)`
+for a message; `ctx:aut()` for the current absolute game time; and
+`ctx:signal(name, value)` for later ordered systems.
+The floor APIs, including `ctx:level_branch(level_id)`, read the current
+world. Save any new per-turn conduct counter in a schema under `schemas/`,
+as `religion.uskayaw_momentum` does. A Lua module local may hold immutable
+rules and helper functions, but never a current game's mutable counters.
+
+Add an `_test.lua` beside the Lua rule tests and import the production
+component and event IDs. The test harness loads the effective VFS and
+runtime. The conduct tests show godless actions, unknown-act forgiveness,
+kill classification, first-sight persistence, item knownness, and
+Uskayaw's pooled damage. For a new action producer, also test one real
+turn through the action system. A mod overlay can replace one god module
+without changing unrelated seeded draws or descriptions: the
+`presentation.religion` policy derives its conduct lists from the same
+resolved rule module, sorted by stable event ID.
+
 ## Test a mod
 
 Use a file ending in `_test.lua` under `tests/`. Import production modules

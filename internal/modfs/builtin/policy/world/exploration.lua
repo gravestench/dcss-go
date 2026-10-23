@@ -3,6 +3,10 @@ local capabilities = require("constants.mutation_capabilities")
 local mutations = require("ids.mutations")
 local effects = require("policy.mutations.effects.registry")
 local mapping = require("policy.world.mapping")
+local branches = require("ids.branches")
+local gods = require("constants.gods")
+local kinds = require("constants.religion_conduct")
+local conduct = require("policy.religion.conduct")
 
 local exploration = {}
 
@@ -64,10 +68,40 @@ function exploration.on_seen(ctx, count)
     ctx:set(player, component.MAGIC, magic)
 end
 
+-- Source view.cc offers a conduct pulse for each newly seen eligible cell.
+-- Temple never counts, and Jiyva does not gain exploration piety in Slime.
+-- The view owner supplies only fresh cells, so revisiting old terrain
+-- cannot farm devotion after save or floor travel.
+local function conduct_on_seen(ctx, count)
+    if count == 0 then
+        return
+    end
+
+    local player = ctx:player()
+    local position = ctx:get(player, component.POSITION)
+    local branch = position and ctx:level_branch(position.level_id)
+    local worship = ctx:get(player, component.RELIGION_WORSHIP)
+
+    if branch == branches.BRANCH_TEMPLE or
+        (branch == branches.BRANCH_SLIME and worship and
+            worship.god_id == gods.JIYVA) then
+        return
+    end
+
+    for _ = 1, count do
+        conduct.record(ctx, {
+            id = kinds.EXPLORATION,
+            level = 2500,
+            known = true,
+        })
+    end
+end
+
 -- Plan mapping from the same reveal snapshot, then apply explore-regeneration for each new cell.
 function exploration.run(ctx, input)
     local mapped = mapping.plan(ctx, input)
     exploration.on_seen(ctx, input.count)
+    conduct_on_seen(ctx, input.count)
 
     return { mapped = mapped }
 end

@@ -11,6 +11,7 @@ local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 local accuracy = require("policy.character.accuracy")
 local monster_stats = require("policy.combat.monster_stats")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local projectile = { specs = {} }
 
@@ -261,6 +262,7 @@ local function resolve(ctx, player, intent, spell, spec, power)
             end
 
             local definition = catalog.get("monsters", actor.kind_id)
+            attack_conduct.report(ctx, target, definition)
             local zap_power = math.min(power, spec.cap)
             local count, sides = damage_dice(ctx, spec, zap_power)
             local raw = dice(ctx, count, sides)

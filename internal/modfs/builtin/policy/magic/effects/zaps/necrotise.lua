@@ -10,6 +10,7 @@ local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
 local allies = require("policy.character.allies")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local necrotise = {}
 
@@ -92,6 +93,8 @@ function necrotise.resolve(ctx, player, intent, spell, power)
     if not definition or not health then
         error("Necrotise struck an actor without health")
     end
+
+    attack_conduct.report(ctx, target, definition)
 
     local negative = resistance(definition)
 

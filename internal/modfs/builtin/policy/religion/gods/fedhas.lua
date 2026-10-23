@@ -118,6 +118,17 @@ function fedhas.leave(ctx)
         if is_plant(definition) then
             -- Source desertion strips charm before restoring hostility.
             -- Preserve unrelated frenzy and berserk state on the actor.
+            local former = targets.real_attitude(ctx, entity)
+
+            if former == attitudes.NEUTRAL or
+                former == attitudes.GOOD_NEUTRAL then
+                if not ctx:has(entity, component.RELIGION_WAS_NEUTRAL) then
+                    ctx:add(entity, component.RELIGION_WAS_NEUTRAL, {
+                        remembered = true,
+                    })
+                end
+            end
+
             allegiance.clear_charm(ctx, entity)
 
             local state = {

@@ -9,6 +9,9 @@ local flags = require("constants.monster_flags")
 local groups = require("constants.monster_groups")
 local noise = require("policy.world.noise")
 local vision = require("policy.character.vision")
+local senses = require("policy.character.senses")
+local conduct = require("policy.religion.conduct")
+local monster_facts = require("policy.religion.conduct.monster_facts")
 
 local system = {}
 
@@ -34,6 +37,25 @@ local function eligible(ctx, monster)
         not has_flag(definition, flags.AVATAR)
 end
 
+-- Source seen_monster offers The Shining One one encounter per actor,
+-- including actors first seen before conversion. Its durable marker is
+-- distinct from the temporary visibility marker used for shout timing.
+local function first_sight(ctx, monster)
+    if ctx:has(monster, component.RELIGION_TSO_SEEN) then
+        return
+    end
+
+    local actor = ctx:get(monster, component.ACTOR)
+    local definition = catalog.get("monsters", actor.kind_id)
+    local event = monster_facts.sight(ctx, monster, definition)
+
+    if event then
+        conduct.record(ctx, event)
+    end
+
+    ctx:add(monster, component.RELIGION_TSO_SEEN, { seen = true })
+end
+
 -- Track sight transitions on monsters so a continuously visible foe cannot prompt repeated scream rolls.
 local function newly_visible(ctx, player, origin)
     local candidates = {}
@@ -50,10 +72,12 @@ local function newly_visible(ctx, player, origin)
             local visible = health.current > 0 and
                 position.level_id == origin.level_id and
                 ctx:visible(origin.level_id, origin.x, origin.y,
-                    sight, position.x, position.y)
+                    sight, position.x, position.y) and
+                senses.player_sees_actor(ctx, monster)
             local seen = ctx:has(monster, component.SEEN_BY_PLAYER)
 
             if visible and not seen then
+                first_sight(ctx, monster)
                 ctx:add(monster, component.SEEN_BY_PLAYER, {
                     visible = true,
                 })

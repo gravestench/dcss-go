@@ -285,4 +285,58 @@ function piety.lose(ctx, player, points)
     return true
 end
 
+-- Source dock_piety scales both consequences through Faith, loses devotion
+-- first, and excommunicates at zero. Only a surviving worshipper gains the
+-- action's penance; leave itself stores the old god's full wrath debt.
+function piety.offend(ctx, player, loss, penance)
+    if type(loss) ~= "number" or loss % 1 ~= 0 or loss < 0 or
+        type(penance) ~= "number" or penance % 1 ~= 0 or
+        penance < 0 then
+        error("religion offense requires nonnegative integer consequences")
+    end
+
+    if loss == 0 and penance == 0 then
+        return false
+    end
+
+    local state = ctx:get(player, component.RELIGION_WORSHIP)
+
+    if not state or state.god_id == gods.NO_GOD then
+        return false
+    end
+
+    local faith = jewellery_effects.has(ctx, player,
+        jewellery_capabilities.FAITH)
+
+    if faith then
+        loss = loss + random_round(ctx, loss, limits.FAITH_DIVISOR)
+        penance = penance + random_round(ctx, penance,
+            limits.FAITH_DIVISOR)
+    end
+
+    if loss > 0 then
+        piety.lose(ctx, player, loss)
+    end
+
+    state = ctx:get(player, component.RELIGION_WORSHIP)
+
+    if state.piety == 0 then
+        local worship = require("policy.religion.worship")
+
+        worship.renounce(ctx, player)
+
+        return true
+    end
+
+    if penance > 0 then
+        local god_id = state.god_id
+
+        state.penance[god_id] = math.min(limits.MAX_PENANCE,
+            (state.penance[god_id] or 0) + penance)
+        ctx:set(player, component.RELIGION_WORSHIP, state)
+    end
+
+    return true
+end
+
 return piety

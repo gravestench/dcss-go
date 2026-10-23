@@ -36,7 +36,7 @@ function brand.apply(ctx, hit, brands)
         warp(ctx, hit, brands, false)
     elseif choice < 65 then
         hit.banished = abyss.banish_monster(ctx, hit.defender,
-            hit.definition)
+            hit.definition, hit.attacker)
     elseif choice < 85 then
         local position = ctx:get(hit.defender, "core.position")
         local destination = dispersal.nearby_space(ctx, position)

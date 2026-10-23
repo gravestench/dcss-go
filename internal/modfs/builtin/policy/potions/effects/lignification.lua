@@ -5,6 +5,8 @@ local forms = require("policy.magic.effects.forms.player")
 local cloud = require("policy.clouds.placement")
 local cloud_ids = require("ids.clouds")
 local zap_ids = require("policy.magic.effects.zaps.ids")
+local kinds = require("constants.religion_conduct")
+local conduct = require("policy.religion.conduct")
 
 local effect = {}
 
@@ -54,13 +56,23 @@ function effect.can_quaff(ctx, player, forced)
 end
 
 -- Source: potion.cc:PotionLignify::effect and transform.cc:transform.
-function effect.apply(ctx, player)
+function effect.apply(ctx, player, known)
     forms.cast(ctx, player, items.POT_LIGNIFY, 0)
 
     local state = ctx:get(player, component.PLAYER_FORM)
 
     state.uncancellable = true
     ctx:set(player, component.PLAYER_FORM, state)
+
+    -- Tree form is a chaotic transformation in the source. Report after
+    -- successful form application, using knowledge from before quaff.
+    if ctx:get(player, component.RELIGION_WORSHIP) then
+        conduct.record(ctx, {
+            id = kinds.CHAOS,
+            level = 10,
+            known = known ~= false,
+        })
+    end
 
     return "You turn into a tree."
 end

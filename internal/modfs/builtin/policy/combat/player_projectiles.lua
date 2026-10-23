@@ -15,6 +15,11 @@ local player_attributes = require("policy.character.attributes")
 local vision = require("policy.character.vision")
 local player_slay = require("policy.combat.player_slay")
 local monster_health = require("policy.combat.monster_health")
+local attack_conduct = require("policy.religion.conduct.attack")
+local projectile_conduct = require("policy.religion.conduct.projectiles")
+local missile_egos = require("constants.missile_egos")
+local item_ids = require("ids.items")
+local skills = require("ids.skills")
 
 local projectiles = {}
 
@@ -32,18 +37,20 @@ end
 
 -- Nets persist for holds, while stones and selected egos always mulch before stack handling.
 local function destroyed(ctx, item, kind)
-    if kind.id == "MI_THROWING_NET" then
+    if kind.id == item_ids.MI_THROWING_NET then
         return false
     end
 
-    if kind.id == "MI_STONE" or item.ego == "dispersal" or
-        item.ego == "chaos" or item.ego == "exploding" then
+    if kind.id == item_ids.MI_STONE or
+        item.ego == missile_egos.DISPERSAL or
+        item.ego == missile_egos.CHAOS or
+        item.ego == missile_egos.EXPLODING then
         return true
     end
 
     local rate = kind.missile.mulch_rate
 
-    if item.ego == "curare" then
+    if item.ego == missile_egos.CURARE then
         rate = rate * 2
     end
 
@@ -57,7 +64,7 @@ local function land(ctx, item, kind, entity, position, separate)
     local mulched = destroyed(ctx, item, kind)
 
     -- A surviving boomerang retraces to the thrower in throw.cc.
-    if kind.id == "MI_BOOMERANG" and not mulched then
+    if kind.id == item_ids.MI_BOOMERANG and not mulched then
         return
     end
 
@@ -101,11 +108,11 @@ end
 local function attack_input(ctx, player, missile, launcher, item, target, defender)
     local attributes = player_attributes.current(ctx, player)
     local weapon = launcher and launcher.weapon or nil
-    local skill_id = weapon and weapon.skill_id or "SK_THROWING"
+    local skill_id = weapon and weapon.skill_id or skills.SK_THROWING
     local throwing_bonus = 0
 
     if not launcher then
-        local throwing100 = fighter.skill(ctx, "SK_THROWING", 100)
+        local throwing100 = fighter.skill(ctx, skills.SK_THROWING, 100)
         throwing_bonus = roll.random_divide(ctx,
             throwing100 * math.min(4, missile.missile.damage), 400)
     end
@@ -127,7 +134,7 @@ local function attack_input(ctx, player, missile, launcher, item, target, defend
         missile_repulsion = repulsion.active(ctx, target),
         defender_ac = monster_defense.armour(ctx, target, defender),
         defender_shield = monster_defense.shield(ctx, target, defender),
-        penetrating = missile.id == "MI_JAVELIN",
+        penetrating = missile.id == item_ids.MI_JAVELIN,
         mighty = false,
     }
 
@@ -138,10 +145,14 @@ end
 local function resolve_target(ctx, player, missile, launcher, item, target)
     local defender_actor = ctx:get(target, "core.actor")
     local defender = catalog.get("monsters", defender_actor.kind_id)
+
+    attack_conduct.report(ctx, target, defender)
+
     local input = attack_input(ctx, player, missile, launcher, item, target, defender)
     local outcome
 
-    if missile.id == "MI_THROWING_NET" or missile.id == "MI_DART" then
+    if missile.id == item_ids.MI_THROWING_NET or
+        missile.id == item_ids.MI_DART then
         outcome = player_attack.contact(ctx, input)
     else
         outcome = player_attack.resolve(ctx, input)
@@ -162,7 +173,7 @@ local function resolve_target(ctx, player, missile, launcher, item, target)
     elseif outcome.kind == "hit" then
         message = "The " .. missile.name .. " hits the " .. defender.name .. "."
 
-        if missile.id == "MI_THROWING_NET" then
+        if missile.id == item_ids.MI_THROWING_NET then
             caught = net.can_hold(defender) and
                 not ctx:has(target, "projectile.held")
         else
@@ -213,7 +224,7 @@ function projectiles.resolve(ctx, player, intent)
     local position = ctx:get(player, "core.position")
     local entity = intent.item_id
     local missile, launched, launcher, item = missile_for(ctx, entity)
-    local penetrating = not launched and missile.id == "MI_JAVELIN"
+    local penetrating = not launched and missile.id == item_ids.MI_JAVELIN
     local portal = statuses.portal_projectile_active(ctx, player)
     local impact
 
@@ -263,7 +274,7 @@ function projectiles.resolve(ctx, player, intent)
     end
 
     if not launched then
-        local separate_net = missile.id == "MI_THROWING_NET" and caught
+        local separate_net = missile.id == item_ids.MI_THROWING_NET and caught
         local floor_item = land(ctx, item, missile, entity, {
             level_id = position.level_id,
             x = impact.x,
@@ -278,6 +289,8 @@ function projectiles.resolve(ctx, player, intent)
     if portal then
         statuses.portal_projectile_pay(ctx, player)
     end
+
+    projectile_conduct.on_shot(ctx, player, entity, launched, item)
 end
 
 return projectiles

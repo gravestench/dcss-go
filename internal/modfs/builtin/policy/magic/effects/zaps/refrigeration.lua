@@ -10,6 +10,7 @@ local cold_exposure = require("policy.magic.effects.statuses.monster_cold_exposu
 local area = require("policy.combat.monster_area.refrigeration")
 local streams = require("constants.rng_streams")
 local resistances = require("constants.resistance_ids")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local refrigeration = {}
 local SIGHT_RADIUS = 7
@@ -52,6 +53,7 @@ function refrigeration.resolve(ctx, player, _, _, power)
 
         if health.current > 0 then
             local definition = hit.definition
+            attack_conduct.report(ctx, target, definition)
             local nearby = area.adjacent(snapshot, target)
             local raw = area.raw_damage(ctx, sides,
                 nearby, streams.SPELL)

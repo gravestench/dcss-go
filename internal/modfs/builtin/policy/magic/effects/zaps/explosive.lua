@@ -6,6 +6,7 @@ local player_health = require("policy.combat.player_health")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local explosive = { specs = {} }
 
@@ -104,6 +105,8 @@ local function hurt(ctx, player, target, spec, power)
     if not definition or health.current <= 0 then
         return
     end
+
+    attack_conduct.report(ctx, target, definition)
 
     local after_ac = raw
 

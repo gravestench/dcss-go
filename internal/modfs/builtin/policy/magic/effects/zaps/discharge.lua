@@ -3,6 +3,7 @@ local spells = require("ids.spells")
 local damage = require("policy.magic.damage")
 local player_health = require("policy.combat.player_health")
 local registry = require("policy.magic.effects.registry")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local discharge = {}
 
@@ -89,6 +90,8 @@ local function arc(ctx, player, target, power, remaining)
         ctx:emit("spell", "You are struck by an arc of lightning!")
     else
         local definition = damage.monster(ctx, target)
+
+        attack_conduct.report(ctx, target, definition)
 
         -- spl-damage.cc:_discharge_monsters does not hit or propagate
         -- through any monster with positive rElec.

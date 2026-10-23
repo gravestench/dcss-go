@@ -36,12 +36,14 @@ function system.update(ctx, actor)
     end
 
     local visible_name = identification.name(ctx, player, intent.item_id)
+    local known = identification.known(ctx, player, intent.item_id)
     local request = {
         scroll = intent.item_id,
         target_id = intent.target_id,
         dx = intent.dx,
         dy = intent.dy,
         cancelled = intent.cancelled,
+        known = known.type,
     }
 
     ctx:emit("read", "As you read the " .. visible_name ..

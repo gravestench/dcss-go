@@ -5,6 +5,7 @@ local records = require("policy.character.spell_records")
 local player_scope = require("policy.magic.player_scope")
 local traits = require("policy.character.traits")
 local availability = require("policy.character.skill_availability")
+local spell_conduct = require("policy.religion.conduct.spells")
 
 local learning = {}
 
@@ -121,6 +122,8 @@ function learning.begin(ctx, player, spell_id)
     casting.learning_spell_id = spell_id
     casting.learning_remaining = spell.level
     ctx:set(player, "character.spellcasting", casting)
+
+    spell_conduct.on_memorise(ctx)
 
     return { started = true }
 end

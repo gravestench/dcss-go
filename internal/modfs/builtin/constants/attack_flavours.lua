@@ -9,6 +9,11 @@ local flavours = {
     ELECTRICITY = "AF_ELEC",
     COLD = "AF_COLD",
     STICKY_FLAME = "AF_STICKY_FLAME",
+    DRAIN = "AF_DRAIN",
+    STEAL = "AF_STEAL",
+    VAMPIRIC = "AF_VAMPIRIC",
+    MUTATE = "AF_MUTATE",
+    CHAOTIC = "AF_CHAOTIC",
 }
 
 return flavours

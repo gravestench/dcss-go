@@ -2,6 +2,7 @@
 -- these in one module prevents UI and gameplay from drifting apart.
 local piety = {
     MAX = 200,
+    MAX_PENANCE = 200,
     HYSTERESIS_LIMIT = 1,
     RU_MAX = 160,
     FAITH_DIVISOR = 4,

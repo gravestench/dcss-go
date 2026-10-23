@@ -14,6 +14,7 @@ local definition = {
     wrath_penance = 50,
     piety_mode = modes.ORDINARY,
     behavior_module = "policy.religion.gods.trog",
+    conduct_module = "policy.religion.conduct.trog",
 }
 
 register.definition(categories.GODS, definition)

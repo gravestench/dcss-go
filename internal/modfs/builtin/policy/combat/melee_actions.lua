@@ -36,6 +36,7 @@ local black_mark = require("policy.combat.monster_black_mark")
 local brambles = require("policy.combat.monster_plants.brambles")
 local vine_grip = require("policy.combat.monster_plants.vine_grip")
 local component = require("constants.component")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local actions = {}
 
@@ -107,6 +108,8 @@ function actions.player(ctx, target, options)
 
     local defender = monster_profile.definition(ctx, target,
         catalog.get("monsters", actor.kind_id))
+
+    attack_conduct.report(ctx, target, defender)
 
     rage.melee(ctx, ctx:player())
     mutation_effects.trigger(ctx, ctx:player(),

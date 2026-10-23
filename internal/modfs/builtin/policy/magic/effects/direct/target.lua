@@ -1,4 +1,5 @@
 local targets = require("policy.ai.targets")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local target = {}
 
@@ -45,6 +46,10 @@ function target.at_aim(ctx, player, intent)
 
     if actor == player then
         return nil, position.level_id, x, y
+    end
+
+    if actor then
+        attack_conduct.report(ctx, actor)
     end
 
     return actor, position.level_id, x, y

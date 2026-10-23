@@ -5,6 +5,7 @@ local damage = require("policy.magic.damage")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local thunderbolt = {}
 
@@ -156,6 +157,7 @@ function thunderbolt.resolve(ctx, player, intent, spell, power)
         local target = ctx:actor_at(origin.level_id, cell.x, cell.y)
 
         if target and target ~= player then
+            attack_conduct.report(ctx, target)
             local ring_length = lengths[cell.ring]
             local sides = random_round(ctx,
                 30 + math.floor(power / 6), ring_length + 2)

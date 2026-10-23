@@ -4,6 +4,7 @@ local defense = require("policy.combat.monster_defense")
 local damage = require("policy.magic.damage")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local hailstorm = {}
 
@@ -94,6 +95,7 @@ function hailstorm.resolve(ctx, player, _, spell, power)
             local definition, health = damage.monster(ctx, target)
 
             if health.current > 0 and in_ring(ctx, source, location, reach) then
+                attack_conduct.report(ctx, target, definition)
                 local ac = defense.armour(ctx, target, definition)
                 local raw = roll_damage(ctx, power)
                 local after_ac = math.max(0, raw - ctx:random("spell", ac + 1))

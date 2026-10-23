@@ -6,6 +6,8 @@ local mutation_levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
 local skills = require("ids.skills")
 local monster_poison = require("policy.combat.monster_poison")
+local conduct = require("policy.religion.conduct")
+local kinds = require("constants.religion_conduct")
 
 local player_staves = {}
 
@@ -62,6 +64,16 @@ function player_staves.apply(ctx, hit, brands, definition, defender_ac)
 
     if bonus <= 0 then
         return
+    end
+
+    -- The staff of death is judged only when its negative-energy proc
+    -- actually harms the defender. Physical staff damage alone is exempt.
+    if staff.negative_energy then
+        conduct.record(ctx, {
+            id = kinds.EVIL,
+            level = 4,
+            known = true,
+        })
     end
 
     ctx:emit("combat", string.format(staff.message, hit.definition.name))

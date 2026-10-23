@@ -12,6 +12,7 @@ local definition = {
     starting_piety = 15,
     wrath_penance = 50,
     piety_mode = modes.ORDINARY,
+    conduct_module = "policy.religion.conduct.elyvilon",
     good = true,
 }
 

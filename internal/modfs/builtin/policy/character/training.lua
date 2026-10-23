@@ -7,6 +7,7 @@ local availability = require("policy.character.skill_availability")
 local component = require("constants.component")
 local weights = require("policy.character.training_weights")
 local distributed = require("policy.character.distributed_training")
+local training_conduct = require("policy.religion.conduct.training")
 
 local training_rules = {}
 
@@ -318,6 +319,7 @@ function training_rules.spend_experience(ctx, actor, id, budget)
     end
 
     local skills = skills_component.entries
+    local magic_before = training_conduct.before(skills)
     local fighting = find_skill(skills, "SK_FIGHTING")
     local points_before = fighting and fighting.points or 0
 
@@ -341,6 +343,7 @@ function training_rules.spend_experience(ctx, actor, id, budget)
     ctx:set(actor, component.SKILLS, skills_component)
     ctx:set(actor, component.SKILL_TRAINING, training)
     refresh_resources(ctx, actor, species, skills, points_before)
+    training_conduct.report(ctx, actor, magic_before, skills)
 
     return spent
 end
@@ -362,6 +365,7 @@ function training_rules.update(ctx, actor)
 
     local species = catalog.get("species", player.species_id)
     local skills = skills_component.entries
+    local magic_before = training_conduct.before(skills)
 
     for _, id in ipairs(ctx:signals("practice")) do
         training_rules.record_practice(ctx, actor, skills, training,
@@ -383,6 +387,7 @@ function training_rules.update(ctx, actor)
     ctx:set(actor, component.SKILLS, skills_component)
     ctx:set(actor, component.SKILL_TRAINING, training)
     refresh_resources(ctx, actor, species, skills, points_before)
+    training_conduct.report(ctx, actor, magic_before, skills)
 end
 
 -- Change the saved manual-mode flag through the current-player policy command.

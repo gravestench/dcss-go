@@ -12,6 +12,8 @@ local rune = require("policy.world.abyss.rune")
 local population = require("policy.world.abyss.population")
 local transit = require("policy.world.abyss.transit")
 local streams = require("constants.rng_streams")
+local conduct = require("policy.religion.conduct")
+local monster_facts = require("policy.religion.conduct.monster_facts")
 
 local abyss = {}
 
@@ -336,11 +338,17 @@ end
 
 -- Distortion moves a monster to the existing Abyss level without a kill.
 -- Its origin is saved so future Abyss and branch rules can find the actor.
-function abyss.banish_monster(ctx, monster, definition)
+function abyss.banish_monster(ctx, monster, definition, attacker)
     local position = ctx:get(monster, "core.position")
 
     if not position or position.level_id == abyss.level_id then
         return false
+    end
+
+    local event = monster_facts.banish(ctx, monster, definition, attacker)
+
+    if event.credit then
+        conduct.record(ctx, event)
     end
 
     local x, y = landing(ctx)

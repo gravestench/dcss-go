@@ -21,6 +21,8 @@ local stat_loss = require("policy.character.stat_loss")
 local temporary_mutations = require("policy.mutations.temporary")
 local evolution = require("policy.mutations.evolution")
 local kill_effects = require("policy.combat.player_kill_effects")
+local conduct = require("policy.religion.conduct")
+local monster_facts = require("policy.religion.conduct.monster_facts")
 local flay = require("policy.combat.monster_flay")
 local component = require("constants.component")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
@@ -152,6 +154,17 @@ function system.update(ctx)
 
                     statuses.wereblood_kill(ctx, player, xp > 0,
                         adjacent, false)
+                end
+
+                -- Source mon-death.cc resolves every kill conduct while the
+                -- victim's actor, spellbook, side, and flags still exist.
+                -- A summoned or allied victim can still offend a god, but
+                -- the conduct owner suppresses ordinary piety gain.
+                if kills[ctx:id(entity)] then
+                    for _, event in ipairs(monster_facts.death(ctx,
+                        entity, definition)) do
+                        conduct.record(ctx, event)
+                    end
                 end
 
                 -- Release trapping links before inventory drops and corpse hooks inspect the dying actor.

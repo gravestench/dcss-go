@@ -6,7 +6,7 @@ local banishment = {}
 
 -- Example: banishment.apply(ctx, nil, defender) with player defender -> player moves to Abyss
 -- Banishment uses different world transitions for a player and a monster defender.
-function banishment.apply(ctx, _, defender)
+function banishment.apply(ctx, caster, defender)
     if ctx:has(defender, component.PLAYER) then
         abyss.banish(ctx, defender)
 
@@ -16,7 +16,7 @@ function banishment.apply(ctx, _, defender)
     local actor = ctx:get(defender, component.ACTOR)
     local definition = catalog.get("monsters", actor.kind_id)
 
-    abyss.banish_monster(ctx, defender, definition)
+    abyss.banish_monster(ctx, defender, definition, caster)
 end
 
 return banishment

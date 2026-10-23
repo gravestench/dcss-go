@@ -7,6 +7,7 @@ local resources = require("policy.magic.resources")
 local demonic_magic = require("policy.character.demonic_magic")
 local hex_status = require("policy.combat.monster_hexes.status")
 local streams = require("constants.rng_streams")
+local spell_conduct = require("policy.religion.conduct.spells")
 
 local cast = {}
 
@@ -41,6 +42,7 @@ function cast.resolve(ctx, player, intent, aut)
 
     effect.resolve(ctx, player, intent, spell,
         power.cast(ctx, player, spell), aut)
+    spell_conduct.on_success(ctx, player, spell)
     demonic_magic.on_success(ctx, player, spell)
 
     -- In DCSS, Sap Magic punishes successful casting with a short period

@@ -19,7 +19,7 @@ local HASTE_DENOMINATOR = 3
 
 -- Action cost is computed after command preparation so rejected no-time commands never consume energy.
 -- Example: timing.player_speed(ctx, player) feeds the next accepted command's aut cost.
-function timing.player_speed(ctx, player)
+function timing.player_speed(ctx, player, ignore_slow)
     local duration = ctx:get(player, component.DURATIONS)
 
     if not duration then
@@ -33,7 +33,8 @@ function timing.player_speed(ctx, player)
         return time.AUT_PER_TURN
     end
 
-    local time_taken = statuses.slow_active(ctx, player) and
+    local time_taken = not ignore_slow and
+        statuses.slow_active(ctx, player) and
         SLOWED_AUT_PER_TURN or time.AUT_PER_TURN
 
     if petrification and petrification.petrifying_aut > 0 then

@@ -9,6 +9,8 @@ local display = require("policy.combat.monster_support.display")
 local causes = require("constants.damage_causes")
 local senses = require("policy.character.senses")
 local awareness = require("policy.ai.awareness")
+local catalog = require("policy.catalog")
+local gods = require("constants.gods")
 
 local monster_health = {}
 
@@ -64,6 +66,24 @@ function monster_health.damage(ctx, target, amount, source, cause)
         cause or causes.ORDINARY)
 
     local dealt = math.min(before, math.max(0, amount))
+
+    -- Monster::hurt offers Uskayaw only direct, XP-bearing foe damage.
+    -- Delayed poison, clouds, and shared pain cannot build dance momentum.
+    local worship = source and ctx:has(source, component.PLAYER) and
+        ctx:get(source, component.RELIGION_WORSHIP)
+
+    if dealt > 0 and worship and worship.god_id == gods.USKAYAW and
+        cause ~= causes.POISON and cause ~= causes.CLOUD and
+        cause ~= causes.INJURY_BOND then
+        local actor = ctx:get(target, component.ACTOR)
+        local definition = catalog.get("monsters", actor.kind_id)
+        local facts = require("policy.religion.conduct.monster_facts")
+        local event = facts.hurt(ctx, target, definition, dealt, health.max)
+
+        if event then
+            require("policy.religion.conduct").record(ctx, event)
+        end
+    end
 
     health.current = before - dealt
     ctx:set(target, component.HEALTH, health)

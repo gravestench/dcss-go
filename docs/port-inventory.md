@@ -44,6 +44,7 @@ context rather than a handler API for each game domain.
 | Domain | Implemented now | Main Lua location |
 | --- | --- | --- |
 | Character | Every legal selectable species/job pair starts; Lua owns chosen or fixed weapons, starting gear, species adjustments, attributes, skills, HP/MP, spell knowledge, Djinni's future spell schedule, religion, and durable origin state; training, XP, level gains, stat choice | `policy/character`, `schemas/character_origin.lua`, `systems/character_*` |
+| Religion conduct | All 26 active gods have source-shaped likes and peeves in individual Lua modules. Existing kills, attacks, spells, item use, exploration, sight, training, damage, banishment, and contamination transitions report typed conduct through action owners. Piety, penance, first-sight and Uskayaw momentum survive saves; god descriptions read the effective rule metadata | `policy/religion/conduct`, `policy/religion/piety.lua`, `systems/religion_*` |
 | Dungeon | D:1 terrain and population at launch; D:2–15 terrain, paired stairs, monsters, and vault entities generated from live state on first entry; fixed test scenario | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
 | Abyss | 100 committed source DES definitions, including 97 MAP blocks and three mapless weighted definitions; Lua sampler, moving 80×70 window, source-position hooks, depth 1–7, morphing, authored and ambient ECS population, saved monster transit, Abyssal Knight pocket start, rune, XP exits, reentry, descent, teleport, escape, and text snapshots | `vaults/abyss`, `vaults/abyss_entry`, `policy/generation/abyss`, `policy/world/abyss` |
 | Snake Pit vaults and end | All 85 source `snake.des` definitions are committed: eight weighted Lair entrances, 68 depth-qualified ordinary and extra maps, and nine mandatory Snake:4 endings. Eight source inline-script sites run as named Lua hooks. The source entry's keyed stair, vault history, typed records, rune, and reciprocal travel survive saves. Source random-item class requests and Snake out-of-depth monster caps reach the live generation path | `vaults/snake_entry`, `vaults/snake`, `vaults/snake_end`, `policy/generation/vaults/branch_entry.lua`, `policy/generation/vaults/primary.lua` |
@@ -96,7 +97,8 @@ project jewellery stat, resistance, vision, flight, MP, wizardry, acrobat,
 guardian-spirit, and attuned regeneration effects from the worn ECS items.
 Blocked hostile stones, poisoned darts, sling bullets, and Slug Dart now
 return to their shooter when an amulet of reflection is worn and the shot is
-still clear. The Faith multiplier now lives in the Lua piety owner; conduct events and
+still clear. The Faith multiplier and ordinary conduct consequences now live
+in the Lua piety and conduct owners. God gifts, wrath execution, and other
 divine effects still need their religion slices.
 The monster beam family now includes player amulet reflection and monster
 shield reflection. Armour reflection ego and further spell families remain
@@ -317,8 +319,10 @@ Both stair keys pray on an altar. Conversion, refusal, ecumenical identification
 two-step renunciation, saved altar identity, and the god/piety/penance HUD now
 run through Lua command, system, and presentation rules. The pending
 entry rewards and most god-specific leave cleanup still need their
-behavior owners. Conduct, abilities, gifts, passives, and wrath execution
-remain separate religion slices.
+behavior owners. Conduct responses now cover all 26 active gods. New action
+domains must report their corresponding conduct at the action owner; current
+producers cover actions the port can execute today. God abilities, gifts,
+remaining passives, and wrath execution remain separate religion slices.
 Fedhas now neutralises eligible hostile plants as they act, reverses plant
 allegiance across loaded levels on desertion, cancels an active forest on
 joining, and prevents hostile Awaken Forest under its passive. Okawaru now

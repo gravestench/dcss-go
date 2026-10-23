@@ -7,6 +7,7 @@ local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
 local torment = require("policy.combat.torment")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local agony = {}
 
@@ -62,6 +63,8 @@ function agony.resolve(ctx, player, intent, spell, power)
     if not definition then
         error("Agony struck an actor without health")
     end
+
+    attack_conduct.report(ctx, target, definition)
 
     if not torment.susceptible(definition) or health.current <= 0 then
         ctx:emit("spell", "The " .. definition.name .. " is unaffected.")

@@ -107,6 +107,8 @@ local component = {
     -- systems can resolve deaths, lingering grips, and delayed actions.
     SPECTRAL_WEAPON = "combat.spectral_weapon",
     MONSTER_CHAOS = "combat.monster_chaos",
+    RELIGION_ZIN_GLOW_LECTURE = "religion.zin_glow_lecture",
+    RELIGION_WAS_NEUTRAL = "religion.was_neutral",
     MONSTER_SHAPESHIFTER = "combat.monster_shapeshifter",
     MONSTER_BOONS = "combat.monster_boons",
     MONSTER_BLACK_MARK = "combat.monster_black_mark",
@@ -215,6 +217,8 @@ local component = {
     VAMPIRE = "character.vampire",
     HORROR = "character.horror",
     SEEN_BY_PLAYER = "character.seen_by_player",
+    RELIGION_TSO_SEEN = "religion.tso_seen",
+    RELIGION_USKAYAW_MOMENTUM = "religion.uskayaw_momentum",
     ABILITY_COOLDOWNS = "character.ability_cooldowns",
     BREATH_COOLDOWN = "character.breath_cooldown",
     DEMONIC_GUARDIAN = "character.demonic_guardian",

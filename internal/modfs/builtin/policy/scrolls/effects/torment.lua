@@ -5,6 +5,8 @@ local area = require("policy.combat.torment_area")
 local channels = require("constants.message_channels")
 local item_ids = require("ids.items")
 local scrolls = require("policy.scrolls")
+local conduct = require("policy.religion.conduct")
+local kinds = require("constants.religion_conduct")
 
 local effect = {}
 
@@ -15,8 +17,16 @@ end
 
 -- Example: effect.apply(ctx, reader) torments the reader and each visible
 -- susceptible monster, using their current resistance and HP components.
-function effect.apply(ctx, reader)
+function effect.apply(ctx, reader, request)
     area.apply(ctx, reader, channels.READ)
+
+    -- Source conduct follows the Torment effect, using knowledge from
+    -- before the scroll identified itself through reading.
+    conduct.record(ctx, {
+        id = kinds.EVIL,
+        level = 10,
+        known = request and request.known == true,
+    })
 end
 
 scrolls.register(item_ids.SCR_TORMENT, effect)

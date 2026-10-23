@@ -25,6 +25,8 @@ local input_items = require("policy.input.items")
 local modals = require("policy.presentation.modals")
 local object_classes = require("ids.object_classes")
 local input_commands = require("policy.input.commands")
+local gods = require("constants.gods")
+local component = require("constants.component")
 
 local test = {}
 
@@ -300,6 +302,10 @@ local function create_player(ctx)
     ctx:add(player, "core.combat", {
         shield_blocks = 0,
     })
+    ctx:add(player, component.RELIGION_WORSHIP, {
+        god_id = gods.ZIN,
+        piety = 50,
+    })
 
     return battle, player
 end
@@ -384,6 +390,13 @@ local function check_melee(ctx, battle, player)
 
         player_staves.apply(battle, hit, player_brands,
             definition, 10)
+
+        if entry.id == items.STAFF_DEATH then
+            local worship = ctx:get(player, component.RELIGION_WORSHIP)
+
+            harness.equal(worship.penance[gods.ZIN], 4,
+                "a damaging staff of death proc reports evil conduct")
+        end
 
         harness.truthy(hit.health.current < 1000,
             entry.id .. " activates its source-backed melee proc")

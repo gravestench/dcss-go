@@ -13,6 +13,7 @@ local definition = {
     wrath_penance = 25,
     behavior_module = "policy.religion.gods.okawaru",
     piety_mode = modes.ORDINARY,
+    conduct_module = "policy.religion.conduct.okawaru",
 }
 
 register.definition(categories.GODS, definition)

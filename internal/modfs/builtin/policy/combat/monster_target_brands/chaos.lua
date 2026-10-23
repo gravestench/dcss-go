@@ -8,6 +8,10 @@ local fiery = require("policy.monsters.fiery")
 local enfeeble = require("policy.magic.effects.statuses.enfeeble")
 local holy_wrath = require("policy.combat.monster_target_brands.holy_wrath")
 local roll = require("policy.combat.roll")
+local conduct = require("policy.religion.conduct")
+local identification = require("policy.items.identification")
+local kinds = require("constants.religion_conduct")
+local streams = require("constants.rng_streams")
 
 local chaos = {
     after_death = true,
@@ -180,6 +184,21 @@ end
 
 -- A self-selected Chaos result uses monster effects; other results reuse ordinary brand code.
 function chaos.apply(ctx, hit, target_brands)
+    -- Source attack.cc judges the chosen chaos weapon brand, even when its
+    -- random effect is harmless. Identification before the proc decides
+    -- whether a good god forgives this particular swing.
+    if hit.attacker == ctx:player() then
+        local known = hit.weapon_entity and
+            identification.known(ctx, hit.attacker,
+                hit.weapon_entity).properties or false
+
+        conduct.record(ctx, {
+            id = kinds.CHAOS,
+            level = 2 + ctx:random(streams.RELIGION, 3),
+            known = known,
+        })
+    end
+
     local selected = chaos.choose(ctx, hit)
 
     if selected == brands.CHAOS then

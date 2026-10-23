@@ -6,6 +6,7 @@ local defense = require("policy.combat.monster_defense")
 local damage = require("policy.magic.damage")
 local fragments = require("policy.combat.monster_area.fragmentation")
 local registry = require("policy.magic.effects.registry")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local shatter = {}
 
@@ -74,6 +75,8 @@ local function hurt(ctx, monster, power)
         has_flag(definition, "M_CONJURED") then
         return
     end
+
+    attack_conduct.report(ctx, monster, definition)
 
     local sides = 5 + math.floor(math.min(power, 200) / 3)
     local amount = 0

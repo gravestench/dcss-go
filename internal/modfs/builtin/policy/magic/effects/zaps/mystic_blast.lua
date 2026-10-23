@@ -7,6 +7,7 @@ local habitat = require("policy.combat.monster_habitat")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
+local attack_conduct = require("policy.religion.conduct.attack")
 
 local mystic = {}
 
@@ -145,6 +146,8 @@ function mystic.resolve(ctx, player, _, spell, power)
         if position and health and health.current > 0 and
             ctx:visible(origin.level_id, origin.x, origin.y, 7,
                 position.x, position.y) then
+            attack_conduct.report(ctx, target, entry.definition)
+
             -- zap-data.h:ZAP_MYSTIC_BLAST is calcdice<2,6,1,3>.
             local sides = random_round(ctx,
                 6 + math.floor(math.min(power, 100) / 3), 2)
