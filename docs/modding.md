@@ -557,6 +557,13 @@ catalog supplies Temple membership and display names through
 `policy.religion.names`. The special `GOD_NO_GOD` and `GOD_ECUMENICAL` IDs
 are engine sentinels, not god definitions. A same-path mod file replaces a
 bundled god's facts; a new path adds a god without editing a central list.
+Set `piety_decay_chance` only when this god loses one ordinary piety point
+on a periodic one-in-N check. For example, `piety_decay_chance = 17` means
+one chance in seventeen; omit the field for gods whose devotion has another
+owner, such as Ru's sacrifices or Uskayaw's combat momentum. Ashenzari and
+Ru set `god_time_zero_check = true`: their periodic check expels a character
+already at zero devotion without rolling random decay. Other alternative
+gods return from the source god-time handler before that zero check.
 
 Write comments for the next human reader. Give each Lua file its own purpose
 and explain each function's reason for existing and how it implements the
@@ -1537,10 +1544,21 @@ with the player and god IDs. Mod systems can use those signals for divine
 abilities, passives, and gifts. Those downstream god systems remain separate
 work; altar prayer already uses this worship owner.
 
+`systems/religion_upkeep.lua` advances the player-owned god-time clock after
+timed actions. The first check is at 200 aut; later checks are 100–300 aut
+apart. The saved `religion.worship.next_god_time_aut` belongs to the player,
+so changing gods cannot reroll the next check. At each check the current
+god's `piety_decay_chance` controls a one-point loss through the normal
+hysteresis rule. A mod god can choose its rate in its own definition file;
+no scheduler edit is needed. Example: with `piety_decay_chance = 35`, a
+successful roll fills the loss buffer first, then a later successful roll
+removes piety. A god with no rate consumes no decay roll.
+
 #### Worship transitions and per-god entry rules
 
 `policy/religion/worship.lua` owns `join(ctx, player, god_id, source)` and
-`renounce(ctx, player)`. Import `constants.religion_sources` for `ALTAR` or
+`renounce(ctx, player)`. It also exposes `excommunicate(ctx, player)` for
+forced loss of devotion. Import `constants.religion_sources` for `ALTAR` or
 `ECUMENICAL`, and import god IDs from `constants.gods` when using a bundled
 god. A mod-added god supplies its ID in its own definition. The owner checks
 live eligibility, leaves the old god, sets the new starting piety, applies a
@@ -1549,6 +1567,9 @@ increments the saved worship count. Renunciation runs the same leave path and
 records source `wrath_penance` on `religion.worship`. The later wrath system
 will consume that debt. The calling prayer command still owns confirmation
 and turn time; invoking `join` directly does not spend a turn.
+Voluntary renunciation or conversion can transfer saved devotion between
+good gods. Conduct offenses and timed decay call `excommunicate` instead;
+forced expulsion clears that temporary bridge before another god can use it.
 
 Each `content/gods/<name>.lua` definition declares `starting_piety` and
 `wrath_penance` as nonnegative integers. If a god has an exceptional entry

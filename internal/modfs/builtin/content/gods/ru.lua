@@ -12,6 +12,7 @@ local definition = {
     starting_piety = 10,
     wrath_penance = 0,
     piety_mode = modes.ORDINARY,
+    god_time_zero_check = true,
     conduct_module = "policy.religion.conduct.ru",
     behavior_module = "policy.religion.gods.ru",
 }

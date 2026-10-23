@@ -12,6 +12,7 @@ local definition = {
     starting_piety = 2,
     wrath_penance = 50,
     piety_mode = modes.ORDINARY,
+    god_time_zero_check = true,
     conduct_module = "policy.religion.conduct.ashenzari",
     behavior_module = "policy.religion.gods.ashenzari",
 }

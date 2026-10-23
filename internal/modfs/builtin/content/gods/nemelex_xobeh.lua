@@ -12,6 +12,7 @@ local definition = {
     starting_piety = 15,
     wrath_penance = 50,
     piety_mode = modes.ORDINARY,
+    piety_decay_chance = 35,
     conduct_module = "policy.religion.conduct.nemelex_xobeh",
 }
 

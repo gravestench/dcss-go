@@ -323,7 +323,7 @@ function piety.offend(ctx, player, loss, penance)
     if state.piety == 0 then
         local worship = require("policy.religion.worship")
 
-        worship.renounce(ctx, player)
+        worship.excommunicate(ctx, player)
 
         return true
     end

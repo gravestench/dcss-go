@@ -12,6 +12,7 @@ local definition = {
     starting_piety = 15,
     wrath_penance = 30,
     piety_mode = modes.ORDINARY,
+    piety_decay_chance = 17,
     conduct_module = "policy.religion.conduct.kikubaaqudgha",
     rejects_innate_caster = true,
 }

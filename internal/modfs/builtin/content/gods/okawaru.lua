@@ -13,6 +13,7 @@ local definition = {
     wrath_penance = 25,
     behavior_module = "policy.religion.gods.okawaru",
     piety_mode = modes.ORDINARY,
+    piety_decay_chance = 17,
     conduct_module = "policy.religion.conduct.okawaru",
 }
 

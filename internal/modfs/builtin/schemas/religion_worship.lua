@@ -6,7 +6,7 @@ local gods = require("constants.gods")
 
 local schema = {
     id = component.RELIGION_WORSHIP,
-    version = 1,
+    version = 2,
     fields = {
         god_id = {
             type = "string",
@@ -24,6 +24,13 @@ local schema = {
         },
 
         gift_timeout = {
+            type = "int64",
+            default = 0,
+        },
+
+        -- God time starts at 200 aut and then rolls a 100–300 aut interval.
+        -- Zero lets an older save initialize its own next deadline once.
+        next_god_time_aut = {
             type = "int64",
             default = 0,
         },

@@ -927,6 +927,21 @@ local function validate_god(definition)
         fail(category, id, "has invalid piety_mode")
     end
 
+    -- Source god time uses a one-in-N ordinary-piety decay chance. Gods
+    -- with another piety owner omit this field entirely, including mod gods.
+    local decay = definition.piety_decay_chance
+
+    if decay ~= nil and (type(decay) ~= "number" or decay % 1 ~= 0 or
+        decay < 1 or mode ~= modes.ORDINARY) then
+        fail(category, id, "has invalid piety_decay_chance")
+    end
+
+    if definition.god_time_zero_check ~= nil and
+        (type(definition.god_time_zero_check) ~= "boolean" or
+            mode ~= modes.ORDINARY or decay ~= nil) then
+        fail(category, id, "has invalid god_time_zero_check")
+    end
+
     required(category, definition, "temple_eligible", "boolean")
 
     if definition.behavior_module ~= nil and

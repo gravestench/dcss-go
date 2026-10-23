@@ -315,6 +315,11 @@ its random draws replay after save/restore. One Lua transition path now joins
 or renounces any registered god, preserves good-god piety transfer, records
 source penance, charges Gozag, and preserves Ignis's spent reserve. Ru,
 Ashenzari, Yredelemnul, and Xom entry exceptions retain typed pending state.
+The saved god-time clock now starts at 200 aut, then runs source 100–300 aut
+checks. Nineteen gods use their source one-in-17 or one-in-35 piety decay;
+seven gods use alternative piety mechanics and skip that roll. A zero-piety
+check forces departure, while voluntary renunciation alone can preserve
+good-god piety for transfer.
 Both stair keys pray on an altar. Conversion, refusal, ecumenical identification,
 two-step renunciation, saved altar identity, and the god/piety/penance HUD now
 run through Lua command, system, and presentation rules. The pending

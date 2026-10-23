@@ -38,10 +38,11 @@ local function first_patrons(state)
     return true
 end
 
--- The C++ leave path stores good-god piety for a later good conversion. The
--- source restores only devotion above the first 30 points, at half value.
-local function preserve_good_piety(state, definition)
-    if definition.good then
+-- A voluntary exit from a good god can bridge piety into the next good
+-- faith. Forced loss of devotion must erase that bridge, even if the former
+-- god was good; source excommunication receives that distinction explicitly.
+local function preserve_good_piety(state, definition, voluntary)
+    if definition.good and voluntary then
         state.previous_good_god = state.god_id
         state.saved_good_piety = state.piety
 
@@ -54,7 +55,7 @@ end
 
 -- Set godless state before invoking the old god's leave handler, matching
 -- excommunication's ordering. Penance is durable for the later wrath owner.
-local function leave(ctx, player, state, next_god)
+local function leave(ctx, player, state, next_god, voluntary)
     local old_id = state.god_id
 
     if old_id == gods.NO_GOD then
@@ -63,7 +64,7 @@ local function leave(ctx, player, state, next_god)
 
     local definition = catalog.get(categories.GODS, old_id)
 
-    preserve_good_piety(state, definition)
+    preserve_good_piety(state, definition, voluntary)
 
     if old_id == gods.IGNIS then
         state.min_ignis_piety = math.min(
@@ -107,7 +108,26 @@ function worship.renounce(ctx, player)
         return false
     end
 
-    leave(ctx, player, state, gods.NO_GOD)
+    leave(ctx, player, state, gods.NO_GOD, true)
+
+    return true
+end
+
+-- Conduct and timed piety decay can expel a player without their consent.
+-- They share all god-specific cleanup with renunciation, but never preserve
+-- a good-god piety bridge that could reward the later conversion.
+function worship.excommunicate(ctx, player)
+    local state = ctx:get(player, component.RELIGION_WORSHIP)
+
+    if not state then
+        error("excommunication requires worship state")
+    end
+
+    if state.god_id == gods.NO_GOD then
+        return false
+    end
+
+    leave(ctx, player, state, gods.NO_GOD, false)
 
     return true
 end
@@ -234,7 +254,7 @@ function worship.join(ctx, player, god_id, source)
     local was_first = first_patrons(state)
 
     if state.god_id ~= gods.NO_GOD then
-        state = leave(ctx, player, state, god_id)
+        state = leave(ctx, player, state, god_id, true)
     end
 
     initial_state(ctx, state, god_id, definition)

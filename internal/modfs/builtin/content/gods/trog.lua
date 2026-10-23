@@ -13,6 +13,7 @@ local definition = {
     starting_piety = 15,
     wrath_penance = 50,
     piety_mode = modes.ORDINARY,
+    piety_decay_chance = 17,
     behavior_module = "policy.religion.gods.trog",
     conduct_module = "policy.religion.conduct.trog",
 }
