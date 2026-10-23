@@ -6,6 +6,7 @@ local flight = require("policy.combat.flight")
 local hex_status = require("policy.combat.monster_hexes.status")
 local forms = require("policy.magic.effects.forms.player")
 local terrain = require("constants.terrain")
+local landings = require("policy.world.teleport_landings")
 local traits = require("policy.character.traits")
 local water = require("policy.character.water")
 
@@ -32,7 +33,8 @@ end
 -- Reject blocked or occupied cells, then allow hazardous terrain only with flight or swimming.
 function translocation.can_land(ctx, player, level_id, x, y)
     if not ctx:walkable(level_id, x, y) or
-        ctx:actor_at(level_id, x, y) then
+        ctx:actor_at(level_id, x, y) or
+        not landings.allowed(ctx, level_id, x, y) then
         return false
     end
 

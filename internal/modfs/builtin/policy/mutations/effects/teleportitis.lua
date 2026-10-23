@@ -16,6 +16,7 @@ local terrain = require("constants.terrain")
 local traits = require("policy.character.traits")
 local vision = require("policy.character.vision")
 local water = require("policy.character.water")
+local landings = require("policy.world.teleport_landings")
 
 local teleportitis = {}
 
@@ -41,7 +42,8 @@ end
 -- capabilities can make a cell safe that is dangerous for another player.
 local function can_land(ctx, player, level_id, x, y)
     if not ctx:walkable(level_id, x, y) or
-        ctx:actor_at(level_id, x, y) then
+        ctx:actor_at(level_id, x, y) or
+        not landings.allowed(ctx, level_id, x, y) then
         return false
     end
 

@@ -17,6 +17,7 @@ local plants = require("policy.save.monster_plants")
 local living_spells = require("policy.combat.monster_summons.living_spells")
 local resistance_ids = require("constants.resistance_ids")
 local holiness = require("constants.monster_holiness")
+local wizlab = require("constants.wizlab")
 
 local constructs = require("constants.monster_construct_components")
 local monster_profile = require("policy.combat.monster_profile")
@@ -171,13 +172,35 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         state.source_id == gods.JIYVA
     local xom_source = state.source_category == categories.GODS and
         state.source_id == gods.XOM
+    local wizlab_source = state.source_category == categories.VAULTS and
+        (state.source_id == wizlab.WUCAD_MAP_ID or
+            state.source_id == wizlab.BORGNJOR_MAP_ID)
 
     if state.source_category ~= categories.SPELLS and
         state.source_category ~= categories.MUTATIONS and
         not trap_source and
         not item_source and not scroll_source and
-        not jiyva_source and not xom_source then
+        not jiyva_source and not xom_source and
+        not wizlab_source then
         error("summon " .. ctx:id(entity) .. " has invalid origin category")
+    end
+
+    if wizlab_source then
+        local event = ctx:get(entity,
+            component.WORLD_WIZLAB_EVENT_ACTOR)
+        local expected_kind = state.source_id ==
+            wizlab.WUCAD_MAP_ID and
+            wizlab.EVENT_ACTOR_WUCAD or
+            wizlab.EVENT_ACTOR_BORGNJOR
+
+        if not event or event.kind ~= expected_kind or
+            event.vault_id ~= state.source_id or
+            event.level_id ~= position.level_id or
+            state.owner ~= ctx:player() or
+            state.attitude ~= attitudes.HOSTILE then
+            error("summon " .. ctx:id(entity) ..
+                " has invalid Wizard Lab origin")
+        end
     end
 
     if jiyva_source and

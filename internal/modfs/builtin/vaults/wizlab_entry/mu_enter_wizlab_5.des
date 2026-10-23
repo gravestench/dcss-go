@@ -1,0 +1,33 @@
+# mu_enter_wizlab_5: original Wizard Lab source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/wizlab.des.
+# Source Lua stays in comments beside named port hooks until DES-local Lua is supported.
+NAME:   mu_enter_wizlab_5
+# The source shared helper supplied these selection facts.
+# Vaults receives its separate single special-room chance.
+DEPTH: Depths, Elf, Crypt, Vaults, !Vaults:$
+TAGS: uniq_wizlab vaults_wizlab no_item_gen no_monster_gen chance_wizlab
+CHANCE: 500, 0 (Vaults)
+TAGS:   vaults_orient_s
+COLOUR: U = random
+COLOUR: W = mutagenic
+KFEAT:  o = granite_statue
+FTILE:  WU.Oo = floor_rough_magenta
+TILE:   b = dngn_crystal_magenta
+# Source Lua at hook site 1:
+# :       wizlab_portal(_G)
+# : set_feature_name("crystal_wall", "wall of crystal")
+: vault.run("mu_enter_wizlab_5.site_1")
+MAP
+bbbbbbbbbbb
+bbbb...bbbb
+bWWU.O.UWWb
+bWbb...bbWb
+bWWWW.WWWWb
+bbbbW.Wbbbb
+bbbbW.Wbbbb
+bbbbW.Wbbbb
+bbbbW.Wbbbb
+bbbbo.obbbb
+bbbb...bbbb
+     @
+ENDMAP

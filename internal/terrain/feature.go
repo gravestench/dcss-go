@@ -52,6 +52,8 @@ const (
 	ExitSewer          ID = "DNGN_EXIT_SEWER"
 	EnterOssuary       ID = "DNGN_ENTER_OSSUARY"
 	ExitOssuary        ID = "DNGN_EXIT_OSSUARY"
+	EnterWizlab        ID = "DNGN_ENTER_WIZLAB"
+	ExitWizlab         ID = "DNGN_EXIT_WIZLAB"
 	EnterBailey        ID = "DNGN_ENTER_BAILEY"
 	ExitBailey         ID = "DNGN_EXIT_BAILEY"
 	EnterIceCave       ID = "DNGN_ENTER_ICE_CAVE"
@@ -295,6 +297,16 @@ var definitions = map[ID]Feature{
 	},
 
 	ExitOssuary: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	EnterWizlab: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitWizlab: {
 		Glyph:    '∩',
 		Walkable: true,
 	},

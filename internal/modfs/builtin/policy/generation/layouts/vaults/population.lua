@@ -13,6 +13,7 @@ local grid = require("policy.generation.grid")
 local rooms = require("policy.generation.layouts.vaults.rooms")
 local catalog = require("policy.generation.vaults.catalog")
 local used = require("policy.generation.vaults.used")
+local wizlab = require("constants.wizlab")
 
 local population = {}
 
@@ -319,6 +320,27 @@ function population.run(api, builder)
     }
     local placed_count = 0
     local failures = 0
+
+    -- Source Vaults room selection rolls Wizard Lab's five-percent
+    -- special attempt once per floor. The entrance DES files suppress
+    -- their ordinary CHANCE in Vaults, so a second draw would double
+    -- the actual portal rate.
+    if builder:chance_in(wizlab.VAULTS_CHANCE_PERCENT, 100) then
+        local placed = place_tagged(api, builder, {
+            tag = tags.VAULTS_WIZLAB,
+        }, protected, state, anchor)
+
+        if placed then
+            placed_count = placed_count + 1
+            entries[#entries + 1] = placed.entry
+            ids[#ids + 1] = placed.id
+            state:add(catalog.get(placed.id))
+
+            for _, record in ipairs(placed.records) do
+                records[#records + 1] = record
+            end
+        end
+    end
 
     while placed_count < 27 and failures < 20 do
         local generator = choose_generator(builder, counts)

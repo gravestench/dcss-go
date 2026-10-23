@@ -1,0 +1,130 @@
+# wizlab_wucad: original Wizard Lab source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/wizlab.des.
+# Source Lua stays in comments beside named port hooks until DES-local Lua is supported.
+NAME:       wizlab_wucad
+# wizlab_setup supplies these whole-floor selection facts.
+DEPTH: WizLab
+ORIENT: encompass
+TAGS: no_item_gen no_monster_gen
+TAGS:       no_rotate
+SUBST:      T = t.
+KMONS:      8 = orange crystal statue name:Statue_of_Wucad_Mu n_rpl n_the \
+                hd:15 tile:mons_wucad_mu_statue
+KITEM:      8 = staff_of_wucad_mu
+COLOUR:     c = darkgrey
+COLOUR:     t = lightred / red w:3
+TILE:       t = dngn_tree_lightred / dngn_tree_red w:4 / dngn_tree_yellow w:4
+# This used to specify dngn_statue_troll as the only middle case, but that tile
+# no longer exists.
+TILE:       G = dngn_granite_statue / \
+                dngn_statue_angel / dngn_statue_imp / \
+                dngn_statue_ancient_evil / dngn_statue_ancient_hero
+COLOUR:     AG = red
+COLOUR:     < = lightred
+TILE:       c = dngn_stone_dark
+LFLOORTILE: floor_pebble_white
+KFEAT:      ' = open_door
+KFEAT:      1234567 = .
+KMONS:      1234567 = nothing
+LROCKCOL:   darkgrey
+ITEM:       potion of experience q:1 ident:all
+ITEM:       manual of fighting / manual of armour / manual of spellcasting / \
+            manual of staves / manual of fighting / manual of dodging
+ITEM:       book of hexes / book of dreams / book of dangerous friends
+SHUFFLE:    defg
+LFLOORCOL:  white
+
+# Source Lua block at hook site 1:
+# dgn.persist.wucad_mu_died = false
+#
+# local function trigfn (spot)
+#   return Triggerable.synchronized_markers(function_at_spot(
+#             "wizlab_wucad_msgfn",
+#             { spot=spot, trig = false}, true, { only_at_slave = true,
+#               listen_to_slaves = true }))
+# end
+#
+# lua_marker('1', trigfn(1))
+# lua_marker('2', trigfn(2))
+# lua_marker('3', trigfn(3))
+# lua_marker('4', trigfn(4))
+# lua_marker('5', trigfn(5))
+# lua_marker('6', trigfn(6))
+# lua_marker('7', trigfn(7))
+#
+#
+# local summon_marker = TriggerableFunction:new ({
+#     func="wizlab_wucad_summon_monks",
+#     repeated=true })
+#
+# summon_marker:add_triggerer(DgnTriggerer:new {type="turn", delay_min=150,
+#     delay_max=300 })
+#
+# local wucad_marker = TriggerableFunction:new ({
+#     func="callback.wizlab_wucad_wucad_died",
+#     repeated=false })
+#
+# wucad_marker:add_triggerer(DgnTriggerer:new {type="monster_dies",
+#     target="Statue of Wucad Mu"})
+#
+# lua_marker('A', summon_marker)
+# lua_marker('A', wucad_marker)
+#
+: vault.run("wizlab_wucad.site_1")
+MARKER:     G = lua:props_marker { veto_destroy="veto" }
+MARKER:     + = lua:props_marker { veto_destroy="veto" }
+MARKER:     ' = lua:props_marker { veto_destroy="veto" }
+MARKER:     c = lua:props_marker { veto_destroy="veto" }
+MARKER:     t = lua:props_marker { veto_destroy="veto" }
+# Source Lua at hook site 2:
+# :           wizlab_setup(_G)
+# :           set_border_fill_type("tree")
+# :           set_random_mon_list([[shadow w:6 / flayed ghost w:2 / wraith w:2 / ]]
+# :                            .. [[demonspawn / deep troll / ]]
+# :                            .. [[grey draconian monk w:6 / ]])
+# :           set_feature_name("tree", "autumnal tree")
+# :           set_feature_name("stone_wall", "crumbled stone wall")
+# :           set_feature_name("granite_statue", "strange statue")
+: vault.run("wizlab_wucad.site_2")
+# Source epilogue runs when the whole lab is placed;
+# its first-visit announcement is owned by lab travel.
+# epilogue{{
+#             wizlab_milestone(_G, "Wucad Mu's Monastery")
+# }}
+: vault.post_place("wizlab_wucad.epilogue")
+MAP
+tttttttttttttttttttttttttttttttttttttttt
+tttttttttttttttttttttttttttttttttttttttt
+ttttttttttttttTTTTTTTttttttttttttttttttt
+ttttttTTTTTTTT.......TTTTTTTTTTTTttttttt
+tttttT.........ccccc.............Ttttttt
+ttttT.........cc777cc.............Tttttt
+tttT.......cccc77777cccc...........Ttttt
+ttT.......cc..cc777cc..cc......ccc..Tttt
+ttT......cc....cc+cc....cc....cc6cc..Ttt
+ttT.....Tc....G.....G....cT..cc6U6cc.Ttt
+ttT.....cc...............cc...cc6cc..Ttt
+ttT......+.G.....8.....G.c.....c+c...Ttt
+ttT.....cc...............cc..........Ttt
+ttT.....Tc....G.....G....cT..........Ttt
+ttT.c..cTcc.............cccT.........Ttt
+ttTcc++ccccccc.......ccccccc+cc......Ttt
+ttcc5555cccdeccc+++cccfgccc444cc.....Ttt
+ttc555555c....c.....c....c44444c....Tttt
+ttc555555cc.............cc44444cc..ctttt
+ttc555555ccccccccccccccccccc+cccc++ccttt
+ttcc5555ccc.............ccc222cc3333cctt
+tttccccccc...............+22222+33333ctt
+ttttttttccc..ccc+++ccc..ccc222cc3333cctt
+tttttttttcccccTT111Ttccccccccccccccccttt
+ttttttttttttttT11111Tttttttttttttttttttt
+tttttttttttT.........TTTTTTttttttttttttt
+tttccccctttT.....G........Ttcccccttttttt
+ttcc...cctT..............Ttcc...cctttttt
+ttc..A..'..................'..<..ctttttt
+ttcc...cctT.....TTTT.....Ttcc...cctttttt
+tttccccctttT...TTttTT....Tttcccccttttttt
+ttttttttttttTTTTttttTTTTTttttttttttttttt
+tttttttttttttttttttttttttttttttttttttttt
+tttttttttttttttttttttttttttttttttttttttt
+ENDMAP

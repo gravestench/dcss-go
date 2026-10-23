@@ -56,7 +56,9 @@ function random_items.describe(name, depth)
         result.class_id = classes.OBJ_SCROLLS
     elseif name == requests.ANY_POTION then
         result.class_id = classes.OBJ_POTIONS
-    elseif name == requests.ANY_WAND then
+    elseif name == requests.ANY_WAND or
+        name == requests.ANY_BEAM_WAND or
+        name == requests.ANY_BLAST_WAND then
         result.class_id = classes.OBJ_WANDS
     elseif name == requests.ANY_MISC then
         result.class_id = classes.OBJ_MISCELLANY

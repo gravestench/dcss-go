@@ -30,6 +30,8 @@ local names_by_category = {}
 
 local random_monster_names = {
     [monster_requests.ANY_DEMON] = true,
+    [monster_requests.LESSER_DEMON] = true,
+    [monster_requests.ANY_LESSER_DEMON] = true,
     [monster_requests.COMMON_DEMON] = true,
     [monster_requests.GREATER_DEMON] = true,
     [monster_requests.ANY_COMMON_DEMON] = true,
@@ -78,6 +80,8 @@ local random_item_names = {
     [item_requests.ANY_CONCEALMENT_SCROLL] = true,
     [item_requests.ANY_POTION] = true,
     [item_requests.ANY_WAND] = true,
+    [item_requests.ANY_BEAM_WAND] = true,
+    [item_requests.ANY_BLAST_WAND] = true,
     [item_requests.ANY_MISC] = true,
     [item_requests.ANY_GOOD_ITEM] = true,
     ["any"] = true,
@@ -585,7 +589,7 @@ function resolve.validate_monster(selected, site)
         return
     end
 
-    local ugly_colour, ugly_species = ugly_names(name)
+    local ugly_colour, ugly_species = ugly_names(base_name or name)
 
     if ugly_colour then
         find_name(categories.MONSTERS, ugly_species, site)
@@ -709,7 +713,7 @@ function resolve.monster(ctx, selected, depth, site)
     local draconian_base, draconian_role = draconian_names(name)
     local band_name = name:match("^(.-) band$")
     local salt_base = name:match("^(.-)%-shaped pillar of salt$")
-    local ugly_colour, ugly_species = ugly_names(name)
+    local ugly_colour, ugly_species = ugly_names(band_name or name)
     local fixed_draconian = name:match(
         "^any nonbase ([a-z]+) draconian$")
     local kind_id
@@ -758,6 +762,11 @@ function resolve.monster(ctx, selected, depth, site)
         if random_monster_names[band_name] then
             kind_id = random_monsters.pick(ctx, band_name,
                 source_depth(selected, depth), site, selected.place)
+        elseif ugly_species then
+            -- A source colour precedes the species even when "band"
+            -- follows it. Use the parsed species for catalog lookup
+            -- while retaining both its colour and band request.
+            kind_id = find_name(categories.MONSTERS, ugly_species, site)
         else
             kind_id = find_name(categories.MONSTERS, band_name, site)
         end
@@ -830,7 +839,9 @@ function resolve.monster(ctx, selected, depth, site)
         name_species = selected.name_species or false,
         tile = selected.tile,
         hp = selected.hp,
-        hd = selected.hd,
+        hd = selected.hd or
+            (selected.mutant_beast and
+                selected.mutant_beast.hit_dice),
         permanent_enchantments = selected.permanent_enchantments,
     }
 end

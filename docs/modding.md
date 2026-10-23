@@ -2623,6 +2623,67 @@ fails before stock generation. Import their IDs from `ids.clouds`,
 `ids.traps`, or `ids.shops` at use sites, and read the corresponding catalog
 validator if you need the exact accepted fields.
 
+### Wizard Lab gates and source rooms
+
+Wizard Labs use eleven entrance maps under `vaults/wizlab_entry/` and fifteen
+whole-floor destination maps under `vaults/wizlab/`. The bundled files retain
+the original DCSS `.des` MAP rows. Each entrance's `O` becomes a timed gate;
+the source 600–800-turn countdown begins when the outside floor is populated.
+The portal may expire while the player is elsewhere. Entry saves the exact
+outside level and gate coordinate, and every authored `<` in the selected lab
+returns there. An occupied return cell refuses travel until it is clear.
+
+To add a lab, place one `.des` file under `vaults/wizlab/` in a higher mod
+layer. Give it a unique `NAME`, `DEPTH: WizLab`, a positive source weight,
+an `ORIENT: encompass` whole-floor map, and at least one `<` exit. The
+effective catalog sorts candidate IDs before drawing by weight, so adding a
+file does not make selection depend on filesystem order. To replace one
+bundled lab, use its exact relative path. To remove a lab from ordinary
+selection while keeping its definition available, give it zero weight.
+Entrance maps use the regular `.des` branch/depth and chance grammar;
+Vaults gets one special five-percent gate attempt rather than a second
+ordinary room draw. `mu_enter_wizlab_7` has no Vaults weight.
+
+For source-position Lua, keep the MAP and static declarations in `.des`.
+A line such as `: vault.run("wizlab_wucad.site_1")` calls a named method in
+`policy/generation/vaults/wizlab/wizlab_wucad.lua` at that precise point in
+the source operation sequence. The hook's `api` can emit a directive or a
+typed marker. Use `api:record` for a marker that must stay attached to a
+cell before a later `SUBST` erases its glyph; Zonguldrok's `M`, `D`, and `L`
+callbacks demonstrate this. See the general [vault hook contract](#vault-maps-and-lua-hooks)
+and [context reference](#the-game-context-ctx) for the difference between
+placement `api` and runtime `ctx`. The planned DES-local hook consolidation
+remains a TODO; executable Lua currently lives in separate Lua files.
+
+Live callbacks belong to small event owners under
+`policy/world/wizlab/events/handlers/`, matched by marker identity through
+the effective VFS. A handler creates an Akara component from real transformed
+marker positions. A focused system or monster-death hook runs the rule;
+the corresponding save validator checks the component against its source
+markers and changed terrain. The bundled examples cover Doroklohe's
+three-phase wall collapse, Wucad's shared numbered messages and monks,
+Borgnjor's guarded lost-soul summons, and Zonguldrok's grave waves, door,
+and one-shot lich. Add a new handler file for a new lab behavior. Keep its
+constants with the rule and give it a dedicated component only when it has
+mutable state; do not add its behavior to a central lab-name switch.
+Zonguldrok's permanent grave actors also have event provenance: they do not
+spend an initial Dungeon roster slot, and the saved encounter death count
+bounds the extra XP that those actors can grant.
+Each source event clock must be unique on its placed floor. Population checks
+this before portal entry commits, so a duplicate marker in a replacement map
+leaves the outside gate intact and reports the owning lab.
+
+The [Wizard Lab snapshot index](level-snapshots/wizlab/index.txt) opens all
+fifteen generated 80×70 floors and lists every return arch with its exact
+outside test gate. Regenerate it with the environment command in the
+[snapshot guide](level-snapshots/README.md). Run the Lua event test and the
+integrated map/travel tests when editing a lab:
+
+```sh
+go test ./internal/script -run 'TestLuaRules/wizlab' -count=1
+go test ./internal/game -run 'TestWizlab' -count=1
+```
+
 ## Character definitions and choices
 
 The embedded `content/species/` and `content/jobs/` trees contain one Lua file

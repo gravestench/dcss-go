@@ -137,6 +137,13 @@ function random_monsters.pick(ctx, request, depth, site, place)
         return any_demon(ctx)
     end
 
+    if request == requests.LESSER_DEMON or
+        request == requests.ANY_LESSER_DEMON then
+        local kinds = tiers[5]
+
+        return kinds[ctx:random("vault_monster", #kinds) + 1]
+    end
+
     if request == requests.COMMON_DEMON or
         request == requests.ANY_COMMON_DEMON then
         return common_demon(ctx)

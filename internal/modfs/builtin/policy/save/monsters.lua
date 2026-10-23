@@ -642,7 +642,8 @@ function module.run(ctx, input)
         elseif ctx:get(entity, component.JIYVA_SPAWN) or
             ctx:get(entity, component.PANDEMONIUM_LORD) or
             ctx:get(entity, component.VAULT_ORIGIN) or
-            ctx:get(entity, component.WORLD_VAULT_SPAWN) then
+            ctx:get(entity, component.WORLD_VAULT_SPAWN) or
+            ctx:get(entity, component.WORLD_WIZLAB_EVENT_ACTOR) then
             validate_vault_monster(ctx, entity, actor, health,
                 position, ai, input.current_aut)
         -- Kirke's extra band and released actors have explicit origins, not

@@ -2,6 +2,33 @@ local items = require("policy.inventory.items")
 
 local doors = {}
 
+-- Source props_marker strings may give an authored doorway its own
+-- ordinary open and close verbs. Read them from the first connected
+-- panel so every panel of a multi-cell door speaks the same way.
+function doors.message(ctx, level, cell, opening, pushed)
+    if pushed then
+        return "You close the door, pushing everything out of the way."
+    end
+
+    local key = opening and "door_verb_open" or
+        "door_verb_close"
+    local template = ctx:marker_property(level,
+        cell.x, cell.y, key)
+
+    if template then
+        local noun = ctx:marker_property(level,
+            cell.x, cell.y, "door_description_noun") or "door"
+
+        return string.format(template, noun, "")
+    end
+
+    if opening then
+        return "You open the door."
+    end
+
+    return "You close the door."
+end
+
 -- Encode coordinates for the visited/exclusion sets used during a door
 -- flood fill; a string key works for both positive and negative offsets.
 local function key(x, y)

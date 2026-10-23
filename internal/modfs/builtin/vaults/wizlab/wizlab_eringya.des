@@ -1,0 +1,101 @@
+# wizlab_eringya: original Wizard Lab source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/wizlab.des.
+# Source Lua stays in comments beside named port hooks until DES-local Lua is supported.
+NAME:       wizlab_eringya
+# wizlab_setup supplies these whole-floor selection facts.
+DEPTH: WizLab
+ORIENT: encompass
+TAGS: no_item_gen no_monster_gen
+TAGS:       no_rotate
+ITEM:       any book, any magical staff
+# Source Lua at hook site 1:
+# :item(dgn.loot_potions)
+: vault.run("wizlab_eringya.site_1")
+ITEM:       any weapon good_item ego:spectral no_pickup / \
+            lajatang ego:spectral no_pickup w:4 / \
+            quarterstaff randart plus:12 ego:spectral no_pickup w:1
+MONS:       deep elf archer w:5 / faun / centaur warrior
+MONS:       yaktaur / satyr / naga sharpshooter
+MONS:       shambling mangrove, thorn hunter / eleionoma, deep elf master archer
+MONS:       fenstrider witch, bush
+KMONS:      P = oklob plant
+KFEAT:      - = stone_arch
+KFEAT:      _ = altar_fedhas
+SHUFFLE:    pq/rs
+SUBST:      q : y., r : y., p = ., s = .
+NSUBST:     1 = 3:1 / *=1...., 2 = 2:2 / *=2..., 3 = 1:4 / 1:3 / *=34....
+NSUBST:     5 = 2:5 / *=5., 7 = 1:P / 4:7 / *=P7777ttV........
+NSUBST:     ; = 2:d / 2:e / 1:g / *:deff, A = 1:< /*:A
+SUBST:      y = ct
+MARKER:     A = feat:stone_arch
+COLOUR:     G = lightgrey
+TILE:       c = wall_brick_vines
+# Source Lua at hook site 2:
+# : if crawl.one_chance_in(4) then
+: vault.run("wizlab_eringya.site_2")
+# Source Lua at hook site 3:
+# : end
+#should use statue_archer, but currently that doesn't work
+TILE:       G = dngn_statue_centaur
+LROCKTILE:  wall_brick_vines
+LFLOORTILE: floor_grass
+# Source Lua at hook site 4:
+# :           set_random_mon_list(
+# :               "deep elf archer / faun / centaur warrior / yaktaur / " ..
+# :               " satyr / naga sharpshooter / shambling mangrove / " ..
+# :               "thorn hunter w:5 / eleionoma w:5 / deep elf master archer w:2")
+# :           wizlab_setup(_G)
+: vault.run("wizlab_eringya.site_4")
+# Source epilogue runs when the whole lab is placed;
+# its first-visit announcement is owned by lab travel.
+# epilogue {{
+#             wizlab_milestone(_G, "Eringya's Formal Garden")
+# }}
+: vault.post_place("wizlab_eringya.epilogue")
+MAP
+ccccccccccccccccccccccccccccccccccccccccccccc
+ctttttttttttttttttttttttttttttttttttttttttttc
+cttttttttttt1....1....t....1....1tttttttttttc
+cttttttt.............................tttttttc
+ctttt1....tttttttttttt.tttttttttttt....1ttttc
+cttt.....tttttttttt.......tttttttttt.....tttc
+ctt...tt...ttt......G...G......ttt...tt...ttc
+cty1.ttt2............A.A............2ttt.1ytc
+ctt...tt......ttt...G...G...ttt......tt...ttc
+cttt.....tttttttttt.......tttttttttt.....tttc
+ctttt1....tttttttttttt.tttttttttttt....1ttttc
+cttttttt.......1.............1.......tttttttc
+cttttttttttt1.....1.......1.....1tttttttttttc
+cttttttttttttttttttttT.Tttttttttttttttttttttc
+cttttttttt.2.ttttttt.....ttttttt.2.tttttttttc
+ctttttttt.....t...t...T...t...t.....ttttttttc
+cttttttt...t....7.....7.....7....t...tttttttc
+ctttttt....1......tc.....ct......1....ttttttc
+cttttt..t......tttttcc-ccttttt......t..tttttc
+ctttt...tt.7..tttttt.....tttttt..7.tt...ttttc
+cttt...tttt..tttttt...3...tttttt..tttt...tttc
+cttt.2.tttt...tttttt2.2.2tttttt...tttt.2.tttc
+ctttt...tttt.2.tttttt;t;tttttt.2.tttt...ttttc
+ctttttp.pttttq.qtttttttttttttq.qttttp.ptttttc
+cttttttpppttttqqqttttyyyttttqqqttttpppttttttc
+cttttp..-..pttq...tt..2..tt...qttp..-..pttttc
+ctty.........ytt....1...1....tty.........yttc
+ctt;1..tTt..1;ytt.3...T...3.tty;1..tTt..1;ttc
+ctty....3...2ytt....1...1....tty2...3....yttc
+ctttt2..-...tt....tt;.3.;tt....tt...-..2ttttc
+ctttttt...tttt...ttttytytttt...tttt...ttttttc
+cttttt...tttt2..ttttttgtttttt..2tttt...tttttc
+ctttt11.tttt...tttt5G;_;G5tttt...tttt.11ttttc
+cttt..2tttt1.2tttt....3....tttt2.1tttt2..tttc
+cttt7..ttt...tttt2....6....2tttt...ttt..7tttc
+ctttt...t.7..tttG;.........;Gttt..7.t...ttttc
+cttttt........tttttcc5.5ccttttt........tttttc
+ctttttt.-.6.-..tttcc..7..ccttt..-.6.-.ttttttc
+cttttttt........t.7-..T..-7.t........tttttttc
+cttttttttt3...11.............11...3tttttttttc
+cttttttttttt..12...7..4..7...21..tttttttttttc
+cttttttttttttttt.............tttttttttttttttc
+cttttttttttttttttttt2...2tttttttttttttttttttc
+ctttttttttttttttttttttttttttttttttttttttttttc
+ccccccccccccccccccccccccccccccccccccccccccccc
+ENDMAP

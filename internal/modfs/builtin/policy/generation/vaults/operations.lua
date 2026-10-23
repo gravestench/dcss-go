@@ -155,6 +155,40 @@ local function declaration_records(vault, operation)
     return records
 end
 
+-- Later keyed source directives replace earlier declarations for their
+-- overlapping glyphs. A prior multi-glyph rule retains only the glyphs
+-- the new declaration did not claim; otherwise two actors can be
+-- projected onto one cell from a legitimate source override.
+local function shadow_keyed(records, fresh)
+    if fresh.directive ~= directives.KMONS and
+        fresh.directive ~= directives.KITEM and
+        fresh.directive ~= directives.KFEAT then
+        return
+    end
+
+    for index = #records, 1, -1 do
+        local prior = records[index]
+
+        if prior.directive == fresh.directive and
+            prior.vault_id == fresh.vault_id and
+            prior.targets and fresh.targets then
+            local remaining = prior.targets:gsub(".", function(glyph)
+                if fresh.targets:find(glyph, 1, true) then
+                    return ""
+                end
+
+                return glyph
+            end)
+
+            if remaining == "" then
+                table.remove(records, index)
+            else
+                prior.targets = remaining
+            end
+        end
+    end
+end
+
 -- A Lua hook can attach a marker to the cells present at this exact source
 -- position. Later SUBST statements may erase the glyph, but the marker
 -- stays bound to those cells and rotates with the finished vault.
@@ -963,6 +997,7 @@ function operations.apply(vault, cells, random, depth, player, state)
         elseif not informational[operation.kind] then
             if not transforms.apply(cells, operation, random) then
                 for _, record in ipairs(declaration_records(vault, operation)) do
+                    shadow_keyed(records, record)
                     records[#records + 1] = record
                 end
             end

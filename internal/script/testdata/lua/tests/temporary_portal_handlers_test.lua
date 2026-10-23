@@ -19,6 +19,8 @@ function test.run()
         [terrain.DNGN_EXIT_SEWER] = "sewer",
         [terrain.DNGN_ENTER_OSSUARY] = "ossuary",
         [terrain.DNGN_EXIT_OSSUARY] = "ossuary",
+        [terrain.DNGN_ENTER_WIZLAB] = "wizlab",
+        [terrain.DNGN_EXIT_WIZLAB] = "wizlab",
         [terrain.DNGN_ENTER_BAILEY] = "bailey",
         [terrain.DNGN_EXIT_BAILEY] = "bailey",
         [terrain.DNGN_ENTER_ICE_CAVE] = "ice_cave",

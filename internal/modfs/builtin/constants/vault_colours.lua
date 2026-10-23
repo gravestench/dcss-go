@@ -3,6 +3,8 @@
 -- Source: crawl-ref/source/mon-util.cc random_monster_colour.
 local colours = {
     ANY = "any",
+    MUTAGENIC = "mutagenic",
+    VEHUMET = "vehumet",
     RANDOM = {
         "black",
         "blue",
@@ -24,6 +26,8 @@ local colours = {
 
 colours.VALID = {
     [colours.ANY] = true,
+    [colours.MUTAGENIC] = true,
+    [colours.VEHUMET] = true,
     darkgrey = true,
 }
 

@@ -21,6 +21,7 @@ local vault_triggers = require("policy.world.vault_triggers")
 local zot_overgrown = require("policy.world.zot_overgrown")
 local temporary_portals = require("policy.world.portals.catalog")
 local volcano_hazards = require("policy.world.volcano.hazards")
+local wizlab_events = require("policy.world.wizlab.events.catalog")
 local branches = require("ids.branches")
 
 local vaults = {}
@@ -89,6 +90,7 @@ local function monster_options(record, level)
         equipment = selected.equipment,
         hp = arguments.hp ~= 0 and arguments.hp or nil,
         hd = arguments.hd ~= 0 and arguments.hd or nil,
+        mutant_beast = selected.mutant_beast,
         custom_name = arguments.custom_name ~= "" and
             arguments.custom_name or nil,
         name_adjective = arguments.name_adjective or false,
@@ -322,6 +324,7 @@ function vaults.materialize(ctx, level, excluded)
     for _, record in ipairs(level.vault_records or {}) do
         local arguments = record.arguments or {}
         local portal_owner = temporary_portals.for_marker(record)
+        local event_owner = wizlab_events.owner(record)
 
         if slime_seal.is_record(record) then
             materialized[#materialized + 1] =
@@ -362,6 +365,9 @@ function vaults.materialize(ctx, level, excluded)
         elseif portal_owner then
             materialized[#materialized + 1] =
                 portal_owner.materialize(ctx, level, record)
+        elseif event_owner then
+            materialized[#materialized + 1] =
+                event_owner.materialize(ctx, level, record)
         elseif volcano_hazards.is_marker(record) then
             materialized[#materialized + 1] =
                 volcano_hazards.materialize(ctx, level, record)

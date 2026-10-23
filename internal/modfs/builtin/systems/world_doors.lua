@@ -29,11 +29,14 @@ function system.update(ctx, actor)
     if intent.kind == 8 then
         -- Opening one connected door group changes every member together,
         -- matching the visible multi-cell doorway in DCSS.
-        for _, cell in ipairs(doors.group(ctx, level, x, y, "DNGN_CLOSED_DOOR")) do
+        local group = doors.group(ctx, level, x, y, "DNGN_CLOSED_DOOR")
+        local message = doors.message(ctx, level, group[1], true, false)
+
+        for _, cell in ipairs(group) do
             ctx:set_cell(level, cell.x, cell.y, "DNGN_OPEN_DOOR")
         end
 
-        ctx:emit("door", "You open the door.")
+        ctx:emit("door", message)
 
         return
     end
@@ -80,11 +83,7 @@ function system.update(ctx, actor)
         ctx:set_cell(level, cell.x, cell.y, "DNGN_CLOSED_DOOR")
     end
 
-    if moved then
-        ctx:emit("door", "You close the door, pushing everything out of the way.")
-    else
-        ctx:emit("door", "You close the door.")
-    end
+    ctx:emit("door", doors.message(ctx, level, group[1], false, moved))
 end
 
 register.system({

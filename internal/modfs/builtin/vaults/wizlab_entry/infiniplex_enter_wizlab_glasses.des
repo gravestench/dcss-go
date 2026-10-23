@@ -1,0 +1,26 @@
+# infiniplex_enter_wizlab_glasses: original Wizard Lab source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/wizlab.des.
+# Source Lua stays in comments beside named port hooks until DES-local Lua is supported.
+NAME:     infiniplex_enter_wizlab_glasses
+# The source shared helper supplied these selection facts.
+# Vaults receives its separate single special-room chance.
+DEPTH: Depths, Elf, Crypt, Vaults, !Vaults:$
+TAGS: uniq_wizlab vaults_wizlab no_item_gen no_monster_gen chance_wizlab
+CHANCE: 500, 0 (Vaults)
+FTILE:    GO_ = floor_rough_magenta
+TILE:     m = dngn_transparent_wall_green
+COLOUR:   m = lightgreen
+COLOUR:   _ = magenta
+TILE:     G = dngn_statue_dragon
+# Source Lua at hook site 1:
+# : wizlab_portal(_G)
+: vault.run("shared.portal")
+MAP
+.......
+.bmmmb.
+.m_O_m.
+.mG_Gm.
+.m___m.
+.bb_bb.
+.......
+ENDMAP

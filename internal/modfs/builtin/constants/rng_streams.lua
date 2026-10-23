@@ -10,6 +10,7 @@ local streams = {
     DAMAGE_REACTION = "damage_reaction",
     FOG_MACHINES = "fog_machines",
     VOLCANO_HAZARDS = "volcano_hazards",
+    WIZLAB_EVENTS = "wizlab_events",
     TROVE_TOLL = "trove_toll",
     HELL_SERPENT = "hell_serpent",
     HELL_EFFECT = "hell_effect",

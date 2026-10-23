@@ -50,3 +50,13 @@ CRAWL_ICE_CAVE_SNAPSHOT_DIR="$PWD/docs/level-snapshots/ice-cave" \
   go test -run '^TestIceCaveAllSourceMapsPopulate$' \
   -count=1 ./internal/game
 ```
+
+The [Wizard Lab index](wizlab/index.txt) shows all 15 source rooms, every
+authored return arch, and the exact Dungeon:1 test gate. It uses the same
+terrain-only view as the other portal snapshots. Regenerate it with:
+
+```sh
+CRAWL_WIZLAB_SNAPSHOT_DIR="$PWD/docs/level-snapshots/wizlab" \
+  go test -run '^TestWizlabAllSourceMapsPopulate$' \
+  -count=1 ./internal/game
+```

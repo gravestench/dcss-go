@@ -1,0 +1,16 @@
+# A sparse same-path Borgnjor override adds a second A clock. It must
+# fail staging before a timed outside gate can be consumed.
+NAME: wizlab_borgnjor
+DEPTH: WizLab
+WEIGHT: 20
+TAGS: no_item_gen no_monster_gen
+ORIENT: encompass
+: vault.run("wizlab_borgnjor.site_4")
+KFEAT: A = .
+KFEAT: < = exit_wizlab
+MAP
+xxxxxxxxxxxx
+xA.......A<x
+x..........x
+xxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,147 @@
+# wizlab_demon: original Wizard Lab source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/wizlab.des.
+# Source Lua stays in comments beside named port hooks until DES-local Lua is supported.
+NAME:       wizlab_demon
+# wizlab_setup supplies these whole-floor selection facts.
+DEPTH: WizLab
+ORIENT: encompass
+TAGS: no_item_gen no_monster_gen
+TAGS:       no_rotate no_hmirror no_vmirror
+KFEAT:      _ = altar_makhleb
+KFEAT:      p = granite_statue
+LFLOORTILE: floor_pebble_lightred
+LFLOORCOL:  red
+LROCKCOL:   red
+COLOUR:     c = darkgrey
+COLOUR:     -|/\o[]CDEFGHIJKLMNOPQRSTUVWXYZu = yellow
+KFEAT:      -|/\o[]CDEFGHIJKLMNOPQRSTUVWXYZu = floor
+KFEAT:      u = fountain_blood
+TILE:       c = wall_stone_dark
+TILE:       p = dngn_statue_demonic_bust / dngn_statue_imp \
+                / dngn_statue_cerebov / dngn_statue_ancient_evil
+# symbols roughly corresponding to sigil shape
+FTILE:      - = sigil_straight_E_W
+FTILE:      | = sigil_straight_N_S
+FTILE:      / = sigil_straight_NE_SW
+FTILE:      \ = sigil_straight_NW_SE
+FTILE:      o = sigil_circle
+FTILE:      T = sigil_cross
+FTILE:      Y = sigil_Y
+FTILE:      ] = sigil_Y_left
+FTILE:      [ = sigil_Y_right
+FTILE:      O = sigil_rhombus
+FTILE:      Q = sigil_algiz_left
+FTILE:      R = sigil_algiz_right
+FTILE:      S = sigil_sharp_E_NE
+FTILE:      Z = sigil_sharp_W_SW
+FTILE:      K = sigil_straight_E_NE_SW
+FTILE:      X = sigil_fourway
+FTILE:      U = sigil_Y_inverted
+FTILE:      V = sigil_Y_leftleaning
+FTILE:      W = sigil_Y_rightleaning
+# remaining sigil patterns
+FTILE:      C = sigil_curve_S_E
+FTILE:      D = sigil_curve_S_W
+FTILE:      E = sigil_curve_N_E
+FTILE:      F = sigil_curve_N_W
+FTILE:      G = sigil_straight_E_SW
+FTILE:      H = sigil_straight_W_SE
+FTILE:      I = sigil_straight_S_NE
+FTILE:      J = sigil_straight_S_NW
+FTILE:      L = sigil_straight_N_SE
+FTILE:      M = sigil_straight_N_SW
+FTILE:      N = sigil_straight_E_NW
+FTILE:      P = sigil_straight_W_NE
+RTILE:      x = wall_undead
+MARKER:     h = lua:fog_machine { \
+                pow_max = 10, delay_min = 10, delay_max = 40, \
+                size = 2, size_buildup_amnt = 5, \
+                size_buildup_time = 25, cloud_type = "flame", \
+                excl_rad = 0 }
+KMONS:      1 = any common demon
+KMONS:      2 = balrug / blizzard demon / cacodemon / green death \
+            / hell beast / hellion / lorocyproca / shadow demon / tormentor
+KMONS:      3 = demonspawn blood saint / demonspawn black sun
+# Source Lua block at hook site 1:
+# wizname = crawl.make_name()
+# kmons("4 = patrolling Hellbinder dbname:Hellbinder name:"
+#       .. string.gsub(wizname, " ", "_") .. " ; majin-bo")
+: vault.run("wizlab_demon.site_1")
+# The source has a doubled slash here, which is an empty item choice.
+# Keep its intended nonempty reward alternatives instead.
+KITEM:      d = scroll of summoning / w:5 scroll of torment / \
+                any scroll w:20 / potion of haste \
+                / potion of heal wounds / any potion w:20
+KITEM:      e = any beam wand / any blast wand / \
+                ring of fire / ring of ice / randbook disc:summoning
+KITEM:      f = demon blade w:1 / demon whip w:1 / demon trident w:1 \
+                / manual of summonings w:2 / any randart jewellery w:5 \
+                / cloak good_item w:5 / star_item w:25 / superb_item
+KITEM:      g = randbook disc:summoning
+NSUBST:     d = e / d, ' = 4:1 / 3=12...., " = 4:1 / 3=12....
+NSUBST:     ` = 2:1 / 2:2 / 3=12...., ; = 2:1 / 2:2 / 3=12....
+NSUBST:     3 = 1:3 / 1, ~ = 2:1 / 3:2 / 4 / 9=12.... / ., f = 1:g / f
+# Source Lua block at hook site 2:
+# set_random_mon_list("common demon w:200 / balrug / blizzard demon / \
+#                      cacodemon / green death / hell beast / hellion / \
+#                      lorocyproca / shadow demon / tormentor \
+#                      / demonspawn blood saint w:5 / demonspawn black sun w:5")
+# wizlab_setup(_G)
+# set_feature_name("stone_wall", "black wall")
+# set_feature_name("rock_wall", "carved rock wall")
+: vault.run("wizlab_demon.site_2")
+# Source epilogue runs when the whole lab is placed;
+# its first-visit announcement is owned by lab travel.
+# epilogue{{ wizlab_milestone(_G, "The Hall of the Hellbinder") }}
+: vault.post_place("wizlab_demon.epilogue")
+MAP
+cccccccccccccccccccccccccccccccccccc
+ccccccc'ccccccp...A...pcccccc'cccccc
+ccccc'''''cccc.........cccc"""""cccc
+cccc''G'H''ccc..cc.cc..ccc"""o"""ccc
+ccc''/'''\''cc.cc...cc.cc""|"""""/cc
+ccc'I'''''J'cc....c....cc"-O-"""/"cc
+ccd'|''U''|.....c...c....."|"""/""dc
+ccd'|''Y''|.......<.......""""/"""dc
+ccc'L'''''M.cc..c...c..cc."""K----cc
+ccc''\'''/''cc....c....cc"""/"""""cc
+cccc''N'P''ccc.cc...cc.ccc"/"""""ccc
+ccccc'''''cccc..cc.cc..cccc"""""cccc
+cccccc..cccccu.........uccccc..ccccc
+cccccc..cccccc..cc.cc..cccccc..ccccc
+cccccc..cc`ccc.cc...cc.ccc,cc..ccccc
+ccccccc``````c.c.\./.c.c;;Z;;;cccccc
+ccccccc```o````...Y...;;;/;;O;cccccc
+cccccc``\```/``c..|..c;;/;;OTO;ccccc
+cccccc```\`/```ccd3dcc;/;;;;U;;ccccc
+ccccc``\`CXD`/``cc.cc;/;;;;;;;;;cccc
+cccccc``\|`|/```.....S--------Zccccc
+cccccc```Q3R```.cc.cc;;;;;3;;/;ccccc
+ccccccc``ETF```ccd3dcc;;;;;;/;cccccc
+cccccccc```````c..|..c;;;;;S;ccccccc
+cccccccccc........U........ccccccccc
+ccccccccccc....c./.\.c....cccccccccc
+ccccccccccc....cc...cc....cccccccccc
+cccccccccccc....cc.cc....ccccccccccc
+ccccccccccccc.\./...\,/.cccccccccccc
+ccccccccccccc..V.....W..cccccccccccc
+cccccccccccccc/.......\ccccccccccccc
+ccccccccccccccc.......cccccccccccccc
+ccccccccccccccccx+++xccccccccccccccc
+cccccccccccccccc.....ccccccccccccccc
+cccccccccccccc...G.H...ccccccccccccc
+cccccccccccc...GP...NH...ccccccccccc
+ccccccccccc..G[.......]H..cccccccccc
+cccccccccc../..NxxxxxP..\..ccccccccc
+cccccccccc.I...xxpupxx...J.ccccccccc
+ccccccccc..U..xx~G~H~xx..U..cccccccc
+ccccccccc.I.J.~~/~~~\~~.I.J.cccccccc
+cccccccc~~|~~~~/~~~~~\~~~~|~~ccccccc
+cccccccc~~|~~~/\~~~~~/\~~~|~~ccccccc
+cccccccc~~|~~/~~\~~~/~~\~~|~~ccccccc
+ccccccc~~~L~/~xx~N~P~xx~\~M~~~cccccc
+cccccccf~~~W~~Gxxp_pxxH~~V~~~fcccccc
+cccccccff~~~NP~~xxxxx~~NP~~~ffcccccc
+ccccccpfff~~~~~~~~~~~~~~~~~fffpccccc
+cccccccccccccccccccccccccccccccccccc
+ENDMAP

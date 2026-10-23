@@ -7,6 +7,11 @@ local loot = {
     AUX_ARMOUR =
         "cloak / scarf / helmet / hat / pair of gloves / pair of boots",
 
+    GOOD_AUX_ARMOUR =
+        "cloak good_item / scarf / helmet good_item / " ..
+        "hat good_item / pair of gloves good_item / " ..
+        "pair of boots good_item",
+
     GOOD_SCROLLS =
         "w:120 scroll of identify no_pickup / " ..
         "w:55 scroll of identify no_pickup q:2 / " ..

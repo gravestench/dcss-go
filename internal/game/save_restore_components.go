@@ -295,6 +295,18 @@ func (g *Game) validateRestoredPlacement() error {
 		return err
 	}
 
+	if _, err := g.scripts.Policy("save.validate_wizlab_portals", map[string]any{
+		"levels": g.vaultValidationLevels(),
+	}); err != nil {
+		return err
+	}
+
+	if _, err := g.scripts.Policy("save.validate_wizlab_events", map[string]any{
+		"levels": g.vaultValidationLevels(),
+	}); err != nil {
+		return err
+	}
+
 	if _, err := g.scripts.Policy("save.validate_bailey_portals", map[string]any{
 		"levels": g.vaultValidationLevels(),
 	}); err != nil {

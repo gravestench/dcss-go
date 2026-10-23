@@ -51,6 +51,31 @@ local function validate_actor_overrides(ctx, entity, record, arguments)
         end
     end
 
+    -- The source descriptor, not the generic mutant beast catalog row,
+    -- owns the tier and facet list of this particular vault actor.
+    local beast = ctx:get(entity,
+        component.MONSTER_MUTANT_BEAST)
+    local source_beast = selected and selected.mutant_beast
+
+    if source_beast then
+        if not beast or beast.tier ~= source_beast.tier or
+            beast.hit_dice ~= source_beast.hit_dice or
+            #beast.facets ~= #source_beast.facets then
+            error("entity " .. ctx:id(entity) ..
+                " has forged mutant beast form")
+        end
+
+        for index, facet in ipairs(source_beast.facets) do
+            if beast.facets[index] ~= facet then
+                error("entity " .. ctx:id(entity) ..
+                    " has forged mutant beast facet")
+            end
+        end
+    elseif beast then
+        error("entity " .. ctx:id(entity) ..
+            " has mutant beast state without a source form")
+    end
+
     -- A status can be dispelled after spawn, but restoration cannot invent
     -- one that the selected DES monster expression never granted.
     local permanent = ctx:get(entity,

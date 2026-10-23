@@ -262,7 +262,8 @@ function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
 
     ctx:place_actor(actor, origin.level_id, x, y)
 
-    if attitude == attitudes.HOSTILE and owner == ctx:player() then
+    if attitude == attitudes.HOSTILE and owner == ctx:player() and
+        not (options and options.silent_hostility) then
         ctx:emit(channels.MONSTER, "The " .. definition.name ..
             " feels only hate for you!")
     end

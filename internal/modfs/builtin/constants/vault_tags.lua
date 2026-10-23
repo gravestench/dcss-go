@@ -53,6 +53,7 @@ local tags = {
     VAULTS_ROOM = "vaults_room",
     VAULTS_EMPTY = "vaults_empty",
     VAULTS_HARD = "vaults_hard",
+    VAULTS_WIZLAB = "vaults_wizlab",
     VAULTS_END_RUNE = "vaults_end_rune",
     VAULTS_END_NORUNE = "vaults_end_norune",
     VAULTS_END_QUADRANT = "vaults_end_quadrant",

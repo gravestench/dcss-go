@@ -4,6 +4,7 @@ local attitude = require("constants.attitude")
 local gods = require("constants.gods")
 local enchantments = require("constants.vault_monster_enchantments")
 local source_spellbook = require("policy.monsters.source_spellbook")
+local mutant_beast = require("policy.monsters.mutant_beast.form")
 
 local monster = {}
 
@@ -37,10 +38,13 @@ end
 -- Separate monster identity from place, depth, and equipment annotations before lookup.
 local function parse_term(text, expression, site)
     local books = {}
+    -- Continued DES spellbooks may indent after a semicolon. That space
+    -- separates neither a spell slot nor a new monster modifier.
+    local normalized = text:gsub("(%S);%s+([%w_'])", "%1;%2")
 
     -- DES extracts spells: tags before splitting the equipment semicolon.
     -- A semicolon inside a spells: value separates slots in one book.
-    local without_spells = text:gsub("spells:(%S+)", function(value)
+    local without_spells = normalized:gsub("spells:(%S+)", function(value)
         local okay, reason = pcall(source_spellbook.parse, value)
 
         if not okay then
@@ -145,10 +149,22 @@ local function parse_term(text, expression, site)
             -- DES accepts the short source spelling on named vault actors.
             -- It affects display and must not become part of the species.
             result.name_adjective = true
-        elseif token == "name_species" then
+        elseif token == "name_species" or token == "n_spe" then
             -- Source corpses use the authored species name as-is, while
             -- display still combines the adjective with the base species.
             result.name_species = true
+        elseif token == "name_nocorpse" or token == "n_noc" then
+            -- A named source actor can suppress a corpse independently of
+            -- whether its live display name is an adjective or replacement.
+            result.name_nocorpse = true
+        elseif token == "name_replace" or token == "n_rpl" then
+            result.name_replace = true
+        elseif token == "name_definite" or token == "n_the" then
+            result.name_definite = true
+        elseif token == "name_descriptor" or token == "n_des" then
+            result.name_descriptor = true
+        elseif token == "name_suffix" or token == "n_suf" then
+            result.name_suffix = true
         elseif token == "generate_awake" then
             -- The source modifier is separate from the monster's display
             -- name. It overrides the ordinary sleeping start of a hostile
@@ -162,6 +178,13 @@ local function parse_term(text, expression, site)
     end
 
     result.name = table.concat(names, " ")
+
+    local beast = mutant_beast.parse(result.name, site, expression)
+
+    if beast then
+        result.name = "mutant beast"
+        result.mutant_beast = beast
+    end
 
     if result.name == "" and result.place then
         -- A standalone DES place: term requests a random monster from that

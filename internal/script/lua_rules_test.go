@@ -521,6 +521,12 @@ func runLuaRule(t *testing.T, rules modfs.Ruleset, name string) {
 	} else if name == "tests/temple_floor_test.lua" {
 		// Every source Temple builds and decodes a full-sized live level.
 		limitDuration = 60 * time.Second
+	} else if name == "tests/wizlab_hooks_test.lua" {
+		// Every Wizard Lab executes a full source-sized placement and decode.
+		limitDuration = 60 * time.Second
+	} else if name == "tests/wizlab_events_test.lua" {
+		// Four live owners inspect their actual source map marker groups.
+		limitDuration = 60 * time.Second
 	} else if name == "tests/overflow_altar_all_placement_test.lua" {
 		// Each committed overflow map fits and executes its source hooks.
 		limitDuration = 60 * time.Second

@@ -1,0 +1,29 @@
+# lightli_enter_wizlab_magi_temple: original Wizard Lab source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/wizlab.des.
+# Source Lua stays in comments beside named port hooks until DES-local Lua is supported.
+NAME:   lightli_enter_wizlab_magi_temple
+# The source shared helper supplied these selection facts.
+# Vaults receives its separate single special-room chance.
+DEPTH: Depths, Elf, Crypt, Vaults, !Vaults:$
+TAGS: uniq_wizlab vaults_wizlab no_item_gen no_monster_gen chance_wizlab
+CHANCE: 500, 0 (Vaults)
+TAGS:   vaults_orient_n
+COLOUR: . = magenta
+FTILE:  . = floor_rough_magenta
+# Source Lua at hook site 1:
+# : wizlab_portal(_G)
+: vault.run("shared.portal")
+MAP
+bmm.@.mmb
+m.......m
+m.bmmmb.m
+m.bGOGb.m
+m.m...m.m
+b.mb.bm.b
+b.mb.bm.b
+m.m...m.m
+m.b...b.m
+m.b...b.m
+m.......m
+bmmbbbmmb
+ENDMAP

@@ -1,0 +1,13 @@
+# A named but missing source hook must fail at boot, before a game starts.
+NAME: wizlab_alistair
+DEPTH: WizLab
+WEIGHT: 20
+TAGS: no_item_gen no_monster_gen
+ORIENT: encompass
+: vault.run("missing_hook")
+KFEAT: < = exit_wizlab
+MAP
+xxxxx
+x.<.x
+xxxxx
+ENDMAP

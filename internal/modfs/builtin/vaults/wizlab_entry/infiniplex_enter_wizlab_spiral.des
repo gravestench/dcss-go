@@ -1,0 +1,45 @@
+# infiniplex_enter_wizlab_spiral: original Wizard Lab source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/wizlab.des.
+# Source Lua stays in comments beside named port hooks until DES-local Lua is supported.
+NAME:     infiniplex_enter_wizlab_spiral
+# The source shared helper supplied these selection facts.
+# Vaults receives its separate single special-room chance.
+DEPTH: Depths, Elf, Crypt, Vaults, !Vaults:$
+TAGS: uniq_wizlab vaults_wizlab no_item_gen no_monster_gen chance_wizlab
+CHANCE: 500, 0 (Vaults)
+SUBST:    G : xG.
+SUBST:    x : xx.
+MARKER:   ! = lua:fog_machine { \
+               pow_max = 8, delay_min = 20, delay_max = 60, \
+               walk_dist = 3, size = 1, start_clouds = 1, \
+               start_clouds = 1, cloud_type = "freezing vapour" \
+           }
+MARKER:   ? = lua:fog_machine { \
+               pow_max = 8, delay_min = 20, delay_max = 60, \
+               walk_dist = 3, size = 1, start_clouds = 1, \
+               start_clouds = 1, cloud_type = "mutagenic fog" \
+           }
+FTILE:    _! = floor_frozen
+COLOUR:   _! = lightcyan
+FTILE:    -? = floor_rough_magenta
+COLOUR:   -? = magenta
+# Source Lua at hook site 1:
+# : wizlab_portal(_G)
+: vault.run("shared.portal")
+MAP
+xx...........xx
+xG.bbbbbbbbb.Gx
+...bw..........
+.b.bw.bbbbbbbb.
+.b.bw.bllllllb.
+.b.bw.bl.....b.
+.b.bw..l.bbb.b.
+.b.bwwwO--?b.b.
+.b.bbb._..-b.b.
+.b....._b.?b.b.
+.b!__!_!b.-b.b.
+.bbbbbbbb.-b.b.
+..........?b...
+xG.bbbbbbbbb.Gx
+xx...........xx
+ENDMAP

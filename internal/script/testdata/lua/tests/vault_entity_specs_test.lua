@@ -96,6 +96,44 @@ local function parser_reads_actor_overrides()
         "source database alias")
 end
 
+-- Wizard Lab actors use DCSS's short naming flags. They describe the
+-- displayed name and corpse identity, never another monster species.
+local function parser_reads_source_name_flags()
+    local selected = monster.parse(
+        "human name:sickly n_adj n_spe n_noc", site)[1][1]
+
+    harness.equal(selected.name, "human", "source species stays human")
+    harness.truthy(selected.name_adjective, "adjective display name")
+    harness.truthy(selected.name_species, "species label for corpses")
+    harness.truthy(selected.name_nocorpse, "suppress authored corpse")
+
+    local named = monster.parse(
+        "statue name:Wucad_Mu n_rpl n_the n_des", site)[1][1]
+
+    harness.equal(named.name, "statue", "named statue base species")
+    harness.truthy(named.name_replace, "replacement name")
+    harness.truthy(named.name_definite, "definite article")
+    harness.truthy(named.name_descriptor, "name descriptor grammar")
+end
+
+-- Cigotuvi's named beast specifies its source tier and three facets in
+-- the monster term. Those choices must survive catalog lookup as data.
+local function parser_reads_mutant_beast_form()
+    local selected = monster.parse(
+        "primal ox-sting-weird mutant beast", site)[1][1]
+
+    harness.equal(selected.name, "mutant beast", "base monster catalog ID")
+    harness.equal(selected.mutant_beast.tier, "primal", "source beast tier")
+    harness.equal(selected.mutant_beast.hit_dice, 27, "source beast HD")
+    harness.equal(table.concat(selected.mutant_beast.facets, ","),
+        "ox,sting,weird", "source beast facets")
+
+    local valid = pcall(monster.parse,
+        "primal ox-unknown mutant beast", site)
+
+    harness.falsy(valid, "unknown beast facet accepted")
+end
+
 -- Repeated spells: tags are source alternative books; semicolons stay inside
 -- one book as distinct slots. Reject a bad slot at the authored DES site.
 local function parser_keeps_spellbooks()
@@ -190,6 +228,8 @@ function test.run()
     parser_reads_modifiers_and_no_spawn()
     parser_reads_patrol_and_random_request()
     parser_reads_actor_overrides()
+    parser_reads_source_name_flags()
+    parser_reads_mutant_beast_form()
     parser_keeps_spellbooks()
     source_cumulative_choice_sequence()
     malformed_terms_name_the_source()

@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local death = require("policy.death")
 local roster = require("policy.population.roster")
+local wizlab_experience = require("policy.world.wizlab.events.experience")
 local component = require("constants.component")
 local effects = require("constants.vault_effects")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
@@ -52,16 +53,19 @@ function module.run(ctx, input)
             local actor = ctx:get(entity, "core.actor")
 
             local origin = ctx:get(entity, component.VAULT_ORIGIN)
-
             local delayed = ctx:get(entity, component.WORLD_VAULT_SPAWN)
+            local wizlab_event = ctx:get(entity,
+                component.WORLD_WIZLAB_EVENT_ACTOR)
 
+            -- Event actors are born after population; their separate
+            -- provenance is checked by the lab event owner.
             if delayed then
                 live_delayed[delayed.level_id .. ":" .. delayed.vault_id] = true
             elseif origin then
                 local key = origin.level_id .. ":" .. origin.record_index
 
                 live_vault[key] = true
-            else
+            elseif not wizlab_event then
                 live[actor.kind_id] = true
                 live_count = live_count + 1
             end
@@ -132,6 +136,10 @@ function module.run(ctx, input)
             end
         end
     end
+
+    -- The source encounter owner bounds XP from monsters it created
+    -- after the fixed population budget was established.
+    maximum = maximum + wizlab_experience.maximum(ctx)
 
     local level_adjustment = potion and potion.untrained_level_xp or 0
     local clone_xp = clone_rewards and clone_rewards.earned_xp or 0

@@ -11,6 +11,7 @@ local hell_levels = require("policy.save.hell_levels")
 local bazaar_levels = require("policy.save.bazaar_levels")
 local sewer_levels = require("policy.save.sewer_levels")
 local ossuary_levels = require("policy.save.ossuary_levels")
+local wizlab_levels = require("policy.save.wizlab_levels")
 local bailey_levels = require("policy.save.bailey_levels")
 local ice_cave_levels = require("policy.save.ice_cave_levels")
 local volcano_levels = require("policy.save.volcano_levels")
@@ -148,6 +149,7 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
     bazaar_levels.validate(levels)
     sewer_levels.validate(levels)
     ossuary_levels.validate(levels)
+    wizlab_levels.validate(levels)
     bailey_levels.validate(levels)
     ice_cave_levels.validate(levels)
     volcano_levels.validate(levels)
@@ -269,6 +271,7 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
             level.branch_id ~= branches.BRANCH_BAZAAR and
             level.branch_id ~= branches.BRANCH_SEWER and
             level.branch_id ~= branches.BRANCH_OSSUARY and
+            level.branch_id ~= branches.BRANCH_WIZLAB and
             level.branch_id ~= branches.BRANCH_BAILEY and
             level.branch_id ~= branches.BRANCH_ICE_CAVE and
             level.branch_id ~= branches.BRANCH_VOLCANO and

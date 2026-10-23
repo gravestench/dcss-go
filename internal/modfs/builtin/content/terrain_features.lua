@@ -64,6 +64,8 @@ features.vault_terrain = {
     [terrain.DNGN_EXIT_SEWER] = terrain.DNGN_EXIT_SEWER,
     [terrain.DNGN_ENTER_OSSUARY] = terrain.DNGN_ENTER_OSSUARY,
     [terrain.DNGN_EXIT_OSSUARY] = terrain.DNGN_EXIT_OSSUARY,
+    [terrain.DNGN_ENTER_WIZLAB] = terrain.DNGN_ENTER_WIZLAB,
+    [terrain.DNGN_EXIT_WIZLAB] = terrain.DNGN_EXIT_WIZLAB,
     [terrain.DNGN_ENTER_ICE_CAVE] = terrain.DNGN_ENTER_ICE_CAVE,
     [terrain.DNGN_EXIT_ICE_CAVE] = terrain.DNGN_EXIT_ICE_CAVE,
     [terrain.DNGN_ENTER_VOLCANO] = terrain.DNGN_ENTER_VOLCANO,
@@ -130,6 +132,8 @@ features.named_vault_terrain = {
     exit_sewer = terrain.DNGN_EXIT_SEWER,
     enter_ossuary = terrain.DNGN_ENTER_OSSUARY,
     exit_ossuary = terrain.DNGN_EXIT_OSSUARY,
+    enter_wizlab = terrain.DNGN_ENTER_WIZLAB,
+    exit_wizlab = terrain.DNGN_EXIT_WIZLAB,
     enter_bailey = terrain.DNGN_ENTER_BAILEY,
     exit_bailey = terrain.DNGN_EXIT_BAILEY,
     enter_ice_cave = terrain.DNGN_ENTER_ICE_CAVE,
@@ -180,6 +184,8 @@ local function apply_border_fill(cells, record)
         feature = terrain.DNGN_ENDLESS_SALT
     elseif style == fill.PERMAROCK_WALL then
         feature = terrain.DNGN_PERMAROCK_WALL
+    elseif style == fill.TREE then
+        feature = terrain.DNGN_TREE
     else
         error("unknown vault border fill " .. tostring(style))
     end

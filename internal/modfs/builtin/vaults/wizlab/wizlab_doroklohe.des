@@ -1,0 +1,177 @@
+# wizlab_doroklohe: original Wizard Lab source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/wizlab.des.
+# Source Lua stays in comments beside named port hooks until DES-local Lua is supported.
+NAME:       wizlab_doroklohe
+# wizlab_setup supplies these whole-floor selection facts.
+DEPTH: WizLab
+ORIENT: encompass
+TAGS: no_item_gen no_monster_gen
+TAGS:       no_rotate
+LROCKCOL:   yellow
+KFEAT:      ! = x
+# Source Lua block at hook site 1:
+# function make_box(cenx, ceny, gly)
+#   for ox = -1, 1 do
+#     for oy = -1, 1 do
+#       local x = cenx + ox
+#       local y = ceny + oy
+#       if (x >= 1 and y >= 1 and x <= width() and y <= height()) then
+#         if (ox ~= 0 or oy ~= 0) then
+#           mapgrd[x][y] = gly;
+#         end
+#       end
+#     end
+#   end
+# end
+#
+# function box_glyph(findgly, boxgly)
+#   local glyphs = {gly_points(findgly)}
+#   for i = 1, #glyphs, 2 do
+#     make_box(glyphs[i], glyphs[i+1], boxgly)
+#   end
+# end
+: vault.run("wizlab_doroklohe.site_1")
+#           There are two layouts: round and grid.
+#           Round has 19 boxes: 12 % and 6 * and 1 |
+#           Grid has 21 boxes: b-u and |
+#           Layout for grid can be regular or random.
+#
+# Source Lua at hook site 2:
+# :           local layout = crawl.random2(13)
+# :           if layout < 3 then
+: vault.run("wizlab_doroklohe.site_2")
+#           Preparation for the rare regular grid layout.
+# Source Lua at hook site 3:
+# :           end
+# :           if layout > 9 then
+: vault.run("wizlab_doroklohe.site_3")
+#           First the round layout...
+# Source Lua at hook site 4:
+# :           else
+: vault.run("wizlab_doroklohe.site_4")
+#           ...and now the grid layout.
+#           Of the outer boxes, three are damaged.
+#           TODO: adapt this code for the first box,
+#           instead of manually ruining it.
+# Source Lua at hook site 5:
+# :           box_glyph('b', 'X')
+# :           box_glyph('c', 'Y')
+# :           box_glyph('d', 'Z')
+: vault.run("wizlab_doroklohe.site_5")
+#           For the other boxes, prepare same setup as for the
+#           round layout (i.e. six *'s)
+# Source Lua at hook site 6:
+# :           end
+: vault.run("wizlab_doroklohe.site_6")
+#           Monsters
+#            0 Tomb set: zombies, mummies (weight *2)
+#            1 Demons (if demons are added or reclassified, please change!)
+# Source Lua at hook site 7:
+# :           local mrnd = crawl.random2(3)
+# :           if mrnd == 0 then
+: vault.run("wizlab_doroklohe.site_7")
+# Source Lua at hook site 8:
+# :           set_random_mon_list(
+# :               "smoke demon / ynoxinul / neqoxec / " ..
+# :               "chaos spawn / soul eater / sun demon / " ..
+# :               "lorocyproca / reaper / shadow demon / tormentor / hellion")
+# :           else
+: vault.run("wizlab_doroklohe.site_8")
+# Source Lua at hook site 9:
+# :           set_random_mon_list("place:Depths:1 zombie / zombie / guardian mummy")
+# :           end
+: vault.run("wizlab_doroklohe.site_9")
+#           Loot.
+#           0 = scrolls. 1 = armours. 2 = mixed.
+# Source Lua at hook site 10:
+# :           local lrnd = crawl.random2(3)
+# :           if lrnd == 0 then
+: vault.run("wizlab_doroklohe.site_10")
+# Source Lua at hook site 11:
+# :           kitem("* = " .. dgn.good_scrolls)
+: vault.run("wizlab_doroklohe.site_11")
+# Source Lua at hook site 12:
+# :           elseif lrnd == 1 then
+: vault.run("wizlab_doroklohe.site_12")
+# Source Lua at hook site 13:
+# :           else
+: vault.run("wizlab_doroklohe.site_13")
+# Source Lua at hook site 14:
+# :           end
+: vault.run("wizlab_doroklohe.site_14")
+#           Boxification:
+# Source Lua at hook site 15:
+# :           box_glyph('%', '!')
+# :           box_glyph('*', '!')
+# :           box_glyph('|', '!')
+: vault.run("wizlab_doroklohe.site_15")
+#           Intentionally colouring the floor glyphs of the central room only.
+#           The squares beneath the boxes are to remain uncoloured.
+NSUBST:     x = 1:. / 1 = x. / *:x
+COLOUR:     ^ = darkgrey
+TILE:       ^ = wall_stone_black_marked / wall_stone_dark w:4 / wall_stone_black_marked
+COLOUR:     = = yellow
+KFEAT:      ^ = stone_wall
+COLOUR:     . = darkgrey / blue w:3 / cyan w:1
+MARKER:     ! = lua:portal_desc {wall_drop=1}
+MARKER:     = = lua:portal_desc {wall_drop=1}
+MARKER:     x = lua:portal_desc {wall_drop=1}
+MARKER:     + = lua:portal_desc {wall_drop=1}
+TILE:       !x = wall_sandstone
+# Source Lua block at hook site 16:
+# local box_marker = TriggerableFunction:new {
+#     func="wizlab_doroklohe_convert_boxes",
+#     repeated=true, data={phase=1} }
+#
+# box_marker:add_triggerer(DgnTriggerer:new { type="turn",
+#     delay_min=500, delay_max=1000})
+#
+# lua_marker("A", box_marker)
+: vault.run("wizlab_doroklohe.site_16")
+# Source Lua at hook site 17:
+# :           set_feature_name("rock_wall", "strange rock wall")
+# :           set_feature_name("stone_wall", "highly decorated stone wall")
+# :           set_feature_name("floor", "rough-hewn floor")
+# :           wizlab_setup(_G)
+: vault.run("wizlab_doroklohe.site_17")
+# Source epilogue runs when the whole lab is placed;
+# its first-visit announcement is owned by lab travel.
+# epilogue{{
+#             wizlab_milestone(_G, "Doroklohe's Tomb")
+# }}
+: vault.post_place("wizlab_doroklohe.epilogue")
+MAP
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^________________...........________________^
+^____________...................____________^
+^_________........................._________^
+^_______b....cc......d%d......ee....f_______^
+^_____bB.....cC%.....dDd.....%Ee.....Ff_____^
+^____bb...............................ff____^
+^___.....................................___^
+^__........%......o*.....*p......%........__^
+^__.......nnN....oO.......Pp....Qqq.......__^
+^_........................................._^
+^_...mm...............................gg..._^
+^_...mM..%......*.....|.....*......%..Gg..._^
+^_...mm...............................gg..._^
+^_........................................._^
+^__.......uuU....tT.......Ss....Rrr.......__^
+^__........%......t*.....*s......%........__^
+^___.....................................___^
+^____ll...............................hh____^
+^_____lL.....kK%.....xxx.....%Ii.....Hh_____^
+^_______l....kk......x0x......ii....h_______^
+^_________...........xxx..........._________^
+^____________...................____________^
+^________________...........________________^
+^^^^^^^^^^^^^^^^^^^^^^#^^^^^^^^^^^^^^^^^^^^^^
+                ^____...____^
+                ^__.......__^
+                ^_...!+!..._^
+                ^_.<.+A+.<._^
+                ^_...!+!..._^
+                ^__.......__^
+                ^____...____^
+                ^^^^^^^^^^^^^
+ENDMAP

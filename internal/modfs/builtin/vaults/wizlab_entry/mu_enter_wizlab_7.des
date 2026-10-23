@@ -1,0 +1,50 @@
+# mu_enter_wizlab_7: original Wizard Lab source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/wizlab.des.
+# Source Lua stays in comments beside named port hooks until DES-local Lua is supported.
+NAME:   mu_enter_wizlab_7
+# The source shared helper supplied these selection facts.
+# Vaults receives its separate single special-room chance.
+DEPTH: Depths, Elf, Crypt, Vaults, !Vaults:$
+TAGS: uniq_wizlab vaults_wizlab no_item_gen no_monster_gen chance_wizlab
+CHANCE: 500, 0 (Vaults)
+# This one doesn't work as well in Vaults, since one entrance tends to become a
+# dead end.
+WEIGHT: 0 (Vaults)
+KFEAT:  apqr = x
+# Mimic the rock/floor colors of Zot:1-4
+COLOUR: a = white
+COLOUR: - = lightgray
+COLOUR: p = blue
+COLOUR: ' = white
+COLOUR: q = lightblue
+COLOUR: " = blue
+COLOUR: r = magenta
+COLOUR: ` = lightblue
+TILE:   a = wall_zot_white
+TILE:   p = wall_zot_blue
+TILE:   q = wall_zot_lightblue
+TILE:   r = wall_zot_magenta
+FTILE:  - = floor_rough_lightgray
+FTILE:  ' = floor_rough_white
+FTILE:  " = floor_rough_blue
+FTILE:  ` = floor_rough_lightblue
+# Source Lua at hook site 1:
+# : wizlab_portal(_G)
+: vault.run("shared.portal")
+MAP
+xxxxxxxxxxxxx
+x...........@
+x.xxxxxxxxxxx
+x-a''''''''-x
+x-a"ppppppa-x
+x-a"q````"a-x
+x-a"q`rrq"a-x
+x-a"q`O`q"a-x
+x-a"qrr`q"a-x
+x-a"````q"a-x
+x-apppppp"a-x
+x-''''''''a-x
+xxxxxxxxxxx.x
+@...........x
+xxxxxxxxxxxxx
+ENDMAP

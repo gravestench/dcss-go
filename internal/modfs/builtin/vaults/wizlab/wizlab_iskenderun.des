@@ -1,0 +1,80 @@
+# wizlab_iskenderun: original Wizard Lab source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/wizlab.des.
+# Source Lua stays in comments beside named port hooks until DES-local Lua is supported.
+NAME:       wizlab_iskenderun
+# wizlab_setup supplies these whole-floor selection facts.
+DEPTH: WizLab
+ORIENT: encompass
+TAGS: no_item_gen no_monster_gen
+TAGS:       no_rotate patrolling
+MONS:       tengu conjurer
+MONS:       statue hd:12 spells:orb_of_destruction.62.magical \
+            tile:mons_statue_mage col:vehumet name:conjurer n_adj
+KMONS:      3DEF = purple draconian
+KITEM:      D = robe ego:archmagi ident:type, star_item / superb_item, star_item
+KITEM:      E = any book, randbook disc:conjuration owner:Iskenderun \
+                spells:iskenderun's_mystic_blast&iskenderun's_battlesphere, \
+                randbook disc:conjuration owner:Iskenderun
+KITEM:      F = any book good_item, any book good_item, any book
+KMONS:      DEF = purple draconian
+KMONS:      H = purple draconian scorcher / purple draconian annihilator /\
+                purple draconian knight / purple draconian stormcaller
+COLOUR:     v = magenta
+TILE:       v = dngn_metal_wall_magenta
+MARKER:     " = lua:fog_machine { \
+                pow_max = 10, delay_min = 10, delay_max = 40, \
+                size = 15, cloud_type = "purple smoke" }
+NSUBST:     1 = 4 = 1:1 3:19 / 6 = 1:2 3:3 / * = 1:15 ., H = 1:H / 1:H. / *:.
+SHUFFLE:    '=F- / '=F- / '=F- / F-'= / F-'=, DEF
+SUBST:      - = v, ' = ., = = +
+LROCKTILE:  wall_zot_magenta
+LROCKCOL:   lightmagenta
+LFLOORTILE: floor_rough_magenta
+LFLOORCOL:  magenta
+# Source Lua at hook site 1:
+# :           set_random_mon_list("purple draconian / tengu conjurer")
+# :           wizlab_setup(_G)
+: vault.run("wizlab_iskenderun.site_1")
+# Source epilogue runs when the whole lab is placed;
+# its first-visit announcement is owned by lab travel.
+# epilogue{{
+#             wizlab_milestone(_G, "Iskenderun's Mystic Tower")
+# }}
+: vault.post_place("wizlab_iskenderun.epilogue")
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+vxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxv
+vxxx..x.x.x.x.x.x.xx"xx.x.x.x.x.x.xx.xxxv
+vxx<xxAx.x.x.x.x.x.x.x.x.x.x.x.x.x.xx.xxv
+vx.x"xxx.x..........x.............xx"x.xv
+vx.xx...............................xxxxv
+vxxAx...............2...............x.xxv
+vx.xx................................x.xv
+vxx.......2.......v...v.......2.......xxv
+vx.xx...........v.vv.vv.v............x.xv
+vxx............vvv11.11vvv............xxv
+vx.x..........v.v1vvvvv1v.v..........x.xv
+vxx..........v.v1vvvEvvv1v.v..........xxv
+vx.x........vvv1vvvv+vvvv1vvv........x.xv
+vxx..........v1vvvH...Hvvv1v..........xxv
+vx.x.......vv1vvvH......vvv1vv.......x.xv
+vxxx........v1vvv.......vvv1v........xxxv
+vx".x...2.....vD+.H.2...+'=.....2...x."xv
+vxxx........v1vvv.......vvv1v........xxxv
+vx.x.......vv1vvvH......vvv1vv.......x.xv
+vxx..........v1vvvH...Hvvv1v..........xxv
+vx.x........vvv1vvvv+vvvv1vvv........x.xv
+vxx..........v.v1vvvFvvv1v.v..........xxv
+vx.x..........v.v1vv-vv1v.v..........x.xv
+vxx............vvv11.11vvv............xxv
+vx.x............v.vv.vv.v............x.xv
+vxx.......2.......v...v.......2.......xxv
+vx.x.................................x.xv
+vxx.x...............2...............x.xxv
+vxxxx...............................xxxxv
+vx.x"xx.............x.............xx"x.xv
+vxx.xx.x.x.x.x.x.x.x.x.x.x.x.x.x.x.xx.xxv
+vxxx.xx.x.x.x.x.x.xx"xx.x.x.x.x.x.xx.xxxv
+vxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxv
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ENDMAP

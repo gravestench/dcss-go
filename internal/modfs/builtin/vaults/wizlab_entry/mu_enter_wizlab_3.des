@@ -1,0 +1,45 @@
+# mu_enter_wizlab_3: original Wizard Lab source map.
+# MAP geometry is preserved from crawl-ref/source/dat/des/portals/wizlab.des.
+# Source Lua stays in comments beside named port hooks until DES-local Lua is supported.
+NAME:   mu_enter_wizlab_3
+# The source shared helper supplied these selection facts.
+# Vaults receives its separate single special-room chance.
+DEPTH: Depths, Elf, Crypt, Vaults, !Vaults:$
+TAGS: uniq_wizlab vaults_wizlab no_item_gen no_monster_gen chance_wizlab
+CHANCE: 500, 0 (Vaults)
+TAGS:   vaults_orient_s
+MARKER: ! = lua:fog_machine { \
+             pow_max = 10, delay_min = 10, delay_max = 40, \
+             size = 2, size_buildup_amnt = 5, \
+             size_buildup_time = 25, cloud_type = "flame" \
+         }
+MARKER: ? = lua:fog_machine { \
+             pow_max = 10, delay_min = 10, delay_max = 40, \
+             size = 2, size_buildup_amnt = 5, \
+             size_buildup_time = 25, cloud_type = "freezing vapour" \
+         }
+COLOUR: .' = red / blue
+KPROP:  '?! = no_tele_into
+SUBST:  ' = .
+TILE:   n = dngn_transparent_stone_magenta
+COLOUR: n = lightmagenta
+TILE:   c = wall_stone_gray
+# Source Lua at hook site 1:
+# :       wizlab_portal(_G)
+: vault.run("shared.portal")
+MAP
+ ccccccccc
+cc''!'?''cc
+c?'''''''!c
+c''nnnnn''c
+c''n...n''c
+c''n.O.n''c
+c'?n...n!'c
+c''nn.nn''c
+c''nn.nn''c
+cc!n.n.n?cc
+ ccnn.nncc
+  cc.n.cc
+   cc.cc
+    c@c
+ENDMAP

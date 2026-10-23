@@ -5,6 +5,7 @@ local fill = {
     ENDLESS_LAVA = "endless_lava",
     ENDLESS_SALT = "endless_salt",
     PERMAROCK_WALL = "permarock_wall",
+    TREE = "tree",
 }
 
 return fill

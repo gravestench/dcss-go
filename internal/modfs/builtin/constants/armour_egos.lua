@@ -19,6 +19,8 @@ local armour_egos = {
     INTELLIGENCE = "SPARM_INTELLIGENCE",
     JUMPING = "SPARM_JUMPING",
     PONDEROUSNESS = "SPARM_PONDEROUSNESS",
+    -- Legacy DES accepts the shorter spelling for the same armour ego.
+    PONDEROUS = "SPARM_PONDEROUSNESS",
     FLYING = "SPARM_FLYING",
     ARCHMAGI = "SPARM_ARCHMAGI",
     PRESERVATION = "SPARM_PRESERVATION",

@@ -835,6 +835,26 @@ effect. Staff of death's god conduct awaits the religion-action domain,
 and the exact source messaging and exposure interactions remain to be
 checked with the broader elemental combat pass.
 
+Wizard Labs now use all eleven source entrance maps and fifteen source
+destination maps as committed `.des` files. The full-size rooms preserve
+their MAP geometry; source-position Lua hooks supply their conditional
+directives and typed markers. One saved gate clock starts when its outside
+floor is populated, and the staged portal returns through any authored arch
+to that exact gate. Doroklohe's collapse, Wucad's monks and shared room
+messages, Borgnjor's death-driven lost souls, and Zonguldrok's escalating
+graves, lich, and door have focused Lua event owners with Akara state.
+Generic door interaction reads authored door verbs, and teleport destination
+policy honors `no_tele_into` until Zonguldrok's door appears. Cigotuvi's
+mutant beast retains its source tier and facets in a saved ECS component;
+its facet-specific combat and resistances remain part of the broader
+mutant-beast rule domain. The
+[Wizard Lab snapshot index](level-snapshots/wizlab/index.txt) shows all
+fifteen generated floors and their return connections. The outstanding
+cross-domain work is the full source interaction pass for terrain-destruction
+vetoes, animated source map props, and every exceptional item/monster effect
+inside the labs; these are tracked with their neighboring systems rather than
+hidden behind an inert lab-specific adapter.
+
 For each new domain, convert the full rule category in one pass. Put its
 definitions, policies, and ECS systems in actual Lua files; extend Go only
 for reusable engine primitives. Delete the previous rule path in the same

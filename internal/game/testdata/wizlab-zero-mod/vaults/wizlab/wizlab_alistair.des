@@ -1,0 +1,12 @@
+# An effective zero weight excludes even an explicit requested ID.
+NAME: wizlab_alistair
+DEPTH: WizLab
+WEIGHT: 0
+TAGS: no_item_gen no_monster_gen
+ORIENT: encompass
+KFEAT: < = exit_wizlab
+MAP
+xxxxx
+x.<.x
+xxxxx
+ENDMAP

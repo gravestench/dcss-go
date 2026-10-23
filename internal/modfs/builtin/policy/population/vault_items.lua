@@ -81,6 +81,12 @@ function vault_items.create(ctx, resolved, level_id, x, y, origin)
     if resolved.request == item_requests.ANY_CONCEALMENT_SCROLL then
         request.kind_id = item_sets.choice(ctx, ctx:player(),
             set_ids.CONCEALMENT_SCROLLS)
+    elseif resolved.request == item_requests.ANY_BEAM_WAND then
+        request.kind_id = item_sets.choice(ctx, ctx:player(),
+            set_ids.BEAM_WANDS)
+    elseif resolved.request == item_requests.ANY_BLAST_WAND then
+        request.kind_id = item_sets.choice(ctx, ctx:player(),
+            set_ids.BLAST_WANDS)
     end
 
     local rolled

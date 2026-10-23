@@ -2,6 +2,8 @@
 -- monster catalog IDs. Keep shared spellings here for validation and draws.
 local requests = {
     ANY_DEMON = "any demon",
+    LESSER_DEMON = "lesser demon",
+    ANY_LESSER_DEMON = "any lesser demon",
     COMMON_DEMON = "common demon",
     GREATER_DEMON = "greater demon",
     ANY_COMMON_DEMON = "any common demon",

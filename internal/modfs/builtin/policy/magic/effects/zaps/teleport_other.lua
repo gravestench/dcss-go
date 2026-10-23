@@ -10,6 +10,7 @@ local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
 local hex_status = require("policy.combat.monster_hexes.status")
 local streams = require("constants.rng_streams")
+local landings = require("policy.world.teleport_landings")
 
 local teleport = {}
 local tentacles = {
@@ -56,7 +57,8 @@ local function destination(ctx, target, position)
         local y = ctx:random("spell", height)
 
         if not ctx:actor_at(position.level_id, x, y) and
-            habitat.at(ctx, target, position.level_id, x, y) then
+            habitat.at(ctx, target, position.level_id, x, y) and
+            landings.allowed(ctx, position.level_id, x, y) then
             return x, y
         end
     end

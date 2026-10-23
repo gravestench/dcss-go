@@ -1,0 +1,55 @@
+Wizard Labs source layouts, seed 88129
+Coordinates are zero-based, origin at top left.
+Every return arch points to the exact outside gate.
+
+wizlab_alistair  wizlab_alistair.txt
+  helpers: none
+Wizard Lab exit (32,51) -> Dungeon:1 (39,11), exact outside gate
+wizlab_borgnjor  wizlab_borgnjor.txt
+  helpers: none
+Wizard Lab exit (39,44) -> Dungeon:1 (39,11), exact outside gate
+wizlab_cigotuvi  wizlab_cigotuvi.txt
+  helpers: none
+Wizard Lab exit (42,36) -> Dungeon:1 (39,11), exact outside gate
+wizlab_cloud  wizlab_cloud.txt
+  helpers: none
+Wizard Lab exit (39,44) -> Dungeon:1 (39,11), exact outside gate
+Wizard Lab exit (43,44) -> Dungeon:1 (39,11), exact outside gate
+wizlab_demon  wizlab_demon.txt
+  helpers: none
+Wizard Lab exit (40,17) -> Dungeon:1 (39,11), exact outside gate
+wizlab_doroklohe  wizlab_doroklohe.txt
+  helpers: none
+Wizard Lab exit (36,46) -> Dungeon:1 (39,11), exact outside gate
+Wizard Lab exit (42,46) -> Dungeon:1 (39,11), exact outside gate
+wizlab_eringya  wizlab_eringya.txt
+  helpers: none
+Wizard Lab exit (40,19) -> Dungeon:1 (39,11), exact outside gate
+wizlab_golubria  wizlab_golubria.txt
+  helpers: none
+Wizard Lab exit (41,29) -> Dungeon:1 (39,11), exact outside gate
+Wizard Lab exit (66,33) -> Dungeon:1 (39,11), exact outside gate
+Wizard Lab exit (29,34) -> Dungeon:1 (39,11), exact outside gate
+Wizard Lab exit (43,34) -> Dungeon:1 (39,11), exact outside gate
+Wizard Lab exit (51,49) -> Dungeon:1 (39,11), exact outside gate
+wizlab_iskenderun  wizlab_iskenderun.txt
+  helpers: none
+Wizard Lab exit (22,20) -> Dungeon:1 (39,11), exact outside gate
+wizlab_lehudib  wizlab_lehudib.txt
+  helpers: none
+Wizard Lab exit (19,17) -> Dungeon:1 (39,11), exact outside gate
+wizlab_maxwell  wizlab_maxwell.txt
+  helpers: none
+Wizard Lab exit (33,58) -> Dungeon:1 (39,11), exact outside gate
+wizlab_tukima  wizlab_tukima.txt
+  helpers: none
+Wizard Lab exit (38,21) -> Dungeon:1 (39,11), exact outside gate
+wizlab_wucad  wizlab_wucad.txt
+  helpers: none
+Wizard Lab exit (50,46) -> Dungeon:1 (39,11), exact outside gate
+wizlab_yara  wizlab_yara.txt
+  helpers: none
+Wizard Lab exit (37,49) -> Dungeon:1 (39,11), exact outside gate
+wizlab_zonguldrok  wizlab_zonguldrok.txt
+  helpers: none
+Wizard Lab exit (39,43) -> Dungeon:1 (39,11), exact outside gate

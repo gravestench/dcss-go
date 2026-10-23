@@ -405,6 +405,15 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
     end
     local equipment = explicit_equipment(ctx, options)
     local monster = ctx:create()
+
+    if options.mutant_beast then
+        ctx:add(monster, component.MONSTER_MUTANT_BEAST, {
+            tier = options.mutant_beast.tier,
+            hit_dice = options.mutant_beast.hit_dice,
+            facets = options.mutant_beast.facets,
+        })
+    end
+
     ctx:add(monster, "core.actor", {
         kind_id = kind_id,
         speed = generated_lord and generated_lord.speed or

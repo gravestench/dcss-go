@@ -2,6 +2,7 @@
 -- The authored text stays on the ECS vault override for saves; this pure
 -- reader turns it into the same slot table used by catalog spellbooks.
 local spells = require("ids.spells")
+local aliases = require("constants.vault_spell_aliases")
 local flags = require("constants.monster_spell_flags")
 local empty = require("constants.vault_spell_override")
 local effects = require("policy.combat.monster_spells")
@@ -42,8 +43,9 @@ end
 -- Source names use underscores and human spelling, while catalogs own the
 -- stable SPELL_* ID. Require a real monster effect before admitting a slot.
 local function spell_id(name)
-    local key = "SPELL_" .. name:upper():gsub("[^A-Z0-9]+", "_")
-    local id = spells[key]
+    local key = "SPELL_" .. name:gsub("'", ""):upper()
+        :gsub("[^A-Z0-9]+", "_")
+    local id = spells[aliases[name] or key]
     local effect = effects.effect(id)
 
     if type(effect.plan) ~= "function" or
