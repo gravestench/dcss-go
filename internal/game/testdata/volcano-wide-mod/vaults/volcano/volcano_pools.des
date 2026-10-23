@@ -1,0 +1,12 @@
+# A valid definition whose 81-column MAP cannot fit an 80-column floor.
+NAME: volcano_pools
+DEPTH: Volcano
+WEIGHT: 50
+TAGS: no_item_gen no_monster_gen
+ORIENT: encompass
+KFEAT: < = exit_volcano
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x<..............................................................................x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

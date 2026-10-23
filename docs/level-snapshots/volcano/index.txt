@@ -1,0 +1,71 @@
+Volcano source layouts, seed 88164
+Coordinates are zero-based, origin at top left.
+All return arches point to the exact outside test gate.
+
+hellmonk_pyromancer_palace  hellmonk_pyromancer_palace.txt
+  helpers: none
+Volcano exit (40,27) -> Dungeon:1 (58,6), exact outside gate
+hellmonk_smoking_crater  hellmonk_smoking_crater.txt
+  helpers: none
+Volcano exit (26,44) -> Dungeon:1 (58,6), exact outside gate
+hellmonk_zot_springs  hellmonk_zot_springs.txt
+  helpers: none
+Volcano exit (39,48) -> Dungeon:1 (58,6), exact outside gate
+kennysheep_volcano_temple  kennysheep_volcano_temple.txt
+  helpers: none
+Volcano exit (40,52) -> Dungeon:1 (58,6), exact outside gate
+pf_volcano_lost_world  pf_volcano_lost_world.txt
+  helpers: none
+Volcano exit (44,14) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (56,18) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (39,56) -> Dungeon:1 (58,6), exact outside gate
+volcano_aerie  volcano_aerie.txt
+  helpers: none
+Volcano exit (39,19) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (37,50) -> Dungeon:1 (58,6), exact outside gate
+volcano_bunker  volcano_bunker.txt
+  helpers: none
+Volcano exit (49,32) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (31,36) -> Dungeon:1 (58,6), exact outside gate
+volcano_caves  volcano_caves.txt
+  helpers: none
+Volcano exit (38,28) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (34,29) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (46,30) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (32,32) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (49,32) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (40,35) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (50,37) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (37,40) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (45,40) -> Dungeon:1 (58,6), exact outside gate
+volcano_grotto  volcano_grotto.txt
+  helpers: vgs_dualism
+Volcano exit (51,18) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (54,27) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (32,43) -> Dungeon:1 (58,6), exact outside gate
+volcano_lake  volcano_lake.txt
+  helpers: vl_original
+Volcano exit (70,24) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (32,30) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (34,32) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (46,32) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (13,44) -> Dungeon:1 (58,6), exact outside gate
+volcano_overflow  volcano_overflow.txt
+  helpers: none
+Volcano exit (53,35) -> Dungeon:1 (58,6), exact outside gate
+volcano_pools  volcano_pools.txt
+  helpers: none
+Volcano exit (34,25) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (50,25) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (55,38) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (20,42) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (45,42) -> Dungeon:1 (58,6), exact outside gate
+volcano_tomb  volcano_tomb.txt
+  helpers: vts_chambers
+Volcano exit (14,24) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (45,26) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (51,29) -> Dungeon:1 (58,6), exact outside gate
+volcano_village  volcano_village.txt
+  helpers: none
+Volcano exit (22,35) -> Dungeon:1 (58,6), exact outside gate
+Volcano exit (56,35) -> Dungeon:1 (58,6), exact outside gate

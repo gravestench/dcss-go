@@ -23,13 +23,19 @@ local function expected_markers(input)
             if record.kind == effects.MARKER and
                 definitions.is_marker(record.identity) and
                 not record.overridden and not record.pending then
-                local key = marker_key(level.id, index)
+                local rule, members = definitions.group(
+                    level.vault_records, record)
 
-                expected[key] = {
-                    level = level,
-                    record = record,
-                    rule = definitions.parse(record.identity, record),
-                }
+                if members[1] == record then
+                    local key = marker_key(level.id, index)
+
+                    expected[key] = {
+                        level = level,
+                        record = record,
+                        rule = rule,
+                        members = members,
+                    }
+                end
             end
         end
     end
@@ -51,6 +57,30 @@ local function validate_rule(state, expected)
         state.y ~= expected.record.y or
         state.vault_id ~= expected.record.source_id then
         error("fog machine moved away from its source marker")
+    end
+
+    if #state.record_indices ~= #expected.members or
+        #state.positions_x ~= #expected.members or
+        #state.positions_y ~= #expected.members then
+        error("fog machine changed its chained source locations")
+    end
+
+    for index, record in ipairs(expected.members) do
+        local source_index
+
+        for position, candidate in ipairs(
+            expected.level.vault_records) do
+            if candidate == record then
+                source_index = position
+                break
+            end
+        end
+
+        if state.record_indices[index] ~= source_index or
+            state.positions_x[index] ~= record.x or
+            state.positions_y[index] ~= record.y then
+            error("fog machine changed its chained source locations")
+        end
     end
 
     if state.countdown_aut < 0 or

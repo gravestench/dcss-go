@@ -1,0 +1,14 @@
+# One sparse layer adds a destination without copying the bundled corpus.
+NAME: my_volcano_foyer
+DEPTH: Volcano
+WEIGHT: 20
+TAGS: no_item_gen no_monster_gen
+ORIENT: encompass
+KFEAT: < = exit_volcano
+MAP
+xxxxx
+x...x
+x.<.x
+x...x
+xxxxx
+ENDMAP

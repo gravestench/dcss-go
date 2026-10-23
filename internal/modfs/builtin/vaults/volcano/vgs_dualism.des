@@ -1,0 +1,28 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (vgs_dualism)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:    vgs_dualism
+DEPTH: Volcano
+TAGS:    volcano_grotto_subvault no_item_gen no_monster_gen no_vmirror unrand
+KFEAT:   BC = altar_makhleb / altar_trog / altar_vehumet
+# Source Lua: :        fiery_guardians(_G)
+: vault.run("shared.guardians")
+# Loot:  8 items, 2 gold piles.
+# Source Lua: :        volcano_setup(_G)
+: vault.run("shared.setup")
+SHUFFLE: defg
+NSUBST:  X = 1:+ / *:x
+MAP
+         .
+xxxxxxxxx+xxxxxxxxx
+x.$.xxxx...xxxx.$.x
+x.B.xxx..<..xxx.C.x
+x...xx..xXx..xx...x
+xx.xx.1xXdXx1.xx.xx
+xx.x..xXefgXx..x.xx
+x....xXdexfgXx....x
+x....xXXXGXXXx....x
+x1...............1x
+xxx2.....1.....3xxx
+xxxxxxxxxxxxxxxxxxx
+ENDMAP

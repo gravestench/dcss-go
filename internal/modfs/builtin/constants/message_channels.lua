@@ -10,6 +10,8 @@ local channels = {
     RELIGION = "religion",
     MONSTER = "monster",
     VAULT = "vault",
+    WARNING = "warning",
+    STAIRS = "stairs",
     HELL_EFFECT = "hell_effect",
 }
 

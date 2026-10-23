@@ -1,0 +1,28 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (vl_original)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:  vl_original
+DEPTH: Volcano
+TAGS:  volcano_lake_subvault no_item_gen no_monster_gen unrand
+# Source Lua: :      fiery_guardians(_G)
+: vault.run("shared.guardians")
+KMONS: 4 = molten gargoyle w:90 / gargoyle
+KFEAT: _ = altar_makhleb / altar_trog / altar_vehumet
+#      Loot: 10 items, 6 gold piles.
+# Source Lua: : volcano_setup(_G)
+: vault.run("shared.setup")
+MAP
+ccccccccccccccccc
+c....+.121.+....c
+c.<1.c.G_G.c.3<.c
+c....c..1..c....c
+ccc++ccc+ccc++ccc
+n......c.c......n
+cccccc.c.c.cccccc
+c.$f$c.c.c.cgd$.c
+c.$gec.c.c.c$e$.c
+c.4dgc.c.c.cfg4.c
+c......c.c......c
+cccccccc+cccccccc
+       ...
+ENDMAP

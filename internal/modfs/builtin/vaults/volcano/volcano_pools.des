@@ -1,0 +1,59 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (volcano_pools)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:    volcano_pools
+DEPTH: Volcano
+TAGS:    no_item_gen no_monster_gen no_rotate
+ORIENT:  encompass
+WEIGHT:  50
+# Source Lua: : fiery_guardians(_G)
+: vault.run("shared.guardians")
+SHUFFLE: QRSTU
+# Two pools with loot (ten items, six gold) and bosses,
+# two nearly empty pools, and an empty entrance pool.
+NSUBST:  Q = 2:1 / 1:2 / 1:d / 1:e / 2:$ / 2:f / 2:g
+NSUBST:  R = 2 = 1. / 1:3 / 2:d / 2:e / 2:$ / 1:f / 1:g
+NSUBST:  S = 1:1 / *:., T = 1 = 1. / *:.
+NSUBST:  U = 1:A / *:.
+# Source Lua: : volcano_setup(_G)
+: vault.run("shared.setup")
+# Source Lua: : place_tiny_volcano(_G)
+: vault.run("shared.fog_tiny")
+KFEAT:   J = l
+MARKER:  J = lua:fog_machine { size = 3, pow_min = 7, pow_max = 7, delay = 80, \
+                               start_clouds = 1, cloud_type = "flame", excl_rad = -1 }
+MAP
+                               xxxx
+              xxxx            xxllxx
+             xxllx           xxLlllx
+             xJlllxx        xxLllllx
+             xlllLUxx      xxyLllllxx
+            xxllUUUyxx     xyQ.Lllllx
+            xllLUUUUyx     xxyQ.Llllxx
+            xllU<UUyxx      xxQQ<Llllx
+            xxlL.yyxx        xyQQllllx
+             xxxy.xx         xQQQLllJx
+             xxx.xxxxxx      xyQLlllxx
+             xy.yxxxxyxxxxxxxxx.llllx
+             xx...xy..xxy..yxx.xxllxx
+             xx.............y.xxxxx
+            xxy...LlLlLlL....xyxx      xxx
+           xxy...LllllllllL....yx      xJx
+           xy...LllllllllllL....x     xxllx
+          xy...LlllllVllllL....xx    xxlllxx
+          xy...LlllllllllllL....x   xxlLLllx
+        xxx....LlllllllllL....yxxxxxxlLRRLlx
+     xxxy........LllLlLlL.......xyxxy<RRRRyx
+    xxx..yxyyxy..............yxx..yy.RRRRyxx
+ xxyxy.Lyxxxxxxyyxxxyyxy.yyyxxxxxx..yy.Ryxx
+ xyTyy.LllllJxxxxx xxxxxx.xxxxxx xxxxxxxxx
+xy<TTT.Lllllxx         xx.y<ySyx  xxxx
+xLTTTTLlllllx         xxyySSSyyx
+xxLTTTLllllxx        xxySSSSSyxx
+xlllLLlllxx          xxllLSSlLLx
+xlllllllxx            xxllLlllxx
+xxllllxxx              xxllllxx
+ xxxJlxx                xxxllx
+   xxxx                   xJxx
+                          xxx
+ENDMAP

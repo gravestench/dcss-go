@@ -61,9 +61,10 @@ Bubble Tea terminal.
   gate, visitor, eruption groups, collapse, and overflow state.
 - `internal/modfs/builtin/policy/world/{fog_machines,fog_machine_definitions}.lua`,
   `internal/modfs/builtin/schemas/world_fog_machine.lua`, and
-  `internal/modfs/builtin/policy/save/fog_machines.lua`, and
-  `internal/modfs/builtin/policy/clouds/placement.lua`:
-  synchronized fog firing, named warnings, and `no_cloud_gen` enforcement.
+  `internal/modfs/builtin/policy/save/fog_machines.lua`:
+  synchronized fog firing and named warnings. Preserve `no_cloud_gen` as
+  a typed level record for the future ambient lava/water cloud producer;
+  source `timed-effects.cc` does not apply it to authored clouds.
 - `internal/modfs/builtin/policy/population/vaults.lua`,
   `internal/modfs/builtin/constants/rng_streams.lua`, and
   `internal/game/commands.go`:
@@ -130,7 +131,8 @@ state.
 - [ ] Extend fog materialization and firing to group source chained
   markers under one clock and dispatch named listener methods for warning
   at 30 aut before firing and at firing. Keep the listener's warning flag
-  saved. Enforce `no_cloud_gen` in the generic cloud placement owner.
+  saved. Preserve the source `no_cloud_gen` record without suppressing
+  authored clouds; the ambient lava/water producer is a separate slice.
   Test source flame, smoke, steam, rain, synchronized positions, and
   uninterrupted versus restored next firing.
 - [ ] Run focused Lua and Go generation/fog checks. Inspect source MAP

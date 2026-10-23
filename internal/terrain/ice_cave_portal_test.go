@@ -2,12 +2,14 @@ package terrain
 
 import "testing"
 
-// The live arch, return exit, and melted portal have separate saved IDs.
+// Live arches, return exits, and expired portals have separate saved IDs.
 // All are walkable and keep the source terminal arch glyph.
-func TestIceCavePortalFeatures(t *testing.T) {
+func TestTimedPortalFeatures(t *testing.T) {
 	for _, id := range []ID{
 		EnterIceCave,
 		ExitIceCave,
+		EnterVolcano,
+		ExitVolcano,
 		ExpiredPortal,
 	} {
 		feature, found := Lookup(id)
@@ -15,7 +17,7 @@ func TestIceCavePortalFeatures(t *testing.T) {
 		if !found ||
 			!feature.Walkable ||
 			feature.Glyph != '∩' {
-			t.Errorf("Ice Cave portal %s = %+v, found %t", id, feature, found)
+			t.Errorf("timed portal %s = %+v, found %t", id, feature, found)
 		}
 	}
 }

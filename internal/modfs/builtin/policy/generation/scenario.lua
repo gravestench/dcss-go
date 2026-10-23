@@ -8,6 +8,7 @@ local sewer = require("policy.generation.sewer.level")
 local ossuary = require("policy.generation.ossuary.level")
 local bailey = require("policy.generation.bailey.level")
 local ice_cave = require("policy.generation.ice_cave.level")
+local volcano = require("policy.generation.volcano.level")
 local hell_vestibule = require("policy.generation.hell.vestibule")
 local branch_catalog = require("policy.catalog")
 local categories = require("constants.catalog")
@@ -219,6 +220,11 @@ function module.ice_cave(ctx, input)
     return ice_cave.generate(ctx, input)
 end
 
+-- Volcano also stages one whole source map before the player enters it.
+function module.volcano(ctx, input)
+    return volcano.generate(ctx, input)
+end
+
 -- Stage one persistent Hell subbranch floor. Its source up exits become
 -- typed return arches only after keyed DES features have been projected.
 function module.hell_floor(ctx, input)
@@ -278,6 +284,11 @@ register.policy({
 register.policy({
     id = "world.generate_ice_cave_level",
     run = module.ice_cave,
+})
+
+register.policy({
+    id = "world.generate_volcano_level",
+    run = module.volcano,
 })
 
 register.policy({

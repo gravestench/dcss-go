@@ -65,6 +65,8 @@ features.vault_terrain = {
     [terrain.DNGN_EXIT_OSSUARY] = terrain.DNGN_EXIT_OSSUARY,
     [terrain.DNGN_ENTER_ICE_CAVE] = terrain.DNGN_ENTER_ICE_CAVE,
     [terrain.DNGN_EXIT_ICE_CAVE] = terrain.DNGN_EXIT_ICE_CAVE,
+    [terrain.DNGN_ENTER_VOLCANO] = terrain.DNGN_ENTER_VOLCANO,
+    [terrain.DNGN_EXIT_VOLCANO] = terrain.DNGN_EXIT_VOLCANO,
     [terrain.DNGN_EXPIRED_PORTAL] = terrain.DNGN_EXPIRED_PORTAL,
     [terrain.DNGN_ENTER_PANDEMONIUM] = terrain.DNGN_ENTER_PANDEMONIUM,
     [terrain.DNGN_TRANSIT_PANDEMONIUM] = terrain.DNGN_TRANSIT_PANDEMONIUM,
@@ -129,6 +131,8 @@ features.named_vault_terrain = {
     exit_bailey = terrain.DNGN_EXIT_BAILEY,
     enter_ice_cave = terrain.DNGN_ENTER_ICE_CAVE,
     exit_ice_cave = terrain.DNGN_EXIT_ICE_CAVE,
+    enter_volcano = terrain.DNGN_ENTER_VOLCANO,
+    exit_volcano = terrain.DNGN_EXIT_VOLCANO,
     expired_portal = terrain.DNGN_EXPIRED_PORTAL,
     open_sea = terrain.DNGN_OPEN_SEA,
     -- Pan KFEAT names become live arch cells. Their original source names

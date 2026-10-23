@@ -1,0 +1,67 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (volcano_aerie)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:   volcano_aerie
+DEPTH: Volcano
+TAGS:   no_item_gen no_monster_gen
+ORIENT: encompass
+WEIGHT: 20
+MONS:   lindwurm, efreet
+MONS:   molten gargoyle / earth elemental w:8 / toenail golem w:2
+MONS:   fire elemental / fire vortex w:8
+KFEAT:  K = l
+NSUBST: R = 2:1 / * = ll'
+NSUBST: Y = 2:2 / 1:24 / 7:4 / 6:J / *:.
+SUBST:  X = lx
+KPROP:  l = no_cloud_gen
+# Source Lua: : volcano_setup(_G)
+: vault.run("shared.setup")
+KPROP:  1' = no_tele_into
+MARKER: J = lua:fog_machine { size = 3, pow_min = 7, pow_max = 7, delay = 80, \
+                                  start_clouds = 1, cloud_type = "flame", excl_rad = -1 }
+MARKER: K = lua:fog_machine { size = 3, pow_min = 7, pow_max = 7, delay = 80, \
+                                  start_clouds = 1, cloud_type = "flame", excl_rad = -1 }
+COLOUR: m = blue
+# Left side has lindwurms and constructs, right side has elementals.
+MAP
+      xxxxxxxxx
+     xxKlllllKxx
+    xxllLLLLLllxx
+   xxXl.d$$ef.lXxx
+  xxy...$f<g$...yxx
+   xxy..g$de$..yxx
+    xxy..yyy..yxx
+     xxx+mxm+xxxx
+    xxy.xxllLYyxx
+   xxy.yxXlllLYyxx
+  xxy.3yxXKKllLYyx
+   xxy3yxXlllLYyxx
+    xxy.xxllLYyxx
+     xxy.xxLYyxx
+      xxy.xYyxx
+     xxxx+x+xxxx
+   xxxy.3xxxYYyxxx
+ xxxy..LlXxXlLYYyxxx
+xxy..LlllXxXlllLYYyxx
+xy.LlllRRXxXllKllLYyx
+xy.LlllRRXxXllKllLYyx
+xxy..LlllXxXlllLYYyxx
+ xxxy..LLXxXlLYYyxxx
+   xxxy.3xxxYYyxxx
+    xxxxx+x+xxxx
+      xxy.xYyxx
+     xxy.xxlYyxx
+    xxy.xxllLYyxx
+   xxy.yxXlllLYyxx
+  xxy.3yxXKlllLYyx
+   xxy3yxXlllLYyxx
+    xxy.xxllLYyxx
+     xxx+mxm+xxx
+    xxy..yyy..yxx
+   xxy.........yxx
+  xxy...<...A...yxx
+   xxy...LLL...yxx
+    xxllLlllLllxx
+     xxKlllllKxx
+      xxxxxxxxx
+ENDMAP

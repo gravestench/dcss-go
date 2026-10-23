@@ -5,6 +5,8 @@ local component = require("constants.component")
 local neighbors = require("constants.adjacent_cells")
 local streams = require("constants.rng_streams")
 local placement = require("policy.clouds.placement")
+local channels = require("constants.message_channels")
+local volcano = require("constants.volcano")
 
 local machines = {}
 
@@ -25,9 +27,9 @@ end
 
 -- A random walk may stay put. Source cloud.cc also samples that ninth
 -- choice after choosing uniformly among eligible adjacent cells.
-local function walk(ctx, state)
-    local x = state.x
-    local y = state.y
+local function walk(ctx, state, start_x, start_y)
+    local x = start_x
+    local y = start_y
 
     for _ = 1, state.walk_dist do
         local choices = {}
@@ -139,8 +141,8 @@ local function built_amount(amount, time, elapsed)
 end
 
 -- One trigger emits the area selected by current size and spread buildup.
-local function emit(ctx, state)
-    local x, y = walk(ctx, state)
+local function emit_at(ctx, state, source_x, source_y)
+    local x, y = walk(ctx, state, source_x, source_y)
     local size_gain = built_amount(state.size_buildup_amnt,
         state.size_buildup_time, state.buildup_aut)
     local spread_gain = built_amount(state.spread_buildup_amnt,
@@ -152,11 +154,69 @@ local function emit(ctx, state)
     area(ctx, state, x, y, size, math.min(spread, 100))
 end
 
+-- A chained source marker places a separate cloud area at each authored
+-- location, but all slave locations consume one master's saved clock.
+local function emit(ctx, state)
+    if #state.positions_x == 0 then
+        emit_at(ctx, state, state.x, state.y)
+
+        return
+    end
+
+    for index, x in ipairs(state.positions_x) do
+        emit_at(ctx, state, x, state.positions_y[index])
+    end
+end
+
+-- The source warning listener belongs to the machine, not to a cloud.
+-- Large sources warn by smell regardless of sight. Small sources use the
+-- source's circular twelve-cell test for both warning and firing text;
+-- outside that radius they say nothing. A saved flag suppresses repeats.
+local function warn(ctx, state, firing)
+    if state.listener == "" then
+        return
+    end
+
+    local player = ctx:get(ctx:player(), component.POSITION)
+
+    if not player or player.level_id ~= state.level_id then
+        return
+    end
+
+    local dx = player.x - state.x
+    local dy = player.y - state.y
+    local near = dx * dx + dy * dy <= 12 * 12 + 1
+
+    if state.listener == volcano.SMALL_FOG_LISTENER then
+        if near then
+            local message = firing and volcano.ERUPTION_SMALL or
+                volcano.ERUPTION_WARNING
+            ctx:emit(channels.VAULT, message)
+        end
+
+        return
+    end
+
+    if not firing then
+        ctx:emit(channels.VAULT, volcano.ERUPTION_WARNING)
+
+        return
+    end
+
+    if ctx:visible(state.level_id, player.x, player.y,
+        7, state.x, state.y) then
+        ctx:emit(channels.VAULT, volcano.ERUPTION_NEAR)
+    else
+        ctx:emit(channels.VAULT, volcano.ERUPTION_DISTANT)
+    end
+end
+
 -- A level entry redraws its countdown and produces the authored opening
 -- burst. Save restore never calls this policy, so loading does not reroll.
 local function enter(ctx, state)
     state.countdown_aut = roll(ctx, state.delay_min,
         state.delay_max, 1)
+    state.warned = false
 
     for _ = 1, state.start_clouds do
         emit(ctx, state)
@@ -175,14 +235,21 @@ local function advance(ctx, state, elapsed)
             break
         end
 
+        warn(ctx, state, true)
         emit(ctx, state)
         state.countdown_aut = state.countdown_aut +
             roll(ctx, state.delay_min, state.delay_max, 1)
+        state.warned = false
     end
 
     if state.countdown_aut <= 0 then
         state.countdown_aut = roll(ctx, state.delay_min,
             state.delay_max, 1)
+    end
+
+    if state.countdown_aut <= 30 and not state.warned then
+        warn(ctx, state, false)
+        state.warned = true
     end
 end
 

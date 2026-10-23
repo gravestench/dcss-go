@@ -1,0 +1,43 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (vts_original)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:    vts_original
+DEPTH: Volcano
+TAGS:    volcano_tomb_subvault no_item_gen no_monster_gen no_rotate no_hmirror
+TAGS:    no_vmirror unrand
+MONS:    gargoyle w:99 / toenail golem w:1
+MONS:    troll skeleton / spriggan skeleton / naga skeleton
+MONS:    alligator skeleton / harpy skeleton / anaconda skeleton
+MONS:    skeletal warrior ; halberd ego:flaming ident:type | \
+                            dire flail ego:flaming ident:type | \
+                            great sword ego:flaming ident:type
+# Only one loot chamber. Scatter tomb residents.
+NSUBST:  4 = 1:J / 3:3 / *:4
+SHUFFLE: 23, a-| / b_*
+SUBST:   a = v, - = +, b_* = c
+NSUBST:  | = 2:d / 3:e / 2:f / 3:g
+# Loot: 3 gold, 8 items.
+# Source Lua: : volcano_setup(_G)
+: vault.run("shared.setup")
+MARKER:  J = lua:fog_machine { size = 3, pow_min = 7, pow_max = 7, delay = 80, \
+                               start_clouds = 1, cloud_type = "flame", excl_rad = -1 }
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxyyxxx
+xxxxxxxxxxxxxxxxxxy.y.$Lxx
+xxxxxxxxxcccccccxy.y.1Lllx
+xxxxxxxxxc..Y..cy.xxx.lllx
+cccccccccc.....+.xxx.xllJx
++...G....+..2..cccxxx.x.xx
++...$....+.1<1.+4cxxxx.xxx
++...G....+..2..cccxxxxxxxx
+cccccccccc.....cxxxxxxxxxx
+xaaaaxxc4c..Y..cxxxxxxxxxx
+xa||axcc+ccccc+ccxbbbbbxxx
+xa||acc.........ccb***bbxx
+xa||-4+.lllllll.+4_****bxx
+xa||ccc....$....ccb***bbxx
+xa||axcc+ccccc+ccxbbbbbxxx
+xaaaaxxc4cxxxc4cxxxxxxxxxx
+xxxxxxxcccxxxcccxxxxxxxxxx
+ENDMAP

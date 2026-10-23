@@ -1,0 +1,51 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (volcano_village)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:       volcano_village
+DEPTH: Volcano
+TAGS:       no_item_gen no_monster_gen
+ORIENT:     encompass
+WEIGHT:     20
+SUBST:      p = lw, W = wW`, q = ll`, r = lx
+SHUFFLE:    JK / LM / NO
+NSUBST:     J = 4=. / $def
+NSUBST:     L = 3=1 / 12. / 2=2 / 3=$def / .
+NSUBST:     N = 2=1 / 12. / 1=2 / 1=$def / .
+SUBST:      K = ^, MO = ., . = .:99 ^:1
+KPROP:      ` = no_tele_into
+# Source Lua: :           fiery_guardians(_G, true, true)
+: vault.run("shared.guardians_village")
+# Source Lua: :           volcano_setup(_G)
+: vault.run("shared.setup")
+# Source Lua: :           place_chained_volcano(_G)
+: vault.run("shared.fog_chained")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwx
+xwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwx
+xwwwwwwwwWwWwWwWwWwWwWwWwWwWwWwWwWwwwwwwwwx
+xwwwwwwwWWWWWWWWWWWWWWWWWWWWWWWWWWWwwwwwwwx
+xwwwwwwx....MMM.............OOO....xxwwwwwx
+xwwwxxxx...xx+xx...xxxxx...xx+xx...'xxwwwwx
+xwwxx.xx..xxLLLxx.xxJJJxx.xxNNNxx..x+xxxwwx
+xppx.x.x..xLLLLLx.xJJJJJx.xNNNNNx..x'xAxppx
+xppx<x.x..xLLLLLx.xJJJJJx.xNNNNNx..x'x<xppx
+xlrxxx+x..xxLLLxx.xxJJJxx.xxNNNxx..xx'xxrlx
+xrlllxx....xxxxx...xx+xx...xxxxx...xxxxllrx
+xlrlllxx............KKK............xllllrlx
+xrllllllqqqqqqqqqqqqqqqqqqqqqqqqqqqllllllrx
+xlrllllllqlqlqlqlqlqlqlqlqlqlqlqlqllllllrlx
+xrlllVllllllllllllllllllllllllllllllVllllrx
+xlrlllllllllllVllllllVllllllllVlllllllllrlx
+xrlrlllllllllllllllllllllllllllllllllllrlrx
+xrlllrlllrlllrlllrlllrlllrlllrlllrlllrlllrx
+xlrlrlrlrlrlrlrlrlrlrlrlrlrlrlrlrlrlrlrlrlx
+xrlrlrlrlrlrlrlrlrlrlrlrlrlrlrlrlrlrlrlrlrx
+xrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

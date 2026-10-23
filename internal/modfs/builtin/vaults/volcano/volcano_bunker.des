@@ -1,0 +1,51 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (volcano_bunker)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:   volcano_bunker
+DEPTH: Volcano
+TAGS:   no_item_gen no_monster_gen no_rotate
+WEIGHT: 20
+ORIENT: encompass
+# Loot: 11 items, 8 gold.
+# Source Lua: : volcano_setup(_G)
+: vault.run("shared.setup")
+NSUBST: h = 1:h / *:W
+KITEM:  h = gold
+COLOUR: m = blue
+MONS:   wizard ; mace ego:flaming . robe ego:fire_resistance ident:type
+MONS:   toenail golem
+MONS:   dancing weapon ; mace ego:flaming
+# Source Lua: : place_chained_volcano(_G)
+: vault.run("shared.fog_chained")
+# ...
+# Source Lua: : set_feature_name("clear_rock_wall", "glass window")
+: vault.run("shared.window_name")
+KFEAT:  K = w
+KFEAT:  h = W
+MARKER: K = lua:fog_machine ( { cloud_type = "rain", walk_dist=3, pow_max=2, \
+                                    delay=250, size=3 } )
+KPROP:  lVK = no_tele_into
+MAP
+      xxxx                  vvvvvvvvvvvvv
+   xxxxllxxx xxx            v...........v
+ xxxlllllllxxxlxxx          v.vvvvvvvvv.v
+xxlllVlllllllllllxxxx       v.v22$e$$fv.v
+ xxlllllllllllllllllxxx     v.v$$egddgv.v
+xxllllllllllllllllllllxx    v.+ggdf$$3v.v
+ xxllllllllvmvmvmvmvmvvvvvvvvvvvvvvvvvv.v
+ xxllllllllm.....vKWhW..1....v.....+....v
+  xxlllllllv.212.vWWthW..2...+.<.vvvvvvvv
+   xxllllllm.....vlltth...1..v...vxxx
+    xxxllllvvv+vvvvvvvvvvvvvvvv+vv.yxx
+      xxlllm.....v.v..1v1.....v..m..yxx
+     xxllllv.<.A.+.v+vvvvv+v+vvv.+..Lyxxx
+    xxlllllm.....v...............mLLllllxx
+    xxlllllvmvmvmvmvmvmvmvmvmvmvmvlllllxxx
+   xxllVlllllllllllllllllllllllllllllllllxx
+    xxxlllllllllllllllllllllllllllllVlllxx
+      xxllllllllllllllllxxllxxxllllllllxx
+       xxxxlllllVllllllxxxxxx xxxlllllxx
+          xxxllllllllxxx        xxxllxx
+            xxxlllllxx            xxxx
+              xxxxxxxx
+ENDMAP

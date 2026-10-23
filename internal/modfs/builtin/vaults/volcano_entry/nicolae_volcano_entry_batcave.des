@@ -1,0 +1,24 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (nicolae_volcano_entry_batcave)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:  nicolae_volcano_entry_batcave
+DEPTH: Lair, Orc
+TAGS: uniq_volcano chance_volcano
+CHANCE: 500
+MONS:  patrolling fire bat
+SUBST: s = Xs, Z = Xx, Y = x.
+# Source Lua: : volcano_portal(_G)
+: vault.run("shared.portal")
+MAP
+      xxxx
+   xxxxYYxxx
+ xxxZYY..YYxxx
+ xXZs.1.....Yxx
+xxXXS........Yxx
+xxXOS..1........@
+xxXXS........Yxx
+ xXZs.1.....Yxx
+ xxxZYY..YYxxx
+   xxxxYYxxx
+      xxxx
+ENDMAP

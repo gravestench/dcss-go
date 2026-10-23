@@ -24,6 +24,8 @@ local sewer_portal = require("policy.world.sewer.portal")
 local ossuary_portal = require("policy.world.ossuary.portal")
 local bailey_portal = require("policy.world.bailey.portal")
 local ice_cave_portal = require("policy.world.ice_cave.portal")
+local volcano_portal = require("policy.world.volcano.portal")
+local volcano_hazards = require("policy.world.volcano.hazards")
 local branches = require("ids.branches")
 
 local vaults = {}
@@ -327,19 +329,33 @@ function vaults.materialize(ctx, level, excluded)
                 slime_seal.materialize(ctx, level, record)
         elseif record.kind == effects.MARKER and
             fog.is_marker(record.identity) then
-            local state = fog.parse(record.identity, record)
+            local state, members = fog.group(level.vault_records, record)
 
-            state.level_id = level.id
-            state.x = record.x
-            state.y = record.y
-            state.vault_id = record.source_id
-            state.record_index = record.index
-            state.countdown_aut = 0
-            state.buildup_aut = 0
+            if members[1] == record then
+                state.level_id = level.id
+                state.x = record.x
+                state.y = record.y
+                state.vault_id = record.source_id
+                state.record_index = record.index
+                state.record_indices = {}
+                state.positions_x = {}
+                state.positions_y = {}
+                state.countdown_aut = 0
+                state.buildup_aut = 0
+                state.warned = false
 
-            local entity = ctx:create()
+                for _, member in ipairs(members) do
+                    state.record_indices[#state.record_indices + 1] =
+                        member.index
+                    state.positions_x[#state.positions_x + 1] = member.x
+                    state.positions_y[#state.positions_y + 1] = member.y
+                end
 
-            ctx:add(entity, component.FOG_MACHINE, state)
+                local entity = ctx:create()
+
+                ctx:add(entity, component.FOG_MACHINE, state)
+            end
+
             materialized[#materialized + 1] = {
                 level_id = level.id,
                 index = record.index,
@@ -364,6 +380,13 @@ function vaults.materialize(ctx, level, excluded)
             ice_cave_portal.is_marker(record) then
             materialized[#materialized + 1] =
                 ice_cave_portal.materialize(ctx, level, record)
+        elseif record.kind == effects.MARKER and
+            volcano_portal.is_marker(record) then
+            materialized[#materialized + 1] =
+                volcano_portal.materialize(ctx, level, record)
+        elseif volcano_hazards.is_marker(record) then
+            materialized[#materialized + 1] =
+                volcano_hazards.materialize(ctx, level, record)
         elseif record.kind == effects.MARKER and
             vault_triggers.is_record(record.identity) then
             materialized[#materialized + 1] =

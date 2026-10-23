@@ -1,0 +1,32 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (nicolae_volcano_entry_lava_flow)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:    nicolae_volcano_entry_lava_flow
+DEPTH: Lair, Orc
+CHANCE: 500
+TAGS:    transparent uniq_volcano chance_volcano
+NSUBST:  V = 3:X / 1:XS / 1:lS / *:S, A = 2:X / 2:. / *:S
+NSUBST:  B = 2:X / 2:. / *:S, C = 2:X / 2:. / *:S, D = 2:X / 2:. / *:S
+NSUBST:  E = 2:X / 2:. / *:S, F = 2:X / 2:. / *:S
+SHUFFLE: abcdef
+SUBST:   ab = S, cde = l, f : .l, ' = ..S, _ = .._
+CLEAR:   _
+# Source Lua: : volcano_portal(_G)
+: vault.run("shared.portal")
+MAP
+    _____
+   _'''''_
+  _'AAAAb'_
+ _'aAAAAbB'_
+_'FFaAAbBBB'_
+'FFFaAAbBBBB'_
+'ffFFVVVBBcc'_
+'fEfFVOVccCC._
+'EEffVVVCCCC'_
+'EEEEEedCCCC'_
+_'EEeeDDdCC'_
+ _'eDDDDdd'_
+  _'DDDDD'_
+   _'''''_
+    _____
+ENDMAP

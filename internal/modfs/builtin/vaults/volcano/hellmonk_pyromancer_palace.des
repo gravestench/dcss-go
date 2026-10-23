@@ -1,0 +1,39 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (hellmonk_pyromancer_palace)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:   hellmonk_pyromancer_palace
+DEPTH: Volcano
+TAGS:   no_item_gen no_monster_gen
+WEIGHT: 20
+ORIENT: encompass
+# Source Lua: :volcano_setup(_G)
+: vault.run("shared.setup")
+MONS:   fire elemental / hell hound, deep elf pyromancer
+MONS:   deep elf archer ; shortbow ego:flaming
+SUBST:  $ = $$$defg, 1 = .11, 2 = .22
+KPROP:  - = no_tele_into
+KFEAT:  - = l
+MAP
+         ----
+       x--cc--x
+      x--cccc--x
+      x--nA<n--x
+     x--cc..cc--x
+     x--n....n--x
+    x--cc+ccccc--x
+    x--n..c2..n--x
+   x--cc..c..2cc--x
+   x--n..cc.l..n--x
+  x--cc..n.....cc--x
+  x--n1.1c.1...2n--x
+ x--cc..cc+cccc+cc--x
+ x--n1.1c1..2n...n--x
+x--cc+ccc...cc1..cc--
+x--n...c....+..l.2n--
+--cc.l1n..1cc..1..cc--
+--n2.1.+...n.2...12n--
+-ccccccccccccccccc+cc-
+-n$$$$$$$$+2..1.....n-
+-c$$$$$$$$+32..1....c-
+-cccccccccccccccccccc-
+ENDMAP

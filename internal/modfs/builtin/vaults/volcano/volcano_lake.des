@@ -1,0 +1,63 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (volcano_lake)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:     volcano_lake
+DEPTH: Volcano
+TAGS:     no_item_gen no_monster_gen no_rotate
+ORIENT:   encompass
+WEIGHT:   50
+SUBVAULT: B : volcano_lake_subvault
+KMONS:    5 = lava snake
+KMONS:    6 = fire bat
+KFEAT:    56 = lava
+NSUBST:   l = 2:5 / 4 = 5l / 2:6 / 4 = 5l
+# One path is built out of one glyph from q, r, s, t, u, v
+SHUFFLE: qrstuv
+SUBST:   q = ., r : l:19 .:1, stuv = l
+# Source Lua: : volcano_setup(_G)
+: vault.run("shared.setup")
+# Source Lua: : place_lake_volcanoes(_G, {"Q", "R", "S", "T", "U", "V"})
+: vault.run("shared.fog_lake")
+MAP
+                      xxxx     xxxxx xxxxx xxxxxx
+                    xxxyyxxx  xxyyxxxxyyyxxxyyyyxx
+             xxxx  xxx....xxxxx....xx.....xxx...xxxxxx
+             xyyxxxxyyy.yyyyyyyy.y....yyy...yyyy...yyxx
+           xxxx..yyy.................................yxx
+         xxxyyy.......................................yxxx
+       xxxyyy...........................................yxxx
+    xxxxy...............LLLllLLllLLLllllLLllLLlllL........yxxxx
+    xy..............LllllllllllllllllllllllllllllllLL........yxxx
+   xxxy............LlllllllllllllllllllllllQtttlllllltL........yxxx
+  xxy............LLlllllllllllllllllllllllttQllttllttlllLLL......<x
+  xy............Lqqlllllllllllllllllllllttlllllllttlllllll.......yxx
+  xxxy........LllllqqlRlllllllllllllllttllllllllllllllllllL.......yx
+ xxy...........Llllllqqlllllllllllllltlllllllllllllllllllll.....yxxx
+  xxy.........LlllllRllqqllLlLLllLLltllLLLllLllllllllllllLL......yx
+   xxy.....LlllllllllllllqL..................LlllllllllllllL.....yxxxx
+   xy......Lllllllllllllll.BBBBBBBBBBBBBBBBB.lllllllllllllllL.......yx
+   xy.......LllllllllllllL.BBBBBBBBBBBBBBBBB.LllllllllllllllL......yxx
+   xxy.....Lrrllllllllllll.BBBBBBBBBBBBBBBBB.llllllllllllllLL.......yx
+   xy......LllrrSllllllllL.BBBBBBBBBBBBBBBBB.Lllllllllllluuu.......yxx
+   xxy.....Lllllrrllllllll.BBBBBBBBBBBBBBBBB.LllllllllluullL......yxx
+   xy.....LlllllllrllllllL.BBBBBBBBBBBBBBBBB.lllllllTuullllL.....yxx
+   xxy.....LllllllSrllllll.BBBBBBBBBBBBBBBBB.LllllluulllllllL.....yxx
+   xy......LllllllllrrlllL.BBBBBBBBBBBBBBBBB.lllluulTlllllllL......yxx
+   xxy......Lllllllllrllll.BBBBBBBBBBBBBBBBB.LluulllllllllllL......yxx
+   xxy.......LllllllllrllL.BBBBBBBBBBBBBBBBB.uullllllllllllL.....yxxx
+   xy........LlllllllllrlL.BBBBBBBBBBBBBBBBB.LllllllllllllL......yxx
+   xxy.....Lllllllllllllrr.BBBBBBBBBBBBBBBBB.llllllllllllllL......yxx
+    xy.....LllllllVvvvllvvL.......BBB.......LLllllllllllllL.....yxxx
+    xxxy....LllllvvVllvvlllLllLlLllllLllLlLlslllllllllllllL.......yxx
+     xA.<.....vvvllllllllllLlllllllllllllllllssllllllllllllL.......yxx
+     xxxxy.....LllllllllllllllllllllllllllllllUssUllllllllllL.....yxx
+       xy........LLllllllllllllllllllllllllllllllssllllllllL.....yxx
+       xxxy..........LllllllllllllllllllLllllllllllslllllLL......yxx
+         xxxy.........LLlllllllllllllLL...LLllllllllsssL......yxxxx
+           xxxy.........LLlLLlLllllLL.......LLllLlLlLL.......yxxx
+             xxxxxxxy...................yy.................yxxx
+                   xxxxy..............yxxxxxy.............yxxx
+                      xxxyyy.yy.yy.yyyxx   xxy..........yxxx
+                        xxxxxxxxxxxxxxx     xxyyyy.yyy.yxxx
+                                             xxxxxxxxxxxx
+ENDMAP

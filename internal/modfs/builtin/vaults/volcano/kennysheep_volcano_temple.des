@@ -1,0 +1,59 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (kennysheep_volcano_temple)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:   kennysheep_volcano_temple
+DEPTH: Volcano
+TAGS:   no_item_gen no_monster_gen no_rotate no_vmirror
+ORIENT: encompass
+WEIGHT: 20
+# Source Lua: : fiery_guardians(_G, true)
+: vault.run("shared.guardians_intelligent")
+KFEAT:  _ = altar_makhleb / altar_trog / altar_vehumet
+KFEAT:  O = l
+# Source Lua: : volcano_setup(_G)
+: vault.run("shared.setup")
+SUBST:  * = $$deef
+KPROP:  O = no_cloud_gen
+# Source Lua: : place_chained_volcano(_G)
+: vault.run("shared.fog_chained")
+MAP
+               xxx
+            xxxxlxxxx
+           xxlllllllxx
+         xxxlllllllllxx
+       xxxllllllllllllxxxx
+       xlllllccnnncclllllxx
+      xxlllcnc*****cncllllxx
+      xlllcn1c.*.*.c1ncllllx
+     xxllVn1.+.*3*.+.1nVlllxx
+xxxxxxlllcc..+.._..+..ccllllxx
+ xlllllllc...c.....c...clllllxx
+ xxlllllln...cnnnnnc...nllllllx
+  xlllllln...+**2**+...nllllllx
+  xxllllln...c..O..c...nllllxxx
+   xxllllc...cGOOOGc...clllxx
+    xllllcc..+..O..+..ccllllx
+    xlllllc..+.....+..clllllx
+    xxllllcc1cG...Gc1ccllllxx
+     xxllllccc.....cccllllxx
+      xxllllll.....lllllxxx
+      xxllllllG...Gllllxx
+       xxlllll.....llxxx
+        xxxlll.....llx
+          xlllG...Glxx
+          xxxx.....xxx
+             x.....x
+             xG...Gx
+             x.....x
+             x.....x
+             xG...Gx
+             x.....x
+             x.....x
+             xG...Gx
+             x.....x
+             x.....x
+             xG.A.Gx
+             xx...xx
+              xx<xx
+               xxx
+ENDMAP

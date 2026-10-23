@@ -103,8 +103,10 @@ exposes a real missing generic behavior: synchronized chained emitters
 share one saved trigger clock, and named listener callbacks deliver the
 large and small eruption warnings at the source trigger time. Listener
 code lives in Lua and uses player visibility and the 12-cell proximity
-rule. The source's `no_cloud_gen` level property must affect ordinary cloud
-placement rather than remaining a decorative record.
+rule. Source verification narrowed `no_cloud_gen`: it vetoes only the
+ambient lava-smoke and shallow-water mist producer in `timed-effects.cc`,
+not authored fog or ordinary cloud placement. Preserve its typed level
+record now; when that ambient producer is ported, it must consult the flag.
 
 `volcano_caves` has a separate saved countdown and a group of authored `M`
 doorway markers. Each 50–200-aut firing picks one remaining marker. If the

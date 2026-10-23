@@ -1,0 +1,42 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (volcano_tomb)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:       volcano_tomb
+DEPTH: Volcano
+WEIGHT:     20
+ORIENT:     encompass
+TAGS:       no_item_gen no_monster_gen no_rotate
+SUBVAULT:   B : volcano_tomb_subvault
+#           The flying skulls on lava.
+KFEAT:      u = lava
+KMONS:      u = flying skull
+# Source Lua: :           volcano_setup(_G)
+: vault.run("shared.setup")
+# Source Lua: : place_chained_volcano(_G)
+: vault.run("shared.fog_chained")
+MAP
+    xxxxxx       xxxx
+   xx.<.Ax  xxxxxxyyxxxxx
+  xx..xxxxxxxy..yy.....yxxx
+  x..xxxxxxy........yyx...yxx        BBBBBBBBBBBBBBBBBBBBBBBBBB
+  xx..yyyyy................yxxx      BBBBBBBBBBBBBBBBBBBBBBBBBB
+   xx.............LLLL.......yxxx    BBBBBBBBBBBBBBBBBBBBBBBBBB
+    xxy.........LLlullLL.......yxxx  BBBBBBBBBBBBBBBBBBBBBBBBBB
+   xxy.........LllllllllLLL......yxxxBBBBBBBBBBBBBBBBBBBBBBBBBB
+  xxy.........LllllllllllllLLL.....y.BBBBBBBBBBBBBBBBBBBBBBBBBB
+ xxy........LLllllllllllllllllLLL...lBBBBBBBBBBBBBBBBBBBBBBBBBB
+xxy....LLlLllllllllllllllllllllllL...BBBBBBBBBBBBBBBBBBBBBBBBBB
+xy....LllllllllllllllllllllllllL....lBBBBBBBBBBBBBBBBBBBBBBBBBB
+xLl.LlllllllllllllllllllllllllllL..y.BBBBBBBBBBBBBBBBBBBBBBBBBB
+xlllllllllllllllllGllllllllllllllLLxxBBBBBBBBBBBBBBBBBBBBBBBBBB
+xxlllllllllllllGlllllGllllllllllllxx BBBBBBBBBBBBBBBBBBBBBBBBBB
+ xxlllllllllllVlllllllVllllllllllxx  BBBBBBBBBBBBBBBBBBBBBBBBBB
+  xxullllllllGlllllllllGllllllluxx   BBBBBBBBBBBBBBBBBBBBBBBBBB
+   xxxllllllllllllllllllllllllxxx    BBBBBBBBBBBBBBBBBBBBBBBBBB
+     xxllllllllGlllllGlllllllxx      BBBBBBBBBBBBBBBBBBBBBBBBBB
+      xxllllllllllGlllllllllxx       BBBBBBBBBBBBBBBBBBBBBBBBBB
+       xxllllllllllllllllllxx        BBBBBBBBBBBBBBBBBBBBBBBBBB
+        xxxllllllllllllllxxx
+          xxxlxxlxxxxlxxxx
+            xxxxxx  xxx
+ENDMAP

@@ -1,0 +1,59 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (hellmonk_smoking_crater)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:   hellmonk_smoking_crater
+DEPTH: Volcano
+TAGS:   no_item_gen no_monster_gen
+ORIENT: encompass
+WEIGHT: 20
+# The pinned source misspells the catalog's condenser vane here. Keep its
+# weight and slot, using the actual item name so this reward can spawn.
+# Source: KITEM: 4 = scroll of fog q:2 ident:all w:20 / condensation vane / cloak of the thief w:1
+KITEM:  4 = scroll of fog q:2 ident:all w:20 / condenser vane / cloak of the thief w:1
+MONS:   steam dragon / steam dragon / smoke demon / hell hound
+MONS:   sun demon, lindwurm
+KMONS:  4 = fire dragon
+SUBST:  a = ..xxl, p = ..'xl, q = .x, ' = '.
+SUBST:  1 = ..1, D = 2., 2 : 23
+NSUBST: $ = 4 / $
+SUBST:  $ = $$deef
+MARKER: ' = lua:fog_machine { cloud_type = "black smoke",  walk_dist=3, \
+                              pow_min=4, pow_max=10, delay=25, size=2, \
+                              spread_rate=0, }
+# Source Lua: :volcano_setup(_G)
+: vault.run("shared.setup")
+MAP
+            xxxxxxxxxxxxxxxx
+           xxxqqqqqqqqqqqqqxxx
+         xxx1...1.....1.....1xx
+       xxx....ppppppppp..D....xx
+      xx..2.pppppppppp.a.......xx
+     xx1.....1....1..axxx...'...xx
+    xx....xxxxaaaaaaaaxxxa1....1xx
+   xx..'.xxxxxa1..1.axxxxa...1..xx
+   x....xxxxxx.....xxxxxx......xx
+   x.1..xxxxxx1.'..xxxxx......xx
+   x....xxxxxxx..D..xxx...1..ax
+   xG..Gxxxxxxxx.....pp......ax
+   x....xxxxxxxxa..1..p......ax
+   x2..2xxxxxxxxa.....p......ax
+   xG..Gxxxxxxxxa.....p.1....ax
+  ccc++cccxxxxxx.....ppp......xx
+ cc......ccxxx..1..xxxxx...1..xx
+cc........ccx.....xxxxxa......xx
+c...llll...cx..'..xxxxxxa.....xx
+cG.llllll.Gcxq....xxxxxa.....xx
+c$..llll..$cxq.1..xxxx..'...xx
+cc$$....$$ccxq....qqq....1.xx
+ cc$$$$$$ccxxq....q'.....xxx
+  ccc$$cccxxq....qq......xx
+    ccccxxxq.1..xxx....1.xx
+ xxxxxxxxqq.....xxq..'..xx
+xxx<xxx........xxq.....xx
+xx...xx..'....xxxq....xx
+x..A..x......xxxq..1.xx
+xx...xxqq..qqx....xxxx
+xxx....qq..qq..qqxx
+xxxxx.........xxxx
+xxxxxxxxxxxxxxx
+ENDMAP

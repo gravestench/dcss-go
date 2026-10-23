@@ -465,6 +465,19 @@ staged owner; terrain snapshots and connections are under
 `docs/level-snapshots/ice-cave/`. Explicit duplicate unrand requests now
 use the source fallback randart rule. Wider gameplay for any authored
 entity effects not yet ported remains subject to those separate domains.
+The Volcano corpus carries all 11 source Lair/Orc entrance definitions,
+14 weighted whole-floor destination maps, and nine tagged nested helpers
+as individually replaceable DES files. Named Lua hooks execute at their
+source positions. The live gate saves one 600–800-turn draw and the exact
+outside return cell; inactive-floor expiry, last-turn entry, multi-exit
+return, staged rollback, and reciprocal save checks are implemented.
+Chained fog emitters share one saved clock. Cave door collapse and all
+nine overflow lava phases have Lua systems, Akara clocks, source-marker
+validation, and grid mutations. All 14 destination maps populate through
+the live staging owner; text maps and return connections are under
+`docs/level-snapshots/volcano/`. The source `no_cloud_gen` record is
+preserved; ambient lava/water cloud generation is a separate unported
+world effect, so this flag currently has no ambient producer to veto.
 The four-map `serial_nicolae_subway` family adds its controller and three
 linked stations. Its named markers pair across separately placed stations,
 paint one-way transporters and landings, and retain their links in saved level

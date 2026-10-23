@@ -3,6 +3,8 @@
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local cloud_names = require("constants.fog_clouds")
+local effects = require("constants.vault_effects")
+local volcano = require("constants.volcano")
 
 local fog = {}
 
@@ -123,7 +125,8 @@ function fog.parse(identity, site)
 
     for key, value in pairs(source) do
         if not numeric[key] and key ~= "cloud_type" and
-            key ~= "kill_cat" and not legacy_ignored[key] then
+            key ~= "kill_cat" and key ~= "chain" and
+            key ~= "listener" and not legacy_ignored[key] then
             invalid(site, "unsupported fog parameter " .. key)
         end
 
@@ -141,6 +144,17 @@ function fog.parse(identity, site)
 
     if source.kill_cat and source.kill_cat ~= "other" then
         invalid(site, "unsupported fog kill category")
+    end
+
+    if source.listener and
+        source.listener ~= volcano.LARGE_FOG_LISTENER and
+        source.listener ~= volcano.SMALL_FOG_LISTENER then
+        invalid(site, "unsupported fog listener")
+    end
+
+    if source.chain and (not source.chain:match("^[A-Z]$") or
+        not site or not site.source_id) then
+        invalid(site, "invalid fog chain")
     end
 
     local delay_min = source.delay_min or source.delay
@@ -164,6 +178,8 @@ function fog.parse(identity, site)
         spread_buildup_time = source.spread_buildup_time or 1,
         start_clouds = source.start_clouds or 1,
         exclusion_radius = source.excl_rad or 1,
+        chain = source.chain or "",
+        listener = source.listener or "",
     }
 
     range(site, "power minimum", state.pow_min, 0)
@@ -193,6 +209,38 @@ end
 function fog.is_marker(identity)
     return type(identity) == "string" and
         identity:match("^%s*lua:fog_machine%s*%{") ~= nil
+end
+
+-- A chained source constructor names every occurrence of its glyph as a
+-- slave. Their one master clock is keyed by source vault plus chain name;
+-- ordinary markers always remain independent, even on the same glyph.
+function fog.group(records, anchor)
+    local rule = fog.parse(anchor.identity, anchor)
+    local members = {}
+
+    for _, record in ipairs(records or {}) do
+        if record.kind == effects.MARKER and not record.overridden and
+            fog.is_marker(record.identity) then
+            local candidate = fog.parse(record.identity, record)
+
+            if record == anchor or
+                (rule.chain ~= "" and record.source_id ==
+                    anchor.source_id and candidate.chain == rule.chain) then
+                if candidate.chain == rule.chain then
+                    for name, value in pairs(rule) do
+                        if candidate[name] ~= value then
+                            invalid(record,
+                                "chained fog settings disagree on " .. name)
+                        end
+                    end
+
+                    members[#members + 1] = record
+                end
+            end
+        end
+    end
+
+    return rule, members
 end
 
 return fog

@@ -2406,6 +2406,101 @@ floor. The owners are `policy/world/ice_cave/`,
 The [Ice Cave snapshot index](level-snapshots/ice-cave/index.txt) shows
 both variants of all 11 source maps and their test return coordinates.
 
+### Volcano entrances, maps, and terrain events
+
+Volcano uses the same layered vault paths. The base game commits 11
+entrances under `vaults/volcano_entry/` and 23 definitions under
+`vaults/volcano/`: 14 whole-floor destinations and nine tagged helpers.
+An entrance has `uniq_volcano chance_volcano`, `CHANCE: 500`, and a named
+`volcano_entry/shared.lua` hook. That hook draws **one** 600–800-turn
+lifetime when the source map is placed. `world.volcano_portal` saves the
+fixed draw, creation time, deadline, exact cell, and closure reason. The
+clock continues on an inactive outside floor. An accepted last-turn entry
+finishes before expiry; natural expiry changes the outside cell to
+`expired_portal`.
+
+To add a weighted destination, create one file at a new relative path in
+your mod directory, for example `vaults/volcano/my_volcano_foyer.des`:
+
+```text
+NAME: my_volcano_foyer
+DEPTH: Volcano
+WEIGHT: 20
+TAGS: no_item_gen no_monster_gen
+ORIENT: encompass
+KFEAT: < = exit_volcano
+MAP
+xxxxx
+x...x
+x.<.x
+x...x
+xxxxx
+ENDMAP
+```
+
+The effective catalog sorts stable `NAME` IDs before a weighted draw.
+Positive weight and a live `exit_volcano` arch are required. A helper
+tagged `volcano_grotto_subvault`, `volcano_lake_subvault`, or
+`volcano_tomb_subvault` belongs to a parent `SUBVAULT` request and never
+enters the whole-floor draw. Add a new helper file in the same directory
+with that tag. Replacing a bundled map uses the **same relative path**;
+`vaults/volcano/volcano_pools.des` replaces only that map. A zero-weight
+replacement disables explicit selection as well as ordinary selection.
+The `internal/game/testdata/volcano-*` fixtures exercise each case.
+
+The `.des` file keeps the source MAP and directive order. At a source
+script site, `: vault.run("my_foyer.decorate")` loads
+`policy/generation/vaults/volcano/my_foyer.lua` through the layered VFS.
+The hook receives the placement `api`, **not** the live game `ctx`.
+`api:emit` inserts an ordinary DES directive at that point. Use a
+multiline `api:record` call to anchor a typed marker to a glyph **before**
+later `SUBST` can erase it:
+
+```lua
+local effects = require("constants.vault_effects")
+local volcano = require("constants.volcano")
+
+api:record(effects.MARKER, {
+    glyph = "M",
+    identity = volcano.COLLAPSE_MARKER,
+})
+```
+This distinction matters for Volcano's cave and overflow scripts. Their
+source-position Lua hooks currently live in named `.lua` files; a future
+cleanup may move those hooks into the DES files while keeping the same
+behavior. No Lua script is embedded in Go code.
+
+After population, live rules receive `ctx` as described in
+[the game context reference](#the-game-context-ctx). The visitor's
+`character.volcano_visit` component holds the exact outside level and
+coordinate plus the selected source map ID. Every `<` and `I` return
+arch uses that one pointer. `policy/world/volcano/travel.lua` decides
+entry and return, the generic staged transaction owns rollback, and
+`policy/save/volcano_*.lua` checks the marker, gate, visitor, map, and
+grid before restore. A blocked outside cell refuses return without cost.
+
+Two source maps animate their terrain. `volcano_caves` has one
+`world.volcano_collapse` component with a 50–200-aut countdown and the
+remaining doorway record indices and positions. Each firing chooses one
+doorway; if the player occupies it, the doorway remains eligible.
+Otherwise it becomes a stone wall and emits grey smoke. `volcano_overflow`
+has one `world.volcano_overflow` component: a 200–400-aut countdown,
+phase 0–9, immutable group indices and positions, and the indices that
+actually turned into lava. Phases 2/4/6 pour lava into A/B/C groups;
+7/8/9 harden those groups in reverse order. The player's current cell
+never changes under them. These schemas describe mutable saved state;
+the DES records and level grid remain the source and terrain owners.
+
+The [Volcano snapshot index](level-snapshots/volcano/index.txt) shows all
+14 staged source floors, chosen helper IDs, and **every** return arch's
+exact outside connection. The snapshots use a Dungeon:1 test gate so the
+map shapes are easy to compare; natural entrance eligibility is Lair and
+Orc. The source `no_cloud_gen` property remains in typed vault records.
+Legacy Crawl uses it specifically to suppress ambient smoke or mist from
+lava and water. The port has no ambient terrain-cloud producer yet, so
+there is currently no such effect to suppress; authored fog machines and
+other explicit clouds remain active.
+
 These content categories validate their effective definitions at startup. A
 missing cloud or trap effect path fails before play; a malformed shop weight
 fails before stock generation. Import their IDs from `ids.clouds`,

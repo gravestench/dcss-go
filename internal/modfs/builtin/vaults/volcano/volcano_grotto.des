@@ -1,0 +1,52 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (volcano_grotto)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:     volcano_grotto
+DEPTH: Volcano
+TAGS:     no_item_gen no_monster_gen
+ORIENT:   encompass
+WEIGHT:   50
+SUBVAULT: B : volcano_grotto_subvault
+KMONS:    5 = lava snake
+KMONS:    6 = fire bat
+KFEAT:    56 = lava
+NSUBST:   l = 4:5 / 4 = 5l / 4:6 / 4 = 6l / *:l
+# Source Lua: : volcano_setup(_G)
+: vault.run("shared.setup")
+# Source Lua: : place_tiny_volcano(_G)
+: vault.run("shared.fog_tiny")
+MAP
+                                    BBBBBBBBBBB
+                                    BBBBBBBBBBB
+                                    BBBBBBBBBBB
+                                    BBBBBBBBBBB
+                         xxxx       BBBBBBBBBBB
+                    xxxxxxyyxxxx    BBBBBBBBBBB
+                 xxxxy......yyyxx   BBBBBBBBBBB
+              xxxxyyy.LLLLL....yxxx BBBBBBBBBBB
+            xxxyyy...LlllllL.....GxxBBBBBBBBBBB
+          xxxyy....LLlllllllL......BBBBBBBBBBBB
+        xxxyy....LLlllllllllL....GxxBBBBBBBBBBB
+       xxyy.....LllllllllllllL..yxx BBBBBBBBBBB
+      xxy......LlllllllllllllL..yxxxBBBBBBBBBBB
+     xxy......LlllllllllllllllL..yyxBBBBBBBBBBB
+    xxy.....LllllllllllllllllllL..yyBBBBBBBBBBB
+   xxy.....LllllllllllllllllllllL...BBBBBBBBBBB
+  xxy....LllllllllllVlllllllllllL...BBBBBBBBBBB
+  xy....LlllllllllllllllllllllLL...yBBBBBBBBBBB
+  xxy....LlllllllllllllllllllL....yxBBBBBBBBBBB
+   xy.....LlllllllllllllllllLL...yxx
+   xy.y...LllllllllllllllllLL...yxx
+   xxyxy...LllllllllllllllL...yyx
+    xxxxy...LllllllllllllL...yxxx
+       xxy...LL....LlllllL..yxx
+        xxy....xxx..LlllL...yx
+         xy.yxxx<xxy.LLL...yxx
+         xx.xx....xxx.....yxx
+          x.xxx.....xxy....yx
+          xx..xxxAxx.xxy..yxx
+           xxx..xxx.xxxx..xx
+             xxx.x.xx  xxxx
+               x...x
+               xxxxx
+ENDMAP

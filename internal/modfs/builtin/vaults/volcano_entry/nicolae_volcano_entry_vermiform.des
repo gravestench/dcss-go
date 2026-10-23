@@ -1,0 +1,25 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (nicolae_volcano_entry_vermiform)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:    nicolae_volcano_entry_vermiform
+DEPTH: Lair, Orc
+TAGS: uniq_volcano chance_volcano
+CHANCE: 500
+NSUBST:  A = l / ., B = l / ., C = l / ., D = l / .
+SHUFFLE: 1V'/Ov-
+SUBST:   Y = xxxx., y = ....x, v = X, V = x, - = S, ' = ., _ = xxxx_
+KMONS:   1 = patrolling lindwurm
+CLEAR:   _
+# Source Lua: : volcano_portal(_G)
+: vault.run("shared.portal")
+MAP
+ __xxxxxx________xxx
+xxxxYYYYxxxxxxxxxxYxx
+xvv--....YYxxxYYx...x
+xvO-AlllB...y....yx..
+xXlllA.BlllC.Dllllx.@
+xV1'''....ClllD..yx..
+xVVxxYYYYy......x...x
+xxxxxxxxxxYYYYYxxxYxx
+ ________xxxxxxx_xxx
+ENDMAP

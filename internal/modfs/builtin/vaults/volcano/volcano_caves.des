@@ -1,0 +1,59 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (volcano_caves)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:   volcano_caves
+DEPTH: Volcano
+TAGS:   no_item_gen no_monster_gen no_rotate
+ORIENT: encompass
+WEIGHT: 10
+# Source inline Lua follows; the named hook is at this site.
+# {{
+# local collapse_marker = TriggerableFunction:new (
+#   {
+#     func="volcano_caves_collapse_doorways",
+#     repeated=true,
+#     props = {
+#       -- Only collapse one doorway at a time, randomly.
+#       single_random_slave="true"
+#     }
+#   }
+# )
+#
+# collapse_marker:add_triggerer(DgnTriggerer:new {
+#   type="turn",
+#   delay_min=50,
+#   delay_max=200
+# })
+#
+# }}
+SUBST: Y = c., Z = c'
+SUBST: * = ddeeffgg$
+# Source Lua: : fiery_guardians(_G)
+: vault.run("shared.guardians")
+# Source Lua: : lua_marker("M", Triggerable.synchronized_markers(collapse_marker))
+: vault.run("volcano_caves.site_1")
+# Source Lua: : volcano_setup(_G)
+: vault.run("shared.setup")
+KPROP: 'defg$123< = no_tele_into
+# There are eight chambers, six with two items and one monster,
+# and two with four items + bosses.
+MAP
+       cccc ccc
+     ccc''cccZcccccc
+    cccZccc<**'1ccZZccc
+    c''<ZZcc''ZccZ1''cc
+    ccc1**ZcZ'cc'**<cccc
+   cc'ccZ''ccMc'ZZ'ccZZcc
+  ccZ<ZccZ'MY.cMccccZ1<'c
+ ccZ121ZcccY...ccM''**ccc
+ccZ'****ccY....Y.cccccc
+cZ'''''ccY..A<....ccZZccc
+ccZ'''''M.....YcccM'**1Zcc
+ cccZ'cccMY..YMc1ccZ'**<3c
+   cccc''ccYccc'Z'cccZZccc
+    ccZ''ZccccZ'**'Zcccc
+   ccZ**'1<''cccZZ<Zcc
+    ccZ'Z'Zccc cccMcc
+     cccc'cc     ccc
+      ccccc
+ENDMAP

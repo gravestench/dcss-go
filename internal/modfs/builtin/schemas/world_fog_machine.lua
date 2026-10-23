@@ -26,6 +26,27 @@ register.component({
             type = "int64",
             default = 0,
         },
+        record_indices = {
+            type = "list<int64>",
+        },
+        positions_x = {
+            type = "list<int64>",
+        },
+        positions_y = {
+            type = "list<int64>",
+        },
+        chain = {
+            type = "string",
+            default = "",
+        },
+        listener = {
+            type = "string",
+            default = "",
+        },
+        warned = {
+            type = "bool",
+            default = false,
+        },
         kind_id = {
             type = "string",
             default = "",

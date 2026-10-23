@@ -1,0 +1,39 @@
+# Source: crawl-ref/source/dat/des/portals/volcano.des (vts_chambers)
+# Original MAP rows and static directives are retained. Named Lua
+# hooks replace executable source scripts at their original sites.
+NAME:    vts_chambers
+DEPTH: Volcano
+TAGS:    volcano_tomb_subvault no_item_gen no_monster_gen no_rotate no_hmirror
+TAGS:    no_vmirror unrand
+MONS:    gargoyle w:99 / toenail golem w:1
+MONS:    troll skeleton / spriggan skeleton / naga skeleton
+MONS:    alligator skeleton / harpy skeleton / anaconda skeleton
+MONS:    skeletal warrior ; halberd ego:flaming ident:type | \
+                            dire flail ego:flaming ident:type | \
+                            great sword ego:flaming ident:type
+SHUFFLE: 23
+NSUBST:  5 = 1:1 / 1:23 / 1:4
+NSUBST:  X = 1:+ / *:v, Y = 1:+ / *:c
+#        Loot: 21 gold, 10 items.
+# Source Lua: :        volcano_setup(_G)
+: vault.run("shared.setup")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxcccccxxxxxxxxxxxxxxxxx
+xxxxc...cxxxxxxxxxxxxxxxxx
+xxxcc.<.cccxxxccccvvvvvxxx
+xccc......ccccc..$v$$$vxxx
+cc1.........3....$X$$$vxxx
+.ccc.c2.c.ccccc..$v...vxxx
+...+...5..cxxxccccvv+vvxxx
+.ccc.c2.c.ccccc..$X2.2vxxx
+cc1.........3....$v.5.vxxx
+xccc......ccccc..$X...vxxx
+xxxcc.cc.ccddecccvvvv+vxxx
+xxxxc3cc3c1eeg+^.+4Y..vvvx
+xxccc.cc.cccccccYvvv..+1vx
+xxc...cc...c...c..3v+vvvvx
+xxc...cc...c...+.5.vffvxxx
+xxc$$$cc$$$+$$$c3..+fgvxxx
+xxcccccccccccccccccvvvvxxx
+ENDMAP

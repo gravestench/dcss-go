@@ -17,6 +17,7 @@ local sewer_travel = require("policy.world.sewer.travel")
 local ossuary_travel = require("policy.world.ossuary.travel")
 local bailey_travel = require("policy.world.bailey.travel")
 local ice_cave_travel = require("policy.world.ice_cave.travel")
+local volcano_travel = require("policy.world.volcano.travel")
 
 -- Rooted movement is rejected before checking the destination cell.
 local function rooted(ctx)
@@ -148,6 +149,12 @@ function navigation.stairs(ctx, position, downstairs, actor, forced,
     end
 
     portal = ice_cave_travel.prepare(ctx, position, downstairs)
+
+    if portal then
+        return portal
+    end
+
+    portal = volcano_travel.prepare(ctx, position, downstairs)
 
     if portal then
         return portal

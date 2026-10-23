@@ -1,0 +1,13 @@
+# An unresolved hook is a boot error, not a rare seeded-game surprise.
+NAME: volcano_pools
+DEPTH: Volcano
+WEIGHT: 50
+TAGS: no_item_gen no_monster_gen
+ORIENT: encompass
+: vault.run("missing_hook")
+KFEAT: < = exit_volcano
+MAP
+xxxxx
+x.<.x
+xxxxx
+ENDMAP
