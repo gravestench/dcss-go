@@ -1586,6 +1586,14 @@ equipment gate while keeping each god's class choice in its own file.
 If a mod needs a new gift class, extend the class picker in
 `policy/scrolls/acquirement_offers.lua` and its focused subtype policy.
 
+Jiyva's `policy.religion.gifts.jiyva` shows a nonitem gift: it iterates
+saved acquired mutation ranks in `data.mutation_enum` order, then uses
+`policy.mutations.selection` and `policy.mutations.transition` for new
+good or slime mutations. Call `gifts.record` only after a mutation level
+was added or removed. A god gift should pass `true` to
+`transition.grant_after_protection` so the existing conflict owner
+resolves opposing mutations with source divine priority.
+
 `systems/religion_upkeep.lua` advances the player-owned god-time clock after
 timed actions. The first check is at 200 aut; later checks are 100–300 aut
 apart. The saved `religion.worship.next_god_time_aut` belongs to the player,

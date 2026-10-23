@@ -16,6 +16,7 @@ local definition = {
     conduct_module = "policy.religion.conduct.jiyva",
     requires_love = true,
     behavior_module = "policy.religion.gods.jiyva",
+    gift_module = "policy.religion.gifts.jiyva",
 }
 
 register.definition(categories.GODS, definition)

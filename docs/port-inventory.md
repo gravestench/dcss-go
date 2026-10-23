@@ -334,7 +334,9 @@ domains must report their corresponding conduct at the action owner; current
 producers cover actions the port can execute today. Sif Muna now gives
 source-weighted books, Trog weapons, and Okawaru equipment or throwing
 stacks. Each is a positioned ECS item with saved god provenance and its
-own piety and timeout rule. God abilities, Nemelex and Jiyva gifts,
+own piety and timeout rule. Jiyva now prunes acquired mutation ranks and
+grants four good or slime ranks through the saved mutation ECS records.
+God abilities, Nemelex card gifts,
 remaining passives, and wrath execution remain separate religion slices.
 Fedhas now neutralises eligible hostile plants as they act, reverses plant
 allegiance across loaded levels on desertion, cancels an active forest on
