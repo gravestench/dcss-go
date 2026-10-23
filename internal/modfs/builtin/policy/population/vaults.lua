@@ -19,13 +19,7 @@ local fog = require("policy.world.fog_machine_definitions")
 local slime_seal = require("policy.population.slime_seal")
 local vault_triggers = require("policy.world.vault_triggers")
 local zot_overgrown = require("policy.world.zot_overgrown")
-local bazaar_portal = require("policy.world.bazaar.portal")
-local sewer_portal = require("policy.world.sewer.portal")
-local ossuary_portal = require("policy.world.ossuary.portal")
-local bailey_portal = require("policy.world.bailey.portal")
-local ice_cave_portal = require("policy.world.ice_cave.portal")
-local volcano_portal = require("policy.world.volcano.portal")
-local trove_portal = require("policy.world.trove.portal")
+local temporary_portals = require("policy.world.portals.catalog")
 local volcano_hazards = require("policy.world.volcano.hazards")
 local branches = require("ids.branches")
 
@@ -318,7 +312,7 @@ end
 
 -- Process typed vault records in source order so terrain, actors, items, and shops see prior effects.
 function vaults.materialize(ctx, level, excluded)
-    trove_portal.validate_level(ctx, level)
+    temporary_portals.validate_level(ctx, level)
 
     local actors = 0
     local followers = 0
@@ -327,6 +321,7 @@ function vaults.materialize(ctx, level, excluded)
 
     for _, record in ipairs(level.vault_records or {}) do
         local arguments = record.arguments or {}
+        local portal_owner = temporary_portals.for_marker(record)
 
         if slime_seal.is_record(record) then
             materialized[#materialized + 1] =
@@ -364,33 +359,9 @@ function vaults.materialize(ctx, level, excluded)
                 level_id = level.id,
                 index = record.index,
             }
-        elseif record.kind == effects.MARKER and
-            bazaar_portal.is_marker(record) then
+        elseif portal_owner then
             materialized[#materialized + 1] =
-                bazaar_portal.materialize(ctx, level, record)
-        elseif record.kind == effects.MARKER and
-            sewer_portal.is_marker(record) then
-            materialized[#materialized + 1] =
-                sewer_portal.materialize(ctx, level, record)
-        elseif record.kind == effects.MARKER and
-            ossuary_portal.is_marker(record) then
-            materialized[#materialized + 1] =
-                ossuary_portal.materialize(ctx, level, record)
-        elseif record.kind == effects.MARKER and
-            bailey_portal.is_marker(record) then
-            materialized[#materialized + 1] =
-                bailey_portal.materialize(ctx, level, record)
-        elseif record.kind == effects.MARKER and
-            ice_cave_portal.is_marker(record) then
-            materialized[#materialized + 1] =
-                ice_cave_portal.materialize(ctx, level, record)
-        elseif record.kind == effects.MARKER and
-            volcano_portal.is_marker(record) then
-            materialized[#materialized + 1] =
-                volcano_portal.materialize(ctx, level, record)
-        elseif trove_portal.is_marker(record) then
-            materialized[#materialized + 1] =
-                trove_portal.materialize(ctx, level, record)
+                portal_owner.materialize(ctx, level, record)
         elseif volcano_hazards.is_marker(record) then
             materialized[#materialized + 1] =
                 volcano_hazards.materialize(ctx, level, record)

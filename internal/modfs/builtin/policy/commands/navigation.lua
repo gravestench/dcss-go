@@ -12,13 +12,7 @@ local endgame = require("policy.character.endgame")
 local phases = require("constants.endgame")
 local pan_travel = require("policy.world.pan.travel")
 local hell_travel = require("policy.world.hell.travel")
-local bazaar_travel = require("policy.world.bazaar.travel")
-local sewer_travel = require("policy.world.sewer.travel")
-local ossuary_travel = require("policy.world.ossuary.travel")
-local bailey_travel = require("policy.world.bailey.travel")
-local ice_cave_travel = require("policy.world.ice_cave.travel")
-local volcano_travel = require("policy.world.volcano.travel")
-local trove_travel = require("policy.world.trove.travel")
+local temporary_portals = require("policy.world.portals.catalog")
 
 -- Rooted movement is rejected before checking the destination cell.
 local function rooted(ctx)
@@ -125,44 +119,12 @@ function navigation.stairs(ctx, position, downstairs, actor, forced,
         return portal
     end
 
-    portal = bazaar_travel.prepare(ctx, position, downstairs)
-
-    if portal then
-        return portal
-    end
-
-    portal = sewer_travel.prepare(ctx, position, downstairs)
-
-    if portal then
-        return portal
-    end
-
-    portal = ossuary_travel.prepare(ctx, position, downstairs)
-
-    if portal then
-        return portal
-    end
-
-    portal = bailey_travel.prepare(ctx, position, downstairs)
-
-    if portal then
-        return portal
-    end
-
-    portal = ice_cave_travel.prepare(ctx, position, downstairs)
-
-    if portal then
-        return portal
-    end
-
-    portal = volcano_travel.prepare(ctx, position, downstairs)
-
-    if portal then
-        return portal
-    end
-
-    portal = trove_travel.prepare(ctx, position, downstairs,
-        forced, target_id)
+    portal = temporary_portals.dispatch(ctx, {
+        position = position,
+        downstairs = downstairs,
+        forced = forced,
+        target_id = target_id,
+    })
 
     if portal then
         return portal

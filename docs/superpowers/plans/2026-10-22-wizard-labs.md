@@ -2,8 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use
 > superpowers:executing-plans to implement this plan. Work in coherent
-> batches and verify each integrated batch. One product commit covers the
-> completed Wizard Labs domain, following the user's commit preference.
+> batches and verify each integrated batch. Commit the shared portal
+> registry as one category, then the completed Wizard Labs domain as one
+> product category, following the user's commit preference.
 
 **Goal:** Make all eleven source Wizard Labs entrances and fifteen complete
 labs playable, moddable, and durable through the Go save format.
@@ -64,25 +65,29 @@ vault maps, Bubble Tea terminal client, JSON saves.
 - Test: `internal/script/testdata/lua/tests/portal_handler_catalog_test.lua`
 - Test: existing portal command, population, and save Go tests
 
-**Interfaces:** `catalog.dispatch(ctx, request)` returns the first nonnil
-travel decision; `request` holds `position`, `downstairs`, `forced`,
-`target_id`, and existing Pan/Hell state. `catalog.materialize(ctx,
-level, record)` returns a realized record or nil. Handlers declare a stable
+**Interfaces:** `catalog.dispatch(ctx, request)` returns the temporary
+portal travel decision; `request` holds `position`, `downstairs`, `forced`,
+and `target_id`. Pan/Hell remain with their persistent branch owners.
+`catalog.for_marker(record)` resolves a marker owner without side effects;
+population invokes that owner's `materialize(ctx, level, record)` only after
+earlier nonportal marker owners decline the record. Handlers declare a stable
 ID and their feature IDs, and expose `prepare`, `is_marker`, and
 `materialize` as applicable. The catalog rejects duplicate feature
 ownership at load and multiple marker matches at materialization.
 
-- [ ] Write a Lua test using the real effective handler catalog: all
+- [x] Write a Lua test using the real effective handler catalog: all
   existing portal entry/exit features have one owner, an unknown feature
   returns nil, a duplicate mod feature is rejected, and marker routing
   keeps source record order.
-- [ ] Implement a sorted, modfs-discovered catalog and one small wrapper
-  module per existing domain. Move the repeated portal calls and marker
-  branches to one catalog call each. Preserve existing Pan/Hell arguments
-  through the `request` value. Keep nonportal markers in their owners.
-- [ ] Run the catalog test and existing Bazaar, Sewer, Ossuary, Bailey,
-  Ice Cave, Volcano, Trove, Pan, and Hell focused tests as one integration
+- [x] Implement a sorted, modfs-discovered catalog and one small wrapper
+  module per existing temporary domain. Move their repeated calls and
+  marker branches to one catalog call each. Keep persistent Pan/Hell
+  travel and nonportal markers in their owners.
+- [x] Run the catalog test and existing Bazaar, Sewer, Ossuary, Bailey,
+  Ice Cave, Volcano, and Trove focused tests as one integration
   batch. Fix regressions before proceeding.
+- [ ] Commit and push the shared temporary-portal handler category after
+  that integration batch passes.
 
 ### Task 2: Commit source maps and port all source-position hooks
 

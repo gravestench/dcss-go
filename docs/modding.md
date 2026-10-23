@@ -2162,6 +2162,33 @@ rule; do not copy the full purchase flow into each shop type. Shop placement
 can also come from a `vaults/shop/` `.des` map and its optional hook, which
 uses the generation `api` described below, not a game `ctx`.
 
+### Temporary portal handlers
+
+One-floor temporary portals register a small Lua handler under
+`policy/world/portals/handlers/`. The layered VFS loads effective files
+by path, then the catalog selects a handler by the terrain feature under
+the player. Each file returns a table with a stable `id`, a `features`
+array, and `prepare(ctx, request)`, `is_marker(record)`, and
+`materialize(ctx, level, record)` functions. The optional
+`validate_level(ctx, level)` checks required source markers before any
+portal is populated. `request` contains `position`, `downstairs`,
+`forced`, and `target_id`; the last two support a gate that asks for
+confirmation. A handler should forward to its domain's travel and gate
+owners, as `handlers/trove.lua` does. The catalog rejects a second file
+that claims an existing feature or source marker. Replace an existing
+handler by its exact relative path in a higher VFS layer.
+
+Keep `is_marker` free of side effects. Population resolves the marker
+owner first, then calls `materialize` only when earlier nonportal marker
+owners have declined that record. This preserves source record order and
+prevents a competing marker from creating an untracked gate.
+
+Adding a new portal domain still requires its terrain IDs, saved Akara
+state, generation policy, and save validator. The handler is the one
+registration point for stair commands and source marker materialization;
+no new command or population `if` branch is needed. Pan and Hell are
+persistent branch travel and keep their separate owners.
+
 The Bazaar map corpus is separate from ordinary shop maps. A portal entry
 belongs under `vaults/bzr_entry/` with a `bzr_entry` tag; a whole-floor
 market belongs under `vaults/bazaar/` with `DEPTH: Bazaar` and a source

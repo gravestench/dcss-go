@@ -5,6 +5,7 @@
 -- Example: changing a modded gate price without replacing the saved marker
 -- is rejected before the character can enter the game.
 local branches = require("ids.branches")
+local categories = require("constants.catalog")
 local component = require("constants.component")
 local effects = require("constants.vault_effects")
 local generation = require("policy.generation.trove.level")
@@ -28,15 +29,27 @@ end
 -- This catches a mod-added entry that forgot its O toll before restore.
 local function expected_markers(levels)
     local expected = {}
+    local ordinary = {}
+
+    -- Saved Dungeon history also includes Temple and altar definitions.
+    -- Their own save validators resolve those catalogs; only ordinary
+    -- vault IDs can be source Trove entrances in this owner.
+    vaults.load()
+
+    for _, id in ipairs(register.ids(categories.VAULTS)) do
+        ordinary[id] = true
+    end
 
     for _, level in ipairs(levels or {}) do
         local counts = {}
 
         for _, id in ipairs(level.vault_ids or {}) do
-            local definition = vaults.get(id)
+            if ordinary[id] then
+                local definition = vaults.get(id)
 
-            if definition.family == trove.ENTRY_FAMILY then
-                counts[id] = 0
+                if definition.family == trove.ENTRY_FAMILY then
+                    counts[id] = 0
+                end
             end
         end
 

@@ -108,13 +108,14 @@ owned effects. An occupied outside return cell refuses safely. A failed
 hook, map, population step, or landing changes neither player nor gate,
 RNG, levels, or saved entities.
 
-The current command and population paths list portal domains one by one.
-This slice moves their portal registration to Lua-discovered handler files
+The current command and population paths list temporary portal domains one
+by one. This slice moves their registration to Lua-discovered handler files
 with stable IDs and feature/marker ownership, then migrates the existing
-portals in one pass. Navigation and population call the resulting sorted
-handler catalog. A new domain adds its own handler instead of growing a
-central `if` chain; source portal policy remains in its own module. The
-same catalog must reject duplicate feature or marker ownership at load.
+temporary portals in one pass. Navigation and population call the resulting
+sorted handler catalog. A new temporary domain adds its own handler
+instead of growing a central `if` chain; source portal policy remains in
+its own module. Pan and Hell travel remain with their persistent branch
+owners. The catalog rejects duplicate feature or marker ownership.
 
 ## Live lab events
 

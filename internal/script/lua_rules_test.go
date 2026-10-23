@@ -45,6 +45,20 @@ func TestTroveModPrice(t *testing.T) {
 	runLuaRule(t, rules, "tests/trove_custom_price_test.lua")
 }
 
+// A sparse temporary-portal handler cannot silently replace an existing
+// feature owner with a different file path.
+func TestDuplicateTemporaryPortalHandler(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua",
+		"testdata/duplicate-temporary-portal")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules,
+		"tests/duplicate_temporary_portal_test.lua")
+}
+
 func TestModJewelleryRule(t *testing.T) {
 	rules, err := modfs.Load("testdata/lua", "testdata/mod-jewellery")
 
