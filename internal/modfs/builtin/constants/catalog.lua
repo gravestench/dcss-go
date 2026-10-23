@@ -3,6 +3,7 @@
 -- Registered content domains. Definition files import the domain they use.
 local catalog = {
     ARTEFACTS = "artefacts",
+    CARDS = "cards",
     BRANCHES = "branches",
     CLOUDS = "clouds",
     GODS = "gods",

@@ -48,25 +48,26 @@ terminal input and renders Lua screen decisions.
 **Files:** Create `internal/modfs/builtin/ids/cards.lua`,
 `ids/decks.lua`, individual `content/cards/*.lua`,
 `schemas/religion_nemelex_decks.lua`, and
-`policy/religion/cards/state.lua`. Modify `constants/catalog.lua`,
-`constants/component.lua`, and Go's `internal/script/definitions.go` to
-accept cards as content. Test in
+`policy/religion/cards/state.lua`, and
+`policy/religion/cards/catalog.lua`. Modify `constants/catalog.lua`,
+`constants/component.lua`, and `init.lua`; Go's content registry already
+accepts new category names. Test in
 `internal/script/testdata/lua/tests/nemelex_catalog_state_test.lua` and
 `internal/game/religion_nemelex_save_test.go`.
 
-**Interfaces:** `state.get(ctx, player)` reads or initializes the player
+**Interfaces:** `state.get(ctx, player)` reads or returns an empty player
 component; `state.set(ctx, player, value)` validates counts, stack IDs,
 and pending phase before writing; `state.clear(ctx, player)` removes
 access on renunciation. `catalog.get(categories.CARDS, id)` returns a
 card with `id`, `name`, `effect_module`, and deck weights. The deck IDs
 are escape, destruction, summoning, punishment, and stack.
 
-- [ ] Write catalog and state tests for all 21 active IDs, source deck
+- [x] Write catalog and state tests for all 21 active IDs, source deck
   memberships, maxima 13/26/13, save and restore, unknown saved IDs,
   and deterministic ID order.
-- [ ] Run focused tests; confirm failures identify missing catalog/state.
-- [ ] Add the schema, IDs, definitions, validation, and state owner.
-- [ ] Run focused tests and `go build ./...`; commit and push the category.
+- [x] Run focused tests; confirm failures identify missing catalog/state.
+- [x] Add the schema, IDs, definitions, validation, and state owner.
+- [x] Run focused tests and `go build ./...`; commit and push the category.
 
 ### Task 2: Nemelex gift economy
 

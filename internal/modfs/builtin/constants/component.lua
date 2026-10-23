@@ -49,6 +49,7 @@ local component = {
     PLAYER = "core.player",
     CHARACTER_ORIGIN = "character.origin",
     RELIGION_WORSHIP = "religion.worship",
+    RELIGION_NEMELEX_DECKS = "religion.nemelex_decks",
     RELIGION_VEHUMET = "religion.vehumet",
     RELIGION_ASHENZARI = "religion.ashenzari",
     RELIGION_RU = "religion.ru",

@@ -407,6 +407,12 @@ func (g *Game) validateRestoredPlacement() error {
 		return err
 	}
 
+	// Card IDs survive mods and input prompts; reject a missing definition
+	// while restoring rather than changing a previously sampled card.
+	if _, err := g.scripts.Policy("save.validate_nemelex_decks", nil); err != nil {
+		return err
+	}
+
 	if _, err := g.scripts.Policy("save.validate_status", nil); err != nil {
 		return err
 	}
