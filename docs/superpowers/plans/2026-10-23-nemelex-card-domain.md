@@ -81,12 +81,12 @@ independent deck slots with 3:1:1 weights, and calls `gifts.record` with
 `5 + random2avg(9, 2)` even when all decks are full.
 `nemelex.leave(ctx, player)` calls `state.clear`.
 
-- [ ] Test the one-star gate, first gift, later gift, 4–13 attempts,
+- [x] Test the one-star gate, first gift, later gift, 4–13 attempts,
   3:1:1 choice, capacity skips, full-deck spent gift, cooldown, and
   renunciation.
-- [ ] Run the new Lua test red, implement the gift rule, then run it
+- [x] Run the new Lua test red, implement the gift rule, then run it
   green alongside current religion gift tests.
-- [ ] Run the focused game save test, build, and style check; commit and
+- [x] Run the focused game save test, build, and style check; commit and
   push the category.
 
 ### Task 3: Deck actions and terminal choice flow

@@ -1594,6 +1594,19 @@ was added or removed. A god gift should pass `true` to
 `transition.grant_after_protection` so the existing conflict owner
 resolves opposing mutations with source divine priority.
 
+Nemelex keeps deck counts and an ordered stack on the player's
+`religion.nemelex_decks` component. The gift rule deals counts, then
+`policy.religion.cards.state` validates each saved card ID against the
+effective `cards` catalog. To add a card, add a file in `content/cards/`
+that registers one definition with an ID from `ids.cards` (or a new ID
+in the mod's own `ids` module), a display name, an effect module, and
+positive integer `deck_weights` keyed by `ids.decks`. Import the new ID
+in both the definition and its effect module. The named effect module
+will implement the card when draw actions are ported. Weighted selection
+traverses the effective card catalog by stable ID, independent of filename
+or mod layer load order. Save restore reports a missing mod card ID rather
+than replacing a previously sampled card.
+
 `systems/religion_upkeep.lua` advances the player-owned god-time clock after
 timed actions. The first check is at 200 aut; later checks are 100–300 aut
 apart. The saved `religion.worship.next_god_time_aut` belongs to the player,

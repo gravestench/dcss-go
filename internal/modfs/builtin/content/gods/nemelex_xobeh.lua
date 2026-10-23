@@ -14,6 +14,7 @@ local definition = {
     piety_mode = modes.ORDINARY,
     piety_decay_chance = 35,
     conduct_module = "policy.religion.conduct.nemelex_xobeh",
+    gift_module = "policy.religion.gifts.nemelex_xobeh",
 }
 
 register.definition(categories.GODS, definition)
