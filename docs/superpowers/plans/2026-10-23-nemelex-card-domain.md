@@ -157,7 +157,9 @@ mechanics receive their own Lua owner and saved component as needed.
   and effects category.
 
 **Current implementation boundary:** All 21 card IDs have Lua effect
-modules. Wrath can select every source god, but nine eligible gods still
-need handlers, and several of the eleven registered handlers explicitly
-reject branches whose shared mechanics are not yet ported. Task 4 stays
-open until those outcomes resolve through source-faithful owners.
+modules. Wrath can select every source god, and every eligible god now has
+a dedicated handler. Many handlers still reject branches whose shared
+mechanics are not yet ported, including god-avatar spells, Xom actions,
+several transformations and mutations, and special summons or placement.
+Task 4 stays open until those outcomes resolve through source-faithful
+owners.

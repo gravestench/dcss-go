@@ -82,9 +82,32 @@ function barbs.lodge(ctx, source, target, damage)
     return true
 end
 
+-- Wu Jian writes DUR_BARBS directly. This replaces the timer without the
+-- wound-strength increase or RNG of a physical Throw Barbs hit.
+function barbs.set_duration(ctx, player, turns)
+    local current = ctx:get(player, component.BARBS)
+    local state = current or {
+        remaining_aut = 0,
+        power = 0,
+        source = player,
+    }
+
+    state.remaining_aut = turns * AUT
+
+    if current then
+        ctx:set(player, component.BARBS, state)
+    else
+        ctx:add(player, component.BARBS, state)
+    end
+end
+
 -- Two source dice are rolled independently; armour does not prevent a
 -- lodged spike from tearing its victim during movement.
 local function movement_damage(ctx, power)
+    if power <= 0 then
+        return 0
+    end
+
     return range(ctx, 1, power) + range(ctx, 1, power)
 end
 

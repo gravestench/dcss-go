@@ -341,8 +341,11 @@ including source capacity and cooldown behavior. Draw, Triple Draw, Deal
 Four, and Stack Five now save their sampled choices, charge source ability
 costs, and resolve Lua card modules through the generic command bridge.
 The 21 active card IDs have effect modules and focused scenarios. Divine
-Wrath's individual god punishments are still being ported; its owner
-reports an eligible god without an implemented handler explicitly.
+Wrath routes every eligible god to a dedicated Lua handler. Source branches
+that still need a shared mechanic, such as god-avatar spells, Xom actions,
+special summons, and certain mutation or transformation effects, raise an
+explicit error at that branch. These outcomes remain part of the open card
+domain work.
 Other god abilities, remaining passives, and ordinary timed wrath remain
 separate religion slices.
 Fedhas now neutralises eligible hostile plants as they act, reverses plant

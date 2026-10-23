@@ -6,12 +6,13 @@ local items = require("ids.items")
 local brands = require("constants.weapon_brands")
 local sentinels = require("constants.monster_gear_sentinels")
 local registry = require("policy.population.gear.registry")
+local streams = require("constants.rng_streams")
 
 local gear = {}
 
 -- Keep all monster equipment randomness on the dedicated gear stream.
 function gear.draw(ctx, bound)
-    return ctx:random("monster_gear", bound)
+    return ctx:random(streams.MONSTER_GEAR, bound)
 end
 
 -- Use one gear-stream draw over source weights so table order stays meaningful.

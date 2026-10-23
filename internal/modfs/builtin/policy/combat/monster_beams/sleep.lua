@@ -47,6 +47,16 @@ local function player_can_sleep(ctx, target)
         return false
     end
 
+    -- player::put_to_sleep rejects either phase of petrification before
+    -- writing a sleep timer, even when the sleep source bypasses Will.
+    local petrification = ctx:get(target,
+        component.PLAYER_PETRIFICATION)
+
+    if petrification and (petrification.petrifying_aut > 0 or
+        petrification.petrified_aut > 0) then
+        return false
+    end
+
     local choice = ctx:get(target, component.PLAYER)
     local species = catalog.get("species", choice.species_id)
 

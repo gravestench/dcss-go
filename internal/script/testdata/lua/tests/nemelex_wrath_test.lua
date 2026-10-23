@@ -62,8 +62,8 @@ local function worshipper(ctx, god_id, penance)
     return player
 end
 
--- The source samples all 26 enum gods, including declined and unported
--- outcomes. Unported eligible wrath raises at its sampled god.
+-- The source samples all 26 enum gods, including declined outcomes.
+-- Vehumet's god-avatar spell still raises at its sampled god.
 local function selection(ctx)
     harness.equal(#roster, 26)
     harness.equal(roster[1], gods.ZIN)
@@ -75,7 +75,8 @@ local function selection(ctx)
     local success, message = pcall(retribution.sample, owner, player)
 
     harness.falsy(success)
-    harness.truthy(string.find(message, gods.VEHUMET, 1, true))
+    harness.truthy(string.find(message, "Vehumet god-avatar", 1,
+        true))
     harness.equal(owner:draws_used(), 2)
 end
 
@@ -123,7 +124,8 @@ local function dead_ignis(ctx)
     local success, message = pcall(retribution.sample, owner, player)
 
     harness.falsy(success)
-    harness.truthy(string.find(message, gods.VEHUMET, 1, true))
+    harness.truthy(string.find(message, "Vehumet god-avatar", 1,
+        true))
     harness.equal(owner:draws_used(), 2)
 end
 

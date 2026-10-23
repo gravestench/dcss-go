@@ -4,6 +4,7 @@ local constructs = require("constants.monster_construct_components")
 local gear = require("policy.population.gear")
 local random_artefact = require("policy.item_generation.artefacts.random")
 local monsters = require("ids.monsters")
+local streams = require("constants.rng_streams")
 
 local weapons = {}
 
@@ -91,6 +92,24 @@ function weapons.equip_card(ctx, creature, choice, power)
 
     return equip(ctx, creature, choice.kind_id, plus, ego,
         math.floor(power / 4), artefact)
+end
+
+-- Source monster creation first rolls its ordinary dancing-weapon loadout.
+-- Wu Jian then overwrites that same weapon's kind, ego, and plus. Our
+-- generic summon owner creates no interim equipment, so consume the normal
+-- loadout rolls before the card-stream plus roll and attach only the final
+-- item. The ghost receives full level-scaled power, unlike the card's /4.
+function weapons.equip_wrath(ctx, creature, choice, power, level_id)
+    local ordinary = gear.loadout(ctx, monsters.MONS_DANCING_WEAPON,
+        level_id)
+
+    if not ordinary or not ordinary.primary then
+        error("dancing weapon has no ordinary loadout")
+    end
+
+    local plus = ctx:random(streams.CARDS, 5)
+
+    return equip(ctx, creature, choice.kind_id, plus, choice.ego, power)
 end
 
 return weapons

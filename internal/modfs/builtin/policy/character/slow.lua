@@ -62,6 +62,21 @@ function slow.apply(ctx, player, turns)
     return true
 end
 
+-- Direct duration writes from divine wrath replace Slow rather than
+-- stretching it through slow_player or testing that spell's stasis guard.
+function slow.set_duration(ctx, player, turns)
+    local state = ctx:get(player, component.PLAYER_SLOW)
+
+    if state then
+        state.remaining_aut = turns * time.AUT_PER_TURN
+        ctx:set(player, component.PLAYER_SLOW, state)
+    else
+        ctx:add(player, component.PLAYER_SLOW, {
+            remaining_aut = turns * time.AUT_PER_TURN,
+        })
+    end
+end
+
 -- Slow duration follows elapsed aut even when haste changes how many actions fit inside it.
 function slow.tick(ctx, player, elapsed)
     local state = ctx:get(player, component.PLAYER_SLOW)
