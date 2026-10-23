@@ -113,6 +113,14 @@ function validation.check(ctx, player)
     history("penance", state.penance, nil, known)
     history("worshipped", state.worshipped, 100, known)
     history("piety maximum", state.piety_max, limits.MAX, known)
+    history("current gifts", state.gift_current, nil, known)
+    history("total gifts", state.gift_total, nil, known)
+
+    for id, count in pairs(state.gift_current) do
+        if count > (state.gift_total[id] or 0) then
+            error("current gifts exceed lifetime gifts for " .. id)
+        end
+    end
 
     return state
 end

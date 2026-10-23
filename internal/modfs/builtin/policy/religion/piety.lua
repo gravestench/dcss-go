@@ -1,8 +1,9 @@
 -- Theory of operation: conduct supplies a nominal piety amount to this
 -- owner. The source rule rounds it once, then handles each candidate point:
 -- penance, gift timeout, upper taper, loss hysteresis, and finally gain.
--- Saved counters stay in religion.worship. Rank and gift checks are signals
--- for later god systems; this module never invents a substitute gift.
+-- Saved counters stay in religion.worship. Rank changes remain signals;
+-- gift checks dispatch to the current god's named Lua module after saving
+-- each accepted candidate so new gift timeouts affect later candidates.
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local component = require("constants.component")
@@ -92,8 +93,8 @@ local function signal_rank(ctx, player, state, old_points)
     end
 end
 
--- Source checks gifts after an accepted point or an upper taper. A future
--- gift system can subscribe without piety guessing any god's actual gift.
+-- Source checks gifts after an accepted point or an upper taper. Other
+-- systems may observe this signal without owning gift dispatch itself.
 local function signal_gift(ctx, player, state)
     ctx:signal(signals.GIFT_CHECK, {
         player = player,
@@ -131,7 +132,7 @@ local function gain_point(ctx, player, state)
     if penance > 0 then
         state.penance[god_id] = penance - 1
 
-        return
+        return false
     end
 
     if state.gift_timeout > 0 then
@@ -141,7 +142,7 @@ local function gain_point(ctx, player, state)
             god_id ~= gods.NEMELEX_XOBEH and
             god_id ~= gods.ELYVILON and
             ctx:random(streams.RELIGION, limits.TIMEOUT_CHANCE) ~= 0 then
-            return
+            return false
         end
     end
 
@@ -150,7 +151,7 @@ local function gain_point(ctx, player, state)
             signal_gift(ctx, player, state)
         end
 
-        return
+        return god_id ~= gods.RU
     end
 
     local old_points = state.piety
@@ -163,6 +164,8 @@ local function gain_point(ctx, player, state)
 
     signal_rank(ctx, player, state, old_points)
     signal_gift(ctx, player, state)
+
+    return true
 end
 
 -- Example: gain(ctx, player, 3, 2, false) may award one or two candidate
@@ -207,7 +210,18 @@ function piety.gain(ctx, player, numerator, denominator, scale)
     local old_rank = piety.rank(state.god_id, state.piety)
 
     for _ = 1, points do
-        gain_point(ctx, player, state)
+        local gift_check = gain_point(ctx, player, state)
+
+        -- Gifts may add cooldown and counters on this very candidate. Save
+        -- then reload before the next point so one large conduct award has
+        -- the same gift and slowdown boundaries as separate awards.
+        ctx:set(player, component.RELIGION_WORSHIP, state)
+
+        if gift_check then
+            require("policy.religion.gifts").check(ctx, player)
+        end
+
+        state = ctx:get(player, component.RELIGION_WORSHIP)
     end
 
     if state.god_id ~= gods.IGNIS and

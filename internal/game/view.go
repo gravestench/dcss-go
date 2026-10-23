@@ -49,6 +49,7 @@ type ItemView struct {
 type SpellView struct {
 	ID         string
 	InLibrary  bool
+	Offered    bool
 	KnownSlot  int
 	LetterSlot int
 }

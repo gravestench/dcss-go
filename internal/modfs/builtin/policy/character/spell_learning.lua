@@ -6,6 +6,7 @@ local player_scope = require("policy.magic.player_scope")
 local traits = require("policy.character.traits")
 local availability = require("policy.character.skill_availability")
 local spell_conduct = require("policy.religion.conduct.spells")
+local gifts = require("policy.religion.gifts")
 
 local learning = {}
 
@@ -54,7 +55,8 @@ function learning.cannot_begin(ctx, player, spell_id)
 
     local entry = records.find(ctx, player, spell_id)
 
-    if not entry or not entry.state.in_library then
+    if not entry or (not entry.state.in_library and
+        not gifts.offering(ctx, player, spell_id)) then
         return "That spell is not in your library."
     end
 
@@ -161,9 +163,16 @@ function learning.advance(ctx, player, intent)
         error("invalid memorisation completion for " .. spell_id)
     end
 
+    -- Source spl-util.cc makes a memorised Vehumet offer permanent before
+    -- consuming the offer. Later renunciation must not erase the spell.
+    if gifts.offering(ctx, player, spell_id) then
+        entry.state.in_library = true
+    end
+
     entry.state.known_slot = records.next_slot(ctx, player, "known_slot")
     entry.state.letter_slot = records.next_slot(ctx, player, "letter_slot")
     ctx:set(entry.entity, "character.spell", entry.state)
+    gifts.accept(ctx, player, spell_id)
     casting.learning_spell_id = ""
     ctx:set(player, "character.spellcasting", casting)
 

@@ -6,7 +6,7 @@ local gods = require("constants.gods")
 
 local schema = {
     id = component.RELIGION_WORSHIP,
-    version = 2,
+    version = 3,
     fields = {
         god_id = {
             type = "string",
@@ -26,6 +26,16 @@ local schema = {
         gift_timeout = {
             type = "int64",
             default = 0,
+        },
+
+        -- Lifetime counts decide which spell set or offer window comes next.
+        -- Current counts reset on departure, but lifetime history does not.
+        gift_current = {
+            type = "map<string,int64>",
+        },
+
+        gift_total = {
+            type = "map<string,int64>",
         },
 
         -- God time starts at 200 aut and then rolls a 100–300 aut interval.

@@ -2,7 +2,7 @@
 -- knowledge, and future innate schedule for a run.
 register.component{
     id = "character.spell",
-    version = 1,
+    version = 2,
     -- Library, learned slot, letter slot, and future level share one authoritative player-spell record.
     fields = {
         owner = {
@@ -17,6 +17,12 @@ register.component{
         in_library = {
             type = "bool",
             default = false,
+        },
+
+        -- A temporary god offer shares this record with later book knowledge.
+        offered_by = {
+            type = "string",
+            default = "",
         },
 
         known_slot = {

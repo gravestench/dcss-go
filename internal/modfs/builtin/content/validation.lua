@@ -950,6 +950,12 @@ local function validate_god(definition)
         fail(category, id, "behavior_module must name a Lua module")
     end
 
+    if definition.gift_module ~= nil and
+        (type(definition.gift_module) ~= "string" or
+            definition.gift_module == "") then
+        fail(category, id, "gift_module must name a Lua module")
+    end
+
     validate_conduct_module(definition)
 
     for _, field in ipairs({

@@ -14,6 +14,7 @@ func spellInput(spells []game.SpellView) []any {
 		result = append(result, map[string]any{
 			"id":          spell.ID,
 			"in_library":  spell.InLibrary,
+			"offered":     spell.Offered,
 			"known_slot":  spell.KnownSlot,
 			"letter_slot": spell.LetterSlot,
 		})

@@ -42,6 +42,12 @@ func (g *Game) fillSpellView(view *View) {
 			panic(err)
 		}
 
+		offeredBy, err := record.Get("offered_by")
+
+		if err != nil {
+			panic(err)
+		}
+
 		known, err := record.Get("known_slot")
 
 		if err != nil {
@@ -57,6 +63,7 @@ func (g *Game) fillSpellView(view *View) {
 		view.Spells = append(view.Spells, SpellView{
 			ID:         id.(string),
 			InLibrary:  library.(bool),
+			Offered:    offeredBy.(string) != "",
 			KnownSlot:  int(known.(int64)),
 			LetterSlot: int(letter.(int64)),
 		})

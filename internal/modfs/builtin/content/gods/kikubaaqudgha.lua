@@ -14,6 +14,7 @@ local definition = {
     piety_mode = modes.ORDINARY,
     piety_decay_chance = 17,
     conduct_module = "policy.religion.conduct.kikubaaqudgha",
+    gift_module = "policy.religion.gifts.kikubaaqudgha",
     rejects_innate_caster = true,
 }
 

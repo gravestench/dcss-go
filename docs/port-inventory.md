@@ -311,7 +311,12 @@ All 26 active gods now have layered Lua definitions. The shared Lua
 eligibility rule covers species, mutation, form, and Gozag fee restrictions;
 Gozag's fee reads saved gold generated on non-Abyss floors. The piety owner
 stores changes in the player ECS component and signals rank and gift checks;
-its random draws replay after save/restore. One Lua transition path now joins
+its random draws replay after save/restore. Kiku now grants both permanent
+spell-library sets, and Vehumet makes thirteen escalating temporary book
+spell offers. Current offers, prior offer history, cooldown, and gift counts
+are saved on the player; memorisation turns an accepted offer into permanent
+library knowledge, and renunciation withdraws the rest. One Lua transition
+path now joins
 or renounces any registered god, preserves good-god piety transfer, records
 source penance, charges Gozag, and preserves Ignis's spent reserve. Ru,
 Ashenzari, Yredelemnul, and Xom entry exceptions retain typed pending state.
@@ -326,7 +331,8 @@ run through Lua command, system, and presentation rules. The pending
 entry rewards and most god-specific leave cleanup still need their
 behavior owners. Conduct responses now cover all 26 active gods. New action
 domains must report their corresponding conduct at the action owner; current
-producers cover actions the port can execute today. God abilities, gifts,
+producers cover actions the port can execute today. God abilities, item and
+monster gifts,
 remaining passives, and wrath execution remain separate religion slices.
 Fedhas now neutralises eligible hostile plants as they act, reverses plant
 allegiance across loaded levels on desertion, cancels an active forest on

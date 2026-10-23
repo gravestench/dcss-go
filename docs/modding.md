@@ -1540,9 +1540,35 @@ changes the saved `religion.worship` component. `scale` applies an equipped
 amulet of Faith before the final random division. `rank(god_id, points)`
 returns the displayed rank; `breakpoint(stars)` accepts one through six.
 The owner emits `constants.religion_signals.RANK_CHANGED` and `GIFT_CHECK`
-with the player and god IDs. Mod systems can use those signals for divine
-abilities, passives, and gifts. Those downstream god systems remain separate
-work; altar prayer already uses this worship owner.
+with the player and god IDs. Mod systems can observe those signals for divine
+abilities and passives. On each eligible piety candidate, it also asks the
+current god's optional `gift_module` to act; altar prayer uses the same
+worship owner.
+
+#### Divine spell gifts
+
+Set `gift_module = "policy.religion.gifts.<name>"` in a god definition to
+add a Lua gift rule. The module exports `check(ctx, player, worship)`, which
+returns `true` when it grants a gift. It may also export `offering`, `accept`,
+and `leave` for temporary access. `policy/religion/gifts.lua` resolves that
+module from the effective layered god definition, checks penance and gift
+timeout, and owns per-god current and lifetime counters. A successful rule
+calls `gifts.record(ctx, player, timeout)` once. The rule itself chooses its
+content and uses the religion RNG stream; it should never duplicate the
+common piety algorithm.
+
+For permanent spell knowledge, load
+`require("policy.character.spell_records")` and call
+`records.grant_library(ctx, player, spell_ids)`.
+Kikubaaqudgha demonstrates two one-time sets. Vehumet demonstrates an
+offer: its `religion.vehumet` component stores current spell IDs, prior
+offers, and the next replacement time. `records.offer` tags a normal
+`character.spell` record so the spell appears in the memorisation menu.
+Completing memorisation makes it permanent library knowledge and calls the
+god's `accept`; leaving clears temporary access. Keep the player's saved
+component as the authority when adding a new gift type. A modded god can
+provide an entirely new gift module and component without editing this
+shared dispatcher.
 
 `systems/religion_upkeep.lua` advances the player-owned god-time clock after
 timed actions. The first check is at 200 aut; later checks are 100–300 aut

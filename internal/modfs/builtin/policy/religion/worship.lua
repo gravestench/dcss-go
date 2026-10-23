@@ -86,6 +86,8 @@ local function leave(ctx, player, state, next_god, voluntary)
         handler.leave(ctx, player, state, next_god)
     end
 
+    require("policy.religion.gifts").leave(ctx, player, old_id)
+
     ctx:signal(signals.LEFT, {
         player = player,
         god_id = old_id,

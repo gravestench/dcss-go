@@ -4,9 +4,13 @@ local menu = require("policy.input.menu")
 
 local spells = {}
 
--- Sort library choices by level then displayed name so letter assignments
--- stay stable when content files are loaded in another order.
+-- Source spl-book.cc places temporary Vehumet offers first. Within each
+-- group, level and name give stable letters regardless of file load order.
 local function memorise_before(left, right)
+    if left.offered ~= right.offered then
+        return left.offered
+    end
+
     local a = catalog.get("spells", left.id)
     local b = catalog.get("spells", right.id)
 
@@ -29,7 +33,8 @@ local function choices(input)
     local learning = input.mode == "spell_memorise"
 
     for _, record in ipairs(input.spells or {}) do
-        if (learning and record.in_library and record.known_slot == 0) or
+        if (learning and (record.in_library or record.offered) and
+            record.known_slot == 0) or
             (not learning and record.known_slot > 0) then
             selected[#selected + 1] = record
         end

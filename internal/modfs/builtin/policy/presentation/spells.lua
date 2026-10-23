@@ -58,7 +58,10 @@ function spells.run(ctx, input)
         local label = string.format("  %s - %-25.25s %-20.20s %7s %6d",
             letter, spell.name, schools, chance, spell.level)
 
-        write(writes, 0, y, label, colors.light_grey)
+        local color = record.offered and colors.light_magenta or
+            colors.light_grey
+
+        write(writes, 0, y, label, color)
     end
 
     if #selected == 0 then
