@@ -1,7 +1,9 @@
 -- The Shining One calls permanent hostile angels, raises a saved Silence
--- field, or broadcasts a source-sized shout. Cleansing Flame needs a god
--- blast owner to preserve collateral damage and kill attribution.
+-- field, blasts nearby actors with holy flame, or broadcasts a loud shout.
+-- Divine flame has no actor source, as in the original game's KILL_MISC blast.
 local component = require("constants.component")
+local cleansing_flame = require("policy.combat.cleansing_flame")
+local channels = require("constants.message_channels")
 local gods = require("constants.gods")
 local monsters = require("ids.monsters")
 local noise = require("policy.world.noise")
@@ -31,7 +33,7 @@ local function warriors(ctx, player)
         end
     end
 
-    ctx:emit("religion", created > 0 and
+    ctx:emit(channels.RELIGION, created > 0 and
         "The Shining One sends the divine host to punish you for your evil ways!" or
         "The Shining One's divine host fails to appear.")
 end
@@ -39,21 +41,29 @@ end
 -- Source cast_silence(25) runs the same status caster as the scroll, with
 -- spell-stream duration rolls and the saved player aura.
 local function squelch(ctx, player)
-    ctx:emit("religion", "You feel the Shining One's silent rage upon you!")
+    ctx:emit(channels.RELIGION,
+        "You feel the Shining One's silent rage upon you!")
     statuses.cast(ctx, player, spells.SPELL_SILENCE, 25)
 end
 
 -- The seven source slots give warriors three, cleansing flame two, and
--- shout and silence one each. Flame cannot become an ordinary HP strike.
+-- shout and silence one each. The god blast uses no actor caster, matching
+-- its KILL_MISC source while retaining the ordinary holy area rules.
 function shining_one.apply(ctx, player)
     local choice = ctx:random(streams.CARDS, 7)
 
     if choice < 3 then
         warriors(ctx, player)
     elseif choice < 5 then
-        error("unimplemented Shining One cleansing-flame wrath")
+        local level = ctx:get(player, component.PROGRESSION).level
+        local power = 5 + math.floor(level * 7 / 12)
+
+        ctx:emit(channels.RELIGION,
+            "The Shining One blasts you with cleansing flame!")
+        cleansing_flame.blast(ctx,
+            ctx:get(player, component.POSITION), power, nil)
     elseif choice == 5 then
-        ctx:emit("religion",
+        ctx:emit(channels.RELIGION,
             'The Shining One booms out: "Take the path of righteousness! REPENT!"')
         noise.emit(ctx, ctx:get(player, component.POSITION), 25, player)
     else

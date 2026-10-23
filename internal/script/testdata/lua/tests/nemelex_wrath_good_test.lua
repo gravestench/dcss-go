@@ -112,9 +112,9 @@ local function shining_host(ctx)
     harness.equal(owner:draws_used(), 4)
 end
 
--- The Silence branch uses the saved player aura. A flame draw rejects
--- until a god-attributed area blast can handle collateral bodies.
-local function shining_status_and_gap(ctx)
+-- The Silence branch uses the saved player aura. The separate cleansing
+-- flame test covers the source's area blast and collateral damage.
+local function shining_status(ctx)
     local player = player_at(ctx, 30)
     local owner = with_draws(ctx, { 6 })
 
@@ -122,12 +122,6 @@ local function shining_status_and_gap(ctx)
     harness.truthy(ctx:get(player,
         component.PLAYER_STATUS).silence_aut > 0)
     harness.equal(owner:draws_used(), 1)
-
-    local flame = with_draws(ctx, { 3 })
-    local ok, message = pcall(shining_one.apply, flame, player)
-
-    harness.falsy(ok)
-    harness.truthy(string.find(message, "cleansing-flame", 1, true))
 end
 
 -- Cheibriados cannot select a source severity before the shared tension
@@ -145,7 +139,7 @@ function test.run(ctx)
     zin_paralysis(ctx)
     zin_removes_good(ctx)
     shining_host(ctx)
-    shining_status_and_gap(ctx)
+    shining_status(ctx)
     cheibriados_gap()
 end
 
