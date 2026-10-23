@@ -60,16 +60,19 @@ downstream mechanic is incomplete; any wider gap is recorded explicitly.
 ## Toll generation and saved ownership
 
 Each realized entrance draws one toll from a dedicated, saved generation
-stream so later gameplay RNG does not depend on which price appeared. The
+stream during population, before play begins, so later gameplay RNG does
+not depend on which price appeared. The
 source offers a one-in-twenty no-piety option except for its excluded gods,
 then chooses among its item-price pool according to species, god, and the
 source's existing shop-item consideration. Prices include item class and
 subtype, quantity, required enchantment, ego, artefact identity, a specific
 rune, or the horn of Geryon as applicable. Source item names and enums come
 from shared ID modules imported at their use sites. The price is immutable
-after population and is stored in a Lua-defined Akara component linked to
-the exact source marker, cell, and vault ID. Display, save, and entry read
-that component rather than rerolling the price.
+after population. The source-position marker has a typed empty price field;
+population compare-and-replaces it with a canonical price string in the
+same transaction that creates a Lua-defined Akara gate component. This
+preserves a source record witness for restore to check against the component.
+Display, save, and entry read the component rather than rerolling the price.
 
 The component also records whether the gate is open or spent, its closure
 reason, and the accepted payment receipt. A separate player visit component
