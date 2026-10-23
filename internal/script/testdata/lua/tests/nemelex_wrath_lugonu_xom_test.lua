@@ -1,5 +1,5 @@
 -- Lugonu's no-translocation route exercises the ordinary saved summon
--- owner; unavailable forced movement and Xom's event engine fail clearly.
+-- owner. Xom's separate event engine still fails clearly.
 local component = require("constants.component")
 local fixture = require("tests.monster_ally_support_fixture")
 local gods = require("constants.gods")
@@ -42,28 +42,6 @@ local function minor_minion(ctx)
         gods.LUGONU)
 end
 
--- A forced teleport must not silently use the ordinary teleport landing
--- algorithm, which lacks the source's proximity-to-monsters preference.
-local function movement_gap(ctx)
-    local owner = setmetatable({}, { __index = ctx })
-    local draws = 0
-
-    function owner:random(stream, bound)
-        harness.equal(stream, streams.CARDS)
-        harness.equal(bound, 2)
-        draws = draws + 1
-
-        return 1
-    end
-
-    local ok, message = pcall(lugonu.apply, owner, nil)
-
-    harness.falsy(ok)
-    harness.truthy(string.find(message,
-        "monster-near forced teleport", 1, true))
-    harness.equal(draws, 1)
-end
-
 -- Xom wrath must eventually call xom_acts. A placeholder punishment
 -- would skew card behavior, so its missing event engine is explicit.
 local function xom_gap()
@@ -74,10 +52,9 @@ local function xom_gap()
         "Xom action engine", 1, true))
 end
 
--- Keep all three checks under one source-backed Lua scenario.
+-- Keep the summon route and Xom gap under one source-backed Lua scenario.
 function test.run(ctx)
     minor_minion(ctx)
-    movement_gap(ctx)
     xom_gap()
 end
 

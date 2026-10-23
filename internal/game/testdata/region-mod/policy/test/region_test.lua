@@ -234,6 +234,18 @@ function test.abyss_teleport(ctx)
     return {}
 end
 
+-- Exercise powered, forced banishment through the real region transaction.
+-- Its high power must enter below Abyss:1 before save and restore.
+function test.powered_banishment(ctx)
+    abyss_world.banish(ctx, ctx:player(), {
+        power = 27,
+        force = true,
+        stream = "region-test",
+    })
+
+    return {}
+end
+
 register.policy({
     id = "test.region_stage",
     run = test.stage,
@@ -287,6 +299,11 @@ register.policy({
 register.policy({
     id = "test.abyss_teleport",
     run = test.abyss_teleport,
+})
+
+register.policy({
+    id = "test.powered_banishment",
+    run = test.powered_banishment,
 })
 
 return test

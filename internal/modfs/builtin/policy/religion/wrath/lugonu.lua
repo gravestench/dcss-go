@@ -2,8 +2,10 @@
 -- The two phases retain their independent source draws and placement.
 local channels = require("constants.message_channels")
 local component = require("constants.component")
+local abyss = require("policy.world.abyss")
 local gods = require("constants.gods")
 local monsters = require("ids.monsters")
+local teleport = require("policy.magic.player_teleport")
 local streams = require("constants.rng_streams")
 local summons = require("policy.religion.wrath.summons")
 
@@ -94,23 +96,35 @@ local function send_minions(ctx, player)
         "Lugonu's minions fail to arrive.")
 end
 
--- Forced teleport favors embarrassing landings near monsters and forced
--- banishment chooses a level-scaled Abyss entry. The generic owners do
--- not yet expose these source options, so reject those draws explicitly.
-local function translocate(ctx)
+-- The first coinflip tries a monster-near teleport. A failed landing still
+-- consumes that branch; source always sends minions after this phase.
+local function translocate(ctx, player)
     if draw(ctx, 2) ~= 0 then
-        error("unimplemented Lugonu monster-near forced teleport wrath")
+        ctx:emit(channels.RELIGION,
+            "Lugonu's wrath scatters you!")
+        teleport.now(ctx, player, {
+            near_monsters = true,
+            reason = "Space warps around you!",
+        })
+
+        return
     end
 
     if draw(ctx, 2) ~= 0 then
-        error("unimplemented Lugonu level-scaled forced banishment wrath")
+        ctx:emit(channels.RELIGION,
+            "Lugonu draws you home!")
+        abyss.banish(ctx, player, {
+            power = ctx:get(player, component.PROGRESSION).level,
+            force = true,
+            stream = streams.CARDS,
+        })
     end
 end
 
 -- The no-translocation quarter still receives minions and the normal
 -- penance/bonus handling in retribution.invoke_god.
 function lugonu.apply(ctx, player)
-    translocate(ctx)
+    translocate(ctx, player)
     send_minions(ctx, player)
 
     return true

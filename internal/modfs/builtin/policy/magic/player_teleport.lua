@@ -4,13 +4,62 @@ local cloud_ids = require("ids.clouds")
 local component = require("constants.component")
 local translocation = require("policy.scrolls.translocation")
 local vision = require("policy.character.vision")
-local zap_ids = require("policy.magic.effects.zaps.ids")
 local trap_held = require("policy.traps.held")
 local abyss = require("policy.world.abyss")
 local abyss_constants = require("constants.abyss")
+local attitudes = require("constants.attitude")
+local catalog = require("policy.catalog")
+local categories = require("constants.catalog")
+local flags = require("constants.monster_flags")
+local targets = require("policy.ai.targets")
 
 local teleport = {}
 local MAX_ATTEMPTS = 500
+local SIGHT_RADIUS = 7
+
+-- Teleportitis and Lugonu's wrath accept only the first sampled landing
+-- when a threatening hostile monster can see that destination. An empty
+-- landing check fails this attempt; it does not reroll the 500-cell search.
+local function threats_near(ctx, player, level_id, x, y)
+    local count = 0
+
+    for _, monster in ipairs(ctx:query({
+        component.ACTOR,
+        component.POSITION,
+        component.HEALTH,
+    })) do
+        if monster ~= player then
+            local position = ctx:get(monster, component.POSITION)
+            local health = ctx:get(monster, component.HEALTH)
+            local distance = math.max(math.abs(position.x - x),
+                math.abs(position.y - y))
+
+            if health.current > 0 and position.level_id == level_id and
+                distance <= SIGHT_RADIUS and
+                targets.attitude(ctx, monster) == attitudes.HOSTILE and
+                ctx:visible_no_trans(level_id, x, y, SIGHT_RADIUS,
+                    position.x, position.y) then
+                local actor = ctx:get(monster, component.ACTOR)
+                local definition = catalog.get(categories.MONSTERS,
+                    actor.kind_id)
+                local threatening = true
+
+                for _, flag in ipairs(definition.flags or {}) do
+                    if flag == flags.NO_THREAT then
+                        threatening = false
+                        break
+                    end
+                end
+
+                if threatening then
+                    count = count + 1
+                end
+            end
+        end
+    end
+
+    return count
+end
 
 -- Candidate landing cells must pass walkability and safety checks before a
 -- queued teleport can move its actor.
@@ -72,13 +121,16 @@ end
 
 -- Immediate teleports reuse destination selection and leave source effects
 -- without waiting for the delayed player's timer.
-function teleport.now(ctx, player)
-    local reason = translocation.restriction(ctx, player)
+function teleport.now(ctx, player, options)
+    options = options or {}
+    local channel = options.channel or "read"
+    local reason = not options.near_monsters and
+        translocation.restriction(ctx, player)
 
     if reason then
-        ctx:emit("read", reason)
+        ctx:emit(channel, reason)
 
-        return
+        return false
     end
 
     local origin = ctx:get(player, component.POSITION)
@@ -86,13 +138,41 @@ function teleport.now(ctx, player)
     if origin.level_id == abyss_constants.LEVEL_ID then
         abyss.teleport(ctx, player)
 
-        return
+        return true
     end
 
     local x, y = destination(ctx, player, origin)
 
     if not x then
-        return
+        return false
+    end
+
+    if options.near_monsters then
+        local count = threats_near(ctx, player, origin.level_id, x, y)
+
+        if count == 0 then
+            return false
+        end
+
+        reason = translocation.restriction(ctx, player)
+
+        if reason then
+            if options.reason then
+                ctx:emit(channel, options.reason)
+            end
+
+            ctx:emit(channel, reason)
+
+            return false
+        end
+
+        if options.reason then
+            ctx:emit(channel, options.reason)
+        end
+
+        ctx:emit(channel, count == 1 and
+            "You are yanked towards a nearby monster!" or
+            "You are yanked towards some nearby monsters!")
     end
 
     local message = "Your surroundings suddenly seem different."
@@ -113,7 +193,9 @@ function teleport.now(ctx, player)
         ctx:move_actor(player, origin.level_id, x, y)
     end
 
-    ctx:emit("read", message)
+    ctx:emit(channel, message)
+
+    return true
 end
 
 -- Restore rejects impossible queued state before the timer resumes.

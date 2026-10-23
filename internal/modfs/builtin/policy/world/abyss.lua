@@ -181,9 +181,11 @@ end
 -- Both ordinary banishment and a Pan exit enter the same generated
 -- window. The caller supplies the outside return site because Pan's
 -- original Dungeon portal, rather than its temporary floor, owns it.
-function abyss.enter(ctx, player, site)
+function abyss.enter(ctx, player, site, options)
     local current = ctx:session_state(constants.SESSION_STATE)
+    options = options or {}
     local next_state = state.new(ctx, {
+        branch_depth = options.branch_depth,
         return_site = site,
     })
     next_state.transit = current and current.transit or {}
@@ -251,19 +253,68 @@ function abyss.pocket_start(ctx, player)
     population.materialize(ctx, level)
 end
 
--- Ordinary banishment remembers the cell where the player stood when
--- the effect landed. A new banishment overwrites an older return site.
-function abyss.banish(ctx, player)
+-- Banishment depth follows the source's rounded upper bound and inclusive
+-- range. This is shared by divine wrath and monster effects with a power.
+function abyss.depth_for_power(ctx, power, stream)
+    local numerator = power + 5
+    local maximum = math.floor(numerator / 6)
+    local remainder = numerator % 6
+
+    if remainder > 0 and ctx:random(stream, 6) < remainder then
+        maximum = maximum + 1
+    end
+
+    local minimum = math.floor((4 * power + 7) / 23)
+    local span = maximum - minimum + 1
+    local depth = minimum
+
+    if span > 1 then
+        depth = depth + ctx:random(stream, span)
+    end
+
+    local bottom = catalog.get(categories.BRANCHES,
+        branches.BRANCH_ABYSS).depth
+
+    return math.min(bottom, math.max(1, depth))
+end
+
+-- Ordinary banishment remembers the outside cell. Forced rebanishment in
+-- the Abyss descends one floor, or shifts the window at the branch bottom.
+function abyss.banish(ctx, player, options)
     local position = ctx:get(player, component.POSITION)
 
-    if not position or position.level_id == abyss.level_id then
+    if not position then
         return
     end
+
+    options = options or {}
+
+    if position.level_id == abyss.level_id then
+        if options.force then
+            local current = ctx:session_state(constants.SESSION_STATE)
+            local bottom = catalog.get(categories.BRANCHES,
+                branches.BRANCH_ABYSS).depth
+
+            if current.branch_depth < bottom then
+                abyss.descend(ctx, player)
+            else
+                abyss.teleport(ctx, player)
+            end
+        end
+
+        return
+    end
+
+    local depth = options.power and
+        abyss.depth_for_power(ctx, options.power,
+            options.stream or streams.PLACEMENT) or 1
 
     abyss.enter(ctx, player, {
         level_id = position.level_id,
         x = position.x,
         y = position.y,
+    }, {
+        branch_depth = depth,
     })
     ctx:emit("banishment", "You are cast into the Abyss!")
 end

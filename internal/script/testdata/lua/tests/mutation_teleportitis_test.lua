@@ -85,6 +85,17 @@ function test.run(ctx)
         return true
     end
 
+    -- The shared teleport owner asks the terrain LOS service from its
+    -- candidate cell; the quiet override below changes both sight modes.
+    function world:visible_no_trans(...)
+        return self:visible(...)
+    end
+
+    -- This hand-built floor has no DES NO_TELE_INTO records.
+    function world:records_at()
+        return {}
+    end
+
     -- Freeze teleportitis world time; the explicit aut argument drives every timer change.
     function world.aut()
         return 0
