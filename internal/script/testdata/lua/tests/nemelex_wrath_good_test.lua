@@ -1,7 +1,6 @@
 -- Good-god wrath tests use production components and the saved summon/status
 -- owners. Unsupported source branches fail explicitly at their own draw.
 local attitudes = require("constants.attitude")
-local cheibriados = require("policy.religion.wrath.cheibriados")
 local component = require("constants.component")
 local fixture = require("tests.monster_ally_support_fixture")
 local harness = require("tests.harness")
@@ -124,15 +123,6 @@ local function shining_status(ctx)
     harness.equal(owner:draws_used(), 1)
 end
 
--- Cheibriados cannot select a source severity before the shared tension
--- score is exposed; rejecting it avoids a fabricated random punishment.
-local function cheibriados_gap()
-    local ok, message = pcall(cheibriados.apply)
-
-    harness.falsy(ok)
-    harness.truthy(string.find(message, "tension-based", 1, true))
-end
-
 -- Every test mutates a distinct production actor, so status and summon
 -- assertions remain local even though the Lua runner shares one world.
 function test.run(ctx)
@@ -140,7 +130,6 @@ function test.run(ctx)
     zin_removes_good(ctx)
     shining_host(ctx)
     shining_status(ctx)
-    cheibriados_gap()
 end
 
 return test

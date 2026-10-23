@@ -7,6 +7,7 @@ local death = require("policy.death")
 local doors = require("policy.inventory.doors")
 local flags = require("constants.monster_flags")
 local formulas = require("policy.character.formulas")
+local confusion = require("policy.magic.player_confusion")
 local targets = require("policy.ai.targets")
 local vision = require("policy.character.vision")
 
@@ -151,13 +152,19 @@ local function score(ctx, player, origin, closed, moved, destination)
         return math.max(1, scaled * 10)
     end
 
+    if confusion.active(ctx, player) then
+        scaled = scaled * 2
+    end
+
+    local player_slow = ctx:get(player, component.PLAYER_SLOW)
+
+    if player_slow and player_slow.remaining_aut > 0 then
+        scaled = math.floor(scaled * 3 / 2)
+    end
+
     local durations = ctx:get(player, component.DURATIONS)
 
     if durations then
-        if durations.slow_aut and durations.slow_aut > 0 then
-            scaled = math.floor(scaled * 3 / 2)
-        end
-
         if durations.haste_aut and durations.haste_aut > 0 then
             scaled = math.floor(scaled * 2 / 3)
         end
@@ -215,6 +222,15 @@ function tension.allows_close(ctx, player, group)
     end
 
     return closed >= 0 and 1 + current * 66 <= closed * 100
+end
+
+-- Divine wrath and door sealing ask the same live question: how dangerous
+-- are the visible monsters to this player right now? Keep the source score
+-- in one owner so status changes affect both decisions together.
+function tension.current(ctx, player)
+    local origin = ctx:get(player, component.POSITION)
+
+    return score(ctx, player, origin)
 end
 
 return tension
