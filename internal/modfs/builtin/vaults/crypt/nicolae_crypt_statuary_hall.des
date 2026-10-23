@@ -1,0 +1,25 @@
+# nicolae_crypt_statuary_hall is a Crypt room eligible at Crypt, !Crypt:1,
+# !Crypt:$; its source MAP supplies authored geometry.
+# The source directives keep source selection tags decor, transparent with
+# this map.
+NAME: nicolae_crypt_statuary_hall
+DEPTH: Crypt, !Crypt:1, !Crypt:$
+TAGS: decor transparent
+SHUFFLE: {[(, }])
+MAP
+      x@x
+      x.x
+      x.x
+   xxxx.xxxx
+   x..G.G..x
+   x..x.x..x
+xxxx..G.G..xxxx
+@....{x.x}....@
+xxxx..G.G..xxxx
+   x..x.x..x
+   x..G.G..x
+   xxxx.xxxx
+      x.x
+      x.x
+      x@x
+ENDMAP

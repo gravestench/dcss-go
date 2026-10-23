@@ -1,0 +1,21 @@
+# nicolae_crypt_knee_deep_in_the_dead is a Crypt room eligible at Crypt:2-;
+# its source MAP supplies authored geometry.
+# The source directives keep kmons choice 0 = 0 zombie / 0 skeleton / 0
+# simulacrum / 0 spectra with this map.
+NAME:    nicolae_crypt_knee_deep_in_the_dead
+TAGS:    transparent no_monster_gen
+DEPTH:   Crypt:2-
+KMONS:   0 = 0 zombie / 0 skeleton / 0 simulacrum / 0 spectral thing
+KMONS:   9 = 9 zombie / 9 skeleton / 9 simulacrum / 9 spectral thing
+KMONS:   8 = 8 zombie / 8 skeleton / 8 simulacrum / 8 spectral thing
+SHUFFLE: {[(<
+SUBST:   - = 8 9:30 0:120 .:20
+MAP
+xxxxxxxxxx
+x-----...x
++-----.{.x
++-----.G.x
++-----.[.x
+x-----...x
+xxxxxxxxxx
+ENDMAP

@@ -1,0 +1,28 @@
+# minmay_crypt_entry_vampire_xt is a Vaults-side Crypt gate selected from the
+# Vaults entrance pool; its source MAP fixes the approach.
+# The source directives keep keyed terrain such as enter_crypt with this map.
+NAME:   minmay_crypt_entry_vampire_xt
+TAGS:   transparent
+MONS:   vampire, vampire knight / vampire mage
+SUBST:  V = VVVY
+TAGS: crypt_entry vaults_entry_crypt
+KMONS: 0 = place:Crypt:1
+KFEAT: O = enter_crypt
+MAP
+................
+.xxxxx....xxxxx.
+.x...xx..xx...x.
+.x.O..xxxx..1.x.
+.x..2..xx.....x.
+.xx..V....V..xx.
+..xx........xx..
+...xx..cc..xx...
+...xx..cc..xx...
+..xx........xx..
+.xx..V....V..xx.
+.x.....xx.....x.
+.x.1..xxxx..1.x.
+.x...xx..xx.....
+.xxxxx....xxx...
+................
+ENDMAP

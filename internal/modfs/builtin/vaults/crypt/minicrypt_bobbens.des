@@ -1,0 +1,22 @@
+# minicrypt_bobbens is a Crypt room eligible at Crypt; its source MAP supplies
+# authored geometry.
+# The source directives keep mons choice necromancer with this map.
+NAME:   minicrypt_bobbens
+TAGS:   allow_dup
+DEPTH:  Crypt
+MONS:   necromancer
+MONS:   zombie/skeleton
+MONS:   flying skull
+MAP
+  ccccccc
+ cc2c2c2cc
+ccc+c+c+ccc
+c2+.....+2c
+ccc..1..ccc
+c2+.3.3.+2c
+ccc.....ccc
+c2+.....+2c
+ccc.....ccc
+c2+.....+2c
+cccc+c+cccc
+ENDMAP

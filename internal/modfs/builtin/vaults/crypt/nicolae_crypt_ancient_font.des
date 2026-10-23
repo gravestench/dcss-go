@@ -1,0 +1,23 @@
+# nicolae_crypt_ancient_font is a Crypt room eligible at Crypt; its source MAP
+# supplies authored geometry.
+# The source directives keep source selection tags transparent, extra with
+# this map.
+NAME: nicolae_crypt_ancient_font
+TAGS: transparent extra
+DEPTH: Crypt
+SHUFFLE: HIJ
+NSUBST: A = @ / ., B = @ / ., C = @ / ., D = @ / .
+SUBST: HI = c, J : Gcc
+MAP
+cccAcHcAccc
+ccc.....ccc
+ccIcc.ccIcc
+D.cJc.cJc.B
+c.cc...cc.c
+H....V....H
+c.cc...cc.c
+D.cJc.cJc.B
+ccIcc.ccIcc
+ccc.....ccc
+cccCcHcCccc
+ENDMAP

@@ -1,0 +1,69 @@
+# due_elkab is a required Crypt:3 ending; its north MAP shapes the final
+# floor.
+# The source directives keep keyed terrain such as closed_door, alarm and Lua
+# decisions at choose_theme_roll, theme_monsters with this map.
+NAME:   due_elkab
+PLACE:  Crypt:$
+ORIENT: north
+TAGS:   no_monster_gen no_item_gen no_pool_fixup no_rotate no_trap_gen
+TAGS:   layout_city
+NSUBST: A = 1:+ / *:c
+NSUBST: B = 1:+ / *:c
+NSUBST: C = 1:6 / *:5
+KFEAT:  YD = closed_door
+KFEAT:  ER = alarm trap
+KFEAT:  CSd = floor
+COLOUR: YsDdE = darkgrey
+: vault.run("choose_theme_roll")
+: vault.run("theme_monsters")
+SUBST:  '" = .
+NSUBST:  %*| = 1:d / 1:h
+: vault.run("bonus_loot")
+MAP
+                ccccccccccccccccccccccccccccccc
+                ccccccccccccccccccccccccccccccc
+                cc*$*c|%*.......**|c.........cc
+                cc$3$c|*...'2'...%|c..G.3.G..cc
+                cc...c|%|.......|%|c.........cc
+                ccc+cccccc.....ccccccc+cccBBBcc
+                cc...c...ccc+ccc...c.....c$$$cc
+                cc.4.c.G.4.RRR.4.G.+..G..c$$$cc
+cccccccccccccccccc...c.............c.....c%%*cc
+ccccccccccccccccccc+ccccccc+++ccccccc+ccccccccc
+c$$A.".c|.".*c%"*cc...ccc.......ccc...cc%*|%*cc
+c$$A.3.c..3..c.3.c..G.....G...G.....G..c..3..cc
+c$$A...c.....c...c..1...............1..c.....cc
+c$$Ac+cccc+cccc+cc..G..G..G...G..G..G..cc+++ccc
+ccccc...........cc..1...............1..c.....cc
+...cc..G4...4G..cc..G..G..G...G..G..G..c.4.4.cc
+...ccc.........ccc..1...............1..c.....cc
+@..cccccc+++cccccc..G..G..G...G..G..G..c.....cc
+...ccc.........cccc...................ccc...ccc
+...cc..G1...1G..ccc+c+c+c+c...c+c+c+c+ccc+++cccc
+c..cc...........ccc5c5c5c5c+++c5c5c5c5ccc...c+Cc
+c..ccccc.....cccccc+ccccccc...cccccccccc.....ccc
+c..c...c.....c...cc.c...............ccC+.....+Cc
+c..c.............cc.c....1.....1....cccc.....ccc
+c......G.....G...cc.cc.............+ccC+.....+Cc
+c.......1...1....cc.cccccc.....ccccc.ccc.....ccc
+c......G.....G...cc+cc.............cc+C+.....+Cc
+c.......1...1....+..+....1.....1....cccc.....ccc
+c......G.....G...cccc...............ccC+.....+Cc
+c..c.............cccccccccc+++cccccccccc.....ccc
+c..c...c.....c...c...........................+Cc
+cccccccc.....ccccc...........................ccc
+  cc.............c...........................+Cc
+  cc.G.G.....G.G.c.cccccc.......ccccccc......ccc
+  cc..1.......1..cc+$$$$cc.....cc%....+c.....+Cc
+  cc.G.........G.cc$$$$$cc.....cc%1...cccccccccc
+  cc..1.......1..cc$$$$1cc.....cc*%%%%cc........
+  cc.G.........G.cccccccc.......ccccccc.........
+  cc..1.......1..c.............................@
+  cc.G.........G.c..............................
+  @.............................................
+  cccccc.....ccccccccccccccccccccccccccccccccccc
+  cccccc.....ccccc
+  cc.............c
+    .............c
+  ........@.......
+ENDMAP

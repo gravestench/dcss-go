@@ -1,0 +1,41 @@
+# david_glass_crypt is a required Crypt:3 ending; its float MAP shapes the
+# final floor.
+# The source directives keep keyed terrain such as iron_grate, alarm and Lua
+# decisions at arm_grates, bonus_loot with this map.
+NAME:   david_glass_crypt
+ORIENT: float
+TAGS:   no_item_gen no_rotate transparent
+PLACE:  Crypt:$
+MARKER: m = lua:portal_desc {wall_phase = 1}
+KFEAT:  m = iron_grate
+KMASK:  1 = opaque
+MONS:   patrolling lich w:20 / patrolling ancient lich / patrolling dread lich
+MONS:   bone dragon / curse skull / curse toe
+MONS:   flying skull / skeletal warrior / skeleton
+MONS:   ancient champion
+KMONS:  F = orange crystal statue / obsidian statue
+KITEM:  | = | no_pickup
+KFEAT:  ^ = alarm trap
+SUBST:  3 = 3., F = G:99 F:1
+: vault.run("arm_grates")
+NSUBST:  %| = 1:d / 1:h
+: vault.run("bonus_loot")
+MAP
+.....................
+.....................
+..vvvvnnnnnnnnnvvvv..
+..vlllllllllllllllv..
+..vlllllllllllllllv..
+..vllll.%|||%.llllv..
+.4vll..%|||||%..llv4.
+..vl....%|||%....lv..
+..vmm...........mmv..
+..v1m..F.vvv.F..m1v..
+..v1m...^^^^^...m1v..
+..vvvvvvv+++vvvvvvv..
+...vv..2..4..2..vv...
+ ..vv.333333333.vv..
+ ...vvv.......vvv...
+   ...vv+++++vv...
+    .............
+ENDMAP

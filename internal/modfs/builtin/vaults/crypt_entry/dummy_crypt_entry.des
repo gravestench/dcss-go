@@ -1,0 +1,10 @@
+# dummy_crypt_entry is a Vaults-side Crypt gate selected from the Vaults
+# entrance pool; its source MAP fixes the approach.
+# The source directives keep keyed terrain such as enter_crypt with this map.
+NAME:   dummy_crypt_entry
+WEIGHT: 50
+TAGS:   crypt_entry extra transparent
+KFEAT:  O = enter_crypt
+MAP
+O
+ENDMAP

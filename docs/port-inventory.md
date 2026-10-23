@@ -870,6 +870,19 @@ ten generated parent floors and their transporter routes. Exceptional
 item and monster effects still follow their wider combat and equipment
 domains.
 
+Crypt now has all 59 pinned source maps as individually layered `.des`
+files: 13 Vaults-side entrances, 38 Crypt floor maps, and eight mandatory
+Crypt:3 endings. MAP blocks are byte-identical to the pinned source. Lua
+hooks preserve source-position conditional terrain, monster, and loot
+decisions. The scheduled Vaults entry leads through three Crypt floors;
+each ending binds its authored Tomb gate or receives one connected fallback
+gate. Saved ECS trigger groups handle sarcophagus guards and the glass
+Crypt's grates when the player sees their trigger. The
+[Crypt snapshot index](level-snapshots/crypt/index.txt) shows connected
+floors and all eight endings. Tomb remains a future branch slice, so its
+saved entrance cannot yet be entered. Exceptional monster, item, and
+terrain effects in Crypt continue to depend on their broader rule domains.
+
 For each new domain, convert the full rule category in one pass. Put its
 definitions, policies, and ECS systems in actual Lua files; extend Go only
 for reusable engine primitives. Delete the previous rule path in the same

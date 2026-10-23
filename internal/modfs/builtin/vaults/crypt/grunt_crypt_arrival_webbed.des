@@ -1,0 +1,28 @@
+# grunt_crypt_arrival_webbed is a Crypt room eligible at Crypt:1; its south
+# MAP supplies authored geometry.
+# The source directives keep keyed terrain such as web with this map.
+NAME:   grunt_crypt_arrival_webbed
+TAGS:   extra uniq_crypt_arrival no_monster_gen no_trap_gen no_item_gen
+KFEAT:  ^ = web trap / w:20 floor
+DEPTH:  Crypt:1
+WEIGHT: 30
+ORIENT: south
+MAP
+      .@.
+xxxxxc+++cxxxxx
+xxxxxc^.^cxxxxx
+xxxxcc^.^ccxxxx
+xxcccG^.^Gcccxx
+xxcG^^^.^^^Gcxx
+xcc^^.....^^ccx
+xcG^.V...V.^Gcx
+xc^^..[.(..^^cx
+xcV.........Vcx
+xc^^...{...^^cx
+xcG^.V...V.^Gcx
+xcc^^.....^^ccx
+xxcG^^^.^^^Gcxx
+xxcccG^V^Gcccxx
+xxxxcccccccxxxx
+xxxxxxxxxxxxxxx
+ENDMAP

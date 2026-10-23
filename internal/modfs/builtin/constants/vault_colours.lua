@@ -5,6 +5,7 @@ local colours = {
     ANY = "any",
     MUTAGENIC = "mutagenic",
     VEHUMET = "vehumet",
+    LIGHTGREY = "lightgrey",
     RANDOM = {
         "black",
         "blue",

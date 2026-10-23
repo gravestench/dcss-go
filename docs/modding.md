@@ -4332,6 +4332,57 @@ For a visual check, run
 The test writes an 80 by 70 text floor and a source-to-landing transporter
 index for every parent map.
 
+### Crypt branch maps and live markers
+
+Crypt uses the ordinary branch schedule and three layered vault directories:
+`vaults/crypt_entry/` for its Vaults-side gates, `vaults/crypt/` for its
+Crypt:1 arrival and supplemental rooms, and `vaults/crypt_end/` for one
+mandatory Crypt:3 ending. The bundled corpus has 13, 38, and eight maps in
+those directories. Each `.des` file contains one original MAP block. Adding
+`vaults/crypt/my_memorial.des` to a mod contributes one map to the eligible
+pool; using a bundled relative path replaces just that file. The map's
+`DEPTH`, tags, chance, and weight determine when the Lua generator may select
+it. File names and directory enumeration order do not affect a seeded draw.
+
+Keep conditional map decisions at their source position in a named hook. For
+example, `: vault.run("choose_tomb_gate")` in
+`vaults/crypt_end/quadcrypt_mu.des` calls the exported method in
+`policy/generation/vaults/crypt_end/quadcrypt_mu.lua`. The method receives
+the placement `api`, not a live `ctx`: `api:emit` inserts a directive before
+later DES operations, `api:roll`, `api:coinflip`, and `api:one_in` consume the
+saved layout stream, and `api:record` creates a typed placed effect. Keep
+dependent rolls in separate calls if an intervening directive changes the
+map. A hook module is an ordinary layered Lua path, so a sparse mod may
+replace only that hook. Hook modules should return a local table whose
+commented methods explain the map choice and its effect.
+
+One Crypt:3 ending is mandatory. If it includes an authored
+`KFEAT: <glyph> = enter_tomb`, generation binds the scheduled Tomb link to
+that final oriented glyph. An ending without that feature receives one
+connected fallback gate. This avoids an extra stair when a map already owns
+the entrance. Tomb gameplay remains a separate branch slice; the link is
+saved and marked unavailable until that branch is implemented.
+
+Crypt also illustrates a live marker. `grunt_crypt_arrival_guarded_gate.des`
+and `david_glass_crypt.des` call hooks that record a
+`vault_trigger:crypt.*` callback and its wall group. The final oriented
+record coordinates become a saved `world.vault_trigger` ECS entity. The
+`player_los` event checks the player's visible cells after a committed move;
+the callback changes the listed cells and consumes its trigger once. Put a
+new live callback in `policy/world/vault_trigger_callbacks/<name>.lua`,
+return a local table of named methods, and record a marker naming one of
+those methods. Group IDs and record indexes connect trigger and target
+cells through save/restore; Lua module variables must not hold visit state.
+The live callback receives `ctx`, which supplies saved ECS components,
+terrain queries and writes, visibility, messages, and RNG. See the
+[game context guide](#the-game-context-ctx) and
+[vault hook guide](#vault-maps-and-lua-hooks) for the full API boundary.
+
+The [Crypt snapshot index](level-snapshots/crypt/index.txt) shows a
+Vaults-side entrance, Crypt:1–3, and all eight possible endings. To write
+fresh examples from the current ruleset, run
+`CRAWL_CRYPT_SNAPSHOT_DIR=/path/to/output go test ./internal/game -run '^TestCrypt'`.
+
 ## Test a mod
 
 Use a file ending in `_test.lua` under `tests/`. Import production modules

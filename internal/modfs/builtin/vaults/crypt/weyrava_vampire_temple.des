@@ -1,0 +1,42 @@
+# weyrava_vampire_temple is a Crypt room eligible at Crypt; its source MAP
+# supplies authored geometry.
+# The source directives keep keyed terrain such as altar_kikubaaqudgha, floor
+# with this map.
+NAME:    weyrava_vampire_temple
+DEPTH:   Crypt
+TAGS:    no_monster_gen no_item_gen no_wall_fixup
+MONS:    col:red fungus
+MONS:    col:lightred fungus
+MONS:    fungus
+MONS:    vampire / w:4 patrolling vampire knight / w:4 vampire mage
+KFEAT:   Z = altar_kikubaaqudgha / altar_yredelemnul
+KITEM:   z = book of Unlife / book of Death / \
+             randbook disc:necromancy numspells:7 / nothing
+KFEAT:   z = floor
+# create between one and four blood fountains
+SUBST:   Q=qu, U=un, N=ns, S=sq
+SHUFFLE: Mmn / Xxy / Xxy / Xxy
+SUBST:   M=V , m=v , n=u , X=A , x=a , y=b
+SHUFFLE: Rrs / Xxy / Xxy / Xxy
+SUBST:   R=V , r=v , s=u , X=A , x=a , y=b
+SHUFFLE: Ppq / Xxy / Xxy / Xxy
+SUBST:   P=V , p=v , q=u , X=A , x=a , y=b
+SUBST:   V=Y, v=11111112, u=1222233...
+SUBST:   A=V, a=..3, b=.
+MAP
+     c@G@c
+   ccc.c.ccc
+  cc4..u...cc
+ cc..cuvuc..cc
+ c..QuvVvuU.4c
+cc4cqQuvuUnc.cc
+@..qpqQuUnmn..@
+GcqpPpqZzmMmncG
+@..qpqSsNnmn..@
+cc.cqSsrsNnc.cc
+ c..SsrRrsN.4c
+ cc4.csrsc..cc
+  cc...s..4cc
+   ccc.c.ccc
+     c@G@c
+ENDMAP

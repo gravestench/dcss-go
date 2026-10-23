@@ -22,6 +22,7 @@ local function update(ctx, actor)
 
     if position then
         triggers.enter(ctx, actor, position)
+        triggers.player_los(ctx, actor, position)
     end
 end
 

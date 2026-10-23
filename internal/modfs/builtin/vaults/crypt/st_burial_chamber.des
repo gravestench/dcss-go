@@ -1,0 +1,27 @@
+# st_burial_chamber is a Crypt room eligible at Crypt; its source MAP supplies
+# authored geometry.
+# The source directives keep kmons choice 4 = guardian mummy with this map.
+NAME:   st_burial_chamber
+TAGS:   no_wall_fixup
+DEPTH:  Crypt
+MONS:   mummy, guardian mummy, ushabti
+KMONS:  4 = guardian mummy
+KMONS:  5 = mummy priest
+KMONS:  6 = royal mummy
+SUBST:  1 = 2231
+KITEM:  345 = |
+MAP
+ ccccccccccccc
+cc...........cc
+cc.cccc+cccc.cc
+cc.cc1...1cc.cc
+ccxccc...cccxcc
+c4x4c1...1c4x4c
+cxxxcc...ccxxxc
+c5x5c1...1c5x5c
+cxxxcc...ccxxxc
+c5x6c1...1c6x5c
+ccccccc+ccccccc
+.ccGcc...ccGcc.
+.......@.......
+ENDMAP

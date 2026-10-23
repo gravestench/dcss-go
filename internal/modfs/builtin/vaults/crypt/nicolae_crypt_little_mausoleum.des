@@ -1,0 +1,25 @@
+# nicolae_crypt_little_mausoleum is a Crypt room eligible at Crypt; its source
+# MAP supplies authored geometry.
+# The source directives keep keyed terrain such as altar_kikubaaqudgha and Lua
+# decisions at select_depth_palette, preserve_skeletons with this map.
+NAME: nicolae_crypt_little_mausoleum
+DEPTH: Crypt
+TAGS: transparent allow_dup
+SHUFFLE: ab/ab/ab/ab/ba
+SUBST: b = ., G : G:60 xV0 .:5 t:2 P:2, a = sGVe0 _:5 $:5 %:5
+: vault.run("select_depth_palette")
+KFEAT: _ = altar_kikubaaqudgha w:15 / altar_yredelemnul w:15 / \
+           altar_dithmenos w:5 / altar_the_shining_one w:1
+KMONS: 0 = zombie / skeleton
+KMONS: P = withered plant
+: vault.run("preserve_skeletons")
+TILE: t = dngn_tree_dead
+: vault.run("name_dead_trees")
+MAP
+xxxxx
+xbabx
+x...x
+xx.xx
+Gx+xG
+.....
+ENDMAP

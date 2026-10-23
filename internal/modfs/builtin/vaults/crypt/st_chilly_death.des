@@ -1,0 +1,31 @@
+# st_chilly_death is a Crypt room eligible at Crypt; its source MAP supplies
+# authored geometry.
+# The source directives keep keyed terrain such as deep_water with this map.
+NAME:   st_chilly_death
+TAGS:   no_pool_fixup
+DEPTH:  Crypt
+KMONS:  1 = lich
+KMONS:  2 = simulacrum w:15 / nothing w:20
+KMONS:  3 = simulacrum
+KMONS:  4 = wraith / shadow wraith / freezing wraith w:30
+KFEAT:  4 = deep_water
+KITEM:  1 = |
+KITEM:  3 = *
+MAP
+    cccccccccc
+   cc444cc444cc
+  ccwwwwwwwwwwcc
+ ccww22222222wwcc
+ccww22ww22ww22wwcc
+c4w22www22www22w4c
+c4w2wwcc++ccww2w4c
+ccw2wcc3333ccw2wcc
+ccw2wcc3133ccw2wcc
+c4w2wwcc33ccww2w4c
+c4w..wwccccww..w4c
+ccww..ww44ww..wwcc
+ ccww..wwww..wwcc
+  ccww......wwcc
+   cc44c++c44cc
+    cccc@@cccc
+ENDMAP

@@ -1,0 +1,24 @@
+# cheibrodos_crypt_3hun_7po is a Crypt room eligible at Crypt; its float MAP
+# supplies authored geometry.
+# The source directives keep mons choice jiangshi, vampire knight with this
+# map.
+NAME: cheibrodos_crypt_3hun_7po
+TAGS: no_item_gen no_monster_gen no_trap_gen
+DEPTH: Crypt
+ORIENT: float
+MONS: jiangshi, vampire knight
+NSUBST: - = 1:| / 2=|* / 5=*% / 8=%$
+MAP
+     ccccccccc
+   cccc..1..cccc
+   c1c..c.c..c1c
+ cccc....2....cccc
+ c1c...........c1c
+ccc..2..===..2..ccc
+cc.....==.==.....cc
+c1.....=...=.....1c
+c+cccccc...cccccc+c
+c-----n.....n-----c
+cc---cc.....cc---cc
+ ccccc...@...ccccc
+ENDMAP

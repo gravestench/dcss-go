@@ -1,0 +1,21 @@
+# nicolae_crypt_cryptocurrency is a Crypt room eligible at Crypt; its source
+# MAP supplies authored geometry.
+# The source directives keep keyed terrain such as iron_grate with this map.
+NAME: nicolae_crypt_cryptocurrency
+DEPTH: Crypt
+TAGS: extra decor no_item_gen no_trap_gen no_monster_gen
+KPROP: $-c = no_tele_into
+KMASK: .@ = !opaque
+KITEM: $ = $ / $ good_item w:3
+KFEAT: m = iron_grate
+MAP
+xxxxxxxxx
+xxxcccxxx@
+xxcc$ccxx.x
+xcc---ccx.x
+xc$-c--m..x
+xcc---ccx.x
+xxcc$ccxx.x
+xxxcccxxx@
+xxxxxxxxx
+ENDMAP

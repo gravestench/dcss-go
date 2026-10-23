@@ -1,0 +1,22 @@
+# minmay_crypt_entry_skeletal_spiral is a Vaults-side Crypt gate selected from
+# the Vaults entrance pool; its source MAP fixes the approach.
+# The source directives keep keyed terrain such as enter_crypt with this map.
+NAME:   minmay_crypt_entry_skeletal_spiral
+TAGS:   transparent
+MONS:   skeleton w:20 / skeletal warrior
+TAGS: crypt_entry vaults_entry_crypt
+KMONS: 0 = place:Crypt:1
+KFEAT: O = enter_crypt
+MAP
+...........
+.xxxxxxxxx.
+.x..1..1.x.
+.x1xxxxx.x.
+.x.x111x1x.
+.x.x1O1x.x.
+.x1x111x1x.
+.x.x.xxx.x.
+.x.x1.1.1x.
+.x1xxxxxxx.
+...........
+ENDMAP

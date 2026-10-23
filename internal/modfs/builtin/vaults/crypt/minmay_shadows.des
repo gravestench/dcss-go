@@ -1,0 +1,37 @@
+# minmay_shadows is a Crypt room eligible at Crypt, Tar; its northwest MAP
+# supplies authored geometry.
+# The source directives keep Lua decisions at choose_branch_terrain with this
+# map.
+NAME:    minmay_shadows
+ORIENT:  northwest
+DEPTH:   Crypt, Tar
+MONS:    shadow, soul eater, tzitzimitl
+ITEM:    any misc
+SUBST:   A : x., B : x., C : x., E : x., F : x.
+: vault.run("choose_branch_terrain")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xx.........xxx2.2xxx.........x
+xx....1....xxxd.dxxx....1....x
+xx.........xxx2.2xxx.........x
+xx...xxx...xxx...xxx...xxx...x
+xx.D.xxx.E.xxx.1.xxx.E.xxx.D.x
+xx...xxx.2.xxx...xxx.2.xxx...x
+xx1..xxx....1..3..1....xxx..1x
+xx...xxx....F.....F....xxx...x
+xx...xxx.......1.......xxx...x
+xx...xxxxxxxxxxxxxxxxxxxxx...x
+xx.2.xxxxxxxxxxxxxxxxxxxxx.2.x
+xx...xxxxxxxxxxxxxxxxxxxxx...x
+xx...xxx...............xxx...x
+xx...xxx..1.A.....A.1..xxx...x
+xx1..xxx...............xxx..1x
+xx...xxx...xxx...xxx...xxx...x
+xx.C.xxx.B.xxx.1.xxx.B.xxx.C.x
+xx...xxx...xxx...xxx...xxx...x
+xx.........xxx1.1xxx.........x
+xx....1....xxx...xxx....1....x
+xx.........xxx...xxx.........x
+xxxxxxxxxxxxxx.@.xxxxxxxxxxxxx
+ENDMAP

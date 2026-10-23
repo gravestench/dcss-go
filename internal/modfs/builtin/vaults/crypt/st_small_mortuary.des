@@ -1,0 +1,26 @@
+# st_small_mortuary is a Crypt room eligible at Crypt; its source MAP supplies
+# authored geometry.
+# The source directives keep Lua decisions at preserve_corpses with this map.
+NAME:   st_small_mortuary
+DEPTH:  Crypt
+KMONS:  1 : vampire mage w:20 / necromancer
+NSUBST: ' = 5:d / *:.
+: vault.run("preserve_corpses")
+MAP
+   ccccccccc
+ ccc...1...ccc
+cc*.........*cc
+c|*1.......1*|c
+cc*.........*cc
+cccc.......cccc
+cd.cc.....cc.dc
+c.............c
+cd.cc.....cc.dc
+cccc'''''''cccc
+cc'''''''''''cc
+c'''''''''''''c
+cc'''''''''''cc
+.ccc''ddd''ccc.
+...cccc+cccc...
+ ......@......
+ENDMAP

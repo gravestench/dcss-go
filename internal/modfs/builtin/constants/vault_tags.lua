@@ -15,6 +15,7 @@ local tags = {
     ELF_BLADE_ENTRY = "elf_blade_entry",
     DEPTHS_ENTRY = "depths_entry",
     ZOT_ENTRY = "zot_entry",
+    CRYPT_ENTRY = "crypt_entry",
     SNAKE_ENTRY = "snake_entry",
     SPIDER_ENTRY = "spider_entry",
     SPIDER_JUMPING_CHILD = "nico_jumpspide",

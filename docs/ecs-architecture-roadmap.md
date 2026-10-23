@@ -248,6 +248,17 @@ the routes inspectable. Remaining work across the wider port includes
 more source branch and vault families, complete spell and monster behavior,
 and UI parity for features beyond these currently playable domains.
 
+The Crypt branch domain now uses 59 committed source MAPs across its Vaults
+entrances, supplemental rooms, and mandatory endings. Branch scheduling,
+stair pairing, saved level records, and ECS population use the existing
+generic owners. Lua owns source-position map choices and two saved marker
+events, including a reusable player-visibility trigger. The Crypt:3 ending
+places exactly one scheduled Tomb link, using an authored gate when present.
+The Tomb branch itself is the next adjacent floor domain; its entrance stays
+unavailable until that branch can generate and validate its own floors.
+The broader monster and item domains still own exceptional effects used by
+Crypt inhabitants and prizes.
+
 ## Slice checks
 
 At the integrated conversion boundary, verify deterministic turn and RNG

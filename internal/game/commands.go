@@ -110,10 +110,20 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 	}
 
 	var portal portalAction
+	pendingStair := false
 
-	if prepared.portal != nil {
-		// Travel changes the player, clocks, region history, and old-floor
-		// entities. Restore all of them if any subsequent action phase fails.
+	if prepared.intent.Kind == ecs.IntentUpstairs ||
+		prepared.intent.Kind == ecs.IntentDownstairs {
+		if level := g.levels[position.LevelID]; level != nil {
+			if link, found := level.StairAt(position.X, position.Y); found {
+				pendingStair = link.Pending
+			}
+		}
+	}
+
+	if prepared.portal != nil || pendingStair {
+		// First entry to a portal or generated branch changes floors,
+		// actors, and RNG. A failed destination must restore the run.
 		checkpoint := g.Snapshot()
 
 		defer func() {
@@ -127,10 +137,12 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 			}
 		}()
 
-		portal, err = g.preparePortal(prepared.portal, position)
+		if prepared.portal != nil {
+			portal, err = g.preparePortal(prepared.portal, position)
 
-		if err != nil {
-			return StepResult{}, err
+			if err != nil {
+				return StepResult{}, err
+			}
 		}
 	}
 

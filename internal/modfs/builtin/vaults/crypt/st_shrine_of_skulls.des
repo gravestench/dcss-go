@@ -1,0 +1,28 @@
+# st_shrine_of_skulls is a Crypt room eligible at Crypt; its source MAP
+# supplies authored geometry.
+# The source directives keep kmons choice 3 = curse skull with this map.
+NAME:   st_shrine_of_skulls
+DEPTH:  Crypt
+MONS:   flying skull band, lich
+KMONS:  3 = curse skull
+KMONS:  4 = lich w:20 / ancient lich / dread lich
+KMONS:  P = withered plant
+KFEAT:  4 = |
+SUBST:  p = Pp, p = PP., o = P..
+MAP
+    ooooooooo
+  ooopppppppooo
+ oopppcccccpppoo
+ooppccc.1.cccppoo
+oppcc.......ccppo
+oppc..ccccc..cpp..
+opcc+cc|4|cc+cc...
+opcc3c*|||*c..+1.@
+opcc+ccc3cccccc...
+oppc...cPc...cpp..
+oppcc.......ccppo
+ooppccc.2.cccppoo
+ oopppcccccpppoo
+  ooopppppppooo
+    ooooooooo
+ENDMAP

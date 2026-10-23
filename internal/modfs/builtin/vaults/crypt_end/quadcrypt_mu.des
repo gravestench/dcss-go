@@ -1,0 +1,108 @@
+# quadcrypt_mu is a required Crypt:3 ending; its encompass MAP shapes the
+# final floor.
+# The source directives keep keyed terrain such as granite_statue and Lua
+# decisions at choose_vampire_or_mummy, choose_bone_or_spirit with this map.
+NAME:   quadcrypt_mu
+ORIENT: encompass
+TAGS:   no_monster_gen no_item_gen no_pool_fixup no_rotate no_vmirror no_hmirror
+PLACE:  Crypt:$
+####### chapel garden
+SUBST:  F = f ?
+SUBST:  f = p:1 .:1
+KFEAT:  p = .
+KMONS:  p = withered plant
+####### hidden skeleton; sometimes good pain weapon, or draining short sword
+KMONS:  ! = skeletal warrior ; w:2 dagger ego:pain | short sword ego:draining |\
+                               w:2 rapier ego:pain | w:1 quick blade ego:pain
+KFEAT:  o = granite_statue
+SUBST:  B = b %
+KITEM:  b = any book
+SUBST:  u = U Y
+KMONS:  8 = gargoyle
+####### NW monsters (chapel).
+KMONS:  A = ancient lich / dread lich / w:4 mummy priest
+KMONS:  DL = lich w:40 / ancient lich / dread lich
+KMONS:  E = war gargoyle
+KMONS:  G = shadow / wraith
+####### NE monsters (hoard). On a coinflip, either vampires or mummies.
+: vault.run("choose_vampire_or_mummy")
+####### SE monsters (catacombs). Either corporeal or incorporeal undead.
+: vault.run("choose_bone_or_spirit")
+####### SW monsters (crematory). Either fiery undead or hellish.
+: vault.run("choose_fire_or_hell")
+####### Randomisation of doors
+NSUBST: K = 1:+ / *:v
+NSUBST: ' = 1:+ / *:v
+NSUBST: " = 1:+ / *:v
+NSUBST: *| = 1:d / 1:h
+####### Tomb entrance
+: vault.run("choose_tomb_gate")
+SUBST:  ? = $ % * |:1
+: vault.run("bonus_loot")
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+vccccccccccccccccccccccccc......"...Bvvvvvvvvvvvvvvvvvvvvvv
+vc..D..c.....c....Bc..+..c.ffff.vvvBLvvvvvvvvvvvvvvvvvvvvvv
+vc.c.c.+.....+....cc..+..c.ffFf.vvvv"vvvvvvvvvvvvvnP+.....v
+vc.._..+...D.c....Bc..c..m.ffFf.vO???||$$$.vvvvv..nPn|????v
+vc.c.c.c.....c....cc..c..c.ffff.v?$$$$$$$$.vvvv...nPn$$$$$v
+vc.....ccc+ccc....Bc..cGGc.ffff.vnnnnnnnnn+vvv..H.nPn$$O$$v
+vc.....c.....c....cc..c..c.ffff.v..........vv.....nPn$$$$$v
+vc.....c?....c..A.Bc..c..m..fff.v..........vv.uvu.nPn$$$$$v
+vc.....c|?...c....cc..c..c...ff.v..vvvvvvvvv..vvv.nPnnnnnnv
+vc.....c||?EEcBcBcc...c..c....f.v..........+..uvu.nPPPPPPPv
+vc++cccccccccccccc...cc..c......v..........+......nnnnnnn+v
+vc.....G............cc...m..G...vvvvvvvvvvvv.H............v
+vc.....G...........cc...cc......v....vvvvvvv..............v
+vccccccccccccccccccc...cc...ff..v.JJ...vvvvvv....v..v..v..v
+vc....................cc..fffff.v.......vvvvv.............v
+vc...................ccE..fffff.vv+vv....vvvvv...v..v..v..v
+vccmcccmm++mmcccmcccmc...fffff..v...vvv...vvvvv...........v
+v.......f..f............fffffff.v.....vv...vvvvv..........v
+v....ffff..ffff.........fffFfff.v......v...vvvvvvvvvvvv++vv
+v.G.ffff...ffff...G....ffffffff.v......vv...v.....I.......v
+v...ffff...fffff.......fffffff..v.......v...+.............v
+v....ffff....ffff.......f.ffff..v.......v...+.............v
+v......f.f....ffff..............v.......v...v.....I.......v
+vvvvvvvvvvvvvv++vvvvvvvvvvvvvvvvvvvvvvv+vvvvvvvvvvvvvvvvvvv
+vvvvvvvvvvvvv....v??llv??llv??llvvvvvvo.ovvvWWWWWWW.......v
+vvvvvlllvvvvv....v?.tlv?.tlv?.tlvvvv.......vvWWWWWW%.mmmm.v
+vvv.......vvv....v....v....v....vvv.........vvWWWWWWWm*|m.v
+vv.........vv....v....v....v....vv...........vWWWWWmWW*|m.v
+v..ccc.ccc..vv++vvv++vvv++vvv++vvv...R.Q.R...vvWWWWmWWZ|m.v
+v...lc.cl...v...................vo...........ovWWWWmmmmmm.v
+v..t.c.c.t..+...................+......U......+...........v
+v...........v...................vo...........ov...........v
+v.cccc.cccc.vvvvvvvvvKvvvvvvvvvvvv.........vvvvvvvvvvvvvvvv
+v.cll...llc.v??......<vvvvvvvvvvvv.........+...+..........v
+v.clt...tlc.K???.....Kvvvvvvvvvvvvv........+...vvvvvvvvvv.v
+v.c...X...c.v????|KKvvwwwwwwwwvvvvvv.......v....vvvW.R.%v.v
+v...........vRRRRKvwwwwwwwwwwwwwwvvvvvo.ovvv+v...vvW...%v.v
+v..ccc.ccc..vRRKvvwwwwwwwwwwwwwwwwvvvvv+vvvv.vv...vv...$v.v
+v..lc...cl..vvvvwwwwwwwwwwwwwwwwwwwwvvv<v....vvv...vvv+vv.v
+v.t.......t.vvvwwwwwwwwwwwwwwwwwwwwwwvvvv.vvvvvvv...vv....v
+v....lll....vvvwwwwwwwwwwwwwwwwwwwwwwvvvv.v%RWvvvv...vvvv.v
+v....lml....vvwwwwwwwwwwwwwwwwwwwwwwwwvvv.v..Wvvvvv...vvv.v
+v....lll....vwwwwwwwwwwwwwwwwwwwwwwwwwwvv.v.vvvvvvvv...vv.v
+v...........vwwwwwwwwwwwwwwwwwwwwwwwwwwvv.v.v%R.Wv%vv...vvv
+vvvv++vvvvvvvwwwwwww..8..wwwwwwwwwwwwwwvv.v.v...WvRWvv...vv
+v........+tvwwwwww.........wwwwwwwwwwwwwv.v+v+vvvv+vvvv...v
+v...ll...v+vwwwww...........wwwwwwwwwwwwv............vvv..v
+v...ll...+tvwwww.............wwwwwwwwwwwvvvvvvvvvvvvvvvvv+v
+v...ll...v+vwwww.............wwww.......+........R......v.v
+v...ll...+tvwww...............ww........+....V.S.R.V....v.v
+v.llllll.v+vwww...................wwwwwwv......S........v.v
+v.llllll.+tvwww8.............8...wwwwwwwv....V.S.R.V....v.v
+v...ll...v+vwww.................wwwwwwwwv........R......v.v
+v.t.ll...vtvvww...............wwwwwwwwwvvvvvv''vvvvvvv+vv+v
+v.t.ll...v.*vwww.{...........wwwwwwwwwwv.......'o$.....vv.v
+v...ll...v.%vwww..[..........wwwwwwwwwwv.......v$.....vvv.v
+v........+.*vvwww..(........wwwwwwwwwwvv..W....v.....vvv..v
+vvvvvvvvvvvvvvvwww.........wwwwwwwwwwvv..SW....v.S..vvv.S.v
+vvvvvvvvvvvvvvvwwwww..8..wwwwwwwwwwwwv..WWWWW..'...vvv....v
+vvvvvvvvvvvvvvvvwwwwwwwwwwwwwwwwwwwwvv....W....v..vvv.....v
+vvvvvvvvvvvvvvvvvvwwwwwwwwwwwwwwwwvvvo....W....v+vvv.....$v
+vvvvvvvvvvvvvvvvvvvwwwwwwwwwwwwwwvv!+.......R..'........$ov
+vvvvvvvvvvvvvvvvvvvvvvwwwwwwwwvvvvvvvovvvvvvvvvvvvvvvvvvvvv
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ENDMAP

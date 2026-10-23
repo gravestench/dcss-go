@@ -560,6 +560,16 @@ function resolve.validate_monster(selected, site)
         end
     end
 
+    -- Crypt requests a depth-selected monster body before applying an
+    -- undead form. The numeric prefix is a random request, not a species.
+    if base_name and random_monster_names[base_name] then
+        return
+    end
+
+    if name:match("^[089] spectral thing$") then
+        return
+    end
+
     if slime_blob.size_for_name(name) then
         return
     end
@@ -708,6 +718,14 @@ function resolve.monster(ctx, selected, depth, site)
         base_name = spectral_base
         variant = "spectral"
     end
+    local random_undead_request = base_name and
+        random_monster_names[base_name] and base_name
+
+    if name:match("^[089] spectral thing$") then
+        random_undead_request = name:sub(1, 1)
+        variant = "spectral"
+    end
+
     local blob_size = slime_blob.size_for_name(name)
     local head_count = hydra_heads.from_name(base_name or name)
     local draconian_base, draconian_role = draconian_names(name)
@@ -725,7 +743,19 @@ function resolve.monster(ctx, selected, depth, site)
         colour = colours.RANDOM[ctx:random("vault_colour", #colours.RANDOM) + 1]
     end
 
-    if random_undead_names[name] then
+    if random_undead_request then
+        if variant == "zombie" then
+            kind_id = monster_ids.MONS_ZOMBIE
+        elseif variant == "skeleton" then
+            kind_id = monster_ids.MONS_SKELETON
+        elseif variant == "simulacrum" then
+            kind_id = monster_ids.MONS_SIMULACRUM
+        else
+            kind_id = monster_ids.MONS_SPECTRAL_THING
+        end
+
+        base_id = random_undead_base(ctx, selected, depth, site)
+    elseif random_undead_names[name] then
         if name == monster_requests.RANDOM_ZOMBIE then
             variant = "zombie"
             kind_id = monster_ids.MONS_ZOMBIE

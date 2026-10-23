@@ -1,0 +1,23 @@
+# lemuel_dead_fish_pool is a Crypt room eligible at Crypt; its source MAP
+# supplies authored geometry.
+# The source directives keep keyed terrain such as w with this map.
+NAME: lemuel_dead_fish_pool
+DEPTH: Crypt
+# Lemuel also had Cocytus
+TAGS: no_pool_fixup extra
+SUBST: . : .W
+SUBST: 1 = w:50 1
+KFEAT: 1 = w
+KMONS: 1 = swamp worm zombie
+MAP
+@..wwwww..@
+..ww111ww..
+.ww11111ww.
+ww1111111ww
+w111111111w
+w111111111w
+ww1111111ww
+.ww11111ww.
+..ww111ww..
+@..wwwww..@
+ENDMAP

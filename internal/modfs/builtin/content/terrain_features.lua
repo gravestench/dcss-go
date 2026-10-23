@@ -9,6 +9,7 @@ local trap_placement = require("policy.traps.placement")
 local glyphs = require("constants.vault_glyphs")
 local fill = require("constants.vault_border_fill")
 local terrain = require("constants.terrain")
+local vault_features = require("constants.vault_features")
 
 features.from_source_glyph = {
     ["#"] = "DNGN_ROCK_WALL",
@@ -94,6 +95,7 @@ features.vault_terrain = {
     DNGN_ESCAPE_HATCH_UP = "DNGN_STONE_STAIRS_UP_I",
     DNGN_ESCAPE_HATCH_DOWN = "DNGN_STONE_STAIRS_DOWN_I",
     DNGN_GRANITE_STATUE = "DNGN_GRANITE_STATUE",
+    [terrain.DNGN_GRATE] = terrain.DNGN_GRATE,
     DNGN_ORCISH_IDOL = "DNGN_ORCISH_IDOL",
 }
 
@@ -123,6 +125,7 @@ features.named_vault_terrain = {
     tree = "DNGN_TREE",
     petrified_tree = "DNGN_PETRIFIED_TREE",
     granite_statue = "DNGN_GRANITE_STATUE",
+    [vault_features.IRON_GRATE] = terrain.DNGN_GRATE,
     closed_door = "DNGN_CLOSED_DOOR",
     closed_clear_door = "DNGN_CLOSED_CLEAR_DOOR",
     open_door = "DNGN_OPEN_DOOR",

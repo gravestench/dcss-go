@@ -1,0 +1,46 @@
+# grunt_crypt_arrival_guarded_gate is a Crypt room eligible at Crypt:1; its
+# south MAP supplies authored geometry.
+# The source directives keep keyed terrain such as granite_statue and Lua
+# decisions at arm_sarcophagi with this map.
+NAME:   grunt_crypt_arrival_guarded_gate
+TAGS:   uniq_crypt_arrival no_item_gen no_monster_gen no_trap_gen \
+        layout_rooms layout_city layout_corridors no_hmirror no_rotate extra
+ORIENT: south
+DEPTH:  Crypt:1
+WEIGHT: 30
+TILE:   H = dngn_sarcophagus_pedestal_left
+TILE:   I = dngn_sarcophagus_pedestal_right
+COLOUR: HI = yellow
+TILE:   C = wall_stone_gray
+SUBST:  HI = G
+: vault.run("arm_sarcophagi")
+KFEAT:  G = granite_statue
+SUBST:  J = V
+SUBST:  C = c
+MAP
+.....@.....
+@....J....@
+...........
+xxcc+++ccxx
+xxcC...Ccxx
+xxcH...Icxx
+xxcC...Ccxx
+xxcH...Icxx
+xxcC...Ccxx
+xxcH...Icxx
+xxcC...Ccxx
+xxcH...Icxx
+xxcC...Ccxx
+xxcH...Icxx
+xxcC...Ccxx
+xccc...cccx
+xcC.....Ccx
+xc.......cx
+xc...{...cx
+xcV.....Vcx
+xc..[.(..cx
+xc.......cx
+xcC..V..Ccx
+xcccccccccx
+xxxxxxxxxxx
+ENDMAP

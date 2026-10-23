@@ -1,0 +1,104 @@
+# cryptofortress_bobbens is a required Crypt:3 ending; its encompass MAP
+# shapes the final floor.
+# The source directives keep keyed terrain such as w, enter_tomb and Lua
+# decisions at choose_stair_and_prize, bonus_loot with this map.
+NAME:   cryptofortress_bobbens
+ORIENT: encompass
+TAGS:   no_monster_gen no_item_gen no_pool_fixup no_rotate no_vmirror
+PLACE:  Crypt:$
+KFEAT:  A = w
+KMONS:  A = flying skull
+KMONS:  B = ancient lich / dread lich
+KMONS:  D = bone dragon
+KMONS:  V = vampire knight
+KMONS:  X = dancing weapon
+KMONS:  L = lich
+KMONS:  I = war gargoyle
+KMONS:  G = crystal guardian
+KMONS:  z = skeletal warrior
+KMONS:  N = necromancer
+KMONS:  H = hell knight
+KMONS:  M = zombie / skeleton / w:5 necrophage
+KMONS:  Q = titan zombie / fire dragon zombie / golden dragon zombie / ghoul
+# red metal walls
+COLOUR: a = red
+SUBST:  a = +
+COLOUR: r = red
+TILE:   r = wall_hell
+SUBST:  r = c
+# emergency exits; most are closed
+NSUBST: ? = 3=+ / v
+# Tomb entrance
+: vault.run("choose_stair_and_prize")
+KFEAT:  > = enter_tomb
+# Loot randomisation
+SUBST:  % = %$, * = *%, / = |**
+NSUBST: *| = d / 1=h
+: vault.run("bonus_loot")
+MAP
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+vwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwvvvvvvvvvvvvvvvvvvvvvvvvvvvvwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwv..........................vAwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwv.........rrrrrrrr.........vAAAwwwwwwwwwwwv
+vwwwwwwwwwwwwwwv.........r//||//r.........vAAAAAAwwwwwwwwv
+vwwwwwwvvvv?vvvv......rrarr*/O*rrarr......v?v?v?v?vwwwwwwv
+vwwwwwwv.......v......r$$*rr++rr*$$r......v.......vwwwwwwv
+vwwwwww?....H..v.....rrrrOr$$$$rOrrrr.....v.......?wwwwwwv
+vwwwwwwv....H..+........rrr$$$$rrr........+.Q..H..vwwwwwwv
+vwwwwww?....H..v......L...r$$$$r...L......v....H..?wwwwwwv
+vwwwwwwv.Q.vvvvv...rrr....rr++rr....rrr...v....H..vwwwwwwv
+vwwwwww?...v...vv....rr.rrrU..Urrr.rr....vvv+v....?wwwwwwv
+vwwwwwwv...v.X..vv....rrr........rrr....vv...vvvvvvwwwwwwv
+vwwwwwwv...+.....vv....r.U..BC..U.r....vvvv.....+Mvwwwwwwv
+vwwwwwwv...v..V.$vvv...rr........rr...vvvM+.....vvvwwwwwwv
+vwwwwwwv...v...$Ov.vv...rrrU..Urrr...vv.vvv.....+Mvwwwwwwv
+vwwwwwwv...vvvvvvv..vv....rr..rr....vv..vM+.....vvvwwwwwwv
+vwwwwwwv...vvv...v...vv............vv...vvv.....+Mvwwwwwwv
+vwwwwwwv...vv....+....vv..........vv....+....N..vvvwwwwwwv
+vwwwwwwv...vNz...v.....vv........vv.....vvv.....+Mvwwwwwwv
+vwwwwww?...v.M...v....G.vv......vvI.....vM+.....vvvwwwwwwv
+vwwwwwwv...v....vv....vvvvvvvvvvvvvv....vvv.....+Mvwwwwwwv
+vwwwwwA?.......vv....vv.....ll.....vv....vvv+v..vvvwwwwwwv
+vwwwwwAv......vv....vv..............vv....vvMv..+Mvwwwwwwv
+vwwwwAA?.....vv....vv................vv....vvv..vvvwwwwwwv
+vwwwAAAv.....v....vv.......N..N.......vv....vv..+Mvwwwwwwv
+vwvvvvvvvvvvvvv+vvvvv+vv.Mzz..zzM.vv+vvvvv+vvvvvvvvvvvvvwv
+vwvv.........v..I.v....v..........v....v.........v..%Ovvwv
+vwvv.........v....v....v..........v....v.........v...$vvwv
+vwvv.........+....v....v..........v....v.....X..V+....vvwv
+vwvv....D....v....v..z.v..........v.z..v.........v....vvwv
+vwvvv....z...v....+...Nvr........rvN...+......X..vvvvvvvwv
+vwwvv........v....v..z.vrr......rrv.z..v.............vvwwv
+vwwvvv.......+....v....vrrrr++rrrrv....v............vvvwwv
+vwwwvv.......v....v....vrrUz..zUrrv....v............vvwwwv
+vwwwvvvvvvvvvvvvvvvv+vvvrI......Irvvv+vvvvvvvvvvvvvvvvwwwv
+vwwwwvvvP**$$v.........vrrrr++rrrrv.........v$$**Pvvvwwwwv
+vwwwwwvvv/*$$+.........vrrww..wwrrv.........+$$*/vvvwwwwwv
+vwwwwwwvvv*$$v...X.....vrwAw..wAwrv...X.....v$$*vvvAwwwwwv
+vwwwwwwwwvvv$v....G....vwwww..wwwwv..G......v$vvvAAwwwwwwv
+vwwwwwwwwwvvvv.........vwwww..wwwwv.........vvvvwwwwwwwwwv
+vwwwwwwwwwwwvvvv.......vwwww..wwwwv.......vvvvwwwwwwwwwwwv
+vwwwwwwwwwwwwwvvvv.....vwwww..wwwwv.....vvvvwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwvvvvv..vwwww..wwwwv..vvvvvwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwvvvvvAwww..wwwAvvvvvwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwvvAwww..wwwAvvwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwAwwww..wwwwAwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwwwww..wwwwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwwwww..wwwwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwwwww..wwwwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwwwww..wwwwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwwwww..wwwwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwAww....wwAwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwwww....wwwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwww....{.wwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwAwww.[....wwwAwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwwww..(.wwwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwwAwwwwwwAwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwv
+vwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwv
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ENDMAP

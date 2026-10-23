@@ -1,0 +1,23 @@
+# skrybe_necro_troll_2 is a Crypt room eligible at Crypt; its source MAP
+# supplies authored geometry.
+# The source directives keep kmons choice 1 = deep troll shaman with this map.
+NAME:    skrybe_necro_troll_2
+DEPTH:   Crypt
+TAGS:    uniq_necro_troll
+KMONS:   1 = deep troll shaman
+# just spectral trolls, since they aren't affected by the water
+KMONS:   2 = spectral deep troll w:30 / spectral iron troll
+KITEM:   * = *
+KFEAT:   *12 = W
+NSUBST:  T = 3:2 / 2=2W / *:W
+MAP
+  ccc
+ ccGcc
+cc***cc
+cWT1TWc
+cTWTWTc
+cWWWWWc
+cWWWWWc
+c.....c
+cc+++cc
+ENDMAP

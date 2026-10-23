@@ -1,0 +1,25 @@
+# skrybe_necro_troll_1 is a Crypt room eligible at Crypt, !Crypt:$; its source
+# MAP supplies authored geometry.
+# The source directives keep kmons choice S = deep troll shaman with this map.
+NAME:    skrybe_necro_troll_1
+DEPTH:   Crypt, !Crypt:$
+TAGS:    no_monster_gen uniq_necro_troll
+KMONS:   S = deep troll shaman
+KFEAT:   S = ] / } / )
+# either all spectrals, or regular necromancer band
+MONS:    spectral deep troll w:30 / spectral iron troll
+MONS:    deep troll skeleton w:18 / deep troll zombie w:18 / \
+         deep troll simulacrum w:9 / iron troll skeleton w:6 / \
+         iron troll zombie w:6 / iron troll simulacrum w:3
+NSUBST:  T = 3:1 / 2 = 1. / *:.
+SHUFFLE: 12
+MAP
+ccccccccccc
+cGT..S..TGc
+cc.......cc
+cGT.....TGc
+cc.......cc
+cGT.....TGc
+cc.......cc
+cccc+++cccc
+ENDMAP

@@ -1,0 +1,105 @@
+# grunt_crypt_end_deaths_head is a required Crypt:3 ending; its encompass MAP
+# shapes the final floor.
+# The source directives keep keyed terrain such as enter_tomb,
+# altar_yredelemnul and Lua decisions at choose_guardians, bonus_loot with
+# this map.
+NAME:    grunt_crypt_end_deaths_head
+TAGS:    patrolling no_monster_gen no_rotate no_hmirror no_vmirror
+PLACE:   Crypt:$
+ORIENT:  encompass
+MONS:    skeletal warrior / jiangshi, flying skull band
+SHUFFLE: 34 / 56 / 78 / 90, AB / CD / EF / HI / JK / LM / NO / PQ
+
+KMONS:   3 = ghoul
+KMONS:   4 = necrophage
+KMONS:   5 = necromancer
+KMONS:   6 = simulacrum / spectral thing / zombie w:5 / skeleton w:5 / \
+             hell knight w:5
+KMONS:   7 = death knight
+KMONS:   8 = vampire knight w:5 / skeletal warrior
+KMONS:   9 = ancient champion
+KMONS:   0 = skeletal warrior
+
+# Room guardian waves; these should be tougher, but not boss tier.
+KMONS:   A = lich
+KMONS:   C = revenant
+KMONS:   BD = freezing wraith / shadow wraith / wraith
+KMONS:   E = deep elf death mage
+KMONS:   F = small abomination / large abomination w:5
+KMONS:   H = death knight
+KMONS:   I = death knight w:5 / nothing
+KMONS:   J = profane servitor
+KMONS:   L = bone dragon
+KMONS:   KM = nothing
+KMONS:   NO = jiangshi
+KMONS:   P = flayed ghost
+KMONS:   Q = flayed ghost / shadow w:20
+
+# Boss tier monsters.
+: vault.run("choose_guardians")
+
+KFEAT:   R = enter_tomb
+KFEAT:   _ = altar_yredelemnul / altar_kikubaaqudgha
+SHUFFLE: {[(<
+
+NSUBST:  *| = 1:d / 1:h
+: vault.run("bonus_loot")
+MAP
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccc|*$$...R...$$*|ccccccccccccccccccccccccc
+cccccccccccccccccccccc..cc*$$.T...T.$$*cc..cccccccccccccccccccccc
+cccccccccccccccccccc....ccc$$...T...$$ccc....cccccccccccccccccccc
+ccccccccccccccccccc.G.G.c.ccccc+++ccccc.c.G.G.ccccccccccccccccccc
+cccccccccccccccccc......c...............c......cccccccccccccccccc
+ccccccccccccccccc.......c..G..T...T..G..c.......ccccccccccccccccc
+cccccccccccccccc..K.J.K.c......T.T......c.M.L.M..cccccccccccccccc
+cccccccccccccccc........c..G.........G..c........cccccccccccccccc
+ccccccccccccccc....K.K..cc.............cc..M.M....ccccccccccccccc
+ccccccccccccccc..........c.G.........G.c..........ccccccccccccccc
+ccccccccccccccc+c........c....c+++c....c........c+ccccccccccccccc
+cccccccccccccc..cc.G...G.c.S.cc...cc.S.c.G...G.cc..cccccccccccccc
+ccccccccccccccO.cc.......c..cc.....cc..c.......cc.Qcccccccccccccc
+ccccccccccccccONcc...F...cccc...9...cccc...I...ccPQcccccccccccccc
+ccccccccccccccOOcc.....F..c...G...G...c..I.....ccQQcccccccccccccc
+ccccccccccccccc$$c...E....c.0.......0.c....H...c$$ccccccccccccccc
+ccccccccccccccc$$c.....F..+.....Y.....+..I.....c$$ccccccccccccccc
+ccccccccccccccc$$cc...F...c.0.......0.c...I...cc$$ccccccccccccccc
+ccccccccccccccc**cc.G.G...c...G...G...c...G.G.cc**ccccccccccccccc
+cccccccccccccccc|cc....cccccc.......cccccc....cc|cccccccccccccccc
+cccccccccccccccc|cc..ccc.B..ccc+++ccc..D.ccc..cc|cccccccccccccccc
+cccccccccccccccccccccc*$..B.+...8...+.D..$*cccccccccccccccccccccc
+ccccccccccccccccccc.c|*$.A..c.......c..C.$*|c.ccccccccccccccccccc
+cccccccccccccccccc..cc*$..Bcc.8.7.8.ccD..$*cc..cccccccccccccccccc
+cccccccccccccccccc...c$$.B.c.........c.D.$$c...cccccccccccccccccc
+cccccccccccccccccc.G.cc...ccc...8...ccc...cc.G.cccccccccccccccccc
+ccccccc...cccccccc....ccccc.+c.....c+.ccccc....cccccccc...ccccccc
+ccccccc.[.cccccccc......c....ccccccc....c......cccccccc.{.ccccccc
+ccccccc....ccccccc...2..4..2.ccccccc.2..6..2...ccccccc....ccccccc
+ccccccc.G...ccccccc..........ccccccc..........ccccccc...G.ccccccc
+cccccc.......ccccccc..4.3V4..ccccccc..6V5.6..ccccccc.......cccccc
+ccccc..........ccccccc.......ccccccc.......ccccccc..........ccccc
+cccccc..cc...1....cccccc4....cc...cc....6cccccc....1...cc..cccccc
+cccccccccccc...2...cccccc..1.cc._.cc.1..cccccc...2...cccccccccccc
+ccccccccccccccc.....ccc.cc.............cc.ccc.....ccccccccccccccc
+ccccccccccccccccc....+.G.c....V...V....c.G.+....ccccccccccccccccc
+ccccccccccccccccccc..+...ccc.........ccc...+..ccccccccccccccccccc
+ccccccccccccccccccccccc..c1cccc+++cccc1c..ccccccccccccccccccccccc
+ccccccccccccccccccccccc.2c..+.c1.1c.+..c2.ccccccccccccccccccccccc
+cccccccccccccccccccccc...c+cc.+...+.cc+c...cccccccccccccccccccccc
+cccccccccccccccccccccc..cc.1ccccccccc1.cc..cccccccccccccccccccccc
+ccccccccccccccccccccccc..cc.+.+.1.+.+.cc..ccccccccccccccccccccccc
+cccccccccccccccccccc.c+...ccc.+...+.ccc...+c.cccccccccccccccccccc
+cccccccccccccccccc....+.....ccc+++ccc.....+....cccccccccccccccccc
+ccccccccccccccc.......cc.................cc.......ccccccccccccccc
+cccccccc....c....2..ccccc...1...2...1...ccccc..2....c....cccccccc
+ccccccccc......1..cccccccc....G...G....cccccccc..1......ccccccccc
+cccccccccc..G....ccccccccccc.........ccccccccccc....G..cccccccccc
+ccccccccccc....ccccccccccccccccccccccccccccccccccc....ccccccccccc
+ccccccccccc.(.ccccccccccccccccccccccccccccccccccccc.<.ccccccccccc
+ccccccccccc...ccccccccccccccccccccccccccccccccccccc...ccccccccccc
+ccccccccccc..ccccccccccccccccccccccccccccccccccccccc..ccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ENDMAP

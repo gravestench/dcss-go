@@ -26,6 +26,7 @@ local names = {
     WIZLAB_ROUGH_FLOOR = "rough-hewn floor",
     SARCOPHAGUS = "sarcophagus",
     GRAVESTONE = "a gravestone",
+    CRYPT_GRAVESTONE = "gravestone",
     IRON_STATUE = "iron statue",
     ADVENTURERS_GRAVESTONE = "adventurer's gravestone",
     HIDEOUS_STATUE = "statue of a hideous four-limbed creature",

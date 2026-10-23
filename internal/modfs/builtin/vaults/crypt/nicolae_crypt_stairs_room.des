@@ -1,0 +1,22 @@
+# nicolae_crypt_stairs_room is a Crypt room eligible at Crypt, !Crypt:1,
+# !Crypt:$; its source MAP supplies authored geometry.
+# The source directives keep source selection tags extra, allow_dup with this
+# map.
+NAME: nicolae_crypt_stairs_room
+TAGS: extra allow_dup luniq
+DEPTH: Crypt, !Crypt:1, !Crypt:$
+SHUFFLE: AB, CDE, FH/FH/HF
+SUBST: + = +@, BCD = c, A : GGGc.., E : Gc., F : GV..
+NSUBST: H = { / }
+SHUFFLE: {}[]()
+MAP
+ccccccccccc
+ccECDEDCEcc
+cc.......cc
+cF.cc.cc..c
+cH.AB.BA..+
+cF.cc.cc..c
+cc.......cc
+ccECDEDCEcc
+ccccccccccc
+ENDMAP

@@ -388,8 +388,11 @@ end
 -- keyed feature before looking for a spare procedural cell: every authored
 -- cell is protected, so a provisional stair cannot fit on that map.
 local function primary_branch_entry(layout, branch_id)
-    local identity = branch_id == branches.BRANCH_ZOT and
-        vault_features.ENTER_ZOT or nil
+    local authored_gates = {
+        [branches.BRANCH_ZOT] = vault_features.ENTER_ZOT,
+        [branches.BRANCH_TOMB] = vault_features.ENTER_TOMB,
+    }
+    local identity = authored_gates[branch_id]
     local found
 
     if not identity or not layout.primary_placement then
@@ -485,6 +488,7 @@ function generated.bind_authored_branch_links(builder, links, maps, protected)
     local authored_features = {
         [vault_features.ENTER_ELF] = branches.BRANCH_ELF,
         [vault_features.ENTER_ZOT] = branches.BRANCH_ZOT,
+        [vault_features.ENTER_TOMB] = branches.BRANCH_TOMB,
     }
     local found = {}
 
@@ -638,26 +642,31 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
             encompass_context.shared_family) and
             vault_encompass.candidates(encompass_context) or {}
         local definition = vault_encompass.choose(random, candidates)
+        local primary_vault
+
+        if primary_spec then
+            primary_vault = vault_primary.select(random, {
+                branch_id = branch_id,
+                depth = depth,
+                branch_bottom = bottom,
+                absolute_depth = absolute_depth,
+                primary_vault_family = primary_spec.family,
+                primary_allow_dummy = primary_spec.allow_dummy,
+                primary_choice = primary_choice,
+                used = vault_used.new(prior_vault_ids),
+            })
+        end
 
         if definition then
             layout = vault_encompass.execute(ctx, definition,
                 encompass_context, profile)
+        elseif primary_vault and
+            primary_vault.orientation == "encompass" then
+            -- A full-size mandatory ending owns the whole grid. Build it
+            -- before procedural stairs exist, just like a source layout.
+            layout = vault_encompass.execute(ctx, primary_vault,
+                encompass_context, profile)
         else
-            local primary_vault
-
-            if primary_spec then
-                primary_vault = vault_primary.select(random, {
-                    branch_id = branch_id,
-                    depth = depth,
-                    branch_bottom = bottom,
-                    absolute_depth = absolute_depth,
-                    primary_vault_family = primary_spec.family,
-                    primary_allow_dummy = primary_spec.allow_dummy,
-                    primary_choice = primary_choice,
-                    used = vault_used.new(prior_vault_ids),
-                })
-            end
-
             local centred = primary_vault and
                 primary_vault.orientation == "centre"
 
@@ -722,6 +731,10 @@ local function build_floor_once(ctx, player, branch_id, depth, prior_vault_ids,
     local extra = {}
     local controller
     local extra_ids = {}
+
+    if primary_spec and layout.primary_placement then
+        controller = layout.primary_id
+    end
 
     -- An encompassing DES map already owns every cell. Source generation
     -- does not run the secondary vault pass after selecting one.

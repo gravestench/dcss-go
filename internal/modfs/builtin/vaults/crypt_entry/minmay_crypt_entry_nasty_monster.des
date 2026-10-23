@@ -1,0 +1,23 @@
+# minmay_crypt_entry_nasty_monster is a Vaults-side Crypt gate selected from
+# the Vaults entrance pool; its source MAP fixes the approach.
+# The source directives keep keyed terrain such as enter_crypt with this map.
+NAME:    minmay_crypt_entry_nasty_monster
+TAGS:    transparent
+MONS:    bone dragon w:25 / lich / shadow dragon w:5
+TAGS: crypt_entry vaults_entry_crypt
+KMONS: 0 = place:Crypt:1
+KFEAT: O = enter_crypt
+MAP
+.........
+.x.....x.
+.xx...xx.
+..x.1.x..
+..x.x.x..
+.xx...xx.
+.x.....x.
+.x..O..x.
+.x.....x.
+.xx...xx.
+..xxxxx..
+.........
+ENDMAP

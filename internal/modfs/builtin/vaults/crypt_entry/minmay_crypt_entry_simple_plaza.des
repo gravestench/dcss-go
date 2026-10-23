@@ -1,0 +1,19 @@
+# minmay_crypt_entry_simple_plaza is a Vaults-side Crypt gate selected from
+# the Vaults entrance pool; its source MAP fixes the approach.
+# The source directives keep keyed terrain such as enter_crypt with this map.
+NAME:   minmay_crypt_entry_simple_plaza
+TAGS:   transparent
+TAGS: crypt_entry vaults_entry_crypt
+KMONS: 0 = place:Crypt:1
+KFEAT: O = enter_crypt
+MAP
+......................
+..............xxxxxxx.
+.....G...G...Gx..0..x.
+..............x.....x.
+...........0..+..O.0x.
+..............x.....x.
+.....G...G...Gx..0..x.
+..............xxxxxxx.
+......................
+ENDMAP

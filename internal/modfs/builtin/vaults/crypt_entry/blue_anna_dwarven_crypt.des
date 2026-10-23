@@ -1,0 +1,21 @@
+# blue_anna_dwarven_crypt is a Vaults-side Crypt gate selected from the Vaults
+# entrance pool; its source MAP fixes the approach.
+# The source directives keep keyed terrain such as enter_crypt with this map.
+NAME:    blue_anna_dwarven_crypt
+TAGS:    transparent
+MONS:    death knight
+MONS:    shadow wraith / wraith / wight w:5
+TAGS: crypt_entry vaults_entry_crypt
+KMONS: 0 = place:Crypt:1
+KFEAT: O = enter_crypt
+MAP
+cccc@cccc
+c.......c
+c.ccccc.c
+c.c.2.c.c
+@.c.O.c.@
+c.c...c.c
+c.cc+cc.c
+c1.....1c
+cccc@cccc
+ENDMAP

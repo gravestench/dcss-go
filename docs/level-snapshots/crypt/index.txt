@@ -1,0 +1,7 @@
+Crypt branch generated floor snapshots
+Coordinates are zero-based; links are saved stair destinations.
+
+vaults_crypt_entry: VAULTS:2
+crypt_1: CRYPT:1, primary cheibrodos_crypt_down_in_the_bonehoard
+crypt_2: CRYPT:2, primary gammafunk_crypt_yreds_forest
+crypt_3: CRYPT:3, primary due_elkab

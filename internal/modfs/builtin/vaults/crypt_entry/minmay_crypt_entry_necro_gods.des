@@ -1,0 +1,26 @@
+# minmay_crypt_entry_necro_gods is a Vaults-side Crypt gate selected from the
+# Vaults entrance pool; its source MAP fixes the approach.
+# The source directives keep keyed terrain such as altar_kikubaaqudgha,
+# altar_yredelemnul with this map.
+NAME:    minmay_crypt_entry_necro_gods
+TAGS:    transparent
+WEIGHT:  30
+SHUFFLE: AB
+KFEAT:   A = altar_kikubaaqudgha
+KFEAT:   B = altar_yredelemnul
+TAGS: crypt_entry vaults_entry_crypt
+KMONS: 0 = place:Crypt:1
+KFEAT: O = enter_crypt
+MAP
+...........
+.G.ccccc.G.
+...c...c...
+.ccc.A.ccc.
+.c.......c.
+.+...O...c.
+.c.......c.
+.ccc.B.ccc.
+...c...c...
+.G.ccccc.G.
+...........
+ENDMAP

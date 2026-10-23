@@ -1,0 +1,56 @@
+# lightli_unholy_cathedral is a required Crypt:3 ending; its north MAP shapes
+# the final floor.
+# The source directives keep keyed terrain such as altar_yredelemnul,
+# altar_kikubaaqudgha and Lua decisions at bonus_loot with this map.
+NAME:    lightli_unholy_cathedral
+TAGS:    no_monster_gen layout_city
+PLACE:   Crypt:$
+ORIENT:  north
+MONS:    ancient champion, lich / revenant, jiangshi / ghoul w:2
+MONS:    profane servitor / bone dragon / curse toe / \
+         royal mummy w:2 / ancient lich w:1 / dread lich w:1
+MONS:    skeletal warrior ; halberd | glaive | bardiche w:5
+MONS:    freezing wraith w:20 / shadow wraith w:20 / flayed ghost
+MONS:    zombie w:20 / skeleton w:20 / simulacrum / nothing w:25
+KMONS:   8 = vampire knight
+KMONS:   9 = vampire w:6 / vampire mage w:4
+KMONS:   0 = mummy priest
+KMONS:   A = guardian mummy w:6 / ushabti w:4
+SHUFFLE: 56, 89 / 0A
+SUBST:   5 = 5., 6 = 6., 9 = 99., A = AA.
+KFEAT:   Y = altar_yredelemnul
+KFEAT:   K = altar_kikubaaqudgha
+NSUBST:  *| = 1:d / 1:h
+: vault.run("bonus_loot")
+MAP
+cccccccccccccccccccccccc
+ccccccccccc$$ccccccccccc
+cccccccccc$$$$cccccccccc
+cccccccccc$$$$cccccccccc
+ccccccccccc++ccccccccccc
+ccccccc..........ccccccc
+ccc**c............c**ccc
+cc||*+..4.K..Y.4..+*||cc
+cc||*+............+*||cc
+ccc**c............c**ccc
+ccccccc.........cccccccc
+ccccccccccc++ccccccccccc
+cccccccccc....cccccccccc
+cccc9....+.33.+....9cccc
+ccc989...+.33.+...989ccc
+cc..9..ccc....ccc..9..cc
+cc.......cc**cc.......cc
+cc........cccc........cc
+cc.......2cccc2.......cc
+cc........cccc........cc
+cc5..5...ccVVcc...5..5cc
+cc.11.cccc....cccc.11.cc
+cc5..5...+.11.+...5..5cc
+cc.......+5..5+.......cc
+cc...ccccc....ccccc...cc
+cc.7.cc  c.55.c  cc.7.cc
+cc7V7cc  cc++cc  cc7V7cc
+cc.7.cc  Gc..cG  cc.7.cc
+ccccccc  ..@@..  ccccccc
+ccccccc          ccccccc
+ENDMAP

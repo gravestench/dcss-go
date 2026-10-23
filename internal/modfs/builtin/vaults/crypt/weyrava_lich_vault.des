@@ -1,0 +1,32 @@
+# weyrava_lich_vault is a Crypt room eligible at Crypt; its source MAP
+# supplies authored geometry.
+# The source directives keep keyed terrain such as w with this map.
+NAME:  weyrava_lich_vault
+DEPTH: Crypt
+TAGS:  no_monster_gen no_item_gen
+ITEM:  gold
+KFEAT: Z = w:5 alarm trap / w:8 zot trap / w:50 floor
+KMONS: Y = Boris / ancient lich, ancient lich / dread lich
+MONS:  w:3 zombie / lich / w:3 skeleton / w:3 bone dragon
+MONS:  skeleton / zombie
+KFEAT: v = .
+KITEM: v = $ / %
+SUBST: $ = $.*|
+MAP
+    ccccc
+ ccccv.vcccc
+ c$.+.Y..+$c
+ c.ccv.vcc.c
+ c+ccc+ccc+c
+ c..$c.c$..c
+@n.1.c.c.1.c
+ c$.$c.c$.$c
+ ccc+c.ccccc
+ cccZcZc$c
+ c.+.cZczc
+ cZcccZc+c
+ c.+2+Z+2c
+ cccccZccc
+     c.c
+     c@c
+ENDMAP

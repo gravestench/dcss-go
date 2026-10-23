@@ -1,0 +1,33 @@
+# cheibrodos_crypt_eye_of_stone is a Crypt room eligible at Crypt, !Crypt:$;
+# its float MAP supplies authored geometry.
+# The source directives keep keyed terrain such as altar_kikubaaqudgha with
+# this map.
+NAME: cheibrodos_crypt_eye_of_stone
+DEPTH: Crypt, !Crypt:$
+TAGS: no_item_gen no_monster_gen
+ORIENT: float
+MONS: floating eye / curse skull, obsidian statue / orange crystal statue
+MONS: ancient champion, skeletal warrior
+SHUFFLE: AB / CD
+SUBST: A = G, B = 1, C = ., D = 2
+KFEAT: - = altar_kikubaaqudgha
+SUBST: * = *%
+MAP
+          cccc
+         cc$*cc
+      cccc..$*c
+   cccc......$c
+  cc.4.......cc
+ cc.3.......ccc
+ c..4......ccVcc
+cc.4.cAc...cV...
+c-3..ABA...+...@
+cc.4.cAc...cV...
+ c..4......ccVcc
+ cc.3.......ccc
+  cc.4.......cc
+   cccc......$c
+      cccc..$*c
+         cc$*cc
+          cccc
+ENDMAP

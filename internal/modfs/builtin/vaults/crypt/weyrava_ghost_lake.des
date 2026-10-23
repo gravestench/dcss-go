@@ -1,0 +1,46 @@
+# weyrava_ghost_lake is a Crypt room eligible at Crypt; its source MAP
+# supplies authored geometry.
+# The source directives keep keyed terrain such as deep_water with this map.
+NAME:  weyrava_ghost_lake
+DEPTH: Crypt
+TAGS:  no_monster_gen no_item_gen
+MONS:  flying skull
+MONS:  skeletal warrior ; long sword . kite shield . w:6 any beam wand | nothing /\
+       skeletal warrior ; battleaxe | halberd . w:7 any beam wand | nothing
+SUBST: y = .:8 c
+SUBST: v = z .
+SUBST: w = w z:6
+KFEAT: z = deep_water
+KMASK: z = no_pool_fixup
+KFEAT: T = .
+KITEM: T = * / w:5 |
+KMONS: T = w:25 phantasmal warrior / spectral fire dragon / spectral ice dragon / \
+           spectral storm dragon
+KFEAT: S = .
+KITEM: S = $ / nothing
+KMONS: S = w:25 phantasmal warrior / spectral fire dragon / spectral ice dragon / \
+           spectral storm dragon
+MAP
+    cccccccccccc
+  cccyy.yy..yyycccc
+  cyy..w..ww...12ycc
+  cy.wwzwwzzwwwww.ycc
+ cc.wzzzzzzzzzzzzw..@
+ccy1wzzzzzzzzzzzzzw.cc
+cy.wzzzzzzvvzzzzzzw.yc
+@.wzzzzzv1.11vzzzzw.yc
+cy.wzzzv.c++c.vzzzzw.c
+cy.wzzz.ccSScc1zzzzw2c
+cy2wzzv.+STTS+.vzzw1yc
+c.wzzzv.+STTS+.vzzw.yc
+c.wzzzz1ccSScc.zzzw.yc
+c.wzzzzv.c++c.vzzzzw.c
+c.wzzzzzv11.1vzzzzzw.@
+cy2wzzzzzzvvzzzzzzw.yc
+ccy1wzzzzzzzzzzzzw1ycc
+ ccy.wzzzzzwwwwww2ycc
+  cy.wzzwww......ycc
+  cc.www...yyyccccc
+   cy...yyccccc
+   ccc@cccc
+ENDMAP

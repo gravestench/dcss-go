@@ -180,6 +180,32 @@ function triggers.enter(ctx, actor, position)
     end
 end
 
+-- A player-LOS source marker watches its final transformed cell after a
+-- committed move. The ECS component owns armed state; destroying it after
+-- success keeps save/restore from replaying the callback on re-entry.
+function triggers.player_los(ctx, actor, position)
+    if actor ~= ctx:player() then
+        return
+    end
+
+    for _, entity in ipairs(ctx:query({ component.WORLD_VAULT_TRIGGER })) do
+        local state = ctx:get(entity, component.WORLD_VAULT_TRIGGER)
+
+        if state and state.event == trigger_ids.PLAYER_LOS_EVENT and
+            state.level_id == position.level_id and
+            ctx:visible(state.level_id, position.x, position.y, 7,
+                state.x, state.y) then
+            local identity = trigger_ids.PREFIX .. state.callback_module ..
+                "." .. state.callback_method
+            local _, _, method = callback(identity)
+
+            if method(ctx, state) ~= false then
+                consume(ctx, entity, state, identity)
+            end
+        end
+    end
+end
+
 -- Source monster_on_death markers persist until their callback recognizes
 -- the killed monster. Each armed marker is an ECS entity, so save/restore
 -- preserves which statues have already awakened.

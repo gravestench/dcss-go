@@ -1,0 +1,29 @@
+# nicolae_crypt_twisting_catacombs is a Crypt room eligible at Crypt; its
+# source MAP supplies authored geometry.
+# The source directives keep source selection tags transparent, extra with
+# this map.
+NAME: nicolae_crypt_twisting_catacombs
+TAGS: transparent extra
+DEPTH: Crypt
+SHUFFLE: Aa/Bb/Dd/Ee/Ff/Jj/Hh/Ii, {[(<
+SUBST: ABDE = @, abd = G, efjhi = ., FJHI = c
+MAP
+ccccccccccIIcccccc
+H..h.....iiic..a.A
+H..h........c..a.A
+cccccccc..ccc..ccc
+J....ccc..ccc..ccc
+J....ccc..ccc....c
+cjjccc{....[c....c
+c..ccc......ccc..c
+c.......cc.......c
+c.......cc.......c
+c..ccc......ccc..c
+c....c(....<cccbbc
+c....ccc..ccc....B
+ccc..ccc..ccc....B
+F.f..ccc..cccccccc
+F.f..c......d..ccc
+ccceec......d..ccc
+cccEEccccccccDDccc
+ENDMAP

@@ -1,0 +1,27 @@
+# grunt_crypt_arrival_split is a Crypt room eligible at Crypt:1; its south MAP
+# supplies authored geometry.
+# The source directives keep source selection tags extra, uniq_crypt_arrival
+# with this map.
+NAME:   grunt_crypt_arrival_split
+TAGS:   extra uniq_crypt_arrival no_monster_gen no_trap_gen no_item_gen
+DEPTH:  Crypt:1
+WEIGHT: 30
+ORIENT: south
+MAP
+       .@.
+xxxxxxx+++xxxxxxx
+xxxxx.......xxxxx
+xxG...xxGxx...Gxx
+xx..xxxxxxxxx..xx
+x..xxxxxxxxxxx..x
+x.xxxxxxxxxxxxx.x
+x.VxxxxxxxxxxxV.x
+x.xxxxxxxxxxxxx.x
+x..xxxxxxxxxxx..x
+xx..xGxxGxxGx..xx
+xx.....[.(.....xx
+xxxG....V....Gxxx
+xxxxxG..{..Gxxxxx
+xxxxxxxG.Gxxxxxxx
+xxxxxxxxxxxxxxxxx
+ENDMAP

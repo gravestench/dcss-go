@@ -56,6 +56,11 @@ local source_entries = {
         tag = tags.SPIDER_ENTRY,
         feature = features.ENTER_SPIDER,
     },
+    [branches.BRANCH_CRYPT] = {
+        family = families.CRYPT_ENTRY,
+        tag = tags.CRYPT_ENTRY,
+        feature = features.ENTER_CRYPT,
+    },
     [branches.BRANCH_SNAKE] = {
         family = families.SNAKE_ENTRY,
         tag = tags.SNAKE_ENTRY,

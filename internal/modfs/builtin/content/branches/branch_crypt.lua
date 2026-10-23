@@ -2,6 +2,7 @@
 -- Entry and depth are catalog facts; generated levels and stair links are saved separately.
 
 local categories = require("constants.catalog")
+local families = require("constants.vault_families")
 
 local definition = {
     id = "BRANCH_CRYPT",
@@ -10,6 +11,12 @@ local definition = {
     min_depth = 2,
     max_depth = 3,
     depth = 3,
+    primary_vaults = {
+        {
+            depth = 3,
+            family = families.CRYPT_END,
+        },
+    },
     absolute_depth = 19,
     flags = {
         "dangerous_end",

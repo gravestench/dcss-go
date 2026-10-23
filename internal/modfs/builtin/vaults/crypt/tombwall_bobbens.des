@@ -1,0 +1,18 @@
+# tombwall_bobbens is a Crypt room eligible at Crypt; its source MAP supplies
+# authored geometry.
+# The source directives keep mons choice w:150 zombie / skeletal warrior /
+# ghoul / \ with this map.
+NAME:  tombwall_bobbens
+TAGS:  allow_dup transparent
+DEPTH: Crypt
+MONS:  w:150 zombie / skeletal warrior / ghoul / \
+       large abomination / small abomination / necrophage / \
+       w:150 skeleton / w:30 nothing
+MAP
+ccccccccccccccccccccccc
+ccc1c1c1c1c1c1c1c1c1ccc
+ccc+c+c+c+c+c+c+c+c+ccc
+.......................
+.......................
+.......................
+ENDMAP

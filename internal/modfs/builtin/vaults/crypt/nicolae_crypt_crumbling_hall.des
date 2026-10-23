@@ -1,0 +1,36 @@
+# nicolae_crypt_crumbling_hall is a Crypt room eligible at Crypt; its source
+# MAP supplies authored geometry.
+# The source directives keep source selection tags transparent, no_wall_fixup
+# with this map.
+NAME:  nicolae_crypt_crumbling_hall
+DEPTH: Crypt
+TAGS:  transparent no_wall_fixup
+SUBST: - = x..., _ = x___, . = .:150 0, 0 = 0:90 9:30 8
+TILE:  x = wall_spider
+CLEAR: _
+MAP
+      ............
+      .........-.._
+ _    ..ccc++ccc.._xx_
+ xxx  .-cxxx...c.._xxx_
+ xxxx_-xc-c..c.c.. xxxx
+  _xxxxxx.-..-xx..  xxx
+....-xxxx.c..cxx-...xx-.
+..--xxxxc.x..-xcxx.-xxx.
+.-cxxxxcc.c..c-ccccccc-.
+.xxxxx-...---...-.-..c..
+.xxxc-c.c.c..cxc.c.c.c.-
+.-xx....-...---x--...+..
+..+.-..---...-.xx-...+..
+..c.c.c.c.c.-c.cxc.c-c-.
+..c-.------...-xx-..-cxx_
+..cccxxxxxc-.cxcccccccxx_
+..-xxxxxxx-.x.-c....--xxx_
+..-xxxxxx-c-.c-c......-x_
+   _xxxxx-..x-xc.-x-   _
+    _xxxc.c-.c-c.xxx_
+    xx--cx....-c.-xx
+   xxx..ccc++ccc.-x_
+   xx ..-x-...-..xx
+      ..........xx
+ENDMAP
