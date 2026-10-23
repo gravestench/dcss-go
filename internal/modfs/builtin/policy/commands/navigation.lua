@@ -3,6 +3,8 @@ local catalog = require("policy.catalog")
 local fighter = require("policy.combat.fighter")
 local abyss = require("policy.world.abyss")
 local component = require("constants.component")
+local forms = require("policy.magic.effects.forms.player")
+local confusion = require("policy.magic.player_confusion")
 local terrain = require("constants.terrain")
 local transporters = require("policy.world.transporters")
 local intent_ids = require("constants.intent")
@@ -44,6 +46,16 @@ function navigation.move(ctx, position, dx, dy)
     if rooted(ctx) and not ctx:actor_at(position.level_id, x, y) then
         return {
             message = "Your roots keep you in place.",
+        }
+    end
+
+    -- Source Fungus Form fear prevents walking while watched, but a bump
+    -- attack on the adjacent watcher still proceeds through melee policy.
+    if not confusion.active(ctx, ctx:player()) and
+        forms.nervous(ctx, ctx:player()) and
+        not ctx:actor_at(position.level_id, x, y) then
+        return {
+            message = "You're too terrified to move while being watched!",
         }
     end
 

@@ -5,6 +5,7 @@ local capabilities = require("constants.mutation_capabilities")
 local armour_egos = require("constants.armour_egos")
 local armour_flags = require("constants.armour_flags")
 local component = require("constants.component")
+local form_ids = require("constants.form_ids")
 local spell_ids = require("ids.spells")
 local form_catalog = require("policy.magic.effects.forms.catalog")
 local potion_resistance = require("policy.potions.resistance")
@@ -24,6 +25,7 @@ local form_poison = {
     ice_beast = 1,
     dragon = 1,
     tree = 1,
+    [form_ids.FUNGUS] = 1,
 }
 
 -- Example: resistance.poison(ctx, player) with Gargoyle player -> poison immunity

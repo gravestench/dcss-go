@@ -3,6 +3,7 @@ local abilities = require("ids.abilities")
 local form_ids = require("constants.form_ids")
 local jewellery_slots = require("constants.jewellery_slots")
 local component = require("constants.component")
+local categories = require("constants.catalog")
 local terrain_ids = require("constants.terrain")
 local size = require("constants.size")
 local catalog = require("policy.magic.effects.forms.catalog")
@@ -307,6 +308,8 @@ function forms.cast(ctx, player, spell_id, power, duration_aut)
     if previous then
         if previous.id == "appendage" then
             appendage_message(ctx, existing.appendage_mask, true)
+        elseif previous.id == form_ids.FUNGUS then
+            ctx:emit("duration", "You stop sporulating.")
         else
             ctx:emit("duration", "Your transformation has ended.")
         end
@@ -454,12 +457,81 @@ function forms.finish(ctx, player)
         ctx:emit("duration", "You feel less batty.")
     elseif active.form_id == "tree" then
         ctx:emit("duration", "You feel less wooden.")
+    elseif active.form_id == form_ids.FUNGUS then
+        ctx:emit("duration", "You stop sporulating.")
     else
         ctx:emit("duration", "Your transformation has ended.")
     end
 
     ctx:remove(player, component.PLAYER_FORM)
     forms.rescale_health(ctx, player, base_hp(ctx, player))
+end
+
+-- A Fungus body freezes when an alert hostile is in sight. This is a live
+-- query, not a saved timer: confusion, sleep, allegiance, or moving a monster
+-- can immediately free the player without a separate cleanup event.
+function forms.nervous(ctx, player)
+    local active = ctx:get(player, component.PLAYER_FORM)
+
+    if not active or active.remaining_aut <= 0 or
+        active.form_id ~= form_ids.FUNGUS then
+        return false
+    end
+
+    local origin = ctx:get(player, component.POSITION)
+    local attitudes = require("constants.attitude")
+    local targets = require("policy.ai.targets")
+    local senses = require("policy.character.senses")
+    local vision = require("policy.character.vision")
+    local monster_flags = require("constants.monster_flags")
+    local behaviors = require("constants.ai_behaviors")
+
+    for _, monster in ipairs(ctx:query({
+        component.ACTOR,
+        component.POSITION,
+        component.HEALTH,
+    })) do
+        if monster ~= player then
+            local position = ctx:get(monster, component.POSITION)
+            local health = ctx:get(monster, component.HEALTH)
+            local distance = math.max(math.abs(position.x - origin.x),
+                math.abs(position.y - origin.y))
+            local asleep = ctx:get(monster, component.MONSTER_STASIS)
+            local confused = ctx:get(monster, component.MONSTER_CONFUSION)
+            local paralysed = ctx:get(monster, component.PARALYSIS)
+            local ai = ctx:get(monster, component.AI)
+
+            if position.level_id == origin.level_id and
+                distance <= vision.radius(ctx, player) and
+                health.current > 0 and
+                targets.attitude(ctx, monster) == attitudes.HOSTILE and
+                not (asleep and asleep.hibernating) and
+                not (asleep and asleep.petrified_aut > 0) and
+                not (confused and confused.remaining_aut > 0) and
+                not (paralysed and paralysed.remaining_aut > 0) and
+                not (ai and (ai.behavior == behaviors.WANDER or
+                    ai.behavior == behaviors.SLEEP)) and
+                senses.player_sees_actor(ctx, monster) then
+                local actor = ctx:get(monster, component.ACTOR)
+                local definition = character_catalog.get(categories.MONSTERS,
+                    actor.kind_id)
+                local harmless = false
+
+                for _, flag in ipairs(definition.flags or {}) do
+                    if flag == monster_flags.NO_THREAT then
+                        harmless = true
+                        break
+                    end
+                end
+
+                if not harmless then
+                    return true
+                end
+            end
+        end
+    end
+
+    return false
 end
 
 -- Reject ending a form if the original body would die on the current terrain.
@@ -607,6 +679,27 @@ function forms.unarmed_base(ctx, player)
     end
 
     return 2 + quotient
+end
+
+-- These animal and insubstantial bodies cannot train useful human fists.
+-- Source player::form_uses_xl substitutes XL for Unarmed Combat in their
+-- accuracy and damage calculations; Vampire Bat is the exception. Attack
+-- timing still belongs to the broader action-delay port.
+function forms.uses_level(ctx, player)
+    local active = ctx:get(player, component.PLAYER_FORM)
+
+    if not active or active.remaining_aut <= 0 then
+        return false
+    end
+
+    if active.form_id == form_ids.BAT then
+        return mutation_levels.effective(ctx, player,
+            mutations.MUT_VAMPIRISM) < 2
+    end
+
+    return active.form_id == form_ids.WISP or
+        active.form_id == form_ids.FUNGUS or
+        active.form_id == form_ids.PIG
 end
 
 local blocked = {

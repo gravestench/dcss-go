@@ -52,6 +52,32 @@ local forms = {
         swim = "forbid",
         can_bleed = true,
     },
+    -- Source Fungus Form is a tiny, armed-free body with permanent poison
+    -- resistance, full negative resistance, and confusing melee spores.
+    -- Terror and spores are projected by the form owner while this profile
+    -- supplies ordinary equipment, health, and combat calculations.
+    [form_ids.FUNGUS] = {
+        id = form_ids.FUNGUS,
+        size = size.TINY,
+        keeps_mutations = false,
+        description = "a sentient fungus",
+        base_turns = 15,
+        scale = "one_and_half",
+        max_turns = 100,
+        strength = 0,
+        dexterity = 0,
+        hp_tenths = 10,
+        ac_flat = 12,
+        ac_power = 0,
+        res_fire = 0,
+        res_cold = 0,
+        unarmed_base = 12,
+        spell_penalty = 0,
+        blocks = "physical",
+        flight = "default",
+        swim = "forbid",
+        can_bleed = true,
+    },
     -- Source: form-data.h:transformation::tree.
     [items.POT_LIGNIFY] = {
         id = "tree",

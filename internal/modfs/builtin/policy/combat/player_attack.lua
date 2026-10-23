@@ -67,7 +67,11 @@ function player_attack.contact(ctx, input)
     end
 
     if not input.using_weapon then
-        hit_base = hit_base + 2
+        -- Source form_uses_xl substitutes XL without the ordinary +2
+        -- bare-fist bonus; weapon100 already holds the XL contribution.
+        if not input.form_uses_level then
+            hit_base = hit_base + 2
+        end
     else
         hit_base = hit_base + input.weapon_hit + input.weapon_plus
     end
@@ -111,12 +115,18 @@ function player_attack.damage(ctx, input)
     local potential = input.weapon_damage
 
     if input.unarmed then
-        potential = forms.unarmed_base(ctx, ctx:player()) +
-            math.floor(input.unarmed256 / 256)
-        local remainder = input.unarmed256 % 256
+        potential = forms.unarmed_base(ctx, ctx:player())
 
-        if remainder ~= 0 and roll.melee(ctx, 256) < remainder then
-            potential = potential + 1
+        if input.form_uses_level then
+            potential = potential + roll.random_divide(ctx,
+                input.unarmed_level, 3)
+        else
+            potential = potential + math.floor(input.unarmed256 / 256)
+            local remainder = input.unarmed256 % 256
+
+            if remainder ~= 0 and roll.melee(ctx, 256) < remainder then
+                potential = potential + 1
+            end
         end
     end
 

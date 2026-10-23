@@ -8,6 +8,7 @@ local forms = {
     WISP = "wisp",
     STORM = "storm",
     BAT = "bat",
+    FUNGUS = "fungus",
     PIG = "pig",
     SPIDER = "spider",
     DRAGON = "dragon",

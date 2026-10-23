@@ -16,6 +16,7 @@ local component = require("constants.component")
 local rage = require("policy.character.rage")
 local ammunition = require("ids.ammunition")
 local weapon_brands = require("constants.weapon_brands")
+local form_ids = require("constants.form_ids")
 local staves = require("policy.inventory.staves")
 local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
@@ -169,7 +170,22 @@ function fighter.attack(ctx, defender)
         input.weapon100 = fighter.skill(ctx, input.weapon_skill, 100)
         input.weapon50 = fighter.skill(ctx, input.weapon_skill, 50)
         input.unarmed256 = fighter.skill(ctx, input.weapon_skill, 256)
-        input.weapon_brand = weapon_brands.NORMAL
+        input.form_uses_level = forms.uses_level(ctx, player)
+
+        if input.form_uses_level then
+            local progress = required(ctx, player, component.PROGRESSION)
+
+            input.weapon100 = progress.level * 100
+            input.unarmed_level = progress.level
+        end
+
+        local form = ctx:get(player, component.PLAYER_FORM)
+
+        -- Fungus has no usable weapon, so its unarmed contact inherits the
+        -- source form's confusing spores instead of a normal weapon brand.
+        input.weapon_brand = form and form.remaining_aut > 0 and
+            form.form_id == form_ids.FUNGUS and
+            weapon_brands.CONFUSE or weapon_brands.NORMAL
     end
 
     return input

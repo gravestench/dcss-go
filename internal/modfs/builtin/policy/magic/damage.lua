@@ -16,6 +16,7 @@ local icy_defense = require("policy.character.icy_defense")
 local cold_blooded = require("policy.character.cold_blooded")
 local monster_health = require("policy.combat.monster_health")
 local component = require("constants.component")
+local form_ids = require("constants.form_ids")
 local potion_resistance = require("policy.potions.resistance")
 local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
@@ -211,7 +212,8 @@ function damage.player_resistance(ctx, player, resistance_id)
         local petrification = ctx:get(player,
             component.PLAYER_PETRIFICATION)
 
-        if active and active.form_id == "lich" then
+        if active and (active.form_id == form_ids.LICH or
+            active.form_id == form_ids.FUNGUS) then
             value = value + 3
         end
 

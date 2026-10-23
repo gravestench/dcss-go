@@ -5,16 +5,20 @@ local channels = require("constants.message_channels")
 local choices = require("constants.mutation_choices")
 local classes = require("constants.mutation_classes")
 local component = require("constants.component")
+local form_ids = require("constants.form_ids")
 local gods = require("constants.gods")
 local streams = require("constants.rng_streams")
 local uses = require("constants.mutation_uses")
 
 local monsters = require("ids.monsters")
+local items = require("ids.items")
+local abilities = require("ids.abilities")
 
 local catalog = require("policy.catalog")
 local contamination = require("policy.magic.contamination")
 local god_gift = require("policy.mutations.god_gift")
 local physiology = require("policy.mutations.physiology")
+local forms = require("policy.magic.effects.forms.player")
 local records = require("policy.mutations.records")
 local summons = require("policy.religion.wrath.summons")
 local transition = require("policy.mutations.transition")
@@ -43,6 +47,40 @@ local slimes = {
     monsters.MONS_AZURE_JELLY,
     monsters.MONS_SLIME_CREATURE,
 }
+
+-- Keep this order: random_choose in the source enumerates these exact five
+-- forms, so changing it changes both probabilities and replayed outcomes.
+local wrath_forms = {
+    abilities.BAT_FORM,
+    form_ids.FUNGUS,
+    form_ids.PIG,
+    items.POT_LIGNIFY,
+    form_ids.WISP,
+}
+
+-- A rejected transformation still consumes the source's power draw. Jiyva
+-- only makes the form uncancellable when the generic transition succeeds.
+local function transform_player(ctx, player)
+    ctx:emit(channels.RELIGION,
+        "Jiyva says: Mutagenic energy floods into your body!")
+
+    local index = ctx:random(streams.CARDS, #wrath_forms) + 1
+    local form_key = wrath_forms[index]
+    local penance = ctx:get(player,
+        component.RELIGION_WORSHIP).penance[gods.JIYVA] or 0
+    local power = roll(ctx, penance) * 2
+
+    if forms.rejection(ctx, player, form_key) then
+        return
+    end
+
+    forms.cast(ctx, player, form_key, power)
+
+    local active = ctx:get(player, component.PLAYER_FORM)
+
+    active.uncancellable = true
+    ctx:set(player, component.PLAYER_FORM, active)
+end
 
 -- Source: god-wrath.cc:_jiyva_mutate_player rolls the count after speaking,
 -- then attempts each bad god-gift mutation even if a previous one fails.
@@ -116,14 +154,14 @@ local function revoke_slime(ctx, player)
 end
 
 -- Keep all three short-circuit one_chance_in draws in source order. The
--- five-form path still needs Fungus Form mechanics; keep it explicit.
+-- five-form path uses the shared form owner for saved state and body rules.
 function jiyva.apply(ctx, player)
     if physiology.can_safely_mutate(ctx, player) and
         ctx:random(streams.CARDS, 7) == 0 then
         mutate_player(ctx, player)
     elseif ctx:random(streams.CARDS, 3) == 0 and
         not (ctx:get(player, component.PLAYER_FORM) or {}).uncancellable then
-        error("unimplemented Jiyva five-form transformation wrath")
+        transform_player(ctx, player)
     elseif ctx:random(streams.CARDS, 3) ~= 0 or
         ctx:get(player, component.RELIGION_WORSHIP).god_id == gods.JIYVA then
         ctx:emit(channels.RELIGION,
