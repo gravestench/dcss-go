@@ -1,5 +1,4 @@
 -- Elemental wrath tests use actual saved summons and fixed card draw gates.
--- Unsupported source effects must stop at their own branch without fallback.
 local component = require("constants.component")
 local fixture = require("tests.monster_ally_support_fixture")
 local gods = require("constants.gods")
@@ -65,7 +64,7 @@ end
 local function qazlal_servants(ctx)
     local player = player_at(ctx, 10, 7)
     local owner = with_draws(fixture.context(ctx, player), {
-        1, 0, 0,
+        0, 1, 0,
     })
     local before = #ctx:query({ component.SUMMON })
 
@@ -82,19 +81,6 @@ local function qazlal_servants(ctx)
     harness.equal(ctx:get(creature, component.SUMMON).expires_aut, 0)
     harness.equal(owner:bounds()[1], 2)
     harness.equal(owner:bounds()[2], 2)
-end
-
--- The temporary mutation draw must fail at the branch gate because the
--- shared mutation owner cannot express the source god-gift protection.
-local function qazlal_mutation_gap(ctx)
-    local player = player_at(ctx, 20, 7)
-    local owner = with_draws(fixture.context(ctx, player), { 1, 1 })
-    local ok, message = pcall(qazlal.apply, owner, player)
-
-    harness.falsy(ok)
-    harness.truthy(string.find(message, "god-gift temporary mutation", 1,
-        true))
-    harness.equal(#owner:bounds(), 2)
 end
 
 -- Both fire elemental placements write permanent Ignis summons; a final
@@ -155,7 +141,6 @@ end
 -- summon cannot satisfy a later god attribution assertion.
 function test.run(ctx)
     qazlal_servants(ctx)
-    qazlal_mutation_gap(ctx)
     ignis_servants(ctx)
     ignis_gaps(ctx)
     vehumet_gap()

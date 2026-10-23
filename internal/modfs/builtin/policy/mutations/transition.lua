@@ -8,6 +8,7 @@ local effects = require("policy.mutations.effects.registry")
 local resistance = require("policy.mutations.effects.mutation_resistance")
 local selection = require("policy.mutations.selection")
 local choices = require("constants.mutation_choices")
+local uses = require("constants.mutation_uses")
 local stat_loss = require("policy.character.stat_loss")
 local evolution = require("policy.mutations.evolution")
 local messages = require("policy.mutations.messages")
@@ -225,7 +226,15 @@ function transition.grant_random(ctx, owner, choice, class, forced, progress)
         return transition.remove_random(ctx, owner, choices.ANY, forced)
     end
 
-    local mutation_id = selection.choose(ctx, owner, choice, class)
+    local mutation_id
+
+    -- Source concretize_mut sends Qazlal's category straight to one use-pool
+    -- draw. Unlike BAD, it does not retry a capped or incompatible result.
+    if choice == choices.QAZLAL then
+        mutation_id = selection.weighted(ctx, uses.QAZLAL)
+    else
+        mutation_id = selection.choose(ctx, owner, choice, class)
+    end
 
     if not mutation_id then
         return { kind = "blocked" }

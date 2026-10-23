@@ -1,10 +1,13 @@
 -- Qazlal's thunder precedes either elemental servants or temporary
 -- vulnerability. Servants use the shared population and god-summon owners.
 local component = require("constants.component")
+local classes = require("constants.mutation_classes")
+local choices = require("constants.mutation_choices")
 local curves = require("constants.population_curves")
 local gods = require("constants.gods")
 local channels = require("constants.message_channels")
 local monsters = require("ids.monsters")
+local god_gift = require("policy.mutations.god_gift")
 local noise = require("policy.world.noise")
 local pool = require("policy.population.pool")
 local streams = require("constants.rng_streams")
@@ -74,19 +77,33 @@ local function summon_elementals(ctx, player, level)
         "Qazlal fails to incite the elements against you.")
 end
 
--- The first coinflip may emit noise even if the second draw selects the
--- unsupported mutation branch. Do not approximate the god-gift resistance
--- rule with transition.grant_random's ordinary or forced protection path.
--- The summon branch then delegates level-weighted choice and saved bodies.
+-- Source: god-wrath.cc:_qazlal_elemental_vulnerability announces success
+-- for mutation, conflict trade, or unsafe-body decomposition. All other
+-- results use the failed message after the mutation owner's ordered draws.
+local function elemental_vulnerability(ctx, player)
+    local result = god_gift.grant_random(ctx, player, choices.QAZLAL,
+        classes.TEMPORARY)
+    local success = result.kind == "granted" or
+        result.kind == "traded" or result.kind == "decomposed"
+
+    ctx:emit(channels.RELIGION, success and
+        "Qazlal strips away your elemental protection." or
+        "Qazlal fails to strip away your elemental protection.")
+end
+
+-- Source coinflip is bool(random2(2)): a one emits thunder and a one
+-- summons servants. The zero second draw takes the mutation branch.
 function qazlal.apply(ctx, player)
-    if ctx:random(streams.CARDS, 2) == 0 then
+    if ctx:random(streams.CARDS, 2) ~= 0 then
         ctx:emit(channels.RELIGION,
             "Qazlal causes a mighty clap of thunder!")
         noise.emit(ctx, ctx:get(player, component.POSITION), 25, player)
     end
 
-    if ctx:random(streams.CARDS, 2) ~= 0 then
-        error("unimplemented Qazlal god-gift temporary mutation wrath")
+    if ctx:random(streams.CARDS, 2) == 0 then
+        elemental_vulnerability(ctx, player)
+
+        return true
     end
 
     local level = math.max(1,

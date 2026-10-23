@@ -3,6 +3,7 @@
 local categories = require("constants.catalog")
 local channels = require("constants.message_channels")
 local choices = require("constants.mutation_choices")
+local classes = require("constants.mutation_classes")
 local component = require("constants.component")
 local gods = require("constants.gods")
 local streams = require("constants.rng_streams")
@@ -12,6 +13,7 @@ local monsters = require("ids.monsters")
 
 local catalog = require("policy.catalog")
 local contamination = require("policy.magic.contamination")
+local god_gift = require("policy.mutations.god_gift")
 local physiology = require("policy.mutations.physiology")
 local records = require("policy.mutations.records")
 local summons = require("policy.religion.wrath.summons")
@@ -41,6 +43,18 @@ local slimes = {
     monsters.MONS_AZURE_JELLY,
     monsters.MONS_SLIME_CREATURE,
 }
+
+-- Source: god-wrath.cc:_jiyva_mutate_player rolls the count after speaking,
+-- then attempts each bad god-gift mutation even if a previous one fails.
+local function mutate_player(ctx, player)
+    ctx:emit(channels.RELIGION, "Jiyva says: You feel Jiyva alter your body.")
+
+    local count = 1 + ctx:random(streams.CARDS, 3)
+
+    for _ = 1, count do
+        god_gift.grant_random(ctx, player, choices.BAD, classes.ACQUIRED)
+    end
+end
 
 -- The source chooses one creature before every placement attempt, even
 -- when a blocked cell prevents it from arriving. The summon owner saves
@@ -102,12 +116,11 @@ local function revoke_slime(ctx, player)
 end
 
 -- Keep all three short-circuit one_chance_in draws in source order. The
--- mutation and five-form paths need god-gift and Fungus Form mechanics;
--- explicit errors preserve the selected punishment until those exist.
+-- five-form path still needs Fungus Form mechanics; keep it explicit.
 function jiyva.apply(ctx, player)
     if physiology.can_safely_mutate(ctx, player) and
         ctx:random(streams.CARDS, 7) == 0 then
-        error("unimplemented Jiyva god-gift bad mutation wrath")
+        mutate_player(ctx, player)
     elseif ctx:random(streams.CARDS, 3) == 0 and
         not (ctx:get(player, component.PLAYER_FORM) or {}).uncancellable then
         error("unimplemented Jiyva five-form transformation wrath")
@@ -125,7 +138,7 @@ function jiyva.apply(ctx, player)
         summon_slimes(ctx, player)
     end
 
-    if ctx:random(streams.CARDS, 2) == 0 then
+    if ctx:random(streams.CARDS, 2) ~= 0 then
         revoke_slime(ctx, player)
     end
 
