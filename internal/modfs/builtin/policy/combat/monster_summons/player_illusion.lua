@@ -2,6 +2,8 @@
 -- combat body. The player can change after this cast without changing it.
 -- Source: mon-clone.cc:mons_summon_illusion_from and ghost.cc:init_player_ghost.
 local catalog = require("policy.catalog")
+local attitudes = require("constants.attitude")
+local categories = require("constants.catalog")
 local component = require("constants.component")
 local equipment = require("policy.combat.equipment")
 local failure = require("policy.magic.failure")
@@ -360,14 +362,20 @@ end
 
 -- The generic summon owner places the body beside Mara and owns lifetime,
 -- allegiance, energy, and expiry. The ghost snapshot owns its combat rules.
-function illusion.spawn(ctx, caster, player)
+local function spawn_from(ctx, caster, player, source_id, degree,
+    options)
     local profile = illusion.capture(ctx, player)
     local actor = summons.spawn(ctx, caster,
-        spell_ids.SPELL_SUMMON_ILLUSION,
-        monsters.MONS_PLAYER_ILLUSION, DURATION, nil, {
+        source_id, monsters.MONS_PLAYER_ILLUSION, degree, nil, {
             hp = profile.hp,
             hd = profile.hd,
-            attitude = targets.attitude(ctx, caster),
+            attitude = options and options.attitude or
+                targets.attitude(ctx, caster),
+            source_category = options and options.source_category or
+                categories.SPELLS,
+            stream = options and options.stream or
+                streams.MONSTER_SPELL,
+            silent_failure = options and options.silent_failure or false,
         })
 
     if not actor then
@@ -380,6 +388,30 @@ function illusion.spawn(ctx, caster, player)
     copy_statuses(ctx, player, actor)
 
     return actor
+end
+
+-- Mara's ordinary spell retains its six-degree source duration. Sharing
+-- capture and placement with the card keeps one saved ghost-body format.
+function illusion.spawn(ctx, caster, player)
+    return spawn_from(ctx, caster, player,
+        spell_ids.SPELL_SUMMON_ILLUSION, DURATION)
+end
+
+-- The Illusion card copies the player, but its source abjuration is only
+-- two plus a tier-bound draw. Card ownership and RNG stay on the card stream.
+function illusion.spawn_card(ctx, player, card_id, tier)
+    local degree = 2
+
+    if tier > 0 then
+        degree = degree + ctx:random(streams.CARDS, tier)
+    end
+
+    return spawn_from(ctx, player, player, card_id, degree, {
+        attitude = attitudes.FRIENDLY,
+        source_category = categories.CARDS,
+        stream = streams.CARDS,
+        silent_failure = true,
+    })
 end
 
 return illusion

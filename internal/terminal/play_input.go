@@ -257,6 +257,11 @@ func (m *AppModel) stepPlayCommand(command game.Command) tea.Cmd {
 	m.notice = ""
 
 	if result.Selection != nil {
+		// A choice is a new input step. The answer to the previous prompt
+		// must not become the answer to this one after a replay.
+		command.TargetID = ""
+		command.Cancelled = false
+		command.Forced = false
 		m.pendingAction = command
 		m.pendingSelection = result.Selection
 
@@ -271,6 +276,8 @@ func (m *AppModel) stepPlayCommand(command game.Command) tea.Cmd {
 
 	if result.Confirmation != "" {
 		command.TargetID = result.ConfirmationTarget
+		command.Cancelled = false
+		command.Forced = false
 		m.pendingAction = command
 		m.pendingActionPrompt = result.Confirmation
 		m.openScreen(ScreenActionConfirm)

@@ -18,6 +18,8 @@ function registry.add(id, definition)
         type(definition.prepare) ~= "function" or
         type(definition.resolve) ~= "function" or
         (definition.available and type(definition.available) ~= "function") or
+        (definition.owns_cancellation ~= nil and
+            type(definition.owns_cancellation) ~= "boolean") or
         (definition.confirmation_needed and
             type(definition.confirmation_needed) ~= "function") or
         (definition.confirmation_message and

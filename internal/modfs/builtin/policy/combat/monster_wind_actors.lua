@@ -44,12 +44,12 @@ end
 
 -- Distance, power, and body size independently change the number of
 -- attempted outward steps. A zero result leaves the actor in place.
-local function push_distance(ctx, source, entity, power)
+local function push_distance(ctx, source, entity, power, stream)
     local bound = math.floor(power / 20)
     local distance = 1
 
     if bound > 0 then
-        distance = distance + ctx:random(streams.MONSTER_SPELL, bound)
+        distance = distance + ctx:random(stream, bound)
     end
 
     local rank = dislodge.body_rank(ctx, entity)
@@ -160,9 +160,9 @@ end
 
 -- Follow the outward ray and try same-radius neighboring cells when its
 -- next cell is blocked. Record an unresolved obstruction for collision.
-local function push_one(ctx, caster, source, candidate, power)
+local function push_one(ctx, caster, source, candidate, power, stream)
     local entity = candidate.entity
-    local remaining = push_distance(ctx, source, entity, power)
+    local remaining = push_distance(ctx, source, entity, power, stream)
     local moved = false
     local blocked
 
@@ -207,7 +207,7 @@ local function push_one(ctx, caster, source, candidate, power)
             -- Source check_speed clamps a negative speed_increment at
             -- the next actor check. Keep the saved ECS value valid now.
             energy.points = math.max(0, energy.points - 4 -
-                ctx:random(streams.MONSTER_SPELL, 6))
+                ctx:random(stream, 6))
             ctx:set(entity, component.MONSTER_ENERGY, energy)
         end
     end
@@ -216,15 +216,15 @@ local function push_one(ctx, caster, source, candidate, power)
 end
 
 -- Armour is rolled separately for each body struck in a collision.
-local function collision_damage(ctx, caster, victim, power)
+local function collision_damage(ctx, caster, victim, power, stream)
     if has_flag(ctx, victim, flags.INSUBSTANTIAL) or
         has_flag(ctx, victim, flags.PROJECTILE) then
         return
     end
 
     local sides = 1 + math.floor(power / 10)
-    local raw = 2 + ctx:random(streams.MONSTER_SPELL, sides) +
-        ctx:random(streams.MONSTER_SPELL, sides)
+    local raw = 2 + ctx:random(stream, sides) +
+        ctx:random(stream, sides)
     local armour
 
     if ctx:has(victim, component.PLAYER) then
@@ -237,7 +237,7 @@ local function collision_damage(ctx, caster, victim, power)
     end
 
     local amount = math.max(0,
-        raw - ctx:random(streams.MONSTER_SPELL, armour + 1))
+        raw - ctx:random(stream, armour + 1))
 
     if ctx:has(victim, component.PLAYER) then
         player_health.damage(ctx, victim, amount, false, caster)
@@ -247,8 +247,10 @@ local function collision_damage(ctx, caster, victim, power)
 end
 
 -- A collision with another actor hurts both; a wall hurts only the
--- pushed actor. Damage waits until all pushes and cloud movement end.
-function actors.collisions(ctx, caster, blocked, power)
+-- pushed actor. Callers may use their own stream for the physical rolls.
+function actors.collisions(ctx, caster, blocked, power, stream)
+    stream = stream or streams.MONSTER_SPELL
+
     for _, contact in ipairs(blocked) do
         local victim = contact.entity
         local health = ctx:get(victim, component.HEALTH)
@@ -268,14 +270,14 @@ function actors.collisions(ctx, caster, blocked, power)
                         display.name(ctx, victim) ..
                         " collides with the " ..
                         display.name(ctx, other) .. "!")
-                    collision_damage(ctx, caster, other, power)
+                    collision_damage(ctx, caster, other, power, stream)
                 else
                     ctx:emit("combat", "The " ..
                         display.name(ctx, victim) ..
                         " slams into an obstruction!")
                 end
 
-                collision_damage(ctx, caster, victim, power)
+                collision_damage(ctx, caster, victim, power, stream)
             end
         end
     end
@@ -295,14 +297,17 @@ function actors.land(ctx, moved)
 end
 
 -- Return deferred collision and landing lists to the spell coordinator.
-function actors.push(ctx, caster, source, aim, radius, power)
+-- Ordinary spells keep MONSTER_SPELL; card effects may supply CARDS.
+function actors.push(ctx, caster, source, aim, radius, power, stream)
+    stream = stream or streams.MONSTER_SPELL
+
     local moved = {}
     local blocked = {}
 
     for _, candidate in ipairs(candidates(ctx, caster,
         source, aim, radius)) do
         local did_move, obstacle = push_one(ctx, caster, source,
-            candidate, power)
+            candidate, power, stream)
 
         if did_move then
             moved[#moved + 1] = candidate

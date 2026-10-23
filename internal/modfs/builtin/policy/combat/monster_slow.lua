@@ -3,35 +3,39 @@ local monster_stats = require("policy.combat.monster_stats")
 local senses = require("policy.character.senses")
 local vault_enchantments = require("policy.monsters.vault_enchantments")
 local enchantments = require("constants.vault_monster_enchantments")
+local streams = require("constants.rng_streams")
 
 local slow = {}
 
 -- Roll duration using pre-slow speed so a second slow does not amplify itself.
-local function duration(ctx, speed, hit_dice)
+local function duration(ctx, speed, hit_dice, stream)
     -- mon-ench.cc,2379-2384 computes ENCH_SLOW duration before changing
     -- the monster's speed, then applies the asymmetric duration fuzz.
     local modified_speed = math.max(1,
         math.floor((hit_dice + 10) * 10 / math.max(1, speed)))
     local centiturns = math.max(2, math.floor(250 / (1 + modified_speed)))
-    local speed_duration = roll.random_divide(ctx, 100, speed)
+    local speed_duration = roll.random_divide(ctx, 100, speed, stream)
     local raw = centiturns * speed_duration
     local low = math.floor(60 * raw / 100)
     local high = math.floor(40 * raw / 100)
     local spread = low + high + 1
-    local fuzz = roll.average_two(ctx, "melee", spread)
+    local fuzz = roll.average_two(ctx, stream, spread)
 
     return math.max(15, raw + fuzz - low)
 end
 
 -- Save original speed once and extend aut without compounding the speed
 -- change. Direct speed-draining melee supplies its source strength in aut;
--- spell Slow still rolls the ordinary HD and speed duration.
-function slow.apply(ctx, monster, definition, fixed_aut)
+-- spell Slow still rolls the ordinary HD and speed duration. Card effects
+-- supply their own stream without changing ordinary melee callers.
+function slow.apply(ctx, monster, definition, fixed_aut, stream)
+    stream = stream or streams.MELEE
+
     local current = ctx:get(monster, "projectile.slow")
     local actor = ctx:get(monster, "core.actor")
     local base_speed = current and current.base_speed or actor.speed
     local added_aut = fixed_aut or duration(ctx, base_speed,
-        monster_stats.hit_dice(ctx, monster, definition))
+        monster_stats.hit_dice(ctx, monster, definition), stream)
 
     if current then
         current.remaining_aut = current.remaining_aut + added_aut
@@ -41,7 +45,7 @@ function slow.apply(ctx, monster, definition, fixed_aut)
     end
 
     -- monster.cc applies haste_div(speed) for ENCH_SLOW.
-    actor.speed = roll.random_divide(ctx, base_speed * 2, 3)
+    actor.speed = roll.random_divide(ctx, base_speed * 2, 3, stream)
     ctx:set(monster, "core.actor", actor)
     ctx:add(monster, "projectile.slow", {
         base_speed = base_speed,

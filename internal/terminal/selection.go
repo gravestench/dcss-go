@@ -49,6 +49,10 @@ func (m *AppModel) applySelectionDecision(
 
 	command := m.pendingAction
 
+	command.TargetID = ""
+	command.Cancelled = false
+	command.Forced = false
+
 	if action == "selection_cancel" {
 		command.Cancelled = true
 	} else {

@@ -4,7 +4,7 @@ local component = require("constants.component")
 
 local schema = {
     id = component.RELIGION_NEMELEX_DECKS,
-    version = 1,
+    version = 3,
     fields = {
         counts = {
             type = "map<string,int64>",
@@ -34,6 +34,18 @@ local schema = {
         pending_selected = {
             type = "int64",
             default = 0,
+        },
+        -- Source rolls invocation failure before opening deck prompts.
+        -- Saving the result prevents a restored choice from rerolling it.
+        pending_failed = {
+            type = "bool",
+            default = false,
+        },
+        -- A targeted card's source tier is rolled before its aim prompt.
+        -- Minus one means that this card has not sampled a tier yet.
+        pending_tier = {
+            type = "int64",
+            default = -1,
         },
     },
 }

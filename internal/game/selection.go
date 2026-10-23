@@ -32,7 +32,7 @@ func selectionFromDecision(value any) (*SelectionRequest, error) {
 	}
 
 	switch kind {
-	case "item", "spell", "cell", "offer":
+	case "item", "spell", "cell", "offer", "card":
 
 	default:
 		return nil, fmt.Errorf("Lua selection has unknown kind %q", kind)

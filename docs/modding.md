@@ -1602,10 +1602,35 @@ that registers one definition with an ID from `ids.cards` (or a new ID
 in the mod's own `ids` module), a display name, an effect module, and
 positive integer `deck_weights` keyed by `ids.decks`. Import the new ID
 in both the definition and its effect module. The named effect module
-will implement the card when draw actions are ported. Weighted selection
+exports `apply(ctx, player, request)` and returns an optional prompt.
+`ctx` is the same live game context described in
+[the context reference](#the-game-context-ctx); the player is an ECS entity,
+not a second mutable player table. Weighted selection
 traverses the effective card catalog by stable ID, independent of filename
 or mod layer load order. Save restore reports a missing mod card ID rather
 than replacing a previously sampled card.
+
+The four Lua ability owners implement Draw, Triple Draw, Deal Four, and
+Stack Five. They save sampled IDs and the current choice phase on that
+same player component before asking the terminal for another input.
+The Go client renders the returned selection or confirmation; it does
+not choose a card or roll an effect. A drawn card is already spent while
+the player aims it. Cancelling aim asks whether to waste that card;
+declining the warning returns to the same aim with the same saved tier.
+This is why an effect must not sample a second card or reroll its tier.
+
+An effect receives `request.power`, the source Nemelex power calculated
+once for the play, and `request.tier` when its module sets `uses_tier = true`.
+The tier is an integer from zero through two. It also receives `dealt`,
+`punishment`, `dx`, `dy`, `target_id`, and `target_phase` when relevant.
+For aimed effects, `policy.religion.cards.effects.targeted.aim` returns
+the chosen direction or a `selection` prompt. Check `target_phase` before
+applying any pre-aim effect that must happen only once, as Vitriol does.
+Use `constants.rng_streams.CARDS` for card-owned draws; pass that stream to
+shared status and summon policies when they support it. A new card that
+needs a durable timer or actor should write a registered ECS component
+through the existing world, combat, or magic owner rather than retaining
+state in a Lua module variable.
 
 `systems/religion_upkeep.lua` advances the player-owned god-time clock after
 timed actions. The first check is at 200 aut; later checks are 100–300 aut

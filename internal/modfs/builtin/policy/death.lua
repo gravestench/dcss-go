@@ -4,6 +4,7 @@ local item_use = require("constants.monster_item_use")
 local books = require("ids.monster_spellbooks")
 local spell_weights = require("data.monster_spell_xp")
 local component = require("constants.component")
+local constructs = require("constants.monster_construct_components")
 local origin_policy = require("policy.population.origin")
 local item_ids = require("ids.items")
 
@@ -91,6 +92,8 @@ end
 -- Death releases carried entities at the monster's last position before a corpse may occupy that tile.
 function death.drop_inventory(ctx, monster, position)
     local dropped = {}
+    local dissolving_weapon = ctx:has(monster,
+        constructs.DANCING_WEAPON)
 
     for _, item in ipairs(ctx:query({ "core.carried_by" })) do
         local carrier = ctx:get(item, "core.carried_by")
@@ -100,16 +103,23 @@ function death.drop_inventory(ctx, monster, position)
                 error("monster " .. ctx:id(monster) .. " has invalid carried item " .. ctx:id(item))
             end
 
-            local equipped = ctx:get(item, component.EQUIPPED)
+            -- Source MF_HARD_RESET destroys a dancing weapon and its
+            -- temporary item together. In particular, a card randart
+            -- must never become permanent loot when its dancer dies.
+            if dissolving_weapon then
+                ctx:destroy(item)
+            else
+                local equipped = ctx:get(item, component.EQUIPPED)
 
-            dropped[#dropped + 1] = {
-                entity = item,
-                slot = equipped and equipped.slot or nil,
-            }
+                dropped[#dropped + 1] = {
+                    entity = item,
+                    slot = equipped and equipped.slot or nil,
+                }
 
-            ctx:remove(item, "core.equipped")
-            ctx:remove(item, "core.carried_by")
-            ctx:add(item, "core.position", position)
+                ctx:remove(item, "core.equipped")
+                ctx:remove(item, "core.carried_by")
+                ctx:add(item, "core.position", position)
+            end
         end
     end
 

@@ -15,6 +15,15 @@ function abilities.prepare(ctx, player, input)
 
     local rejection = definition.prepare(ctx, player, input)
 
+    -- A replayed cancellation gives an ability a chance to clear its saved
+    -- prompt. Ordinary confirmations need no cleanup and simply end here.
+    if input.cancelled and not definition.owns_cancellation and
+        (rejection == nil or
+            (type(rejection) == "table" and
+                rejection.confirmation)) then
+        return { message = "Okay." }
+    end
+
     -- An ability may request another free confirmation before it creates an
     -- intent. Renunciation uses two source prompts with one shared bridge.
     if type(rejection) == "table" then

@@ -8,6 +8,9 @@ local vampire = require("policy.character.vampire")
 local component = require("constants.component")
 local commands = require("policy.input.commands")
 local registry = require("policy.commands.registry")
+local nemelex = require("policy.abilities.nemelex")
+local card_operations = require("constants.card_operations")
+local card_state = require("policy.religion.cards.state")
 
 -- Prepare accepted intents before timing; explicit cancellation may still clear an active delay.
 local function prepare_raw(ctx, input)
@@ -18,6 +21,19 @@ local function prepare_raw(ctx, input)
         return {
             message = "You die.",
             event_kind = "death",
+        }
+    end
+
+    -- A sampled card is already spent. Complete its saved prompt before
+    -- another command can change the world or consume a second turn.
+    local pending_card = card_state.get(ctx, player)
+
+    if pending_card.pending_kind ~= card_operations.NONE and
+        (input.kind ~= commands.ability or
+            not nemelex.pending_command(ctx, player,
+                input.ability_id)) then
+        return {
+            message = "Finish your pending card action first.",
         }
     end
 

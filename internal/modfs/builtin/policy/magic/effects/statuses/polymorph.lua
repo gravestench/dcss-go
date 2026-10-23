@@ -9,9 +9,17 @@ local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
 local monster_stats = require("policy.combat.monster_stats")
 local streams = require("constants.rng_streams")
+local demon_tiers = require("data.demon_tiers")
 
 local polymorph = {}
 local definitions = catalog.all("monsters")
+local demon_tier_for = {}
+
+for tier, kinds in pairs(demon_tiers) do
+    for _, kind_id in ipairs(kinds) do
+        demon_tier_for[kind_id] = tier
+    end
+end
 
 -- Absent holiness and flag lists cannot grant a catalog trait.
 local function has(values, wanted)
@@ -329,6 +337,62 @@ function polymorph.random_shifter(ctx, target, source, stream)
             transform(ctx, target, source, chosen, source_stream)
 
             return true
+        end
+    end
+
+    return false
+end
+
+-- Degeneration asks for a weaker body, rather than Polymorph's similar
+-- body. Sample the same habitat-safe source species pool and relax the
+-- lower-power window after misses, preserving the shared body transition.
+function polymorph.less(ctx, target, source, stream)
+    if not can_polymorph(source) then
+        return false
+    end
+
+    local position = ctx:get(target, component.POSITION)
+
+    if not position then
+        return false
+    end
+
+    local pool = polymorph.shifter_pool(ctx, position)
+
+    if #pool == 0 then
+        return false
+    end
+
+    local source_stream = stream or streams.SPELL
+    local source_hd = monster_stats.hit_dice(ctx, target, source)
+    local source_tier = demon_tier_for[source.id] or 0
+    local relax = 1
+
+    for _ = 1, 1000 do
+        local chosen = pool[ctx:random(source_stream, #pool) + 1]
+
+        if ctx:random(source_stream, 200) == 0 then
+            relax = relax + 1
+
+            if relax > 50 then
+                return false
+            end
+        end
+
+        local minimum = source_hd - math.floor(relax / 2)
+        local maximum = source_hd - 3 +
+            math.floor(relax * 3 / 2)
+
+        if polymorph.shifter_eligible(ctx, source, chosen, position) and
+            chosen.hd >= minimum and chosen.hd <= maximum then
+            local target_tier = demon_tier_for[chosen.id] or 0
+
+            if source_tier == target_tier or
+                ctx:random(source_stream, 200) < relax then
+                transform(ctx, target, source, chosen, source_stream)
+
+                return true
+            end
         end
     end
 

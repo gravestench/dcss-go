@@ -112,9 +112,18 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 		return m.acceptActionConfirmation()
 
 	case "action_confirm_cancel":
+		command := m.pendingAction
+
 		m.pendingAction = game.Command{}
 		m.pendingActionPrompt = ""
 		m.openScreen(ScreenPlay)
+
+		if command.Kind == game.CommandAbility {
+			command.Forced = false
+			command.Cancelled = true
+
+			return m.stepPlayCommand(command)
+		}
 
 	case "cancel_read_aim":
 		if m.screen != ScreenAim ||
@@ -127,6 +136,7 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 
 		command := m.pendingAction
 
+		command.Forced = false
 		command.Cancelled = true
 		m.pendingAction = game.Command{}
 		m.pendingSelection = nil

@@ -101,6 +101,20 @@ local function can_frenzy(ctx, target, definition)
             stasis.petrified_aut <= 0)
 end
 
+-- Divine wrath and direct monster effects need the body's Berserk gate,
+-- without the AI spell's extra close-foe and teleport preconditions.
+function allegiance.can_berserk(ctx, target)
+    local actor = ctx:get(target, component.ACTOR)
+
+    if not actor then
+        return false
+    end
+
+    local definition = catalog.get("monsters", actor.kind_id)
+
+    return can_frenzy(ctx, target, definition)
+end
+
 -- monster::needs_berserk(false) filters physical incapacity, Teleport,
 -- and distant foes before the AI spends its Rage spell slot. The spell
 -- resolver checks its separate Haste owner before calling this predicate.
@@ -135,7 +149,7 @@ end
 
 -- Intentional Berserker Rage uses the existing saved frenzy/fatigue owner.
 -- The source enchant's 16 + random2avg(13, 2) turns are spent on later actions.
-function allegiance.start_berserk(ctx, target)
+function allegiance.start_berserk(ctx, target, stream)
     local current = ensure(ctx, target)
 
     if current.frenzy_aut > 0 then
@@ -147,7 +161,7 @@ function allegiance.start_berserk(ctx, target)
     frenzy_health.scale(ctx, target, 3, 2)
 
     current.frenzy_aut = (16 +
-        roll.average_two(ctx, "monster_spell", 13)) * 10
+        roll.average_two(ctx, stream or "monster_spell", 13)) * 10
     current.fatigue_aut = 0
     current.berserk_hp = true
     save(ctx, target, current)

@@ -43,6 +43,8 @@ local function empty()
         pending_cards = {},
         pending_target_count = 0,
         pending_selected = 0,
+        pending_failed = false,
+        pending_tier = -1,
     }
 end
 
@@ -87,7 +89,9 @@ local function validate_pending(value)
         if phase ~= card_phases.NONE or value.pending_deck ~= "" or
             #value.pending_cards > 0 or
             value.pending_target_count ~= 0 or
-            value.pending_selected ~= 0 then
+            value.pending_selected ~= 0 or
+            value.pending_failed or
+            value.pending_tier ~= -1 then
             error("inactive card operation has pending values")
         end
 
@@ -110,6 +114,10 @@ local function validate_pending(value)
         value.pending_selected < 0 or
         value.pending_selected > 5 then
         error("invalid pending card choice")
+    end
+
+    if value.pending_tier < -1 or value.pending_tier > 2 then
+        error("invalid pending card power tier")
     end
 end
 

@@ -40,6 +40,8 @@ func (m *AppModel) fireAim() tea.Cmd {
 		command = m.pendingAction
 		command.DX = m.aimX - view.PlayerX
 		command.DY = m.aimY - view.PlayerY
+		command.Cancelled = false
+		command.Forced = false
 		m.pendingAction = game.Command{}
 		m.pendingSelection = nil
 	}

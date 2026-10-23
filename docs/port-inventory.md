@@ -337,9 +337,14 @@ stacks. Each is a positioned ECS item with saved god provenance and its
 own piety and timeout rule. Jiyva now prunes acquired mutation ranks and
 grants four good or slime ranks through the saved mutation ECS records.
 Nemelex now gifts source-weighted counts to three saved player decks,
-including source capacity and cooldown behavior; drawing and resolving
-their cards remains the next card-domain stage. God abilities,
-remaining passives, and wrath execution remain separate religion slices.
+including source capacity and cooldown behavior. Draw, Triple Draw, Deal
+Four, and Stack Five now save their sampled choices, charge source ability
+costs, and resolve Lua card modules through the generic command bridge.
+The 21 active card IDs have effect modules and focused scenarios. Divine
+Wrath's individual god punishments are still being ported; its owner
+reports an eligible god without an implemented handler explicitly.
+Other god abilities, remaining passives, and ordinary timed wrath remain
+separate religion slices.
 Fedhas now neutralises eligible hostile plants as they act, reverses plant
 allegiance across loaded levels on desertion, cancels an active forest on
 joining, and prevents hostile Awaken Forest under its passive. Okawaru now

@@ -275,7 +275,7 @@ end
 -- Source: transform.cc:transform. The caller must perform its generic
 -- terrain, stat-zero, undead and equipment checks before invoking this hook.
 -- Equipment meld is a live projection from the blocked-slot hook below.
-function forms.cast(ctx, player, spell_id, power)
+function forms.cast(ctx, player, spell_id, power, duration_aut)
     local profile = catalog[spell_id]
 
     if not profile then
@@ -283,7 +283,12 @@ function forms.cast(ctx, player, spell_id, power)
     end
 
     local existing, previous = record(ctx, player)
-    local remaining = duration(ctx, profile, power)
+    if duration_aut and
+        (duration_aut % 1 ~= 0 or duration_aut <= 0) then
+        error("form duration must be positive aut")
+    end
+
+    local remaining = duration_aut or duration(ctx, profile, power)
 
     if existing and existing.form_id == profile.id then
         existing.power = power
@@ -385,13 +390,13 @@ function forms.polymorph(ctx, player, power)
 end
 
 -- beam.cc:BEAM_PORKALATOR forces Pig Form and forbids voluntary cancellation.
-function forms.porkalator(ctx, player, power)
+function forms.porkalator(ctx, player, power, duration_aut)
     if not forms.can_polymorph(ctx, player) or
         forms.rejection(ctx, player, form_ids.PIG) then
         return false
     end
 
-    forms.cast(ctx, player, form_ids.PIG, power)
+    forms.cast(ctx, player, form_ids.PIG, power, duration_aut)
     local active = ctx:get(player, component.PLAYER_FORM)
 
     active.uncancellable = true

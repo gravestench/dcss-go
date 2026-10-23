@@ -17,6 +17,15 @@ terminal input and renders Lua screen decisions.
 
 **Spec:** `docs/superpowers/specs/2026-10-23-nemelex-card-domain-design.md`
 
+**Ruling:** The source ability runner completes `_do_ability`, including
+uncancelled card prompts, before it pays costs and ends the turn. This plan
+therefore commits card samples and resolves effects through Lua command
+preparation, then issues one timed ability intent after the final prompt.
+The cost of this choice is that an intermediate save can contain a spent
+card before its turn is charged; restoring that save must resume the
+pending card action before any other command. Source invocation failure
+spends a turn without MP or piety cost and rolls `random2avg(100, 3)`.
+
 ## Global Constraints
 
 - Work in `/Users/dylanknuth/src/dcrawl-go` on `main`; commit each
@@ -104,22 +113,23 @@ new choice/target values need transport. Test in
 
 **Interfaces:** `draw.sample(ctx, deck_id)` selects a card by sorted
 catalog ID and source weight. `operations.prepare(ctx, player, request)`
-returns a no-time rejection, a prompt, or a timed intent. The timed
-`operations.resolve(ctx, player, intent)` updates saved state and either
-returns a completed effect request or a pending choice. A generic
+returns a no-time rejection, prompt, or committed card. Separate action
+modules own Draw, Triple Draw, Deal Four, and Stack Five phases. A generic
 `operations.continue(ctx, player, response)` completes persisted pending
-phases. Ability definitions own rank, MP and piety costs, and source
-failure calculations; generic command timing charges one normal turn.
+phases. Card effects run after sampling and before the one timed intent;
+the timed ability resolution pays successful MP and piety costs. Ability
+definitions own rank and source failure calculations; generic command
+timing charges one normal turn.
 
-- [ ] Test Draw, Triple Draw, Deal Four, Stack Five, stack ordering and
+- [x] Test Draw, Triple Draw, Deal Four, Stack Five, stack ordering and
   deck exhaustion; assert source counts and RNG order.
-- [ ] Test precommit cancellation, pending-phase save and restore,
+- [x] Test precommit cancellation, pending-phase save and restore,
   blocked unrelated actions, ability rank/cost/failure, and terminal
   prompts. Run new tests red.
-- [ ] Implement Lua operations and the minimal generic Go transport and
+- [x] Implement Lua operations and the minimal generic Go transport and
   menu bridge. Keep pending card IDs only in the ECS component.
-- [ ] Run focused Lua/game/terminal tests, build, and changed-file style
-  checks; commit and push the category.
+- [x] Run focused Lua/game/terminal tests, build, and changed-file style
+  checks. Keep this work with Task 4 until drawn cards have real effects.
 
 ### Task 4: All active card effects
 
@@ -143,5 +153,11 @@ mechanics receive their own Lua owner and saved component as needed.
   missing reusable mechanics needed by them.
 - [ ] Run focused Lua/game/terminal tests, `go build ./...`,
   `git diff --check`, and changed-file line limits. Inspect the live
-  deck screens and save/restore. Commit and push the complete effects
-  category.
+  deck screens and save/restore. Commit and push the integrated actions
+  and effects category.
+
+**Current implementation boundary:** All 21 card IDs have Lua effect
+modules. Wrath can select every source god, but nine eligible gods still
+need handlers, and several of the eleven registered handlers explicitly
+reject branches whose shared mechanics are not yet ported. Task 4 stays
+open until those outcomes resolve through source-faithful owners.

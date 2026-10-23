@@ -37,4 +37,17 @@ function holiness.natural(ctx, player)
     return species.undead_type == undead.ALIVE
 end
 
+-- Holy Word and Torment cards use source undead_state(), which treats a
+-- vampire's semi-undead species state as undead and Lich Form as fully
+-- undead. Demonspawn count as demonic even though their base state lives.
+function holiness.undead_or_demonic(ctx, player)
+    local identity = ctx:get(player, component.PLAYER)
+    local species = catalog.get(categories.SPECIES, identity.species_id)
+    local form = ctx:get(player, component.PLAYER_FORM)
+
+    return identity.species_id == species_ids.SP_DEMONSPAWN or
+        species.undead_type ~= undead.ALIVE or
+        form and form.form_id == forms.LICH or false
+end
+
 return holiness

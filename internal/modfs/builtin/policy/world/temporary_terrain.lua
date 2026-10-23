@@ -36,7 +36,7 @@ function terrain.place(ctx, source_actor, source_kind_id,
 
     ctx:set_cell(level_id, x, y, changed_feature)
 
-    return true
+    return true, marker
 end
 
 return terrain

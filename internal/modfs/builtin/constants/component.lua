@@ -50,6 +50,7 @@ local component = {
     CHARACTER_ORIGIN = "character.origin",
     RELIGION_WORSHIP = "religion.worship",
     RELIGION_NEMELEX_DECKS = "religion.nemelex_decks",
+    RELIGION_CARD_ELIXIR = "religion.card_elixir",
     RELIGION_VEHUMET = "religion.vehumet",
     RELIGION_ASHENZARI = "religion.ashenzari",
     RELIGION_RU = "religion.ru",
@@ -182,6 +183,7 @@ local component = {
     -- only the extra state required by a particular summon behavior.
     SUMMON = "magic.summon",
     TEMPORARY_TERRAIN = "world.temporary_terrain",
+    RELIGION_CARD_TOMB = "religion.card_tomb",
     SUMMON_CONSTRUCT = "magic.summon_construct",
     SUMMON_SEGMENT = "magic.summon_segment",
     SUMMON_GATEWAY = "magic.summon_gateway",

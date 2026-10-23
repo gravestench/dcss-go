@@ -212,6 +212,15 @@ end
 function iood.launch(ctx, caster, dx, dy, power, target, stream)
     local origin = ctx:get(caster, component.POSITION)
     local vx, vy = normalized(dx, dy)
+    local aimed = target
+
+    -- A card burst supplies unit vectors and an explicit foe or false.
+    -- Only an ordinary integer cursor with omitted foe may autoacquire.
+    if aimed == nil and dx % 1 == 0 and dy % 1 == 0 then
+        aimed = ctx:actor_at(origin.level_id,
+            origin.x + dx, origin.y + dy)
+    end
+
     local tangent = (ctx:random(stream, 31) - 15) * 0.019 *
         75 / math.max(10, power)
     local off = ctx:random(stream, 2) == 0 and -0.25 or 0.25
@@ -222,8 +231,7 @@ function iood.launch(ctx, caster, dx, dy, power, target, stream)
         vy = vy - vx * tangent,
         distance = 0,
         power = power,
-        target = target or ctx:actor_at(origin.level_id,
-            origin.x + dx, origin.y + dy),
+        target = aimed or nil,
     }
 
     state.vx, state.vy = normalized(state.vx, state.vy)

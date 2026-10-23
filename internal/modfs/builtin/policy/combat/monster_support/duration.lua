@@ -17,10 +17,11 @@ end
 
 -- One monster action represents a stochastic fraction of ordinary 10-aut
 -- time. Keep the rounding draw on the spell stream for save continuation.
-local function speed_to_duration(ctx, speed)
+local function speed_to_duration(ctx, speed, stream)
     local bounded = speed < 1 and 10 or math.min(100, speed)
 
-    return roll.random_divide(ctx, 100, bounded, "monster_spell")
+    return roll.random_divide(ctx, 100, bounded,
+        stream or streams.MONSTER_SPELL)
 end
 
 -- Monster Vortex damage uses the caster's speed-adjusted action time,
@@ -37,17 +38,19 @@ end
 
 -- The source's asymmetric fuzz spans 40% through 140% of the raw duration.
 -- The two average draws are made only when a real cast applies the effect.
-local function fuzz(ctx, raw)
+local function fuzz(ctx, raw, stream)
     local low = math.floor(60 * raw / 100)
     local high = math.floor(40 * raw / 100)
-    local average = roll.average_two(ctx, "monster_spell", low + high + 1)
+    local average = roll.average_two(ctx,
+        stream or streams.MONSTER_SPELL, low + high + 1)
 
     return math.max(15, raw + average - low)
 end
 
 -- Example: a speed-10 monster's Haste is based on 40 centiturns before fuzz.
--- Haste, Might, Invisibility, and Swift share this source duration class.
-function duration.beneficial(ctx, monster)
+-- Haste, Might, Invisibility, and Swift share this duration class. A card
+-- caller may use CARDS while ordinary monster spells keep MONSTER_SPELL.
+function duration.beneficial(ctx, monster, stream)
     local actor = ctx:get(monster, component.ACTOR)
 
     if not actor then
@@ -56,9 +59,9 @@ function duration.beneficial(ctx, monster)
 
     local centiturns = math.max(2,
         math.floor(1000 / modified_speed(25, actor.speed)))
-    local raw = centiturns * speed_to_duration(ctx, actor.speed)
+    local raw = centiturns * speed_to_duration(ctx, actor.speed, stream)
 
-    return fuzz(ctx, raw)
+    return fuzz(ctx, raw, stream)
 end
 
 -- Protective enchantments use the shorter 300-centiturn source class.

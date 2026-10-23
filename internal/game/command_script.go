@@ -29,6 +29,7 @@ func (g *Game) prepareScriptCommand(
 		}
 	}
 
+	beforeEvents := len(g.turn.Events)
 	decision, err := g.scripts.Policy("command.prepare", map[string]any{
 		"pan_state":             luaPanState(g.panState),
 		"hell_state":            luaHellState(g.hellState),
@@ -47,7 +48,27 @@ func (g *Game) prepareScriptCommand(
 	})
 
 	if err != nil {
+		g.turn.Events = g.turn.Events[:beforeEvents]
+
 		return preparedCommand{}, err
+	}
+
+	// Lua can resolve a committed card while preparing its one timed
+	// intent. Preserve those emitted events across runActionStarted, which
+	// resets the turn context before Akara systems run.
+	preparationEvents := append([]Event(nil),
+		g.turn.Events[beforeEvents:]...)
+
+	g.turn.Events = g.turn.Events[:beforeEvents]
+
+	freePrepared := func(result StepResult) preparedCommand {
+		result.Events = append(preparationEvents, result.Events...)
+
+		for _, event := range preparationEvents {
+			g.messages = append(g.messages, event.Text)
+		}
+
+		return freeCommand(result)
 	}
 
 	if selection, found := decision["selection"]; found {
@@ -67,7 +88,7 @@ func (g *Game) prepareScriptCommand(
 			return preparedCommand{}, err
 		}
 
-		return freeCommand(StepResult{
+		return freePrepared(StepResult{
 			Selection: request,
 			View:      g.View(),
 		}), nil
@@ -84,7 +105,7 @@ func (g *Game) prepareScriptCommand(
 			return preparedCommand{}, err
 		}
 
-		return freeCommand(StepResult{
+		return freePrepared(StepResult{
 			Confirmation:       confirmation,
 			ConfirmationTarget: target,
 			View:               g.View(),
@@ -107,7 +128,7 @@ func (g *Game) prepareScriptCommand(
 			Text: message,
 		}
 
-		return freeCommand(g.noTimeEvent(event)), nil
+		return freePrepared(g.noTimeEvent(event)), nil
 	}
 
 	if portal, found := decision["portal"]; found {
@@ -137,12 +158,13 @@ func (g *Game) prepareScriptCommand(
 		prepared := spendingCommand(ecs.Intent{Kind: ecs.IntentWait}, Aut(cost))
 
 		prepared.portal = values
+		prepared.response.Events = preparationEvents
 
 		return prepared, nil
 	}
 
 	if _, found := decision["intent"]; !found {
-		return freeCommand(StepResult{View: g.View()}), nil
+		return freePrepared(StepResult{View: g.View()}), nil
 	}
 
 	values, ok := decision["intent"].(map[string]any)
@@ -192,7 +214,7 @@ func (g *Game) prepareScriptCommand(
 		return preparedCommand{}, err
 	}
 
-	prepared.response.Events = events
+	prepared.response.Events = append(preparationEvents, events...)
 
 	if values, found := decision["delay"].(map[string]any); found {
 		delay, err := equipmentDelayFromDecision(values)
@@ -206,6 +228,13 @@ func (g *Game) prepareScriptCommand(
 
 	if target, found := decision["attack_target"].(akara.Entity); found {
 		prepared.attackTarget = target
+	}
+
+	// Lua may spend a card or save a completed choice while preparing an
+	// action. Commit those changes before BeginAction clears its staging
+	// area for the timed Akara system pass.
+	if err := g.scripts.ApplyPending(); err != nil {
+		return preparedCommand{}, err
 	}
 
 	return prepared, nil

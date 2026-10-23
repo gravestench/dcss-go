@@ -14,6 +14,7 @@ func (m *AppModel) acceptActionConfirmation() tea.Cmd {
 
 	command := m.pendingAction
 
+	command.Cancelled = false
 	command.Forced = true
 	m.pendingAction = game.Command{}
 	m.pendingActionPrompt = ""
