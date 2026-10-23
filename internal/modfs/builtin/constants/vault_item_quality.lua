@@ -3,6 +3,7 @@
 local quality = {
     ORDINARY = "ordinary",
     STAR = "star",
+    GIFT = "gift",
     GOOD = "good",
     SUPERB = "superb",
     RANDART = "randart",

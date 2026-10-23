@@ -26,7 +26,7 @@ local function eligible(ctx, player, species, kind)
 end
 
 -- A slot enters the draw only if the current species can wear at least one generated kind in it.
-local function slot(ctx, player, species)
+local function slot(ctx, player, species, divine)
     local rows = {}
 
     for _, slot_id in ipairs(slots) do
@@ -43,7 +43,7 @@ local function slot(ctx, player, species)
         if available then
             rows[#rows + 1] = {
                 id = slot_id,
-                weight = 1,
+                weight = divine and slot_id == "body" and 5 or 1,
             }
         end
     end
@@ -52,8 +52,12 @@ local function slot(ctx, player, species)
 end
 
 -- Warrior rolls favour AC squared; non-warriors favour low EV burden as armour skill changes.
-local function body_weight(ctx, kind, warrior)
+local function body_weight(ctx, kind, warrior, divine)
     local base = kind.armour.acquire_weight or kind.generation.weight or 0
+
+    if divine then
+        return base
+    end
 
     if warrior then
         return base * kind.armour.ac * kind.armour.ac
@@ -83,9 +87,9 @@ local function warrior(ctx)
 end
 
 -- Use slot-specific weights: body armour, shields, and secondary pieces have different source curves.
-local function subtype_weight(ctx, kind, slot_id, warrior_pref)
+local function subtype_weight(ctx, kind, slot_id, warrior_pref, divine)
     if slot_id == "body" then
-        return body_weight(ctx, kind, warrior_pref)
+        return body_weight(ctx, kind, warrior_pref, divine)
     end
 
     if slot_id == "shield" then
@@ -125,15 +129,18 @@ end
 
 -- Example: a species unable to wear body armour samples only its usable armour slots.
 -- Choose a wearable slot before subtype weighting so body-size limits remain hard constraints.
-function armour.pick(ctx, player)
+function armour.pick(ctx, player, _, god_id)
     local species = selection.species(ctx, player)
-    local slot_id = slot(ctx, player, species)
-    local warrior_pref = slot_id == "body" and warrior(ctx)
+    local divine = god_id ~= nil
+    local slot_id = slot(ctx, player, species, divine)
+    local warrior_pref = slot_id == "body" and not divine and
+        warrior(ctx)
     local rows = {}
 
     for _, kind in ipairs(catalog.all("items")) do
         if kind.slot == slot_id and eligible(ctx, player, species, kind) then
-            local value = subtype_weight(ctx, kind, slot_id, warrior_pref)
+            local value = subtype_weight(ctx, kind, slot_id,
+                warrior_pref, divine)
 
             if value > 0 then
                 rows[#rows + 1] = {

@@ -4,6 +4,7 @@ local catalog = require("policy.catalog")
 local classes = require("ids.object_classes")
 local ammunition = require("ids.ammunition")
 local equipment = require("policy.inventory.equipment")
+local gods = require("constants.gods")
 local ids = require("ids.items")
 local mutations = require("ids.mutations")
 local mutation_levels = require("policy.mutations.levels")
@@ -22,16 +23,33 @@ local weapon_skills = {
     skills.SK_RANGED_WEAPONS,
 }
 
--- Weight trained weapon skills before choosing a family for this scroll offer.
-local function chosen_skill(ctx)
+-- Trog's gift pool stops before Ranged Weapons. Divine skill weights are
+-- linear; scrolls exaggerate a trained family's chance quadratically.
+local function permitted_skills(god_id)
+    local count = #weapon_skills
+
+    if god_id == gods.TROG then
+        count = count - 1
+    end
+
+    return count
+end
+
+local function chosen_skill(ctx, god_id)
     local rows = {}
 
-    for _, skill_id in ipairs(weapon_skills) do
+    for index = 1, permitted_skills(god_id) do
+        local skill_id = weapon_skills[index]
         local level = selection.skill(ctx, skill_id)
+        local weight = level + 1
+
+        if not god_id then
+            weight = (weight + 1) * (weight + 2)
+        end
 
         rows[#rows + 1] = {
             id = skill_id,
-            weight = (level + 2) * (level + 3),
+            weight = weight,
         }
     end
 
@@ -39,18 +57,19 @@ local function chosen_skill(ctx)
 end
 
 -- Include Unarmed Combat in the benchmark so weak weapon training does not overvalue a weapon.
-local function best_skill(ctx)
+local function best_skill(ctx, god_id)
     local best = selection.skill(ctx, skills.SK_UNARMED_COMBAT)
 
-    for _, skill_id in ipairs(weapon_skills) do
-        best = math.max(best, selection.skill(ctx, skill_id))
+    for index = 1, permitted_skills(god_id) do
+        best = math.max(best, selection.skill(ctx,
+            weapon_skills[index]))
     end
 
     return best
 end
 
 -- Scale source weight by skill, shield use, and species fit before a subtype reaches the draw.
-local function weight(ctx, player, species, kind, best, shields)
+local function weight(ctx, player, species, kind, best, shields, divine)
     local weapon = kind.weapon
     local base = (weapon.acquire_weight or kind.generation.weight or 0) * 100
 
@@ -65,8 +84,9 @@ local function weight(ctx, player, species, kind, best, shields)
         return 0
     end
 
-    -- Source applies damage weighting to melee weapons only.
-    if weapon.ammo_id == ammunition.NONE then
+    -- Scrolls favor powerful melee bases. Trog and Okawaru keep the
+    -- catalog's base acquisition weights before shield and novelty bias.
+    if not divine and weapon.ammo_id == ammunition.NONE then
         base = math.max(base, 500)
 
         if kind.id == ids.WPN_QUICK_BLADE then
@@ -101,10 +121,11 @@ end
 
 -- Example: A trained Axes skill raises axe-family chance before shield use changes subtype weight.
 -- Choose one weighted weapon subtype after the player build and supported kinds are known.
-function weapons.pick(ctx, player)
-    local skill_id = chosen_skill(ctx)
+function weapons.pick(ctx, player, _, god_id)
+    local divine = god_id ~= nil
+    local skill_id = chosen_skill(ctx, god_id)
     local species = selection.species(ctx, player)
-    local best = best_skill(ctx)
+    local best = best_skill(ctx, god_id)
     local shields = selection.skill(ctx, skills.SK_SHIELDS)
     local rows = {}
 
@@ -112,7 +133,8 @@ function weapons.pick(ctx, player)
         if kind.class == classes.OBJ_WEAPONS and kind.weapon and
             kind.weapon.skill_id == skill_id and
             kind.generation.mode ~= "none" then
-            local value = weight(ctx, player, species, kind, best, shields)
+            local value = weight(ctx, player, species, kind, best,
+                shields, divine)
 
             if value > 0 then
                 rows[#rows + 1] = {

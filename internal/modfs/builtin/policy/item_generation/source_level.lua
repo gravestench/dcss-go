@@ -2,8 +2,8 @@ local quality = require("constants.vault_item_quality")
 
 local source_level = {}
 
--- Example: source_level.request({ depth = 4, quality = quality.GOOD }).depth is 351 for good vault loot.
--- Copy the request before substituting source's high-depth good-item rule so callers retain their original depth.
+-- Example: GOOD vault loot uses source depth 351; a divine GIFT uses 350.
+-- Copy the request before substituting source's special item levels so callers retain their original depth.
 function source_level.request(request)
     -- Source: crawl-ref/source/dungeon.cc and
     -- crawl-ref/source/mapdef.h. The * vault shorthand has already
@@ -14,7 +14,9 @@ function source_level.request(request)
         adjusted[name] = value
     end
 
-    if request.quality == quality.GOOD or
+    if request.quality == quality.GIFT then
+        adjusted.depth = 350
+    elseif request.quality == quality.GOOD or
         request.quality == quality.SUPERB then
         adjusted.depth = 351
     end

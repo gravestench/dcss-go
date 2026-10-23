@@ -32,7 +32,8 @@ function policy.roll(ctx, _, request, result)
         return
     end
 
-    if request.quality == quality.GOOD or
+    if request.quality == quality.GIFT or
+        request.quality == quality.GOOD or
         request.quality == quality.SUPERB then
         result.quantity = 100 + ctx:random(streams.ITEM_GENERATION, 400)
 

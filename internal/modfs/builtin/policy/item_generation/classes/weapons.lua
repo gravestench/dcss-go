@@ -91,7 +91,8 @@ end
 -- Good quality grants enchantment even when no brand rolls; ordinary unbranded weapons can stay plain.
 function policy.roll(ctx, definition, request, result)
     -- Source: crawl-ref/source/makeitem.cc.
-    local forced_good = request.quality == quality.GOOD or
+    local forced_good = request.quality == quality.GIFT or
+        request.quality == quality.GOOD or
         request.quality == quality.SUPERB
     local brand = weapon_brands.roll(ctx, definition, request)
 

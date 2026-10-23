@@ -16,6 +16,7 @@ local definition = {
     piety_decay_chance = 17,
     behavior_module = "policy.religion.gods.trog",
     conduct_module = "policy.religion.conduct.trog",
+    gift_module = "policy.religion.gifts.trog",
 }
 
 register.definition(categories.GODS, definition)

@@ -2,13 +2,43 @@ local streams = require("constants.rng_streams")
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local ids = require("ids.items")
+local gods = require("constants.gods")
 local schools = require("constants.spell_schools")
 local source = require("policy.item_generation.source_roll")
 local kinds = require("constants.artefact_kinds")
 local names = require("policy.item_generation.artefacts.names")
 local player_books = require("policy.magic.player_book_catalog")
+local records = require("policy.character.spell_records")
 
 local random_books = {}
+
+-- Acquirement gifts should not spend a book slot on spells the player
+-- already owns. Ordinary floor and vault books still use their full pool.
+local function available_for(ctx, request)
+    local available = player_books.ordered()
+
+    if not request.exclude_known then
+        return available
+    end
+
+    local known = {}
+
+    for _, entry in ipairs(records.list(ctx, ctx:player())) do
+        if entry.state.in_library or entry.state.known_slot > 0 then
+            known[entry.state.spell_id] = true
+        end
+    end
+
+    local filtered = {}
+
+    for _, spell in ipairs(available) do
+        if not known[spell.id] then
+            filtered[#filtered + 1] = spell
+        end
+    end
+
+    return filtered
+end
 
 -- Source: crawl-ref/source/spl-util.h. The source iterates this
 -- bitfield order when selecting a random discipline.
@@ -64,7 +94,17 @@ end
 -- Fill a themed book without repeats within the authored spell-level budget.
 local function themed_spells(ctx, request)
     -- Source: crawl-ref/source/randbook.cc, 216-301.
-    local count = request.numspells or source.average(ctx, 4, 3) + 2
+    -- Acquired themes use 2 + random2avg(7, 3): the later two draws
+    -- include seven, matching source's rounded average and 2-8 range.
+    local count = request.numspells
+
+    if not count then
+        local total = ctx:random(streams.ITEM_GENERATION, 7) +
+            ctx:random(streams.ITEM_GENERATION, 8) +
+            ctx:random(streams.ITEM_GENERATION, 8)
+
+        count = 2 + math.floor(total / 3)
+    end
     local first = request.disc or
         school_order[ctx:random(streams.ITEM_GENERATION, #school_order) + 1]
     local second = request.disc2 or request.disc or
@@ -73,8 +113,27 @@ local function themed_spells(ctx, request)
     local used = {}
     local levels = 0
     local level_budget = request.slevels or 20
-    local available = player_books.ordered()
+    local available = available_for(ctx, request)
     local eligible = {}
+
+    -- A god's unknown-only pool can leave a randomly chosen school empty.
+    -- Use the first remaining book spell's school before generating an
+    -- empty gift; ordinary floor books keep their source school draw.
+    if request.exclude_known and #available > 0 then
+        local matching = false
+
+        for _, spell in ipairs(available) do
+            if has_school(spell, first, second) then
+                matching = true
+                break
+            end
+        end
+
+        if not matching then
+            first = available[1].schools[1]
+            second = first
+        end
+    end
 
     for _, spell in ipairs(available) do
         eligible[spell.id] = spell
@@ -136,14 +195,18 @@ local function level_spells(ctx, request)
         maximum)
     local count = math.max(1, math.min(5 + math.floor((level - 1) / 3),
         18 - 2 * level))
-    local scaled = count * 3
+    -- Sif retains the original level-book size. Other generated level
+    -- books use source's later 3/5 reduction with random rounding.
+    if request.god_id ~= gods.SIF_MUNA then
+        local scaled = count * 3
 
-    count = math.max(1, math.floor(scaled / 5) +
-        (source.chance(ctx, scaled % 5, 5) and 1 or 0))
+        count = math.max(1, math.floor(scaled / 5) +
+            (source.chance(ctx, scaled % 5, 5) and 1 or 0))
+    end
 
     local candidates = {}
 
-    for _, spell in ipairs(player_books.ordered()) do
+    for _, spell in ipairs(available_for(ctx, request)) do
         if spell.level == level then
             candidates[#candidates + 1] = spell.id
         end

@@ -69,6 +69,7 @@ local component = {
     FOLLOWER = "core.follower",
     INTENT = "core.intent",
     ITEM = "core.item",
+    ITEM_PROVENANCE = "item.provenance",
     GOLD_TITHE = "item.gold_tithe",
     -- Inventory and shop components distinguish a catalog kind from the
     -- particular stack, owner, stock offer, or identification state.

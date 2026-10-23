@@ -1545,7 +1545,7 @@ abilities and passives. On each eligible piety candidate, it also asks the
 current god's optional `gift_module` to act; altar prayer uses the same
 worship owner.
 
-#### Divine spell gifts
+#### Divine gifts
 
 Set `gift_module = "policy.religion.gifts.<name>"` in a god definition to
 add a Lua gift rule. The module exports `check(ctx, player, worship)`, which
@@ -1569,6 +1569,22 @@ god's `accept`; leaving clears temporary access. Keep the player's saved
 component as the authority when adding a new gift type. A modded god can
 provide an entirely new gift module and component without editing this
 shared dispatcher.
+
+For a physical gift, call
+`policy.religion.gifts.items.grant(ctx, player, class_id, god_id)` after
+your god's own piety check. It returns the new ECS item or `nil` when the
+player's floor cannot hold the gift or acquisition has no usable result.
+The helper uses direct acquirement, places the item at the player's feet,
+and stores `item.provenance` with `purpose = "god_gift"` and the god ID.
+The item request uses `constants.vault_item_quality.GIFT`, which maps to
+DCSS's divine gift level. It has different brand and unique-item odds from
+the `GOOD` quality used for acquirement scrolls.
+Only then call `gifts.record(ctx, player, timeout)`. Sif Muna's module
+shows how to count spells in the actual generated book for its timeout;
+Trog and Okawaru use `policy.religion.gifts.martial` for their shared
+equipment gate while keeping each god's class choice in its own file.
+If a mod needs a new gift class, extend the class picker in
+`policy/scrolls/acquirement_offers.lua` and its focused subtype policy.
 
 `systems/religion_upkeep.lua` advances the player-owned god-time clock after
 timed actions. The first check is at 200 aut; later checks are 100–300 aut

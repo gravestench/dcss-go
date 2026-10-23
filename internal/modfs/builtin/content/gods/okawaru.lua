@@ -15,6 +15,7 @@ local definition = {
     piety_mode = modes.ORDINARY,
     piety_decay_chance = 17,
     conduct_module = "policy.religion.conduct.okawaru",
+    gift_module = "policy.religion.gifts.okawaru",
 }
 
 register.definition(categories.GODS, definition)

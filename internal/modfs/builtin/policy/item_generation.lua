@@ -8,12 +8,15 @@ local artefacts = require("policy.item_generation.artefacts")
 local source_level = require("policy.item_generation.source_level")
 local unique_artefacts =
     require("policy.item_generation.artefacts.unique")
+local component = require("constants.component")
+local purpose = require("constants.item_generation_purpose")
 
 local generation = {}
 
 local valid_quality = {
     [quality.ORDINARY] = true,
     [quality.STAR] = true,
+    [quality.GIFT] = true,
     [quality.GOOD] = true,
     [quality.SUPERB] = true,
     [quality.RANDART] = true,
@@ -41,6 +44,12 @@ local function validate_request(request)
 
     if type(request.site) ~= "string" or request.site == "" then
         error("item generation requires caller site")
+    end
+
+    if request.purpose == purpose.GOD_GIFT and
+        (type(request.god_id) ~= "string" or
+            request.god_id == "") then
+        fail(request, "requires a gift god ID")
     end
 end
 
@@ -150,6 +159,13 @@ function generation.roll(ctx, request)
 
     if request.ego then
         result.ego = request.ego
+    end
+
+    if request.purpose == purpose.GOD_GIFT then
+        result.components[component.ITEM_PROVENANCE] = {
+            purpose = purpose.GOD_GIFT,
+            god_id = request.god_id,
+        }
     end
 
     if request.mundane then

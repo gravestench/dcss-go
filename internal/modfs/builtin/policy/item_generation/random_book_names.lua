@@ -24,6 +24,17 @@ for _, entry in ipairs(god_names) do
     display_gods[entry.id] = entry.name
 end
 
+-- Authored source names remain stable for bundled gods. A layered mod may
+-- add a god without editing that list, so direct gifts use its effective
+-- definition when the source name table has no entry.
+local function gift_god_name(god_id)
+    if display_gods[god_id] then
+        return display_gods[god_id]
+    end
+
+    return catalog.get(categories.GODS, god_id).name
+end
+
 -- A single-level book can mention its spell level inside a weighted phrase.
 local function title_facts(facts, level)
     local titled = {}
@@ -103,7 +114,7 @@ end
 -- or a generated author and usually stay anonymous.
 local function level_owner(random, make_word, god_id)
     if god_id and god_id ~= gods.NO_GOD then
-        return display_gods[god_id] or error("unknown book god " .. god_id)
+        return gift_god_name(god_id)
     end
 
     if random(30) == 0 then
@@ -234,7 +245,7 @@ local function themed_owner(random, make_word, details, facts)
     local highlevel, all_first = theme_facts(random, details)
 
     if gift and random(4) ~= 0 then
-        return display_gods[god_id] or error("unknown book god " .. god_id)
+        return gift_god_name(god_id)
     end
 
     if (gift and random(3) == 0) or random(5) == 0 then

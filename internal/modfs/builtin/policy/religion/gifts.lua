@@ -22,8 +22,8 @@ local function handler(god_id)
     return require(definition.gift_module)
 end
 
--- Example: Kiku may grant a library set on the candidate that reaches one
--- star, while Trog currently has no spell gift module and does nothing.
+-- Example: Kiku may grant library knowledge at one star, while Trog may
+-- grant a weapon at high piety through its own gift module.
 function gifts.check(ctx, player)
     local state = ctx:get(player, component.RELIGION_WORSHIP)
 

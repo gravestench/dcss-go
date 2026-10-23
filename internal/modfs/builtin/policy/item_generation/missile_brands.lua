@@ -13,6 +13,12 @@ local function normal_weight(ctx, request)
         return 0
     end
 
+    -- Source leaves a normal-brand chance on divine javelins and
+    -- boomerangs, although ordinary acquirement forces a brand.
+    if request.quality == quality.GIFT then
+        return 120
+    end
+
     local bound = math.max(1, 2000 - 55 * request.depth)
 
     return ctx:random(streams.ITEM_GENERATION, bound)
@@ -49,7 +55,8 @@ function missile_brands.roll(ctx, definition, request)
     -- Source: crawl-ref/source/makeitem.cc. Both random weights
     -- are drawn before the subtype's brand choice.
     local ordinary = normal_weight(ctx, request)
-    local poisoned = normal_weight(ctx, request)
+    local poisoned = request.quality == quality.GIFT and 0 or
+        normal_weight(ctx, request)
 
     if kind_id == ids.MI_DART then
         if source.chance(ctx, 1, curare_denominator(request.depth)) then

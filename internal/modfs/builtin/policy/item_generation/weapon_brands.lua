@@ -27,7 +27,8 @@ function weapon_brands.roll(ctx, definition, request)
 
     local tries = 0
 
-    if request.quality == quality.GOOD or
+    if request.quality == quality.GIFT or
+        request.quality == quality.GOOD or
         request.quality == quality.SUPERB then
         tries = 5
     elseif is_demonic(definition) or

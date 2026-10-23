@@ -168,7 +168,8 @@ function policy.roll(ctx, definition, request, result)
         definition = definitions.get("items", result.kind_id)
     end
 
-    local forced_good = request.quality == quality.GOOD or
+    local forced_good = request.quality == quality.GIFT or
+        request.quality == quality.GOOD or
         request.quality == quality.SUPERB
     local forced_ego = request.ego and request.ego ~= egos.NORMAL
     local always_ego = definition.id == ids.ARM_SCARF or
