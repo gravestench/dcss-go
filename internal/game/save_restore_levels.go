@@ -9,7 +9,9 @@ import (
 
 func (g *Game) restoreLevels(
 	records []save.LevelRecord, currentAut int64,
-	panState *save.PanStateRecord, hellState *save.HellStateRecord,
+	panState *save.PanStateRecord,
+	hellState *save.HellStateRecord,
+	abyssState *save.AbyssStateRecord,
 ) error {
 	for _, record := range records {
 		if _, duplicate := g.levels[record.ID]; duplicate {
@@ -162,7 +164,7 @@ func (g *Game) restoreLevels(
 		return err
 	}
 
-	return g.validateScenarioLevels(panState, hellState)
+	return g.validateScenarioLevels(panState, hellState, abyssState)
 }
 
 // Validate the complete level set before restore or a newly staged portal
@@ -170,6 +172,7 @@ func (g *Game) restoreLevels(
 func (g *Game) validateScenarioLevels(
 	panState *save.PanStateRecord,
 	hellState *save.HellStateRecord,
+	abyssState *save.AbyssStateRecord,
 ) error {
 	if _, err := g.scripts.Policy("save.validate_scenario_levels", map[string]any{
 		"scenario_id":     g.scenarioID,
@@ -177,6 +180,7 @@ func (g *Game) validateScenarioLevels(
 		"branch_schedule": branchSchedulePolicyInput(g.branchSchedule),
 		"pan_state":       luaPanState(panState),
 		"hell_state":      luaHellState(hellState),
+		"abyss_state":     luaAbyssState(abyssState),
 	}); err != nil {
 		return err
 	}

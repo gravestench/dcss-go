@@ -1,0 +1,19 @@
+# dshaligram_kb_abyss_rune_zappy_water_cross retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   dshaligram_kb_abyss_rune_zappy_water_cross
+DEPTH: Abyss
+TAGS:   abyss_rune unrand patrolling no_pool_fixup
+MONS:   generate_awake lightning spire, raiju, smoke demon, blizzard demon
+KMONS:  O = merfolk impaler
+KITEM:  O = abyssal rune of Zot
+KFEAT:  O = shallow_water
+KFEAT:  A = stone_arch
+KFEAT:  1 = runelight
+FTILE:  A234OwW = floor_crystal_squares
+MAP
+www1w1www
+www2w4www
+123WOW321 A
+www4w2www
+www1w1www
+ENDMAP

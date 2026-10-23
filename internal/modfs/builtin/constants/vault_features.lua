@@ -20,6 +20,7 @@ local features = {
     ENTER_ORC = "enter_orcish_mines",
     ENTER_ELF = "enter_elven_halls",
     ENTER_DEPTHS = "enter_depths",
+    ENTER_ABYSS = "enter_abyss",
     ENTER_ZOT = "enter_zot",
     ENTER_CRYPT = "enter_crypt",
     ENTER_TOMB = "enter_tomb",

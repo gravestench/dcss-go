@@ -1,0 +1,27 @@
+# hangedman_illusive_loot retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    hangedman_illusive_loot
+DEPTH: Abyss
+TAGS:    patrolling
+WEIGHT:  5
+MONS:    rakshasa, guardian serpent / great orb of eyes
+ITEM:    potion of might / potion of haste / potion of heal wounds w:12 / \
+         any blast wand / any beam wand / wand of paralysis / \
+         ring mail good_item / chain mail good_item w:12 / kite shield / \
+         spear good_item / trident good_item / any weapon w:12 / any w:2
+SUBST:   x = ccccvbb
+MAP
+     .x.x
+   x.xxx.x
+  x.xx1xx.x
+ x. x.. x .x
+ .xxx.ddxxx.
+.xx..dddd xx.
+xx1.ddd...1xx
+.xx dd..x.xx.
+x.xxxd.x+xx..
+ x. x ..x2. x
+  x.xx1xx.x.
+   x.xxx. ..
+     .x..x
+ENDMAP

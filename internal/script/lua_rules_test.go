@@ -33,6 +33,18 @@ func TestLuaRules(t *testing.T) {
 	}
 }
 
+// A layered Abyss mod adds one map and replaces one source path without a
+// branch-specific Go registry or a copied base mod directory.
+func TestAbyssSparseMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/abyss-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/abyss_overlay_test.lua")
+}
+
 // A sparse price kind joins the effective Lua policy set without changing
 // source Trove logic or adding a Go payment handler.
 func TestTroveModPrice(t *testing.T) {

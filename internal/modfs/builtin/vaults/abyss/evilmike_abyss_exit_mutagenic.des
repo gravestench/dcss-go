@@ -1,0 +1,17 @@
+# evilmike_abyss_exit_mutagenic retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   evilmike_abyss_exit_mutagenic
+DEPTH: Abyss
+TAGS:   abyss_exit
+MARKER: O = lua:fog_machine {                               \
+                pow_min = 8, pow_max = 12, delay = 25,      \
+                size = 2, walk_dist = 1, spread_rate = 33,  \
+                cloud_type = "mutagenic fog"                \
+            }
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_o")
+MAP
+...
+.O.
+...
+ENDMAP

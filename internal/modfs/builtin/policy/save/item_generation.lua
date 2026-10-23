@@ -12,6 +12,7 @@ local classes = require("ids.object_classes")
 local item_sets = require("policy.item_generation.item_sets")
 local skills = require("ids.skills")
 local tithe_states = require("constants.zin_tithe_state")
+local abyss = require("constants.abyss")
 
 local validation = {}
 
@@ -61,6 +62,34 @@ local function validate_orb(ctx)
         (phase == phases.EXPLORING or phase == phases.LEFT) and
         count ~= 1 then
         error("generated Hall is missing its Orb of Zot")
+    end
+end
+
+-- The Abyssal rune is a single floor entity until pickup transfers its
+-- identity to permanent player progress. A spare copy on another level
+-- or after collection would grant a second rune on restore.
+function validation.abyssal_rune(ctx)
+    local collected = runes.has(ctx, ctx:player(), ids.RUNE_ABYSSAL)
+    local count = 0
+
+    for _, entity in ipairs(ctx:query({ component.ITEM })) do
+        local item = ctx:get(entity, component.ITEM)
+
+        if item.kind_id == ids.RUNE_ABYSSAL then
+            count = count + 1
+            local position = ctx:get(entity, component.POSITION)
+
+            if not position or
+                position.level_id ~= abyss.LEVEL_ID or
+                ctx:has(entity, component.CARRIED_BY) or
+                not ctx:session_state(abyss.SESSION_STATE) then
+                error("saved Abyssal rune has no active floor")
+            end
+        end
+    end
+
+    if count > 1 or (count > 0 and collected) then
+        error("saved Abyssal rune conflicts with player progress")
     end
 end
 
@@ -152,6 +181,7 @@ end
 function validation.run(ctx)
     validate_player(ctx)
     validate_orb(ctx)
+    validation.abyssal_rune(ctx)
 
     for _, entity in ipairs(ctx:query({ component.ITEM })) do
         local item = ctx:get(entity, component.ITEM)

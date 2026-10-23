@@ -35,22 +35,54 @@ function system.update(ctx, actor, elapsed_aut)
         return
     end
 
+    -- The outside arch has no fixed stair link. Entering it records this
+    -- very cell as the return site before the region owner is replaced.
+    if intent.kind == intents.DOWNSTAIRS and
+        ctx:cell(position.level_id, position.x, position.y) ==
+            terrain.DNGN_ENTER_ABYSS then
+        if actor ~= ctx:player() then
+            error("only the player can enter the Abyss")
+        end
+
+        barbs.moved(ctx, actor, elapsed_aut)
+
+        if ctx:get(actor, component.HEALTH).current <= 0 then
+            return
+        end
+
+        abyss.enter(ctx, actor, position)
+        ctx:emit("stairs", "You enter the Abyss!")
+
+        return
+    end
+
+    if position.level_id == abyss.level_id then
+        local feature = ctx:cell(position.level_id,
+            position.x, position.y)
+
+        if actor ~= ctx:player() then
+            error("only the player can use an Abyss stair")
+        end
+
+        if intent.kind == intents.UPSTAIRS and
+            feature == terrain.DNGN_EXIT_ABYSS then
+            abyss.escape(ctx, actor)
+        elseif intent.kind == intents.DOWNSTAIRS and
+            feature == terrain.DNGN_ABYSSAL_STAIR then
+            abyss.descend(ctx, actor)
+        else
+            error("there is no Abyss stair in that direction")
+        end
+
+        return
+    end
+
     local glyph = intent.kind == intents.UPSTAIRS and
         "DNGN_STONE_STAIRS_UP_I" or
         "DNGN_STONE_STAIRS_DOWN_I"
 
     if ctx:cell(position.level_id, position.x, position.y) ~= glyph then
         error("stair actor " .. ctx:id(actor) .. " is not on a stair")
-    end
-
-    if position.level_id == abyss.level_id then
-        if glyph ~= "DNGN_STONE_STAIRS_UP_I" or actor ~= ctx:player() then
-            error("only the player can use an Abyss exit")
-        end
-
-        abyss.escape(ctx, actor)
-
-        return
     end
 
     local link = ctx:stair_at(position.level_id, position.x, position.y)

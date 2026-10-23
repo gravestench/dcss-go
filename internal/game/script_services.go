@@ -56,27 +56,40 @@ func (g *Game) scriptServices() (script.Services, error) {
 		ActiveActor: func() akara.Entity {
 			return g.turn.Actor
 		},
+
 		PlayerEntity: func() akara.Entity {
 			return g.player
 		},
+
 		EntityCreated: func(entity akara.Entity) {
 			g.noteEntity(entity)
 		},
+
 		CurrentAut: func() int64 {
 			return int64(g.currentAut)
 		},
-		Random:     g.rng.Intn,
-		RandomWord: g.rng.next,
+
+		Random:         g.rng.Intn,
+		RandomWord:     g.rng.next,
+		RandomSnapshot: g.rng.States,
+		RestoreRandom:  g.rng.RestoreStates,
+
+		SessionStates: map[string]script.SessionStateHost{
+			abyssSessionStateName: g.abyssSessionStateHost(),
+		},
+
 		Emit: func(kind, message string) {
 			g.turn.Events = append(g.turn.Events, Event{
 				Kind: kind,
 				Text: message,
 			})
 		},
+
 		Grid: scriptGrid{
 			levels: g.levels,
 			opaque: g.opaqueClouds,
 		},
+
 		HostComponents: components,
 	}, nil
 }

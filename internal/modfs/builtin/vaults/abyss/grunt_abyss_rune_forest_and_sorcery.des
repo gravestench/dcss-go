@@ -1,0 +1,47 @@
+# grunt_abyss_rune_forest_and_sorcery retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    grunt_abyss_rune_forest_and_sorcery
+DEPTH: Abyss
+TAGS:    abyss_rune unrand patrolling no_pool_fixup no_monster_gen transparent
+MONS:    worldbinder, rakshasa
+KMONS:   34 = deep elf sorcerer
+KMONS:   56 = deep elf blademaster
+KMONS:   78 = tengu reaver
+KMONS:   90 = shambling mangrove
+KMONS:   AB = thorn hunter
+KMONS:   CD = dire elephant
+KMONS:   EF = satyr
+KMONS:   G = water elemental
+KMONS:   H = water nymph
+KFEAT:   G = w
+KFEAT:   H = W
+KFEAT:   a = stone_arch
+KFEAT:   ' = runelight
+KITEM:   O = abyssal rune of Zot
+# Exclude one of the deep elves / tengu and one of the Forest denizens.
+SHUFFLE: 34 / 56 / 78, 90 / AB / CD / EF
+SUBST:   T = t., X = ttWw
+NSUBST:  . = 1:2 / *:., w = 2:G / *:w, W = 2:H / *:W
+RTILE:   x = wall_hall
+COLOUR:  x = elven_brick
+FTILE:   -+U4680BDFO = floor_hall
+FTILE:   .t23579ACE = floor_grass
+FTILE:   a1 = floor_crystal_squares
+COLOUR:  1 = lightmagenta
+MAP
+    ..'.'.
+  ....XXX....
+ ..XWwtttwWX..
+ .X.Tt.w.tT1X..'..
+..WT.WXAXW.xxxxxxx.
+1.wt.tt'xxxxcccccx'
+.Xt.Xt3'x0--c6--cx.
+aXtw...'+-U-+-O4cx1
+.Xt.Xt2'x6--c0--cx.
+1.wt.tt'xxxxcccccx'
+..WT..XCX..xxxxxxx.
+ .X.Tt.w.tT1X..'..
+ ..XWwtttwWX..
+  ....XXX....
+    ..'.'.
+ENDMAP

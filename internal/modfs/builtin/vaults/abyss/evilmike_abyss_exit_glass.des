@@ -1,0 +1,14 @@
+# evilmike_abyss_exit_glass retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:  evilmike_abyss_exit_glass
+DEPTH: Abyss
+TAGS:  abyss_exit
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_o")
+MAP
+ mmm@
+mm.mm
+m.O.m
+mm.mm
+ mmm
+ENDMAP

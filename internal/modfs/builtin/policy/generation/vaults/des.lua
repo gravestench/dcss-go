@@ -248,10 +248,13 @@ function des.parse(path, source)
         oriented = oriented or operation.kind == directives.ORIENT
     end
 
+    local mapless_dummy = vault.tags.dummy and not map_seen
+
     if in_map or continuing or
-        (not map_seen and not post_place and
+        (not map_seen and not post_place and not mapless_dummy and
             not (vault.family == "layout" and layout_run)) or
-        (#vault.rows == 0 and not post_place and not layout_run) then
+        (#vault.rows == 0 and not post_place and not layout_run and
+            not mapless_dummy) then
         fail(path, #source_lines(source), vault.id, "incomplete DES map or directive")
     end
 

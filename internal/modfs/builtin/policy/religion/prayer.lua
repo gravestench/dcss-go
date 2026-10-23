@@ -20,6 +20,13 @@ local prayer = {}
 -- The generic terrain cell cannot identify a god. Exactly one saved source
 -- feature at this coordinate supplies the authoritative altar identity.
 local function altar_at(ctx, position)
+    -- The pocket Abyss has a typed Lugonu altar without a DES source
+    -- record. Other altars still derive their god from authored records.
+    if ctx:cell(position.level_id, position.x, position.y) ==
+        terrain.DNGN_ALTAR_LUGONU then
+        return {}, gods.LUGONU
+    end
+
     if ctx:cell(position.level_id, position.x, position.y) ~=
         terrain.DNGN_RANDOM_ALTAR then
         return nil

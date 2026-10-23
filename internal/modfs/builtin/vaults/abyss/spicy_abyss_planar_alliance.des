@@ -1,0 +1,29 @@
+# spicy_abyss_planar_alliance retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   spicy_abyss_planar_alliance
+DEPTH: Abyss
+TAGS:   abyss_exit
+KMONS:  O = starflower
+SUBST:  c : bclmvx+G
+SUBST:  . = Ww.+vbV0xt
+SUBST:  0 = 000_
+KMONS:  _ = place:Swamp / demonic plant w:1
+SUBST:  _ = __A
+KFEAT:  _ = altar_lugonu
+KFEAT:  A = altar_fedhas
+SUBST:  M = .
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_o")
+MAP
+ c.c
+  c
+ c.c
+c...c
+@0M0.
+.MOM.
+.0M0@
+c...c
+ c.c
+  c
+ c.c
+ENDMAP

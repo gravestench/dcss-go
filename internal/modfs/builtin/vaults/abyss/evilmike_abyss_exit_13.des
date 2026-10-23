@@ -1,0 +1,11 @@
+# evilmike_abyss_exit_13 retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:  evilmike_abyss_exit_13
+DEPTH: Abyss
+TAGS:  abyss_exit unrand allow_dup
+KMONS: O = w:1 orange crystal statue / w:2 obsidian statue / w:20 ice statue / w:15 oklob plant
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_o")
+MAP
+O
+ENDMAP

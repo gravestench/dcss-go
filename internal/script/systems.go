@@ -12,13 +12,19 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
-const callbackTimeout = 2 * time.Second
+// A combat system can trigger a full Abyss arrival through distortion.
+// Its authored DES selection needs more time than a simple turn effect,
+// while a stuck Lua callback still has a finite deadline.
+const callbackTimeout = 8 * time.Second
 
 type structuralCommand struct {
 	entity  akara.Entity
 	apply   func() error
 	undo    func() error
 	destroy bool
+	// spatialLevel marks commands whose read or write depends on a level's
+	// current grid. Region replacement may follow unrelated ECS commands.
+	spatialLevel int
 }
 
 type componentTarget struct {
@@ -252,6 +258,13 @@ func (r *Runtime) entityHandle(entity akara.Entity) *lua.LUserData {
 // DiscardPending forgets structural changes from a failed update.
 func (r *Runtime) DiscardPending() {
 	if r != nil {
+		if r.randomDrawn && r.services.RestoreRandom != nil {
+			r.services.RestoreRandom(r.randomCheckpoint)
+		}
+
+		r.randomCheckpoint = nil
+		r.randomDrawn = false
+
 		for _, entity := range r.created {
 			r.world.DestroyEntity(entity)
 		}
@@ -263,6 +276,8 @@ func (r *Runtime) DiscardPending() {
 		r.pendingCells = make(map[gridCell]terrain.ID)
 		r.pendingActors = make(map[gridCell]akara.Entity)
 		r.pendingPositions = make(map[akara.Entity]*gridCell)
+		r.pendingSession = make(map[string]map[string]any)
+		r.pendingRegions = make(map[int]RegionChange)
 	}
 }
 
@@ -331,6 +346,21 @@ func (r *Runtime) ApplyPending() error {
 	r.pendingCells = make(map[gridCell]terrain.ID)
 	r.pendingActors = make(map[gridCell]akara.Entity)
 	r.pendingPositions = make(map[akara.Entity]*gridCell)
+	r.pendingSession = make(map[string]map[string]any)
+	r.pendingRegions = make(map[int]RegionChange)
+	r.randomCheckpoint = nil
+	r.randomDrawn = false
 
 	return nil
+}
+
+// The first draw captures every stream. A failed Lua callback can then
+// restore streams that did not exist before the callback as well as old ones.
+func (r *Runtime) checkpointRandom() {
+	if r.randomDrawn || r.services.RandomSnapshot == nil {
+		return
+	}
+
+	r.randomCheckpoint = r.services.RandomSnapshot()
+	r.randomDrawn = true
 }

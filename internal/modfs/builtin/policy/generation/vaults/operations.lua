@@ -986,6 +986,17 @@ end
 -- Walk source operations in order so hook emissions and substitutions see preceding edits.
 function operations.apply(vault, cells, random, depth, player, state,
     nested_context)
+    local resolved_tags = {}
+
+    for tag, present in pairs(vault.tags) do
+        resolved_tags[tag] = present
+    end
+
+    -- Source-position TAGS emitted by a conditional hook belong to this
+    -- placement only. The cached catalog definition must stay immutable so
+    -- the same map can serve another branch on a later generation attempt.
+    vault = setmetatable({ tags = resolved_tags }, { __index = vault })
+
     depth = depth or 0
     state = state or {
         used = used.new(player and player.prior_vault_ids),
@@ -1004,7 +1015,11 @@ function operations.apply(vault, cells, random, depth, player, state,
     local function apply_operation(operation)
         entity_specs.operation(vault, operation)
 
-        if operation.kind == directives.HOOK_VETO then
+        if operation.kind == directives.TAGS then
+            for tag in operation.argument:gmatch("%S+") do
+                resolved_tags[tag] = true
+            end
+        elseif operation.kind == directives.HOOK_VETO then
             records[#records + 1] = {
                 kind = effects.VETO,
                 method = operation.argument,
@@ -1112,7 +1127,7 @@ function operations.apply(vault, cells, random, depth, player, state,
         end
     end
 
-    return records, state.used:ids(), hook_values
+    return records, state.used:ids(), hook_values, resolved_tags
 end
 
 return operations

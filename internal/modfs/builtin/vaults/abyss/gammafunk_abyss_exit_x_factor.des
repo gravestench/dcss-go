@@ -1,0 +1,26 @@
+# gammafunk_abyss_exit_x_factor retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   gammafunk_abyss_exit_x_factor
+DEPTH: Abyss
+TAGS:   abyss_exit unrand transparent
+MONS:   large abomination / thrashing horror / tentacled starspawn \
+        / starcursed mass / tentacled monstrosity
+MONS:   orange crystal statue
+NSUBST: E = E / -
+NSUBST: - = 2=0 / 1 / 2=01.. / .
+SUBST:  c : cvb
+MARKER: D = lua:transp_loc("x_factor")
+MARKER: E = lua:transp_dest_loc("x_factor")
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_o")
+MAP
+ccccc     ccccc
+nn--cc   cc-Ecc
+.nn--ccccc--cc
+..nn--c-c--cc
+@.DnO--2---c
+..nn--c-c--cc
+.nn--ccccc--cc
+nn--cc   cc-Ecc
+ccccc     ccccc
+ENDMAP

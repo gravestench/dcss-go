@@ -1,0 +1,36 @@
+# hangedman_abyss_rune_flesh_and_stone retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    hangedman_abyss_rune_flesh_and_stone
+DEPTH: Abyss
+TAGS:    abyss_rune unrand no_monster_gen no_item_gen no_pool_fixup
+WEIGHT:  5
+MONS:    catoblepas, earth elemental, basilisk, boulder beetle
+MONS:    catoblepas skeleton, air elemental, death drake
+ITEM:    potion of flight q:1 ident:type
+KMONS:   O = patrolling war gargoyle
+KITEM:   O = abyssal rune of Zot
+KFEAT:   A = stone_arch
+KFEAT:   "@6 = runelight
+SHUFFLE: 23 / 57
+SUBST:   ! = 2, 0 = 222234555
+KPROP:   l = no_cloud_gen
+FTILE:   AO = floor_crystal_squares
+COLOUR:  O = lightmagenta
+MAP
+    @d0A0d@
+6ccccGclcGcccc6
+ .cOccclccccc.
+  c+c0"l"0ccc
+"cc1ccclcccccc"
+ .c4c0"l"0ccc.
+  c5c clc ccc
+"cc.c0"l"0cccc"
+ .c.ccclccccc.
+  c.c0"l"0ccc
+"cc.ccclcccdcc"
+ .c+c2c!c5c+c.
+  c 3 c1c 7 c
+6cc2 2+ +5 5cc6
+ .ccccccccccc.
+  .c c. .c c.
+ENDMAP

@@ -5,6 +5,7 @@ local tags = {
     GRUNT_PROFANE_LOOT = "grunt_profane_loot",
     GRUNT_ZOT_PORTAL = "grunt_zot_portal",
     DECOR = "decor",
+    EXTRA_OUTSIDE_ABYSS = "extra_outside_abyss",
     LAIR_ENTRY = "lair_entry",
     LAIR_END_SMALL = "lair_end_small",
     ORC_ENTRY = "orc_entry",

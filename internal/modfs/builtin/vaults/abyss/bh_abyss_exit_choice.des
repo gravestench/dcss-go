@@ -1,0 +1,14 @@
+# bh_abyss_exit_choice retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:  bh_abyss_exit_choice
+TAGS:  abyss_exit unrand transparent
+DEPTH: Abyss:1-4
+KFEAT: <: exit_abyss
+KFEAT: >: abyssal_stair
+MAP
+xxxxxxxxxxx
+x00........
+x<0......>.
+x00........
+xxxxxxxxxxx
+ENDMAP

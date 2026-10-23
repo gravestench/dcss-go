@@ -1,0 +1,26 @@
+# hangedman_relentless_pull retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    hangedman_relentless_pull
+DEPTH: Abyss
+TAGS:    no_monster_gen no_item_gen
+MONS:    ugly thing / large abomination / ynoxinul / unseen horror / smoke demon
+MONS:    tentacled starspawn / starcursed mass
+MONS:    very ugly thing, wretched star, lurking horror, ancient zyme
+SHUFFLE: 2d, 34eAB / 34eAB / '''CD, 34 / 56
+SUBST:   de = %**, AB = x, C = ., D = @, x = xxccb
+MAP
+ xxxxx         xxxxx
+xx%1xx@       Bxx3exx
+ x....xx.   .xxA43ex
+xx.xxxxxxx xxxxxxx.xx
+ x.xd. .2x x3. .dx.x
+xx.xx.x.xxxxx.x.xx.xx
+ x..xx.x.xxx.x.xx..x
+xx..x.. xxxxx ..x..xx
+ x..x .x. x .x. x..x
+xx .xx..x.x.x..xx. xx
+xxx..x....%....x..xxx
+ xx .%.xx.1.xx.%. xx
+  xx .xxxxxxxxx. xx
+   xxxx x x x xxxx
+ENDMAP

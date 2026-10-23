@@ -1,0 +1,41 @@
+# hangedman_abyss_lost_library retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    hangedman_abyss_lost_library
+DEPTH: Abyss
+TAGS:    patrolling no_monster_gen no_item_gen
+MONS:    guardian serpent, great orb of eyes, glowing orange brain
+MONS:    boggart, rakshasa, cacodemon, shadow demon
+KMONS:   0 = wizard
+KMONS:   8 = orc sorcerer
+KMONS:   9 = sphinx
+KMONS:   & = lich
+KMONS:   @ = deep elf sorcerer
+KMONS:   Z = nonbase draconian
+ITEM:    randbook numspells:1 w:19 / randbook numspells:2 w:1, any scroll
+KFEAT:   _ = altar_sif_muna
+SHUFFLE: ABCDEF
+NSUBST:  A = 0 / d / dee / ., B = 1 / d / dee / .
+NSUBST:  C = 2 / d / dee / ., D = 3 / d / dee / .
+NSUBST:  E = 4 / d / dee / ., F = & / 2=d / e / .
+NSUBST:  + = 2=+ / x, - = 2=+ / x
+SHUFFLE: 0123456789', '''''''''@, &@Z
+SUBST:   ' = ., a = +wl x:45, _ : _:30 TUVY .:35
+SUBST:   x = x:20 c:4 v:1 b:1 .:4, X = x:20 c:5 v:2 b:2 .:1
+MAP
+ . .. .. .. .. .. .
+..X++XXXXXXXXXXXXX..
+ XX. xx xxx xxx xXX
+.+._ xAAAxBBBxCCCxX.
+.+  .xAAAaBBBaCCC X.
+ XX..xAAAxBBBxCCCxX
+.XX..xx xxx xxx xxX.
+.X .............. X.
+.X .............. X.
+.Xxx xxx xxx xx..XX.
+ XxDDDxEEExFFFx..XX
+.X DDDaEEEaFFFx.  -.
+.XxDDDxEEExFFFx _.-.
+ XXx xxx xxx xx .XX
+..XXXXXXXXXXXXX--X..
+ . .. .. .. .. .. .
+ENDMAP

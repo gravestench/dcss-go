@@ -112,6 +112,14 @@ func (r *Runtime) policyWithContext(
 		return nil, fmt.Errorf("Lua policy %s output: %w", name, err)
 	}
 
+	// A successful decision with no staged work has already crossed its
+	// transaction boundary. Retain its random draws when BeginAction later
+	// clears pending commands from the previous action.
+	if len(r.pending) == 0 && len(r.created) == 0 {
+		r.randomCheckpoint = nil
+		r.randomDrawn = false
+	}
+
 	return output, nil
 }
 
@@ -139,10 +147,14 @@ func (r *Runtime) policyValue(value any) (lua.LValue, error) {
 	case int:
 		return r.policyValue(int64(typed))
 
-	case int64, uint64, bool, string, akara.Entity:
+	case int64, uint64, float64, bool, string, akara.Entity:
 		return r.luaFieldValue(typed)
 
 	case map[string]any:
+		if typed == nil {
+			return lua.LNil, nil
+		}
+
 		return r.policyTable(typed)
 
 	case []any:

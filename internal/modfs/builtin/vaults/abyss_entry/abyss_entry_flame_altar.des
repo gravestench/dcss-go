@@ -1,0 +1,24 @@
+# abyss_entry_flame_altar retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    abyss_entry_flame_altar
+DEPTH: Depths, D:21-
+TAGS:    nolayout_encompass
+# Source abyss_entry(_G, 'O') sets entrance tags, chance, and key feature.
+TAGS: extra luniq_enter_abyss chance_enter_abyss
+CHANCE: 3333 (Depths:1-2), 10000 (Depths:3), 3333 (Depths:4-)
+CHANCE: 3333 (D:21-24), 10000 (D:25), 3333 (D:26-)
+KFEAT: O = enter_abyss
+SUBST:   A : deG
+MARKER:  d = lua:fog_machine { cloud_type = "flame", \
+             pow_min = 10, pow_max = 10, delay = 10, \
+             size = 1, walk_dist = 0, spread_rate= 0, excl_rad = 0 }
+MARKER:  e = lua:fog_machine { cloud_type = "seething chaos", \
+             pow_min = 10, pow_max = 10, delay = 10, \
+             size = 1, walk_dist = 0, spread_rate= 0, excl_rad = 0 }
+KFEAT:   _ = altar_lugonu
+MAP
+ bbb
+bbObb
+bA_Ab
+  @
+ENDMAP

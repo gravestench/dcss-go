@@ -27,6 +27,7 @@ type Game struct {
 	templePlan     *save.TemplePlanRecord
 	panState       *save.PanStateRecord
 	hellState      *save.HellStateRecord
+	abyssState     *save.AbyssStateRecord
 
 	turn TurnContext
 

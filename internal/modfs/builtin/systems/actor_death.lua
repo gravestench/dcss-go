@@ -25,6 +25,7 @@ local flay = require("policy.combat.monster_flay")
 local component = require("constants.component")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
 local zap_ids = require("policy.magic.effects.zaps.ids")
+local abyss_exits = require("policy.world.abyss.exits")
 
 local system = {}
 
@@ -133,6 +134,7 @@ function system.update(ctx)
                     training.available_xp = training.available_xp + 10 * xp
                     ctx:set(player, "core.progression", progress)
                     ctx:set(player, "core.skill_training", training)
+                    abyss_exits.award(ctx, player, xp)
                     record_extra_reward(ctx, player, entity,
                         component.CHAOS_CLONE,
                         component.CHAOS_CLONE_REWARDS, xp)

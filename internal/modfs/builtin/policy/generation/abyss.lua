@@ -1,63 +1,110 @@
--- Example: A new Abyss map reserves the arrival portal before scattering rock walls.
-local abyss = {}
-local world_abyss = require("policy.world.abyss")
+-- Theory of operation: one Abyss visit owns a moving 80x70 window and a
+-- serializable source state. This generator plans the next region in Lua;
+-- the game publishes both only after the region transaction succeeds.
 local branches = require("ids.branches")
+local constants = require("constants.abyss")
+local terrain = require("constants.terrain")
+local window = require("policy.generation.abyss.terrain")
+local vaults = require("policy.generation.abyss.vaults")
+local paths = require("policy.generation.abyss.paths")
+local proto = require("policy.generation.abyss.proto")
 
-local width = 80
-local height = 70
-local portal_x = 40
-local portal_y = 35
+local abyss = {}
 
--- Keep the arrival portal clear while scattering rock; edge walls close the standalone Abyss map.
-function abyss.generate(ctx)
-    local rows = {}
-    local seed = ctx:random("abyss-layout", 1000000000)
-    local open_row = "#" .. string.rep(".", width - 2) .. "#"
+-- Keep a level owner ready without selecting a borrowed floor or
+-- consuming any Abyss RNG before the first actual entry. The first
+-- region transaction replaces this neutral storage in one commit.
+function abyss.storage(level_id)
+    local cells = {}
 
-    for y = 0, height - 1 do
-        if y == 0 or y == height - 1 then
-            rows[#rows + 1] = string.rep("#", width)
-        else
-            local row = open_row
+    for y = 0, constants.HEIGHT - 1 do
+        local row = {}
 
-            for rock = 1, 7 do
-                local x = 1 + (seed + y * 19349663 + rock * 73856093 +
-                    y * rock * 83492791) % (width - 2)
-                local near_portal = y >= portal_y - 2 and y <= portal_y + 2 and
-                    x >= portal_x - 2 and x <= portal_x + 2
+        for x = 0, constants.WIDTH - 1 do
+            local boundary = x == 0 or y == 0 or
+                x == constants.WIDTH - 1 or
+                y == constants.HEIGHT - 1
 
-                if not near_portal then
-                    row = row:sub(1, x) .. "#" .. row:sub(x + 2)
-                end
-            end
-
-            if y == portal_y then
-                row = row:sub(1, portal_x) .. "<" .. row:sub(portal_x + 2)
-            end
-
-            rows[#rows + 1] = row
+            row[x + 1] = boundary and terrain.DNGN_ROCK_WALL or
+                terrain.DNGN_FLOOR
         end
+
+        cells[y + 1] = row
     end
 
     return {
-        id = world_abyss.level_id,
+        id = level_id or constants.LEVEL_ID,
         branch_id = branches.BRANCH_ABYSS,
         local_depth = 1,
-        rows = rows,
-        stairs = {
-            {
-                x = portal_x,
-                y = portal_y,
-                to_level_id = 0,
-                to_x = 0,
-                to_y = 0,
-                unavailable = "The exit follows your banishment origin.",
-            },
-        },
-        entry_x = portal_x,
-        entry_y = portal_y,
+        cells = cells,
+        stairs = {},
+        entry_x = constants.CENTRE_X,
+        entry_y = constants.CENTRE_Y,
         initial_monsters = 0,
     }
+end
+
+-- Actors awaiting a source-style return remain ordinary ECS actors on a
+-- separate, inert grid. The visible window can then be replaced without
+-- serializing a second, partial copy of their health, AI, or equipment.
+function abyss.transit_storage()
+    return abyss.storage(constants.TRANSIT_LEVEL_ID)
+end
+
+-- Source proto generation samples the current world window, fits authored
+-- vaults, then copies a faded impression of the departure floor into cells
+-- those vaults did not claim. Exit and stair placement follows that imprint.
+function abyss.generate(ctx, state, departure)
+    if not state then
+        error("Abyss generation requires saved procedural state")
+    end
+
+    local cells, updated = window.build(ctx, state)
+    local records
+    local ids
+    local protected
+
+    -- Source proto generation places authored furniture before its final
+    -- safety pass. The center is cleared only after map terrain resolves.
+    cells, records, ids, protected = vaults.fill(ctx, cells, updated)
+    cells = proto.apply(ctx, cells, departure, protected)
+    local path_records
+    local path_ids
+
+    cells, path_records, path_ids, protected = paths.place(ctx, cells,
+        updated, protected)
+
+    for _, record in ipairs(path_records) do
+        records[#records + 1] = record
+    end
+
+    for _, id in ipairs(path_ids) do
+        ids[#ids + 1] = id
+    end
+    updated.selected_map_ids = ids
+    local center_x = constants.CENTRE_X
+    local center_y = constants.CENTRE_Y
+
+    -- Ordinary banishment always lands on floor; the pocket start's
+    -- explicit exit feature will be installed by its entry policy.
+    cells[center_y + 1][center_x + 1] = terrain.DNGN_FLOOR
+
+    local level = {
+        id = constants.LEVEL_ID,
+        branch_id = branches.BRANCH_ABYSS,
+        local_depth = updated.branch_depth,
+        cells = cells,
+        stairs = {},
+        entry_x = center_x,
+        entry_y = center_y,
+        initial_monsters = 0,
+        vault_ids = ids,
+        vault_records = records,
+        actor_moves = {},
+        actor_retire = {},
+    }
+
+    return level, updated, protected
 end
 
 return abyss

@@ -10,7 +10,8 @@ them, recover the rune, escape to the saved outside site, and resume the
 same state after a save. Mods add or replace one DES map or Lua rule by path.
 
 The pinned references are `crawl-ref/source/abyss.cc`, `abyss.h`, and
-`dat/des/branches/abyss.des`. The source DES contains 100 definitions:
+`source/dat/des/branches/abyss.des` in the local source checkout. The source
+DES contains 100 definitions:
 97 MAP blocks and three mapless weighted dummies. Keep each active MAP block
 byte-identical in an individual committed `.des` file. Translate embedded
 scripts to readable source-position Lua hooks. The original DES text remains
@@ -27,7 +28,9 @@ change points, the borrowed non-Abyss floor identity and layout, the exit
 XP counter, the spawned-exit flag, the minimum reached branch depth, and
 pending transiting entities. Save the sample queue explicitly; restore it
 without consuming a new random draw. Akara owns actors, items, statuses,
-and banishment origin. Lua owns terrain sampling, feature and vault draws,
+and banishment origin. Go may expose reusable 64-bit hash, Worley, and Perlin
+math primitives; Lua composes the source layouts and owns terrain sampling,
+feature and vault draws,
 monster selection, depth progression, and the policies for entering,
 shifting, descending, and escaping. A reusable Go grid transaction applies
 Lua's validated terrain and coordinate plan to the level and ECS entities

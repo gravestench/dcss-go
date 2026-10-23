@@ -1,0 +1,39 @@
+# hangedman_abyss_rune_macabre_mess retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   hangedman_abyss_rune_macabre_mess
+DEPTH: Abyss
+TAGS:   abyss_rune unrand no_monster_gen
+KMONS:  1 = glowing orange brain
+KMONS:  2 = golden eye / floating eye w:2
+KMONS:  3O = flying skull
+KMONS:  4 = large abomination / small abomination w:6
+KMONS:  5 = cacodemon
+KMONS:  6 = executioner
+KMONS:  7 = shining eye
+KMONS:  8 = titanic slime creature
+KITEM:  O = abyssal rune of Zot
+KFEAT:  A = stone_arch
+KFEAT:  n = iron_grate
+KFEAT:  " = runelight
+KFEAT:  1237 = shallow_water w:1 / . w:14
+SUBST:  c = ccccvb
+FTILE:  A+@W48O = floor_crystal_squares
+COLOUR: 48 = lightmagenta
+MAP
+ "cccccc4@4cccccc"
+ cc .. ccAcc .. cc
+"c 44"" x5x ""44 c"
+cc44nnn.c+c.nnn44cc
+c 4nn7n.....n7nn4 c
+c44+13n5.c.5n31+44c
+c 4nn2n.....n2nn4 c
+cc"4nnn.....nnn4"cc
+"c ......6...... c"
+ ccc "4nnnnn4" ccc
+  "cc84n2O2n48cc"
+   "c 4nn1nn4 c"
+    cc44n+n44cc
+    "c 44444 c"
+     ccc 4 ccc
+      "ccccc"
+ENDMAP

@@ -13,6 +13,7 @@ return {
     ELF_BLADES = "elf_blades",
     ELF_END = "elf_end",
     DEPTHS_ENTRY = "depths_entry",
+    ABYSS_ENTRY = "abyss_entry",
     DEPTHS_ENCOMPASS = "depths_encompass",
     GEH_LAVA_MAZE = "geh_lava_maze",
     GEH = "geh",

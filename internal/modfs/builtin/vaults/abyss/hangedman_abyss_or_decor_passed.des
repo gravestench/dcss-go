@@ -1,0 +1,22 @@
+# hangedman_abyss_or_decor_passed retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    hangedman_abyss_or_decor_passed
+# Source conditional makes this an extra only outside the Abyss.
+TAGS: extra_outside_abyss
+TAGS:    transparent no_pool_fixup decor
+DEPTH:   D:4-, Depths, Abyss
+# Source branch-dependent directives run at this exact declaration site.
+: vault.run("hangedman_abyss_or_decor_passed.conditional")
+MAP
+     x
+ ;;;;x::::
+ ;YX.x.XY:
+ ;X..x..X:
+ ;.......:
+xxxx.x.xxxx
+ `.......'x
+ `X..x.X'"x
+ `YX.x.'Y"x
+ ````x'""xx
+     xxxxx
+ENDMAP

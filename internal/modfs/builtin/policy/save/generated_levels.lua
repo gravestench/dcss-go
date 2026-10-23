@@ -1,5 +1,6 @@
 local generated = {}
 local abyss = require("policy.world.abyss")
+local abyss_constants = require("constants.abyss")
 local branches = require("ids.branches")
 local glyphs = require("constants.vault_glyphs")
 local branch_schedule = require("policy.generation.branch_schedule")
@@ -199,7 +200,8 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
         end
     end
 
-    if floors < 1 or floors > bottom or not by_id[abyss.level_id] then
+    if floors < 1 or floors > bottom or not by_id[abyss.level_id] or
+        not by_id[abyss_constants.TRANSIT_LEVEL_ID] then
         error("generated Dungeon save needs a Dungeon prefix and the Abyss")
     end
 
@@ -317,7 +319,8 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
             level.branch_id ~= branches.BRANCH_TROVE and
             not hell_size.is_subbranch(register.get("branches",
                 level.branch_id)) and
-            level.id ~= abyss.level_id then
+            level.id ~= abyss.level_id and
+            level.id ~= abyss_constants.TRANSIT_LEVEL_ID then
             local depth = level.local_depth
             local scheduled = chosen_schedule.entries[level.branch_id]
 

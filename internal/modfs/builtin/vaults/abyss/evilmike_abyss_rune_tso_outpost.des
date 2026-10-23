@@ -1,0 +1,24 @@
+# evilmike_abyss_rune_tso_outpost retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   evilmike_abyss_rune_tso_outpost
+DEPTH: Abyss
+TAGS:   abyss_rune unrand no_monster_gen
+MONS:   angel, ophan, cherub, patrolling juggernaut
+MONS:   dancing weapon ; long sword ego:holy_wrath
+KITEM:  O = abyssal rune of Zot
+KFEAT:  A = stone_arch
+KFEAT:  _ = altar_the_shining_one
+KFEAT:  " = runelight
+FTILE:  A45OG = floor_crystal_squares
+COLOUR: 45OG = lightmagenta
+MAP
+.......................
+....."""ccc"5"cccccc...
+.cccccGcc2ccGcc...3cc..
+.+...ccc...ccc....cccc.
+A+.T15+"._."+"....+4Oc.
+.+...ccc...ccc....cccc.
+.cccccGcc2ccGcc...3cc..
+....."""ccc"5"cccccc...
+.......................
+ENDMAP

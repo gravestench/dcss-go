@@ -258,6 +258,18 @@ func newScenarioWithRules(
 		return nil, err
 	}
 
+	if err = g.runWorldPolicy("character.start_region", map[string]any{
+		"job_id": playerDef.JobID,
+	}); err != nil {
+		return nil, err
+	}
+
+	position, found = g.stores.Positions.Get(g.player)
+
+	if !found {
+		return nil, fmt.Errorf("new player lost its starting position")
+	}
+
 	if err = g.runWorldPolicy("world.fog_machines", map[string]any{
 		"source_level_id":      position.LevelID,
 		"destination_level_id": position.LevelID,

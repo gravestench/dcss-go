@@ -1,6 +1,7 @@
 local poison_sources = require("policy.save.poison_sources")
 
 local abyss = require("policy.world.abyss")
+local abyss_constants = require("constants.abyss")
 local component = require("constants.component")
 local mutation_levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
@@ -179,15 +180,20 @@ function module.run(ctx)
     end
 
     if position and position.level_id == abyss.level_id then
-        if not banishment then
+        local state = ctx:session_state("abyss")
+
+        if not banishment and not (state and state.pocket_start) then
             error("Abyss player has no banishment origin")
         end
     elseif banishment then
         error("Dungeon player retains banishment origin")
     end
 
+    -- The return floor may be any generated branch. The earlier D:1-2
+    -- bound belonged to the fixed scenario and rejected valid deep saves.
     if banishment and (banishment.origin_level_id < 1 or
-        banishment.origin_level_id > 2 or
+        banishment.origin_level_id == abyss.level_id or
+        banishment.origin_level_id == abyss_constants.TRANSIT_LEVEL_ID or
         not ctx:walkable(banishment.origin_level_id,
             banishment.origin_x, banishment.origin_y)) then
         error("invalid player banishment origin")

@@ -1,0 +1,19 @@
+# hangedman_abyss_mock_shop retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   hangedman_abyss_mock_shop
+DEPTH: Abyss
+TAGS:   no_monster_gen patrolling
+KMONS:  1 = water elemental / nothing w:5
+KMONS:  2 = earth elemental
+KFEAT:  0 = abandoned_shop
+KFEAT:  1 = dry_fountain
+SUBST:  x = xcv, . = ...W
+MAP
+     . .
+  ..xx.xx..
+xxxxx1$1xxxxx
+x.2..$0$..2.x
+xxxxx1$1xxxxx
+  ..xx.xx..
+     . .
+ENDMAP

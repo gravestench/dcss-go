@@ -1,0 +1,22 @@
+# evilmike_abyss_exit_10 retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:  evilmike_abyss_exit_10
+DEPTH: Abyss
+TAGS:  abyss_exit
+SUBST: X = x.., x = xxxcv
+MONS:  neqoxec
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_o")
+MAP
+XXXXXXXXXXX
+XXXXXXXXXXX
+XXxxxxxxxXX
+XXx..1..xXX
+XXx.xxx.xXX
+XXx1.Ox....
+XXx.xxx.xXX
+XXx..1..xXX
+XXxxxxxxxXX
+XXXXXXXXXXX
+XXXXXXXXXXX
+ENDMAP

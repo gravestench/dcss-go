@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"crawl/internal/ecs"
+	"crawl/internal/terrain"
 	"github.com/gravestench/akara"
 )
 
@@ -93,6 +94,13 @@ func TestDistortionBanishmentCompletesStepAndReplaysEscape(t *testing.T) {
 
 	for _, run := range []*Game{g, loaded} {
 		if err := run.levels[1000].MoveActor(run.player, 40, 35); err != nil {
+			t.Fatal(err)
+		}
+
+		// Banishment lands on ordinary floor. Install a real Abyss exit
+		// to test the return path without relying on the old fixed stair.
+		if err := run.levels[1000].SetCell(40, 35,
+			terrain.ExitAbyss); err != nil {
 			t.Fatal(err)
 		}
 
@@ -218,6 +226,11 @@ func TestDistortionBanishesAndEscapesThroughSavedAbyss(t *testing.T) {
 	}
 
 	if err := loaded.levels[1000].MoveActor(loaded.player, 40, 35); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := loaded.levels[1000].SetCell(40, 35,
+		terrain.ExitAbyss); err != nil {
 		t.Fatal(err)
 	}
 

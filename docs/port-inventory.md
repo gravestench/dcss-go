@@ -44,7 +44,8 @@ context rather than a handler API for each game domain.
 | Domain | Implemented now | Main Lua location |
 | --- | --- | --- |
 | Character | Every legal selectable species/job pair starts; Lua owns chosen or fixed weapons, starting gear, species adjustments, attributes, skills, HP/MP, spell knowledge, Djinni's future spell schedule, religion, and durable origin state; training, XP, level gains, stat choice | `policy/character`, `schemas/character_origin.lua`, `systems/character_*` |
-| Dungeon | D:1 terrain and population at launch; D:2–15 terrain, paired stairs, monsters, and vault entities generated from live state on first entry; fixed test scenario; an initial Abyss level with banishment and escape | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
+| Dungeon | D:1 terrain and population at launch; D:2–15 terrain, paired stairs, monsters, and vault entities generated from live state on first entry; fixed test scenario | `policy/generation`, `policy/population`, `policy/world`, `systems/world_*` |
+| Abyss | 100 committed source DES definitions, including 97 MAP blocks and three mapless weighted definitions; Lua sampler, moving 80×70 window, source-position hooks, depth 1–7, morphing, authored and ambient ECS population, saved monster transit, Abyssal Knight pocket start, rune, XP exits, reentry, descent, teleport, escape, and text snapshots | `vaults/abyss`, `vaults/abyss_entry`, `policy/generation/abyss`, `policy/world/abyss` |
 | Snake Pit vaults and end | All 85 source `snake.des` definitions are committed: eight weighted Lair entrances, 68 depth-qualified ordinary and extra maps, and nine mandatory Snake:4 endings. Eight source inline-script sites run as named Lua hooks. The source entry's keyed stair, vault history, typed records, rune, and reciprocal travel survive saves. Source random-item class requests and Snake out-of-depth monster caps reach the live generation path | `vaults/snake_entry`, `vaults/snake`, `vaults/snake_end`, `policy/generation/vaults/branch_entry.lua`, `policy/generation/vaults/primary.lua` |
 | Lair vaults and end | All 116 source `lair.des` definitions are committed as 13 weighted Dungeon entrances, 89 ordinary and helper maps, and 14 mandatory Lair:5 endings. Shared woods and Beast Lair source decisions run as Lua hooks; five small endings select one fitting partner through the effective catalog. Keyed entry stairs, end IDs, map records, and reciprocal travel survive saves. Source delayed skeleton decay and feature names are retained as typed effects. A source `plant` script fault and two misspelled unrand names use the intended catalog identities | `vaults/lair_entry`, `vaults/lair`, `vaults/lair_end`, `policy/generation/vaults/lair`, `policy/generation/vaults/lair_end` |
 | Orc vaults and end | All 77 source `orc.des` definitions are split into 19 weighted Dungeon gates, 42 ordinary and helper maps, and 16 mandatory Orc:2 endings. Named Lua hooks port every source script site; the gardens and community endings compose child maps with placement-local settings. Keyed Orc and Elf entrances, optional shop or floor choices, typed delayed decay, end IDs, and save validation use the live generation path. Historical corpse decay still depends on its live consumer | `vaults/orc_entry`, `vaults/orc`, `vaults/orc_end`, `policy/generation/vaults/orc_entry`, `policy/generation/vaults/orc_end` |
@@ -360,9 +361,8 @@ module and the shared training owner; Gnoll distributed training keeps its
 source exception without a permanent skill-point loss.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
-vault families beyond D:1 arrivals and their Lua scripts,
-branch-specific layouts and entrances, the Abyss monster
-roster and shifting terrain,
+still-unported vault families and their Lua scripts,
+remaining branch-specific layouts and entrances,
 full source parity for chaos clone allegiance and exact shapeshifter RNG order,
 exact random-name RNG parity, gift-origin equipment name preference, runes,
 endgame, and the

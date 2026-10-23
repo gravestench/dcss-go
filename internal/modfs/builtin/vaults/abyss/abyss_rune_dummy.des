@@ -1,0 +1,8 @@
+# abyss_rune_dummy retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME: abyss_rune_dummy
+DEPTH: Abyss
+TAGS: abyss_rune unrand dummy
+CHANCE: 10%
+
+# FIXME: the tag name is inaccurate with abyssal stairs placed by these vaults.

@@ -41,6 +41,16 @@ func (r *RNGStreams) States() map[string]uint64 {
 	return copyStates
 }
 
+// RestoreStates replaces the named streams after a failed Lua transaction.
+// Copy the input so a later draw cannot mutate the saved checkpoint.
+func (r *RNGStreams) RestoreStates(states map[string]uint64) {
+	r.states = make(map[string]uint64, len(states))
+
+	for name, state := range states {
+		r.states[name] = state
+	}
+}
+
 func (r *RNGStreams) next(name string) uint64 {
 	state, found := r.states[name]
 

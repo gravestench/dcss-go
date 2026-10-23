@@ -1,0 +1,17 @@
+# spicy_abyss_rude_harpoons retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   spicy_abyss_rude_harpoons
+DEPTH: Abyss
+TAGS:   abyss_exit no_pool_fixup
+SUBST:  l : llw-
+SUBST:  - = -'
+KFEAT:  - = dispersal trap
+KFEAT:  ' = teleport trap / zot trap / net trap
+KMONS:  M = starflower
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_o")
+MAP
+lllll
+lMOMl
+lllll
+ENDMAP

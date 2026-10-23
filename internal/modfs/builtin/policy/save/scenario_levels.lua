@@ -2,6 +2,7 @@ local roster = require("policy.population.roster")
 local generated = require("policy.save.generated_levels")
 local abyss = require("policy.save.abyss_levels")
 local world_abyss = require("policy.world.abyss")
+local abyss_constants = require("constants.abyss")
 local branches = require("ids.branches")
 
 local population_id = "fixed-dungeon-population-v1"
@@ -27,12 +28,18 @@ function module.run(_, input)
         by_id[level.id] = level
         local choices = level.initial_monsters
 
-        if level.id == world_abyss.level_id then
+        if level.id == abyss_constants.TRANSIT_LEVEL_ID then
+            if level.branch_id ~= branches.BRANCH_ABYSS then
+                error("Abyss transit level has the wrong branch owner")
+            end
+
+            abyss.validate_transit(level)
+        elseif level.id == world_abyss.level_id then
             if level.branch_id ~= branches.BRANCH_ABYSS then
                 error("Abyss level has the wrong branch owner")
             end
 
-            abyss.validate(level)
+            abyss.validate(level, input.abyss_state)
         elseif scenario_id == generated_id then
             -- The branch validator below checks source ownership, depth,
             -- and topology for every generated ordinary floor.
@@ -76,12 +83,14 @@ function module.run(_, input)
     end
 
     if not by_id[1] or not by_id[2] or
-        not by_id[world_abyss.level_id] then
+        not by_id[world_abyss.level_id] or
+        not by_id[abyss_constants.TRANSIT_LEVEL_ID] then
         error("fixed Dungeon save needs D:1-2 and the Abyss")
     end
 
     for _, level in ipairs(levels) do
-        if level.id ~= world_abyss.level_id then
+        if level.id ~= world_abyss.level_id and
+            level.id ~= abyss_constants.TRANSIT_LEVEL_ID then
 
             for _, link in ipairs(level.stairs) do
                 if link.unavailable ~= "" then

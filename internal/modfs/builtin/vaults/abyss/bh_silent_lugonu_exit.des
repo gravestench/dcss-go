@@ -1,0 +1,12 @@
+# bh_silent_lugonu_exit retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   bh_silent_lugonu_exit
+DEPTH: Abyss
+TAGS:   allow_dup
+MONS:   silent spectre
+KFEAT:   _ = altar_lugonu
+MAP
+...       xxx
+._.       x1x
+...       xx+
+ENDMAP

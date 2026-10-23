@@ -1,0 +1,23 @@
+# evilmike_abyss_exit_16 retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   evilmike_abyss_exit_16
+DEPTH: Abyss
+TAGS:   abyss_exit
+NSUBST: . = 1:O / *:.
+SUBST:  c = cbx, . = .....12
+MONS:   slime creature, endoplasm / jelly
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_o")
+MAP
+c+c+c+c+c+c
++.+.+.+.+.+
+c+c+c+c+c+c
++.+.+.+.+.+
+c+c+c+c+c+c
++.+.+.+.+.+
+c+c+c+c+c+c
++.+.+.+.+.+
+c+c+c+c+c+c
++.+.+.+.+.+
+c+c+c+c+c+c
+ENDMAP

@@ -29,7 +29,9 @@ local module = {}
 -- Both startup and first-entry generation decode DES terrain through one
 -- owner, so a newly entered floor retains exactly the same feature rules.
 local function decode_level(ctx, level)
-    level.cells = features.decode_source_rows(level.rows)
+    if not level.cells then
+        level.cells = features.decode_source_rows(level.rows)
+    end
 
     if level.vault_records then
         level.vault_records = features.apply_vault_terrain(
@@ -90,7 +92,8 @@ function module.run(ctx, input)
         error(string.format("unsupported scenario ID %q", tostring(scenario_id)))
     end
 
-    result.levels[#result.levels + 1] = abyss.generate(ctx)
+    result.levels[#result.levels + 1] = abyss.storage()
+    result.levels[#result.levels + 1] = abyss.transit_storage()
 
     -- The fixed benchmark retains its authored coordinates. Population
     -- receives the same item intent format as live Dungeon generation.
@@ -147,7 +150,8 @@ end
 function module.first(ctx, input)
     local result = generated.first(ctx, input)
 
-    result.levels[#result.levels + 1] = abyss.generate(ctx)
+    result.levels[#result.levels + 1] = abyss.storage()
+    result.levels[#result.levels + 1] = abyss.transit_storage()
 
     for _, level in ipairs(result.levels) do
         decode_level(ctx, level)

@@ -1,0 +1,41 @@
+# nicolae_abyss_rune_star_stuff retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    nicolae_abyss_rune_star_stuff
+DEPTH: Abyss
+TAGS:    abyss_rune unrand no_monster_gen
+WEIGHT:  25
+KMONS:   1 = starcursed mass
+KMONS:   2 = wretched star
+KMONS:   3 = tentacled starspawn
+KMONS:   4 = place:Abyss:$
+KITEM:   O = abyssal rune of zot
+KFEAT:   A = stone_arch
+KFEAT:   4 = runelight
+# Place an arch before the door, and place the rune on one of
+# the three most distant points from the entrance.
+SHUFFLE: Aa'Bb"Dd-Ee_Ff~ / Bb"Dd-Ee_Ff~Aa' / Dd-Ee_Ff~Aa'Bb" / \
+         Ee_Ff~Aa'Bb"Dd- / Ff~Aa'Bb"Dd-Ee_
+NSUBST:  FAB : 1:O / *:"
+NSUBST:  s = 2:1 / 2:2 / 2:3
+SUBST:   a = +, ' = A, DE = ., bdef = c
+SUBST:   c = cccxbv
+CLEAR:   "-_~
+FTILE:   123O = floor_crystal_squares
+COLOUR:  123O = lightmagenta
+MAP
+     4ccc4
+    cccBccc
+  _ec..s..cf~
+4ccc...c...ccc4
+cc....c.c....cc
+cA...........Dc
+c..sc.....cs..c
+cc..c..s..c..cc
+-d...........a'
+ c...c...c...c
+ cc..cc.cc..cc
+ 4c.s.....s.c4
+  cF.......Ec
+  cccccbccccc
+       "
+ENDMAP

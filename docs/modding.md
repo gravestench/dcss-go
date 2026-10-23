@@ -4432,6 +4432,85 @@ the choice. The [Tomb snapshot index](level-snapshots/tomb/index.txt) shows
 the actual three floors and their connected one-way links. Regenerate it
 with `CRAWL_TOMB_SNAPSHOT_DIR=/absolute/output go test ./internal/game -run '^TestTombBranchStagesCompleteRoute$'`.
 
+## Add or replace an Abyss map
+
+The Abyss is a moving 80×70 view over a procedural world, rather than a
+stack of persistent floors. A branch depth from Abyss:1 through Abyss:7
+controls monsters, vault weights, exits, and rune eligibility. A separate
+morph clock changes exposed terrain as turns pass. The generated map and
+clock are saved together, so loading a game does not reroll terrain.
+
+The bundled source maps live as individual files in `vaults/abyss/`.
+Depths-side portal entrances live in `vaults/abyss_entry/`. Their
+`CHANCE` and `chance_enter_abyss` tags join the ordinary DES chance stage;
+the keyed `enter_abyss` feature becomes a live arch. A player on that arch
+uses the down-stair command to enter the Abyss, and the outside cell becomes
+the return site. To add a room, create
+`vaults/abyss/my_ruined_shrine.des` with its own `NAME`, `DEPTH`,
+`WEIGHT`, `TAGS`, directives, and `MAP` block.
+Use `ORIENT: float` for an ordinary Abyss room. Without an `ORIENT`
+directive, the source DES parser marks it as a minivault, which uses a
+different draw and does not enter the ordinary Abyss furniture pool.
+The effective catalog finds the file by path; no registry list or Go
+change is needed. Use a new `NAME` for an addition, or the same relative
+path to replace a bundled map. A `TAGS: abyss_rune` map joins the rune
+pool; `TAGS: abyss_exit` joins the exit pool. Weighted mapless dummy
+definitions deliberately spend a draw
+without placing terrain. Normal Abyss furniture uses the ordinary depth
+and weight rules and a six-map stop limit. Keep the source map syntax in
+the `.des` file so the map remains readable beside the original game.
+
+An executable `:` line in a map calls a named method with
+`vault.run("method_name")`; a veto calls `vault.veto`. Put that method in
+`policy/generation/vaults/abyss/<same_name>.lua`, or the matching
+`abyss_entry/` path. The runtime loads that Lua through the same layered
+VFS as the `.des`, so either file can be overridden independently. The
+hook receives the temporary placement `api`, which can emit a directive,
+read placement-local choices, or draw from the placement RNG. It is not
+the live world `ctx`. Keep each method as a named function on a returned
+local handler table, and explain why the source map needs it. Existing
+bundled hooks remain in separate Lua files; a future cleanup may move
+them into their paired DES files. Lua source must never be embedded in Go.
+
+The runtime first samples terrain in `policy/generation/abyss/`, then
+fits weighted DES maps. On entry, `proto.lua` paints a sanitized,
+distance-faded impression of the departure floor over unprotected cells;
+authored vault cells keep their shape. It then places exits, stairs, and
+a depth-eligible rune. It projects the authored cells onto typed terrain
+and keeps a source record for every occupied map cell, including plain
+floor. A later window shift preserves a touched map whole. Keyed item
+and monster directives materialize through the ordinary ECS factories.
+Pending source effects
+remain typed records. When the player approaches an edge, the
+`policy/world/abyss/shift.lua` rule carries the radius-ten neighborhood
+and any touched vault to the center. A map that cannot fit intact causes
+the proposed shift to fail before terrain or RNG state is committed.
+
+`policy/world/abyss.lua` owns first entry, reentry, descent, teleport,
+and escape. It saves the outside return cell on each new banishment.
+An Abyssal Knight starts in a pocket window with an exit underfoot and a
+nearby Lugonu altar. Ordinary exit features return to the saved outside
+site; downward Abyssal stairs generate a fresh window one depth deeper.
+Credited XP can place another exit or stair. `policy/world/abyss/rune.lua`
+keeps the Abyssal rune unique after pickup. Once collected, the rune also
+raises ordinary exit odds to the source's maximum effective depth; save
+validation rejects a second floor copy. `policy/world/abyss/transit.lua`
+parks eligible monsters in an inert ECS reserve while a window changes,
+then tries to return them on a later window. Their health, AI, and gear
+stay on the same ECS entities. The reserve is engine storage, not a map
+that a player or mod vault should address directly.
+
+For a gameplay rule change, override one named Lua policy in
+`policy/generation/abyss/` or `policy/world/abyss/`. For a new authored
+encounter, add a `.des` file and only add a hook when a static directive
+cannot express the behavior. A test for a rule belongs in a `_test.lua`
+file and should import the production constants and policy. The
+[Abyss text snapshots](level-snapshots/abyss/index.txt) show a playable
+first window, shifted window, depth-seven rune, and XP exit with map IDs
+and travel destinations. Each text file marks whether those destinations
+and the rune are reachable from the player. Regenerate them with
+`CRAWL_ABYSS_SNAPSHOT_DIR=/absolute/output go test ./internal/game -run '^TestAbyssTextSnapshots$'`.
+
 ## Test a mod
 
 Use a file ending in `_test.lua` under `tests/`. Import production modules

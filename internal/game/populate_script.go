@@ -283,6 +283,12 @@ func vaultRecordArguments(record vault.Record) map[string]any {
 }
 
 func (g *Game) markMaterializedVaultRecords(value any) error {
+	return markMaterializedVaultRecords(g.levels, value)
+}
+
+// A staged region and the startup population path use the same record
+// transition, including generated item identity and monster equipment.
+func markMaterializedVaultRecords(levels map[int]*Level, value any) error {
 	entries, ok := value.([]any)
 
 	if !ok {
@@ -312,7 +318,7 @@ func (g *Game) markMaterializedVaultRecords(value any) error {
 			return err
 		}
 
-		level := g.levels[levelID]
+		level := levels[levelID]
 
 		if level == nil ||
 			index < 1 ||

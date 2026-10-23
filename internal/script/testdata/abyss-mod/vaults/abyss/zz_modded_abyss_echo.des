@@ -1,0 +1,12 @@
+# A sparse overlay adds one ordinary Abyss room by path discovery.
+# Explicit orientation keeps this map in the regular Abyss pool; omitted
+# ORIENT would make it a minivault with a separate selection stage.
+NAME: zz_modded_abyss_echo
+DEPTH: Abyss
+TAGS: extra allow_dup
+ORIENT: float
+MAP
+...
+.#.
+...
+ENDMAP

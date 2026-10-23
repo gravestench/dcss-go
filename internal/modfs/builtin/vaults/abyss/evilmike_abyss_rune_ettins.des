@@ -1,0 +1,32 @@
+# evilmike_abyss_rune_ettins retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   evilmike_abyss_rune_ettins
+DEPTH: Abyss
+TAGS:   abyss_rune unrand
+MONS:   ettin ; giant spiked club ego:distortion | giant club ego:distortion . \
+                giant spiked club ego:chaos | giant club ego:chaos
+MONS:   ettin skeleton w:6 / flayed ghost / shadow wraith w:4
+MONS:   place:Abyss:$, silent spectre
+KMONS:  O = floating eye
+KITEM:  O = abyssal rune of Zot
+KFEAT:  A = stone_arch
+KFEAT:  " = runelight
+SUBST:  x = xxccn, . = ...W
+NSUBST: 0 = 4:1 / 2:2 / *:3
+FTILE:  AO = floor_crystal_squares
+COLOUR: O = lightmagenta
+MAP
+    """"""""
+ ""..xxxAxx..
+ "xxxx.xx1xx."
+ .x0x.x0xx.xx"
+".xx.xxx.xx.x"
+"xx.xx3x.x0xx"
+"x.xx1O2xx.xx"
+"xx.xx4xx.xxx"
+".xx.xxxxx0xx"
+ .x0x.x0x.xx."
+ "xxxx.x.xx..
+ ""..xxxxx..
+    """""""
+ENDMAP

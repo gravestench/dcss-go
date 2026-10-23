@@ -1,0 +1,41 @@
+# nicolae_abyss_rune_left_handed retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    nicolae_abyss_rune_left_handed
+DEPTH: Abyss
+TAGS:    abyss_rune unrand no_monster_gen
+WEIGHT:  25
+MONS:    ancient zyme, wretched star, starcursed mass, lurking horror
+MONS:    thrashing horror, tentacled starspawn, apocalypse crab
+# Worldbinders summon from other branches....
+KMONS:   8 = nagaraja / ghost moth / thorn hunter / merfolk javelineer
+KMONS:   9 = guardian serpent / entropy weaver / swamp dragon / satyr
+KMONS:   0 = place:Abyss:$
+KMONS:   O = worldbinder
+KITEM:   O = abyssal rune of zot
+KFEAT:   A = stone_arch
+KFEAT:   " = runelight
+NSUBST:  0 = 1:0 / 1:9 / * = 09
+NSUBST:  X = 1:1 / 1:2 / 1:3 / * = 123"", Q = 1:6 / 1:7 / * = 67...
+SHUFFLE: 12, 45
+FTILE:   A123O = floor_crystal_squares
+COLOUR:  123O = lightmagenta
+MAP
+    ...
+   ..c....
+  ..cc0.c.
+ ..ccc"......
+..cccccccccc..
+..0ccc.4cc.cc..
+..cc9+cc+...nc.
+."c.5.cc..X..c.
+.ccc+ccc.XcX.c.
+.....Q.c..X8.c.
+..Q.A..cn...nc.
+.....Q..ccOcc..
+.ccccc..8ccc".0
+.ccc"ccccc"cc..
+.ccc...0....cc.
+............c0.
+           .cc.
+           ....
+ENDMAP

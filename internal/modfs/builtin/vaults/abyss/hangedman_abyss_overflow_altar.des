@@ -1,0 +1,20 @@
+# hangedman_abyss_overflow_altar retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   hangedman_abyss_overflow_altar
+DEPTH: Abyss
+TAGS:   no_item_gen no_monster_gen no_pool_fixup
+MONS:   earth elemental
+KFEAT:  A = altar_lugonu
+KFEAT:  B = dry_fountain
+KFEAT:  C = abyssal_stair
+SUBST:  x = xcv++, y = ..w, z = Wl
+MAP
+yyyyyyyy
+yxxxxxxy
+yxzzzzxy
+yxzA1zxy
+yxz.Bzxy
+yxzzzzxy
+yxxxxxxy
+yyyyyyyy
+ENDMAP

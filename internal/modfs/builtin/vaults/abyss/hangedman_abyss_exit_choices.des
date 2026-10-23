@@ -1,0 +1,31 @@
+# hangedman_abyss_exit_choices retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    hangedman_abyss_exit_choices
+DEPTH: Abyss
+TAGS:    abyss_exit unrand no_monster_gen
+MONS:    hell hound, raiju, great orb of eyes
+MONS:    glowing orange brain, swamp drake, wind drake, torpor snail
+KMONS:   8 = tyrant leech
+KMONS:   9 = mana viper
+KMONS:   0 = anaconda
+KMONS:   A = ball lightning
+KMONS:   B = air elemental
+KMONS:   C = unseen horror
+KMONS:   D = shadow wraith
+KMONS:   E = elephant
+KMONS:   F = catoblepas
+SHUFFLE: 12, 56, 90, CD, 12 / 34, 56 / 78, 90 / AB, CD / EF
+SUBST:   c = ccv, x = xxc
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_n")
+MAP
+. . . . . . . . . .
+ .xx x x x x x x .
+.ccccccccccccccccc.
+.c +C+ +9+ +5+ +1+.
+.cNcnc.cnc.cnc.cncn
+.c +D+ +0+ +6+ +2+.
+.ccccccccccccccccc.
+ .xx x x x x x x .
+. . . . . . . . . .
+ENDMAP

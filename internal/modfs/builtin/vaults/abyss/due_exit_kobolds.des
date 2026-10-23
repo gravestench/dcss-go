@@ -1,0 +1,33 @@
+# due_exit_kobolds retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   due_exit_kobolds
+DEPTH: Abyss
+TAGS:   no_rotate abyss_exit
+SUBST:  y  = c.
+COLOUR: 1. = random
+MARKER: P  = lua:fog_machine { cloud_type="blue smoke", walk_dist=1, \
+             size=9, pow_max=20, delay=10, buildup_amnt=14, buildup_time=7, \
+             spread_rate=3, start_clouds=1, colour="blue" }
+KFEAT:  _ = altar_lugonu
+KMONS:  1 = kobold brigand w:80 ; dart ego:poisoned | dart ego:curare w:5 \
+                . short sword | rapier | quick blade w:3 \
+            / kobold brigand w:10 ; dart ego:poisoned | dart ego:curare w:5 \
+                . quick blade ego:distortion w:6 | rapier ego:distortion \
+                    | short sword ego:distortion
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_p")
+MAP
+  ccccc
+ cc...cc
+cc..P..cc
+ cc...cc
+ ccc.cccc
+ccyy.yyyccc
+cy..111.yyc
+cc..1_1..cc
+cyy.111..yc
+cccyy..yycc
+  ccc..ccc
+    c++c
+     @@
+ENDMAP

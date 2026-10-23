@@ -1,0 +1,22 @@
+# bh_abyss_xom_lugonu_altar retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   bh_abyss_xom_lugonu_altar
+DEPTH: Abyss
+TAGS:   extra allow_dup
+COLOUR: " : magenta w:2 / white
+KFEAT:   _ = altar_lugonu
+KFEAT:   X = altar_xom
+SUBST:   a = XXX"
+SUBST:   b = X"
+SUBST:   c = XX"
+SUBST:   d = X""
+SUBST:   e = X"""
+MAP
+   ebe
+  dcacd
+ ec"""ce
+ ba"_"ab
+ ec"""ce
+  dcacd
+   ebe
+ENDMAP

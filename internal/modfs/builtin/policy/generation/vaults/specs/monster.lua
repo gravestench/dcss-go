@@ -135,8 +135,10 @@ local function parse_term(text, expression, site)
         elseif key == "place" then
             local fixed_depth = value:match("^[A-Za-z]+:%d+$")
             local branch_bottom = value:match("^[A-Za-z]+:%$$")
+            local whole_branch = value:match("^[A-Za-z]+$")
 
-            if not fixed_depth and not branch_bottom then
+            if not fixed_depth and not branch_bottom and
+                not whole_branch then
                 choice.fail(site, expression, "invalid monster place " .. value)
             end
 

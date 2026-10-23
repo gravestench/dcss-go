@@ -1,0 +1,44 @@
+# evilmike_abyss_rune_elephants_shrine retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    evilmike_abyss_rune_elephants_shrine
+DEPTH: Abyss
+TAGS:    abyss_rune unrand
+KMONS:   1 = elephant
+KMONS:   23 = dire elephant
+KMONS:   45 = hellephant
+KMONS:   67 = generate_awake spatial vortex
+KMONS:   89 = draconian shifter
+KMONS:   _ = patrolling spatial maelstrom
+ITEM:    potion of flight q:1 ident:type
+KITEM:   _ = abyssal rune of Zot
+KFEAT:   _ = altar_lugonu
+KFEAT:   A = stone_arch
+KFEAT:   " = runelight
+# Two rings of opposite sides on the inside / outside of the octagon lava moat,
+# with one to three (mostly two) pairs of opposite sides made floor or wall.
+SHUFFLE: HIJKL, MNOPQ
+SUBST:   HIMN = l, J : ll. KL = ., O : llP, PQ : xxxxb, c : ccv
+NSUBST:  ' = 1:4 / 1:8 / 1 = 22248 / 10 = 2216 / *:., d = 1:dddd. / *:.
+MARKER:  F = lua:fog_machine { cloud_type = "translocational energy", \
+             pow_max = 2, delay_min = 10, delay_max = 20, walk_dist = 0, size = 1 }
+FTILE:   AF3579_OG+ = floor_crystal_squares
+COLOUR:  F3579 = lightmagenta
+MAP
+  l".HIIIIIIIIJ."l
+ l".HllllllllllJ."l
+l"dHlMNNNNNNNNOlJd"l
+".HlMMllllKlllOOlJ."
+.HlMMlJ''''''HlOOlJ.
+HlMMlJ''''G'''HlOOlJ
+KlPlJ'FccccccF'HlPlK
+KlPl''ccG"79cc''lPlK
+KlPII''+"5_7cc'IIPlKA
+KlPl''ccG37"cc''lPlK
+KlPlH'FccccccF'JlPlK
+JlOOlH''''G'''JlMMlH
+.JlOOlH''''''JlMMlH.
+".JlOOllllKlllMMlH."
+l"dJlONNNNNNNNMlHd"l
+ l".JllllllllllH."l
+  l".JIIIIIIIIH."l
+ENDMAP

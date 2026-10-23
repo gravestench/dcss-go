@@ -1,0 +1,34 @@
+# hangedman_classic_abyss_death retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    hangedman_classic_abyss_death
+DEPTH: Abyss
+TAGS:    transparent no_monster_gen
+MONS:    large abomination / ynoxinul / unseen horror / \
+         skeleton / sixfirhy / smoke demon / neqoxec / \
+         efreet / rakshasa / glowing orange brain / ugly thing / \
+         golden eye / hell hog
+MONS:    lich / hellephant / tentacled monstrosity / profane servitor / \
+         death drake / daeva / angel / bone dragon / balrug w:4 / \
+         shadow demon w:4 / executioner w:4 / hellion w:4
+SHUFFLE: lw / ll / ww / ''
+NSUBST:  2 : 2:2 / *:1
+SUBST:   c = ccvbb, x = xxxc, ' = .
+MAP
+         c
+        cc
+       cc.
+      ccx.@
+     cc2x..x
+    cc%xx wxx
+   cc*11x% w.@
+  cc2x1x%x% ...cc
+ ccxxxx%.%xxxxcc
+cc... %x%x1x2cc
+   @.l %x11*cc
+    xxl xx%cc
+     x..x2cc
+      @.xcc
+       .cc
+       cc
+       c
+ENDMAP

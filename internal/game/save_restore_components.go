@@ -233,6 +233,10 @@ func (g *Game) restoreLocationComponents(
 }
 
 func (g *Game) validateRestoredPlacement() error {
+	if err := g.validateAbyssTransitPlacement(); err != nil {
+		return err
+	}
+
 	panVaultIDs := []string{}
 
 	if g.panState != nil {

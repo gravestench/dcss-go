@@ -1,0 +1,38 @@
+# evilmike_nicolae_abyss_rune_betentacled_crabyss retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    evilmike_nicolae_abyss_rune_betentacled_crabyss
+DEPTH: Abyss
+TAGS:    abyss_rune unrand transparent no_pool_fixup patrolling
+KMONS:   1P = apocalypse crab
+KMONS:   2 = fire crab
+KMONS:   3 = ghost crab
+KMONS:   K = kraken
+KMONS:   T = tentacled monstrosity
+KMONS:   S = shambling mangrove
+KITEM:   OP = abyssal rune of Zot
+KFEAT:   TS1P = W
+KFEAT:   K = w
+KFEAT:   A = stone_arch
+KFEAT:   " = runelight
+SHUFFLE: O1 / O1 / P'
+SUBST:   D : cw, ' = w
+FTILE:   A23O = floor_crystal_squares
+COLOUR:  23O = lightmagenta
+MAP
+  .............
+  .cc.......cc.
+....c"ccccc"c....
+.cccccccOccccccc.
+.."cc1WWWWW1cc"..
+.cccWWDWSWDWWccc.
+.."cTWWWWWWWTc"..
+.ccccccWWWcccccc.
+..."cc"WWW"cc"...
+ ..cc""WWW""cc..
+ ..c"""WWW"""c..
+ ..c"""WwW"""c..
+ .cccWWwwwWWccc.
+ .c2WWwwKwwWW3c.
+ .cccWWwwwWWccc.
+ ...""""A""""...
+ENDMAP

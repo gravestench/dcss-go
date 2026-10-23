@@ -1,0 +1,21 @@
+# grunt_abyss_exit_deep_breaths retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:  grunt_abyss_exit_deep_breaths
+DEPTH: Abyss
+TAGS:  abyss_exit unrand transparent
+MONS:  ice statue, fire crab, swamp dragon, catoblepas
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_o")
+MAP
+   xxxxx
+  xxlllxx
+ xxll3llxx
+xxll.O.llxx
+xll..1..llx
+xl.2...2.lx
+xl...4...lx
+xl.......lx
+ll.......ll
+ ..........
+  ...@....
+ENDMAP

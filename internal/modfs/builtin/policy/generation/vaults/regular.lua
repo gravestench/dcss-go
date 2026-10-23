@@ -8,6 +8,19 @@ local weights = require("policy.generation.vaults.weight")
 
 local regular = {}
 
+-- A branch may reserve tagged definitions for a later dedicated role.
+-- The Abyss, for example, draws rune and exit maps at different times
+-- from its ordinary furniture rather than letting them fill a room slot.
+local function allowed_tags(definition, context)
+    for _, tag in ipairs(context.excluded_tags or {}) do
+        if definition.tags[tag] then
+            return false
+        end
+    end
+
+    return true
+end
+
 -- A family directory is the mod extension point. DEPTH and source weight
 -- still decide each map's eligibility; explicit ORIENT keeps a map out of
 -- the separate minivault draw.
@@ -30,6 +43,7 @@ function regular.candidates(context)
             definition.family == context.shared_vault_family
 
         if family and
+            allowed_tags(definition, context) and
             (not context.regular_extra_only or definition.tags.extra) and
             definition.orientation ~= "encompass" and
             not definition.tags.minivault and

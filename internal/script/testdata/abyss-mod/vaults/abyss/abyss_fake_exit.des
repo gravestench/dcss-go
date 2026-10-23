@@ -1,0 +1,7 @@
+# Matching a base relative path replaces that map as one whole definition.
+NAME: abyss_fake_exit
+DEPTH: Abyss
+TAGS: allow_dup
+MAP
+..
+ENDMAP

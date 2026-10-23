@@ -1,0 +1,22 @@
+# evilmike_abyss_exit_plants retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:  evilmike_abyss_exit_plants
+DEPTH: Abyss
+TAGS:  abyss_exit
+SUBST: 1 = 112.
+SUBST: . = .:100 1
+MONS:  demonic plant
+MONS:  bush
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_o")
+MAP
+ .......
+.........
+..11111..
+..12221..
+..12O21..
+..12221..
+..11111..
+.........
+ .......
+ENDMAP

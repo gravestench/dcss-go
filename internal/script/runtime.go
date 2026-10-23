@@ -27,6 +27,9 @@ type Services struct {
 	CurrentAut     func() int64
 	Random         func(stream string, bound int) (int, error)
 	RandomWord     func(stream string) uint64
+	RandomSnapshot func() map[string]uint64
+	RestoreRandom  func(map[string]uint64)
+	SessionStates  map[string]SessionStateHost
 	Emit           func(kind, text string)
 	Grid           Grid
 	HostComponents map[string]HostComponent
@@ -35,6 +38,8 @@ type Services struct {
 // Grid exposes reusable spatial reads. Game rules decide how to interpret
 // terrain features, stair links, occupancy, and walkability.
 type Grid interface {
+	PrepareRegion(levelID int, plan map[string]any) (RegionChange, error)
+	RegionPlan(levelID int) (map[string]any, error)
 	Cell(levelID, x, y int) (terrain.ID, bool)
 	RecordsAt(levelID, x, y int) []SpatialRecord
 	ReplaceRecordString(
@@ -71,6 +76,31 @@ type Grid interface {
 	MoveActors(moves []ActorMove) error
 	PlaceActor(entity akara.Entity, levelID, x, y int) error
 	RemoveActor(entity akara.Entity, levelID int) error
+}
+
+// RegionChange is a validated, reversible replacement of one grid owner.
+// The Lua runtime stages it with the same structural-command transaction
+// used for ECS changes, so later failures run Undo in reverse order.
+type RegionChange struct {
+	Cells         [][]terrain.ID
+	ActorMoves    []ActorMove
+	RetiredActors []akara.Entity
+	MarkRecords   func([]map[string]any) error
+	AddActors     func(int) error
+	Apply         func() error
+	Undo          func() error
+}
+
+// SessionStateHost binds one named saved record to the generic Lua
+// transaction. Its owner validates a candidate before publication.
+type SessionStateHost struct {
+	Read    func() (map[string]any, error)
+	Prepare func(map[string]any) (SessionChange, error)
+}
+
+type SessionChange struct {
+	Apply func() error
+	Undo  func() error
 }
 
 // SpatialRecord is a read-only, content-neutral view of a saved level record.
@@ -140,6 +170,10 @@ type Runtime struct {
 	pendingCells      map[gridCell]terrain.ID
 	pendingActors     map[gridCell]akara.Entity
 	pendingPositions  map[akara.Entity]*gridCell
+	pendingSession    map[string]map[string]any
+	pendingRegions    map[int]RegionChange
+	randomCheckpoint  map[string]uint64
+	randomDrawn       bool
 	created           []akara.Entity
 	signals           map[string][]lua.LValue
 	loaded            map[string]lua.LValue
@@ -196,6 +230,7 @@ func newRuntime(
 		pendingViews:      make(map[componentTarget]*pendingComponent),
 		pendingDestroy:    make(map[akara.Entity]bool),
 		pendingCells:      make(map[gridCell]terrain.ID),
+		pendingRegions:    make(map[int]RegionChange),
 		pendingActors:     make(map[gridCell]akara.Entity),
 		pendingPositions:  make(map[akara.Entity]*gridCell),
 		signals:           make(map[string][]lua.LValue),

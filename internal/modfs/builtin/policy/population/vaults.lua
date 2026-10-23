@@ -76,7 +76,7 @@ local function monster_options(record, level)
     return {
         origin = origin(level, record),
         site = site,
-        depth = level.id,
+        depth = level.local_depth or level.id,
         base_id = arguments.base_id ~= "" and arguments.base_id or nil,
         blob_size = arguments.blob_size or 1,
         hydra_heads = arguments.hydra_heads or 0,
@@ -188,7 +188,8 @@ local function fallback_monster(ctx, level, record)
 
     for index = 2, #slots do
         local selected = choice.pick(random, slots[index])
-        local resolved = resolve.monster(ctx, selected, level.id, site)
+        local resolved = resolve.monster(ctx, selected,
+            level.local_depth or level.id, site)
 
         if not resolved.no_spawn then
             arguments.selected_expression = selected.source

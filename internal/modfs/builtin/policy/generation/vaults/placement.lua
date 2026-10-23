@@ -708,8 +708,10 @@ end
 function placement.place(_, builder, vault, player, options)
     local depth = player and (player.absolute_depth or player.depth) or 1
     local cells, map_width, map_height = matrix(vault.rows)
-    local source_records, helper_ids, hook_values = operations.apply(vault,
+    local source_records, helper_ids, hook_values, resolved_tags = operations.apply(vault,
         cells, builder, 0, player)
+
+    vault = setmetatable({ tags = resolved_tags }, { __index = vault })
 
     -- A procedural hook may supply the MAP geometry that the source left
     -- empty. Record its final unrotated size for source-cell localization.

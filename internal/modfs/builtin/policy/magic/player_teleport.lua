@@ -6,6 +6,8 @@ local translocation = require("policy.scrolls.translocation")
 local vision = require("policy.character.vision")
 local zap_ids = require("policy.magic.effects.zaps.ids")
 local trap_held = require("policy.traps.held")
+local abyss = require("policy.world.abyss")
+local abyss_constants = require("constants.abyss")
 
 local teleport = {}
 local MAX_ATTEMPTS = 500
@@ -80,6 +82,13 @@ function teleport.now(ctx, player)
     end
 
     local origin = ctx:get(player, component.POSITION)
+
+    if origin.level_id == abyss_constants.LEVEL_ID then
+        abyss.teleport(ctx, player)
+
+        return
+    end
+
     local x, y = destination(ctx, player, origin)
 
     if not x then

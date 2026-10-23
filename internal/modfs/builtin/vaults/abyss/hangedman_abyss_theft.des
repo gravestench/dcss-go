@@ -1,0 +1,37 @@
+# hangedman_abyss_theft retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    hangedman_abyss_theft
+DEPTH: Abyss
+TAGS:    no_monster_gen
+KMONS:   1 = place:Lair:$
+KMONS:   2 : place:Swamp:1 / place:Swamp:$
+KMONS:   3 : place:Snake:1 / place:Snake:$
+KMONS:   4 : place:Shoals:1 / place:Shoals:$
+KMONS:   5 : place:Spider:1 / place:Spider:$
+KMONS:   6 = place:Orc:$
+KMONS:   7 : place:Elf:1 / place:Elf:$
+KMONS:   8 : place:Crypt:1 / place:Crypt:$
+KMONS:   9 : place:Hell / place:Slime
+KMONS:   A = plant
+KMONS:   B = bush
+SHUFFLE: Gwm, xcvbwm, wwl, mmttB, 1234567, 1689, $%
+KMASK:   B = no_item_gen
+MAP
+     ..xbb..
+ A x .xxbbb. b A
+  x  xx1cvbb  b
+ x  x...vc..b  b
+   x.x.1cv...b
+..x...x.vc2.b.b..
+.xx..1..cv.b..bb.
+xxbvbvb%$*..2.2bb
+ccvbvbv$G$xcxcxbb
+cc3.3..*$%cxcxcvv
+.cc..c.xb..4..vv.
+..c.c.3bx.v...v..
+   c...xb4.v.v
+ c  c..bx...v  v
+  c  ccxb4vv  v
+ A c .ccvvv. v A
+     ..cvv..
+ENDMAP

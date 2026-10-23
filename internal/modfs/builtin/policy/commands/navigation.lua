@@ -113,6 +113,32 @@ function navigation.stairs(ctx, position, downstairs, actor, forced,
         return portal
     end
 
+    -- An authored Depths entrance is a live arch, not a linked branch
+    -- stair. Its destination is the newly generated moving Abyss window.
+    if downstairs and cell == terrain.DNGN_ENTER_ABYSS then
+        return {
+            intent = {
+                kind = intent_ids.DOWNSTAIRS,
+            },
+            cost = 10,
+        }
+    end
+
+    -- Abyss exits and depth stairs have no fixed level link. Their Lua
+    -- world policy creates or leaves the moving window after this intent
+    -- spends time, so the ordinary stair_at check must not reject them.
+    if position.level_id == abyss.level_id and
+        ((downstairs and cell == terrain.DNGN_ABYSSAL_STAIR) or
+            (not downstairs and cell == terrain.DNGN_EXIT_ABYSS)) then
+        return {
+            intent = {
+                kind = downstairs and intent_ids.DOWNSTAIRS or
+                    intent_ids.UPSTAIRS,
+            },
+            cost = 10,
+        }
+    end
+
     portal = hell_travel.prepare(ctx, position, downstairs, hell_state)
 
     if portal then

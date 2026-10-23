@@ -13,6 +13,7 @@ const (
 	DryFountain        ID = "DNGN_FOUNTAIN_DRY"
 	BloodFountain      ID = "DNGN_FOUNTAIN_BLOOD"
 	Altar              ID = "DNGN_RANDOM_ALTAR"
+	LugonuAltar        ID = "DNGN_ALTAR_LUGONU"
 	ShopEntrance       ID = "DNGN_ENTER_SHOP"
 	RockWall           ID = "DNGN_ROCK_WALL"
 	StoneWall          ID = "DNGN_STONE_WALL"
@@ -71,6 +72,10 @@ const (
 	TransitPandemonium ID = "DNGN_TRANSIT_PANDEMONIUM"
 	ExitPandemonium    ID = "DNGN_EXIT_PANDEMONIUM"
 	ExitThroughAbyss   ID = "DNGN_EXIT_THROUGH_ABYSS"
+	EnterAbyss         ID = "DNGN_ENTER_ABYSS"
+	ExitAbyss          ID = "DNGN_EXIT_ABYSS"
+	AbyssalStair       ID = "DNGN_ABYSSAL_STAIR"
+	Runelight          ID = "DNGN_RUNELIGHT"
 	EnterHell          ID = "DNGN_ENTER_HELL"
 	ExitHell           ID = "DNGN_EXIT_HELL"
 	EnterDis           ID = "DNGN_ENTER_DIS"
@@ -124,6 +129,11 @@ var definitions = map[ID]Feature{
 	},
 
 	Altar: {
+		Glyph:    '_',
+		Walkable: true,
+	},
+
+	LugonuAltar: {
 		Glyph:    '_',
 		Walkable: true,
 	},
@@ -404,6 +414,26 @@ var definitions = map[ID]Feature{
 
 	ExitThroughAbyss: {
 		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	EnterAbyss: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitAbyss: {
+		Glyph:    '<',
+		Walkable: true,
+	},
+
+	AbyssalStair: {
+		Glyph:    '>',
+		Walkable: true,
+	},
+
+	Runelight: {
+		Glyph:    '*',
 		Walkable: true,
 	},
 

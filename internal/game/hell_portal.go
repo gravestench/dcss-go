@@ -289,7 +289,7 @@ func (g *Game) prepareHellPortal(
 
 	if portal.stage != nil {
 		if err := g.validateScenarioLevels(g.panState,
-			portal.nextState); err != nil {
+			portal.nextState, g.abyssState); err != nil {
 			return nil, err
 		}
 	}

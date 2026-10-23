@@ -1,0 +1,36 @@
+# due_evilmike_abyss_rune_seething_liches retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   due_evilmike_abyss_rune_seething_liches
+DEPTH: Abyss
+TAGS:   abyss_rune unrand no_monster_gen
+MONS:   fire bat, chaos spawn, fire dragon / ice dragon, ogre mage
+KMONS:  OL = lich / ancient lich w:1 / dread lich w:1
+KITEM:  O = abyssal rune of Zot
+KFEAT:  A = stone_arch
+KFEAT:  ' = runelight
+NSUBST: L = 1:O / *:L
+MARKER: ! = lua:fog_machine { cloud_type = "seething chaos", \
+            pow_min = 8, pow_max = 12, delay_min = 20, delay_max = 30, \
+            size = 1, walk_dist = 1, spread_rate = 16 }
+SUBST:  ! = V, X = x', x = xc, C : c.
+FTILE:  @A+V1234LOx = floor_crystal_squares
+COLOUR: @12LO = lightmagenta
+MAP
+  cccccc X
+ ccLccLcc
+cccc+c+cccX
+cLccc1.ccc X
+cc+c2.1+LcX X
+ccc1.2.ccc X X
+cL+.1.++Cxx X X
+cccc+c++.4xx X X
+ cccLcC.c.3xx X X
+X ccccx4.1.2xx X
+  X X xx3.1.2xx X
+   X X xx2.!..xxx
+    X X xx2....xx
+     X X xx....+'
+      X X xx...+'
+       X X xx++x@
+        X X x''@A
+ENDMAP

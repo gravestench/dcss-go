@@ -10,6 +10,7 @@ local sticky_flame = require("policy.magic.effects.zaps.sticky_flame")
 local summons = require("policy.save.summons")
 local summon_branches = require("policy.combat.monster_summons.branches")
 local abyss = require("policy.world.abyss")
+local abyss_constants = require("constants.abyss")
 local component = require("constants.component")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
 local monsters = require("ids.monsters")
@@ -35,7 +36,8 @@ local function validate_banishment(ctx, entity, position)
         return
     end
 
-    if position.level_id ~= abyss.level_id or
+    if (position.level_id ~= abyss.level_id and
+        position.level_id ~= abyss_constants.TRANSIT_LEVEL_ID) or
         origin.origin_level_id <= 0 or
         origin.origin_level_id == abyss.level_id or
         not ctx:walkable(origin.origin_level_id,
@@ -72,10 +74,14 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     local banishment = ctx:get(entity, component.BANISHMENT)
     local level_id = banishment and banishment.origin_level_id or
         position.level_id
+    if level_id == abyss_constants.TRANSIT_LEVEL_ID then
+        level_id = abyss.level_id
+    end
+    local fixed = state.fixed and level_id ~= abyss.level_id
     local growth = ctx:get(entity, component.JIYVA_GROWTH)
     local born_from_split = growth and growth.born_from_split
 
-    if not state.fixed and not clone and not born_from_split then
+    if not fixed and not clone and not born_from_split then
         local count = (state.live_by_level[level_id] or 0) + 1
 
         if count > (state.budgets[level_id] or 0) then
@@ -106,7 +112,7 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
         overrides.base_id or roster_id
     local profile = roster.profile(growth and actor.kind_id or profile_id)
 
-    if state.fixed and state.seen[roster_id] and not clone then
+    if fixed and state.seen[roster_id] and not clone then
         error("duplicate fixed animal " .. roster_id)
     end
 
@@ -513,12 +519,14 @@ function module.run(ctx, input)
     local live_by_level = {}
     local allowed_by_level = {}
 
-    if not fixed then
-        for _, level in ipairs(input.levels) do
+    for _, level in ipairs(input.levels) do
+        if not fixed or level.branch_id == branches.BRANCH_ABYSS then
             budgets[level.id] = level.initial_actors
 
-            if input.scenario_id == "generated-dungeon-basic-v1" and
-                level.branch_id ~= branches.BRANCH_ABYSS then
+            if level.branch_id == branches.BRANCH_ABYSS then
+                allowed_by_level[level.id] = roster.allowed(
+                    "generated-dungeon-basic-v1", level.branch_id)
+            elseif input.scenario_id == "generated-dungeon-basic-v1" then
                 allowed_by_level[level.id] = roster.allowed(
                     input.scenario_id, level.branch_id)
             end

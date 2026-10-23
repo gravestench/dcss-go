@@ -3,6 +3,7 @@
 -- Named persisted RNG streams used by Lua policies.
 local streams = {
     ACQUIREMENT = "acquirement",
+    ABYSS_TRANSIT = "abyss-transit",
     BRANCH_SCHEDULE = "branch_schedule",
     BANDS = "bands",
     BAZAAR_PORTAL = "bazaar_portal",

@@ -1,0 +1,21 @@
+# hangedman_abyss_shoalhut retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    hangedman_abyss_shoalhut
+DEPTH: Abyss
+TAGS:    no_pool_fixup patrolling
+MONS:    red devil w:30 / smoke demon / eye of devastation w:5 / \
+         unseen horror / ynoxinul / snapping turtle skeleton w:15
+NSUBST:  a = + / xx+ / x
+SUBST:   1 = 1., x = xxxxcccvb, l = wWll
+KMASK:   wWl = no_monster_gen
+MAP
+   l l
+ lxxaxxl
+ xx.1.xx
+lx.1.1.xl
+ a1.*.1a
+lx.1.1.xl
+ xx.1.xx
+ lxx+xxl
+   l l
+ENDMAP

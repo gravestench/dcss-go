@@ -1,0 +1,19 @@
+# hangedman_abyss_river_spirits retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    hangedman_abyss_river_spirits
+DEPTH: Abyss
+TAGS:    no_monster_gen
+MONS:    smoke demon, efreet, fire elemental, water elemental
+SHUFFLE: ABCDEF / ABCDEF / ABCDEF / ACEBDF / ACEBDF / GGGGGG
+SHUFFLE: 1234 / 1234 / 1234 / 1212 / 1212 / 1212 / 3434 / 3434 / 3434
+SUBST:   ACE = w, BDF = l, G : wl, x = x:50 cb
+MAP
+%2xxAAxxxx
+1.xx..xx2x
+xx..xx.%xxBBxxxx
+xxDDxx%.xx..xx3x
+    x1xx..xx.%xxCCxx
+    xxxxEExx%.xx..xx
+          x4xx..xx.3
+          xxxxFFxx4%
+ENDMAP

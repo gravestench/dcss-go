@@ -1,0 +1,50 @@
+# hangedman_abyss_town retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    hangedman_abyss_town
+DEPTH: Abyss
+TAGS:    no_monster_gen patrolling allow_dup
+WEIGHT:  5
+MONS:    rakshasa / efreet / smoke demon / wizard / base draconian w:5 / \
+         guardian serpent w:1 / vampire w:3 / necromancer w:3
+MONS:    thrashing horror / blink frog / ugly thing / \
+         large abomination / unseen horror / shapeshifter / \
+         wretched star w:5 / air elemental / raiju / worldbinder
+MONS:    draconian shifter w:5 / shadow demon w:5 / lich / \
+         profane servitor w:5 / lorocyproca / deep elf demonologist / \
+         deep elf sorcerer / death knight
+MONS:    bone dragon / tentacled starspawn / starcursed mass / \
+         apocalypse crab / dancing weapon / tentacled monstrosity / \
+         glowing shapeshifter
+ITEM:    superb_item
+ITEM:    boomerang good_item q:10 / javelin good_item q:5, any magical staff
+ITEM:    scroll of magic mapping q:4 / scroll of noise q:4
+ITEM:    ring mail randart / scale mail randart / chain mail randart w:20
+ITEM:    demon blade ego:chaos good_item ident:type / \
+         demon trident ego:chaos good_item ident:type / \
+         demon whip ego:chaos good_item ident:type
+KITEM:   k = any misc, any misc
+SHUFFLE: defghijk
+NSUBST:  0 : 2:0 / 1 = VY / *:.
+SUBST:   c = c:7 b:2 v:1, x = x:8 c:1 b:1
+MAP
+  ccccccc..
+ ccccccc ...ccccccc
+ ccd...cc... ccccccc
+ cc.2c+cc...cc...ecc
+ cc.cc1 cc..cc+c2.cc
+ cc.+12.+..cc 1cc.cc
+ cccc .cc...+.21+.cc
+ c ccc+c....cc. cccc
+ ....c.. xx .c+ccc c
+........x00x...c....
+....c...x00x........
+c ccc+c. xx ..c....
+cccc..cc....c+ccc c
+cc.+12.+...cc..cccc
+cc.cc1.cc..+.34+.cc
+cc.2c+cc..cc.4cc1cc
+ccf...cc...cc+c1%cc
+ccccccc ...cc.1%gcc
+ ccccccc... ccccccc
+         ..ccccccc
+ENDMAP

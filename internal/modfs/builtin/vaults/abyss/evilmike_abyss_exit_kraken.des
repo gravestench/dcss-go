@@ -1,0 +1,24 @@
+# evilmike_abyss_exit_kraken retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   evilmike_abyss_exit_kraken
+DEPTH: Abyss
+TAGS:   abyss_exit no_pool_fixup
+NSUBST: w = 1:m / *:w
+KFEAT:  m = w
+KMONS:  m = kraken
+SUBST:  Z = wY, Y = wW, W = w., w=WWw
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_o")
+MAP
+..WWWWWWW..
+.WYYYYYYYW.
+WYZZZZZZZYW
+WYZwwwwwZYW
+WYZwwwwwZYW
+WYZwwOwwZYW
+WYZwwwwwZYW
+WYZwwwwwZYW
+WYZZZZZZZYW
+.WYYYYYYYW.
+..WWWWWWW..
+ENDMAP

@@ -7,9 +7,20 @@ local chance_units = require("constants.vault_chance")
 local depth = require("policy.generation.vaults.depth")
 local eligibility = require("policy.generation.vaults.eligibility")
 local weights = require("policy.generation.vaults.weight")
+local branches = require("ids.branches")
+local tags = require("constants.vault_tags")
 
 local minivault = {}
 local MAX_EXTRA_DRAWS = 10000
+
+-- A few source Abyss maps become extra decor only on ordinary branch
+-- floors. Their source conditional TAGS is evaluated during placement,
+-- after selection, so this static role marker preserves draw chaining.
+function minivault.is_extra(definition, branch_id)
+    return definition.tags.extra or
+        (definition.tags[tags.EXTRA_OUTSIDE_ABYSS] and
+            branch_id ~= branches.BRANCH_ABYSS)
+end
 
 -- A fitter already tries multiple origins. If none works, another weighted
 -- draw of the same map cannot improve this floor's protected geometry.
@@ -138,7 +149,7 @@ function minivault.place(ctx, builder, context, placed, place,
             remove_failed(candidates, vault.id)
         end
 
-        if not selected.tags.extra then
+        if not minivault.is_extra(selected, context.branch_id) then
             break
         end
     end

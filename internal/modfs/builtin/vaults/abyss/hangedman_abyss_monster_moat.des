@@ -1,0 +1,29 @@
+# hangedman_abyss_monster_moat retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   hangedman_abyss_monster_moat
+DEPTH: Abyss
+TAGS:   no_monster_gen patrolling
+MONS:   fire bat w:12 / bat simulacrum / spectral bat / bat
+MONS:   vampire, vampire knight / vampire mage w:7
+MONS:   crimson imp w:12 / white imp / shadow imp / iron imp
+MONS:   kobold demonologist, deep elf demonologist
+MONS:   scorpion w:40 / vampire mosquito w:20 / hornet
+KMONS:  8 = demonic crawler
+KMONS:  9 = emperor scorpion / death scarab
+KMONS:  D = place:D:1 perm_ench:shapeshifter w:30 / \
+            small abomination w:15 / chaos spawn
+KMONS:  E = ugly thing
+KMONS:  F = very ugly thing / glowing shapeshifter w:7
+SHUFFLE: 123 / 456 / 789 / DEF
+SUBST:  C = xccv, w : w:8 l:1 .:1, W : .:9 W:1
+MAP
+ CCCC  CCCCCCCCCC  CCCC
+CC 1cccc+2WWWW5+cccc4 CC
+C 11n|32ccc++ccc56|n44 C
+C 11c3|3c1WwwW4c6|6c44 C
+C 11ccncc11ww44ccncc44 C
+C  11111111ww44444444  C
+C   111111 ww 444444   C
+.C                   .C.
+ .CC .C. CCCCCC .C. CC.
+ENDMAP

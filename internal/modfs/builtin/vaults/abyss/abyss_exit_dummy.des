@@ -1,0 +1,12 @@
+# abyss_exit_dummy retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME: abyss_exit_dummy
+DEPTH: Abyss
+TAGS: abyss_exit unrand dummy
+CHANCE: 95% (Abyss:1)
+CHANCE: 90% (Abyss:2)
+CHANCE: 85% (Abyss:3)
+CHANCE: 80% (Abyss:4)
+CHANCE: 75% (Abyss:5)
+CHANCE: 70% (Abyss:6)
+CHANCE: 65% (Abyss:7)

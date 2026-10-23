@@ -1,0 +1,25 @@
+# hangedman_abyss_sting retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   hangedman_abyss_sting
+DEPTH: Abyss
+TAGS:   no_item_gen no_monster_gen uniq_hornetnest
+KMONS:  1 = orange demon
+KMONS:  2 = hornet / killer bee w:2 / nothing w:2
+KMONS:  3 = death drake / green death
+KFEAT:  123 = W
+NSUBST: 3 = 1:3, *:.
+# Source delayed corpse decay is a typed placement record.
+: vault.run("hangedman_abyss_sting.decay")
+COLOUR: x = yellow
+TILE:   x = wall_wax
+MAP
+ xxxxxxx
+xx22222xx
+x2...222x
+x2.++xx3x
+x2.+1 xxx
+x2.x 1 xx
+x22xx W x
+xx23xx W
+ xxxxxx W
+ENDMAP

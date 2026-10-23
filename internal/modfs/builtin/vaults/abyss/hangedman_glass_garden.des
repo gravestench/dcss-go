@@ -1,0 +1,26 @@
+# hangedman_glass_garden retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    hangedman_glass_garden
+# Source conditional makes this an extra only outside the Abyss.
+TAGS: extra_outside_abyss
+TAGS:    no_monster_gen no_pool_fixup
+DEPTH:   D, Depths, Abyss
+MONS:    butterfly, plant, unseen horror, shadow wraith, wind drake
+SHUFFLE: 34GT, GTt
+# Source branch-dependent directives run at this exact declaration site.
+: vault.run("hangedman_glass_garden.conditional")
+MAP
+   ''' '''
+  'MmM+MmM'
+ 'MmAA.BBmM'
+'MmA..2..BmM'
+'mA.2.4.2.Bm'
+'MA..1G1..BM'
+ +.2T3%3T2.+
+'MC..1G1..DM'
+'mC.2.4.2.Dm'
+'MmC..2..DmM'
+ 'MmCC.DDmM'
+  'MmM+MmM'
+   ''' '''
+ENDMAP

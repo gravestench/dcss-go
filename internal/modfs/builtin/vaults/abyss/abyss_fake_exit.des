@@ -1,0 +1,10 @@
+# abyss_fake_exit retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    abyss_fake_exit
+DEPTH: Abyss
+TAGS:    allow_dup
+WEIGHT:  1
+KFEAT:   O = exit_abyss mimic w:6 / abyssal_stair mimic w:4
+MAP
+O
+ENDMAP

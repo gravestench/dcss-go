@@ -20,6 +20,8 @@ local item_sets = require("policy.item_generation.item_sets")
 local unique_history = require("policy.item_generation.artefacts.history")
 local runes = require("policy.character.runes")
 local endgame = require("policy.character.endgame")
+local job_ids = require("ids.jobs")
+local abyss = require("policy.world.abyss")
 
 local start = {}
 
@@ -178,6 +180,22 @@ end
 register.policy({
     id = "character.start",
     run = start.run_start,
+})
+
+-- Floor population runs before this policy, so an Abyssal Knight's
+-- pocket region and any authored inhabitants retain their own saved
+-- population count instead of D:1 setup resetting that level metadata.
+function start.start_region(ctx, input)
+    if input.job_id == job_ids.JOB_ABYSSAL_KNIGHT then
+        abyss.pocket_start(ctx, ctx:player())
+    end
+
+    return {}
+end
+
+register.policy({
+    id = "character.start_region",
+    run = start.start_region,
 })
 
 -- Return source base action speed after validating the chosen species exists.

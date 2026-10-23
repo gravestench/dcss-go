@@ -1,0 +1,28 @@
+# evilmike_nicolae_abyss_rune_containment_curve retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   evilmike_nicolae_abyss_rune_containment_curve
+DEPTH: Abyss
+TAGS:   abyss_rune unrand patrolling no_monster_gen no_item_gen
+MONS:   neqoxec w:4 / raiju / worldbinder / thrashing horror / shapeshifter
+MONS:   tormentor / hellion / shadow demon / \
+        bone dragon / iron dragon zombie w:4
+KMONS:  3O = spatial maelstrom
+KITEM:  O = abyssal rune of Zot
+KFEAT:  A = stone_arch
+KFEAT:  " = runelight
+SUBST:  X : b", x = xv, n = nnnnnc, m = n
+FTILE:  A123$Onc = floor_crystal_squares
+COLOUR: 123$O = lightmagenta
+MAP
+""xxxxxxxxxxxxxxxx
+.....1xxnnnnnnnnnxxx
+........1nnnnnnnnxxxxx
+....X......xxnnnnnxxxx
+.........2..nnnn33xxxx
+A.....X...x.2$mm3Oxxxx
+.........2..nnnn33xxxx
+....X......xxnnnnnxxxx
+........1nnnnnnnnxxxxx
+.....1xxnnnnnnnnnxxx
+""xxxxxxxxxxxxxxxx
+ENDMAP

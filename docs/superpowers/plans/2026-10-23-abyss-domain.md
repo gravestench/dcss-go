@@ -55,13 +55,13 @@ committed source `NAME` remains its stable ID. Named Lua hooks use the existing 
 `vault.veto`, `vault.validate`, and placement context API; registration is by relative path, never a
 central map-name switch.
 
-- [ ] Write failing catalog tests for 100 names, 97 exact MAP blocks, three dummies, the first nine
+- [x] Write failing catalog tests for 100 names, 97 exact MAP blocks, three dummies, the first nine
       outside entry maps, source tags/depths/weights, and sparse overlay precedence.
-- [ ] Split pinned `crawl-ref/dat/des/branches/abyss.des` with temporary tooling outside the
+- [x] Split pinned `crawl-ref/source/dat/des/branches/abyss.des` with temporary tooling outside the
       repository; preserve the original MAP bytes and ordinary directives.
-- [ ] Port each executable DES script site to a named Lua hook, with source-position hook markers
+- [x] Port each executable DES script site to a named Lua hook, with source-position hook markers
       and a why/how comment on each function.
-- [ ] Run every definition through the production DES parser and selection/placement path; test both
+- [x] Run every definition through the production DES parser and selection/placement path; test both
       outcomes of each conditional hook. Reject malformed overlay hooks before publication.
 
 ### Task 2: Terrain sampler and saved procedural state
@@ -72,6 +72,9 @@ central map-name switch.
   `wastes.lua`, `worley.lua`, `rivers.lua`, `roiling_chaos.lua`,
   `borrowed.lua`, `features.lua`, and `vaults.lua` in that directory.
 - Create: `internal/modfs/builtin/constants/abyss.lua`.
+- Create: `internal/noise/{hash,worley,perlin}.go` and the generic Lua math
+  bridge in `internal/script/`, if the source sampler needs exact integer or
+  cellular arithmetic unavailable in Lua's numeric representation.
 - Test: `internal/script/testdata/lua/tests/abyss_{sampler,state,generation}_test.lua`.
 - Modify: `internal/save/snapshot.go`, game snapshot/restore owners, `policy/save/abyss_levels.lua`.
 
@@ -82,14 +85,14 @@ central map-name switch.
 feature and next change point. `abyss.generate(ctx, state)` returns the current level plan and
 updated state without publishing either.
 
-- [ ] Write failing `_test.lua` vectors for each of the five source sampler families, borrowed-level
+- [x] Write failing `_test.lua` vectors for each of the five source sampler families, borrowed-level
       choice, change points, source initial vault-before-proto order, and deterministic draws after
       state restore.
-- [ ] Implement sampler functions from `crawl-ref/source/abyss.cc`; keep source probabilities,
+- [x] Implement sampler functions from `crawl-ref/source/abyss.cc`; keep source probabilities,
       spatial scale, and feature precedence in named Lua constants.
-- [ ] Use the existing DES placement owner for weighted Abyss furniture. Keep outside `enter_abyss`
+- [x] Use the existing DES placement owner for weighted Abyss furniture. Keep outside `enter_abyss`
       maps in the ordinary entry pool.
-- [ ] Add an explicit Abyss save record and validator. Save the sample queue and borrowed layout,
+- [x] Add an explicit Abyss save record and validator. Save the sample queue and borrowed layout,
       restore without terrain generation or an extra RNG draw.
 
 ### Task 3: Moving window and atomic region mutation
@@ -108,15 +111,15 @@ validates bounds, unique destinations, live entity ownership, and stair/record c
 applying; its undo restores the prior region. Lua `abyss.shift(ctx, state, player)` uses the source
 radius-10 preservation rule and returns an updated state.
 
-- [ ] Write failing tests for a preserved vault and actors/items/clouds moving by the same delta;
+- [x] Write failing tests for a preserved vault and actors/items/clouds moving by the same delta;
       reject clipped vaults, blocked actor destinations, malformed records, and a forced error after
       staging, asserting full snapshot/RNG equality.
-- [ ] Add the generic reversible grid region operation to the existing structural-command
+- [x] Add the generic reversible grid region operation to the existing structural-command
       transaction. Reuse Akara position/ownership and existing region retirement logic; do not add
       Abyss-specific Go policy.
-- [ ] Implement Lua world-coordinate shift, source protection and transit rules, and fresh-edge
+- [x] Implement Lua world-coordinate shift, source protection and transit rules, and fresh-edge
       sampling. Morph eligible cells after source time increments while keeping player-safe terrain.
-- [ ] Test edge crossing over repeated turns, whole-vault preservation, discarded unique/rune
+- [x] Test edge crossing over repeated turns, whole-vault preservation, discarded unique/rune
       lifecycle, and save/restore replay of the next shift.
 
 ### Task 4: Entry, depth, exit, rune, and population
@@ -135,15 +138,15 @@ a banishment origin. `abyss.travel.descend(ctx, actor)` advances branch depth th
 `abyss.travel.escape(ctx, actor)` uses the saved origin and shared safe landing. The world stair
 system delegates to these Lua policies by feature.
 
-- [ ] Write failing end-to-end tests for ordinary and monster banishment, Pan's Abyss gate, pocket
+- [x] Write failing end-to-end tests for ordinary and monster banishment, Pan's Abyss gate, pocket
       start and D:1 return, branch depths 1–7, force descent, and an occupied origin.
-- [ ] Implement source depth/exit XP clocks and source exit or downward-stair appearance. Time
+- [x] Implement source depth/exit XP clocks and source exit or downward-stair appearance. Time
       changes morph depth, XP changes the counter, and stairs/banishment change branch depth.
-- [ ] Select rune vaults or source fallback only at eligible depths; materialize the rune as one
+- [x] Select rune vaults or source fallback only at eligible depths; materialize the rune as one
       saved item and suppress future copies after pickup.
-- [ ] Populate depth-qualified monsters and items through existing ECS factories, respecting source
+- [x] Populate depth-qualified monsters and items through existing ECS factories, respecting source
       weights, uniqueness, saved transit, and the effective layered catalog.
-- [ ] Route symbols, messages, status labels, and commands through the existing terminal policy. An
+- [x] Route symbols, messages, status labels, and commands through the existing terminal policy. An
       unavailable feature remains visible and explains why.
 
 ### Task 5: Save integrity, overlays, snapshots, and whole-domain verification
@@ -158,12 +161,12 @@ system delegates to these Lua policies by feature.
 1000 stores the current grid and records. Restore rejects inconsistent state before exposing the
 game. Text snapshots are produced from seeded, playable generated floors.
 
-- [ ] Test exact post-restore next-turn snapshot equality, malformed depth/queue/borrowed
+- [x] Test exact post-restore next-turn snapshot equality, malformed depth/queue/borrowed
       layout/transit rejection, rune uniqueness, and sparse add/replace overlays.
-- [ ] Document the mod file paths, DES hook context, source roles, rule override examples, state
+- [x] Document the mod file paths, DES hook context, source roles, rule override examples, state
       fields, and the moving-window model.
-- [ ] Capture proto, shifted, rune, and exit text snapshots with connectivity and selected map IDs in the index.
-- [ ] Run focused Lua, game, terminal, save, build, style, and `git diff --check` once after the
+- [x] Capture proto, shifted, rune, and exit text snapshots with connectivity and selected map IDs in the index.
+- [x] Run focused Lua, game, terminal, save, build, style, and `git diff --check` once after the
       whole category; fix failures tied to the Abyss domain.
-- [ ] Obtain one fresh whole-domain review, address Important findings, commit the contiguous
+- [x] Obtain one fresh whole-domain review, address Important findings, commit the contiguous
       implementation, and push `main`.

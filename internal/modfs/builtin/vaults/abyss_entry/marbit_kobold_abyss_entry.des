@@ -1,0 +1,22 @@
+# marbit_kobold_abyss_entry retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:  marbit_kobold_abyss_entry
+DEPTH: Depths, D:21-
+TAGS:  no_monster_gen nolayout_encompass
+WEIGHT: 5
+MONS:  kobold brigand ; boomerang ego:dispersal, kobold demonologist
+KPROP: 1 = no_tele_into
+# Source abyss_entry(_G, '_') sets entrance tags, chance, and key feature.
+TAGS: extra luniq_enter_abyss chance_enter_abyss
+CHANCE: 3333 (Depths:1-2), 10000 (Depths:3), 3333 (Depths:4-)
+CHANCE: 3333 (D:21-24), 10000 (D:25), 3333 (D:26-)
+KFEAT: _ = enter_abyss
+MAP
+xxxxxxxxxxxxxxx
+xxlllxx<.xlll.x
+xlllllxx.lll..x
+@x.llll..lll2_x
+x.xl1lllllll.>x
+xlllxlllx1lll.x
+xxxxxxxxxxxxxxx
+ENDMAP

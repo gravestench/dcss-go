@@ -1,0 +1,28 @@
+# evilmike_abyss_exit_vortex retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   evilmike_abyss_exit_vortex
+DEPTH: Abyss
+TAGS:   abyss_exit
+ITEM:   stone q:1 no_pickup
+SUBST:  x:xxxcv, 1=1., g:G.
+SUBST:  G:Gb.
+MONS:   generate_awake spatial vortex
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_o")
+MAP
+     xxxxx
+     x111x
+     x1d1x
+     x111x
+    @x+++x@
+xxxxx.....xxxxx
+x111+..g..+111x
+x1d1+.gGg.+1d1x
+x111+..g..+111x
+xxxxx.....xxxxx
+    @x+++x@
+     x111x
+     x1O1x
+     x111x
+     xxxxx
+ENDMAP

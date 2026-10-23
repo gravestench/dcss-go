@@ -187,11 +187,9 @@ function travel.commit(ctx, input)
             error("Pan Abyss exit has no original return site")
         end
 
-        ctx:add(player, component.BANISHMENT, {
-            origin_level_id = site.level_id,
-            origin_x = site.x,
-            origin_y = site.y,
-        })
+        abyss.enter(ctx, player, site)
+
+        return { message = "You pass through the gate into the Abyss." }
     end
 
     ctx:move_actor(player, destination.level_id,
@@ -202,10 +200,6 @@ function travel.commit(ctx, input)
             branches.BRANCH_PANDEMONIUM)
 
         return { message = branch.entry_message }
-    end
-
-    if operation == operations.ABYSS then
-        return { message = "You pass through the gate into the Abyss." }
     end
 
     return { message = "You pass through the gate." }

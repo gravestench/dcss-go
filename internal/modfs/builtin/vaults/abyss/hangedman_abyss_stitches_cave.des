@@ -1,0 +1,29 @@
+# hangedman_abyss_stitches_cave retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    hangedman_abyss_stitches_cave
+DEPTH: Abyss
+TAGS:    transparent no_monster_gen
+MONS:    thrashing horror / unseen horror / raiju / \
+         shapeshifter w:5 / large abomination / common demon
+MONS:    starcursed mass / apocalypse crab / hellephant / \
+         tentacled monstrosity / tentacled starspawn w:5
+SHUFFLE: yY / yY / Yy
+SUBST:   x : X:9 C:1, y : W:25 L:25 X:35 C:10 M:5, Y = ., z : X:20 CMB
+SUBST:   X = x:50 cb, C = c:50 bv, B = b:50 cv, M = m:50 cb, W = w:50 l
+SUBST:   L = l:50 w, $ = $%., % = %:7 .:3, * = *:7 %:3
+MAP
+            xxxxxxxxxxx
+            x%1.zxz...x
+           xx.y.zzz.y.xxx
+         xxx..Y..Y..Y....
+         x%..zzz.y.zzz.Z.
+         x2Yyzxz$1.zxz...
+         x*1.zzxxxxxxx
+   xxxxxxxzz.1*x
+...zxz.1$zxzYZ2x
+.Z.zzz.Y.zzz..%x
+....Y..y..y..xxx
+xxx.y.zzz.Y.xx
+  x.1.zxz.1%x
+  xxxxxxxxxxx
+ENDMAP

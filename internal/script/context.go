@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"slices"
 
+	"crawl/internal/noise"
 	"crawl/internal/terrain"
 
 	"github.com/gravestench/akara"
@@ -37,6 +38,18 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "shoals_tide_clock", r.state.NewFunction(r.luaGridShoalsTideClock))
 	r.state.SetField(context, "set_shoals_tide_clock", r.state.NewFunction(r.luaGridSetShoalsTideClock))
 	r.state.SetField(context, "set_cell", r.state.NewFunction(r.luaGridSetCell))
+	r.state.SetField(context, "replace_region",
+		r.state.NewFunction(r.luaGridReplaceRegion))
+	r.state.SetField(context, "region_plan",
+		r.state.NewFunction(r.luaGridRegionPlan))
+	r.state.SetField(context, "mark_region_records",
+		r.state.NewFunction(r.luaGridMarkRegionRecords))
+	r.state.SetField(context, "add_region_actors",
+		r.state.NewFunction(r.luaGridAddRegionActors))
+	r.state.SetField(context, "session_state",
+		r.state.NewFunction(r.luaSessionState))
+	r.state.SetField(context, "replace_session_state",
+		r.state.NewFunction(r.luaReplaceSessionState))
 	r.state.SetField(context, "set_cell_colour", r.state.NewFunction(r.luaGridSetCellColour))
 	r.state.SetField(context, "map_cell", r.state.NewFunction(r.luaGridMapCell))
 	r.state.SetField(context, "walkable", r.state.NewFunction(r.luaGridWalkable))
@@ -57,12 +70,42 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "actor", r.state.NewFunction(r.luaActiveActor))
 	r.state.SetField(context, "player", r.state.NewFunction(r.luaPlayerEntity))
 	r.state.SetField(context, "random", r.state.NewFunction(r.luaRandom))
+	r.state.SetField(context, "hash_with_seed", r.state.NewFunction(r.luaHashWithSeed))
+	r.state.SetField(context, "hash3_quotient_mod",
+		r.state.NewFunction(r.luaHash3QuotientMod))
+	r.state.SetField(context, "worley", r.state.NewFunction(r.luaWorley))
+	r.state.SetField(context, "fbm3", r.state.NewFunction(r.luaFBM3))
+	r.state.SetField(context, "xor_u32", r.state.NewFunction(r.luaXorU32))
 	r.state.SetField(context, "random_u64", r.state.NewFunction(r.luaRandomWord))
 	r.state.SetField(context, "emit", r.state.NewFunction(r.luaEmit))
 	r.state.SetField(context, "signal", r.state.NewFunction(r.luaSignal))
 	r.state.SetField(context, "signals", r.state.NewFunction(r.luaSignals))
 
 	r.context = context
+}
+
+// Lua represents integers as floats, so validate the exact source word
+// range before passing a borrowed-floor choice to the unsigned Go kernel.
+func (r *Runtime) luaHashWithSeed(state *lua.LState) int {
+	values := [3]uint32{}
+
+	for index := range values {
+		number, err := exactLuaNumber(state.Get(index + 2))
+
+		if err != nil ||
+			number < 0 ||
+			number > 4294967295 {
+			state.RaiseError("hash_with_seed argument %d must be a uint32", index+1)
+
+			return 0
+		}
+
+		values[index] = uint32(number)
+	}
+
+	state.Push(lua.LNumber(noise.HashWithSeed(values[0], values[1], values[2])))
+
+	return 1
 }
 
 func (r *Runtime) componentArgs(
@@ -375,6 +418,7 @@ func (r *Runtime) luaGridReplaceRecordString(state *lua.LState) int {
 	}
 
 	r.pending = append(r.pending, structuralCommand{
+		spatialLevel: levelID,
 		apply: func() error {
 			return r.services.Grid.ReplaceRecordString(
 				levelID, x, y, sourceID, kind, identity,
@@ -515,6 +559,7 @@ func (r *Runtime) luaGridSetCell(state *lua.LState) int {
 	var previous terrain.ID
 
 	r.pending = append(r.pending, structuralCommand{
+		spatialLevel: levelID,
 		apply: func() error {
 			previous, _ = r.services.Grid.Cell(levelID, x, y)
 
@@ -549,6 +594,7 @@ func (r *Runtime) luaGridSetCellColour(state *lua.LState) int {
 	previous, _ := r.services.Grid.CellColour(levelID, x, y)
 
 	r.pending = append(r.pending, structuralCommand{
+		spatialLevel: levelID,
 		apply: func() error {
 			return r.services.Grid.SetCellColour(levelID, x, y, colour)
 		},
@@ -577,6 +623,7 @@ func (r *Runtime) luaGridMapCell(state *lua.LState) int {
 	}
 
 	r.pending = append(r.pending, structuralCommand{
+		spatialLevel: levelID,
 		apply: func() error {
 			return r.services.Grid.MapCell(levelID, x, y)
 		},
@@ -847,7 +894,8 @@ func (r *Runtime) luaGridMoveActor(state *lua.LState) int {
 
 	r.stageActorPosition(entity, &old, &next)
 	r.pending = append(r.pending, structuralCommand{
-		entity: entity,
+		entity:       entity,
+		spatialLevel: old.levelID,
 		apply: func() error {
 			return r.services.Grid.MoveActor(
 				entity, next.levelID, next.x, next.y,
@@ -901,7 +949,8 @@ func (r *Runtime) luaGridPlaceActor(state *lua.LState) int {
 
 	r.stageActorPosition(entity, nil, &next)
 	r.pending = append(r.pending, structuralCommand{
-		entity: entity,
+		entity:       entity,
+		spatialLevel: next.levelID,
 		apply: func() error {
 			return r.services.Grid.PlaceActor(
 				entity, next.levelID, next.x, next.y,
@@ -938,7 +987,8 @@ func (r *Runtime) luaGridRemoveActor(state *lua.LState) int {
 
 	r.stageActorPosition(entity, &old, nil)
 	r.pending = append(r.pending, structuralCommand{
-		entity: entity,
+		entity:       entity,
+		spatialLevel: old.levelID,
 		apply: func() error {
 			return r.services.Grid.RemoveActor(entity, old.levelID)
 		},
@@ -1277,6 +1327,7 @@ func (r *Runtime) luaRandom(state *lua.LState) int {
 		return 0
 	}
 
+	r.checkpointRandom()
 	value, err := r.services.Random(stream, bound)
 
 	if err != nil {
@@ -1307,6 +1358,7 @@ func (r *Runtime) luaRandomWord(state *lua.LState) int {
 		return 0
 	}
 
+	r.checkpointRandom()
 	word := r.services.RandomWord(stream)
 	state.Push(lua.LNumber(word >> 32))
 	state.Push(lua.LNumber(word & 0xffffffff))

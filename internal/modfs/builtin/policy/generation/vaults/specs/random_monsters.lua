@@ -124,6 +124,42 @@ local function effective_depth(request, depth, branch_id)
     return depth
 end
 
+-- DES place:Branch, place:Branch:N, and place:Branch:$ carry their own
+-- population branch. A bare branch means its first floor and dollar means
+-- its static last floor, matching level_id::parse_level_id in source Crawl.
+local function population_place(place, site, depth)
+    if not place then
+        return site and site.branch_id or branches.BRANCH_DUNGEON,
+            site and site.local_depth or depth
+    end
+
+    local abbreviation, requested_depth = place:match("^([A-Za-z]+):?(.*)$")
+
+    for _, branch_id in ipairs(register.ids(categories.BRANCHES)) do
+        local branch = register.get(categories.BRANCHES, branch_id)
+
+        if branch.abbreviation == abbreviation then
+            if requested_depth == "" then
+                return branch_id, 1
+            end
+
+            if requested_depth == "$" then
+                return branch_id, branch.depth
+            end
+
+            local floor = tonumber(requested_depth)
+
+            if floor and floor >= 1 and floor <= branch.depth then
+                return branch_id, floor
+            end
+
+            choice.fail(site, place, "invalid monster place depth")
+        end
+    end
+
+    choice.fail(site, place, "unknown monster place branch")
+end
+
 -- Use the adjusted source depth to build a live pool before one weighted draw.
 function random_monsters.pick(ctx, request, depth, site, place)
     if request == requests.BASE_DRACONIAN then
@@ -153,13 +189,7 @@ function random_monsters.pick(ctx, request, depth, site, place)
         return greater_demon(ctx)
     end
 
-    -- A map's place:D:N override changes both the population branch and
-    -- its local depth; otherwise random requests use the current branch.
-    local explicit_depth = place and place:match("^D:(%d+)$")
-    local branch_id = explicit_depth and branches.BRANCH_DUNGEON or
-        site and site.branch_id or branches.BRANCH_DUNGEON
-    local local_depth = tonumber(explicit_depth) or
-        site and site.local_depth or depth
+    local branch_id, local_depth = population_place(place, site, depth)
     local selected_depth = effective_depth(request, local_depth, branch_id)
     local branch = register.get(categories.BRANCHES, branch_id)
 
@@ -177,7 +207,7 @@ function random_monsters.pick(ctx, request, depth, site, place)
     -- the parent Dungeon at the Temple's absolute depth. This does not add
     -- ambient Temple population or change branches with their own rows.
     if total <= 0 and branch_id == branches.BRANCH_TEMPLE and
-        not explicit_depth then
+        not place then
         local branch = register.get(categories.BRANCHES, branch_id)
         local dungeon_depth = site and site.absolute_depth or
             branch.absolute_depth

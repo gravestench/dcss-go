@@ -1,0 +1,15 @@
+# abyss_entry retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME: abyss_entry
+DEPTH: Depths, D:21-
+TAGS: allow_dup overwrite_floor_cell no_exits replace_portal transparent
+TAGS: fallback_enter_abyss
+WEIGHT: 50
+# Source abyss_entry(_G, 'O') sets entrance tags, chance, and key feature.
+TAGS: extra luniq_enter_abyss chance_enter_abyss
+CHANCE: 3333 (Depths:1-2), 10000 (Depths:3), 3333 (Depths:4-)
+CHANCE: 3333 (D:21-24), 10000 (D:25), 3333 (D:26-)
+KFEAT: O = enter_abyss
+MAP
+O
+ENDMAP

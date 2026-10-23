@@ -1,0 +1,48 @@
+# abyss_greek_temple retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:    abyss_greek_temple
+DEPTH: Abyss
+TAGS:    no_rotate
+NSUBST:  . = 3:1 / 2:2 / *:.
+SUBST:   ' = .
+COLOUR:  " : white w:5 / none
+FTILE:   "ABCDEFGHIJKLMNOPRQSTUV : floor_limestone w:5 / floor_nerves
+SUBST:   " = .
+MONS:    plant, bush
+# Disable Wu in the stable version.
+# Source branch-dependent directives run at this exact declaration site.
+: vault.run("abyss_greek_temple.conditional")
+KFEAT:   A = altar_makhleb
+KFEAT:   B = altar_xom
+KFEAT:   C = altar_zin
+KFEAT:   D = altar_the_shining_one
+KFEAT:   E = altar_kikubaaqudgha
+KFEAT:   F = altar_yredelemnul
+KFEAT:   H = altar_vehumet
+KFEAT:   I = altar_okawaru
+KFEAT:   J = altar_sif_muna
+KFEAT:   K = altar_trog
+KFEAT:   L = altar_nemelex_xobeh
+KFEAT:   M = altar_elyvilon
+KFEAT:   N = altar_fedhas
+KFEAT:   O = altar_cheibriados
+KFEAT:   P = altar_ashenzari
+KFEAT:   Q = altar_dithmenos
+KFEAT:   R = altar_gozag
+KFEAT:   S = altar_qazlal
+KFEAT:   T = altar_uskayaw
+KFEAT:   U = altar_hepliaklqana
+KFEAT:   V = altar_wu_jian
+MAP
+''''''.................
+''ccccccccccccccccccc..
+''G'c"""D"""""""P"""c..
+''''c"A"""I"""L"""S"c..
+''G'c"""E"""V"""Q"""ct.
+''''+"B"""J"""N"""T"c..
+''G'c"""F"""""""R"""c..
+''''c"C"""K"""O"""U"c.t
+''G'c"""H"""""""S"""c..
+''ccccccccccccccccccc..
+.......t........ttt....
+ENDMAP

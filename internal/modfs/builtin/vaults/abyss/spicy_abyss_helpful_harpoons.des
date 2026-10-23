@@ -1,0 +1,19 @@
+# spicy_abyss_helpful_harpoons retains the pinned DCSS Abyss MAP and ordinary DES directives.
+# Source: crawl-ref/source/dat/des/branches/abyss.des.
+NAME:   spicy_abyss_helpful_harpoons
+DEPTH: Abyss
+TAGS:   abyss_exit
+MONS:   starflower, demonic plant
+NSUBST: 1 = 4:1. / 22t...
+KMONS:  O = place:Abyss
+# Source exit choice depends on the current Abyss branch depth.
+: vault.run("shared.exit_o")
+MAP
+   @
+  ...
+ .111.
+@.1O1.@
+ .111.
+  ...
+   @
+ENDMAP

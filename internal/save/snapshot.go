@@ -35,6 +35,7 @@ type Snapshot struct {
 	TemplePlan     *TemplePlanRecord     `json:"temple_plan,omitempty"`
 	PanState       *PanStateRecord       `json:"pan_state,omitempty"`
 	HellState      *HellStateRecord      `json:"hell_state,omitempty"`
+	AbyssState     *AbyssStateRecord     `json:"abyss_state,omitempty"`
 }
 
 // PanStateRecord carries session history across one-region replacements.

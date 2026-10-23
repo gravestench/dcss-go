@@ -1,0 +1,9 @@
+Playable Abyss windows, seed 1
+Coordinates are zero-based (x,y); x goes right, y goes down.
+Each 80x70 grid shows terrain without actor, item, or fog glyphs.
+Unlinked Abyss exits return to the saved outside site; stairs regenerate the window.
+
+proto  proto.txt  Abyss:1  shift 0  reachable 3192  maps: (none)
+shifted  shifted.txt  Abyss:1  shift 1  reachable 3138  maps: (none)
+rune  rune.txt  Abyss:7  shift 0  reachable 3113  maps: evilmike_abyss_exit_7, evilmike_nicolae_abyss_rune_betentacled_crabyss
+exit  exit.txt  Abyss:7  shift 0  reachable 3113  maps: evilmike_abyss_exit_7, evilmike_nicolae_abyss_rune_betentacled_crabyss
