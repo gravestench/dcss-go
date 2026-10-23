@@ -1,0 +1,28 @@
+# Pinned source: crawl-ref/source/dat/des/portals/icecave.des
+# 31-polynomial digest over MAP rows joined by LF; no trailing LF.
+ice_cave_caverns_01 c34cb774 25
+ice_cave_caverns_02 74bf22a3 23
+ice_cave_caverns_03 6ac7c5df 38
+ice_cave_hellmonk_azure_passage 660e7c17 32
+ice_cave_small_demon 74153779 30
+ice_cave_small_dragons ad997571 40
+ice_cave_small_giant 161f39af 41
+ice_cave_small_necro a57361fa 32
+ice_cave_statue_garden_chambered b0d17b9a 33
+ice_cave_statue_garden_transporter 28798861 20
+ice_cave_tombish a1e49a58 49
+portal_ice_cave_demonic_guard b24236a3 10
+portal_ice_cave_entry_animals_and_master f0a7da8c 9
+portal_ice_cave_entry_dragon 3a39b4b9 8
+portal_ice_cave_entry_frozen_things 479519c7 10
+portal_ice_cave_entry_horrid_things b8391175 9
+portal_ice_cave_entry_ice_simulacra c4691e9f 5
+portal_ice_cave_entry_ice_statue_one 7827beec 9
+portal_ice_cave_entry_ice_statue_two cabb9b56 9
+portal_ice_cave_entry_imps f150429f 5
+portal_ice_cave_entry_pillars_1 020bba79 7
+portal_ice_cave_entry_pillars_2 271fc801 7
+portal_ice_cave_entry_pillars_four b43ac509 9
+portal_ice_cave_entry_pillars_three eaa6f5f3 7
+portal_ice_cave_entry_ugly_swarm 146bf245 15
+portal_ice_cave_rime a19f363e 9

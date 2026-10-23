@@ -1,0 +1,43 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (portal_ice_cave_entry_ice_simulacra)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:   portal_ice_cave_entry_ice_simulacra
+DEPTH: D:11-, Lair, Orc, Elf, Swamp, Shoals, Snake, Spider
+TAGS:   patrolling no_monster_gen transparent uniq_icecv chance_icecave
+CHANCE: 500
+# Source Lua: site_1; ported at this stage.
+# {{
+# ice_cave_portal(_G)
+# local simul = simulacrum_monsters()
+# mons(simul["mocking"])
+# mons(simul["savage"])
+# }}
+: vault.run("portal_ice_cave_entry_ice_simulacra.site_1")
+# Source Lua: site_2; ported at this stage.
+# : if you.in_branch("D") then
+# :     if you.depth() < 12 then
+# SUBST: 1 = 1.
+# :     else
+# SUBST: 1 = 112
+# :     end
+# # Savage only for Lair, but fewer.
+# : elseif you.in_branch("Lair") then
+# :     if you.depth() < 3 then
+# SUBST: 1 = 2...
+# :     else
+# SUBST: 1 = 2.
+# :     end
+# # Orc
+# : elseif you.in_branch("Orc") then
+# SUBST: 1 = 112
+# : else
+# SUBST: 1 = 12
+# : end
+: vault.run("portal_ice_cave_entry_ice_simulacra.site_2")
+MAP
+..1..
+.1.1.
+1.O.1
+.1.1.
+..1..
+ENDMAP

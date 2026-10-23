@@ -1,0 +1,18 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (portal_ice_cave_entry_imps)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:   portal_ice_cave_entry_imps
+DEPTH: D:11-13, Lair, Orc
+TAGS:   patrolling no_monster_gen transparent uniq_icecv chance_icecave
+CHANCE: 500
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_portal(_G)
+: vault.run("shared.portal")
+MONS:   white imp
+MAP
+..1..
+.111.
+11O11
+.111.
+..1..
+ENDMAP

@@ -53,6 +53,8 @@ const (
 	ExitOssuary        ID = "DNGN_EXIT_OSSUARY"
 	EnterBailey        ID = "DNGN_ENTER_BAILEY"
 	ExitBailey         ID = "DNGN_EXIT_BAILEY"
+	EnterIceCave       ID = "DNGN_ENTER_ICE_CAVE"
+	ExitIceCave        ID = "DNGN_EXIT_ICE_CAVE"
 	ExpiredPortal      ID = "DNGN_EXPIRED_PORTAL"
 	EnterPandemonium   ID = "DNGN_ENTER_PANDEMONIUM"
 	TransitPandemonium ID = "DNGN_TRANSIT_PANDEMONIUM"
@@ -298,6 +300,16 @@ var definitions = map[ID]Feature{
 	},
 
 	ExitBailey: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	EnterIceCave: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitIceCave: {
 		Glyph:    '∩',
 		Walkable: true,
 	},

@@ -1,0 +1,10 @@
+# This parses but its 81-cell row cannot fit a temporary Ice Cave floor.
+NAME: ice_cave_small_giant
+DEPTH: IceCv
+WEIGHT: 10
+TAGS: no_item_gen no_monster_gen
+ORIENT: encompass
+KFEAT: < = exit_ice_cave
+MAP
+<xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

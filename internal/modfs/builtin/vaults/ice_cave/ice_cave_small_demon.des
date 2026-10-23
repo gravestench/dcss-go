@@ -1,0 +1,86 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (ice_cave_small_demon)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:    ice_cave_small_demon
+DEPTH: IceCv
+TAGS:    no_item_gen no_monster_gen no_pool_fixup
+ORIENT:  encompass
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_common_loot(_G)
+: vault.run("shared.common_loot")
+# Source Lua: site_2; ported at this stage.
+# : ice_cave_undead_demon_monster_set(_G, "E")
+: vault.run("shared.undead_reaper_e")
+# For hard ice caves, place an obsidian statue and a 50% chance for an OCS.
+# fiend. For the boss, 50% chance for either reapers or ice fiend. If reapers,
+# two guaranteed and 33% each for up to two more. If ice fiend, 50% chance for
+# a second. For easy ice caves, always place a single reaper.
+# Source Lua: site_3; ported at this stage.
+# : if dgn.persist.ice_cave_hard then
+# KMONS:   D = orange crystal statue
+# SHUFFLE: EF / 8H
+# NSUBST:  3 = 3 / D4, F = E / E.., H = 8. / .
+# : else
+# SUBST:   6 = 56
+# : end
+: vault.run("ice_cave_small_demon.site_3")
+SHUFFLE: dg, fh
+SUBST:   i = e|ii
+# Place middle-tier monsters and cloud generators in the boss chamber.
+SHUFFLE: JK / LM / NO / PQ / RS
+SUBST:   JL = 44., KM = !, MNOPQR = ., Z = 25
+# Source Lua: site_4; ported at this stage.
+# : place_freezing_vapour_machine(_G)
+: vault.run("shared.fog_12")
+# Add in 1s and 2s throughout the map, doing this last so we have more space.
+NSUBST:  . = 6=1 / 6=1. / 2 / 2=2. / .
+# Set up two shortcuts, each with a 50% to be open. Each open shortcut has a
+# 50% chance to be open space with a freezing vapour machine and a 50% chance
+# to be deep water.
+SHUFFLE: apq / aa! / zzz / zzz
+SUBST:   a = ., pq = w, z = x
+# Source Lua: site_5; ported at this stage.
+# : place_freezing_vapour_machine(_G, 12)
+: vault.run("shared.fog_12")
+# Replace this glyph with floor so we can re-use it.
+SUBST:   ! = .
+SHUFFLE: rsu / rr! / zzz / zzz
+SUBST:   r = ., su = w, z = x
+# Source Lua: site_6; ported at this stage.
+# : place_freezing_vapour_machine(_G, 8)
+: vault.run("shared.fog_8")
+# Source Lua: site_7; ported at this stage.
+# : ice_cave_appearance(_G)
+: vault.run("shared.appearance")
+MAP
+                    xxxxxx
+                  xxx....xxx
+                 xx........xxx
+                xx....xxx....xx
+  xxxxx         x...xxx6xxx...xxx
+ xx...xxxxx     x...xx4...xxxx..xx
+xx.4..2...xx xxxxxx..xx....2xx...x
+x1......1..xxx.x...........gxxx..x
+xx..........x.........xx..dxx...xx
+x.1.....1.......xxrxxxxxxxxx...xx
+xx............xxxsssxxxxxxx...xx
+ x..........xxxxssuxxxxxxK..xxx
+ x3x....x3xxxxxxxxrr....J..xx
+ xxxx..xxxxxxxxxx......JKJ..xxx
+   xx..axxpxxxx....xx.........xxx
+  xx..xapqpax.....xx..xxxx..Q...xx
+  x..xxpppxaZ.M.x.....N..x...P...xx
+  x...xxxxxx..L.xxx..O.N.xx.PQP..Zxx
+  xx...xxxxxZLML..xx..N...xx.......x
+   xx.-.xxxxx.........x.O........Zxx
+   xx---xxxxxx...xxx..x..xxx.....xx
+   x---xxxxxxxxxxx....x.....x..xxx
+  xx---xxxxxxxxx...S..x.....xxxx
+ xx-----xxxxxxxxx.xx.R...Sxxx
+ x---A---xxxxxccccc.R.R.ccccc
+ x-------xxxxxc...cccFccc...c
+ xx--<--xxxxxxc.f...FEF...h.c
+  xx---xxxxxxxc...cc*i*cc...c
+   xxxxxxxxxxxccccccccccccccc
+         xxxxx
+ENDMAP

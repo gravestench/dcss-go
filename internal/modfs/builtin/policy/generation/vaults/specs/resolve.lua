@@ -252,7 +252,7 @@ end
 -- property, not part of its species name. Require a known source colour
 -- and one of the two catalog species before accepting that shorthand.
 local function ugly_names(name)
-    local colour, species = name:match("^([a-z]+) (.+ ugly thing)$")
+    local colour, species = name:match("^([a-z]+) (.*ugly thing)$")
 
     if (species == "ugly thing" or species == "very ugly thing") and
         colours.VALID[colour] then

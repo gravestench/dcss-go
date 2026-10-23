@@ -1,0 +1,87 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (ice_cave_small_necro)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:    ice_cave_small_necro
+DEPTH: IceCv
+TAGS:    no_item_gen no_monster_gen no_pool_fixup
+ORIENT:  encompass
+KPROP:   yY'j = bloody
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_common_loot(_G)
+: vault.run("shared.common_loot")
+# Source Lua: site_2; ported at this stage.
+# : ice_cave_necro_loot(_G)
+: vault.run("shared.necro_loot")
+# Source Lua: site_3; ported at this stage.
+# : ice_cave_undead_demon_monster_set(_G)
+: vault.run("shared.undead_monsters")
+KMONS:   D = necromancer
+KFEAT:   _ = altar_kikubaaqudgha
+KFEAT:   ^ = alarm trap
+KFEAT:   y = x
+KFEAT:   " = +
+# For the easy ice cave, necromancer + elephants as boss, second area gets a
+# mix of appropriate monsters. For the hard ice cave, lich and friends as boss
+# and necromancer + dire elephants + friends in second area.
+# Source Lua: site_4; ported at this stage.
+# : if dgn.persist.ice_cave_hard then
+# KMONS:   E = lich
+# SUBST:   D = E, K = D
+# :else
+# SUBST:   K = 5
+# :end
+: vault.run("ice_cave_small_necro.site_4")
+SHUFFLE: fghi, def
+SUBST:   f = f*, N = 456, - = ........^
+# Set up two shortcuts, each with a 50% to be open. Each open shortcut has a
+# 50% chance to be open space with a freezing cloud machine and a 50% chance to
+# be deep water.
+SHUFFLE: apq / aa! / zzz / zzz
+SUBST:   a = ., pq = w, z = x
+# Source Lua: site_5; ported at this stage.
+# : place_freezing_vapour_machine(_G, 8)
+: vault.run("shared.fog_8")
+# Replace this glyph with floor so we can re-use it.
+SUBST:   ! = .
+SHUFFLE: rsu / rr! / zzz / zzz
+SUBST:   r = ., su = w, z = x
+# Source Lua: site_6; ported at this stage.
+# : place_freezing_vapour_machine(_G, 12)
+: vault.run("shared.fog_12")
+# Source Lua: site_7; ported at this stage.
+# : ice_cave_appearance(_G)
+: vault.run("shared.appearance")
+MAP
+                          xxxxxx
+                        xxx....xx
+                      xxx.......x
+              xxxxxx xx...xxx..xx
+             xxpqppxxx...xxx..xx
+            xxppppxxx...xxx..xx
+    xxxxxxxxxpqpxaaxN..xxx...x
+   xx.G...G.aappxx...Nxxxx..xx     xxxxx
+xxxx.........xxxx....xxxxx...xxx xxx...xxxx
+xfx....2_424.xxxx..xxxxxxxx....xxx...2....xx
+x*+.....K...2xxxx...xxxxxxxx.......2.1.2...xx
+xgx....52N.N42xxxx.N.xxxxxxxxxx...1.....1...x
+xxxx..4...N24xxxxxxxN..xxxxxxxxx............x
+   xxxG5.4G...xxxxxxxx...xxxxxxxx2........2xx
+     xxxxxx....xxxxxxxx....xxxxxxx1x....x1xx
+          xxx...xx.xxxxxx....xxxxxxxx..xxxx
+   xyyyyyxx....xx...xxxxxxx...xxxxxxx..x
+   xyYj'yxx..xxx..x..xxxxxxxx..xxxxx..xx
+   xyyy"yxxx.....xxx.....xxx..xxsxx..xx
+  xxN.'''Nxxx...xxxxx........xxxssr...xx
+ xx...4D4.2xxxxxxxxxG.N..N...xxssurx...xx
+xx.2x$**$x.2xxxxxxd%...1.....xxsssxxx.22x
+x..2xxhixx2..xxxxxe%....N....rsusssxx2.2x
+x....xxxx...xxxxxxxxx.......xrxsssxx...xx
+xxx.........xxxxxxxxxxx...xxxxsssxxx...xx
+  x...3....xxxxxxxxxxxxx..xxxxxxxxx.....xx
+  xx------xxxxx.xxxxxxxxxx..xx   x...A...x
+   xx----xxxxx....xxxxx..x...xx  x.......x
+    x---xx.x...xx....x.....xxx   xx..<..xx
+    xx.......xxxxxx....xxxxx      xx...xx
+     xxx.xx.xx    xxxxxx           xxxxx
+       xxxxxx
+ENDMAP

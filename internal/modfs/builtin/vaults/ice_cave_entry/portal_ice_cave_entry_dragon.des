@@ -1,0 +1,28 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (portal_ice_cave_entry_dragon)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:   portal_ice_cave_entry_dragon
+DEPTH: D:14-, Elf, Swamp, Shoals, Snake, Spider
+TAGS:   no_monster_gen no_pool_fixup patrolling uniq_icecv chance_icecave
+CHANCE: 500
+MONS:   ice dragon
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_portal(_G)
+: vault.run("shared.portal")
+# Source Lua: site_2; ported at this stage.
+# : if you.in_branch("Swamp") then
+# SUBST:  x = t
+# : elseif you.in_branch("Shoals") then
+# SUBST:  x = w
+# : end
+: vault.run("portal_ice_cave_entry_dragon.site_2")
+MAP
+xxxxxxxx
+xaaaaaxx
+xaO..aax
+xa.1a.ax
+xa.a..a@
+xaa..a.'
+xxaaa..'
+xxxx@'''
+ENDMAP

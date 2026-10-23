@@ -113,8 +113,13 @@ function generation.roll(ctx, request)
             unique_artefacts.apply(ctx, explicit_unique, request, result)
 
         if not artefact_applied then
-            fail(request, "unique artefact " .. request.unique_id ..
-                " is already generated")
+            artefact_applied = artefacts.explicit_duplicate(ctx,
+                explicit_unique, request, result)
+
+            if not artefact_applied then
+                fail(request, "unique artefact " .. request.unique_id ..
+                    " has no usable fallback")
+            end
         end
     else
         artefact_applied = artefacts.roll(ctx, definition, effective, result)

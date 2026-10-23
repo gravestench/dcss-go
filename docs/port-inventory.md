@@ -452,6 +452,19 @@ bands run in Lua. Text snapshots under `docs/level-snapshots/bailey/` show
 every generated map and its test return connection. The broader effects of
 some authored monster equipment and feature records still depend on their
 respective gameplay domains.
+The Ice Cave now carries all 15 source entrances and 11 source destination
+maps as individually replaceable DES files. Its source-position Lua hooks
+draw one 600–800-turn clock and save the origin's easy/hard choice. A live
+Akara gate continues counting on inactive floors, emits source frost and
+crackling messages, and closes to `expired_portal`. The destination is one
+weighted whole-floor source map with its authored monsters, cold loot,
+fog machines, transporter links, and exact return exit. Save validation
+checks the marker, deadline, difficulty, grid, selected map, and reciprocal
+visitor pointer. All 22 easy/hard map variants populate through the live
+staged owner; terrain snapshots and connections are under
+`docs/level-snapshots/ice-cave/`. Explicit duplicate unrand requests now
+use the source fallback randart rule. Wider gameplay for any authored
+entity effects not yet ported remains subject to those separate domains.
 The four-map `serial_nicolae_subway` family adds its controller and three
 linked stations. Its named markers pair across separately placed stations,
 paint one-way transporters and landings, and retain their links in saved level
@@ -479,8 +492,8 @@ committed map; branch generation will activate these maps when those floors
 are ported. The sixteen-map ice family adds a Dungeon/Cocytus controller
 and fifteen weighted pieces. One named Lua module applies the source's
 branch-specific monster pools, ice surface rules, and typed fog markers.
-The controller can request an Ice Cave entrance when a mod adds the source
-`uniq_icecv` pool; without that pool it consumes no cave coinflip. The
+The controller can request an Ice Cave entrance from the committed source
+`uniq_icecv` pool; a mod may add another eligible entry by one DES file. The
 one-map `serial_glass`
 controller adds a non-flat common draw and an independent rare draw that
 is skipped in Dis. The nine tagged maps came from the separate variable

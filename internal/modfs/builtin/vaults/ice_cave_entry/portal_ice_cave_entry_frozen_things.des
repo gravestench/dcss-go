@@ -1,0 +1,24 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (portal_ice_cave_entry_frozen_things)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:   portal_ice_cave_entry_frozen_things
+DEPTH: D:14-, Elf, Swamp, Shoals, Snake, Spider
+TAGS:   no_monster_gen transparent uniq_icecv chance_icecave
+CHANCE: 500
+MONS:   freezing wraith, azure jelly
+SUBST:  2 = 12.
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_portal(_G)
+: vault.run("shared.portal")
+MAP
+  '''''
+ ''aaa''
+''aaOaa''
+'aa.2.aa'
+'a.....a'
+'a.1.1.a'
+'aaa.aaa'
+'aaa.aaa'
+'aaa+aaa'
+'''''''''
+ENDMAP

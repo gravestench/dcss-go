@@ -1,0 +1,97 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (ice_cave_tombish)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:    ice_cave_tombish
+DEPTH: IceCv
+TAGS:    no_item_gen no_monster_gen
+ORIENT:  encompass
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_common_loot(_G)
+: vault.run("shared.common_loot")
+# Source Lua: site_2; ported at this stage.
+# : ice_cave_necro_loot(_G)
+: vault.run("shared.necro_loot")
+# Scroll loot under statues.
+KITEM:   3 = any scroll
+# Source Lua: site_3; ported at this stage.
+# : kitem("D8 = " .. dgn.loot_scrolls)
+: vault.run("shared.scrolls_d8")
+KITEM:   D = any scroll
+# For easy ice caves, small chance for freezing wraiths in tomb area. For the
+# boss, a 50% chance for either necromancer plus bog body or reaper. For hard
+# ice caves, bog bodies in tomb area. The boss is 50% chance reapers versus one
+# or two ice fiends. For reapers, minimum of two, 33% chance each for up to two
+# more. For ice fiend, minimum of one and 50% chance for another.
+# Source Lua: site_4; ported at this stage.
+# : if dgn.persist.ice_cave_hard then
+# : ice_cave_undead_demon_monster_set(_G)
+# KMONS:   D7 = reaper ; halberd itemname:scythe tile:wpn_scythe wtile:scythe ego:freezing
+# SHUFFLE: D7 / 88
+# NSUBST:  7 = 7 / 7.., 8 = 8 / 8. / .
+# NSUBST:  4 = 6 / 446, F = 122445
+# : else
+# : ice_cave_undead_demon_monster_set(_G)
+# KMONS:   D = necromancer
+# SHUFFLE: D7 / 88
+# NSUBST:  7 = 7 / ., 8 = 8 / .
+# SUBST:   4 = 4:70 6, F = .12244
+# : end
+: vault.run("ice_cave_tombish.site_4")
+# Shuffle main loot chamber items, and then the locations of the non-necro loot
+# items to possibly be at other locations and to possibly include magical loot.
+SHUFFLE: fghi, defgh
+SUBST:   d = d*, e = e*, f = f*, g = g*, h = h*
+# Source Lua: site_5; ported at this stage.
+# : ice_cave_appearance(_G)
+: vault.run("shared.appearance")
+MAP
+      xxxxx
+     xx...xx
+    xx.....xx
+    x...A...x
+    x...<...x
+    xx.....xx
+     xx...xx
+      x...xx
+      xx..1x
+      xx..1x
+      x...xx
+   xxxx...xxxx
+  xx3x.....x3xx
+ xx...........xx
+ x.............x
+xx.............xx
+x.......F.......x
+x....F.....F....x
+x.......U.......x
+x....F.....F....x
+x.......F.......x
+xx.............xx
+ x.cnnc...cnnc.x
+ xxc44c...c44cxx
+  xcVdcc+cceVcx
+  ccc+c...c+ccc
+  c...c...c...c
+ccc.ccc...ccc.ccc
+c...c5c...c5c...c
+c+ccc+c...c+ccc+c
+c.c5+.......+5c.c
+c.ccc.G...G.ccc.c
+c.c5+.......+5c.c
+c.ccc.G...G.ccc.c
+c.+...........+.c
+c.ccc.G...G.ccc.c
+c.c5+.......+5c.c
+c.ccc.G...G.ccc.c
+c.c5+.......+5c.c
+c+cccccc+cccccc+c
+c...............c
+ccccG.ccccc.Gcccc
+   cc.cfDgc.cc
+    c.c7U7c.c
+    c.ch7ic.c
+    c.cc+cc.c
+    c.......c
+    ccccVcccc
+       ccc
+ENDMAP

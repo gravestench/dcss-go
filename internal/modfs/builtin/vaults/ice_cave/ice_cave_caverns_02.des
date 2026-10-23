@@ -1,0 +1,83 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (ice_cave_caverns_02)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:    ice_cave_caverns_02
+DEPTH: IceCv
+TAGS:    no_item_gen no_monster_gen no_pool_fixup
+ORIENT:  encompass
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_common_loot(_G)
+: vault.run("shared.common_loot")
+# Source Lua: site_2; ported at this stage.
+# : kitem("j = any wand / any potion w:5 / any scroll w:5")
+: vault.run("shared.cavern_j")
+# Source Lua: site_3; ported at this stage.
+# : kitem("k = any misc / " .. dgn.loot_potions .. " / " .. dgn.loot_scrolls)
+: vault.run("shared.cavern_k")
+# Source Lua: site_4; ported at this stage.
+# : if crawl.coinflip() then
+# :     ice_cave_undead_demon_monster_set(_G)
+# : else
+# :     ice_cave_natural_monster_set(_G)
+# : end
+: vault.run("ice_cave_caverns_02.site_4")
+KFEAT:   y = w
+SHUFFLE: 7F / F8, 3H / UJ
+# Source Lua: site_5; ported at this stage.
+# : if dgn.persist.ice_cave_hard then
+# NSUBST:  J = 6 / 5.
+# : else
+# SUBST:   J : JJK
+# NSUBST:  J = 2=5 / 5., K = 6 / .
+# : end
+: vault.run("ice_cave_caverns_02.site_5")
+SHUFFLE: fghik, def
+SUBST:   D = 12, E = 2 4:2 5:5, 2 = 2 .:5
+SHUFFLE: '-
+SUBST:   '=x
+# A fixed shortcut through a freezing vapour generators with a 50% chance to
+# place.
+SUBST:   r = rx
+# Source Lua: site_6; ported at this stage.
+# : place_freezing_vapour_machine(_G, 6, "r")
+: vault.run("shared.fog_r6")
+# Two shortcut set up in a similar fashion to ice_cave_caverns_01.
+SHUFFLE: apq / aa! / zzz / zzz
+SUBST:   a = ., pq = w, z = x
+# Source Lua: site_7; ported at this stage.
+# : place_freezing_vapour_machine(_G, 8)
+: vault.run("shared.fog_8")
+SUBST:   ! = .
+SHUFFLE: suy / ss! / zzz / zzz
+SUBST:   s = ., uy = w, z = x
+# Source Lua: site_8; ported at this stage.
+# : place_freezing_vapour_machine(_G, 12)
+: vault.run("shared.fog_12")
+# Source Lua: site_9; ported at this stage.
+# : ice_cave_appearance(_G)
+: vault.run("shared.appearance")
+MAP
+ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxxxxx    xxxxxxxx    xxxxxxxx
+ x..xappppxax.x.'x-.xD..Dxxxxxxxxxx....x.Wxxxxxx1DE1D.xx  xx......xx
+ x.<.xppqpax...x.x.x.x1D.Dxxxxxxx'''..x.xxWWxx1DxxD.E1.xxxx..xxxJJJxx
+ xx..xxppxx..xxx-.'xx.xxD.1xxxx'''xxx.-xxxxWWWxxxxxx....x...xxxe.U.*x
+  x.A.xxxx..xxxxxxxwwwwxxx1.x'''xxxxx---xxxxWWwwwwwxxx-...xxxxxx...xx
+  x...xxxxx...xxxxxwwwwwxx..'xxxxxxxxxx--xxwwwwwwwxx--xxxxxxxxx..xxx
+  x...xxxxxxx..xx1-'xxwwxxx--xxxxx'''x--xxwwwwwwwxx'x-xxxx..xxxx..x
+  xx.11xxxxx1.x...1.2xxwx---xx.*.*.xx..xxxwwwwwwwww'.x.x..xx.x..xxx
+  x11.xxxxxxxx1xxxxx1.xxxx--x.j.T.j.xxx..xwwwwwwwwx'x-..xxxxx.xxx
+  xx..xxxxxxxx2..1x11..xxxx-...*.*..xx...xxwwwwwwx'...xxx   xxx
+   xx.xxxxxxxxxxxx.xxx..xxxx...xxxxxxxxx..xxwwwxxx.-xxx
+xxxxx..xxxx.x*...xxxx...xxxxxx.-xxxxxxx1xxxxxxxxx..xx
+xdx$xx..xr....-'..xxxxx..xxx''.-xxxxx.Dxxxxsxxxxxx..xxx
+xx$x.xx..xx..xxxx..xxxxxx..''xx--xxxx11Dsxuuuuxxxxx...xxx
+x$x..x....xx..xxx..xxxxxxx--xxxx-xx.1.xxsuuuuuuxxxxx....xxx
+xx.xx.x..xxx..xx.HHxxxxxxxx1.xxxx...xxxxxuyuuuxxxxxxx.D.5.xx
+xxxxxx..xxxx...xxH3.xxxxxx'-.1x'''xxxxxxuuuuyuuxxxxxx.DE.D.xx
+   xx..xxxx...xxxx...xxxx..x..''xxxxxxxxxuuuusxxx$$x.5E.D...xx
+   x...xx...xxxx.x.xxxxx...x.xxxx  xxxxxxuxuxsxi*$$...7F7.xx.xxx
+   x..xxD..xx  xx|x.xx...xx.xx      xxxxxxxxxxfk|$$$...xxxxxx..xxxxx
+   x...2.2xx    xx....xxxxxxx        xxxxxxxxxxgh|$$$$.x    xxx....xxx
+   xx11Dxxx     xxxxxxx                       xxxxxxxxxx      xxx...<x
+    xxxxx                                                       xxxxxx
+ENDMAP

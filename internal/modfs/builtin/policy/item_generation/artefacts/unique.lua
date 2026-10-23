@@ -83,11 +83,10 @@ function unique.apply(ctx, chosen, request, result)
     local player = ctx:player()
     local previous = history.status(ctx, player, chosen.id)
 
-    if previous == status.ORDINARY then
-        error("duplicate unique artefact " .. chosen.id)
-    end
-
-    if previous == status.NONLEVEL then
+    -- Explicit DES requests can repeat on one map. Source makeitem.cc
+    -- replaces any already generated unrand with a fallback randart.
+    if previous == status.ORDINARY or
+        previous == status.NONLEVEL then
         return false
     end
 

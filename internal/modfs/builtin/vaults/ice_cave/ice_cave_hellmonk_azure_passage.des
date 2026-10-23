@@ -1,0 +1,88 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (ice_cave_hellmonk_azure_passage)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:    ice_cave_hellmonk_azure_passage
+DEPTH: IceCv
+TAGS:    no_item_gen no_monster_gen
+ORIENT:  encompass
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_common_loot(_G)
+: vault.run("shared.common_loot")
+# Loot always includes at least one randart so Jiyva worshipers get something
+KITEM:   j = any weapon randart ego:freezing ident:all / any armour randart \
+             / ring of ice randart ident:all / ice dragon scales randart w:5 \
+             / ring of protection from cold randart ident:all \
+             / any ring randart / any amulet randart \
+             / randbook disc:ice numspells:3
+KMONS:   _ = azure jelly
+KFEAT:   _ = altar_jiyva
+KFEAT:   D = slimy_wall
+SUBST:   * = dj *:60, d = defghi, 1 = 1.., 3 = 113334
+SHUFFLE: qrs
+# For easy ice cave, use ice statues,
+# boss slimes, including a rockslime.
+# Source Lua: site_2; ported at this stage.
+# : if dgn.persist.ice_cave_hard then
+# MONS:    glowing shapeshifter simulacrum / slime creature simulacrum \
+#          / great orb of eyes simulacrum
+# MONS:    orange crystal statue, slime creature band, quicksilver ooze
+# MONS:    azure jelly, rockslime
+# {{
+# set_random_mon_list("glowing shapeshifter simulacrum w:20" ..
+#     " / slime creature simulacrum w:20 / great orb of eyes simulacrum w:20" ..
+#     " / slime creature w:40 / quicksilver ooze w:20 / azure jelly")
+# }}
+# SUBST:   p = 4, q = 455, r = 5, s = 6
+# : else
+# MONS:    shapeshifter simulacrum / glowing shapeshifter simulacrum \
+#          / slime creature simulacrum / great orb of eyes simulacrum
+# MONS:    ice statue, slime creature band, quicksilver ooze, azure jelly
+# {{
+# set_random_mon_list("shapeshifter simulacrum" ..
+#     " / glowing shapeshifter simulacrum / slime creature simulacrum" ..
+#     " / great orb of eyes simulacrum / slime creature w:20 / quicksilver ooze")
+# }}
+# SUBST:   q = 34455
+# :end
+: vault.run("ice_cave_hellmonk_azure_passage.site_2")
+NSUBST:  2 = 2 / 2=2. / .
+# 50% chance for slimy wall passages, otherwise fill with rock.
+SHUFFLE: DE / FF
+SUBST:   E = ., F = x
+# Source Lua: site_3; ported at this stage.
+# : ice_cave_appearance(_G)
+: vault.run("shared.appearance")
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+xxxxxxxxx..3......xxxxxxxx.....xxxxxxxxx
+xxxxxxx.......11...pxxxx.......rxxxxxxxx
+xxxxx1.....xxx.....xxxx.....D....**xxxxx
+xxxx2....DDDD.....xxx.....D........*xxxx
+xxxx....EEEE....3.x.......s._.D....jxxxx
+xxxx31...DDDD.....1.......D........*xxxx
+xxxxx..1....xxxxxxxxxx......D....**xxxxx
+xxxxxx...11...xxxxxxxxxx.......qxxxxxxxx
+xxxxxxxxx3....21....xxxxxx.....xxxxxxxxx
+xxxxxxxxxx........1......xxxxxxxxxxxxxxx
+xxxxxxxxxxxxxDEDxxxx.....1.xxxxxxxxxxxxx
+xxxxxxxxxxxxxDEDxxxxxx.....3.xxxxxxxxxxx
+xxxxxxx....2....xxxxxxxx....xxxxxxxxxxxx
+xxxxx..1........xxxxxxx..1.xxx..1..xxxxx
+xxxx..1...xxx..1..xxx2...DDx.1......xxxx
+xxxx.....DDxxxx..1......EE....x2..1.xxxx
+xxxx3...EEE.d*xxx....xxDD...1xx.....xxxx
+xxxxx.....Dx*d..xxxxxxxx..1.xx...3.xxxxx
+xxxxxx1....xx.p..2xx...1..xxx.....xxxxxx
+xxxxxxxxx...xxxx.......xxxx...1xxxxxxxxx
+xxxxxxxxxx.1..xxxx.p.xxx..1..xxxxxxxxxxx
+xxxxxxxxxxxx.1..1xxxxx.....xxxxxxxxxxxxx
+xxxxxxxxxxxxxxx...111...xxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxx...xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxx...xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxx..A..xxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxx.<.xxxxxxxxxxxxxxxxxxx
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -37,3 +37,16 @@ CRAWL_BAILEY_SNAPSHOT_DIR="$PWD/docs/level-snapshots/bailey" \
   go test -run '^TestBaileyAllSourceMapsPopulate$' \
   -count=1 ./internal/game
 ```
+
+The [Ice Cave index](ice-cave/index.txt) links all 11 source destination
+maps in both easy and hard variants. Each of the 22 files shows its
+generated 80×70 terrain, source vault ID, every exit coordinate, and the
+exact outside test gate. Easy fixtures use Dungeon:1; hard fixtures use a
+generated Dungeon:14 floor. Ordinary Ice Cave entrances start at D:11.
+Regenerate the set with:
+
+```sh
+CRAWL_ICE_CAVE_SNAPSHOT_DIR="$PWD/docs/level-snapshots/ice-cave" \
+  go test -run '^TestIceCaveAllSourceMapsPopulate$' \
+  -count=1 ./internal/game
+```

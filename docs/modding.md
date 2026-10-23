@@ -2318,7 +2318,95 @@ The gate and travel rules live under `policy/world/bailey/`, its timer in
 `systems/world_bailey_portals.lua`, and integrity rules under
 `policy/save/bailey_*.lua`.
 
-All three categories validate their effective definitions at startup. A
+### Ice Cave gates and destination maps
+
+Ice Cave is a one-floor timed portal branch. Its 15 committed entrances
+live under `vaults/ice_cave_entry/`, and its 11 whole-floor destinations
+live under `vaults/ice_cave/`. A source entrance has
+`uniq_icecv chance_icecave` tags, `CHANCE: 500`, its own `DEPTH` and
+`WEIGHT`, and a named Lua hook at the source decision site. The shared
+entrance hook draws exactly one 600–800-turn lifetime and decides `hard`
+from the **outside branch and depth**: D:11–13, Lair, and Orc are easy;
+D:14–15, Elf, Swamp, Shoals, Snake, and Spider are hard. That bit is
+stored in the marker and `world.ice_cave_portal` ECS component. Entering
+the cave never redraws it or looks at the player's current depth.
+
+To add a destination, put one `.des` file at a new path such as
+`vaults/ice_cave/my_ice_gallery.des` in your mod directory:
+
+```text
+NAME: my_ice_gallery
+DEPTH: IceCv
+WEIGHT: 20
+TAGS: no_item_gen no_monster_gen
+ORIENT: encompass
+KFEAT: < = exit_ice_cave
+MAP
+xxxxx
+x...x
+x.<.x
+x...x
+xxxxx
+ENDMAP
+```
+
+The effective catalog adds a positive-weight map to the IceCv pool, sorts
+candidate IDs, and draws by weight. The map must fit the 80×70 level and
+provide a live `exit_ice_cave` feature. The player arrives at that exit;
+the upstairs command returns to the saved outside cell. A blocked outside
+cell refuses return without spending time. The generic portal transaction
+stages the whole floor and its actors before spending the gate, so a bad
+map or hook leaves the saved gate and RNG unchanged. A zero-weight map is
+excluded, including from explicit `layout_id` requests. A file at the
+same relative path as a bundled map replaces only that map; see the
+`internal/game/testdata/ice-cave-*` mod fixtures for runnable examples.
+
+Use a named source-position hook when difficulty changes a map's content.
+For `: vault.run("my_ice_gallery.decorate")`, add
+`policy/generation/vaults/ice_cave/my_ice_gallery.lua`:
+
+```lua
+-- This map chooses its keyed guardian from the entrance's saved bit.
+local directives = require("constants.vault_directives")
+local difficulty = require("policy.generation.vaults.ice_cave.difficulty")
+
+local gallery = {}
+
+-- The same map stays easy or hard across save and restore.
+function gallery.decorate(api)
+    if difficulty.hard(api) then
+        api:emit(directives.KMONS, "G = ice dragon")
+    else
+        api:emit(directives.KMONS, "G = rime drake")
+    end
+end
+
+return gallery
+```
+
+The hook's `api` is the vault placement context: `api:emit` inserts a DES
+directive at that exact site; `api:record` preserves a typed effect;
+`api:roll` and `api:coinflip` use the staged generation stream; and
+`api:setting("ice_cave_hard")` reads the saved gate choice supplied by
+the floor generator. Do not store a visit bit in a Lua module variable.
+The `ctx` used later by world policies and systems is the live game context:
+it reads and writes ECS components and level cells, emits messages, and
+queries the game clock. It is not available to DES hooks. The general
+vault hook and runtime-context sections describe their full methods.
+
+The visitor's `character.ice_cave_visit` component carries the exact
+outside level and coordinate, selected map ID, and hard bit. Its outside
+gate changes to `expired_portal` and keeps `closure_reason = "entry"`;
+natural timeout uses `"expiry"`. Global player action time continues the
+clock on an inactive floor. The Lua system gives the source frost warning,
+five crackling bands, final warning, and Silence-aware hearing. Restore
+compares the marker, ECS clock, terrain cell, active visit, and selected
+floor. The owners are `policy/world/ice_cave/`,
+`systems/world_ice_cave_portals.lua`, and `policy/save/ice_cave_*.lua`.
+The [Ice Cave snapshot index](level-snapshots/ice-cave/index.txt) shows
+both variants of all 11 source maps and their test return coordinates.
+
+These content categories validate their effective definitions at startup. A
 missing cloud or trap effect path fails before play; a malformed shop weight
 fails before stock generation. Import their IDs from `ids.clouds`,
 `ids.traps`, or `ids.shops` at use sites, and read the corresponding catalog

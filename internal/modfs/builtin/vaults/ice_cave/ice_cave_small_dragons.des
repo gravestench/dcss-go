@@ -1,0 +1,102 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (ice_cave_small_dragons)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:    ice_cave_small_dragons
+DEPTH: IceCv
+TAGS:    no_item_gen no_monster_gen no_pool_fixup
+ORIENT:  encompass
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_common_loot(_G)
+: vault.run("shared.common_loot")
+KITEM:   j = any jewellery
+# For easy ice caves, there are two ice statues, the boss is white draconian
+# instead of ice dragon half the time, and the higher quality jewellery is
+# good_item. For hard ice cave, there is one orange crystal statue and another
+# tier 2 monster, whenand the high quality jewellery is always randart.
+# Source Lua: site_2; ported at this stage.
+# : if dgn.persist.ice_cave_hard then
+# KITEM:   k = any jewellery randart
+# MONS:    lindwurm simulacrum / ice dragon simulacrum \
+#          / storm dragon simulacrum / golden dragon simulacrum
+# MONS:    ice dragon, orange crystal statue, golden dragon
+# {{
+# kmons("D = white draconian ; " ..
+#     dgn.random_item_def({["scimitar"] = 2, ["halberd"] = 2, ["broad axe"] = 1,
+#        ["morningstar"] = 2}, "freezing", nil, "|") .. " . cloak")
+# kmons("E = white draconian knight ; " ..
+#     dgn.monster_weapon("knight", "freezing", "good_item", "|") ..
+#     " . cloak good_item")
+# set_random_mon_list("lindwurm simulacrum / swamp dragon simulacrum \
+#                      / ice dragon simulacrum / golden dragon simulacrum \
+#                      / white draconian / ice dragon")
+# }}
+# # 50% chance for dragons vs draconians.
+# NSUBST:  3 = 3 / 2
+# SHUFFLE: 24 / DE
+# : else
+# KITEM:   k = any jewellery good_item
+# MONS:    steam dragon simulacrum / acid dragon simulacrum \
+#          / komodo dragon simulacrum / lindwurm simulacrum w:5
+# MONS:    rime drake, ice statue, ice dragon, white draconian
+# {{
+# set_random_mon_list("steam dragon simulacrum / acid dragon simulacrum \
+#     / komodo dragon simulacrum / lindwurm simulacrum \
+#                      / rime drake w:20")
+# }}
+# # 50% chance for a white draconian boss instead of an ice dragon.
+# SUBST:   4 = 45
+# : end
+: vault.run("ice_cave_small_dragons.site_2")
+# Two guaranteed jewellery with 4 pieces on average.
+NSUBST:  j = j / *=j$$$, k = k / *=k$$$
+# Make each of d through i have about a 50% chance of placing, and reduce the
+# gold placed to about 22 piles on-average.
+SUBST:   $ = $:440 d e f g h i .:140
+# Randomize the winding tunnels.
+SHUFFLE: 'w / "a
+SUBST:   "a = x
+# Source Lua: site_3; ported at this stage.
+# : ice_cave_appearance(_G)
+: vault.run("shared.appearance")
+MAP
+                         xxxxxxxx
+                      xxxx......xxxx
+                     xx......x....1xxx
+                     x...xx.xxx..12..xxx
+                   xxxxx..xxx$$..24..jkxx
+                  xx...xx.xx$$$$1...jkjjx
+                  xx.x....x$$$$$$$.jkjjxx
+                 xx..xxx.xxxx$$$$$$xxx''x
+              xxxx11xxxxxxxxxxxxxxxxxwx'x
+           xxxx.111xxxxxxxxxxxxxxxxwwwwwxx
+         xxx.....1xxxxxxxxxxxxxxxxwwwwwwxxx
+        xx...xxxxxxxxxxxxxxxxxxxxxxwwwwxxxx
+       xx..xxxxxxxxxxxxxxxxxxxxxxxxx'xxxxxx
+     xxx..xxxxxxxxxxxxxxxxxxxxxxxxx..xxxxx
+   xxx....xxxxxxxxxxx"xxxxxx""""x....xxxxx
+  xx........xxxxxxxx"""x"x"""x"x.'xx.xxxx
+ xx...........xxxx"""x""x""xxxx"x''xx""xx
+xx..............x""xxxxx"xxxxxxxxx''xx""xx
+x.......2........xxxxxxxxxxxxxxxxxx''x"x"x
+x.................xxxxxxxxxxxxxxxxxx'xx"xx
+xx....1.1.1.....x'''xxxxxxxxxxxxxx'''x""x
+ xx.............xxx''xx''xxxx'''x'x'xx"xx
+  xx..........xxxxxx'''''''x''x''''xx""x
+   xx3x....x3xxxxxxxx'xxxx'''1xxxxx"""xx
+    xxxx..xxxxxxxxxxxxxxxxx$$$xxx""""xx
+      xx..xxxxxxxxxxxxx"""1$2*$xx"x"xx
+     xx..xxxxxxxxxxxxx""x"1$$|$1xx"xx
+     x..xxxx"xxxxxxxxx""xxx1x1x""""x
+     x...x"""""xxxxxxxx"""xxxxxx"xxx
+     xx..."x"x"""xxxxx"x""x    xxx
+      xx.1.xxxxx"""x"xx""xx
+      xx1.1x   xxx""""""xx
+      x...xx     xxxx"xxx
+     xx...xx        xxx
+    xx.....xx
+    x...A...x
+    x.......x
+    xx..<..xx
+     xx...xx
+      xxxxx
+ENDMAP

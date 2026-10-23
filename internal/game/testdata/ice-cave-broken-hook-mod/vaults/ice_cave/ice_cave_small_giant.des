@@ -1,0 +1,11 @@
+# A broken named method must fail catalog boot rather than partial travel.
+NAME: ice_cave_small_giant
+DEPTH: IceCv
+WEIGHT: 10
+TAGS: no_item_gen no_monster_gen
+ORIENT: encompass
+: vault.run("missing_hook.no_such_method")
+KFEAT: < = exit_ice_cave
+MAP
+<
+ENDMAP

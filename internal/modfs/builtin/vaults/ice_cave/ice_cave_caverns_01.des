@@ -1,0 +1,97 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (ice_cave_caverns_01)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:    ice_cave_caverns_01
+DEPTH: IceCv
+TAGS:    no_item_gen no_monster_gen no_pool_fixup
+ORIENT:  encompass
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_common_loot(_G)
+: vault.run("shared.common_loot")
+# Source Lua: site_2; ported at this stage.
+# : kitem("j = any wand / any potion w:5 / any scroll w:5")
+: vault.run("shared.cavern_j")
+# Source Lua: site_3; ported at this stage.
+# : kitem("k = any misc / " .. dgn.loot_potions .. " / " .. dgn.loot_scrolls)
+: vault.run("shared.cavern_k")
+# Pick one of two themes, undead/demons or natural monsters.
+# Source Lua: site_4; ported at this stage.
+# : if crawl.coinflip() then
+# :     ice_cave_undead_demon_monster_set(_G)
+# : else
+# :     ice_cave_natural_monster_set(_G)
+# : end
+: vault.run("ice_cave_caverns_01.site_4")
+# Randomize bosses tiers and shuffle statue monster and miniboss locations.
+SHUFFLE: 7F / F8, 3H / UJ
+# For easy ice caves, 33% chance for the "miniboss" fight to be a solo 6,
+# otherwise two or three tier 5s. For the boss, either a fight with two tier 7
+# or one tier 8, along with other friends. For hard ice cave, the miniboss is
+# always includes a 6 tier along with one to two tier 5s. For the boss, still
+# two tier 7s or one tier 8.
+# Source Lua: site_5; ported at this stage.
+# : if dgn.persist.ice_cave_hard then
+# NSUBST:  J = 6 / 5.
+# : else
+# SUBST:   J : JJK
+# NSUBST:  J = 2=5 / 5., K = 6 / .
+# : end
+: vault.run("ice_cave_caverns_01.site_5")
+# Randomize loot so that two armour pieces will be at various places in the
+# map, and randomize loot locations at the end stash.
+SHUFFLE: efghi, def
+SUBST:   D = 12, E = 2 4:2 5:5, 2 = 2 .:5
+# Choose one of two possible paths to open up.
+SHUFFLE: '-
+SUBST:   ' = x
+# Set up three shortcuts, each with a 50% to be open. Each open shortcut has a
+# 50% chance to be open space with a freezing vapour machine and a 50% chance
+# to be deep water.
+SHUFFLE: apq / aa! / ZZZ / ZZZ
+SUBST:   a = ., pq = w, Z = x
+# Source Lua: site_6; ported at this stage.
+# : place_freezing_vapour_machine(_G, 12)
+: vault.run("shared.fog_12")
+# Replace this glyph with floor so we can re-use it.
+SUBST:   ! = .
+SHUFFLE: rsu / rr! / ZZZ / ZZZ
+SUBST:   r = ., su = w, Z = x
+# Source Lua: site_7; ported at this stage.
+# : place_freezing_vapour_machine(_G, 12)
+: vault.run("shared.fog_12")
+SUBST:   ! = .
+SHUFFLE: yz" / yy! / ZZZ / ZZZ
+SUBST:   y = ., z" = w, Z = x
+# Source Lua: site_8; ported at this stage.
+# : place_freezing_vapour_machine(_G, 12)
+: vault.run("shared.fog_12")
+# Source Lua: site_9; ported at this stage.
+# : ice_cave_appearance(_G)
+: vault.run("shared.appearance")
+MAP
+   xxx         xxxx     xxxx xxxx
+ xxx.xx       xx-'xx  xxxppxxxppxxxxx xxxx      xxxxxxxxxx      xxx
+xx....x    xxxx....xxxxppppppppppxx*xxx$$xxxxxxxx...xx...xxxxxxxxkxx
+x...A.xxxxxx....xx....xxpppppppaaa*x*xxx$$x-.x...xx...xx...xxxxxjxjx
+x.<....'-....xxxxxxx...aaqppqppqpxx*x.xxxx.'x..xxxxxxxxxx....Hxxx.xx
+xx..xx....xxxxxxxx1111xxppppppppppxxxx...xxxxx..xxxxxxxxxx..3.Hx.xx
+xxxxxxxxxxxxxxx....xxxxxxxxppppppxx11..x...x..xxxxxxxxxxxxx....Hxx
+        xxx.....xxxx------xxppxxxxD1xxxxxx..xxxxxxxxxxxxxx...xxyxxx
+     xxxx..xxxxxx---xx-----xxxx...xxxxxxxxxxxxxxxxxxxxxxx...xxxzzzx
+   xxx....xxxxx--xxxxxxxx---xx..xxxxxxxxxxxxxxxxxxxxxx....xxxxzzzxxx
+  xx...xxxxxxx-xxxx....xxx--xxx..xxxxxxxxxxxxxxx....x...xxxxxzzxz"zxx
+xxx..xxxxxxxx-xxx...xx...xxx-xxx..xxxxxxxxxxx...xx....xxxxxxxxxxxxzzx
+x...xxxxxxxxxx-...x.xxxx...xx-x..xxxxxxxxxxx..xxxxxxxxxxxxxxxx.xxxyzx
+x..xxxxxxxxxxx1E1xxxjxxxx...x-xx.11xxxxxxxxxx...xxxxxxxxxe.*x.x.xxyxx
+xx..xxxxxxxxx...xxxdxxx...xxx-xxxxD1xxxxxxxxxx..1.xxxxxx.JUJ.xxx..x
+xx..xxxxxxxxx....xxxx..xxxwxx-xx...xxxxxxxxxxxx.1..xxxxxx..Jxx..xxx
+ x..xxxxxxxxx'x.xxxxxD...xxwwx-xxxx1.xxxxxxxxxxxxDE.D.xxxxx..xx...xx
+ x...xxxxxxx..'xxxxxxx1..Dxxwwx--xxxD.xxsxsxxxxxxxD.E1.xxxx..xxxE5Exx
+ xx..-xxxxx..xxxxxxxxxxxD.1xxwwxx---11rrssssxxxxxxxx.D..x...xxxD7F7Dx
+  x...-xx-..xxxxxxxxxxxx-x1.xxwwxx'''xxxsssusssxxxxxxx-...xxxxxxD5Dxxx
+  x...x--xx..1xxxxxxxx--x-..'xxwx'x'xxxxxxssssssssxx..xxxxx.xxx..xxx|x
+  x222x''x''x..xx1xxx----xxxx'xx'''xx    xxssussusrrx.xxxx.<.xxx.$*fgx
+  xx'.'xx'xx1.x.1...2xxxxx  xx'''xxx      xxxssssssxxx''........x|hikx
+   xxxxxxxxxxxxxxxxxxx       xx'xx          xssxsxxx xxxxxx.xxxxxxxxxx
+                              xxx           xxxxxx        xxx
+ENDMAP

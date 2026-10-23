@@ -1,0 +1,77 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (ice_cave_statue_garden_chambered)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:   ice_cave_statue_garden_chambered
+DEPTH: IceCv
+TAGS:   no_item_gen no_monster_gen no_pool_fixup
+ORIENT: encompass
+# Source Lua: site_1; ported at this stage.
+# {{
+# ice_cave_common_loot(_G)
+# local simul = simulacrum_monsters()
+# mons(simul["savage"])
+# mons(simul["cruel"])
+# }}
+: vault.run("ice_cave_statue_garden_chambered.site_1")
+# For easy ice caves, three ice statues in the middle chamber, and a freezing
+# wraith has a 50% chance of replacing one of the two white ugly thing. For
+# hard ice caves, there are two orange crystal statues in the middle chamber,
+# always two white very ugly things total. Two freezing wraiths are added to
+# the final chamber, and there two more star_items.
+# Source Lua: site_2; ported at this stage.
+# : if dgn.persist.ice_cave_hard then
+# MONS:   orange crystal statue, freezing wraith, white very ugly thing
+# # 12 * 5 = 60 total weight for savage simulacra, 4 * 5 = 20 total weight for
+# # cruel simulacra, and 10 weight for freezing wraiths.
+# : set_random_mon_list(dgn.random_entry_arg(simul["savage"], "w:12") ..
+# :     " / " .. dgn.random_entry_arg(simul["cruel"], "w:5")  ..
+# :     " / freezing wraith")
+# NSUBST: D = 3 / 1
+# SUBST:  E = 124, F = 4, 1 = 112, J = *
+# : else
+# MONS:   ice statue, freezing wraith, white ugly thing
+# : set_random_mon_list(dgn.random_entry_arg(simul["savage"], "w:16") ..
+# :    " / " .. simul["cruel"])
+# NSUBST: 1 = 2=1 / 4=1112.... / ., D = 2=3 / 1, 5 = 45 / 5
+# : end
+: vault.run("ice_cave_statue_garden_chambered.site_2")
+NSUBST: d = def*** / *
+SUBST:  g = gh||, i = i|
+# Source Lua: site_3; ported at this stage.
+# : ice_cave_appearance(_G)
+: vault.run("shared.appearance")
+MAP
+ccccccccc
+cg*JiJ*|c
+c*.....*c
+c%.....%c
+c.......c
+c2..5..2c
+cc.....cc
+cccF.Fccc
+cccc3cccc
+ccc.E.ccc
+cc.....cc
+cD.....Dc
+c...5...c
+c.......c
+cE.....Ec
+cD.....Dc
+cccc.cccc
+xd%...%dx
+x*E...E*x
+x%.....%x
+x.11111.x
+x..111..x
+xx.....xx
+xxx...xxx
+xxxx.xxxx
+xxx...xxx
+xx.....xx
+x...A...x
+x.......x
+x.......x
+x...<...x
+x.......x
+xxxxxxxxx
+ENDMAP

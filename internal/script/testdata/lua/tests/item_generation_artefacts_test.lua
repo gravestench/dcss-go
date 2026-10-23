@@ -172,6 +172,31 @@ local function nonlevel_unique_uses_source_fallback()
         "fallback keeps unique history")
 end
 
+-- Ice Cave's repeated authored weapon glyph can select the same named
+-- unrand twice. Source makeitem.cc keeps the first and gives the second
+-- its compatible random-artefact fallback instead of aborting generation.
+local function repeated_explicit_unique_uses_fallback()
+    local ctx = context(false)
+    local request = {
+        kind_id = items.WPN_EXECUTIONERS_AXE,
+        unique_id = ids.UNRAND_FROSTBITE,
+        depth = 15,
+        quality = quality.ORDINARY,
+        allow_uniques = false,
+        purpose = purpose.VAULT,
+        site = "Ice Cave repeated reward",
+    }
+    local first = generation.roll(ctx, request)
+    local second = generation.roll(ctx, request)
+
+    harness.equal(first.components[component.ITEM_ARTEFACT].kind,
+        "unique", "first authored Frostbite remains unique")
+    harness.equal(second.components[component.ITEM_ARTEFACT].kind,
+        "random", "second authored Frostbite uses source fallback")
+    harness.equal(ctx.state.status[ids.UNRAND_FROSTBITE],
+        status.ORDINARY, "fallback does not change unique history")
+end
+
 -- An enhancer staff can produce a weapon-based source unique, so generation
 -- must switch its base kind when that unique wins the roll.
 local function enhancer_staff_can_roll_unique()
@@ -434,6 +459,7 @@ function test.run()
     unided_unique_starts_with_hidden_properties()
     item_roll_uses_unique_history()
     nonlevel_unique_uses_source_fallback()
+    repeated_explicit_unique_uses_fallback()
     enhancer_staff_can_roll_unique()
     enhancer_fallback_uses_quarterstaff()
     forced_randart_saves_properties()

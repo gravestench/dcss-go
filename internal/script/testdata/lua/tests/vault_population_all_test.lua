@@ -13,6 +13,8 @@ local terrain = require("constants.terrain")
 local trap_placement = require("policy.traps.placement")
 local fog = require("policy.world.fog_machine_definitions")
 local branches = require("ids.branches")
+local eligibility = require("policy.generation.vaults.eligibility")
+local ice_cave = require("constants.ice_cave")
 
 local test = {}
 
@@ -100,6 +102,11 @@ local function entity_context()
         return 0
     end
 
+    -- Entrance population uses the same clock source as the live session.
+    function world:aut()
+        return 0
+    end
+
     -- Keep fixture cells open so unresolved records, not terrain, cause failures.
     function world:walkable()
         return true
@@ -135,6 +142,65 @@ local function entity_context()
     history.initialise(world, world.player_id)
 
     return world
+end
+
+-- Each committed entrance runs its source-position hooks through real
+-- vault placement, then the production population policy creates its gate.
+-- Choose the earliest Dungeon depth where that particular DES is eligible.
+local function check_ice_cave_entry(path, index)
+    local id = path:match("([^/]+)%.des$")
+    local source = catalog.get(id)
+    local depth
+
+    for _, candidate in ipairs({
+        ice_cave.EARLIEST_DUNGEON_DEPTH,
+        ice_cave.HARD_DUNGEON_DEPTH,
+    }) do
+        if eligibility.depth(source, {
+            branch_id = branches.BRANCH_DUNGEON,
+            depth = candidate,
+            branch_bottom = 15,
+            absolute_depth = candidate,
+        }) then
+            depth = candidate
+            break
+        end
+    end
+
+    harness.truthy(depth, source.id .. " has no eligible Dungeon depth")
+
+    local random = random_context(index + 500)
+    local placed = placement.place(random, grid.new(random), source, {
+        branch_id = branches.BRANCH_DUNGEON,
+        depth = depth,
+        branch_bottom = 15,
+        absolute_depth = depth,
+        layout_family = "open",
+    })
+    local level = {
+        id = depth,
+        vault_records = placed.records,
+    }
+
+    for record_index, record in ipairs(level.vault_records) do
+        record.index = record_index
+        record.source_id = record.vault_id
+    end
+
+    local world = entity_context()
+    population.materialize(world, level)
+
+    local gates = world:query({ component.WORLD_ICE_CAVE_PORTAL })
+
+    harness.equal(#gates, 1, source.id .. " live Ice Cave gate count")
+
+    local gate = world:get(gates[1], component.WORLD_ICE_CAVE_PORTAL)
+
+    harness.equal(gate.level_id, depth, source.id .. " gate level")
+    harness.equal(gate.vault_id, source.id, source.id .. " gate source")
+    harness.equal(gate.hard,
+        depth >= ice_cave.HARD_DUNGEON_DEPTH,
+        source.id .. " source difficulty")
 end
 
 -- Every placed entity record must become either a typed outcome or an origin
@@ -214,6 +280,14 @@ function test.run()
     -- Iterate all selectable committed arrivals, including helper records.
     for index, id in ipairs(ids) do
         check_arrival(id, index)
+    end
+
+    local entrances = mod.paths("vaults/ice_cave_entry", ".des")
+
+    harness.equal(#entrances, 15, "committed Ice Cave entrances")
+
+    for index, path in ipairs(entrances) do
+        check_ice_cave_entry(path, index)
     end
 end
 

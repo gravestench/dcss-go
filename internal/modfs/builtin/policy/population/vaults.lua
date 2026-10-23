@@ -23,6 +23,7 @@ local bazaar_portal = require("policy.world.bazaar.portal")
 local sewer_portal = require("policy.world.sewer.portal")
 local ossuary_portal = require("policy.world.ossuary.portal")
 local bailey_portal = require("policy.world.bailey.portal")
+local ice_cave_portal = require("policy.world.ice_cave.portal")
 local branches = require("ids.branches")
 
 local vaults = {}
@@ -359,6 +360,10 @@ function vaults.materialize(ctx, level, excluded)
             bailey_portal.is_marker(record) then
             materialized[#materialized + 1] =
                 bailey_portal.materialize(ctx, level, record)
+        elseif record.kind == effects.MARKER and
+            ice_cave_portal.is_marker(record) then
+            materialized[#materialized + 1] =
+                ice_cave_portal.materialize(ctx, level, record)
         elseif record.kind == effects.MARKER and
             vault_triggers.is_record(record.identity) then
             materialized[#materialized + 1] =

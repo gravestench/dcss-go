@@ -1,0 +1,57 @@
+Ice Cave source layouts, seed 88164
+Coordinates are zero-based: (x,y), origin at top left.
+Easy uses a Dungeon:1 test gate; hard uses a Dungeon:14 gate.
+Live entrances spawn from D:11.
+
+easy  ice_cave_caverns_01_easy.txt
+Ice Cave exit (7,26) -> Dungeon:1 (58,6), exact outside gate
+Ice Cave exit (64,43) -> Dungeon:1 (58,6), exact outside gate
+hard  ice_cave_caverns_01_hard.txt
+Ice Cave exit (7,26) -> Dungeon:14 (56,10), exact outside gate
+Ice Cave exit (64,43) -> Dungeon:14 (56,10), exact outside gate
+easy  ice_cave_caverns_02_easy.txt
+Ice Cave exit (8,25) -> Dungeon:1 (58,6), exact outside gate
+Ice Cave exit (73,44) -> Dungeon:1 (58,6), exact outside gate
+hard  ice_cave_caverns_02_hard.txt
+Ice Cave exit (8,25) -> Dungeon:14 (56,10), exact outside gate
+Ice Cave exit (73,44) -> Dungeon:14 (56,10), exact outside gate
+easy  ice_cave_caverns_03_easy.txt
+Ice Cave exit (54,26) -> Dungeon:1 (58,6), exact outside gate
+Ice Cave exit (14,44) -> Dungeon:1 (58,6), exact outside gate
+hard  ice_cave_caverns_03_hard.txt
+Ice Cave exit (54,26) -> Dungeon:14 (56,10), exact outside gate
+Ice Cave exit (14,44) -> Dungeon:14 (56,10), exact outside gate
+easy  ice_cave_hellmonk_azure_passage_easy.txt
+Ice Cave exit (39,49) -> Dungeon:1 (58,6), exact outside gate
+hard  ice_cave_hellmonk_azure_passage_hard.txt
+Ice Cave exit (39,49) -> Dungeon:14 (56,10), exact outside gate
+easy  ice_cave_small_demon_easy.txt
+Ice Cave exit (27,46) -> Dungeon:1 (58,6), exact outside gate
+hard  ice_cave_small_demon_hard.txt
+Ice Cave exit (27,46) -> Dungeon:14 (56,10), exact outside gate
+easy  ice_cave_small_dragons_easy.txt
+Ice Cave exit (26,52) -> Dungeon:1 (58,6), exact outside gate
+hard  ice_cave_small_dragons_hard.txt
+Ice Cave exit (26,52) -> Dungeon:14 (56,10), exact outside gate
+easy  ice_cave_small_giant_easy.txt
+Ice Cave exit (52,52) -> Dungeon:1 (58,6), exact outside gate
+hard  ice_cave_small_giant_hard.txt
+Ice Cave exit (52,52) -> Dungeon:14 (56,10), exact outside gate
+easy  ice_cave_small_necro_easy.txt
+Ice Cave exit (54,47) -> Dungeon:1 (58,6), exact outside gate
+hard  ice_cave_small_necro_hard.txt
+Ice Cave exit (54,47) -> Dungeon:14 (56,10), exact outside gate
+easy  ice_cave_statue_garden_chambered_easy.txt
+Ice Cave exit (39,48) -> Dungeon:1 (58,6), exact outside gate
+hard  ice_cave_statue_garden_chambered_hard.txt
+Ice Cave exit (39,48) -> Dungeon:14 (56,10), exact outside gate
+easy  ice_cave_statue_garden_transporter_easy.txt
+Ice Cave exit (45,26) -> Dungeon:1 (58,6), exact outside gate
+Ice Cave exit (39,43) -> Dungeon:1 (58,6), exact outside gate
+hard  ice_cave_statue_garden_transporter_hard.txt
+Ice Cave exit (45,26) -> Dungeon:14 (56,10), exact outside gate
+Ice Cave exit (39,43) -> Dungeon:14 (56,10), exact outside gate
+easy  ice_cave_tombish_easy.txt
+Ice Cave exit (39,14) -> Dungeon:1 (58,6), exact outside gate
+hard  ice_cave_tombish_hard.txt
+Ice Cave exit (39,14) -> Dungeon:14 (56,10), exact outside gate

@@ -1,0 +1,68 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (ice_cave_statue_garden_transporter)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:   ice_cave_statue_garden_transporter
+DEPTH: IceCv
+TAGS:   no_item_gen no_monster_gen no_pool_fixup
+ORIENT: encompass
+# Source Lua: site_1; ported at this stage.
+# {{
+# ice_cave_common_loot(_G)
+# local simul = simulacrum_monsters()
+# mons(simul["savage"])
+# mons(simul["cruel"])
+# }}
+: vault.run("ice_cave_statue_garden_transporter.site_1")
+# For easy ice caves, both statues are ice statues, and a freezing wraith has a
+# 50% chance of replacing one of the two white ugly thing. For hard ice caves,
+# there is one orange crystal statue with two freezing wraiths, always two
+# white very ugly things, the first chamber has more cruel simulacra, and there
+# are two more star_items.
+# Source Lua: site_2; ported at this stage.
+# : if dgn.persist.ice_cave_hard then
+# MONS:   orange crystal statue, freezing wraith, white very ugly thing
+# # 12 * 5 = 60 total weight for savage simulacra, 4 * 5 = 20 total weight for
+# # cruel simulacra, and 10 weight for freezing wraiths.
+# : set_random_mon_list(dgn.random_entry_arg(simul["savage"], "w:12") ..
+# :     " / " .. dgn.random_entry_arg(simul["cruel"], "w:5")  ..
+# :     " / freezing wraith")
+# SUBST:  1 = 112, 3 = 4, D = 3, E = *
+# NSUBST: % = * / %
+# :else
+# MONS:   ice statue, freezing wraith, white ugly thing
+# : set_random_mon_list(dgn.random_entry_arg(simul["savage"], "w:16") ..
+# :     " / " .. simul["cruel"])
+# NSUBST: 1 = 2=1 / 4=1112.... / ., 5 = 45 / 5
+# SUBST:  D = *
+# :end
+: vault.run("ice_cave_statue_garden_transporter.site_2")
+SUBST:  d = def***, g = gh**, i = i*
+MARKER: P = lua:transp_loc("statue_garden_entry")
+MARKER: Q = lua:transp_dest_loc("statue_garden_entry")
+MARKER: R = lua:transp_loc("statue_garden_exit")
+MARKER: S = lua:transp_dest_loc("statue_garden_exit")
+# Source Lua: site_3; ported at this stage.
+# : ice_cave_appearance(_G)
+: vault.run("shared.appearance")
+MAP
+ccccccccccccccc
+cR..3EgDiE3..<c
+c.....*|*.....c
+ccG....5....Gcc
+ ccG.......Gcc
+  ccG..Q..Gcc
+  xccnnnnnccx
+ xx...GPG...xx
+ x...%.S.%...x
+xx.1..*d*..1.xx
+x......%......x
+x..1.G.5.G.1..x
+x.............x
+xx.1.1...1.1.xx
+ x...........x
+ x...........x
+ xx.........xx
+  xx...A...xx
+   xx..<..xx
+    xxxxxxx
+ENDMAP

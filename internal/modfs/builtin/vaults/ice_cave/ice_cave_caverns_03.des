@@ -1,0 +1,90 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (ice_cave_caverns_03)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:    ice_cave_caverns_03
+DEPTH: IceCv
+TAGS:    no_item_gen no_monster_gen no_pool_fixup
+ORIENT:  encompass
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_common_loot(_G)
+: vault.run("shared.common_loot")
+# Source Lua: site_2; ported at this stage.
+# : kitem("j = any wand / any potion w:5 / any scroll w:5")
+: vault.run("shared.cavern_j")
+# Source Lua: site_3; ported at this stage.
+# : kitem("k = any misc / " .. dgn.loot_potions .. " / " .. dgn.loot_scrolls)
+: vault.run("shared.cavern_k")
+# Source Lua: site_4; ported at this stage.
+# : if crawl.coinflip() then
+# :     ice_cave_undead_demon_monster_set(_G)
+# : else
+# :     ice_cave_natural_monster_set(_G)
+# : end
+: vault.run("ice_cave_caverns_03.site_4")
+SHUFFLE: 7F / F8, 3H / UJ
+# Source Lua: site_5; ported at this stage.
+# : if dgn.persist.ice_cave_hard then
+# NSUBST:  J = 6 / 5.
+# : else
+# SUBST:   J : JJK
+# NSUBST:  J = 2=5 / 5., K = 6 / .
+# : end
+: vault.run("ice_cave_caverns_03.site_5")
+SHUFFLE: fghik, def
+SUBST:   D = 12, E = 2 4:2 5:5, 2 = 2 .:5
+SHUFFLE: '-
+# Two shortcut set up in a similar fashion to ice_cave_caverns_01.
+SHUFFLE: apq / aa! / zzz / zzz
+SUBST:   a = ., pq = w, z = x
+# Source Lua: site_6; ported at this stage.
+# : place_freezing_vapour_machine(_G, 8)
+: vault.run("shared.fog_8")
+SUBST:   ! = .
+SHUFFLE: rsu / rr! / zzz / zzz
+SUBST:   r = ., su = w, z = x
+# Source Lua: site_7; ported at this stage.
+# : place_freezing_vapour_machine(_G, 12)
+: vault.run("shared.fog_12")
+# Source Lua: site_8; ported at this stage.
+# : ice_cave_appearance(_G)
+: vault.run("shared.appearance")
+MAP
+                                 xxxxx
+                                 x$e*xx      xxxxxxxxxx
+                                 x.UJxxxxxxxxx...xx...xxx
+                              xxxx.JJ..x..x...xx...xx.DDxxx
+                              xWxxxxx....x..xxxxxxxxxx.DDExxx
+                              xWxWxWW.xxxxx..xxxxxxxxxx.2D2Dx
+                              xxWWWWxW..xx..xxxxxxxxxxxxE7F7x
+                           xxxxWWxwWWxx...xxxxxxxxxxxxx.2Dxxx
+                          xx.WWxxxxxrrxxxxxxxxxxxxxxxx...xx
+               xxxxxxxxxxxx..xxxxsssssssssssxxxxxxx....xxxx
+             xxx....xxxxxxxx..xxxssssusssssrr<...x...xx.xkxx
+           xxx...xx...xxxxxxx..xxxxsssssussxxxx....xxxxxix|x
+          xx.EEx.xxxxD1Dxxxx..xxx xxssssssxxxxxxxxxx  x$x$xhx
+         xx.E.xxx$xxxxDDDxxxx...xx xxsxssxxx          xx|xgxx
+         x...xxx$xxx11Dxxxxxxxx..x  xxxxxxx            xxfxx
+         xx....xxxx..xxxxxxxxx...xx                     xxx
+        xx.x.xxxpx....xxxxxxxxxx..xx
+       xx...xxxppxx....xxxxxxx'''..xx
+      xx..xxxxxpqpxxx...xxxx''xxxx.-xx
+      x.1xxxxxapppppaxx..x'''xxxxx---xx
+      xx.11xxxaxxxxxxa...''xxxxx'xxx--x
+       xxx1.xx.xxxxxx-xx--xxxxx''''--xx
+        x..x......xxxx---xx.*.*.xx..xxx
+        xxx.xxxxx..xxxx--x.j.T.j.xxx..x
+          x2..2x....xxxx-...*.*..xx...xx
+       xxxxxxxx.xxx.1xxxx...xxxxxxxxx..x
+      xx1x...'xxxx.1.xxxxxx.-xxxxxxx1xxx
+  xxxxx1...-x..xxxxx11xxxx'.--x---1Dxx
+ xx..<xx..xxxx..xxxxxx..''xx-x-xxx11Dx
+ xA..xxxx..xxx..xxxxxxx--xxxx-xx.11xxx
+ x....xxx..xx.HHxxxxxxxx1.xxx-...xxx
+ x...xxxx...xxH3.xxxxxxxx.1x'''xxx
+xx..xxxx21.xxxx...xxxx..x..''xxx
+x...xx.12xxxxdx.xxxxx...x.xxxx
+x..xx...xx  xx*x.xx...xx.xx
+x......xx   xxx....xxxxxxx
+xx...xxx     xxxxxxx
+ xxxxxx
+ENDMAP

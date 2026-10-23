@@ -1,0 +1,24 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (portal_ice_cave_entry_horrid_things)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:   portal_ice_cave_entry_horrid_things
+TAGS:   patrolling no_monster_gen transparent uniq_icecv chance_icecave
+CHANCE: 500
+DEPTH:  D:14-, Elf, Snake, Swamp
+WEIGHT: 5
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_portal(_G)
+: vault.run("shared.portal")
+MONS:   white ugly thing, freezing wraith, azure jelly / white very ugly thing
+SUBST:  1 = 1., 2 = 2 .:3, 3 = 3:3 2:7
+MAP
+xxxxxxxxxxxxxxxxxxxxxxx
+xxaaaaaxaaaaaaaaaaxxxxx
+xaa...aaa........aaxxxx
+xa.....a....2..1..aaaaa
+xa..O..+..3...1.1.....+
+xa.....a....2..1..aaaaa
+xaa...aaa........aaxxxx
+xxaaaaaxaaaaaaaaaaxxxxx
+xxxxxxxxxxxxxxxxxxxxxxx
+ENDMAP

@@ -1,0 +1,32 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (portal_ice_cave_entry_ice_statue_one)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:   portal_ice_cave_entry_ice_statue_one
+DEPTH: D:14-, Elf, Swamp, Shoals, Snake, Spider
+TAGS:   no_monster_gen no_pool_fixup transparent uniq_icecv chance_icecave
+CHANCE: 500
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_portal(_G)
+: vault.run("shared.portal")
+MONS:   ice statue
+KFEAT:  ^ = web trap
+# Source Lua: site_2; ported at this stage.
+# : if you.in_branch("Swamp") then
+# SUBST:  + = ., x = t
+# : elseif you.in_branch("Shoals") then
+# SUBST:  x = w
+# : elseif you.in_branch("Spider") then
+# SUBST:  + = ^
+# : end
+: vault.run("portal_ice_cave_entry_ice_statue_one.site_2")
+MAP
+ xxxxxxx
+xxaaaaaxx
+xaa...aax
+xa..O..ax
+xa.....ax
+xa..1..ax
+xa.....ax
+xaa...aax
+xxaa+aaxx
+ENDMAP

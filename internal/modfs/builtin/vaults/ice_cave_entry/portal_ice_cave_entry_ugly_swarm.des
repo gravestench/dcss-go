@@ -1,0 +1,31 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (portal_ice_cave_entry_ugly_swarm)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:     portal_ice_cave_entry_ugly_swarm
+DEPTH: D:14-, Elf, Swamp, Shoals, Snake, Spider
+TAGS:     no_monster_gen transparent patrolling uniq_icecv chance_icecave
+CHANCE: 500
+MONS:     white ugly thing, white very ugly thing
+SHUFFLE:  ABC
+SUBST:    a = aa.
+NSUBST:   1 = 12 / 4=1 / ., . = 8=1. / .
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_portal(_G)
+: vault.run("shared.portal")
+MAP
+    '''''''
+   '''''''''
+  '''.....'''
+ '''.a.a.a.'''
+'''.........'''
+''.a..111..a.''
+''...11111...''
+''.a.11O11.a.''
+''...11111...''
+''.a..111..a.''
+'''.........'''
+ '''.a.a.a.'''
+  '''.....'''
+   '''''''''
+    '''''''
+ENDMAP

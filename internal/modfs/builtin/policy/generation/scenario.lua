@@ -7,6 +7,7 @@ local bazaar = require("policy.generation.bazaar.level")
 local sewer = require("policy.generation.sewer.level")
 local ossuary = require("policy.generation.ossuary.level")
 local bailey = require("policy.generation.bailey.level")
+local ice_cave = require("policy.generation.ice_cave.level")
 local hell_vestibule = require("policy.generation.hell.vestibule")
 local branch_catalog = require("policy.catalog")
 local categories = require("constants.catalog")
@@ -213,6 +214,11 @@ function module.bailey(ctx, input)
     return bailey.generate(ctx, input)
 end
 
+-- Ice Cave's entrance saves the hard choice before this whole-floor draw.
+function module.ice_cave(ctx, input)
+    return ice_cave.generate(ctx, input)
+end
+
 -- Stage one persistent Hell subbranch floor. Its source up exits become
 -- typed return arches only after keyed DES features have been projected.
 function module.hell_floor(ctx, input)
@@ -267,6 +273,11 @@ register.policy({
 register.policy({
     id = "world.generate_bailey_level",
     run = module.bailey,
+})
+
+register.policy({
+    id = "world.generate_ice_cave_level",
+    run = module.ice_cave,
 })
 
 register.policy({

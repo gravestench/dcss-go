@@ -1,0 +1,78 @@
+# Source: crawl-ref/source/dat/des/portals/icecave.des (ice_cave_small_giant)
+# Keep the original MAP and static directives. Source Lua sites
+# run through named hooks; TODO: consolidate them into DES-local Lua.
+NAME:    ice_cave_small_giant
+DEPTH: IceCv
+TAGS:    no_item_gen no_monster_gen no_pool_fixup
+ORIENT:  encompass
+# Source Lua: site_1; ported at this stage.
+# : ice_cave_common_loot(_G)
+: vault.run("shared.common_loot")
+# Source Lua: site_2; ported at this stage.
+# : kitem("j = " .. dgn.loot_potions)
+: vault.run("shared.potions_j")
+# Source Lua: site_3; ported at this stage.
+# : ice_cave_natural_monster_set(_G)
+: vault.run("shared.natural_monsters")
+# For easy ice cave, always one frost giant and the potion area has fewer
+# monsters with only 33% chance for the 6 glyph miniboss. For hard ice cave,
+# minimum of two frost giants, with 25% each for up to two more, and the potion
+# area has more monsters and always has a miniboss.
+# Source Lua: site_4; ported at this stage.
+# : if dgn.persist.ice_cave_hard then
+# NSUBST:  E8 = 2=7 / 7..., F = 6 / 5 / 2=5. / 4=12.. / .
+# : else
+# NSUBST:  F = 556 / 2=5. / 2=12.. / .
+# : end
+: vault.run("ice_cave_small_giant.site_4")
+NSUBST:  D = 45
+# Randomize tunnel layout and the loot composition and locations.
+SHUFFLE: "w / 'a
+SUBST:   'a = x, j = j.
+NSUBST:  d = 3=def... / 5=gh.. / 2=i. / .
+# Source Lua: site_5; ported at this stage.
+# : ice_cave_appearance(_G)
+: vault.run("shared.appearance")
+MAP
+                  xxxxx        xxxxxxxx
+                xxx...xxxx  xxxx1D....xx
+         xxxxxxxx...x....xxxx...D.x....xxxx
+      xxxx......1..xxxx...xD1D.xxxxxxx...1xxxx
+     xx.......1..4.xxxxxx....xxxxxxxxxxxxD1..xxx
+   xxx...xxxxE8E2....xxxxxxxxxxxxxxxxxxxxxx....xxx
+  xx...xxxddxxE5..1...xxxxxxxxxxxxxxxxxxxxxxx....xxx
+  x...xxdddddxx..1.....xxxxxxxxxxxxxxxxxxxxxxxx....x
+  x...x$$$$dddx.......xxxxxxxxxxxxxxxxxxxxxxxxxxx..x
+  x...x....$$xx.....xxxxxxxxxxxxxxxxxxxxxxxxxxxx11xx
+  xx.......xxx.....xxxxxxxxxxxxxxxxxxxxxxxxxx...Dxx
+   xx............xxxxxxxxxxxxxxxxxxxxxxxxx......xx
+ xxx"xx.........x'aaaxxxxxxxxxxxxxxxxxxx...x.xxxx
+ xwwwxxxxxxxxxxxxxaaaxxxxxxxxxxxxxxxxxx..xxxxx
+ xxwwwxxxxxxxxxaaaaaxxxxxxxxxxxxxxxxxx..xx
+ xwwwwxxxxxxxxxxxaaa'xxxxxxxxxxxxxxx3...xxx
+ xwwwxxxxxxxxxxxxxx'x'xxxxxxxxxxxxx.......xxx
+xxwwxxxxxxxxxxxxxxxx'xxxxxxx"xxxxxxxx.......xxx
+x""xxxxxxxxxxxxxxxx''xxxxx"""xxxxxxxxx....D...xx
+xx""xxxxxxxxxxxxxx''xxxxxx"""""..xxxxxxxD......x
+ xx""xxxxxxxxxxxx'x'xxxx"""xxx.......xxx.......x
+  x"x"xxxxxxxxxxx''xxxxx"xx'''xx......24x.....xx
+  xx"""xxxxxxxxxxx''xxx""x''x'''x....1..2....xx
+   xxx""""xxxxxxxxx''xx"xx''xxxxxx.1......1.xx
+     xxx"x"xxxxxxxxx'xx""xx''xx  xx.x....x.xx
+      xxx"xxxxxxxxx''x""xxxx''xx  xxxx..xxxx
+     xx"""xxxxxxxx'x'x"x"xxxx''xx   xx..x
+    xx""xxxxxxxxxx''xxx"x"xxxx''x  xx..xx
+   xx""x"xxxxxxxxxx''xxx""xxx''xx  x..xx
+  xx""x"xxxxxxxxxxxx'xxxx""x''xx   x...xx
+  x""xxxxxxxxxxxxxx'x'xxxx""'xx    xx...xx
+  x"x"xxxxxxxxxxxxxx'''xxxx..x      xx12.x
+ xx""xxxxxxxxxxxxxxxx'xF.xF.xx      xx1.1x
+xx""xxxxxxxxxxxxxxxxxxFjx.xxx       x...xx
+x""xxxxxxxxxxxxxxxxF.xjxjxFxx      xx...xx
+x"x"xxxxxxxxxxxxxxx.xjxjxjFxx     xx.....xx
+xx"x"xxxx""x"xxxxxx".F.F.Fxx      x...A...x
+ xx""""x""""x""x""""xxxxxxx       x.......x
+  xxxx"""xxx"x""""xxx             xx..<..xx
+     xxxxx xxxxxxxx                xx...xx
+                                    xxxxx
+ENDMAP

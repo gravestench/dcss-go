@@ -1,6 +1,10 @@
 -- Feature aliases let DES use readable names for a subset of terrain features.
 
 local features = {
+    ROCK_WALL = "rock_wall",
+    STONE_ARCH = "stone_arch",
+    SHALLOW_WATER = "shallow_water",
+    DEEP_WATER = "deep_water",
     TREE = "tree",
     MANGROVE = "mangrove",
     GRANITE_STATUE = "granite_statue",

@@ -33,6 +33,12 @@ local function fallback(ctx, chosen, request, result)
     return random.apply(ctx, definition, result, brand)
 end
 
+-- A source DES may request the same named unrand at several glyphs. The
+-- first copy remains unique; later copies use its source fallback base.
+function artefacts.explicit_duplicate(ctx, chosen, request, result)
+    return fallback(ctx, chosen, request, result)
+end
+
 -- Forced randarts skip the ordinary rarity gate; uniques are tried before the random-artefact fallback.
 local function weapon_or_armour(ctx, definition, request, result)
     local forced = request.quality == quality.RANDART
