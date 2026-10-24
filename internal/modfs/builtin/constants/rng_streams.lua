@@ -22,6 +22,7 @@ local streams = {
     MONSTER_HP = "monster_hp",
     MONSTER_GEAR = "monster_gear",
     MONSTER_TRAITS = "monster_traits",
+    POLYMORPH_SET = "polymorph_set",
     MONSTER_SPELL = "monster_spell",
     PAN_LORD = "pan_lord",
     MUTATION = "mutation",

@@ -19,6 +19,7 @@ local weapon_brands = require("constants.weapon_brands")
 local armour_egos = require("constants.armour_egos")
 local missile_brands = require("constants.missile_brands")
 local shapeshifter = require("policy.monsters.shapeshifter")
+local polymorph_selection = require("policy.monsters.polymorph_selection")
 local unique_history = require("policy.population.unique_history")
 local generation = require("policy.item_generation")
 local identification = require("policy.items.identification")
@@ -505,6 +506,10 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
     end
 
     ctx:place_actor(monster, level_id, x, y)
+
+    -- Source placement rolls the body's three candidate forms once. The
+    -- saved component keeps later Polymorph casts from redrawing the pool.
+    polymorph_selection.initialize(ctx, monster, definition)
 
     -- Species flags and generated lords install their source cloud ring at
     -- spawn, before the monster takes an ordinary action.

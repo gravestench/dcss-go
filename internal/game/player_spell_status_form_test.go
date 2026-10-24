@@ -1,6 +1,7 @@
 package game
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 
@@ -1294,6 +1295,50 @@ func TestPolymorphChangesMonsterIdentityAndKeepsOriginal(t *testing.T) {
 		actor.KindID == "MONS_RAT" ||
 		!g.scripts.Components()["magic.monster_polymorph"].Has(rat) {
 		t.Fatalf("Polymorph did not change rat: %s, %+v", actor.KindID, result.Events)
+	}
+}
+
+// Monster placement rolls the source three-form set once. The same set must
+// survive a save before any spell changes the body or rerolls its choices.
+func TestMonsterPolymorphSetPersistsThroughSave(t *testing.T) {
+	g := newStepGame(t)
+	rat := ratID(t, g)
+	sets := g.scripts.Components()["monster.polymorph_set"]
+	before, found := sets.Get(rat)
+
+	if !found {
+		t.Fatal("spawned rat has no polymorph set")
+	}
+
+	forms, err := before.Get("forms")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	loaded, err := Restore(g.Snapshot())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer loaded.Close()
+
+	after, found := loaded.scripts.Components()["monster.polymorph_set"].Get(rat)
+
+	if !found {
+		t.Fatal("restored rat lost its polymorph set")
+	}
+
+	restoredForms, err := after.Get("forms")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !reflect.DeepEqual(forms, restoredForms) {
+		t.Fatalf("polymorph forms changed on restore: %v to %v",
+			forms, restoredForms)
 	}
 }
 

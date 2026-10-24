@@ -448,8 +448,11 @@ Kirke's band and spell-transformed victims when she dies.
 Monster polymorph requests now return active shapeshifters to their durable
 variant and usually force merged slime creatures to split before each body
 chooses a form. The same Lua route serves player Polymorph, monster hexes,
-chaos, Xom, and relative-power effects. The source's persistent three-form
-polymorph set and exact target-selection RNG remain a selection follow-up.
+chaos, Xom, and relative-power effects. Each monster now saves a persistent
+three-form polymorph set, generated at placement and rebuilt after a body
+change. Same-power casts select from that set; relative-power and shifter
+requests use the source species and tier gates. Byte-for-byte C++ RNG parity,
+including its draconian thinning draw, remains a follow-up.
 Malmutate's abomination tile reroll remains. Ugly things now save their own
 colour, attack, damage, resistance, and spontaneous kin mutation traits;
 combat and display read that actor state after spawn, polymorph, and

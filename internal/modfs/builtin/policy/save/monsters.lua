@@ -24,6 +24,7 @@ local monster_spells = require("policy.combat.monster_spells")
 local pan_traits = require("constants.pan_lord_traits")
 local pan_colours = require("constants.pan_lord_colours")
 local ugly_thing = require("policy.monsters.ugly_thing")
+local polymorph_selection = require("policy.monsters.polymorph_selection")
 local slime_lifecycle = require("policy.monsters.slime_lifecycle")
 local slime_blob = require("policy.monsters.slime_blob")
 local fedhas = require("policy.religion.gods.fedhas")
@@ -167,6 +168,7 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     end
 
     local definition = catalog.get("monsters", actor.kind_id)
+
     -- A polymorph rolls the live body's HP afresh. If that body later feeds,
     -- its Jiyva birth HP belongs to the new species, not its roster origin.
     -- Ambient corpse-form templates use a selected source body just as
@@ -766,6 +768,20 @@ function module.run(ctx, input)
         end
     end
 
+    -- The form set belongs to a complete monster. A stray component on a
+    -- player or orphan must not bypass the ordinary AI validation loop.
+    for _, entity in ipairs(ctx:query({
+        component.MONSTER_POLYMORPH_SET,
+    })) do
+        if ctx:has(entity, component.PLAYER) or
+            not ctx:has(entity, component.ACTOR) or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("orphan monster polymorph set " .. ctx:id(entity))
+        end
+    end
+
     for _, entity in ipairs(ctx:query({ "core.ai" })) do
         local actor = ctx:get(entity, "core.actor")
         local health = ctx:get(entity, "core.health")
@@ -793,6 +809,11 @@ function module.run(ctx, input)
         end
 
         ugly_thing.validate(ctx, entity,
+            catalog.get("monsters", actor.kind_id))
+
+        -- Every live monster may own a set, including summons and authored
+        -- vault actors. Check it before dispatching to origin-specific rules.
+        polymorph_selection.validate(ctx, entity,
             catalog.get("monsters", actor.kind_id))
 
         validate_banishment(ctx, entity, position)

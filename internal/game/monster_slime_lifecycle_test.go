@@ -321,6 +321,9 @@ func TestSlimeCreaturePolymorphUsesLiveHP(t *testing.T) {
 	actor.KindID = "MONS_SLIME_CREATURE"
 	health.Current = 60
 	health.Max = 60
+	// This fixture changes the body directly, bypassing the production Lua
+	// transition that would regenerate its persisted polymorph choices.
+	g.scripts.Components()["monster.polymorph_set"].Remove(entity)
 
 	if _, err := g.scripts.Components()["magic.monster_polymorph"].Set(
 		entity, map[string]any{

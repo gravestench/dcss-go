@@ -11,34 +11,15 @@ local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
 local monster_stats = require("policy.combat.monster_stats")
 local streams = require("constants.rng_streams")
-local demon_tiers = require("data.demon_tiers")
 local power_modes = require("constants.polymorph_power")
+local selection = require("policy.monsters.polymorph_selection")
 
 local polymorph = {}
-local definitions = catalog.all(categories.MONSTERS)
-local demon_tier_for = {}
-
-for tier, kinds in pairs(demon_tiers) do
-    for _, kind_id in ipairs(kinds) do
-        demon_tier_for[kind_id] = tier
-    end
-end
 
 -- Absent holiness and flag lists cannot grant a catalog trait.
 local function has(values, wanted)
     for _, value in ipairs(values or {}) do
         if value == wanted then
-            return true
-        end
-    end
-
-    return false
-end
-
--- Polymorph keeps at least one holiness class shared with the original form.
-local function same_holiness(left, right)
-    for _, value in ipairs(left or {}) do
-        if has(right, value) then
             return true
         end
     end
@@ -74,147 +55,18 @@ function polymorph.can_actor(ctx, target)
     return can_polymorph(catalog.get(categories.MONSTERS, actor.kind_id))
 end
 
--- A transformed monster must survive its current environment, with flight handled specially.
-local function same_habitat(source, target)
-    local old = source.habitat_id
-    local next_kind = target.habitat_id
-
-    if has(target.flags, "M_FLIES") then
-        return true
-    end
-
-    if has(source.flags, "M_FLIES") then
-        return false
-    end
-
-    if old == "HT_LAND" then
-        return next_kind == "HT_LAND" or next_kind == "HT_AMPHIBIOUS" or
-            next_kind == "HT_AMPHIBIOUS_LAVA"
-    end
-
-    if old == "HT_WATER" then
-        return next_kind == "HT_WATER" or next_kind == "HT_AMPHIBIOUS"
-    end
-
-    if old == "HT_LAVA" then
-        return next_kind == "HT_LAVA" or next_kind == "HT_AMPHIBIOUS_LAVA"
-    end
-
-    return old == next_kind
+-- RANDOM_MONSTER checks its current cell rather than the persistent set's
+-- old habitat. The optional actor lets standalone catalog tests ask the
+-- question without manufacturing a permanent shifter component.
+function polymorph.shifter_eligible(ctx, source, definition, position,
+    monster, stream)
+    return selection.eligible(ctx, monster, source, definition, position,
+        stream)
 end
 
--- Check actual terrain after catalog habitat matching so lava and deep water cannot kill the new form.
-local function feature_safe(ctx, position, definition)
-    local feature = ctx:cell(position.level_id, position.x, position.y)
-    local habitat = definition.habitat_id
-
-    if has(definition.flags, "M_FLIES") then
-        return true
-    end
-
-    if feature == "DNGN_LAVA" then
-        return habitat == "HT_LAVA" or habitat == "HT_AMPHIBIOUS_LAVA"
-    end
-
-    if feature == "DNGN_DEEP_WATER" then
-        return habitat == "HT_WATER" or habitat == "HT_AMPHIBIOUS"
-    end
-
-    return habitat ~= "HT_LAVA" and habitat ~= "HT_WATER"
-end
-
--- Exclude unfinished, unique, immobile, and unrelated species before weighted selection.
-local function candidate(source, target, match_habitat)
-    if target.status ~= "defined" or not target.average_hp_10x or
-        target.average_hp_10x <= 0 or not target.speed or target.speed <= 0 or
-        target.id == source.id or target.species_id ~= target.id or
-        target.species_id == source.species_id or
-        not same_holiness(source.holiness, target.holiness) or
-        (match_habitat and not same_habitat(source, target)) then
-        return false
-    end
-
-    for _, flag in ipairs({
-        "M_UNFINISHED", "M_CANT_SPAWN", "M_NO_POLY_TO", "M_UNIQUE",
-        "M_STATIONARY", "M_NO_THREAT",
-    }) do
-        if has(target.flags, flag) then
-            return false
-        end
-    end
-
-    return true
-end
-
--- Choose up to three forms without replacement, strongly preferring similar HD.
-local function weighted_candidates(ctx, source, position, stream)
-    local choices = {}
-
-    for _, definition in ipairs(definitions) do
-        if candidate(source, definition, true) and
-            feature_safe(ctx, position, definition) then
-            local delta = math.abs(source.hd - definition.hd)
-
-            if definition.hd > source.hd then
-                delta = delta * 2
-            end
-
-            if delta <= 8 then
-                choices[#choices + 1] = {
-                    definition = definition,
-                    weight = 2 ^ (8 - delta),
-                }
-            end
-        end
-    end
-
-    local shortlist = {}
-
-    for _ = 1, math.min(3, #choices) do
-        local total = 0
-
-        for _, choice in ipairs(choices) do
-            total = total + choice.weight
-        end
-
-        local draw = ctx:random(stream or streams.SPELL, total)
-
-        for index, choice in ipairs(choices) do
-            draw = draw - choice.weight
-
-            if draw < 0 then
-                shortlist[#shortlist + 1] = choice.definition
-                table.remove(choices, index)
-                break
-            end
-        end
-    end
-
-    return shortlist
-end
-
--- RANDOM_MONSTER only requires the destination species to live on this
--- cell; the spell's persistent three-form set additionally matches the
--- old habitat. A flying shifter on floor may become a ground creature.
-function polymorph.shifter_eligible(ctx, source, definition, position)
-    return candidate(source, definition, false) and
-        feature_safe(ctx, position, definition)
-end
-
--- The source samples species uniformly for the current cell before testing
--- whether the chosen body is a legal or suitably powered transformation.
+-- Expose the production cell pool to source-style RNG fixtures.
 function polymorph.shifter_pool(ctx, position)
-    local pool = {}
-
-    for _, definition in ipairs(definitions) do
-        if definition.status == "defined" and
-            definition.species_id == definition.id and
-            feature_safe(ctx, position, definition) then
-            pool[#pool + 1] = definition
-        end
-    end
-
-    return pool
+    return selection.pool(ctx, position)
 end
 
 -- Polymorph drops carried gear because the new body cannot retain old equipment slots.
@@ -302,6 +154,8 @@ local function transform(ctx, target, source, definition, stream)
         })
     end
 
+    selection.replace(ctx, target, definition)
+
     ctx:emit(channels.SPELL, "The " .. source.name ..
         " evaporates and reforms as a " .. definition.name .. "!")
 end
@@ -321,7 +175,7 @@ function polymorph.random_shifter(ctx, target, source, stream)
         return false
     end
 
-    local pool = polymorph.shifter_pool(ctx, position)
+    local pool = selection.pool(ctx, position)
 
     if #pool == 0 then
         return false
@@ -329,6 +183,12 @@ function polymorph.random_shifter(ctx, target, source, stream)
 
     local source_stream = stream or streams.MONSTER_SPELL
     local source_hd = monster_stats.hit_dice(ctx, target, source)
+    local source_tier = selection.demon_tier(source)
+
+    if source_tier == -1 then
+        return false
+    end
+
     local relax = 1
 
     for _ = 1, 1000 do
@@ -342,7 +202,12 @@ function polymorph.random_shifter(ctx, target, source, stream)
             end
         end
 
-        if polymorph.shifter_eligible(ctx, source, chosen, position) and
+        local target_tier = selection.demon_tier(chosen)
+
+        if selection.eligible(ctx, target, source, chosen, position,
+            source_stream) and
+            (source_tier == target_tier or
+                ctx:random(source_stream, 200) < relax) and
             shifter_power_fits(source_hd, chosen.hd, relax) then
             transform(ctx, target, source, chosen, source_stream)
 
@@ -380,7 +245,7 @@ local function relative(ctx, target, source, stream, stronger)
         return false
     end
 
-    local pool = polymorph.shifter_pool(ctx, position)
+    local pool = selection.pool(ctx, position)
 
     if #pool == 0 then
         return false
@@ -388,7 +253,12 @@ local function relative(ctx, target, source, stream, stronger)
 
     local source_stream = stream or streams.SPELL
     local source_hd = monster_stats.hit_dice(ctx, target, source)
-    local source_tier = demon_tier_for[source.id] or 0
+    local source_tier = selection.demon_tier(source)
+
+    if source_tier == -1 then
+        return false
+    end
+
     local relax = 1
 
     for _ = 1, 1000 do
@@ -402,17 +272,17 @@ local function relative(ctx, target, source, stream, stronger)
             end
         end
 
-        if polymorph.shifter_eligible(ctx, source, chosen, position) and
+        local target_tier = selection.demon_tier(chosen)
+
+        if selection.eligible(ctx, target, source, chosen, position,
+            source_stream) and
+            (source_tier == target_tier or
+                ctx:random(source_stream, 200) < relax) and
             relative_power_fits(source_hd, chosen.hd, relax,
                 stronger) then
-            local target_tier = demon_tier_for[chosen.id] or 0
+            transform(ctx, target, source, chosen, source_stream)
 
-            if source_tier == target_tier or
-                ctx:random(source_stream, 200) < relax then
-                transform(ctx, target, source, chosen, source_stream)
-
-                return true
-            end
+            return true
         end
     end
 
@@ -436,13 +306,12 @@ local function ordinary(ctx, target, source, stream, mode)
         return false
     end
 
-    local choices = weighted_candidates(ctx, source, position, stream)
+    local definition = selection.pick(ctx, target, stream)
 
-    if #choices == 0 then
+    if not definition or not selection.eligible(ctx, target, source,
+        definition, position, stream) then
         return false
     end
-
-    local definition = choices[ctx:random(stream, #choices) + 1]
 
     transform(ctx, target, source, definition, stream)
 
@@ -472,8 +341,8 @@ function polymorph.monster(ctx, target, source, stream, mode)
 
         -- Fixed reversion still runs source _valid_morph. A base-form
         -- shifter or a borrowed flyer above unsafe water cannot revert.
-        if not position or not polymorph.shifter_eligible(ctx, source,
-            variant, position) then
+        if not position or not selection.eligible(ctx, target, source,
+            variant, position, source_stream) then
             return false
         end
 
