@@ -140,6 +140,7 @@ end
 -- Source AF_ACID calls splash_with_acid rather than equipment corrosion
 -- alone. Players take a 4d3 packet; monsters take 2d4. Both use their
 -- existing corrosion owner after the separate elemental resistance check.
+-- AF_REACH_TONGUE shares this exact post-contact effect in source melee.
 local function acid(ctx, hit)
     if hit.damage_done <= 0 then
         return false
@@ -165,6 +166,37 @@ local function acid(ctx, hit)
     monster_enchant.corrode(ctx, hit.defender,
         hit.defender_definition)
     return damage_monster(ctx, hit, amount)
+end
+
+-- The source groups Rift with Distort after reach has already established
+-- contact. Both use the same weighted warp, blink, and banishment behavior
+-- as a distortion brand, with separate owners for player and monster moves.
+local function distortion(ctx, hit)
+    if hit.damage_done <= 0 then
+        return false
+    end
+
+    if ctx:has(hit.defender, component.PLAYER) then
+        require("policy.combat.brands.distortion").apply(ctx, hit)
+
+        return true
+    end
+
+    local target_brands = require("policy.combat.monster_target_brands")
+    local weapon_brands = require("constants.weapon_brands")
+    local brand_hit = {
+        attacker = hit.attacker,
+        attacker_name = hit.attacker_name,
+        defender = hit.defender,
+        definition = hit.defender_definition,
+        damage_done = hit.damage_done,
+        health = ctx:get(hit.defender, component.HEALTH),
+        player_credit = hit.player_credit,
+    }
+
+    target_brands.apply(ctx, weapon_brands.DISTORTION, brand_hit)
+
+    return true
 end
 
 -- Very ugly red things replace a fire packet with the source one-in-three
@@ -289,6 +321,9 @@ local effects = {
     [attack_ids.COLD] = cold,
     [attack_ids.ELECTRICITY] = electricity,
     [attack_ids.ACID] = acid,
+    [attack_ids.REACH_TONGUE] = acid,
+    [attack_ids.DISTORT] = distortion,
+    [attack_ids.RIFT] = distortion,
     [attack_ids.STICKY_FLAME] = napalm,
     [traits.corrode] = corrode,
     [traits.ensnare] = ensnare,

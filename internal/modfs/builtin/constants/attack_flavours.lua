@@ -14,6 +14,7 @@ local flavours = {
     REACH_STING = "AF_REACH_STING",
     REACH_TONGUE = "AF_REACH_TONGUE",
     RIFT = "AF_RIFT",
+    DISTORT = "AF_DISTORT",
     CRUSH = "AF_CRUSH",
     TRAMPLE = "AF_TRAMPLE",
     STEAL = "AF_STEAL",

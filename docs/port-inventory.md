@@ -141,8 +141,10 @@ two cells; the Rift artefact reaches three through solid-blocking sight.
 The AI offers distant melee only when the current path permits it, combat
 checks the path again, and only each eligible reaching slot makes contact.
 Removing a weapon changes that capability on the next action.
-Tongue acid and Rift distortion contact effects still need their attack-
-flavour slice.
+Tongue and ordinary Acid now share source acid splash on damaging contact;
+Rift and ordinary Distort share weighted warp, blink, and banishment through
+the existing player and monster distortion owners. Both effects use the
+resolved contact after reach geometry and preserve their damage gates.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except
