@@ -18,6 +18,10 @@ local artefact_properties = require("ids.artefact_properties")
 local hex_status = require("policy.combat.monster_hexes.status")
 local trog_hand = require("policy.religion.trog.hand")
 local willpower_units = require("constants.willpower")
+local gods = require("constants.gods")
+local streams = require("constants.rng_streams")
+local torment_sources = require("constants.torment_sources")
+local piety = require("policy.religion.piety")
 
 local resistance = {}
 
@@ -195,9 +199,10 @@ function resistance.petrification(ctx, player)
         active_form(ctx, player, spell_ids.SPELL_STORM_FORM)
 end
 
--- Source: spl-goditem.cc:torment_player. God shielding and undead blood
--- states wait for their gameplay domains; current HP and rN are live reads.
-function resistance.torment_loss(ctx, player, current_hp)
+-- Source: spl-goditem.cc:torment_player. Kiku's four-star passive uses live
+-- piety, except pain branding temporarily disables it. A direct Kiku
+-- invocation guarantees partial protection after a failed full-shield roll.
+function resistance.torment_loss(ctx, player, current_hp, source)
     if resistance.torment(ctx, player) then
         return 0
     end
@@ -215,6 +220,33 @@ function resistance.torment_loss(ctx, player, current_hp)
 
     if effects.sum(ctx, player, capabilities.TORMENT_RESISTANCE) > 0 then
         loss = math.floor(loss / 2)
+    end
+
+    local worship = ctx:get(player, component.RELIGION_WORSHIP)
+
+    if loss > 0 and worship and
+        worship.god_id == gods.KIKUBAAQUDGHA and
+        piety.rank(gods.KIKUBAAQUDGHA, worship.piety) >= 3 and
+        source ~= torment_sources.KIKU_BLESSING and
+        (worship.penance[gods.KIKUBAAQUDGHA] or 0) == 0 then
+        if ctx:random(streams.RELIGION, 600) < worship.piety then
+            ctx:emit("religion", "Kikubaaqudgha shields you from torment!")
+
+            return 0
+        end
+
+        if ctx:random(streams.RELIGION, 250) < worship.piety or
+            source == torment_sources.KIKU_INVOKED then
+            local reduction = 1
+
+            if loss > 1 then
+                reduction = reduction +
+                    ctx:random(streams.RELIGION, loss - 1)
+            end
+
+            ctx:emit("religion", "Kikubaaqudgha partially shields you from torment!")
+            loss = loss - reduction
+        end
     end
 
     return loss

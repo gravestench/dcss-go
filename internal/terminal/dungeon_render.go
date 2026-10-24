@@ -74,6 +74,7 @@ func (r dungeonRenderer) terrainColor(cell game.CellView) Color {
 		"detected_item":     cell.DetectedItem,
 		"detected_creature": cell.DetectedCreature,
 		"color_id":          cell.ColorID,
+		"bloody":            cell.Bloody,
 	})
 
 	color := policyColor(result["fg"])

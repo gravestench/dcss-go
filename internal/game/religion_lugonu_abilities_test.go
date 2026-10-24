@@ -170,7 +170,7 @@ func TestLugonuBlessWeaponSelectionAndRestore(t *testing.T) {
 
 	defer restored.Close()
 
-	if restored.scripts.Components()["religion.lugonu_bless_choice"].Has(
+	if restored.scripts.Components()["religion.weapon_bless_choice"].Has(
 		restored.player) {
 		t.Fatal("completed blessing still has a pending choice")
 	}

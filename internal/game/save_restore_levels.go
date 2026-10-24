@@ -108,6 +108,21 @@ func (g *Game) restoreLevels(
 			}
 		}
 
+		for _, savedBlood := range record.BloodCells {
+			cell := point{
+				x: savedBlood.X,
+				y: savedBlood.Y,
+			}
+
+			if level.bloodCells[cell] {
+				return fmt.Errorf("level %d has duplicate blood cell", record.ID)
+			}
+
+			if err := level.SetCellBlood(cell.x, cell.y, true); err != nil {
+				return err
+			}
+		}
+
 		if knownErr := level.LoadKnownCells(record.Known); knownErr != nil {
 			return knownErr
 		}

@@ -1182,6 +1182,21 @@ rejects the earlier Xom schema and pre-detection level records explicitly.
 Unusual death and item-destruction stimulation hooks still belong to their
 later action domains; Xom's stimulation policy is ready for those calls.
 
+### One-time divine weapon capstones
+
+The Shining One, Kikubaaqudgha, and Lugonu now share a saved Lua weapon
+selection transaction. Each patron's named Lua definition supplies the
+brand, ranged eligibility, messages, and extra effect; the shared owner
+checks current worship, penance, rank, No Grasping, and carried item identity
+before a timed commit. The three source demon/holy base-kind pairs convert
+in place. TSO emits a power-100 holy word, dazes surviving undead or demonic
+actors, and cleanses saved blood marks and blood fountains. Kiku invokes
+Torment without its usual passive shielding during the pain blessing and
+marks eligible nearby cells with blood. Forbidden Knowledge offers Kiku's
+five usable capstone spells instead of the weapon brand and spends the same
+permanent choice. The cell blood property and shared pending choice survive
+save/restore; version 40 rejects older layouts explicitly.
+
 ## Running the slice
 
 `go run ./cmd/crawl -seed 1 -save crawl-save.json` starts the terminal

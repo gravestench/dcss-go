@@ -166,6 +166,12 @@ function view.terrain_color(input)
         return { fg = override }
     end
 
+    -- A blood mark is saved separately from the feature so divine effects
+    -- can cleanse it without replacing terrain or a vault colour.
+    if input.bloody then
+        return { fg = colors.red }
+    end
+
     if input.glyph == "<" or input.glyph == ">" then
         return { fg = colors.yellow }
     end

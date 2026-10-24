@@ -283,7 +283,7 @@ local component = {
     -- CHANNEL is a lasting player magic effect.
     WORLD_CLOUD = "world.cloud",
     FOG_MACHINE = "world.fog_machine",
-    LUGONU_BLESS_CHOICE = "religion.lugonu_bless_choice",
+    WEAPON_BLESS_CHOICE = "religion.weapon_bless_choice",
     LUGONU_CORRUPTION_NEXUS = "world.lugonu_corruption_nexus",
     CHANNEL = "magic.channel",
     ZOT_CLOCK = "world.zot_clock",

@@ -82,6 +82,8 @@ type Grid interface {
 	MoveStair(levelID, fromX, fromY, toX, toY int) error
 	CellColour(levelID, x, y int) (string, bool)
 	SetCellColour(levelID, x, y int, colour string) error
+	CellBlood(levelID, x, y int) (bool, bool)
+	SetCellBlood(levelID, x, y int, bloody bool) error
 	MoveActor(entity akara.Entity, levelID, x, y int) error
 	MoveActors(moves []ActorMove) error
 	PlaceActor(entity akara.Entity, levelID, x, y int) error

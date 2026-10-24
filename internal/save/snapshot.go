@@ -8,7 +8,7 @@ import (
 	"crawl/internal/vault"
 )
 
-const Version = 39
+const Version = 40
 
 type Snapshot struct {
 	Version        int               `json:"version"`
@@ -138,6 +138,7 @@ type LevelRecord struct {
 	VaultIDs          []string           `json:"vault_ids,omitempty"`
 	VaultRecords      []vault.Record     `json:"vault_records,omitempty"`
 	CellColours       []CellColourRecord `json:"cell_colours,omitempty"`
+	BloodCells        []PointRecord      `json:"blood_cells,omitempty"`
 	ShoalsTide        *ShoalsTideRecord  `json:"shoals_tide,omitempty"`
 }
 

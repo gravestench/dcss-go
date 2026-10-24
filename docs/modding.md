@@ -2069,6 +2069,35 @@ or a live rule input. For a new category owned wholly by a mod, use
 it through `register.get`; registering a new catalog does not create a
 command, scheduler hook, or UI screen automatically.
 
+### One-time divine weapon choices
+
+The Shining One, Kikubaaqudgha, and Lugonu register their weapon capstones
+under `policy/abilities/weapon_blessing/`. Each file supplies its god ID,
+ability ID, brand, wording, ranged-weapon rule, and optional `after` effect
+to `policy.abilities.weapon_blessing.define`. That shared Lua owner offers a
+free carried-item menu, stores the selected Akara entity in
+`religion.weapon_bless_choice`, asks for a free confirmation, and verifies
+the same item and current worship before the timed action. The item policy
+then changes its base kind, brand, and enchantment on that entity. Mods can
+replace a single god file at the same relative path, or register another
+definition with a new ability ID without editing a Go switch.
+
+Kiku's `policy/abilities/kikubaaqudgha/forbidden_knowledge.lua` is a
+separate menu row. It reads the five source spell IDs from `ids.spells`,
+filters them through the live permanent-usability rules, and grants the
+surviving library records only after confirmation. Both Kiku choices write
+`religion.worship.one_time_abilities[GOD_KIKUBAAQUDGHA]`, so changing gods
+cannot permit a second choice. No Grasping hides weapon blessings but leaves
+Forbidden Knowledge available. A new one-time god power should use the same
+durable worship history key and validate pending choices on restore.
+
+TSO's holy word uses `policy.combat.holy_word` for living target selection,
+damage, daze, and blood cleansing. Kiku's brand calls the normal Torment
+area with `constants.torment_sources.KIKU_BLESSING`, which suppresses Kiku's
+usual passive shield just for that source action. Its blood spread uses the
+saved level `cell_blood` and `set_cell_blood` grid methods; these are
+properties of floor cells, independent of terrain IDs and vault colours.
+
 Put one definition in one file below `content/<category>/`. The recognized
 base categories are `species`, `jobs`, `monsters`, `spells`, `items`,
 `mutations`, `branches`, `gods`, and `monster_spellbooks`, plus `artefacts`, `clouds`,

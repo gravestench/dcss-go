@@ -24,6 +24,7 @@ type CellView struct {
 	DetectedItem     bool
 	DetectedCreature bool
 	ColorID          string
+	Bloody           bool
 	Name             string
 }
 
@@ -308,6 +309,7 @@ func (g *Game) fillTerrainView(view *View, level *Level) {
 			i < len(g.visible) &&
 			g.visible[i]:
 			colour, _ := level.CellColour(i%level.width, i/level.width)
+			bloody, _ := level.CellBlood(i%level.width, i/level.width)
 
 			view.Cells[i] = CellView{
 				Glyph:     terrain.Glyph(level.terrain[i/level.width][i%level.width]),
@@ -315,6 +317,7 @@ func (g *Game) fillTerrainView(view *View, level *Level) {
 				FeatureID: string(level.terrain[i/level.width][i%level.width]),
 				Walkable:  terrain.Walkable(level.terrain[i/level.width][i%level.width]),
 				ColorID:   colour,
+				Bloody:    bloody,
 			}
 
 		case feature != terrain.Unseen:

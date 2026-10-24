@@ -195,6 +195,42 @@ func TestDrawDungeonUsesLiveCellColour(t *testing.T) {
 	}
 }
 
+// Blood is a separate saved floor property. The Lua presentation policy
+// colours it without replacing the cell's underlying terrain or vault tint.
+func TestDrawDungeonShowsBloodMark(t *testing.T) {
+	g, err := game.NewScenario(7, "WPN_RAPIER", "Presenter")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer g.Close()
+
+	canvas := NewCanvas(79, 24)
+	region := Region{
+		X: 0,
+		Y: 0,
+		W: 37,
+		H: 17,
+	}
+
+	view := game.View{
+		Width: 1,
+		Cells: []game.CellView{{
+			Glyph:  '.',
+			State:  game.Visible,
+			Bloody: true,
+		}},
+	}
+
+	drawDungeon(canvas, region, view, g.PresentationPolicy)
+	cell := canvas.cells[8*canvas.width+18]
+
+	if cell.fg != Red {
+		t.Fatalf("blood mark colour = %d, want %d", cell.fg, Red)
+	}
+}
+
 // Source ETC_RANDOM draws from a separate UI stream on every redraw.
 // Rendering must change visible colour without advancing saved game RNG.
 func TestDrawDungeonAnimatesRandomColourWithoutGameState(t *testing.T) {

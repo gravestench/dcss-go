@@ -39,6 +39,7 @@ type Level struct {
 	vaultIDs     []string
 	vaultRecords []vault.Record
 	cellColours  map[point]string
+	bloodCells   map[point]bool
 
 	// Shoals heights are authored terrain elevations. The tide changes the
 	// visible feature, but never overwrites the elevation beneath it.
@@ -112,7 +113,43 @@ func NewLevel(id int, cells [][]terrain.ID, positions *akara.Store[ecs.Position]
 
 		stairs:      make(map[point]StairLink),
 		cellColours: make(map[point]string),
+		bloodCells:  make(map[point]bool),
 	}, nil
+}
+
+// Blood is a live floor property, separate from authored terrain and tint.
+// It survives a god effect and a save without changing walkability.
+func (l *Level) CellBlood(x, y int) (bool, bool) {
+	if !l.inBounds(x, y) {
+		return false, false
+	}
+
+	cell := point{
+		x: x,
+		y: y,
+	}
+
+	return l.bloodCells[cell], true
+}
+
+// SetCellBlood clears an existing mark when a cleansing effect passes.
+func (l *Level) SetCellBlood(x, y int, bloody bool) error {
+	if !l.inBounds(x, y) {
+		return fmt.Errorf("level %d has no cell at (%d,%d)", l.ID, x, y)
+	}
+
+	cell := point{
+		x: x,
+		y: y,
+	}
+
+	if bloody {
+		l.bloodCells[cell] = true
+	} else {
+		delete(l.bloodCells, cell)
+	}
+
+	return nil
 }
 
 // CellColour returns an explicit terrain tint, if one was placed by a vault

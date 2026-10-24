@@ -33,10 +33,10 @@ end
 -- Ask each actor's existing owner for its Torment loss. A monster's kind
 -- definition supplies innate resistance, while both actors' live state
 -- supplies equipment and other current protections.
-local function loss(ctx, entity, health)
+local function loss(ctx, entity, health, source)
     if ctx:has(entity, component.PLAYER) then
         return player_resistance.torment_loss(ctx, entity,
-            health.current), nil
+            health.current, source), nil
     end
 
     local actor = ctx:get(entity, component.ACTOR)
@@ -102,7 +102,7 @@ end
 -- area.apply(ctx, monster, channels.SPELL) implements Symbol of Torment.
 -- Scan live entities once, then use each health owner to apply nonlethal HP
 -- loss. Messages name only actors the player can actually perceive.
-function area.apply(ctx, caster, channel, death_position)
+function area.apply(ctx, caster, channel, death_position, source)
     local origin = death_position or ctx:get(caster, component.POSITION)
 
     if not origin then
@@ -118,7 +118,8 @@ function area.apply(ctx, caster, channel, death_position)
         local health = ctx:get(entity, component.HEALTH)
 
         if health.current > 0 and in_area(ctx, origin, position) then
-            local amount, definition = loss(ctx, entity, health)
+            local amount, definition = loss(ctx, entity, health,
+                source)
 
             if ctx:has(entity, component.PLAYER) then
                 if amount > 0 then

@@ -15,7 +15,7 @@ local jiyva_ecology = require("policy.religion.jiyva.periodic")
 local beogh_recall = require("policy.abilities.beogh.recall")
 local beogh_gift = require("policy.abilities.beogh.gift_item")
 local beogh_resurrection = require("policy.abilities.beogh.resurrection")
-local lugonu_blessing = require("policy.abilities.lugonu.bless_weapon")
+local weapon_blessing = require("policy.abilities.weapon_blessing")
 local mutation_effects = require("policy.mutations.effects.registry")
 local mutation_capabilities = require("constants.mutation_capabilities")
 local vampire = require("policy.character.vampire")
@@ -238,7 +238,7 @@ local function validate(ctx)
     beogh_recall.validate(ctx, entity)
     beogh_gift.validate(ctx, entity)
     beogh_resurrection.validate(ctx, entity)
-    lugonu_blessing.validate(ctx, entity)
+    weapon_blessing.validate(ctx, entity)
 
     -- These free prompts and timed queue belong only to the player.
     -- An orphan on another entity cannot bypass the checks above.
@@ -246,11 +246,11 @@ local function validate(ctx)
         component.BEOGH_RECALL,
         component.BEOGH_GIFT_CHOICE,
         component.BEOGH_RESURRECTION_CHOICE,
-        component.LUGONU_BLESS_CHOICE,
+        component.WEAPON_BLESS_CHOICE,
     }) do
         for _, owner in ipairs(ctx:query({ id })) do
             if owner ~= entity then
-                error("orphan Beogh player action " .. ctx:id(owner))
+                error("orphan player choice " .. ctx:id(owner))
             end
         end
     end

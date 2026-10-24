@@ -63,6 +63,10 @@ func (grid scriptGrid) PrepareRegion(
 	next.tideLastAut = old.tideLastAut
 	next.actors = make(map[point]akara.Entity, len(old.actors))
 
+	for cell := range old.bloodCells {
+		next.bloodCells[cell] = true
+	}
+
 	for cell, actor := range old.actors {
 		next.actors[cell] = actor
 	}

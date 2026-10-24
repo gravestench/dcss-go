@@ -53,6 +53,8 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "replace_session_state",
 		r.state.NewFunction(r.luaReplaceSessionState))
 	r.state.SetField(context, "set_cell_colour", r.state.NewFunction(r.luaGridSetCellColour))
+	r.state.SetField(context, "cell_blood", r.state.NewFunction(r.luaGridCellBlood))
+	r.state.SetField(context, "set_cell_blood", r.state.NewFunction(r.luaGridSetCellBlood))
 	r.state.SetField(context, "map_cell", r.state.NewFunction(r.luaGridMapCell))
 	r.state.SetField(context, "detect_item", r.state.NewFunction(r.luaGridDetectItem))
 	r.state.SetField(context, "detect_creature", r.state.NewFunction(r.luaGridDetectCreature))
@@ -683,6 +685,47 @@ func (r *Runtime) luaGridSetCellColour(state *lua.LState) int {
 		},
 		undo: func() error {
 			return r.services.Grid.SetCellColour(levelID, x, y, previous)
+		},
+	})
+
+	return 0
+}
+
+// Lua reads committed blood. The effect uses this to avoid clearing unrelated
+// terrain state when a holy word passes over a cell.
+func (r *Runtime) luaGridCellBlood(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	bloody, found := r.services.Grid.CellBlood(levelID, x, y)
+
+	if !found {
+		state.Push(lua.LNil)
+	} else {
+		state.Push(lua.LBool(bloody))
+	}
+
+	return 1
+}
+
+// Blood marks join the structural transaction so a later Lua failure
+// restores the exact earlier value along with item and actor changes.
+func (r *Runtime) luaGridSetCellBlood(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	bloody := state.CheckBool(5)
+	previous, found := r.services.Grid.CellBlood(levelID, x, y)
+
+	if !found {
+		state.RaiseError("cannot mark missing grid cell")
+
+		return 0
+	}
+
+	r.pending = append(r.pending, structuralCommand{
+		spatialLevel: levelID,
+		apply: func() error {
+			return r.services.Grid.SetCellBlood(levelID, x, y, bloody)
+		},
+		undo: func() error {
+			return r.services.Grid.SetCellBlood(levelID, x, y, previous)
 		},
 	})
 

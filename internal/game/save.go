@@ -187,6 +187,24 @@ func (g *Game) Snapshot() save.Snapshot {
 			})
 		}
 
+		for cell := range level.bloodCells {
+			record.BloodCells = append(record.BloodCells, save.PointRecord{
+				X: cell.x,
+				Y: cell.y,
+			})
+		}
+
+		sort.Slice(record.BloodCells, func(i, j int) bool {
+			left := record.BloodCells[i]
+			right := record.BloodCells[j]
+
+			if left.Y != right.Y {
+				return left.Y < right.Y
+			}
+
+			return left.X < right.X
+		})
+
 		sort.Slice(record.CellColours, func(i, j int) bool {
 			left := record.CellColours[i]
 			right := record.CellColours[j]

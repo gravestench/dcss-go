@@ -1,7 +1,7 @@
 -- Exercise the production item catalog and saved ECS choice, rather than
 -- mirroring the blessing's predicates in a separate test declaration.
 local abilities = require("ids.abilities")
-local blessing = require("policy.abilities.lugonu.bless_weapon")
+local blessing = require("policy.abilities.weapon_blessing.lugonu")
 local brands = require("constants.weapon_brands")
 local component = require("constants.component")
 local commands = require("policy.commands.abilities")
@@ -60,11 +60,32 @@ function test.run(ctx)
     })
 
     harness.truthy(confirm.confirmation)
-    harness.truthy(ctx:has(player, component.LUGONU_BLESS_CHOICE))
+    harness.truthy(ctx:has(player, component.WEAPON_BLESS_CHOICE))
     blessing.validate(ctx, player)
+
+    -- Save validation refuses a selected item after ownership changes;
+    -- a forged pending choice must never brand an item on another actor.
+    local carrier = ctx:get(sword, component.CARRIED_BY)
+
+    ctx:remove(sword, component.CARRIED_BY)
+    harness.falsy(pcall(blessing.validate, ctx, player))
+    ctx:add(sword, component.CARRIED_BY, carrier)
+
+    local lowered = ctx:get(player, component.RELIGION_WORSHIP)
+
+    lowered.piety = 0
+    ctx:set(player, component.RELIGION_WORSHIP, lowered)
+    harness.falsy(pcall(blessing.validate, ctx, player))
+    lowered.piety = piety.breakpoint(6)
+    lowered.penance[gods.LUGONU] = 1
+    ctx:set(player, component.RELIGION_WORSHIP, lowered)
+    harness.falsy(pcall(blessing.validate, ctx, player))
+    lowered.penance[gods.LUGONU] = 0
+    ctx:set(player, component.RELIGION_WORSHIP, lowered)
+
     harness.equal(blessing.prepare(ctx, player, { cancelled = true }),
         "Okay.")
-    harness.falsy(ctx:has(player, component.LUGONU_BLESS_CHOICE))
+    harness.falsy(ctx:has(player, component.WEAPON_BLESS_CHOICE))
 
     blessing.prepare(ctx, player, {
         target_id = tostring(ctx:id(sword)),
@@ -85,7 +106,7 @@ function test.run(ctx)
     })
 
     harness.equal(cancelled.message, "Okay.")
-    harness.falsy(ctx:has(player, component.LUGONU_BLESS_CHOICE))
+    harness.falsy(ctx:has(player, component.WEAPON_BLESS_CHOICE))
     changed_worship.god_id = gods.LUGONU
     ctx:set(player, component.RELIGION_WORSHIP,
         changed_worship)

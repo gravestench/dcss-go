@@ -55,9 +55,11 @@ local function prepare_raw(ctx, input)
 
     -- The selected blessing item owns the free confirmation slot until
     -- the player confirms or cancels it.
-    if ctx:has(player, component.LUGONU_BLESS_CHOICE) and
+    local weapon_choice = ctx:get(player, component.WEAPON_BLESS_CHOICE)
+
+    if weapon_choice and
         (input.kind ~= commands.ability or
-            input.ability_id ~= ability_ids.LUGONU_BLESS_WEAPON) then
+            input.ability_id ~= weapon_choice.ability_id) then
         return { message = "Finish your weapon blessing choice first." }
     end
 

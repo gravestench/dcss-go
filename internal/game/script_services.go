@@ -592,6 +592,28 @@ func (grid scriptGrid) SetCellColour(levelID, x, y int, colour string) error {
 	return level.SetCellColour(x, y, colour)
 }
 
+// Expose saved blood markings to Lua without assigning terrain semantics in Go.
+func (grid scriptGrid) CellBlood(levelID, x, y int) (bool, bool) {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return false, false
+	}
+
+	return level.CellBlood(x, y)
+}
+
+// Stage blood changes through the same grid owner as other cell mutations.
+func (grid scriptGrid) SetCellBlood(levelID, x, y int, bloody bool) error {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return fmt.Errorf("missing level %d", levelID)
+	}
+
+	return level.SetCellBlood(x, y, bloody)
+}
+
 func (grid scriptGrid) MoveActor(entity akara.Entity, levelID, x, y int) error {
 	positioned := grid.levels[levelID]
 
