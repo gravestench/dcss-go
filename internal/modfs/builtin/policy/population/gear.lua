@@ -7,12 +7,23 @@ local brands = require("constants.weapon_brands")
 local sentinels = require("constants.monster_gear_sentinels")
 local registry = require("policy.population.gear.registry")
 local streams = require("constants.rng_streams")
+local unique_history = require("policy.item_generation.artefacts.history")
 
 local gear = {}
 
 -- Keep all monster equipment randomness on the dedicated gear stream.
 function gear.draw(ctx, bound)
     return ctx:random(streams.MONSTER_GEAR, bound)
+end
+
+-- Source rolls a chance before asking whether a named artefact was already
+-- generated. Preserve that draw even for a claimed item so later monster
+-- gear decisions remain on the same saved stream.
+function gear.chance_unique(ctx, unique_id, odds)
+    local selected = gear.draw(ctx, odds) == 0
+
+    return selected and
+        unique_history.status(ctx, ctx:player(), unique_id) == nil
 end
 
 -- Use one gear-stream draw over source weights so table order stays meaningful.
@@ -123,6 +134,33 @@ function gear.quality(ctx, kind_id, depth)
     }
 end
 
+-- Source weapon specs with unconditional plusses and a forced brand do
+-- not pass through ordinary item generation. Use their imported range
+-- and brand, including random2avg's larger later-roll bound.
+local function forced_spec_quality(ctx, spec)
+    local plus = spec.plus
+    local choices = spec.brands
+
+    if not plus or plus.odds ~= 1 or spec.good_chance ~= 0 or
+        type(choices) ~= "table" or #choices ~= 1 or
+        choices[1].id == sentinels.NO_FORCED_BRAND then
+        return nil
+    end
+
+    local rolls = math.max(1, plus.rolls or 0)
+    local span = plus.max - plus.min + 1
+    local total = gear.draw(ctx, span)
+
+    for _ = 2, rolls do
+        total = total + gear.draw(ctx, span + 1)
+    end
+
+    return {
+        plus = plus.min + math.floor(total / rolls),
+        ego = gear.weighted(ctx, choices),
+    }
+end
+
 -- Read the catalog weapon row independently so a named armour grant can
 -- preserve its ordinary weapon draw. Other special handlers may still
 -- replace this path when source gear has a distinct roll order.
@@ -145,7 +183,8 @@ function gear.ordinary_loadout(ctx, monster_id, depth)
             if kind_id ~= "" then
                 local selected = {
                     kind_id = kind_id,
-                    quality = gear.quality(ctx, kind_id, depth),
+                    quality = forced_spec_quality(ctx, spec) or
+                        gear.quality(ctx, kind_id, depth),
                 }
 
                 if slot == "primary" then

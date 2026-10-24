@@ -6,13 +6,13 @@ local component = require("constants.component")
 local death = require("policy.death")
 local equipment = require("policy.combat.equipment")
 local factory = require("policy.population.factory")
+local fixture = require("tests.fixtures.monster_gear_world")
 local generation = require("policy.item_generation")
 local harness = require("tests.harness")
 local monsters = require("ids.monsters")
 local purpose = require("constants.item_generation_purpose")
 local quality = require("constants.vault_item_quality")
 local save_inventory = require("policy.save.monster_inventory")
-local terrain = require("constants.terrain")
 local unique = require("policy.item_generation.artefacts.unique")
 
 local test = {}
@@ -45,79 +45,6 @@ local signatures = {
     },
 }
 
--- Use real ECS components with a deterministic open floor. The wrapper only
--- supplies world geometry and RNG normally owned by the Go level runtime.
-local function world_context(ctx)
-    local world = setmetatable({}, { __index = ctx })
-    local player = ctx:create()
-
-    ctx:add(player, component.PLAYER_UNIQUE_HISTORY, {
-        status = {},
-        monsters = {},
-        pan_states = {},
-        choices = {},
-        boris_killed = false,
-    })
-
-    -- Route unique history to the same run owner used by the factory.
-    function world:player()
-        return player
-    end
-
-    -- Keep all source draws deterministic and reject an invalid bound.
-    function world:random(_, bound)
-        harness.truthy(bound > 0, "monster gear RNG bound")
-
-        return 0
-    end
-
-    -- This fixture isolates gear from terrain restrictions.
-    function world:walkable()
-        return true
-    end
-
-    -- The blocked branch proves placement rejects before unique history.
-    function world:actor_at()
-        return self.blocked and 1 or nil
-    end
-
-    -- Every trial cell is normal floor for these five land monsters.
-    function world:cell()
-        return terrain.DNGN_FLOOR
-    end
-
-    -- Mirror the real level's placement into the ECS position component.
-    function world:place_actor(entity, level_id, x, y)
-        ctx:add(entity, component.POSITION, {
-            level_id = level_id,
-            x = x,
-            y = y,
-        })
-    end
-
-    return world, player
-end
-
--- Query the actual carrier edge so a cosmetic gear row cannot satisfy the
--- test without creating a lootable item entity.
-local function signature_item(ctx, monster, artefact_id)
-    for _, entity in ipairs(ctx:query({
-        component.ITEM,
-        component.CARRIED_BY,
-        component.ITEM_ARTEFACT,
-    })) do
-        local carrier = ctx:get(entity, component.CARRIED_BY)
-        local artefact = ctx:get(entity, component.ITEM_ARTEFACT)
-
-        if carrier.holder == monster and
-            artefact.unique_id == artefact_id then
-            return entity
-        end
-    end
-
-    return nil
-end
-
 -- Invalid placement is checked before gear claims the named artefact.
 local function blocked_spawn_does_not_claim(ctx, world, player)
     world.blocked = true
@@ -139,7 +66,7 @@ local function bosses_carry_signatures(ctx, world, player)
     for index, signature in ipairs(signatures) do
         local boss = factory.spawn(world, signature.monster,
             1, 10 + index, 10)
-        local item = signature_item(ctx, boss, signature.artefact)
+        local item = fixture.signature_item(ctx, boss, signature.artefact)
 
         harness.truthy(item,
             signature.monster .. " lacks its signature artefact")
@@ -202,7 +129,7 @@ end
 -- The full factory path is the contract: gear handlers only select IDs,
 -- while item generation and death own physical identity and disposition.
 function test.run(ctx)
-    local world, player = world_context(ctx)
+    local world, player = fixture.new(ctx, false)
 
     blocked_spawn_does_not_claim(ctx, world, player)
     bosses_carry_signatures(ctx, world, player)

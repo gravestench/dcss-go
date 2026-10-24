@@ -194,8 +194,15 @@ their named weapons; the Enchantress and Tiamat wear their named armour.
 The latter two also retain their catalogued weapon rolls, and Tiamat's
 draconian cloak occupies the monster body-armour inventory slot.
 Their `none` generation mode still excludes random drops, while explicit
-source gear claims the unique and leaves loot on death. Cerebov's later
-disarm exception and chance-based named gear remain follow-up work.
+source gear claims the unique and leaves loot on death.
+All nine source one-in-N monster artefact owners now use individual Lua
+gear handlers: Nikola, Amaemon, Arachne, Maggie, Margery, Terence, Grunn,
+Parghit, and Gastronok. Their saved unique history prevents a second named
+item, and losing rolls preserve source ordinary weapons or armour, including
+Nikola's electric rapier, Amaemon's venom whip, and Grunn's draining polearm.
+Arachne's poison staff uses the shared staff melee profile; Gastronok's hat
+maps to the monster body slot. Cerebov's disarm exception and Geryon's
+non-artefact horn remain follow-up work.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except

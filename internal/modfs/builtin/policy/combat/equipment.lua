@@ -8,6 +8,7 @@ local item_use = require("constants.monster_item_use")
 local monster_flags = require("constants.monster_flags")
 local monster_armour = require("policy.combat.monster_armour")
 local object_classes = require("ids.object_classes")
+local staves = require("policy.inventory.staves")
 
 local equipment = {}
 
@@ -142,11 +143,13 @@ function equipment.monster_melee(ctx, monster, contact_index)
         if entry then
             local definition = entry.definition
 
-            if definition.class ~= "OBJ_WEAPONS" or not definition.weapon then
+            local profile = staves.weapon(definition)
+
+            if not profile then
                 error("monster has non-weapon in " .. slot)
             end
 
-            if not has_flag(definition.weapon.damage_flags, "DAMV_NON_MELEE") then
+            if not has_flag(profile.damage_flags, "DAMV_NON_MELEE") then
                 local properties = require(
                     "policy.item_generation.artefacts.properties")
                 local artefact = ctx:get(entry.entity,
@@ -154,12 +157,12 @@ function equipment.monster_melee(ctx, monster, contact_index)
 
                 return {
                     entity = entry.entity,
-                    skill_id = definition.weapon.skill_id,
+                    skill_id = profile.skill_id,
                     unique_id = artefact and artefact.unique_id or "",
-                    damage = definition.weapon.damage +
+                    damage = profile.damage +
                         properties.value(ctx, entry.entity,
                             artefact_ids.BASE_DAMAGE),
-                    hit = definition.weapon.hit +
+                    hit = profile.hit +
                         properties.value(ctx, entry.entity,
                             artefact_ids.BASE_ACCURACY),
                     plus = entry.item.plus,

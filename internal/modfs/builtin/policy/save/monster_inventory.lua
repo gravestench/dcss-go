@@ -1,5 +1,6 @@
 local catalog = require("policy.catalog")
 local monster_armour = require("policy.combat.monster_armour")
+local staves = require("policy.inventory.staves")
 
 local inventory = {}
 
@@ -34,7 +35,7 @@ function inventory.validate(ctx)
             if not slot then
                 -- Source monster inventories can carry an unequipped item.
             elseif slot == "weapon" or slot == "alternate_weapon" then
-                if kind.class ~= "OBJ_WEAPONS" or not kind.weapon then
+                if not staves.weapon(kind) then
                     error("item " .. ctx:id(entity) .. " is not a monster weapon")
                 end
             elseif slot == "missile" then

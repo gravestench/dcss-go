@@ -37,6 +37,7 @@ local streams = require("constants.rng_streams")
 local beast_form = require("policy.monsters.mutant_beast.form")
 local beast_profile = require("policy.monsters.mutant_beast.profile")
 local monster_armour = require("policy.combat.monster_armour")
+local staves = require("policy.inventory.staves")
 
 local factory = {}
 
@@ -89,7 +90,7 @@ local function starting_item(ctx, holder, kind_id, quantity, plus, ego, slot,
     local definition = catalog.get("items", kind_id)
 
     if (slot == "weapon" or slot == "alternate_weapon") and
-        definition.class ~= "OBJ_WEAPONS" then
+        not staves.weapon(definition) then
         error("monster starting item is not a weapon: " .. kind_id)
     end
 
@@ -120,31 +121,10 @@ local function starting_item(ctx, holder, kind_id, quantity, plus, ego, slot,
     return entity
 end
 
--- A named signature uses the item generator's unique claim and component
--- rules. The source gear handler names only the artefact, never a duplicate
--- base kind or list of properties that could drift from the catalog.
-local function signature_item(ctx, monster, entry, slot, origin,
-    occurrence, depth)
-    local artefact = catalog.get("artefacts", entry.unique_id)
-
-    if (slot == "weapon" or slot == "alternate_weapon") and
-        artefact.class ~= object_classes.OBJ_WEAPONS or
-        slot == "body" and
-        not monster_armour.wears_body(ctx, monster,
-            catalog.get("items", artefact.kind_id)) then
-        error("signature artefact has wrong equipment class " ..
-            entry.unique_id)
-    end
-
-    local rolled = generation.roll(ctx, {
-        kind_id = artefact.kind_id,
-        unique_id = artefact.id,
-        depth = depth,
-        quality = item_quality.ORDINARY,
-        allow_uniques = false,
-        purpose = item_purpose.VAULT,
-        site = "monster signature gear " .. artefact.id,
-    })
+-- Both named and quality-rolled monster items use the item generator for
+-- their ECS identity. Equip the resulting carried item only after creation.
+local function equip_generated(ctx, monster, rolled, slot, origin,
+    occurrence)
     local entity = generation.create(ctx, rolled, {
         carrier = monster,
     })
@@ -162,6 +142,63 @@ local function signature_item(ctx, monster, entry, slot, origin,
     return entity
 end
 
+-- Validate the artefact's catalogued base before claiming run history.
+-- An authored plus changes its item enchantment, not the shared definition.
+local function signature_item(ctx, monster, entry, slot, origin,
+    occurrence, depth)
+    local artefact = catalog.get("artefacts", entry.unique_id)
+    local kind = catalog.get("items", artefact.kind_id)
+    local weapon_slot = slot == "weapon" or
+        slot == "alternate_weapon"
+    local valid = weapon_slot and staves.weapon(kind) or
+        slot == "body" and
+        monster_armour.wears_body(ctx, monster, kind)
+
+    if not valid then
+        error("signature artefact has wrong equipment class " ..
+            entry.unique_id)
+    end
+
+    local rolled = generation.roll(ctx, {
+        kind_id = artefact.kind_id,
+        unique_id = artefact.id,
+        depth = depth,
+        plus = entry.plus,
+        quality = item_quality.ORDINARY,
+        allow_uniques = false,
+        purpose = item_purpose.VAULT,
+        site = "monster signature gear " .. artefact.id,
+    })
+
+    return equip_generated(ctx, monster, rolled, slot,
+        origin, occurrence)
+end
+
+-- Some source monsters request a good ordinary item instead of a forced
+-- enchantment. Keep that quality roll in the item generator while the
+-- monster handler still chooses which kind enters the inventory.
+local function quality_item(ctx, monster, entry, slot, origin,
+    occurrence, depth)
+    local kind = catalog.get("items", entry.kind_id)
+
+    if slot == "body" and
+        not monster_armour.wears_body(ctx, monster, kind) then
+        error("monster quality item has wrong body slot " .. entry.kind_id)
+    end
+
+    local rolled = generation.roll(ctx, {
+        kind_id = entry.kind_id,
+        depth = depth,
+        quality = entry.generation_quality,
+        allow_uniques = false,
+        purpose = item_purpose.VAULT,
+        site = "monster quality gear " .. entry.kind_id,
+    })
+
+    return equip_generated(ctx, monster, rolled, slot,
+        origin, occurrence)
+end
+
 -- Ordinary gear keeps its existing quality rolls; named gear uses the
 -- explicit unique path while both create ordinary carried item entities.
 local function loadout_item(ctx, monster, entry, slot, origin,
@@ -172,6 +209,11 @@ local function loadout_item(ctx, monster, entry, slot, origin,
 
     if entry.unique_id then
         return signature_item(ctx, monster, entry, slot,
+            origin, occurrence, depth)
+    end
+
+    if entry.generation_quality then
+        return quality_item(ctx, monster, entry, slot,
             origin, occurrence, depth)
     end
 
