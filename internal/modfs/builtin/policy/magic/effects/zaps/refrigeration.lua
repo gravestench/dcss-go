@@ -61,7 +61,8 @@ function refrigeration.resolve(ctx, player, _, _, power)
             local ac = defense.armour(ctx, target, definition)
             local after_ac = math.max(0,
                 raw - ctx:random(streams.SPELL, ac + 1))
-            local amount = damage.elemental(after_ac, definition,
+            local amount = damage.monster_elemental(ctx, target,
+                after_ac,
                 resistances.COLD)
 
             local remaining = damage.apply(ctx, target, amount)

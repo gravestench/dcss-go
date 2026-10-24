@@ -14,6 +14,7 @@ local senses = require("policy.character.senses")
 local symbol = require("policy.combat.monster_spells.symbol_of_torment")
 local targets = require("policy.ai.targets")
 local target_kind = require("constants.target_kind")
+local gods = require("constants.gods")
 
 local test = {}
 local caster = 101
@@ -59,6 +60,10 @@ local function context()
 
         if id == component.HEALTH then
             return { current = state.health[entity] }
+        end
+
+        if id == component.RELIGION_WORSHIP and entity == player then
+            return { god_id = gods.NO_GOD }
         end
 
         if id == component.ACTOR then
@@ -215,7 +220,7 @@ function test.run()
 
     restore_services(original)
     original = install_services(scroll_state)
-    scroll.apply(scroll_ctx, player)
+    scroll.apply(scroll_ctx, player, { known = false })
 
     harness.truthy(scroll_state.health[player] < 100,
         "the shared scroll rule still torments its reader")

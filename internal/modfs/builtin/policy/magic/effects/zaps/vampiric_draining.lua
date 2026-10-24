@@ -1,6 +1,7 @@
 local component = require("constants.component")
 local spells = require("ids.spells")
 local damage = require("policy.magic.damage")
+local resistances = require("constants.resistance_ids")
 local health_policy = require("policy.combat.player_health")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
@@ -18,17 +19,6 @@ local function has_value(values, wanted)
     end
 
     return false
-end
-
--- Read a monster’s explicit negative-energy resistance before HP drain.
-local function negative_resistance(definition)
-    for _, entry in ipairs(definition.resistances or {}) do
-        if entry.id == "MR_RES_NEG" then
-            return entry.level
-        end
-    end
-
-    return 0
 end
 
 -- Exclude nonliving or harmless firewood targets before life transfer.
@@ -61,7 +51,8 @@ function vampiric_draining.can_target(ctx, player, spell)
             if health.current > 0 and distance <= reach and
                 position.level_id == source.level_id and
                 susceptible(ctx, target, definition) and
-                negative_resistance(definition) < 3 and
+                damage.monster_resistance(ctx, target,
+                    resistances.NEGATIVE_ENERGY) < 3 and
                 ctx:visible(source.level_id, source.x, source.y, reach,
                     position.x, position.y) and
                 ctx:projectile_clear(source.level_id, source.x, source.y,
@@ -118,14 +109,15 @@ function vampiric_draining.resolve(ctx, player, intent, spell, power)
 
     attack_conduct.report(ctx, target, definition)
 
-    if not susceptible(ctx, target, definition) or
-        negative_resistance(definition) >= 3 then
+    local negative = damage.monster_resistance(ctx, target,
+        resistances.NEGATIVE_ENERGY)
+
+    if not susceptible(ctx, target, definition) or negative >= 3 then
         ctx:emit("spell", "The " .. definition.name .. " is unaffected.")
         return
     end
 
-    local amount = resist_damage(roll_damage(ctx, power),
-        negative_resistance(definition))
+    local amount = resist_damage(roll_damage(ctx, power), negative)
     local drained = math.min(health.current, amount)
 
     if drained <= 0 then

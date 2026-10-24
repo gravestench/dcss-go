@@ -217,8 +217,8 @@ function summon_melee.attack(ctx, summon, target)
                 strike.flavour_id ~= "AF_CRUSH" and
                 strike.flavour_id ~= "AF_TRAMPLE" then
                 local cold = hd + ctx:random("spell", math.max(1, hd * 2))
-                dealt = dealt + magic_damage.elemental(cold,
-                    victim_def, "MR_RES_COLD")
+                dealt = dealt + magic_damage.monster_elemental(ctx,
+                    target, cold, "MR_RES_COLD")
             end
 
             if dealt > 0 then

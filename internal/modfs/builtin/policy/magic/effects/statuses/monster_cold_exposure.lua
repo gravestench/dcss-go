@@ -6,6 +6,7 @@ local roll = require("policy.combat.roll")
 local senses = require("policy.character.senses")
 local flags = require("constants.monster_flags")
 local resistances = require("constants.resistance_ids")
+local damage = require("policy.magic.damage")
 
 local exposure = {}
 
@@ -30,10 +31,9 @@ function exposure.apply(ctx, monster, definition, strength, stream)
         return
     end
 
-    for _, resistance in ipairs(definition.resistances or {}) do
-        if resistance.id == resistances.COLD and resistance.level > 0 then
-            return
-        end
+    if damage.monster_resistance(ctx, monster,
+        resistances.COLD) > 0 then
+        return
     end
 
     if ctx:random(stream, 2) ~= 0 then

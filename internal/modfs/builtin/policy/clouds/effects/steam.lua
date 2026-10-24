@@ -12,16 +12,8 @@ function steam.immune(ctx, actor)
             resistances.STEAM) > 0
     end
 
-    local definition = damage.monster(ctx, actor)
-
-    for _, resistance in ipairs(definition.resistances or {}) do
-        if resistance.id == resistances.STEAM and
-            resistance.level > 0 then
-            return true
-        end
-    end
-
-    return false
+    return damage.monster_resistance(ctx, actor,
+        resistances.STEAM) > 0
 end
 
 -- Apply the shared elemental path with steam resistance after its own immunity predicate.

@@ -38,7 +38,13 @@ function test.run()
     end
 
     -- Let danger inspect one destination cloud and one optional origin cloud.
-    function ctx:query()
+    function ctx:query(required)
+        -- Cloud entities are separate from the equipped-item query used
+        -- by live monster resistance; this scenario has no equipment.
+        if required and required[1] == component.EQUIPPED then
+            return {}
+        end
+
         return { 11, 12 }
     end
 

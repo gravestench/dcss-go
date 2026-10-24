@@ -37,7 +37,8 @@ function poison.immune(ctx, actor)
 
     local definition = catalog.get(categories.MONSTERS, state.kind_id)
 
-    return monster_poison.resistance(definition) > 0
+    return monster_poison.effective_resistance(ctx, actor,
+        definition) > 0
 end
 
 -- Use separate player and monster poison accumulation, retaining the cloud's saved attribution.

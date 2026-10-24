@@ -1,29 +1,18 @@
 -- Cloud immunity queries the live actor and the same monster definition used
 -- by elemental damage. Specialized kinds add their own non-elemental rules.
-local categories = require("constants.catalog")
 local component = require("constants.component")
-local catalog = require("policy.catalog")
+local damage = require("policy.magic.damage")
 
 local resistance = {}
 
--- Return zero for absent resistance entries so cloud immunity checks use a stable numeric level.
--- Example: an absent monster resistance entry contributes zero to a cloud immunity check.
+-- Cloud immunity must read the same live monster resistance as damage,
+-- including current gear and timed effects, before rolling exposure.
 function resistance.monster(ctx, actor, resistance_id)
-    local state = ctx:get(actor, component.ACTOR)
-
-    if not state then
+    if not ctx:get(actor, component.ACTOR) then
         return 0
     end
 
-    local definition = catalog.get(categories.MONSTERS, state.kind_id)
-
-    for _, entry in ipairs(definition.resistances or {}) do
-        if entry.id == resistance_id then
-            return entry.level
-        end
-    end
-
-    return 0
+    return damage.monster_resistance(ctx, actor, resistance_id)
 end
 
 -- Use the shared spell resistance calculation for player cloud damage.

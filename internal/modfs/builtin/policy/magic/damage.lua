@@ -23,6 +23,7 @@ local jewellery_capabilities = require("constants.jewellery_capabilities")
 local artefacts = require("policy.item_generation.artefacts.properties")
 local artefact_properties = require("ids.artefact_properties")
 local jiyva_defenses = require("policy.religion.jiyva.defenses")
+local monster_resistance = require("policy.combat.monster_resistance")
 
 local damage = {}
 
@@ -72,7 +73,8 @@ function damage.monster_resistance(ctx, target, resistance_id)
         error("resistance target is not a monster")
     end
 
-    return resistance_level(definition, resistance_id)
+    return monster_resistance.level(ctx, target, definition,
+        resistance_id)
 end
 
 -- Source: fight.cc:resist_adjust_damage for a wholly resistible flavour.
@@ -110,15 +112,8 @@ function damage.monster_elemental(ctx, target, raw, resistance_id)
         error("elemental damage target is not a monster")
     end
 
-    local resistance = resistance_level(definition, resistance_id)
-
-    if resistance_id == resistances.FIRE then
-        local vulnerability = ctx:get(target, "zap.fire_vulnerability")
-
-        if vulnerability and vulnerability.remaining_aut > 0 then
-            resistance = math.max(-3, resistance - 1)
-        end
-    end
+    local resistance = monster_resistance.level(ctx, target,
+        definition, resistance_id)
 
     return elemental(raw, resistance, resistance_id)
 end
@@ -126,6 +121,8 @@ end
 local jewellery_resistance = {
     [resistances.FIRE] = jewellery_capabilities.FIRE_RESISTANCE,
     [resistances.COLD] = jewellery_capabilities.COLD_RESISTANCE,
+    [resistances.ELECTRICITY] =
+        jewellery_capabilities.ELECTRICITY_RESISTANCE,
     [resistances.ACID] = jewellery_capabilities.CORROSION_RESISTANCE,
     [resistances.NEGATIVE_ENERGY] =
         jewellery_capabilities.NEGATIVE_ENERGY_RESISTANCE,

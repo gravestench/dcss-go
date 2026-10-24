@@ -17,6 +17,7 @@ local player_slow = require("policy.character.slow")
 local monster_poison = require("policy.combat.monster_poison")
 local monster_slow = require("policy.combat.monster_slow")
 local monster_profile = require("policy.combat.monster_profile")
+local damage = require("policy.magic.damage")
 
 local miasma = {}
 
@@ -47,12 +48,10 @@ local function player_immune(ctx, actor)
 end
 
 -- Miasma immunity can come from resistance or nonliving holiness.
-local function monster_immune(definition)
-    for _, resistance in ipairs(definition.resistances or {}) do
-        if resistance.id == resistances.MIASMA and
-            resistance.level > 0 then
-            return true
-        end
+local function monster_immune(ctx, actor, definition)
+    if damage.monster_resistance(ctx, actor,
+        resistances.MIASMA) > 0 then
+        return true
     end
 
     for _, kind in ipairs(definition.holiness or {}) do
@@ -72,8 +71,9 @@ function miasma.immune(ctx, actor)
 
     local state = ctx:get(actor, component.ACTOR)
 
-    return state and monster_immune(monster_profile.definition(ctx,
-        actor, catalog.get(categories.MONSTERS, state.kind_id))) or false
+    return state and monster_immune(ctx, actor,
+        monster_profile.definition(ctx, actor,
+            catalog.get(categories.MONSTERS, state.kind_id))) or false
 end
 
 -- Player miasma adds poison unless resistance is complete; monsters receive one poison level and possible slow.

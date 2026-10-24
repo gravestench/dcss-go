@@ -31,7 +31,8 @@ function agony.amount(ctx, _, defender)
     local actor = ctx:get(defender, component.ACTOR)
     local definition = catalog.get("monsters", actor.kind_id)
 
-    return torment.monster_loss(definition, health.current)
+    return torment.monster_loss(ctx, defender, definition,
+        health.current)
 end
 
 -- Convert current HP to nonlethal Torment loss, then use shared monster spell damage credit.

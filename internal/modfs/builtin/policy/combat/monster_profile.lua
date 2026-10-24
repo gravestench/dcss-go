@@ -125,8 +125,6 @@ function profile.definition(ctx, entity, definition)
         definition = generated
     end
 
-    definition = resistance.project(ctx, entity, definition)
-
     local ghost = ctx:get(entity, component.PLAYER_ILLUSION)
 
     local weapon = ctx:get(entity, constructs.DANCING_WEAPON)
@@ -153,7 +151,7 @@ function profile.definition(ctx, entity, definition)
     end
 
     if not ghost then
-        return definition
+        return resistance.project(ctx, entity, definition)
     end
 
     local result = {}
@@ -191,7 +189,9 @@ function profile.definition(ctx, entity, definition)
         }
     end
 
-    return result
+    -- Ghost traits replace the catalog profile before timed resistance is
+    -- projected, so the shared resistance owner retains the correct base.
+    return resistance.project(ctx, entity, result)
 end
 
 return profile

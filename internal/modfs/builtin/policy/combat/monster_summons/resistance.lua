@@ -43,6 +43,9 @@ function resistance.project(ctx, entity, definition)
 
     table.sort(ordered)
     result.resistance_projected_for = entity
+    -- Live equipment is added before ENCH_RESISTANCE and the final cap in
+    -- source DCSS. Retain the pre-enchantment levels for that owner.
+    result.resistance_base = definition.resistances
     result.resistances = {}
 
     for _, id in ipairs(ordered) do

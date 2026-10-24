@@ -79,7 +79,8 @@ local function poison_resisted(ctx, target, raw, profile)
             error("poison beam target is not an actor")
         end
 
-        level = monster_poison.resistance(definition)
+        level = monster_poison.effective_resistance(ctx, target,
+            definition)
     end
 
     local fraction = resistible_fraction[profile.flavour] or 100

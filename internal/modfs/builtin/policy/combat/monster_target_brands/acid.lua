@@ -8,22 +8,11 @@ local roll = require("policy.combat.roll")
 
 local acid = {}
 
--- Acid immunity is the third resistance pip. A one-point probe would also
--- round to zero at lower resistance, so inspect the level itself.
-local function immune(definition)
-    for _, entry in ipairs(definition.resistances or {}) do
-        if entry.id == resistances.ACID then
-            return entry.level >= 3
-        end
-    end
-
-    return false
-end
-
 -- Full acid immunity prevents both splash damage and corrosion. Below that
 -- threshold the independent 2d4 splash and 2/3 corrosion roll still run.
 function acid.apply(ctx, hit, brands)
-    if immune(hit.definition) then
+    if damage.monster_resistance(ctx, hit.defender,
+        resistances.ACID) >= 3 then
         return
     end
 

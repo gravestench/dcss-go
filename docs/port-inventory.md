@@ -105,8 +105,12 @@ shield reflection. Player Reflection shields now share the amulet's block
 and return path. All seven generated player shield egos have their source
 resistance, +3 Protection AC, or reflection effect while worn; a melded
 or removed shield loses its effect. Monster shield reflection already
-runs; the remaining monster armour resistance effects belong to the
-monster equipment slice. Further spell families remain for their later
+runs. Monster fire, cold, electric, poison, acid, steam, and negative
+energy resistance now reads live equipped armour, jewellery, staves,
+and artefacts through one Lua owner. Spells, clouds, poison, and drain
+consume that result, including source item-use limits and poison's
+one-pip equipment cap. Worn Cigotuvi's Embrace also grants monster
+miasma immunity. Further spell families remain for their later
 combat domains.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,

@@ -21,7 +21,8 @@ local function resolve(ctx, player, intent, _, power)
 
     local sides = 3 + math.floor(math.min(power, 25) / 3)
     local rolled = 1 + ctx:random("spell", sides)
-    local dealt = damage.elemental(rolled, definition, "MR_RES_COLD")
+    local dealt = damage.monster_elemental(ctx, monster, rolled,
+        "MR_RES_COLD")
 
     damage.apply(ctx, monster, dealt)
 

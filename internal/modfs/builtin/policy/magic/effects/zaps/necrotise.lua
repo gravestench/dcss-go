@@ -3,6 +3,7 @@ local zap_ids = require("policy.magic.effects.zaps.ids")
 local spells = require("ids.spells")
 local monsters = require("ids.monsters")
 local damage = require("policy.magic.damage")
+local resistances = require("constants.resistance_ids")
 local death_hooks = require("policy.combat.death_hooks")
 local necromancy = require("policy.magic.effects.summons.necromancy")
 local range = require("policy.magic.range")
@@ -23,22 +24,6 @@ local function has_value(values, wanted)
     end
 
     return false
-end
-
--- Give nonliving and nonplant targets full negative-energy resistance.
-local function resistance(definition)
-    if not has_value(definition.holiness, "MH_NATURAL") and
-        not has_value(definition.holiness, "MH_PLANT") then
-        return 3
-    end
-
-    for _, entry in ipairs(definition.resistances or {}) do
-        if entry.id == "MR_RES_NEG" then
-            return entry.level
-        end
-    end
-
-    return 0
 end
 
 -- Reject summons and unskeletonizable bodies before saving a death mark.
@@ -96,7 +81,8 @@ function necrotise.resolve(ctx, player, intent, spell, power)
 
     attack_conduct.report(ctx, target, definition)
 
-    local negative = resistance(definition)
+    local negative = damage.monster_resistance(ctx, target,
+        resistances.NEGATIVE_ENERGY)
 
     if health.current <= 0 or negative >= 3 then
         return

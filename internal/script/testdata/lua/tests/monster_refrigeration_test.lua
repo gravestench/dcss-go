@@ -73,7 +73,14 @@ local function context()
     end
 
     -- Source adjacency sees the caster as well as both living victims.
-    function ctx:query()
+    function ctx:query(required)
+        for _, id in ipairs(required or {}) do
+            if id == component.EQUIPPED or
+                id == component.CARRIED_BY then
+                return {}
+            end
+        end
+
         return { caster, foe, second }
     end
 

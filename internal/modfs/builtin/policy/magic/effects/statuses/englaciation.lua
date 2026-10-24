@@ -3,6 +3,8 @@ local component = require("constants.component")
 local catalog = require("policy.catalog")
 local common = require("policy.magic.effects.statuses.common")
 local monster_stats = require("policy.combat.monster_stats")
+local damage = require("policy.magic.damage")
+local resistances = require("constants.resistance_ids")
 
 local englaciation = {}
 
@@ -17,23 +19,12 @@ local function has(values, wanted)
     return false
 end
 
--- Example: a cold-immune monster is skipped while a susceptible one receives
--- saved Projectile Slow and a reduced actor speed.
-local function cold_resistance(definition)
-    for _, resistance in ipairs(definition.resistances or {}) do
-        if resistance.id == "MR_RES_COLD" then
-            return resistance.level
-        end
-    end
-
-    return 0
-end
-
 -- Englaciation slows eligible monsters by storing projectile-slow state and adjusting actor speed.
 -- Reapplication extends an existing slow; the first application updates both
 -- speed and duration with spell-stream random rounding.
 local function apply(ctx, monster, definition, power)
-    if cold_resistance(definition) > 0 or
+    if damage.monster_resistance(ctx, monster,
+        resistances.COLD) > 0 or
         has(definition.flags, "M_STATIONARY") then
         ctx:emit("spell", "The " .. definition.name .. " is unaffected.")
         return

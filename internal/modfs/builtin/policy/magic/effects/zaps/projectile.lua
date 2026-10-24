@@ -204,10 +204,11 @@ local function armour(ctx, spec, target, definition)
 end
 
 -- Keep thirty percent of Poison Arrow damage outside poison resistance.
-local function poison_arrow_damage(raw, definition)
+local function poison_arrow_damage(ctx, target, raw, definition)
     -- fight.cc:resist_adjust_damage: 70% of a poison arrow is resistible.
     -- Poison is a boolean resistance, so monster rPois uses 2 + r*r.
-    local resistance = monster_poison.resistance(definition)
+    local resistance = monster_poison.effective_resistance(ctx,
+        target, definition)
     local resistible = math.floor(raw * 70 / 100)
     local solid = raw - resistible
 
@@ -334,7 +335,8 @@ local function resolve(ctx, player, intent, spell, spec, power,
             local poison_resistance
 
             if spec.poison_arrow then
-                amount, poison_resistance = poison_arrow_damage(amount, definition)
+                amount, poison_resistance = poison_arrow_damage(ctx,
+                    target, amount, definition)
             elseif spec.negative_energy then
                 amount = beam_damage.resisted(ctx, target, amount, {
                     flavour = flavours.BEAM_NEG,

@@ -31,8 +31,8 @@ local function in_area(ctx, origin, position)
 end
 
 -- Ask each actor's existing owner for its Torment loss. A monster's kind
--- definition supplies innate resistance; the player's live state supplies
--- equipment, form, mutation, and other current protections.
+-- definition supplies innate resistance, while both actors' live state
+-- supplies equipment and other current protections.
 local function loss(ctx, entity, health)
     if ctx:has(entity, component.PLAYER) then
         return player_resistance.torment_loss(ctx, entity,
@@ -42,7 +42,8 @@ local function loss(ctx, entity, health)
     local actor = ctx:get(entity, component.ACTOR)
     local definition = catalog.get(categories.MONSTERS, actor.kind_id)
 
-    return monster_torment.monster_loss(definition, health.current),
+    return monster_torment.monster_loss(ctx, entity, definition,
+        health.current),
         definition
 end
 

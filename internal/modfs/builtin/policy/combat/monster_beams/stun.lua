@@ -18,17 +18,6 @@ local function has_flag(definition, wanted)
     return false
 end
 
--- An explicit electricity resistance level changes stun eligibility.
-local function electric_resistance(definition)
-    for _, entry in ipairs(definition.resistances or {}) do
-        if entry.id == resistances.ELECTRICITY then
-            return entry.level
-        end
-    end
-
-    return 0
-end
-
 -- Store one baseline-delay stun using the defender's component type.
 local function paralyse(ctx, defender, component_id)
     ctx:add(defender, component_id, {
@@ -71,7 +60,8 @@ function stun.after_hit(ctx, _, defender)
 
     local definition = catalog.get("monsters", actor.kind_id)
 
-    if electric_resistance(definition) > 0 or
+    if magic_damage.monster_resistance(ctx, defender,
+        resistances.ELECTRICITY) > 0 or
         has_flag(definition, monster_flags.STASIS) then
         return
     end

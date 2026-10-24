@@ -3,22 +3,12 @@ local component = require("constants.component")
 local catalog = require("policy.catalog")
 local confusion = require("policy.magic.effects.statuses.confusing_touch")
 local statuses = require("policy.magic.effects.statuses.player")
+local poison = require("policy.combat.monster_poison")
 
 local intoxication = {}
 
--- Read the catalog's explicit poison level for intoxication's immunity and partial-resist rolls.
-local function poison_resistance(definition)
-    for _, resistance in ipairs(definition.resistances or {}) do
-        if resistance.id == "MR_RES_POISON" then
-            return resistance.level
-        end
-    end
-
-    return 0
-end
-
 -- Only sapient monsters below full poison immunity can be confused by this spell.
-local function susceptible(definition)
+local function susceptible(ctx, monster, definition)
     local intelligence = definition.intelligence_id
 
     if intelligence ~= "I_HUMAN" and intelligence ~= "I_NORMAL" and
@@ -26,7 +16,7 @@ local function susceptible(definition)
         return false
     end
 
-    return poison_resistance(definition) < 3
+    return poison.effective_resistance(ctx, monster, definition) < 3
 end
 
 -- Snapshot visible susceptible monsters so cast eligibility and resolution see the same target class.
@@ -47,7 +37,7 @@ local function visible_targets(ctx, player)
                 local actor = ctx:get(target, component.ACTOR)
                 local definition = catalog.get("monsters", actor.kind_id)
 
-                if susceptible(definition) then
+                if susceptible(ctx, target, definition) then
                     targets[#targets + 1] = {
                         entity = target,
                         definition = definition,
@@ -72,7 +62,8 @@ function intoxication.cast(ctx, player, power)
     local count = 0
 
     for _, target in ipairs(visible_targets(ctx, player)) do
-        local resistance = poison_resistance(target.definition)
+        local resistance = poison.effective_resistance(ctx,
+            target.entity, target.definition)
         local resisted = resistance >= 1 and ctx:random("spell", 3) < 2
         local chance = 40 + math.floor(power / 3)
 

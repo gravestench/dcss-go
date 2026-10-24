@@ -32,7 +32,8 @@ function poisonous_vapours.prepare(ctx, player, spell, dx, dy)
         local actor = ctx:get(monster, component.ACTOR)
         local definition = catalog.get("monsters", actor.kind_id)
 
-        if poison.resistance(definition) > 0 then
+        if poison.effective_resistance(ctx, monster,
+            definition) > 0 then
             return "That creature cannot be affected by poisonous vapours!"
         end
     end
@@ -50,7 +51,8 @@ function poisonous_vapours.resolve(ctx, player, intent, _, power)
     local actor = ctx:get(monster, component.ACTOR)
     local definition = catalog.get("monsters", actor.kind_id)
 
-    if poison.resistance(definition) > 0 then
+    if poison.effective_resistance(ctx, monster,
+        definition) > 0 then
         ctx:emit("spell", "The spell fizzles.")
         return
     end

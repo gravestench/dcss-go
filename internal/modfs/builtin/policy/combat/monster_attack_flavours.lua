@@ -116,13 +116,13 @@ local function acid(ctx, hit)
         return true
     end
 
-    for _, entry in ipairs(hit.defender_definition.resistances or {}) do
-        if entry.id == resistances.ACID and entry.level >= 3 then
-            return false
-        end
+    local damage = require("policy.magic.damage")
+
+    if damage.monster_resistance(ctx, hit.defender,
+        resistances.ACID) >= 3 then
+        return false
     end
 
-    local damage = require("policy.magic.damage")
     local raw = 2 + roll.melee(ctx, 4) + roll.melee(ctx, 4)
     local amount = damage.monster_elemental(ctx, hit.defender,
         raw, resistances.ACID)

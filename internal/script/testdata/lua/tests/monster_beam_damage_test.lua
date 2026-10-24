@@ -122,6 +122,11 @@ function test.run()
         return 999
     end
 
+    -- Beam targets in this fixture have no equipped item entities.
+    function ctx:query()
+        return {}
+    end
+
     -- One defender table below supplies distinct holiness and resistances for
     -- each beam flavor, including immunity and vulnerability cases.
     harness.equal(damage.resisted(ctx, 101, 20, fire), 4,

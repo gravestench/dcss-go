@@ -9,6 +9,7 @@ local capabilities = {
     DEXTERITY = "dexterity",
     FIRE_RESISTANCE = "fire_resistance",
     COLD_RESISTANCE = "cold_resistance",
+    ELECTRICITY_RESISTANCE = "electricity_resistance",
     POISON_RESISTANCE = "poison_resistance",
     CORROSION_RESISTANCE = "corrosion_resistance",
     NEGATIVE_ENERGY_RESISTANCE = "negative_energy_resistance",

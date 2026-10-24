@@ -3,41 +3,20 @@ local roll = require("policy.combat.roll")
 local monster_health = require("policy.combat.monster_health")
 local component = require("constants.component")
 local monster_profile = require("policy.combat.monster_profile")
-local hex_status = require("policy.combat.monster_hexes.status")
+local resistance_ids = require("constants.resistance_ids")
 local causes = require("constants.damage_causes")
 local senses = require("policy.character.senses")
+local monster_resistance = require("policy.combat.monster_resistance")
 
 local poison = {}
 
--- Treat undead and nonliving monsters as poison immune unless the catalog gives an explicit level.
-function poison.resistance(definition)
-    for _, entry in ipairs(definition.resistances or {}) do
-        if entry.id == "MR_RES_POISON" then
-            return entry.level
-        end
-    end
-
-    for _, id in ipairs(definition.holiness or {}) do
-        if id == "MH_UNDEAD" or id == "MH_NONLIVING" then
-            return 3
-        end
-    end
-
-    return 0
-end
-
--- Virulence changes effective resistance only while its saved status is
--- active. Full poison immunity remains absolute, as in source DCSS.
+-- Project the live profile before the shared owner folds in worn gear and
+-- Virulence; poison damage and applications then read the same level.
 function poison.effective_resistance(ctx, monster, definition)
     definition = monster_profile.definition(ctx, monster, definition)
 
-    local value = poison.resistance(definition)
-
-    if value < 3 and hex_status.poison_vulnerable(ctx, monster) then
-        return value - 1
-    end
-
-    return value
+    return monster_resistance.level(ctx, monster, definition,
+        resistance_ids.POISON)
 end
 
 -- Scale poison duration by actor speed and degree before asymmetric random fuzzing.

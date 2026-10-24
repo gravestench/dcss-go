@@ -56,7 +56,8 @@ local gas_spec = {
 
 -- A damaging hit may add poison; complete poison resistance and the one-in-three miss gate stop it.
 function breath.poison_after_hit(ctx, player, target, definition, damage)
-    if damage <= 0 or poison.resistance(definition) >= 3 or
+    if damage <= 0 or poison.effective_resistance(ctx, target,
+        definition) >= 3 or
         ctx:random("spell", 3) == 0 then
         return
     end

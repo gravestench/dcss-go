@@ -16,7 +16,8 @@ function virulence.viable(ctx, _, defender)
     local actor = ctx:get(defender, component.ACTOR)
     local definition = catalog.get("monsters", actor.kind_id)
 
-    return monster_poison.resistance(definition) < 3
+    return monster_poison.effective_resistance(ctx, defender,
+        definition) < 3
 end
 
 -- Example: virulence.apply(ctx, nil, defender) with player with zero RNG -> 120 aut poison vulnerability

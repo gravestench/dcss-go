@@ -9,6 +9,7 @@ local roll = require("policy.combat.roll")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
 local monster_stats = require("policy.combat.monster_stats")
+local resistances = require("constants.resistance_ids")
 
 local stasis = {}
 
@@ -90,9 +91,14 @@ local function can_hibernate(ctx, target, definition)
     local current = state(ctx, target)
     local holiness = definition.holiness
 
+    -- Player status initialization imports this module before combat
+    -- damage, so resolve the live resistance owner only at use time.
+    local damage = require("policy.magic.damage")
+
     if has(holiness, "MH_UNDEAD") or has(holiness, "MH_NONLIVING") or
         has(holiness, "MH_PLANT") or
-        resistance(definition, "MR_RES_COLD") > 0 then
+        damage.monster_resistance(ctx, target,
+            resistances.COLD) > 0 then
         return false
     end
 

@@ -49,7 +49,8 @@ local function emit_poison(ctx, player, power, aut, on_cast)
                     attack_conduct.report(ctx, monster, definition)
                 end
 
-                if poison.resistance(definition) < 1 then
+                if poison.effective_resistance(ctx, monster,
+                    definition) < 1 then
                     local raw = (1 + ctx:random("spell", 1 +
                         math.floor(power / 20))) * pulses
                     local amount = damage.monster_elemental(ctx, monster,

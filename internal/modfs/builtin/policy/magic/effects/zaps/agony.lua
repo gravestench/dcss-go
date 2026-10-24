@@ -81,7 +81,8 @@ function agony.resolve(ctx, player, intent, spell, power)
 
     -- spl-goditem.cc:torment_cell cuts current HP by 50%-5% per rN,
     -- less one point, so Agony itself never kills the target.
-    local amount = torment.monster_loss(definition, health.current)
+    local amount = torment.monster_loss(ctx, target, definition,
+        health.current)
 
     damage.apply(ctx, target, amount)
     ctx:emit("spell", "The " .. definition.name .. " convulses!")

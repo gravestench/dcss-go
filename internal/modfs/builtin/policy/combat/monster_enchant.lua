@@ -142,17 +142,6 @@ local function save(ctx, monster, value)
     end
 end
 
--- Missing catalog resistance means no acid protection for corrosion checks.
-local function resistance(definition, id)
-    for _, entry in ipairs(definition.resistances or {}) do
-        if entry.id == id then
-            return entry.level
-        end
-    end
-
-    return 0
-end
-
 -- Species flags gate permanent immunities before chance rolls consume combat RNG.
 local function flag(definition, id)
     for _, value in ipairs(definition.flags or {}) do
@@ -236,7 +225,10 @@ end
 
 -- monster.cc:acid_corrode gives a 2/3 application chance below rAcid 3.
 function enchant.corrode(ctx, monster, definition)
-    if resistance(definition, resistance_ids.ACID) >= 3 or
+    local damage = require("policy.magic.damage")
+
+    if damage.monster_resistance(ctx, monster,
+        resistance_ids.ACID) >= 3 or
         roll.melee(ctx, 3) == 0 then
         return false
     end
@@ -251,11 +243,11 @@ function enchant.corrode_equipment(ctx, monster, definition, source)
         return false
     end
 
-    -- Equipment imports this owner for AC, so load it only at the live
-    -- resistance check after both modules have registered their methods.
-    local equipment = require("policy.combat.equipment")
-    local protected = resistance(definition, resistance_ids.ACID) > 0 or
-        equipment.monster_res_corr(ctx, monster)
+    -- Damage imports equipment through the monster resistance owner, so
+    -- defer it until the hit resolves to avoid a module load cycle.
+    local damage = require("policy.magic.damage")
+    local protected = damage.monster_resistance(ctx, monster,
+        resistance_ids.ACID) > 0
 
     if protected and
         roll.melee(ctx, 2) == 0 then

@@ -1,6 +1,8 @@
 -- Source: spl-goditem.cc:torment_player and torment_cell.
 local holiness = require("constants.monster_holiness")
 local resistances = require("constants.resistance_ids")
+local monster_resistance = require("policy.combat.monster_resistance")
+local monster_profile = require("policy.combat.monster_profile")
 
 local torment = {}
 
@@ -33,7 +35,7 @@ function torment.susceptible(definition)
 end
 
 -- Torment cannot kill directly; susceptible monsters lose a resistance-adjusted fraction of current HP.
-function torment.monster_loss(definition, current_hp)
+function torment.monster_loss(ctx, monster, definition, current_hp)
     if not torment.susceptible(definition) then
         return 0
     end
@@ -42,8 +44,11 @@ function torment.monster_loss(definition, current_hp)
 
     if has_holiness(definition, holiness.NATURAL) or
         has_holiness(definition, holiness.PLANT) then
+        local profile = monster_profile.definition(ctx, monster, definition)
+
         negative = math.min(3,
-            resistance(definition, resistances.NEGATIVE_ENERGY))
+            monster_resistance.level(ctx, monster, profile,
+                resistances.NEGATIVE_ENERGY))
     end
 
     return math.max(0,

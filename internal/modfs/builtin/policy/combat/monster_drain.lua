@@ -1,105 +1,21 @@
 -- Source: monster.cc:monster::drain and mon-ench.cc:ENCH_DRAINED.
 local component = require("constants.component")
 local resistance_ids = require("constants.resistance_ids")
-local holiness_ids = require("constants.monster_holiness")
-local armour_egos = require("constants.armour_egos")
-local armour_flags = require("constants.armour_flags")
-local item_use = require("constants.monster_item_use")
-local item_ids = require("ids.items")
-local object_classes = require("ids.object_classes")
-local equipment = require("policy.combat.equipment")
 local monster_health = require("policy.combat.monster_health")
 local catalog = require("policy.catalog")
-local jewellery_effects = require("policy.inventory.jewellery_effects")
-local jewellery_capabilities = require("constants.jewellery_capabilities")
 local senses = require("policy.character.senses")
 local monster_profile = require("policy.combat.monster_profile")
+local monster_resistance = require("policy.combat.monster_resistance")
 
 local drain = {}
 
--- Fold intrinsic armour's negative-energy flags into the drain resistance score.
-local function armour_resistance(definition)
-    local source = definition.armour and definition.armour.flags
-    local flags = type(source) == "table" and source or {}
-    local value = 0
-
-    for _, flag in ipairs(flags) do
-        if flag.id == armour_flags.RES_NEGATIVE_ENERGY then
-            value = value + flag.level
-        end
-    end
-
-    return value
-end
-
--- Only monsters allowed to use gear receive body, shield, jewellery, or
--- staff protection against negative energy.
-local function equipped_resistance(ctx, monster, definition)
-    if definition.item_use_id ~= item_use.STARTING_EQUIPMENT and
-        definition.item_use_id ~= item_use.WEAPONS_ARMOUR then
-        return 0
-    end
-
-    local value = 0
-    local worn = equipment.worn(ctx, monster, {
-        body = true,
-        shield = true,
-        jewellery = true,
-        weapon = true,
-    })
-
-    for slot, entry in pairs(worn) do
-        local item = entry.item
-        local kind = entry.definition
-
-        if kind.class == object_classes.OBJ_ARMOUR and
-            (slot == "body" or slot == "shield") then
-            value = value + armour_resistance(kind)
-
-            if entry.ego == armour_egos.POSITIVE_ENERGY then
-                value = value + 1
-            end
-        elseif slot == "jewellery" and
-            kind.jewellery then
-            value = value + jewellery_effects.value(item, kind,
-                jewellery_capabilities.NEGATIVE_ENERGY_RESISTANCE)
-        elseif slot == "weapon" and
-            item.kind_id == item_ids.STAFF_DEATH then
-            value = value + 1
-        end
-    end
-
-    return value
-end
-
--- Nonliving holiness is fully immune; living resistance combines intrinsic
--- pips with permitted equipment and caps at three.
+-- Negative-energy drain uses the same live body, shield, jewellery, staff,
+-- and artefact calculation as every other monster resistance consumer.
 function drain.resistance(ctx, monster, definition)
     definition = monster_profile.definition(ctx, monster, definition)
 
-    local types = definition.holiness or {}
-    local living = #types == 0
-
-    for _, holiness in ipairs(types) do
-        if holiness == holiness_ids.NATURAL or
-            holiness == holiness_ids.PLANT then
-            living = true
-            break
-        end
-    end
-
-    if not living then
-        return 3
-    end
-
-    for _, entry in ipairs(definition.resistances or {}) do
-        if entry.id == resistance_ids.NEGATIVE_ENERGY then
-            return math.min(3, entry.level +
-                equipped_resistance(ctx, monster, definition))
-        end
-    end
-
-    return math.min(3, equipped_resistance(ctx, monster, definition))
+    return monster_resistance.level(ctx, monster, definition,
+        resistance_ids.NEGATIVE_ENERGY)
 end
 
 -- Monster drain is stored as a timed component after negative-energy resistance is checked.

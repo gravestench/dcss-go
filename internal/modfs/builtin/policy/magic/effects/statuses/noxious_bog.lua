@@ -182,7 +182,8 @@ function bog.tick(ctx, actor, aut)
         return
     end
 
-    local resistance = poison.resistance(definition)
+    local resistance = poison.effective_resistance(ctx, actor,
+        definition)
     local amount = math.floor(adjusted(roll_damage(ctx), resistance) *
         math.max(1, aut) / time.AUT_PER_TURN)
 

@@ -68,12 +68,13 @@ local function roll_damage(ctx, power)
 end
 
 -- Leave sixty percent of ice damage outside cold resistance per the source rule.
-local function cold_damage(raw, definition)
+local function cold_damage(ctx, target, raw)
     -- fight.cc:BEAM_ICE leaves 60% irresistible to cold resistance.
     local resistible = math.floor(raw * 40 / 100)
 
     return raw - resistible +
-        damage.elemental(resistible, definition, "MR_RES_COLD")
+        damage.monster_elemental(ctx, target, resistible,
+            "MR_RES_COLD")
 end
 
 -- Example: resolve(ctx, player, nil, spell, 60) damages monsters in the ring
@@ -99,7 +100,7 @@ function hailstorm.resolve(ctx, player, _, spell, power)
                 local ac = defense.armour(ctx, target, definition)
                 local raw = roll_damage(ctx, power)
                 local after_ac = math.max(0, raw - ctx:random("spell", ac + 1))
-                local amount = cold_damage(after_ac, definition)
+                local amount = cold_damage(ctx, target, after_ac)
 
                 damage.apply(ctx, target, amount)
                 ctx:emit("spell", "The hail pelts the " .. definition.name .. ".")

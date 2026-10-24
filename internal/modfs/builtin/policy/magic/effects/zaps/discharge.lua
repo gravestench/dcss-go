@@ -1,4 +1,5 @@
 local component = require("constants.component")
+local resistances = require("constants.resistance_ids")
 local spells = require("ids.spells")
 local damage = require("policy.magic.damage")
 local player_health = require("policy.combat.player_health")
@@ -59,17 +60,6 @@ local function select(ctx, found, count)
     return chosen
 end
 
--- Read explicit electric resistance before applying arc damage.
-local function resistance(definition)
-    for _, entry in ipairs(definition.resistances or {}) do
-        if entry.id == "MR_RES_ELEC" then
-            return entry.level
-        end
-    end
-
-    return 0
-end
-
 -- Skip dead targets and return total arc damage while remaining depth bounds propagation.
 local function arc(ctx, player, target, power, remaining)
     local health = ctx:get(target, component.HEALTH)
@@ -95,7 +85,8 @@ local function arc(ctx, player, target, power, remaining)
 
         -- spl-damage.cc:_discharge_monsters does not hit or propagate
         -- through any monster with positive rElec.
-        if resistance(definition) > 0 then
+        if damage.monster_resistance(ctx, target,
+            resistances.ELECTRICITY) > 0 then
             return 0
         end
 

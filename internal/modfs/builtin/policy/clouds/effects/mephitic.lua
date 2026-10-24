@@ -41,7 +41,7 @@ function mephitic.immune(ctx, target)
 
     local actor = ctx:get(target, component.ACTOR)
 
-    return not actor or poison.resistance(
+    return not actor or poison.effective_resistance(ctx, target,
         catalog.get(categories.MONSTERS, actor.kind_id)) > 0
 end
 
