@@ -8,6 +8,7 @@ local health = require("policy.combat.player_health")
 local avatar = require("policy.religion.wrath.avatar")
 local effects = require("policy.combat.monster_spells")
 local jobs = require("ids.jobs")
+local makhleb = require("policy.religion.wrath.makhleb")
 local monsters = require("ids.monsters")
 local species = require("ids.species")
 local spells = require("ids.spells")
@@ -272,6 +273,108 @@ local function lasting_ball_lightning(ctx)
     harness.truthy(balls > 0, "god spell placed no ball lightning")
 end
 
+-- Exercise every source destruction choice through its real registered
+-- effect. This catches missing zap profiles and effects in any XL tier,
+-- while the pinned card draws keep source selection deterministic.
+local function makhleb_destruction_pool(ctx)
+    local tiers = {
+        {
+            level = 1,
+            spells = {
+                spells.SPELL_THROW_FLAME,
+                spells.SPELL_PAIN,
+                spells.SPELL_STONE_ARROW,
+                spells.SPELL_SHOCK,
+                spells.SPELL_SPIT_ACID,
+            },
+        },
+        {
+            level = 14,
+            spells = {
+                spells.SPELL_BOLT_OF_FIRE,
+                spells.SPELL_FIREBALL,
+                spells.SPELL_LIGHTNING_BOLT,
+                spells.SPELL_STICKY_FLAME,
+                spells.SPELL_IRON_SHOT,
+                spells.SPELL_BOLT_OF_DRAINING,
+                spells.SPELL_ORB_OF_ELECTRICITY,
+            },
+        },
+        {
+            level = 27,
+            spells = {
+                spells.SPELL_FIREBALL,
+                spells.SPELL_LEHUDIBS_CRYSTAL_SPEAR,
+                spells.SPELL_ORB_OF_ELECTRICITY,
+                spells.SPELL_FLASH_FREEZE,
+                spells.SPELL_GHOSTLY_FIREBALL,
+            },
+        },
+    }
+    local selected = nil
+    local original = avatar.cast
+    local next_x = 1
+
+    avatar.cast = function(world, player, god_id, spell_id)
+        selected = spell_id
+        return original(world, player, god_id, spell_id)
+    end
+
+    local okay, message = pcall(function()
+        for _, tier in ipairs(tiers) do
+            for index, spell_id in ipairs(tier.spells) do
+                local player = player_at(ctx, next_x, tier.level)
+                local draws = { 0 }
+
+                if tier.level == 27 then
+                    draws[#draws + 1] = 1
+                end
+
+                draws[#draws + 1] = index - 1
+                local owner = with_draws(fixture.context(ctx, player),
+                    draws)
+
+                selected = nil
+                harness.truthy(makhleb.apply(owner, player))
+                harness.equal(selected, spell_id)
+                harness.equal(owner:draws_used(), #draws)
+                next_x = next_x + 2
+            end
+        end
+    end)
+
+    avatar.cast = original
+    harness.truthy(okay, tostring(message))
+end
+
+-- Shock is chosen by the low-XL pool and credits the god shadow as the
+-- attacker. The medium pool's Sticky Flame must retain that attribution
+-- after the shadow leaves the player's cell.
+local function makhleb_spell_sources(ctx)
+    local shock_target = player_at(ctx, 80, 1)
+    local shock_owner = with_draws(fixture.context(ctx, shock_target),
+        { 0, 3 })
+    local shock_source = cast_and_source(ctx, shock_owner,
+        shock_target, makhleb.apply)
+
+    harness.equal(shock_source.god_id, gods.MAKHLEB)
+    harness.equal(shock_source.name, "the fury of Makhleb")
+
+    local flame_target = player_at(ctx, 82, 14)
+    local flame_owner = with_draws(fixture.context(ctx, flame_target),
+        { 0, 3 })
+
+    harness.truthy(makhleb.apply(flame_owner, flame_target))
+
+    local flame = ctx:get(flame_target, component.STICKY_FLAME)
+
+    harness.truthy(flame, "Makhleb's Sticky Flame did not ignite")
+    harness.truthy(ctx:has(flame.source,
+        component.RELIGION_AVATAR_SOURCE))
+    harness.equal(ctx:get(flame.source,
+        component.RELIGION_AVATAR_SOURCE).god_id, gods.MAKHLEB)
+end
+
 -- Both independent casts use production Lua component schemas and effects.
 function test.run(ctx)
     trog_fireball(ctx)
@@ -280,6 +383,8 @@ function test.run(ctx)
     lasting_flame_source(ctx)
     lasting_world_sources(ctx)
     lasting_ball_lightning(ctx)
+    makhleb_destruction_pool(ctx)
+    makhleb_spell_sources(ctx)
 end
 
 return test

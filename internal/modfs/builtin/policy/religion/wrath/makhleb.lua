@@ -1,10 +1,12 @@
--- Makhleb's servant punishment uses the ordinary saved hostile summon
--- owner. Spell destruction requires a god avatar and remains explicit.
+-- Makhleb chooses between a god-cast destruction spell and hostile demon
+-- servants. Both routes carry Makhleb as their damage or summon source.
 local component = require("constants.component")
 local gods = require("constants.gods")
 local monsters = require("ids.monsters")
+local spells = require("ids.spells")
 local streams = require("constants.rng_streams")
 local summons = require("policy.religion.wrath.summons")
+local avatar = require("policy.religion.wrath.avatar")
 
 local makhleb = {}
 
@@ -24,6 +26,34 @@ local lesser_kinds = {
     monsters.MONS_ORANGE_DEMON,
     monsters.MONS_SMOKE_DEMON,
     monsters.MONS_YNOXINUL,
+}
+
+-- The three source destruction tiers grow with XL. Each registered spell
+-- owns its beam, resistance, cloud, or lasting-status effect in Lua.
+local destruction_spells = {
+    {
+        spells.SPELL_THROW_FLAME,
+        spells.SPELL_PAIN,
+        spells.SPELL_STONE_ARROW,
+        spells.SPELL_SHOCK,
+        spells.SPELL_SPIT_ACID,
+    },
+    {
+        spells.SPELL_BOLT_OF_FIRE,
+        spells.SPELL_FIREBALL,
+        spells.SPELL_LIGHTNING_BOLT,
+        spells.SPELL_STICKY_FLAME,
+        spells.SPELL_IRON_SHOT,
+        spells.SPELL_BOLT_OF_DRAINING,
+        spells.SPELL_ORB_OF_ELECTRICITY,
+    },
+    {
+        spells.SPELL_FIREBALL,
+        spells.SPELL_LEHUDIBS_CRYSTAL_SPEAR,
+        spells.SPELL_ORB_OF_ELECTRICITY,
+        spells.SPELL_FLASH_FREEZE,
+        spells.SPELL_GHOSTLY_FIREBALL,
+    },
 }
 
 -- Source random2 returns zero for bounds of zero or one without consuming a
@@ -87,17 +117,35 @@ local function send_servants(ctx, player, level)
     return true
 end
 
--- Half of Makhleb's retributions use destructive god-avatar spells. That
--- spell path has no saved avatar caster yet, so its draw cannot be replaced
--- with direct HP loss while preserving spell, resistance, and attribution.
-function makhleb.apply(ctx, player)
-    if ctx:random(streams.CARDS, 2) == 0 then
-        error("unimplemented Makhleb destruction wrath")
+-- Source random_range is inclusive. Clamp only after the range draw, then
+-- choose one spell uniformly from that tier before the avatar fires.
+local function destruction(ctx, player, level)
+    if not avatar.available(ctx, player, gods.MAKHLEB) then
+        return false
     end
 
-    local progression = ctx:get(player, component.PROGRESSION)
+    local minimum = math.floor(level / 14)
+    local maximum = math.floor(level / 9)
+    local severity = math.min(2, minimum +
+        roll(ctx, maximum - minimum + 1))
+    local choices = destruction_spells[severity + 1]
+    local spell_id = choices[ctx:random(streams.CARDS,
+        #choices) + 1]
 
-    return send_servants(ctx, player, math.max(1, progression.level))
+    return avatar.cast(ctx, player, gods.MAKHLEB, spell_id)
+end
+
+-- Coinflip selects destruction or hostile servants before either branch
+-- draws severity. Both branches use the same saved god source and credit.
+function makhleb.apply(ctx, player)
+    local progression = ctx:get(player, component.PROGRESSION)
+    local level = math.max(1, progression.level)
+
+    if ctx:random(streams.CARDS, 2) == 0 then
+        return destruction(ctx, player, level)
+    end
+
+    return send_servants(ctx, player, level)
 end
 
 return makhleb

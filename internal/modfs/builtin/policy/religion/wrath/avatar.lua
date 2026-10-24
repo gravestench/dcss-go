@@ -199,10 +199,9 @@ local function resolve(ctx, shadow, player, god_id, spell_id, message)
     return effect.resolve(ctx, shadow, player, nil, plan)
 end
 
--- Resolve a source priest cast through its registered spell effect. The
--- caster begins at the player's feet, then leaves the grid; ongoing
--- effects retain its god credit until their final owner expires.
-function avatar.cast(ctx, player, god_id, spell_id, message)
+-- Source get_avatar may fail before spell selection if another actor owns
+-- the player's cell. Check first so branch RNG stays in source order.
+function avatar.available(ctx, player, god_id)
     local position = ctx:get(player, component.POSITION)
     local occupant = ctx:actor_at(position.level_id, position.x, position.y)
 
@@ -210,6 +209,17 @@ function avatar.cast(ctx, player, god_id, spell_id, message)
         local god = catalog.get(categories.GODS, god_id)
 
         ctx:emit(channels.RELIGION, god.name .. " has no time to deal with you just now.")
+        return false
+    end
+
+    return true
+end
+
+-- Resolve a priest cast through its registered spell effect. The caster
+-- starts at the player's feet, then leaves the grid; ongoing effects keep
+-- its god credit. Recheck availability for direct casts and mod abilities.
+function avatar.cast(ctx, player, god_id, spell_id, message)
+    if not avatar.available(ctx, player, god_id) then
         return false
     end
 

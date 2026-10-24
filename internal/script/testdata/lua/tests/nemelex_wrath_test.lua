@@ -380,18 +380,6 @@ local function makhleb_servant(ctx)
     harness.equal(owner:draws_used(), 3)
 end
 
--- The spell half is deliberately explicit until a god-avatar spell caster
--- can preserve beam, resistance, and killer attribution.
-local function unsupported_makhleb_spell(ctx)
-    local player = worshipper(ctx, gods.NO_GOD)
-    local owner = with_draws(ctx, { 0 })
-    local success, message = pcall(makhleb.apply, owner, player)
-
-    harness.falsy(success)
-    harness.truthy(string.find(message,
-        "unimplemented Makhleb destruction wrath", 1, true))
-end
-
 -- Force only the selected high-level roster entry, then exercise the real
 -- base-draconian draw and saved hostile summon through the ordinary owner.
 local function okawaru_draconian(ctx)
@@ -468,7 +456,6 @@ function test.run(ctx)
     beogh_smite(ctx)
     okawaru_warrior(ctx)
     makhleb_servant(ctx)
-    unsupported_makhleb_spell(ctx)
     okawaru_draconian(ctx)
     makhleb_greater(ctx)
 end
