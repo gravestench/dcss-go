@@ -76,8 +76,9 @@ local function ranks()
     harness.equal(piety.rank(gods.XOM, 21), 2)
     harness.equal(piety.rank(gods.XOM, 50), 2)
     harness.equal(piety.rank(gods.XOM, 51), 3)
-    harness.equal(piety.rank(gods.XOM, 180), 5)
-    harness.equal(piety.rank(gods.XOM, 181), 6)
+    -- Xom has six mood breakpoints; the highest band starts above 180.
+    harness.equal(piety.rank(gods.XOM, 180), 6)
+    harness.equal(piety.rank(gods.XOM, 181), 7)
     harness.equal(piety.rank(gods.GOZAG, 200), 0)
     harness.equal(piety.rank(gods.NO_GOD, 0), 0)
 end
