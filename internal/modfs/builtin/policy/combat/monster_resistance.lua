@@ -5,7 +5,6 @@ local armour_flags = require("constants.armour_flags")
 local component = require("constants.component")
 local construct_components = require("constants.monster_construct_components")
 local item_use = require("constants.monster_item_use")
-local monster_flags = require("constants.monster_flags")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
 local holiness = require("constants.monster_holiness")
 local artefact_ids = require("ids.artefact_properties")
@@ -16,7 +15,6 @@ local resistances = require("constants.resistance_ids")
 local equipment = require("policy.combat.equipment")
 local hex_status = require("policy.combat.monster_hexes.status")
 local jewellery_effects = require("policy.inventory.jewellery_effects")
-local properties = require("policy.item_generation.artefacts.properties")
 local staves = require("policy.inventory.staves")
 
 local resistance = {}
@@ -161,18 +159,6 @@ local function can_use_gear(definition)
         definition.item_use_id == item_use.WEAPONS_ARMOUR
 end
 
--- Only source dual wielders receive artefact properties from their second
--- weapon; other alternate weapons are inventory swaps, not active gear.
-local function dual_wields(definition)
-    for _, flag in ipairs(definition.flags or {}) do
-        if flag == monster_flags.TWO_WEAPONS then
-            return true
-        end
-    end
-
-    return false
-end
-
 -- Sum each source-eligible item exactly once. Artefact properties are a
 -- separate worn-item scan in DCSS; armour and jewellery helpers omit them.
 local function equipped(ctx, monster, definition, resistance_id)
@@ -180,7 +166,8 @@ local function equipped(ctx, monster, definition, resistance_id)
         return 0
     end
 
-    local value = 0
+    local value = equipment.monster_artefact_value(ctx, monster,
+        definition, artefact_resistance[resistance_id])
     local worn = equipment.worn(ctx, monster, {
         body = true,
         shield = true,
@@ -191,11 +178,6 @@ local function equipped(ctx, monster, definition, resistance_id)
 
     for slot, entry in pairs(worn) do
         local kind = entry.definition
-
-        if slot ~= "alternate_weapon" or dual_wields(definition) then
-            value = value + properties.value(ctx, entry.entity,
-                artefact_resistance[resistance_id])
-        end
 
         if (slot == "body" or slot == "shield") and
             kind.class == object_classes.OBJ_ARMOUR then

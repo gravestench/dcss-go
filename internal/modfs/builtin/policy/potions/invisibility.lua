@@ -2,8 +2,8 @@ local component = require("constants.component")
 local mutations = require("ids.mutations")
 local levels = require("policy.mutations.levels")
 local zap_ids = require("policy.magic.effects.zaps.ids")
-local monster_flags = require("constants.monster_flags")
 local hex_status = require("policy.combat.monster_hexes.status")
+local monster_senses = require("policy.combat.monster_senses")
 
 local invisibility = {}
 
@@ -48,22 +48,10 @@ function invisibility.visible_to(ctx, player, observer)
         return false
     end
 
-    local illusion = ctx:get(observer, component.PLAYER_ILLUSION)
-
-    if illusion and illusion.see_invisible then
-        return true
-    end
-
     local catalog = require("policy.catalog")
     local definition = catalog.get("monsters", actor.kind_id)
 
-    for _, flag in ipairs(definition.flags or {}) do
-        if flag == monster_flags.SEE_INVISIBLE then
-            return true
-        end
-    end
-
-    return false
+    return monster_senses.see_invisible(ctx, observer, definition)
 end
 
 -- Remove the potion component only after its remaining aut reaches zero.

@@ -4,6 +4,9 @@ local enchant = require("policy.combat.monster_enchant")
 local forms = require("policy.magic.effects.forms.player")
 local component = require("constants.component")
 local artefact_ids = require("ids.artefact_properties")
+local item_use = require("constants.monster_item_use")
+local monster_flags = require("constants.monster_flags")
+local object_classes = require("ids.object_classes")
 
 local equipment = {}
 
@@ -56,6 +59,48 @@ function equipment.worn(ctx, holder, slots)
     end
 
     return result
+end
+
+-- The source scans artefacts only on item-using monsters. A second weapon
+-- contributes only when the monster really wields both weapons.
+function equipment.monster_artefact_value(ctx, monster, definition,
+    property_id)
+    if definition.item_use_id ~= item_use.STARTING_EQUIPMENT and
+        definition.item_use_id ~= item_use.WEAPONS_ARMOUR then
+        return 0
+    end
+
+    local dual_wielder = has_flag(definition.flags,
+        monster_flags.TWO_WEAPONS)
+    local worn = equipment.worn(ctx, monster, {
+        weapon = true,
+        alternate_weapon = true,
+        body = true,
+        shield = true,
+        jewellery = true,
+    })
+    local properties = require(
+        "policy.item_generation.artefacts.properties")
+    local value = 0
+
+    for slot, entry in pairs(worn) do
+        local class = entry.definition.class
+        local active = (slot == "weapon" and
+            class == object_classes.OBJ_WEAPONS) or
+            (slot == "alternate_weapon" and dual_wielder and
+                class == object_classes.OBJ_WEAPONS) or
+            ((slot == "body" or slot == "shield") and
+                class == object_classes.OBJ_ARMOUR) or
+            (slot == "jewellery" and
+                class == object_classes.OBJ_JEWELLERY)
+
+        if active then
+            value = value + properties.value(ctx, entry.entity,
+                property_id)
+        end
+    end
+
+    return value
 end
 
 -- Monster weapon selection reads the validated equipped-item snapshot rather than raw inventory.

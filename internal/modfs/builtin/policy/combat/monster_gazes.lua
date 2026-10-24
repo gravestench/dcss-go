@@ -8,13 +8,14 @@ local hex_status = require("policy.combat.monster_hexes.status")
 local monster_stats = require("policy.combat.monster_stats")
 local monster_invisibility = require(
     "policy.combat.monster_support.invisibility")
+local monster_senses = require("policy.combat.monster_senses")
 local player_invisibility = require("policy.potions.invisibility")
 
 local gazes = {}
 
 -- Source `can_see` checks creature invisibility as well as map geometry.
--- Temporary Corona reveals an invisible monster; see-invisible is a
--- species trait of the caster rather than a property of the ray.
+-- Temporary Corona reveals an invisible monster; see-invisible belongs to
+-- the caster's live body and worn items rather than to the gaze ray.
 local function visible_actor(ctx, caster, foe)
     local caster_actor = ctx:get(caster, component.ACTOR)
     local caster_def = catalog.get("monsters", caster_actor.kind_id)
@@ -45,13 +46,8 @@ local function visible_actor(ctx, caster, foe)
         return true
     end
 
-    for _, flag in ipairs(caster_def.flags or {}) do
-        if flag == flags.SEE_INVISIBLE then
-            return true
-        end
-    end
-
-    return false
+    return monster_senses.see_invisible(ctx, caster,
+        caster_def)
 end
 
 -- Example: gazes.plan(ctx, eye, player, SPELL_PARALYSIS_GAZE) returns an

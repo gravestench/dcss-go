@@ -3,6 +3,7 @@
 -- ID stays MONS_MUTANT_BEAST; the authored form is separate per-actor
 -- data for its hit dice, attacks, movement, and eventual corpse identity.
 local choice = require("policy.generation.vaults.specs.choice")
+local facet_ids = require("policy.monsters.mutant_beast.facets")
 
 local form = {}
 
@@ -15,12 +16,12 @@ local tiers = {
 }
 
 local facets = {
-    sting = true,
-    bat = true,
-    fire = true,
-    weird = true,
-    shock = true,
-    ox = true,
+    [facet_ids.STING] = true,
+    [facet_ids.BAT] = true,
+    [facet_ids.FIRE] = true,
+    [facet_ids.WEIRD] = true,
+    [facet_ids.SHOCK] = true,
+    [facet_ids.OX] = true,
 }
 
 -- Decode the source spelling once during spec parsing. A typo must fail

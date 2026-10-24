@@ -118,6 +118,15 @@ throw. Removing gear changes the next roll immediately; a caster's
 Guile armour reduces the target's effective will only for that roll.
 Phantom Mirror uses the same rolled margin for clone duration. The
 unported Kiku wretch property remains part of the later Kiku domain.
+Monster flight and sight now inspect the current actor and its equipped
+ring, armour ego, and artefacts. Habitat, web, invisibility detection,
+and gazes consume these live results; draconian jobs inherit their saved
+base color's innate flight. An active artefact scan centralizes source
+item-use, slot-class, and dual-wield limits for these properties plus
+monster resistance and willpower. Saved Bat and Weird mutant-beast
+facets supply their source flight and sight traits. Zombies, skeletons,
+simulacra, spectral things, and bound souls inherit flight from their saved
+base species.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except

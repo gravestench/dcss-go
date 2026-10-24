@@ -5,7 +5,6 @@ local armour_flags = require("constants.armour_flags")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local component = require("constants.component")
-local item_use = require("constants.monster_item_use")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
 local monster_flags = require("constants.monster_flags")
 local artefact_ids = require("ids.artefact_properties")
@@ -17,7 +16,6 @@ local jewellery_effects = require("policy.inventory.jewellery_effects")
 local monster_profile = require("policy.combat.monster_profile")
 local monster_stats = require("policy.combat.monster_stats")
 local draconian_base = require("policy.monsters.draconian_base")
-local properties = require("policy.item_generation.artefacts.properties")
 local trogs_hand = require("policy.combat.monster_support.trogs_hand")
 
 local willpower = {}
@@ -32,47 +30,6 @@ local function has_flag(definition, wanted)
     end
 
     return false
-end
-
--- Source scans only an active item of the expected class at each slot.
-local function artefact_slot_active(slot, entry, definition)
-    local class = entry.definition.class
-
-    if slot == "weapon" then
-        return class == object_classes.OBJ_WEAPONS
-    end
-
-    if slot == "alternate_weapon" then
-        return class == object_classes.OBJ_WEAPONS and
-            has_flag(definition, monster_flags.TWO_WEAPONS)
-    end
-
-    if slot == "body" or slot == "shield" then
-        return class == object_classes.OBJ_ARMOUR
-    end
-
-    return slot == "jewellery" and
-        class == object_classes.OBJ_JEWELLERY
-end
-
--- The source scans artefacts only on item-using monsters and counts the
--- second weapon only when it is active for a dual wielder.
-local function artefact_pips(ctx, definition, worn)
-    if definition.item_use_id ~= item_use.STARTING_EQUIPMENT and
-        definition.item_use_id ~= item_use.WEAPONS_ARMOUR then
-        return 0
-    end
-
-    local total = 0
-
-    for slot, entry in pairs(worn) do
-        if artefact_slot_active(slot, entry, definition) then
-            total = total + properties.value(ctx, entry.entity,
-                artefact_ids.WILLPOWER)
-        end
-    end
-
-    return total
 end
 
 -- Body and shield kind flags and egos contribute without artefact
@@ -159,7 +116,8 @@ function willpower.level(ctx, monster, definition)
     end
 
     local value = base(ctx, monster, definition) +
-        units.PIP * artefact_pips(ctx, definition, worn)
+        units.PIP * equipment.monster_artefact_value(ctx, monster,
+            definition, artefact_ids.WILLPOWER)
 
     for _, slot in ipairs({ "body", "shield" }) do
         local entry = worn[slot]
