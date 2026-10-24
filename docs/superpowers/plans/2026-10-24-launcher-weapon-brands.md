@@ -27,8 +27,8 @@ Go game integration tests.
 ## Review Focus
 
 - A melee-only or unknown launcher brand fails before spending a turn.
-- Physical branded ammunition and its six launcher conflicts belong to
-  the later physical-ammunition slice.
+- The pinned source generates ordinary virtual launcher projectiles;
+  physical branded ammo is not a current gameplay parity requirement.
 - Electrocution and Venom honor resistance; Holy Wrath honors holiness.
 - Speed changes delay, Protection refreshes a saved aura after a hit,
   and Penetration changes projectile contact without bonus damage.

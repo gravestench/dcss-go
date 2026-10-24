@@ -820,9 +820,11 @@ refreshes a saved, short +7 AC aura after a qualifying player hit; and
 Penetration bypasses shields and continues along the player's traced ray.
 Holy Wrath recognizes live undead or demonic
 players, Electrocution respects rElec, and Venom uses the shared player
-poison gate. Current launchers use virtual ordinary arrows and bolts;
-physical branded ammo and its source launcher-brand suppression remain an
-explicit later ammunition-state slice.
+poison gate. The pinned DCSS source creates ordinary, nonconsuming
+projectiles for launcher shots; arrows, bolts, and sling bullets are removed
+as physical item drops. Its branded-ammo suppression branch is therefore
+inactive in ordinary current gameplay. Modded physical ammo would require
+an explicit rule for that case.
 The three Dis:1–6 divisions layouts now use their source weights and map
 geometry: recursive rooms, an irregular-room lattice, and overlapping boxes.
 Their procedural Lua hooks retain source statue style directives as typed

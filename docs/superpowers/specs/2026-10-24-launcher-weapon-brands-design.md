@@ -17,10 +17,10 @@ monster-target or player-target weapon-brand owner after contact. Those
 owners already implement the active brands, so new launcher-only adapters
 would duplicate combat policy. Speed and Penetration remain in their
 delay and projectile-path owners. Protection refreshes a saved, short
-player aura through its shared monster-target brand owner. The current
-engine uses virtual ordinary arrows and bolts; actual branded launcher
-  ammunition needs a later physical-ammo ECS slice. That slice must implement
-  source brand suppression using the actual ammunition ego.
+  player aura through its shared monster-target brand owner. The pinned
+  source creates virtual ordinary launcher projectiles. Arrows, bolts,
+  and sling bullets are removed as physical items in this source revision,
+  so physical branded launcher ammunition is outside the faithful port.
 
 ## Source rules
 
@@ -28,9 +28,10 @@ engine uses virtual ordinary arrows and bolts; actual branded launcher
   Speed, Vorpal, Chaos, Holy Wrath, Electrocution, Flaming, Freezing,
   Penetration, and Acid on ranged weapons. Melee-only, removed, debug, and
   unknown brands fail validation before an attack spends a turn.
-- When physical ammunition is added, `ranged-attack.cc:apply_damage_brand`
-  suppresses Flaming, Freezing, Holy Wrath, Electrocution, Venom, and Chaos
-  for a nonordinary missile ego. Vorpal and Acid remain active.
+- The source retains a branded-ammunition suppression branch for Flaming,
+  Freezing, Holy Wrath, Electrocution, Venom, and Chaos, but ordinary launcher
+  actions generate unbranded projectiles. A mod that introduces physical
+  launcher ammo would need to implement that dormant branch.
 - Brand effects run after a hit. Holy Wrath hurts susceptible undead or
   demonic targets; Electrocution uses the source one-in-four 8–20 shock
   unless electric resistance prevents it; Venom uses its source poison
