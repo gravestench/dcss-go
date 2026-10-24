@@ -1790,6 +1790,18 @@ the current floor through the common summon cleanup path. A custom god can
 use the same `join` and `leave` methods, but
 actor state should remain on the affected entity rather than in module locals.
 
+Fedhas' four active powers are separate files in
+`policy/abilities/fedhas/`. Each registers one stable ability ID, its live
+rank gate, its free targeting check, and its timed resolver. The shared
+`policy/religion/fedhas/active_plants.lua` handles actual grid cells and
+ECS plant summons. For example, a mod that changes Grow Oklob's price can
+override only `policy/abilities/fedhas/grow_oklob.lua`; a mod that changes
+which plants Overgrow can raise should override the shared plant policy.
+An added summon must remain a catalogued monster and an allowed Fedhas
+source for save validation. The resulting actor carries `magic.summon`
+and `magic.summon_stats`; terrain changed by Overgrow is saved in the
+level grid, so a mod must not keep either effect only in a Lua local.
+
 Jiyva shows a passive whose timing differs from a join hook. Its
 `neutralise(ctx, player, slime)` runs before an eligible monster chooses an
 action, using source jelly and eye genera from the monster catalog. The

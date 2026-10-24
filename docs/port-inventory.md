@@ -500,6 +500,14 @@ Fedhas now neutralises eligible hostile plants as they act, reverses plant
 allegiance across loaded levels on desertion, cancels an active forest on
 joining, and prevents hostile Awaken Forest under its passive. Okawaru now
 dismisses friendly player-owned summons on the current floor when joined.
+Its four active powers now use the ordinary ability command: Wall of Briars
+surrounds the player with timed briar actors, Grow Ballistomycete and Grow
+Oklob create aimed plant allies, and Overgrow replaces eligible walls and
+trees with weighted source plants. The source rank, MP, piety, failure,
+range, vault veto, and save paths are covered by Lua and game tests.
+The current one-actor-per-cell level index still prevents source Fedhas
+pass-through and growing a stationary plant on the player's own square;
+these need a dedicated shared spatial-occupancy slice.
 Jiyva now converts source jelly and eye genera on their monster turns.
 Attempted conversion under penance, retry when that debt ends, desertion,
 temporary charm removal, and off-level allegiance use saved actor state.

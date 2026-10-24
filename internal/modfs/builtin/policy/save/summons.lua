@@ -21,6 +21,7 @@ local holiness = require("constants.monster_holiness")
 local wizlab = require("constants.wizlab")
 local trog_roster = require("policy.religion.trog.brothers_roster")
 local makhleb_roster = require("policy.religion.makhleb.roster")
+local fedhas_plants = require("policy.religion.fedhas.active_plants")
 local spiders = require("policy.combat.monster_summons.spiders")
 local attack_flavours = require("constants.attack_flavours")
 
@@ -236,6 +237,10 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         evoker_effect.summon_kind_id == actor.kind_id
     local jiyva_source = state.source_category == categories.GODS and
         state.source_id == gods.JIYVA
+    local fedhas_source = state.source_category == categories.GODS and
+        state.source_id == gods.FEDHAS and owner_player and
+        state.attitude == attitudes.FRIENDLY and
+        state.expires_aut > current_aut
     local xom_source = state.source_category == categories.GODS and
         state.source_id == gods.XOM
     local lugonu_source = state.source_category == categories.GODS and
@@ -251,7 +256,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         not trap_source and
         not item_source and not scroll_source and
         not evoker_source and
-        not jiyva_source and not xom_source and
+        not jiyva_source and not fedhas_source and not xom_source and
         not lugonu_source and
         not wrath_god_source and
         not yred_gift_source and
@@ -285,6 +290,13 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
             state.attitude ~= attitudes.FRIENDLY or
             state.owner ~= ctx:player()) then
         error("summon " .. ctx:id(entity) .. " has invalid Jiyva origin")
+    end
+
+    -- Fedhas' invocation roster is finite and friendly; hostile permanent
+    -- wrath plants follow the separate wrath origin rule above.
+    if fedhas_source and not fedhas_plants.allowed[actor.kind_id] then
+        error("summon " .. ctx:id(entity) ..
+            " has invalid Fedhas plant")
     end
 
     if xom_source and
