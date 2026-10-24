@@ -8,14 +8,46 @@ local categories = require("constants.catalog")
 local component = require("constants.component")
 local death = require("policy.death")
 local awards = require("policy.character.experience_award")
+local constriction = require("policy.combat.constriction")
+local engulf = require("policy.combat.engulf")
 local flags = require("constants.monster_flags")
+local flay = require("policy.combat.monster_flay")
 local holiness = require("constants.monster_holiness")
 local intelligence = require("constants.monster_intelligence")
+local items = require("ids.items")
 local monsters = require("ids.monsters")
 local streams = require("constants.rng_streams")
 local targets = require("policy.ai.targets")
 
 local pacification = {}
+
+-- Geryon alone drops the Horn when accepting peace. The rest of a
+-- pacified monster's carried inventory leaves the level with it later.
+local function discard_geryon_horn(ctx, target)
+    local actor = ctx:get(target, component.ACTOR)
+
+    if actor.kind_id ~= monsters.MONS_GERYON then
+        return
+    end
+
+    local position = ctx:get(target, component.POSITION)
+
+    for _, entity in ipairs(ctx:query({ component.CARRIED_BY })) do
+        local carrier = ctx:get(entity, component.CARRIED_BY)
+        local item = ctx:get(entity, component.ITEM)
+
+        if carrier.holder == target and item and
+            item.kind_id == items.MISC_HORN_OF_GERYON then
+            if ctx:has(entity, component.EQUIPPED) then
+                ctx:remove(entity, component.EQUIPPED)
+            end
+
+            ctx:remove(entity, component.CARRIED_BY)
+            ctx:add(entity, component.POSITION, position)
+            ctx:emit("religion", "Geryon discards his horn.")
+        end
+    end
+end
 
 -- These bodies are appendages of another monster. Source treats them as
 -- mindless for this invocation even when a profile has animal intelligence.
@@ -167,12 +199,28 @@ function pacification.attempt(ctx, player, target, healed, power)
         end
     end
 
+    -- Source ends the monster's holds and flaying at allegiance change,
+    -- not when it eventually reaches a stair. A freed player acts next.
+    flay.release_for_ghost(ctx, target)
+    constriction.release_for(ctx, target)
+    engulf.release_for(ctx, target)
+
+    if ctx:has(target, component.PLAYER_CONSTRICTION) then
+        ctx:remove(target, component.PLAYER_CONSTRICTION)
+    end
+
+    discard_geryon_horn(ctx, target)
+
     local ai = ctx:get(target, component.AI)
 
     if ai then
         ai.behavior = behaviors.WANDER
         ai.memory_until_aut = 0
         ctx:set(target, component.AI, ai)
+    end
+
+    if ctx:has(target, component.MONSTER_PATROL) then
+        ctx:remove(target, component.MONSTER_PATROL)
     end
 
     ctx:emit("religion", "The " .. definition.name .. " turns neutral.")

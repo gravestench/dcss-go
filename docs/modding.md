@@ -1940,6 +1940,13 @@ Heal Other asks `policy.religion.elyvilon.pacification` to examine the
 monster catalog class and store a neutral ECS marker. Pacification grants
 the same credited XP as a kill through `policy.character.experience_award`,
 but the marker prevents that monster from paying XP again if it later dies.
+`policy.ai.pacified_departure` reads that same marker during monster
+decisions, finds a reachable floor exit through the shared grid service,
+and uses the ordinary move intent. Once the monster reaches a stair, gate,
+teleport trap, or shaft, the post-movement system removes it with its
+carried gear. Mods that add a new exit should expose it as a travel feature
+or a trap type recognized by this policy. A new pacification effect must
+award nonlethal XP once and set the marker; the AI owner then routes it.
 Divine Vigour stores an amount and timer in `religion.elyvilon_vigour`.
 The normal HP and MP formulas read that amount, so later training or level
 changes still produce the correct maxima. The god's `behavior_module`

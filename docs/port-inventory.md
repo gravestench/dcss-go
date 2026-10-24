@@ -538,9 +538,13 @@ Trog summons. The ordinary ability menu and Go save path exercise these
 powers without Trog-specific Go handlers.
 Elyvilon's four active powers now use the same command bridge. The
 pacification marker is durable, and the source's class intelligence,
-holiness, mobility, and average HP gate the offer. The resulting neutral
-monster currently wanders rather than deliberately finding an exit; that
-movement behavior remains a fidelity task in the broader monster AI domain.
+holiness, mobility, and average HP gate the offer. A pacified monster now
+routes toward a reachable stair, gate, or qualifying trap, then leaves
+without a corpse, carried gear, or another XP award. Geryon discards the
+Horn on conversion; constriction and flaying stop immediately.
+The remaining source-specific consequences for pacifying Pikel, Kirke,
+the elven twins, and a Vault Warden still need their existing unique
+owners to handle nonlethal departure as well as death.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 still-unported vault families and their Lua scripts,

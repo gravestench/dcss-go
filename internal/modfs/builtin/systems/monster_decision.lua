@@ -11,6 +11,7 @@ local confusion = require("policy.magic.effects.statuses.confusing_touch")
 local habitat = require("policy.combat.monster_habitat")
 local fear = require("policy.ai.fear")
 local targets = require("policy.ai.targets")
+local pacified_departure = require("policy.ai.pacified_departure")
 local statuses = require("policy.magic.effects.statuses.player")
 local allies = require("policy.character.allies")
 local fedhas = require("policy.religion.gods.fedhas")
@@ -94,6 +95,17 @@ local function choose_intent(ctx, entity, state)
 
     if not ctx:cell(position.level_id, position.x, position.y) then
         error("monster level " .. position.level_id .. " is missing")
+    end
+
+    -- A pacified neutral actor pursues an exit before ordinary neutral
+    -- wandering can replace its saved destination.
+    if ctx:has(entity, component.ELYVILON_PACIFIED) then
+        local next_state, intent = pacified_departure.intent(ctx,
+            entity, state, position)
+
+        if intent then
+            return next_state, intent
+        end
     end
 
     -- Neutral actors have no player foe. Let them wander without offering

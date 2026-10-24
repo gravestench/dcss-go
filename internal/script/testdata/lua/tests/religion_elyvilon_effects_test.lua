@@ -11,6 +11,7 @@ local fixture = require("tests.monster_ally_support_fixture")
 local formulas = require("policy.character.formulas")
 local gods = require("constants.gods")
 local harness = require("tests.harness")
+local items = require("ids.items")
 local jobs = require("ids.jobs")
 local monsters = require("ids.monsters")
 local pacification = require("policy.religion.elyvilon.pacification")
@@ -138,6 +139,36 @@ local function vigour_patron_loss(ctx)
     harness.equal(game:get(player, component.HEALTH).max, baseline)
 end
 
+-- Geryon's Horn remains on the floor when its owner accepts peace. This
+-- exception happens at conversion; ordinary carried gear departs later.
+local function geryon_horn(ctx)
+    local game, player = worshipper(ctx)
+    local target = fixture.actor(ctx, monsters.MONS_GERYON,
+        13, 10, 30)
+    local horn = ctx:create()
+
+    game:add(target, component.AI, {
+        behavior = behaviors.WANDER,
+    })
+    game:add(target, component.PLAYER_CONSTRICTION, {
+        by = player,
+        held_aut = 10,
+        escape_attempts = 0,
+    })
+    game:add(horn, component.ITEM, {
+        kind_id = items.MISC_HORN_OF_GERYON,
+        quantity = 1,
+    })
+    game:add(horn, component.CARRIED_BY, {
+        holder = target,
+    })
+
+    harness.equal(pacification.attempt(game, player, target,
+        20, 10000), "pacified")
+    harness.falsy(game:has(horn, component.CARRIED_BY))
+    harness.equal(game:get(horn, component.POSITION).x, 13)
+end
+
 -- Self-healing uses the source base and two dice; at zero Invocations
 -- and maximum RNG rolls it restores 28 HP before the max-HP clamp.
 local function heal_self(game, player)
@@ -177,6 +208,7 @@ local function heal_other(game, player)
     healing.resolve(game, player, request)
     harness.equal(targets.real_attitude(game, target),
         attitudes.NEUTRAL)
+    harness.falsy(game:has(target, component.PLAYER_CONSTRICTION))
     harness.truthy(game:get(player, component.PROGRESSION).total_xp >
         before_xp)
     pacification.validate(game)
@@ -270,6 +302,7 @@ function test.run(ctx)
     ineligible_healing(ctx)
     empty_healing(ctx)
     vigour_patron_loss(ctx)
+    geryon_horn(ctx)
 end
 
 return test
