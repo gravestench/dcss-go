@@ -56,6 +56,7 @@ const (
 	ScreenRead
 	ScreenSelection
 	ScreenShop
+	ScreenEvokeItem
 )
 
 type equipmentTick struct {
@@ -316,6 +317,9 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	case ScreenEvokeWand:
 		return m.routeInventoryInput("evoke_wand", key)
 
+	case ScreenEvokeItem:
+		return m.routeInventoryInput("evoke_item", key)
+
 	case ScreenDrop:
 		return m.routeInventoryInput("drop", key)
 
@@ -340,7 +344,8 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 	case ScreenAim:
 		return m.routeInput("aim", key, map[string]any{
 			"casting": m.aimSpellID != "",
-			"evoking": m.aimKind == game.CommandEvokeWand,
+			"evoking": m.aimKind == game.CommandEvokeWand ||
+				m.aimKind == game.CommandEvokeItem,
 			"reading": m.pendingSelection != nil &&
 				m.pendingSelection.Kind == "cell",
 		})
@@ -410,7 +415,7 @@ func (m *AppModel) renderCanvas() *Canvas {
 		}
 
 	case ScreenInventory, ScreenSkills, ScreenMutations, ScreenQuaff, ScreenRead, ScreenSelection,
-		ScreenEvokeWand, ScreenDrop,
+		ScreenEvokeWand, ScreenEvokeItem, ScreenDrop,
 		ScreenWield, ScreenWear, ScreenTakeOff, ScreenPutOn,
 		ScreenRemoveJewellery, ScreenThrow, ScreenSpells,
 		ScreenAbilities, ScreenAbilityConfirm, ScreenActionConfirm:
@@ -475,6 +480,9 @@ func (m *AppModel) drawGameMenu(canvas *Canvas) {
 
 		case ScreenEvokeWand:
 			drawInventoryModal(canvas, view, "evoke_wand", "", m.presentationPolicy)
+
+		case ScreenEvokeItem:
+			drawInventoryModal(canvas, view, "evoke_item", "", m.presentationPolicy)
 
 		case ScreenDrop:
 			DrawDrop(canvas, view, m.dropQuantity, m.presentationPolicy)

@@ -22,6 +22,7 @@ local screens = {
     door = door.route,
     drop = items.drop,
     evoke_wand = items.evoke_wand,
+    evoke_item = items.evoke_item,
     help = modal.help,
     quaff = items.quaff,
     read = items.read,

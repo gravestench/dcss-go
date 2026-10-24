@@ -14,6 +14,12 @@ local definition = {
     class_value = 11,
     subtype_value = 27,
     stackable = false,
+    -- XP recharge is shared by every carried copy of this subtype.
+    evoker = {
+        charge_debt = 10,
+        max_charges = 2,
+        aimed = false,
+    },
     -- Source: crawl-ref/source/item-name.cc
     -- tin of tremorstones has its display text here so identification policy can
     -- choose known or unknown names consistently.

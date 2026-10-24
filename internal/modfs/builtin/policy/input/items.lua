@@ -1,6 +1,7 @@
 local commands = require("policy.input.commands")
 local classes = require("ids.object_classes")
 local menu = require("policy.input.menu")
+local evokers = require("policy.inventory.evokers")
 
 local items = {}
 
@@ -28,6 +29,13 @@ end
 -- share inventory letters but need different target rules.
 function items.wand(candidate)
     return candidate.class == "OBJ_WANDS"
+end
+
+-- Miscellany contains non-evokable utility objects too. The menu accepts
+-- only registered XP evokers, independent of the displayed item name.
+function items.xp_evoker(candidate)
+    return candidate.class == classes.OBJ_MISCELLANY and
+        evokers.definition(candidate.kind_id) ~= nil
 end
 
 -- Magical staves occupy the weapon slot too, so wield selection includes
@@ -141,6 +149,32 @@ function items.evoke_wand(input)
     end
 
     return notice("Select a wand by its inventory letter.")
+end
+
+-- Immediate effects open a timed command; aimed effects first allow a
+-- no-time target choice. The command rechecks inventory and charges.
+function items.evoke_item(input)
+    local navigation = menu.close_or_help(input)
+
+    if navigation then
+        return navigation
+    end
+
+    local item = menu.item(input, items.xp_evoker)
+
+    if not item then
+        return notice("Select an evokable item by its inventory letter.")
+    end
+
+    if evokers.aimed(item.kind_id) then
+        return {
+            action = "aim",
+            kind = commands.evoke_item,
+            item_id = item.id,
+        }
+    end
+
+    return item_step(commands.evoke_item, item.id)
 end
 
 -- Dropping may first collect a quantity, then resolves the inventory letter into an item entity.

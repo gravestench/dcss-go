@@ -60,6 +60,18 @@ local abjuration_duration_aut = {
     [6] = 1710,
 }
 
+-- Translate the source player summon degree to its saved AUT lifetime.
+-- Item effects may finalize that degree only after a clone finds a cell.
+function summons.player_duration_aut(degree)
+    local lifetime = abjuration_duration_aut[degree]
+
+    if not lifetime then
+        error("unsupported player summon duration degree")
+    end
+
+    return lifetime
+end
+
 -- Example: A bound of one returns zero without consuming spell RNG; larger bounds draw from that stream.
 -- Avoid consuming spell RNG for a one-outcome bound, keeping later summon rolls stable.
 function summons.roll(ctx, bound)
@@ -219,7 +231,8 @@ function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
         if degree == 0 then
             expires_aut = 0
         elseif owner == ctx:player() then
-            expires_aut = ctx:aut() + abjuration_duration_aut[degree]
+            expires_aut = ctx:aut() +
+                summons.player_duration_aut(degree)
         else
             expires_aut = ctx:aut() + monster_duration.abjuration(ctx,
                 degree, definition.speed)

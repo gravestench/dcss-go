@@ -22,7 +22,8 @@ end
 
 -- Sample silence before considering the caster's spell slots.
 local function silenced(ctx, entity, position)
-    if ctx:has(entity, component.MONSTER_MUTE) then
+    if ctx:has(entity, component.MONSTER_MUTE) or
+        ctx:has(entity, component.MONSTER_WATERLOGGED) then
         return true
     end
 

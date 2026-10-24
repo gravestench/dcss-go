@@ -26,6 +26,7 @@ local intent = {
     JEWELLERY_ON = 20,
     JEWELLERY_OFF = 21,
     PRAYER = 22,
+    EVOKE_ITEM = 23,
     MONSTER_MOVE = 1,
     MONSTER_MELEE = 2,
     MONSTER_WAIT = 6,

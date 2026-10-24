@@ -15,6 +15,12 @@ local definition = {
     class_value = 11,
     subtype_value = 26,
     stackable = false,
+    -- XP recharge is shared by every carried copy of this subtype.
+    evoker = {
+        charge_debt = 2,
+        max_charges = 15,
+        aimed = false,
+    },
     -- Source: crawl-ref/source/item-name.cc
     -- piece from Xom's chessboard has its display text here so identification
     -- policy can choose known or unknown names consistently.

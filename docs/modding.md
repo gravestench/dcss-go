@@ -1484,6 +1484,10 @@ in the bundled tree before implementing a new rule:
 - **Potion or scroll:** Item definition in `content/items/`, behavior in
   `policy/potions/effects/` or `policy/scrolls/effects/`. Inspect
   `policy.potions` or `policy.scrolls` for the applicable methods.
+- **XP evoker:** Miscellaneous item definition in `content/items/` with an
+  `evoker` record, and a matching effect in `policy/inventory/evokers/`.
+  Inspect `policy.inventory.evokers.effects` for registration and
+  `policy.inventory.evokers` for charge and command rules.
 - **Cloud or trap:** Definition in `content/clouds/` or `content/traps/`;
   the definition names its effect module. Inspect the paired effect and
   the exposure or activation owner before writing its callback.
@@ -1505,6 +1509,10 @@ The common effect contracts currently used by those dispatchers are:
 - **Potion:** `can_quaff(ctx, player, forced)` may return a refusal string
   and then a confirmation string. If it accepts, `apply(ctx, player)` runs
   during action resolution.
+- **XP evoker:** optional `prepare(ctx, player, dx, dy, forced)` returns a
+  refusal string, a `{ confirmation = "..." }` table, or `nil` to proceed.
+  `resolve(ctx, player, chosen, aut)` returns a table containing `charge`
+  and `practice`. The shared owner adds XP debt only when `charge` is true.
 - **Scroll:** `prepare(ctx, player, request)` returns `nil` to proceed or a
   decision table to stop or prompt. `apply(ctx, player, request)` runs during
   action resolution.
@@ -1554,6 +1562,47 @@ separate behavior file, as described under each feature type.
 | Branch | `content/branches/` | [`branch.go`](../internal/content/branch.go) and the generation policy that consumes its fields |
 | Mutation | `content/mutations/` | Its nearby Lua definition and `policy/mutations/effects/registry.lua` for any new capability |
 | Cloud, trap, or shop | `content/clouds/`, `content/traps/`, `content/shops/` | Their Lua `policy/<category>/catalog.lua` and effect or stock policy |
+
+### Add an XP evoker
+
+Create `content/items/<name>.lua` in your mod layer and declare a
+miscellaneous item with an `evoker` record. The record needs positive
+integer `charge_debt` and `max_charges`, plus `aimed = true` if the player
+must choose a cell. The bundled `misc_phial_of_floods.lua` is an aimed
+example; `misc_condenser_vane.lua` chooses targets automatically. Put the
+new item ID in your mod's constants or ID module, then import it at every
+use site. A same-path overlay replaces a bundled definition; a new path
+adds a new item.
+
+Create `policy/inventory/evokers/<name>.lua` with a local effect table.
+Import `policy.inventory.evokers.effects` and call
+`effects.add(item_id, effect)` once before returning the table. The game
+loads the effective tree and checks that every evoker item has a resolver.
+`prepare(ctx, player, dx, dy, forced)` is optional. Return a string to
+refuse freely, `{ confirmation = "..." }` to ask the player, or `nil` to
+begin the ten-aut action. A confirmation repeats preparation with
+`forced = true`; use that flag only to bypass the question, not the other
+eligibility checks. If `aimed = true`, the shared command opens the aim
+screen and passes the chosen relative `dx` and `dy`.
+
+`resolve(ctx, player, chosen, aut)` implements the committed effect.
+`chosen` includes `item_id`, `dx`, and `dy`. Return
+`{ charge = true, practice = 1 }` to spend one XP charge and offer one
+Evocations practice signal. Return `charge = false` when placement failed
+and the source item keeps its charge. The player still spent the action
+time. The shared `policy.inventory.evokers` owner stores debt on the
+player's `character.xp_evokers` component, so two carried copies of one
+subtype display and spend the same charge pool. Credited monster XP
+reduces debt only while that subtype is carried; neither an item file nor
+an effect should edit debt directly.
+
+Use ordinary cloud, summon, terrain, damage, and monster status owners for
+the effect's consequences. Add a schema and an active-floor system for a
+new lasting state; the phial's Waterlogged status is an example. Give new
+random choices a named RNG stream under `constants/rng_streams.lua` or
+reuse `EVOKER` for evoker behavior. Test preflight, charge timing, the
+effect on a real actor, and save/restore of any lasting state. The
+`xp_evoker` Lua and game tests show the actual command contract.
 
 ### God eligibility and piety
 

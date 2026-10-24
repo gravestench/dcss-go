@@ -5,6 +5,7 @@ local projectiles = require("policy.commands.projectiles")
 local quaff = require("policy.commands.quaff")
 local registry = require("policy.commands.registry")
 local wands = require("policy.inventory.wands")
+local evokers = require("policy.inventory.evokers")
 local jewellery = require("policy.inventory.jewellery")
 local classes = require("ids.object_classes")
 
@@ -69,6 +70,12 @@ function entries.evoke_wand(ctx, player, input)
         input.dx or 0, input.dy or 0)
 end
 
+-- Prepare any registered XP evoker through the one shared charge owner.
+function entries.evoke_item(ctx, player, input)
+    return evokers.prepare(ctx, player, input.item_id or 0,
+        input.dx or 0, input.dy or 0, input.forced)
+end
+
 registry.register(commands.quaff, entries.quaff)
 registry.register(commands.drop, entries.drop)
 registry.register(commands.wield, entries.wield)
@@ -77,5 +84,6 @@ registry.register(commands.take_off, entries.take_off)
 registry.register(commands.fire, entries.fire)
 registry.register(commands.throw, entries.throw)
 registry.register(commands.evoke_wand, entries.evoke_wand)
+registry.register(commands.evoke_item, entries.evoke_item)
 
 return entries

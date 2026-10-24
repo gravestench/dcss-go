@@ -6,6 +6,7 @@ local fighter = require("policy.combat.fighter")
 local colors = require("policy.presentation.colors")
 local clouds = require("policy.presentation.clouds")
 local identification = require("policy.items.identification")
+local evokers = require("policy.inventory.evokers")
 local component = require("constants.component")
 local god_names = require("policy.religion.names")
 local monster_display = require("policy.combat.monster_support.display")
@@ -117,10 +118,20 @@ end
 function view.inventory_item(ctx, input)
     local item = catalog.get("items", input.kind_id)
     local entity = ctx:entity(input.item_entity_id)
+    local name = identification.name(ctx, ctx:player(), entity)
+    local rule = evokers.definition(input.kind_id)
+
+    -- XP charge belongs to the player's subtype debt, not core.item.
+    -- Derive the label each frame so a kill immediately updates every copy.
+    if rule then
+        name = string.format("%s (%d/%d)", name,
+            evokers.charges(ctx, ctx:player(), input.kind_id),
+            rule.max_charges)
+    end
 
     return {
         kind_id = input.kind_id,
-        name = identification.name(ctx, ctx:player(), entity),
+        name = name,
         class = item.class,
         quantity = input.quantity,
         slot = input.slot or "",

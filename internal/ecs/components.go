@@ -212,6 +212,7 @@ const (
 	IntentJewelleryOn
 	IntentJewelleryOff
 	IntentPrayer
+	IntentEvokeItem
 )
 
 type Intent struct {

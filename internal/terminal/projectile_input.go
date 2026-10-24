@@ -82,9 +82,10 @@ func (m *AppModel) drawAim(canvas *Canvas, layout Layout) {
 	result := runPresentation(m.presentationPolicy, "presentation.aim", map[string]any{
 		"throwing": m.aimKind == game.CommandThrow,
 		"casting":  m.aimSpellID != "",
-		"evoking":  m.aimKind == game.CommandEvokeWand,
-		"x":        m.aimX,
-		"y":        m.aimY,
+		"evoking": m.aimKind == game.CommandEvokeWand ||
+			m.aimKind == game.CommandEvokeItem,
+		"x": m.aimX,
+		"y": m.aimY,
 	})
 
 	drawPresentation(canvas, layout.Messages, result)

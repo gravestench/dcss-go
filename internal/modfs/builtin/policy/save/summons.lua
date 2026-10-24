@@ -1,4 +1,5 @@
 local spells = require("ids.spells")
+local evoker_effects = require("policy.inventory.evokers.effects")
 local gods = require("constants.gods")
 local jiyva_slimes = require("constants.jiyva_ejectable_monsters")
 local monsters = require("ids.monsters")
@@ -229,6 +230,10 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
     local scroll_source = state.source_category == categories.ITEMS and
         (state.source_id == items.SCR_SUMMONING or
             state.source_id == items.SCR_BUTTERFLIES)
+    local evoker_effect = state.source_category == categories.ITEMS and
+        evoker_effects.get(state.source_id)
+    local evoker_source = evoker_effect and
+        evoker_effect.summon_kind_id == actor.kind_id
     local jiyva_source = state.source_category == categories.GODS and
         state.source_id == gods.JIYVA
     local xom_source = state.source_category == categories.GODS and
@@ -245,6 +250,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         state.source_category ~= categories.MUTATIONS and
         not trap_source and
         not item_source and not scroll_source and
+        not evoker_source and
         not jiyva_source and not xom_source and
         not lugonu_source and
         not wrath_god_source and

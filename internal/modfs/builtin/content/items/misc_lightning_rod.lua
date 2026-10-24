@@ -14,6 +14,12 @@ local definition = {
     class_value = 11,
     subtype_value = 9,
     stackable = false,
+    -- XP recharge is shared by every carried copy of this subtype.
+    evoker = {
+        charge_debt = 3,
+        max_charges = 4,
+        aimed = true,
+    },
     -- Source: crawl-ref/source/item-name.cc
     -- lightning rod has its display text here so identification policy can choose
     -- known or unknown names consistently.

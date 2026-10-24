@@ -86,6 +86,7 @@ var inputScreens = map[string]ScreenID{
 	"read":             ScreenRead,
 	"selection":        ScreenSelection,
 	"evoke_wand":       ScreenEvokeWand,
+	"evoke_item":       ScreenEvokeItem,
 	"drop":             ScreenDrop,
 	"wield":            ScreenWield,
 	"throw":            ScreenThrow,

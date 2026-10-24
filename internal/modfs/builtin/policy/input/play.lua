@@ -34,6 +34,10 @@ local screens = {
         name = "evoke_wand",
         returnable = true,
     },
+    v = {
+        name = "evoke_item",
+        returnable = true,
+    },
     d = { name = "drop" },
     w = { name = "wield" },
     F = { name = "throw" },

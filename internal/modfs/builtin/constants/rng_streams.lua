@@ -11,6 +11,7 @@ local streams = {
     CORPSE = "corpse",
     CLOUDS = "clouds",
     DAMAGE_REACTION = "damage_reaction",
+    EVOKER = "evoker",
     FOG_MACHINES = "fog_machines",
     VOLCANO_HAZARDS = "volcano_hazards",
     WIZLAB_EVENTS = "wizlab_events",

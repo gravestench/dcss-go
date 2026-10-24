@@ -13,6 +13,7 @@ local classes = {
     { id = object_classes.OBJ_WANDS, title = "Wands" },
     { id = object_classes.OBJ_SCROLLS, title = "Scrolls" },
     { id = object_classes.OBJ_POTIONS, title = "Potions" },
+    { id = object_classes.OBJ_MISCELLANY, title = "Miscellaneous" },
 }
 
 local item_modes = {
@@ -35,6 +36,11 @@ local item_modes = {
         title = "Evoke which wand?",
         class = object_classes.OBJ_WANDS,
         empty = "You have no wands.",
+    },
+    evoke_item = {
+        title = "Evoke which item?",
+        accept = input_items.xp_evoker,
+        empty = "You have no evokable items.",
     },
 }
 
@@ -178,7 +184,10 @@ function modals.rows(input)
         local y = 2
 
         for index, item in ipairs(inventory) do
-            if item.class == chosen.class then
+            local accepted = chosen.accept and chosen.accept(item) or
+                item.class == chosen.class
+
+            if accepted then
                 local label = item.name
 
                 if item.quantity > 1 then

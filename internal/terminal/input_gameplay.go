@@ -13,7 +13,8 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 		kind, ok := inputCommandKind(decision,
 			game.CommandFire, game.CommandThrow,
 			game.CommandCast, game.CommandForceCast,
-			game.CommandAbility, game.CommandEvokeWand)
+			game.CommandAbility, game.CommandEvokeWand,
+			game.CommandEvokeItem)
 
 		if !ok {
 			m.notice = "Input policy returned an invalid aim command."
@@ -22,7 +23,8 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 		}
 
 		itemID, err := inputItemID(decision,
-			kind == game.CommandThrow || kind == game.CommandEvokeWand)
+			kind == game.CommandThrow || kind == game.CommandEvokeWand ||
+				kind == game.CommandEvokeItem)
 
 		if err != nil {
 			m.notice = err.Error()
@@ -38,6 +40,12 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 
 		if kind == game.CommandEvokeWand && itemID == 0 {
 			m.notice = "Input policy returned an invalid wand."
+
+			return nil
+		}
+
+		if kind == game.CommandEvokeItem && itemID == 0 {
+			m.notice = "Input policy returned an invalid evoker."
 
 			return nil
 		}

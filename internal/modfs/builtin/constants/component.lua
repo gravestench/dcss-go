@@ -258,6 +258,7 @@ local component = {
     POTION_ATTRACTION = "character.potion_attraction",
     POTION_INVISIBILITY = "character.potion_invisibility",
     POTION_EXPERIENCE = "character.potion_experience",
+    XP_EVOKERS = "character.xp_evokers",
     POWERED_BY_DEATH = "character.powered_by_death",
     EXTRA_LIVES = "character.extra_lives",
     -- Zap components describe consequences left on targets after a beam hit.
@@ -270,6 +271,7 @@ local component = {
     PARALYSIS = "zap.paralysis",
     FLASH_FROZEN = "zap.flash_frozen",
     MONSTER_MUTE = "zap.monster_mute",
+    MONSTER_WATERLOGGED = "evoker.monster_waterlogged",
     ZAP_FLIGHT = "zap.flight",
     WRETCHED = "zap.wretched",
     -- World cloud and Zot clock state belong to the level or branch, while

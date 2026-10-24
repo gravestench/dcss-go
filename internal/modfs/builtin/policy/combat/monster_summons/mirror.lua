@@ -42,6 +42,7 @@ local bodily_status = {
     component.MONSTER_REPULSION,
     component.MONSTER_STASIS,
     component.MONSTER_TROGS_HAND,
+    component.MONSTER_WATERLOGGED,
     component.PROJECTILE_POISON,
     component.PROJECTILE_SLOW,
     component.WRETCHED,

@@ -111,7 +111,10 @@ local function starting_item(ctx, holder, kind_id, quantity, plus, ego, slot,
     local entity = ctx:create()
     ctx:add(entity, "core.item", item)
     ctx:add(entity, "core.carried_by", { holder = holder })
-    ctx:add(entity, "core.equipped", { slot = slot })
+
+    if slot then
+        ctx:add(entity, "core.equipped", { slot = slot })
+    end
 
     if origin then
         ctx:add(entity, component.VAULT_ORIGIN,
@@ -237,6 +240,10 @@ local function create_loadout(ctx, monster, loadout, origin, depth)
         "missile", origin, 4, depth)
     loadout_item(ctx, monster, loadout.body,
         "body", origin, 5, depth)
+    -- A monster can carry a source quest item without wielding it. Geryon's
+    -- Horn follows ordinary inventory drop when that actor dies.
+    loadout_item(ctx, monster, loadout.misc,
+        nil, origin, 6, depth)
 end
 
 -- Parse every source option before drawing so malformed alternatives fail

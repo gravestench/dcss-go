@@ -464,6 +464,22 @@ function module.run(ctx, input)
     inventory.validate(ctx)
     links.validate(ctx)
 
+    -- Waterlogged is a phial-owned monster timer. A player or orphan
+    -- carrying it would bypass the normal active-floor expiry system.
+    for _, entity in ipairs(ctx:query({
+        component.MONSTER_WATERLOGGED,
+    })) do
+        local state = ctx:get(entity,
+            component.MONSTER_WATERLOGGED)
+
+        if not ctx:has(entity, component.ACTOR) or
+            not ctx:has(entity, component.HEALTH) or
+            state.remaining_aut < 1 or
+            state.remaining_aut > 10000 then
+            error("invalid Waterlogged monster state")
+        end
+    end
+
     for _, entity in ipairs(ctx:query({ component.ACTOR })) do
         draconian_base.validate_actor(ctx, entity)
     end

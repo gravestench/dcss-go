@@ -28,6 +28,7 @@ local commands = {
     force_cast = kind.FORCE_CAST,
     ability = kind.ABILITY,
     evoke_wand = kind.EVOKE_WAND,
+    evoke_item = kind.EVOKE_ITEM,
     read = kind.READ,
     pray = kind.PRAY,
 }

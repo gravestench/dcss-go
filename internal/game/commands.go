@@ -38,6 +38,7 @@ const (
 	CommandEvokeWand
 	CommandRead
 	CommandPray
+	CommandEvokeItem
 )
 
 const CommandCancelVampire = CommandCancelMemorise
