@@ -8,6 +8,7 @@ local doom_howl = require("policy.combat.monster_doom_howl.ids")
 local branches = require("ids.branches")
 local trigger_ids = require("constants.vault_triggers")
 local monsters = require("ids.monsters")
+local scenarios = require("constants.scenarios")
 
 local module = {}
 
@@ -19,9 +20,27 @@ function module.run(ctx, input)
     local potion = ctx:get(player, component.POTION_EXPERIENCE)
     local clone_rewards = ctx:get(player, component.CHAOS_CLONE_REWARDS)
     local doom_rewards = ctx:get(player, doom_howl.REWARDS)
+    local level_adjustment = potion and potion.untrained_level_xp or 0
+    local clone_xp = clone_rewards and clone_rewards.earned_xp or 0
+    local doom_xp = doom_rewards and doom_rewards.earned_xp or 0
+
+    if level_adjustment < 0 or clone_xp < 0 or doom_xp < 0 or
+        level_adjustment + clone_xp + doom_xp > progress.total_xp then
+        error("saved experience has invalid grant history")
+    end
+
+    -- Generated runs can keep earning XP from respawns and transient Pan
+    -- regions after the source floor has disappeared from the save. Their
+    -- current population cannot cap lifetime kills. The player validator
+    -- checks the level/XP relation; explicit non-kill grants are checked
+    -- above. Finite test scenarios retain the stronger roster bound below.
+    if input.scenario_id == scenarios.GENERATED_DUNGEON_BASIC then
+        return {}
+    end
+
     local allowed = roster.allowed(input.scenario_id, branches.BRANCH_DUNGEON)
-    local uses_population = input.scenario_id == "fixed-dungeon-population-v1" or
-        input.scenario_id == "generated-dungeon-basic-v1"
+    local uses_population =
+        input.scenario_id == scenarios.FIXED_POPULATION
     local live = {}
     local live_count = 0
     local live_vault = {}
@@ -146,13 +165,7 @@ function module.run(ctx, input)
     -- after the fixed population budget was established.
     maximum = maximum + wizlab_experience.maximum(ctx)
 
-    local level_adjustment = potion and potion.untrained_level_xp or 0
-    local clone_xp = clone_rewards and clone_rewards.earned_xp or 0
-    local doom_xp = doom_rewards and doom_rewards.earned_xp or 0
-
-    if level_adjustment < 0 or clone_xp < 0 or doom_xp < 0 or
-        level_adjustment + clone_xp + doom_xp > progress.total_xp or
-        progress.total_xp - level_adjustment - clone_xp - doom_xp > maximum then
+    if progress.total_xp - level_adjustment - clone_xp - doom_xp > maximum then
         error("saved experience exceeds possible Dungeon kills")
     end
 

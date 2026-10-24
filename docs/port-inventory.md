@@ -575,6 +575,10 @@ portals carry that wave into connected destinations and Pandemonium, while
 isolated temporary branches leave ordinary followers outside. Each
 traveler retains its first roster branch through save and Pan region
 replacement, and its remembered AI target changes to the arrival grid.
+Pan-native followers also remain valid after their source region retires;
+generated-game save validation checks progression and explicit XP grants
+without treating today's surviving floor population as a lifetime kill cap.
+Finite scenarios still validate XP against their original roster budget.
 The Hepliaklqana ancestor exception still belongs to its future religion
 actor slice. The current AI records a target cell rather than the
 source's foe identity, so hostile follower selection checks pursuit near

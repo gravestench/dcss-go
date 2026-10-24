@@ -17,6 +17,11 @@ func placePortalPursuer(t *testing.T, g *Game, site point) akara.Entity {
 	g.levels[1].initialActors++
 	movePortalPursuer(t, g, worm, site)
 
+	health, _ := g.stores.Health.Get(worm)
+
+	health.Max = 18
+	health.Current = 18
+
 	return worm
 }
 
@@ -64,15 +69,14 @@ func movePortalPursuer(t *testing.T, g *Game, worm akara.Entity, site point) {
 	}
 
 	ai, _ := g.stores.AI.Get(worm)
+
 	ai.Behavior = "seek"
 	ai.TargetX = site.x
 	ai.TargetY = site.y
 
 	energy, _ := g.stores.MonsterEnergy.Get(worm)
+
 	energy.Points = 60
-	health, _ := g.stores.Health.Get(worm)
-	health.Max = 18
-	health.Current = 18
 }
 
 // The Vestibule is a connected destination. A tagged pursuer crosses the
@@ -82,6 +86,7 @@ func TestHellPortalCarriesOrdinaryPursuer(t *testing.T) {
 	health, _ := g.stores.Health.Get(g.player)
 	originalMax := health.Max
 	originalCurrent := health.Current
+
 	health.Max = 10000
 	health.Current = health.Max
 
@@ -96,7 +101,8 @@ func TestHellPortalCarriesOrdinaryPursuer(t *testing.T) {
 	player, _ := g.stores.Positions.Get(g.player)
 	follower, found := g.stores.Positions.Get(worm)
 
-	if !found || follower.LevelID != player.LevelID ||
+	if !found ||
+		follower.LevelID != player.LevelID ||
 		g.scripts.Components()["world.stair_follower"].Has(worm) {
 		t.Fatalf("pursuer did not complete Hell transit: %+v", follower)
 	}
@@ -130,7 +136,8 @@ func TestBaileyPortalLeavesOrdinaryPursuerOutside(t *testing.T) {
 
 	position, found := g.stores.Positions.Get(worm)
 
-	if !found || position.LevelID != 1 ||
+	if !found ||
+		position.LevelID != 1 ||
 		g.scripts.Components()["world.stair_follower"].Has(worm) {
 		t.Fatalf("ordinary monster entered Bailey: %+v", position)
 	}
@@ -143,6 +150,7 @@ func TestPanTransitCarriesPursuerAcrossRegionReplacement(t *testing.T) {
 	health, _ := g.stores.Health.Get(g.player)
 	originalMax := health.Max
 	originalCurrent := health.Current
+
 	health.Max = 10000
 	health.Current = health.Max
 
@@ -170,7 +178,8 @@ func TestPanTransitCarriesPursuerAcrossRegionReplacement(t *testing.T) {
 
 	position, found = g.stores.Positions.Get(worm)
 
-	if !found || position.LevelID != g.panState.ActiveLevelID ||
+	if !found ||
+		position.LevelID != g.panState.ActiveLevelID ||
 		g.levels[firstRegion] != nil ||
 		g.scripts.Components()["world.stair_follower"].Has(worm) {
 		t.Fatalf("pursuer did not survive Pan replacement: %+v", position)
@@ -188,6 +197,86 @@ func TestPanTransitCarriesPursuerAcrossRegionReplacement(t *testing.T) {
 
 	if !found || carrier.Holder != worm {
 		t.Fatalf("Pan follower lost its weapon: %+v", carrier)
+	}
+}
+
+// A monster first spawned in Pan can follow into a new region after its
+// source level is retired. Its saved roster provenance names Pan itself,
+// rather than relying on the no-longer-saved source floor record.
+func TestPanNativeFollowerRestoresAfterSourceRetirement(t *testing.T) {
+	g := newGeneratedTestGame(t, 8102)
+	playerHealth, _ := g.stores.Health.Get(g.player)
+	originalMax := playerHealth.Max
+	originalCurrent := playerHealth.Current
+
+	playerHealth.Max = 10000
+	playerHealth.Current = playerHealth.Max
+
+	placePortalForTest(t, g, terrain.EnterPandemonium)
+
+	if _, err := g.Step(Command{Kind: CommandDownstairs}); err != nil {
+		t.Fatal(err)
+	}
+
+	oldRegion := g.panState.ActiveLevelID
+	site := placePortalForTest(t, g, terrain.TransitPandemonium)
+	follower := spawnWormForTest(t, g, oldRegion)
+	definition, err := testCatalog(t).Monster("MONS_HELLWING")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	actor, _ := g.stores.Actors.Get(follower)
+
+	actor.KindID = definition.ID
+	actor.Speed = definition.Speed
+
+	monsterHealth, _ := g.stores.Health.Get(follower)
+
+	monsterHealth.Max = definition.AverageHP10x / 10
+	monsterHealth.Current = monsterHealth.Max
+	g.levels[oldRegion].initialActors++
+	movePortalPursuer(t, g, follower, site)
+
+	if _, err := g.Step(Command{Kind: CommandUpstairs}); err != nil {
+		t.Fatal(err)
+	}
+
+	position, found := g.stores.Positions.Get(follower)
+
+	if !found ||
+		position.LevelID != g.panState.ActiveLevelID ||
+		g.levels[oldRegion] != nil {
+		t.Fatalf("Pan-native follower was retired: %+v", position)
+	}
+
+	resetHellTestHealth(g, originalMax, originalCurrent)
+	restored, err := Restore(g.Snapshot())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	if !restored.world.EntityExists(follower) {
+		t.Fatal("retired source lost its Pan-native follower")
+	}
+
+	origin, found := restored.scripts.Components()["world.monster_transit_origin"].Get(follower)
+
+	if !found {
+		t.Fatal("Pan-native follower lost its spawn provenance")
+	}
+
+	branchID, _ := origin.Get("branch_id")
+	levelID, _ := origin.Get("level_id")
+
+	if branchID != "BRANCH_PANDEMONIUM" ||
+		levelID != int64(oldRegion) {
+		t.Fatalf("Pan-native spawn provenance changed: %v, %v",
+			branchID, levelID)
 	}
 }
 
@@ -216,7 +305,8 @@ func TestRestoreRejectsForgedMonsterTransitBranch(t *testing.T) {
 		defer loaded.Close()
 	}
 
-	if err == nil || !strings.Contains(err.Error(), "invalid transit origin") {
+	if err == nil ||
+		!strings.Contains(err.Error(), "invalid transit origin") {
 		t.Fatalf("forged transit origin was accepted: %v", err)
 	}
 }

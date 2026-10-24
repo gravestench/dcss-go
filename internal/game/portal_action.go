@@ -74,6 +74,7 @@ func (g *Game) transferPortalFollowers(origin ecs.Position) error {
 
 	if err != nil {
 		g.scripts.DiscardPending()
+
 		return err
 	}
 
