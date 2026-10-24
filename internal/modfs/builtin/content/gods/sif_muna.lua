@@ -15,6 +15,7 @@ local definition = {
     piety_decay_chance = 17,
     conduct_module = "policy.religion.conduct.sif_muna",
     gift_module = "policy.religion.gifts.sif_muna",
+    behavior_module = "policy.religion.gods.sif_muna",
     rejects_innate_caster = true,
 }
 

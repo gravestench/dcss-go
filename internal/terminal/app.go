@@ -132,6 +132,7 @@ type AppModel struct {
 	pendingAction       game.Command
 	pendingActionPrompt string
 	pendingSelection    *game.SelectionRequest
+	selectionPage       int
 	aimX                int
 	aimY                int
 	spellMode           string
@@ -332,7 +333,9 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 
 	case ScreenSelection:
 		return m.routeInput("selection", key, map[string]any{
-			"options": selectionOptions(m.pendingSelection),
+			"options":      selectionOptions(m.selectionPageOptions()),
+			"has_previous": m.selectionPage > 0,
+			"has_next":     m.selectionHasNext(),
 		})
 
 	case ScreenEvokeWand:
@@ -367,6 +370,7 @@ func (m *AppModel) handleKey(key string) tea.Cmd {
 			"casting": m.aimSpellID != "",
 			"evoking": m.aimKind == game.CommandEvokeWand ||
 				m.aimKind == game.CommandEvokeItem,
+
 			"reading": m.pendingSelection != nil &&
 				m.pendingSelection.Kind == "cell",
 		})

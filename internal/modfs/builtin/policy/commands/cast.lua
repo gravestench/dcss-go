@@ -8,6 +8,7 @@ local confusion = require("policy.magic.player_confusion")
 local availability = require("policy.character.skill_availability")
 local hex_status = require("policy.combat.monster_hexes.status")
 local engulf = require("policy.combat.engulf")
+local command_kind = require("constants.command_kind")
 
 local cast = {}
 
@@ -29,14 +30,22 @@ local function needs_aim(spell)
         has_flag(spell, "dir_or_target")
 end
 
+-- Ability casting asks the same target question as ordinary casting. This
+-- shared predicate keeps spell flags from being interpreted twice.
+function cast.requires_aim(spell)
+    return needs_aim(spell)
+end
+
 -- Source: spl-cast.cc:cast_a_spell and spl-util.cc:
 -- casting_uselessness_reason. A rejected choice leaves time and RNG alone.
 -- Example: cast.prepare(ctx, player, { spell_id = spells.SPELL_MAGIC_DART, dx = 1 }) checks a cast.
-function cast.prepare(ctx, player, input)
+function cast.prepare(ctx, player, input, allow_library)
     local spell_id = input.spell_id
     local known = records.find(ctx, player, spell_id)
 
-    if not known or known.state.known_slot == 0 then
+    if not known or
+        (known.state.known_slot == 0 and
+            (not allow_library or not known.state.in_library)) then
         return { message = "You don't know that spell." }
     end
 
@@ -63,7 +72,9 @@ function cast.prepare(ctx, player, input)
         return { message = "You cannot cast spells while unable to breathe!" }
     end
 
-    if progress.level < spell.level then
+    -- Exegesis can borrow a library spell above the player's experience
+    -- level; it still needs the ordinary spell resource and usable school.
+    if not allow_library and progress.level < spell.level then
         return { message = "You aren't experienced enough to cast this spell." }
     end
 
@@ -108,7 +119,8 @@ function cast.prepare(ctx, player, input)
         end
     end
 
-    if input.kind ~= 21 and effect.can_target and
+    if input.kind ~= command_kind.FORCE_CAST and
+        effect.can_target and
         not effect.can_target(ctx, player, spell) then
         return {
             message = "You can't see any susceptible monsters within range! " ..
@@ -122,7 +134,7 @@ function cast.prepare(ctx, player, input)
             spell_id = spell_id,
             dx = dx,
             dy = dy,
-            forced = input.kind == 21,
+            forced = input.kind == command_kind.FORCE_CAST,
         },
         cost = 10,
     }

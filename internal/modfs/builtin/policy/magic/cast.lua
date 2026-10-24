@@ -15,12 +15,15 @@ local cast = {}
 -- Source: spl-cast.cc:cast_a_spell and your_spells. Preparation already
 -- resolved all no-time aborts before the scheduler began this action.
 -- Validate and pay for a learned spell before dispatching its resolver and possible channel state.
-function cast.resolve(ctx, player, intent, aut)
+function cast.resolve(ctx, player, intent, aut, exegesis)
     local spell_id = intent.spell_id
     local known = records.find(ctx, player, spell_id)
     local effect = effects.get(spell_id)
 
-    if not known or known.state.known_slot == 0 or not effect then
+    if not known or
+        (known.state.known_slot == 0 and
+            (not exegesis or not known.state.in_library)) or
+        not effect then
         error("player spell intent has no known Lua effect " .. spell_id)
     end
 
@@ -32,16 +35,17 @@ function cast.resolve(ctx, player, intent, aut)
     resources.pay(ctx, player,
         resources.spell_cost(ctx, player, spell.level))
 
-    local profile = failure.profile(ctx, player, spell)
+    local profile = not exegesis and
+        failure.profile(ctx, player, spell)
 
-    if failure.roll(ctx, profile.raw) then
+    if profile and failure.roll(ctx, profile.raw) then
         ctx:emit("spell", "You miscast " .. spell.name .. ".")
 
         return "fail"
     end
 
     effect.resolve(ctx, player, intent, spell,
-        power.cast(ctx, player, spell), aut)
+        power.cast(ctx, player, spell, exegesis), aut)
     spell_conduct.on_success(ctx, player, spell)
     demonic_magic.on_success(ctx, player, spell)
 

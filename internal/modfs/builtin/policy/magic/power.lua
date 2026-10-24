@@ -108,7 +108,7 @@ end
 -- Source: spl-cast.cc:calc_spell_power and _stepdown_spellpower, with the
 -- ordinary scale-one cast path. Wielded staff enhancement is included in
 -- enhancement.apply alongside mutation and brilliance effects.
-function power.cast(ctx, player, spell)
+function power.cast(ctx, player, spell, exegesis)
     local attributes = player_attributes.current(ctx, player)
     local character = ctx:get(player, "core.player")
 
@@ -116,7 +116,14 @@ function power.cast(ctx, player, spell)
         error("player lacks cast power state")
     end
 
-    local centis = math.floor(power.skill(ctx, player, spell) *
+    local skill_power = power.skill(ctx, player, spell)
+
+    if exegesis then
+        skill_power = skill_power + power.training(ctx, player,
+            skill_ids.SK_INVOCATIONS, 300)
+    end
+
+    local centis = math.floor(skill_power *
         attributes.intelligence / 10)
     centis = enhancement.apply(ctx, player, spell, centis)
     local wild = mutation_effects.sum(ctx, player,

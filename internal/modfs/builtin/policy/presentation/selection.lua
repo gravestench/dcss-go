@@ -28,7 +28,8 @@ function selection.run(_, input)
     writes[#writes + 1] = {
         x = 0,
         y = input.height - 2,
-        text = "Esc - Cancel",
+            text = "Page " .. input.page .. "/" .. input.pages ..
+                "  < Previous  > Next  Esc Cancel",
         fg = colors.brown,
     }
 

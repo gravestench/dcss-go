@@ -12,6 +12,14 @@ function selection.route(input)
         }
     end
 
+    if input.key == ">" and input.has_next then
+        return { action = "selection_next" }
+    end
+
+    if input.key == "<" and input.has_previous then
+        return { action = "selection_previous" }
+    end
+
     for index, option in ipairs(input.options or {}) do
         if input.key == menu.letter(index) then
             return {
@@ -23,7 +31,7 @@ function selection.route(input)
 
     return {
         action = "notice",
-        text = "Choose an option by its letter, or Esc to cancel.",
+        text = "Choose a letter, use </> for pages, or Esc to cancel.",
     }
 end
 

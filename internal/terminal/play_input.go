@@ -120,6 +120,8 @@ var gameInputActions = map[string]bool{
 	"item_step":              true,
 	"selection_choose":       true,
 	"selection_cancel":       true,
+	"selection_next":         true,
+	"selection_previous":     true,
 	"cancel_read_aim":        true,
 	"move_aim":               true,
 	"mutation_page":          true,
@@ -207,7 +209,8 @@ func (m *AppModel) applyInputDecision(decision map[string]any) tea.Cmd {
 	case "drop_quantity", "item_step":
 		return m.applyItemDecision(action, decision)
 
-	case "selection_choose", "selection_cancel":
+	case "selection_choose", "selection_cancel",
+		"selection_next", "selection_previous":
 		return m.applySelectionDecision(action, decision)
 
 	case "fire_aim", "cycle_aim", "move_aim", "cancel_door",
@@ -266,9 +269,12 @@ func (m *AppModel) stepPlayCommand(command game.Command) tea.Cmd {
 		command.Forced = false
 		m.pendingAction = command
 		m.pendingSelection = result.Selection
+		m.selectionPage = 0
 
 		if result.Selection.Kind == "cell" {
 			m.startAim(command.Kind, command.ItemID)
+			m.aimSpellID = command.SpellID
+			m.aimAbilityID = command.AbilityID
 		} else {
 			m.openScreen(ScreenSelection)
 		}

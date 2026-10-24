@@ -5074,6 +5074,27 @@ population rows need no `source_order`. When a definition contains multiple
 ordered choices, keep that order inside the owning file and explain why it
 matters there.
 
+## Spell-list abilities and long selections
+
+Sif Muna's powers under `policy/abilities/sif_muna/` show how to add an
+ability that uses existing spell records. `spells.choose(ctx, player,
+spell_id, known_only, title)` reads `character.spell` ECS entries and returns
+either a validated spell or a free selection prompt. Use `known_only = true`
+for a memorized spell and `false` for a library spell with a registered
+effect. The generic ability command carries the returned ID as `spell_id`;
+the terminal pages long lists and sends that stable ID back. A label is
+display text and must never be used as a lookup key.
+
+Divine Exegesis asks for a cell after selecting a spell whose flags require
+aiming. It then calls the ordinary cast preflight and effect owners with a
+library allowance and an Invocations power bonus. A new spell-list ability
+should follow that flow instead of making a second spell effect table.
+Channel Magic illustrates a timed god effect: the ability starts a saved
+player component, an ordered Lua system ages it once per player action, and
+the god behavior clears it immediately on departure or penance. Validate
+saved timed state in `policy/save/status.lua` so invalid worship and timers
+cannot silently resume.
+
 ## Saves and identity
 
 The startup screen shows a short effective ruleset hash and whether its Lua

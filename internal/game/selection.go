@@ -57,10 +57,6 @@ func selectionFromDecision(value any) (*SelectionRequest, error) {
 		return nil, fmt.Errorf("Lua selection has no options")
 	}
 
-	if len(rows) > 52 {
-		return nil, fmt.Errorf("Lua selection exceeds 52 terminal letters")
-	}
-
 	seen := map[string]bool{}
 
 	for index, row := range rows {
