@@ -148,9 +148,13 @@ function equipment.monster_melee(ctx, monster, contact_index)
             if not has_flag(definition.weapon.damage_flags, "DAMV_NON_MELEE") then
                 local properties = require(
                     "policy.item_generation.artefacts.properties")
+                local artefact = ctx:get(entry.entity,
+                    component.ITEM_ARTEFACT)
 
                 return {
                     entity = entry.entity,
+                    skill_id = definition.weapon.skill_id,
+                    unique_id = artefact and artefact.unique_id or "",
                     damage = definition.weapon.damage +
                         properties.value(ctx, entry.entity,
                             artefact_ids.BASE_DAMAGE),

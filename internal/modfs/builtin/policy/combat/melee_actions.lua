@@ -744,8 +744,9 @@ local function run_round(ctx, attacker, target, options)
     local contacts = attack_sequence.for_actor(ctx, attacker, definition)
     local origin = ctx:get(target, component.POSITION)
     local last_health
+    local effective_index = 0
 
-    for index, selected in ipairs(contacts) do
+    for _, selected in ipairs(contacts) do
         local attacker_health = ctx:get(attacker, component.HEALTH)
         local defender_health = ctx:get(target, component.HEALTH)
         local position = ctx:get(target, component.POSITION)
@@ -782,7 +783,12 @@ local function run_round(ctx, attacker, target, options)
 
         -- Source skips each ordinary slot independently when the foe is
         -- beyond adjacency; the later Sting slot retains its source index.
-        if distance <= 1 or reach.contact(selected.attack) then
+        if distance <= 1 or reach.contact(ctx, attacker,
+            selected.attack, effective_index + 1, distance) then
+            -- Source skipped attempts do not advance the weapon hand.
+            -- A dual wielder's next eligible slot reuses that hand.
+            effective_index = effective_index + 1
+
             if target == ctx:player() then
                 if selected.attack.type_id == attack_types.CONSTRICT then
                     if not (options and options.player_moving) then
@@ -791,13 +797,13 @@ local function run_round(ctx, attacker, target, options)
                     end
                 else
                     monster_player_contact(ctx, attacker, selected,
-                        index, options)
+                        effective_index, options)
                 end
 
                 last_health = ctx:get(target, component.HEALTH)
             else
                 last_health = monster_target_contact(ctx, attacker,
-                    target, selected, index)
+                    target, selected, effective_index)
             end
         end
     end

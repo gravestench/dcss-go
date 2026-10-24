@@ -135,6 +135,14 @@ and dual wielders alternate their active weapons. Cherub and random
 attack types choose their contact shape on each attempt. A constricting
 slot starts one hold; later damage reads that slot's base damage rather
 than a fixed second slot.
+Monster reach now derives from natural Reach, Sting, Tongue, and Rift
+contacts plus the live primary weapon. Polearms and the Lochaber axe reach
+two cells; the Rift artefact reaches three through solid-blocking sight.
+The AI offers distant melee only when the current path permits it, combat
+checks the path again, and only each eligible reaching slot makes contact.
+Removing a weapon changes that capability on the next action.
+Tongue acid and Rift distortion contact effects still need their attack-
+flavour slice.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except

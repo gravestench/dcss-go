@@ -356,9 +356,11 @@ local function sting_reach(ctx)
         profile.definition(ctx, beast,
             catalog.get("monsters", monsters.MONS_MUTANT_BEAST)))
 
-    harness.falsy(reach.contact(contacts[1].attack),
+    harness.falsy(reach.contact(ctx, beast,
+        contacts[1].attack, 1, 2),
         "the primary hit cannot strike from two cells")
-    harness.truthy(reach.contact(contacts[2].attack),
+    harness.truthy(reach.contact(ctx, beast,
+        contacts[2].attack, 2, 2),
         "only the Sting slot can strike from two cells")
 
     local contact_messages = 0
