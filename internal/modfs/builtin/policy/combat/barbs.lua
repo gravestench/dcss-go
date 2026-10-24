@@ -12,12 +12,15 @@ local streams = require("constants.rng_streams")
 local barbs = {}
 local AUT = 10
 
--- Use the spell stream so a saved game replays duration and movement rolls.
-local function range(ctx, low, high)
-    return low + ctx:random(streams.MONSTER_SPELL, high - low + 1)
+-- Throw Barbs uses the monster spell stream; direct melee contact passes
+-- its melee stream so the two source actions do not share a draw sequence.
+local function range(ctx, low, high, stream)
+    return low + ctx:random(stream or streams.MONSTER_SPELL,
+        high - low + 1)
 end
 
--- Insubstantial bodies and the jelly genus cannot hold physical spikes.
+-- Source allows a jelly to hold barbs even when its body is insubstantial;
+-- other insubstantial monsters cannot keep the spikes lodged.
 local function can_lodge(ctx, target)
     if ctx:has(target, component.PLAYER) then
         return true
@@ -26,8 +29,12 @@ local function can_lodge(ctx, target)
     local actor = ctx:get(target, component.ACTOR)
     local definition = actor and catalog.get("monsters", actor.kind_id)
 
-    if not definition or definition.genus_id == monsters.MONS_JELLY then
+    if not definition then
         return false
+    end
+
+    if definition.genus_id == monsters.MONS_JELLY then
+        return true
     end
 
     for _, flag in ipairs(definition.flags or {}) do
@@ -41,7 +48,7 @@ end
 
 -- A landed, damaging hit starts or strengthens the target's barbs. Player
 -- and monster durations differ in the source, but share one ECS record.
-function barbs.lodge(ctx, source, target, damage)
+function barbs.lodge(ctx, source, target, damage, stream)
     if damage <= 0 or not can_lodge(ctx, target) then
         return false
     end
@@ -51,7 +58,8 @@ function barbs.lodge(ctx, source, target, damage)
     local state
 
     if player then
-        local added = current and range(ctx, 2, 4) or range(ctx, 4, 8)
+        local added = current and range(ctx, 2, 4, stream) or
+            range(ctx, 4, 8, stream)
 
         state = {
             remaining_aut = current and
@@ -66,7 +74,7 @@ function barbs.lodge(ctx, source, target, damage)
     else
         state = {
             remaining_aut = (current and current.remaining_aut or 0) +
-                range(ctx, 5, 7) * AUT,
+                range(ctx, 5, 7, stream) * AUT,
             -- mon_enchant::operator+= stacks degree, capped at four.
             power = current and math.min(4, current.power + 1) or 1,
             source = source,

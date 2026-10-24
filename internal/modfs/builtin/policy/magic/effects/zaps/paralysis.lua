@@ -8,19 +8,9 @@ local will = require("policy.magic.effects.zaps.will")
 local senses = require("policy.character.senses")
 local vault_enchantments = require("policy.monsters.vault_enchantments")
 local enchantments = require("constants.vault_monster_enchantments")
+local monster_stasis = require("policy.monsters.stasis")
 
 local paralysis = {}
-
--- Check stationary and other catalog flags without assuming a flag list exists.
-local function has_flag(definition, wanted)
-    for _, flag in ipairs(definition.flags or {}) do
-        if flag == wanted then
-            return true
-        end
-    end
-
-    return false
-end
 
 -- Convert enchant power through source stepdown before storing a paralysis duration.
 local function duration(power)
@@ -102,7 +92,7 @@ function paralysis.resolve(ctx, player, intent, spell, power)
 
     local definition = catalog.get("monsters", actor.kind_id)
 
-    if health.current <= 0 or has_flag(definition, "M_STASIS") or
+    if health.current <= 0 or monster_stasis.intrinsic(definition) or
         ctx:has(target, component.PARALYSIS) then
         ctx:emit("spell", "The " .. definition.name .. " is unaffected.")
         return

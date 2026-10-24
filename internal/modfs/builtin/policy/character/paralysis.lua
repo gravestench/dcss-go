@@ -10,6 +10,32 @@ local streams = require("constants.rng_streams")
 
 local paralysis = {}
 
+-- A hostile melee actor cannot re-paralyse a player during an existing
+-- paralysis window. The divine path below deliberately bypasses this gate.
+function paralysis.melee(ctx, player, turns)
+    local choice = ctx:get(player, component.PLAYER)
+    local species = catalog.get("species", choice.species_id)
+
+    if species_traits.stasis(species) or forms.stasis(ctx, player) then
+        ctx:emit("combat", "Your stasis prevents you from being paralysed.")
+
+        return false
+    end
+
+    if ctx:has(player, component.PLAYER_PARALYSIS) then
+        ctx:emit("combat", "You shrug off the repeated paralysis!")
+
+        return false
+    end
+
+    ctx:add(player, component.PLAYER_PARALYSIS, {
+        remaining_aut = math.min(13, turns) * 10,
+    })
+    ctx:emit("combat", "You suddenly lose the ability to move!")
+
+    return true
+end
+
 -- The source roll spans 2..5+current turns and then caps at 13. Stasis
 -- rejects it before drawing, leaving the card stream unchanged.
 function paralysis.divine(ctx, player, stream)

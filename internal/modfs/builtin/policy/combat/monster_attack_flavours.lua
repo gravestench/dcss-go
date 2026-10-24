@@ -9,6 +9,8 @@ local monster_enchant = require("policy.combat.monster_enchant")
 local monster_health = require("policy.combat.monster_health")
 local monster_poison = require("policy.combat.monster_poison")
 local life = require("policy.combat.monster_attack_flavours.life")
+local afflictions = require(
+    "policy.combat.monster_attack_flavours.afflictions")
 local concentrate_venom = require("policy.combat.monster_tactical.concentrate_venom")
 local curare = require("policy.combat.monster_tactical.curare")
 local player_corrosion = require("policy.combat.player_corrosion")
@@ -313,6 +315,12 @@ local effects = {
     [attack_ids.SCARAB] = life.scarab,
     [attack_ids.PAIN] = life.pain,
     [attack_ids.ANTIMAGIC] = life.antimagic,
+    [attack_ids.CONFUSE] = afflictions.confuse,
+    [attack_ids.BARBS] = afflictions.barbs,
+    [attack_ids.RAGE] = afflictions.rage,
+    [attack_ids.VULNERABILITY] = afflictions.vulnerability,
+    [attack_ids.POISON_PARALYSE] =
+        afflictions.poison_paralysis,
     [attack_ids.STICKY_FLAME] = napalm,
     [traits.corrode] = corrode,
     [traits.ensnare] = ensnare,

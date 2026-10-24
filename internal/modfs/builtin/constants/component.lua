@@ -145,6 +145,7 @@ local component = {
     MONSTER_VINE_GRIP = "combat.monster_vine_grip",
     MONSTER_FOE_MOTION = "ai.monster_foe_motion",
     MONSTER_SPORE = "combat.monster_spore",
+    MONSTER_SPORE_EXHAUSTION = "combat.monster_spore_exhaustion",
     MONSTER_TROGS_HAND = "combat.monster_trogs_hand",
     MONSTER_REPULSION = "combat.monster_repulsion",
     MONSTER_INJURY_MIRROR = "combat.monster_injury_mirror",

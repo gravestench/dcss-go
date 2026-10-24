@@ -44,8 +44,10 @@ function stats.hit_dice(ctx, monster, definition, base_hd)
     local drained = ctx:get(monster, component.MONSTER_DRAINED)
     local degree = drained and drained.remaining_aut > 0 and
         drained.degree or 0
+    local spores = ctx:get(monster, component.MONSTER_SPORE_EXHAUSTION)
+    local spent_hd = spores and spores.lost_hd or 0
     local hd = math.max(1, (base_hd or
-        stats.base_hit_dice(ctx, monster, definition)) - degree)
+        stats.base_hit_dice(ctx, monster, definition)) - degree - spent_hd)
     local wretched = ctx:get(monster, component.WRETCHED)
 
     if wretched and wretched.remaining_aut > 0 then

@@ -151,6 +151,11 @@ source chances and power formulas against player and monster actors. Their
 secondary HP, MP, slow, and drain state stays in the existing ECS owners;
 ghost moths regain stolen MP and antimagic vine stalkers shorten their own
 enchantment on contact.
+Confuse, Barbs, Rage, Vulnerability, and Poison Paralysis now apply after
+source monster melee contacts to player and monster victims. Each effect
+uses the saved status owner already shared with spells, scrolls, or missiles.
+Spore confusion permanently spends the attacker's HD; poison paralysis
+keeps its independent poison and control chances and its rPois gates.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except

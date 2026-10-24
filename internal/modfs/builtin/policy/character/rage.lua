@@ -4,8 +4,6 @@
 local catalog = require("policy.catalog")
 local command_kind = require("constants.command_kind")
 local component = require("constants.component")
-local effects = require("policy.mutations.effects.registry")
-local capabilities = require("constants.mutation_capabilities")
 local formulas = require("policy.character.formulas")
 local slow = require("policy.character.slow")
 local traits = require("policy.character.traits")
@@ -91,6 +89,7 @@ function rage.can_begin(ctx, player, intentional, potion)
     local mesmerism = ctx:get(player, component.PLAYER_MESMERISM)
 
     local forms = require("policy.magic.effects.forms.player")
+    local resistance = require("policy.combat.player_resistance")
 
     return not traits.stasis(species) and not forms.stasis(ctx, player) and
         species.undead_type ~= undead_states.UNDEAD and
@@ -99,7 +98,7 @@ function rage.can_begin(ctx, player, intentional, potion)
         not (mesmerism and mesmerism.remaining_aut > 0 and
             require("policy.character.player_mesmerism").any(ctx, player)) and
         (intentional or potion or
-            effects.sum(ctx, player, capabilities.CLARITY) == 0)
+            not resistance.clarity(ctx, player))
 end
 
 -- Persist the initial rage state before action restrictions or HP scaling read it.

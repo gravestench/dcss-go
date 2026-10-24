@@ -678,6 +678,22 @@ function statuses.lower_will(ctx, player, duration_aut)
     end
 end
 
+-- Melee vulnerability adds to the current timer, unlike scroll
+-- Vulnerability's maximum-duration write, and caps at forty turns.
+function statuses.extend_lower_will(ctx, player, added_aut)
+    local current = state(ctx, player)
+    local value = ensure(ctx, player)
+
+    value.lowered_will_aut = math.min(400,
+        value.lowered_will_aut + added_aut)
+
+    if current then
+        ctx:set(player, component.PLAYER_STATUS, value)
+    else
+        ctx:add(player, component.PLAYER_STATUS, value)
+    end
+end
+
 -- Source: player.cc:player_speed. All slowing effects share one duration.
 function statuses.slow_active(ctx, player)
     return player_slow.active(ctx, player)

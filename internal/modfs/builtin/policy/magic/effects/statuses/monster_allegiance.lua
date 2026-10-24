@@ -11,7 +11,7 @@ local monster_slow = require("policy.combat.monster_slow")
 local mass = require("policy.magic.effects.statuses.mass_enchantment")
 local frenzy_health = require("policy.magic.effects.statuses.monster_frenzy_health")
 local holiness = require("constants.monster_holiness")
-local monster_flags = require("constants.monster_flags")
+local monster_stasis = require("policy.monsters.stasis")
 
 local allegiance = {}
 
@@ -134,8 +134,12 @@ function allegiance.can_berserk(ctx, target)
     end
 
     local definition = catalog.get("monsters", actor.kind_id)
+    local living = has(definition.holiness, holiness.NATURAL) or
+        has(definition.holiness, holiness.DEMONIC) or
+        has(definition.holiness, holiness.HOLY)
 
-    return can_frenzy(ctx, target, definition)
+    return living and not monster_stasis.intrinsic(definition) and
+        can_frenzy(ctx, target, definition)
 end
 
 -- monster::needs_berserk(false) filters physical incapacity, Teleport,
@@ -151,7 +155,7 @@ function allegiance.needs_berserk(ctx, target, foe)
 
     if not definition or not can_frenzy(ctx, target, definition) or
         ctx:has(target, component.TELEPORT) or
-        has(definition.flags, monster_flags.STASIS) then
+        monster_stasis.intrinsic(definition) then
         return false
     end
 

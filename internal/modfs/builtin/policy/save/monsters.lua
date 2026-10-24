@@ -20,6 +20,7 @@ local band_members = require("policy.population.band_members")
 local branches = require("ids.branches")
 local ai_validation = require("policy.ai.validation")
 local monster_profile = require("policy.combat.monster_profile")
+local monster_stats = require("policy.combat.monster_stats")
 local monster_spells = require("policy.combat.monster_spells")
 local pan_traits = require("constants.pan_lord_traits")
 local pan_colours = require("constants.pan_lord_colours")
@@ -835,6 +836,8 @@ function module.run(ctx, input)
         local energy = ctx:get(entity, "core.monster_energy")
         local ai = ctx:get(entity, "core.ai")
         local rolling = ctx:get(entity, component.MONSTER_ROLLING)
+        local spore_exhaustion = ctx:get(entity,
+            component.MONSTER_SPORE_EXHAUSTION)
 
         if not actor or not health or not position or not energy then
             error("invalid monster entity " .. ctx:id(entity))
@@ -852,6 +855,20 @@ function module.run(ctx, input)
             rolling.remaining_aut > 150) then
             error("monster " .. ctx:id(entity) ..
                 " has invalid rolling duration")
+        end
+
+        -- An alive mushroom cannot have spent all its intrinsic HD.
+        -- Reject malformed negative values before they inflate live HD.
+        if spore_exhaustion then
+            local definition = catalog.get("monsters", actor.kind_id)
+            local base_hd = monster_stats.base_hit_dice(ctx, entity,
+                definition)
+
+            if spore_exhaustion.lost_hd < 1 or
+                spore_exhaustion.lost_hd >= base_hd then
+                error("monster " .. ctx:id(entity) ..
+                    " has invalid spore exhaustion")
+            end
         end
 
         ugly_thing.validate(ctx, entity,
