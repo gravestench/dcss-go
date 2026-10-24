@@ -3,7 +3,7 @@
 local abilities = require("ids.abilities")
 local commands = require("policy.commands.abilities")
 local component = require("constants.component")
-local costs = require("policy.abilities.beogh.costs")
+local costs = require("policy.abilities.god_costs")
 local gods = require("constants.gods")
 local harness = require("tests.harness")
 local jobs = require("ids.jobs")
@@ -61,8 +61,8 @@ local function gates(game, player)
     worship.piety = piety.breakpoint(2)
     game:set(player, component.RELIGION_WORSHIP, worship)
 
-    harness.truthy(costs.available(game, player, 2))
-    harness.falsy(costs.available(game, player, 4))
+    harness.truthy(costs.available(game, player, gods.BEOGH, 2))
+    harness.falsy(costs.available(game, player, gods.BEOGH, 4))
     harness.truthy(registry.usable_now(game, player,
         registry.get(abilities.BEOGH_SMITING)))
 
@@ -70,13 +70,13 @@ local function gates(game, player)
     worship.penance[gods.BEOGH] = 1
     game:set(player, component.RELIGION_WORSHIP, worship)
 
-    harness.falsy(costs.available(game, player, 2))
-    harness.falsy(costs.available(game, player, 6))
+    harness.falsy(costs.available(game, player, gods.BEOGH, 2))
+    harness.falsy(costs.available(game, player, gods.BEOGH, 6))
 
     worship.penance[gods.BEOGH] = 0
     game:set(player, component.RELIGION_WORSHIP, worship)
 
-    harness.truthy(costs.available(game, player, 6))
+    harness.truthy(costs.available(game, player, gods.BEOGH, 6))
 end
 
 -- The source invocation formula uses effective Invocations and piety;

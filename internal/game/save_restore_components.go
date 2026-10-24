@@ -369,6 +369,10 @@ func (g *Game) validateRestoredPlacement() error {
 		return err
 	}
 
+	if _, err := g.scripts.Policy("save.validate_lugonu_corruption", nil); err != nil {
+		return err
+	}
+
 	if _, err := g.scripts.Policy("save.validate_traps", map[string]any{
 		"levels": g.vaultValidationLevels(),
 	}); err != nil {

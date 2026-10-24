@@ -172,6 +172,8 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         state.source_id == gods.JIYVA
     local xom_source = state.source_category == categories.GODS and
         state.source_id == gods.XOM
+    local lugonu_source = state.source_category == categories.GODS and
+        state.source_id == gods.LUGONU
     local wizlab_source = state.source_category == categories.VAULTS and
         (state.source_id == wizlab.WUCAD_MAP_ID or
             state.source_id == wizlab.BORGNJOR_MAP_ID)
@@ -181,6 +183,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         not trap_source and
         not item_source and not scroll_source and
         not jiyva_source and not xom_source and
+        not lugonu_source and
         not wizlab_source then
         error("summon " .. ctx:id(entity) .. " has invalid origin category")
     end

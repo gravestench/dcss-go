@@ -8,9 +8,10 @@ local armour_slots = require("constants.armour_slots")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local component = require("constants.component")
-local costs = require("policy.abilities.beogh.costs")
+local costs = require("policy.abilities.god_costs")
 local display = require("policy.combat.monster_support.display")
 local gift_categories = require("constants.beogh_gift_categories")
+local gods = require("constants.gods")
 local identification = require("policy.items.identification")
 local object_classes = require("ids.object_classes")
 local monster_slots = require("constants.monster_equipment_slots")
@@ -24,7 +25,7 @@ local gift_item = {}
 
 -- The five-star menu row follows live worship and Beogh penance.
 local function available(ctx, player)
-    return costs.available(ctx, player, 5)
+    return costs.available(ctx, player, gods.BEOGH, 5)
 end
 
 -- Source is_named includes both bestowed proper names and unique orcs.
@@ -402,7 +403,7 @@ end
 function gift_item.validate(ctx, player)
     local pending = ctx:get(player, component.BEOGH_GIFT_CHOICE)
 
-    if pending and (not costs.available(ctx, player, 5) or
+    if pending and (not costs.available(ctx, player, gods.BEOGH, 5) or
         not gift_item.follower(ctx, player, pending.follower)) then
         error("invalid saved Beogh gift choice")
     end

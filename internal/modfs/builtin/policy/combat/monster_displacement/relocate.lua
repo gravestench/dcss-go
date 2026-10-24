@@ -15,9 +15,10 @@ local relocate = {}
 
 -- The same saved anchor, stasis, and constriction state gates every blink
 -- variant before an actor can leave its cell.
-function relocate.can_move(ctx, mover)
+function relocate.can_move(ctx, mover, force_player_blink)
     if ctx:has(mover, component.PLAYER) then
-        return translocation.restriction(ctx, mover) == nil
+        return force_player_blink or
+            translocation.restriction(ctx, mover) == nil
     end
 
     local actor = ctx:get(mover, component.ACTOR)
@@ -34,10 +35,12 @@ end
 -- Movement stays on the grid owner. Nets are released before leaving and a
 -- short source cloud records a blink's origin. Recall uses the same movement
 -- checks without a blink cloud, matching its distinct source visual effect.
-function relocate.move(ctx, mover, x, y, source, clouded)
+function relocate.move(ctx, mover, x, y, source, clouded,
+    force_player_blink)
     local origin = ctx:get(mover, component.POSITION)
 
-    if not origin or not relocate.can_move(ctx, mover) or
+    if not origin or
+        not relocate.can_move(ctx, mover, force_player_blink) or
         ctx:actor_at(origin.level_id, x, y) then
         return false
     end

@@ -9,7 +9,9 @@ function abilities.prepare(ctx, player, input)
     local id = input.ability_id
     local definition = registry.get(id)
 
-    if not definition or not registry.usable_now(ctx, player, definition) then
+    if not definition or
+        (not registry.usable_now(ctx, player, definition) and
+            not (input.cancelled and definition.owns_cancellation)) then
         return { message = "You do not have that ability." }
     end
 

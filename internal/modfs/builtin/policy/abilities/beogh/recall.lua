@@ -10,7 +10,7 @@ local branches = require("ids.branches")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local component = require("constants.component")
-local costs = require("policy.abilities.beogh.costs")
+local costs = require("policy.abilities.god_costs")
 local flags = require("constants.monster_flags")
 local gods = require("constants.gods")
 local habitat = require("policy.combat.monster_habitat")
@@ -397,7 +397,7 @@ end
 -- A running queue replaces the menu's ordinary Recall row; the live
 -- component, rather than stale player piety, decides which row appears.
 local function start_available(ctx, player)
-    return costs.available(ctx, player, 4) and
+    return costs.available(ctx, player, gods.BEOGH, 4) and
         not ctx:has(player, component.BEOGH_RECALL)
 end
 

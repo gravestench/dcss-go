@@ -26,6 +26,7 @@ local streams = {
     MUTATION = "mutation",
     POTION = "potion",
     RELIGION = "religion",
+    LUGONU_CORRUPTION = "lugonu_corruption",
     PLACEMENT = "placement",
     POPULATION_COUNT = "population-count",
     SHOP = "shop",

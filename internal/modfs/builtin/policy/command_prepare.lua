@@ -53,6 +53,14 @@ local function prepare_raw(ctx, input)
         return { message = "Finish your resurrection choice first." }
     end
 
+    -- The selected blessing item owns the free confirmation slot until
+    -- the player confirms or cancels it.
+    if ctx:has(player, component.LUGONU_BLESS_CHOICE) and
+        (input.kind ~= commands.ability or
+            input.ability_id ~= ability_ids.LUGONU_BLESS_WEAPON) then
+        return { message = "Finish your weapon blessing choice first." }
+    end
+
     -- Involuntary states turn a requested command into a wait before dispatch can spend the chosen action.
     local petrification = ctx:get(player,
         component.PLAYER_PETRIFICATION)

@@ -445,6 +445,13 @@ func (g *Game) finishTurn(startAut, cost Aut, events []Event) (StepResult, error
 		return StepResult{}, err
 	}
 
+	if err := g.runWorldPolicy("world.lugonu_corruption", map[string]any{
+		"level_id":    activeLevelID,
+		"elapsed_aut": int64(cost),
+	}); err != nil {
+		return StepResult{}, err
+	}
+
 	if err := g.refreshVisibility(); err != nil {
 		return StepResult{}, err
 	}

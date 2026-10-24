@@ -4,7 +4,7 @@
 local abilities = require("ids.abilities")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
-local costs = require("policy.abilities.beogh.costs")
+local costs = require("policy.abilities.god_costs")
 local effects = require("policy.magic.effects.registry")
 local magic_power = require("policy.magic.power")
 local registry = require("policy.abilities.registry")
@@ -12,6 +12,7 @@ local skills = require("ids.skills")
 local spells = require("ids.spells")
 local streams = require("constants.rng_streams")
 local component = require("constants.component")
+local gods = require("constants.gods")
 
 local smiting = {}
 local range = 7
@@ -19,7 +20,7 @@ local range = 7
 -- The menu and the resolution gate both read live worship. A stale menu
 -- entry cannot smite after conversion or Beogh penance begins.
 function smiting.available(ctx, player)
-    return costs.available(ctx, player, 2)
+    return costs.available(ctx, player, gods.BEOGH, 2)
 end
 
 -- Direction selection precedes the source failure roll. An empty visible

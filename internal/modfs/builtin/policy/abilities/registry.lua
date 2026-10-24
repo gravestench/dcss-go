@@ -113,7 +113,7 @@ function registry.available(ctx, player)
                 name = definition.name,
                 level = level,
                 range = definition.range and
-                    definition.range(level) or 0,
+                    definition.range(level, ctx, player) or 0,
                 confirmation_needed = definition.confirmation_needed and
                     definition.confirmation_needed(ctx, player) or false,
             }

@@ -8,7 +8,8 @@ local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local component = require("constants.component")
 local corpse = require("policy.abilities.beogh.corpse")
-local costs = require("policy.abilities.beogh.costs")
+local costs = require("policy.abilities.god_costs")
+local gods = require("constants.gods")
 local habitat = require("policy.combat.monster_habitat")
 local beogh = require("policy.religion.gods.beogh")
 local factory = require("policy.population.factory")
@@ -19,7 +20,7 @@ local resurrection = {}
 
 -- The six-star menu row follows live worship and Beogh penance.
 local function available(ctx, player)
-    return costs.available(ctx, player, 6)
+    return costs.available(ctx, player, gods.BEOGH, 6)
 end
 
 -- Defined before the confirmation handler so its no-room preflight can
@@ -226,7 +227,7 @@ function resurrection.resolve(ctx, player, intent)
     beogh.resurrect(ctx, follower, saved.gift_category)
     reclaim_gear(ctx, saved, follower, origin)
     ctx:destroy(body)
-    costs.spend(ctx, player, 0, 28)
+    costs.spend(ctx, player, 0, costs.piety_cost(ctx, 28))
     ctx:emit("religion", "Your orcish follower rises again.")
 end
 
@@ -236,7 +237,7 @@ function resurrection.validate(ctx, player)
     local pending = ctx:get(player,
         component.BEOGH_RESURRECTION_CHOICE)
 
-    if pending and (not costs.available(ctx, player, 6) or
+    if pending and (not costs.available(ctx, player, gods.BEOGH, 6) or
         not resurrection.reachable(ctx, player, pending.corpse)) then
         error("invalid saved Beogh resurrection choice")
     end
