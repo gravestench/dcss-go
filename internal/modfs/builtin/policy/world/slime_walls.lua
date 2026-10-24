@@ -17,6 +17,7 @@ local resistance = require("constants.resistance_ids")
 local streams = require("constants.rng_streams")
 local terrain = require("constants.terrain")
 local vision = require("policy.character.vision")
+local jiyva_powers = require("policy.religion.jiyva.powers")
 
 local walls = {}
 
@@ -172,7 +173,10 @@ function walls.expose(ctx, actor, elapsed_aut)
         end
 
         monster_message(ctx, actor, count)
-        monster_health.damage(ctx, actor, dealt, nil,
+        local source = jiyva_powers.oozemancy_active(ctx,
+            ctx:player()) and ctx:player() or nil
+
+        monster_health.damage(ctx, actor, dealt, source,
             causes.ACID)
     end
 

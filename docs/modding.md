@@ -5095,6 +5095,26 @@ the god behavior clears it immediately on departure or penance. Validate
 saved timed state in `policy/save/status.lua` so invalid worship and timers
 cannot silently resume.
 
+## Temporary terrain and melee conversion powers
+
+Jiyva's Oozemancy illustrates a power that changes the grid without
+embedding new terrain logic in Go. `policy/religion/jiyva/oozemancy.lua`
+selects eligible, visible cells. `policy/world/temporary_terrain.lua`
+creates one saved ECS marker per changed cell; that marker stores the old
+feature, new feature, expiry, source actor, and source ability ID. The
+existing slimy wall rule then handles acid exposure. A modded terrain power
+should use this owner and a distinct stable source ID so its cleanup does
+not restore unrelated temporary terrain.
+
+Slimify shows where to intercept a melee rule. Its focused Jiyva owner
+checks target eligibility and chooses a replacement body. The shared
+fixed-form polymorph owner updates the live monster entity, including its
+gear and HP; Jiyva's allegiance marker records the resulting side. The
+melee coordinator calls this owner only after a successful primary contact
+and returns before ordinary damage, brands, and auxiliary hits. A new
+conversion power should keep its timer in a player component, its monster
+state in an entity component, and its source order in that contact path.
+
 ## Saves and identity
 
 The startup screen shows a short effective ruleset hash and whether its Lua

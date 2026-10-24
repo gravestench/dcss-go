@@ -14,6 +14,7 @@ local monsters = require("ids.monsters")
 local piety = require("policy.religion.piety")
 local identity = require("policy.religion.jiyva.identity")
 local life = require("policy.religion.jiyva.life")
+local powers = require("policy.religion.jiyva.powers")
 local allegiance = require(
     "policy.magic.effects.statuses.monster_allegiance")
 local summons = require("policy.magic.effects.summons.common")
@@ -176,7 +177,9 @@ end
 
 -- Abandonment affects only good-neutral Jiyva converts, not unrelated
 -- neutral monsters. Charm is removed as part of the source daction.
-function jiyva.leave(ctx)
+function jiyva.leave(ctx, player)
+    powers.clear(ctx, player or ctx:player())
+
     local changed = false
 
     for _, entity in ipairs(ctx:query({ component.JIYVA_SLIME })) do
@@ -203,6 +206,12 @@ function jiyva.leave(ctx)
         ctx:emit(channels.MONSTER,
             "All of your fellow slimes turn on you.")
     end
+end
+
+-- Penance removes active slime powers without changing durable slime
+-- lineage or the earlier one-time Slime:5 reward.
+function jiyva.on_penance(ctx, player)
+    powers.clear(ctx, player)
 end
 
 -- A saved allegiance tag cannot turn a non-slime into a god gift.

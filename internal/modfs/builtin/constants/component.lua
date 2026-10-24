@@ -78,6 +78,7 @@ local component = {
     JIYVA_GROWTH = "religion.jiyva_growth",
     JIYVA_ECOLOGY = "religion.jiyva_ecology",
     JIYVA_SPAWN = "religion.jiyva_spawn",
+    JIYVA_POWERS = "religion.jiyva_powers",
     PLAYER_TURN = "core.player_turn",
     SPELL_RECORD = "character.spell",
     SPELLCASTING = "character.spellcasting",

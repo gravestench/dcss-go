@@ -42,6 +42,7 @@ local contact_report = require("policy.combat.player_contact")
 local cleaving = require("policy.religion.xom.cleaving")
 local attack_sequence = require("policy.combat.monster_attack_sequence")
 local reach = require("policy.combat.monster_reach")
+local slimify = require("policy.religion.jiyva.slimify")
 
 local actions = {}
 
@@ -131,6 +132,14 @@ local function player_contact(ctx, target, options)
     input.defender_shield = monster_defense.shield(ctx, target, defender)
 
     local outcome = melee.player(ctx, input)
+
+    -- Source Slimify replaces the first eligible primary hit before
+    -- damage, brands, and auxiliary contacts can affect its new ally.
+    if outcome.kind == "hit" and
+        slimify.contact(ctx, target,
+            options and options.cleave_secondary) then
+        return
+    end
 
     brambles.thorns(ctx, ctx:player(), target,
         outcome.kind == "block")
