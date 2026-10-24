@@ -2,19 +2,20 @@ local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local component = require("constants.component")
 local capabilities = require("constants.mutation_capabilities")
-local flags = require("constants.monster_flags")
 local habitats = require("constants.monster_habitats")
 local holiness = require("constants.monster_holiness")
 local channels = require("constants.message_channels")
 local monsters = require("ids.monsters")
 local mutations = require("ids.mutations")
-local size = require("constants.size")
-local confusion = require("policy.magic.player_confusion")
-local forms = require("policy.magic.effects.forms.player")
 local effects = require("policy.mutations.effects.registry")
 local roll = require("policy.combat.roll")
-local vision = require("policy.character.vision")
 local monster_health = require("policy.combat.monster_health")
+local substances = require("constants.water_hold_substances")
+local player_health = require("policy.combat.player_health")
+local eligibility = require("policy.combat.grip_eligibility")
+local drowning = require("policy.combat.monster_beams.water")
+local causes = require("constants.damage_causes")
+local targets = require("policy.ai.targets")
 
 local engulf = {}
 
@@ -46,39 +47,6 @@ local function definition(ctx, target)
     end
 
     return catalog.get(categories.MONSTERS, actor.kind_id), actor
-end
-
--- Use transformed size when present, then fall back to the species body.
-local function player_size(ctx, player)
-    local choice = ctx:get(player, component.PLAYER)
-
-    if not choice then
-        error("engulf holder has no player choice")
-    end
-
-    local species = catalog.get(categories.SPECIES, choice.species_id)
-    local body = catalog.get(categories.MONSTERS, species.monster_id)
-    local form_size = forms.modifiers(ctx, player).size
-
-    return size.rank[form_size] or size.rank[body.size_id]
-end
-
--- The player must see and physically cover an adjacent nonspiny target before any RNG draw.
-local function eligible(ctx, player, target, monster)
-    local holder = ctx:get(player, component.POSITION)
-    local victim = ctx:get(target, component.POSITION)
-
-    if not adjacent(holder, victim) or
-        confusion.active(ctx, player) or
-        player_size(ctx, player) < size.rank[monster.size_id] or
-        contains(monster.flags, flags.INSUBSTANTIAL) or
-        contains(monster.flags, flags.SPINY) or
-        monster.genus_id == monsters.MONS_JELLY then
-        return false
-    end
-
-    return ctx:visible(holder.level_id, holder.x, holder.y,
-        vision.radius(ctx, player), victim.x, victim.y)
 end
 
 -- Water dwellers and unliving creatures cannot be asphyxiated by an ooze hold.
@@ -123,7 +91,7 @@ function engulf.on_player_hit(ctx, target, damage)
 
     local monster = definition(ctx, target)
 
-    if not eligible(ctx, player, target, monster) or
+    if not eligibility.can_engulf(ctx, player, target) or
         ctx:random("mutation", 2) ~= 0 then
         return false
     end
@@ -131,9 +99,43 @@ function engulf.on_player_hit(ctx, target, damage)
     ctx:add(target, component.WATER_HOLD, {
         by = player,
         elapsed_aut = 1,
+        substance_id = substances.OOZE,
     })
+
+    if ctx:has(target, component.STICKY_FLAME) then
+        ctx:remove(target, component.STICKY_FLAME)
+    end
     ctx:emit(channels.COMBAT,
         "You engulf the " .. monster.name .. " in ooze!")
+
+    return true
+end
+
+-- A monster's AF_ENGULF uses the same saved status as the player's ooze
+-- mutation. Keep the hit-time substance because a later polymorph must
+-- not rewrite the text or identity of the original hold.
+function engulf.on_monster_hit(ctx, hit)
+    if engulf.active(ctx, hit.defender) then
+        return false
+    end
+
+    local actor = ctx:get(hit.attacker, component.ACTOR)
+    local watery = actor.kind_id ~= monsters.MONS_QUICKSILVER_OOZE
+
+    ctx:add(hit.defender, component.WATER_HOLD, {
+        by = hit.attacker,
+        elapsed_aut = ctx:has(hit.defender, component.PLAYER) and 10 or 1,
+        substance_id = watery and substances.WATER or substances.OOZE,
+    })
+
+    if ctx:has(hit.defender, component.PLAYER) then
+        ctx:emit(channels.COMBAT, "The " .. hit.attacker_name ..
+            " engulfs you" .. (watery and " in water!" or "!"))
+    else
+        ctx:emit(channels.COMBAT, "The " .. hit.attacker_name ..
+            " engulfs the " .. hit.defender_definition.name ..
+            (watery and " in water!" or "!"))
+    end
 
     return true
 end
@@ -148,12 +150,24 @@ function engulf.release_far(ctx, target)
 
     local holder = ctx:get(state.by, component.POSITION)
     local victim = ctx:get(target, component.POSITION)
+    local health = ctx:get(state.by, component.HEALTH)
 
-    if adjacent(holder, victim) then
+    if health and health.current > 0 and adjacent(holder, victim) then
         return false
     end
 
     ctx:remove(target, component.WATER_HOLD)
+
+    if ctx:has(target, component.PLAYER) then
+        if drowning.immune(ctx, target) then
+            ctx:emit(channels.COMBAT,
+                "The " .. state.substance_id ..
+                " engulfing you falls away.")
+        else
+            ctx:emit(channels.COMBAT,
+                "You gasp with relief as air once again reaches your lungs.")
+        end
+    end
 
     return true
 end
@@ -162,6 +176,20 @@ end
 function engulf.release_far_all(ctx)
     for _, target in ipairs(ctx:query({ component.WATER_HOLD })) do
         engulf.release_far(ctx, target)
+    end
+end
+
+-- The death phase can run after the water-hold tick. Remove links to the
+-- dying actor before it is deleted, even if its victim has not acted yet.
+function engulf.release_for(ctx, dying)
+    for _, victim in ipairs(ctx:query({ component.WATER_HOLD })) do
+        local state = ctx:get(victim, component.WATER_HOLD)
+
+        if victim == dying then
+            ctx:remove(victim, component.WATER_HOLD)
+        elseif state.by == dying then
+            engulf.release_far(ctx, victim)
+        end
     end
 end
 
@@ -180,43 +208,65 @@ function engulf.silenced(ctx, target)
         return false
     end
 
-    return breathes(definition(ctx, target))
+    return not drowning.immune(ctx, target)
 end
 
--- Source: mon-ench.cc increments the hold duration by one monster action
--- and applies random-rounded drowning damage to breathing targets.
-function engulf.tick(ctx, target)
-    if engulf.release_far(ctx, target) then
+-- The logarithmic stepdown mirrors the source's duration ramp. Reusing it
+-- for both victims keeps each direction's different base damage clear.
+local function stepdown(duration, threshold)
+    return threshold * math.log(1 + duration / threshold) /
+        math.log(2)
+end
+
+-- Player drowning runs on the player's own spent time. An unbreathing or
+-- swimming player stays held and silenced only when breathing applies, but
+-- its damage ramp resets so resistance cannot bank future damage.
+local function tick_player(ctx, target, state, elapsed_aut)
+    if drowning.immune(ctx, target) then
+        state.elapsed_aut = 10
+        ctx:set(target, component.WATER_HOLD, state)
+
         return 0
     end
 
-    local state = ctx:get(target, component.WATER_HOLD)
+    local delay = math.max(0, elapsed_aut or 0)
 
-    if not state then
-        return 0
-    end
+    state.elapsed_aut = state.elapsed_aut + delay
+    ctx:set(target, component.WATER_HOLD, state)
 
+    local numerator = math.floor((28 +
+        stepdown(state.elapsed_aut, 28)) * delay)
+    local damage = roll.random_divide(ctx, numerator, 100)
+
+    player_health.damage(ctx, target, damage, false,
+        state.by, causes.WATER)
+    ctx:emit(channels.COMBAT, "Your lungs strain for air!")
+
+    return damage
+end
+
+-- Source mon-ench increments the monster hold on its own active turn and
+-- awards the damage to the actual holder, which can be an allied monster.
+local function tick_monster(ctx, target, state)
     local monster, actor = definition(ctx, target)
 
     if not breathes(monster) then
         return 0
     end
 
-    local speed = actor.speed
-
-    if speed < 1 then
-        speed = 10
-    end
-
-    local duration = roll.random_divide(ctx, 100,
+    local speed = math.max(1, actor.speed)
+    local advanced = roll.random_divide(ctx, 100,
         math.min(speed, 100))
 
-    state.elapsed_aut = state.elapsed_aut + duration
+    state.elapsed_aut = state.elapsed_aut + advanced
     ctx:set(target, component.WATER_HOLD, state)
 
-    local stepdown = 30 * math.log(1 + state.elapsed_aut / 30) /
-        math.log(2)
-    local numerator = math.floor((50 + stepdown) * duration)
+    -- Source speed_to_duration draws again for injury after advancing the
+    -- enchant. Two independent rounds matter at non-divisor speeds.
+    local duration = roll.random_divide(ctx, 100,
+        math.min(speed, 100))
+    local numerator = math.floor((50 +
+        stepdown(state.elapsed_aut, 30)) * duration)
     local damage = roll.random_divide(ctx, numerator, 100)
 
     if damage <= 0 then
@@ -229,15 +279,35 @@ function engulf.tick(ctx, target)
         return 0
     end
 
-    health = monster_health.damage(ctx, target, damage, ctx:player())
+    health = monster_health.damage(ctx, target, damage,
+        state.by, causes.WATER)
     ctx:emit(channels.COMBAT,
         "The " .. monster.name .. " is asphyxiated!")
 
-    if health.current == 0 then
+    if health.current == 0 and targets.allied(ctx, state.by) then
         ctx:signal("player_kill", target)
     end
 
     return damage
+end
+
+-- Clear dead or distant links before either victim clock advances.
+function engulf.tick(ctx, target, elapsed_aut)
+    if engulf.release_far(ctx, target) then
+        return 0
+    end
+
+    local state = ctx:get(target, component.WATER_HOLD)
+
+    if not state then
+        return 0
+    end
+
+    if ctx:has(target, component.PLAYER) then
+        return tick_player(ctx, target, state, elapsed_aut)
+    end
+
+    return tick_monster(ctx, target, state)
 end
 
 effects.add(mutations.MUT_ENGULF, {

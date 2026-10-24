@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local constriction = require("policy.combat.constriction")
 local player_constriction = require("policy.combat.player_constriction")
+local monster_stats = require("policy.combat.monster_stats")
 local targets = require("policy.ai.targets")
 local clutch = require("policy.magic.effects.statuses.vile_clutch")
 local fastroot = require("policy.magic.effects.zaps.fastroot")
@@ -34,16 +35,35 @@ local function escape_grasp(ctx, actor, intent)
     grip.escape_attempts = grip.escape_attempts + 1
     ctx:set(actor, component.CONSTRICTION, grip)
 
-    if not constriction.escape(ctx, grip.escape_attempts, definition.hd) then
+    local player = actor == ctx:player()
+    local escaped
+
+    if player then
+        escaped = constriction.escape(ctx, grip.escape_attempts,
+            monster_stats.hit_dice(ctx, grip.by, definition))
+    else
+        escaped = constriction.monster_escape(ctx,
+            grip.escape_attempts,
+            monster_stats.hit_dice(ctx, grip.by, definition))
+    end
+
+    if not escaped then
         intent.kind = intent_ids.WAIT
         ctx:set(actor, component.INTENT, intent)
-        ctx:emit("combat", "The " .. definition.name ..
-            "'s grasp on you weakens, but your attempt to escape fails.")
+
+        if player then
+            ctx:emit("combat", "The " .. definition.name ..
+                "'s grasp on you weakens, but your attempt to escape fails.")
+        end
 
         return false
     end
 
     ctx:remove(actor, component.CONSTRICTION)
+
+    if not player then
+        return true
+    end
 
     local energy = ctx:get(grip.by, component.MONSTER_ENERGY)
 
@@ -110,6 +130,13 @@ function system.update(ctx, actor, elapsed_aut)
         end
         ctx:set(actor, component.INTENT, intent)
 
+        return
+    end
+
+    -- A constricted monster can still strike an occupied neighbor. Source
+    -- movement tries to escape only after ruling out that melee action.
+    if actor ~= ctx:player() and
+        not escape_grasp(ctx, actor, intent) then
         return
     end
 

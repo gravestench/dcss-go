@@ -2,6 +2,10 @@ local component = require("constants.component")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local members = require("policy.population.band_members")
+local sequence = require("policy.combat.monster_attack_sequence")
+local attack_types = require("constants.monster_attack_types")
+local monster_profile = require("policy.combat.monster_profile")
+local substances = require("constants.water_hold_substances")
 
 local links = {}
 
@@ -58,30 +62,42 @@ local function validate_followers(ctx)
     end
 end
 
--- Constrictor and victim links must agree after entity IDs are restored.
+-- A direct grip may belong to a player or monster victim. Its source must
+-- still have a constricting attack after polymorph and remain adjacent.
 local function validate_constriction(ctx)
-    local player = ctx:player()
-    local grip = ctx:get(player, "core.constricted")
+    for _, victim in ipairs(ctx:query({ component.CONSTRICTION })) do
+        local grip = ctx:get(victim, component.CONSTRICTION)
+        local victim_health = ctx:get(victim, component.HEALTH)
+        local victim_position = ctx:get(victim, component.POSITION)
+        local holder = ctx:id(grip.by) ~= 0 and grip.by or nil
+        local actor = holder and ctx:get(holder, component.ACTOR)
+        local ai = holder and ctx:get(holder, component.AI)
+        local health = holder and ctx:get(holder, component.HEALTH)
+        local position = holder and ctx:get(holder, component.POSITION)
+        local constricts = false
 
-    if not grip then
-        return
-    end
+        if actor then
+            local base = catalog.get(categories.MONSTERS, actor.kind_id)
+            local definition = monster_profile.definition(ctx, holder, base)
 
-    local player_health = ctx:get(player, "core.health")
-    local player_position = ctx:get(player, "core.position")
-    local python_id = ctx:id(grip.by)
-    local python = python_id ~= 0 and ctx:entity(python_id) or nil
-    local actor = python and ctx:get(python, "core.actor")
-    local ai = python and ctx:get(python, "core.ai")
-    local health = python and ctx:get(python, "core.health")
-    local position = python and ctx:get(python, "core.position")
+            for _, selected in ipairs(sequence.for_actor(ctx, holder,
+                definition)) do
+                if selected.attack.type_id == attack_types.CONSTRICT then
+                    constricts = true
+                    break
+                end
+            end
+        end
 
-    if grip.escape_attempts < 0 or grip.escape_attempts > 1000 or
-        not player_health or player_health.current <= 0 or not player_position or
-        not actor or actor.kind_id ~= "MONS_BALL_PYTHON" or not ai or
-        not health or health.current <= 0 or not position or
-        not adjacent(player_position, position) then
-        error("player has invalid ball python constriction link")
+        if grip.escape_attempts < 0 or grip.escape_attempts > 1000 or
+            grip.held_aut < 0 or grip.held_aut > 1000000 or
+            not victim_health or victim_health.current <= 0 or
+            not victim_position or not actor or not ai or
+            not health or health.current <= 0 or not position or
+            not adjacent(victim_position, position) or
+            not constricts then
+            error("actor has invalid direct constriction link")
+        end
     end
 end
 
@@ -142,24 +158,27 @@ local function validate_vine_grips(ctx)
     end
 end
 
--- Water hold references must still match a live actor and reachable cell.
+-- A water hold can point in either direction. A hit-time substance and
+-- adjacent living holder make its eventual release unambiguous.
 local function validate_water_holds(ctx)
-    local player = ctx:player()
-    local player_health = ctx:get(player, component.HEALTH)
-    local player_position = ctx:get(player, component.POSITION)
+    for _, victim in ipairs(ctx:query({ component.WATER_HOLD })) do
+        local hold = ctx:get(victim, component.WATER_HOLD)
+        local victim_health = ctx:get(victim, component.HEALTH)
+        local victim_position = ctx:get(victim, component.POSITION)
+        local holder_health = ctx:get(hold.by, component.HEALTH)
+        local holder_position = ctx:get(hold.by, component.POSITION)
+        local valid_substance = hold.substance_id == substances.WATER or
+            hold.substance_id == substances.OOZE
 
-    for _, monster in ipairs(ctx:query({ component.WATER_HOLD })) do
-        local hold = ctx:get(monster, component.WATER_HOLD)
-        local actor = ctx:get(monster, component.ACTOR)
-        local health = ctx:get(monster, component.HEALTH)
-        local position = ctx:get(monster, component.POSITION)
-
-        if monster == player or hold.by ~= player or
-            hold.elapsed_aut < 1 or not player_health or
-            player_health.current <= 0 or not player_position or
-            not actor or not health or health.current <= 0 or
-            not position or not adjacent(player_position, position) then
-            error("monster has invalid engulf water-hold link")
+        if hold.by == victim or hold.elapsed_aut < 1 or
+            hold.elapsed_aut > 1000000 or not valid_substance or
+            not victim_health or victim_health.current <= 0 or
+            not victim_position or not holder_health or
+            holder_health.current <= 0 or not holder_position or
+            not adjacent(victim_position, holder_position) or
+            not ctx:has(victim, component.ACTOR) or
+            not ctx:has(hold.by, component.ACTOR) then
+            error("actor has invalid engulf water-hold link")
         end
     end
 end

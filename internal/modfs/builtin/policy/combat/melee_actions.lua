@@ -348,45 +348,6 @@ local function retreat_bat(ctx, attacker, definition)
     ctx:set(attacker, "core.ai", ai)
 end
 
--- A constricting slot starts a saved hold only after a living victim
--- survives the slot's own hit roll; it is not a bonus after the round.
-local function grab(ctx, attacker, definition, attack, player_health)
-    if player_health.current <= 0 or
-        ctx:has(ctx:player(), "core.constricted") then
-        return
-    end
-
-    local defense = fighter.defense(ctx)
-    local outcome = melee.monster(ctx, {
-        attacker = attacker,
-        hd = monster_stats.hit_dice(ctx, attacker, definition),
-        damage = attack.damage,
-        type_id = attack.type_id,
-        flavour_id = attack.flavour_id,
-    }, defense)
-
-    update_shield(ctx, outcome)
-    practice.incoming_melee(ctx, outcome, defense)
-
-    if outcome.kind == "hit" then
-        ctx:add(ctx:player(), "core.constricted", {
-            by = attacker,
-            escape_attempts = 0,
-        })
-        ctx:emit("combat", "The " .. definition.name .. " grabs you.")
-
-        return
-    end
-
-    local messages = {
-        miss = "The " .. definition.name .. " misses you with its grab.",
-        dodge = "You dodge the " .. definition.name .. "'s grab.",
-        block = "You block the " .. definition.name .. "'s grab.",
-    }
-
-    ctx:emit("combat", messages[outcome.kind])
-end
-
 -- Example: actions.monster(ctx, attacker) with monster adjacent to player -> melee outcome against player defense
 -- A monster attacking the player uses player defense and reaction phases.
 -- The monster-to-monster path below has different allegiance and summon
@@ -457,7 +418,8 @@ local function monster_player_contact(ctx, attacker, selected,
         message = "You dodge the " .. definition.name .. "'s attack."
     elseif outcome.kind == "block" then
         message = "You block the " .. definition.name .. "'s attack."
-    elseif outcome.kind == "hit" then
+    elseif outcome.kind == "hit" and
+        attack_type ~= attack_types.CONSTRICT then
         local verb = attack_type == attack_types.HIT and "hits" or "bites"
 
         if dealt == 0 then
@@ -467,7 +429,9 @@ local function monster_player_contact(ctx, attacker, selected,
         end
     end
 
-    ctx:emit("combat", message)
+    if message ~= "" then
+        ctx:emit("combat", message)
+    end
 
     local illusion = ctx:get(attacker, component.PLAYER_ILLUSION)
     local lord = ctx:get(attacker, component.PANDEMONIUM_LORD)
@@ -797,15 +761,8 @@ local function run_round(ctx, attacker, target, options)
             effective_index = effective_index + 1
 
             if target == ctx:player() then
-                if selected.attack.type_id == attack_types.CONSTRICT then
-                    if not (options and options.player_moving) then
-                        grab(ctx, attacker, definition,
-                            selected.attack, defender_health)
-                    end
-                else
-                    monster_player_contact(ctx, attacker, selected,
-                        effective_index, options, pending_blinks)
-                end
+                monster_player_contact(ctx, attacker, selected,
+                    effective_index, options, pending_blinks)
 
                 last_health = ctx:get(target, component.HEALTH)
             else

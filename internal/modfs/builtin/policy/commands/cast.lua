@@ -7,6 +7,7 @@ local silence = require("policy.world.silence")
 local confusion = require("policy.magic.player_confusion")
 local availability = require("policy.character.skill_availability")
 local hex_status = require("policy.combat.monster_hexes.status")
+local engulf = require("policy.combat.engulf")
 
 local cast = {}
 
@@ -56,6 +57,10 @@ function cast.prepare(ctx, player, input)
 
     if silence.actor(ctx, player) then
         return { message = "You cannot cast spells when silenced!" }
+    end
+
+    if engulf.silenced(ctx, player) then
+        return { message = "You cannot cast spells while unable to breathe!" }
     end
 
     if progress.level < spell.level then

@@ -5,6 +5,8 @@ local habitats = require("constants.monster_habitats")
 local holiness = require("constants.monster_holiness")
 local undead_states = require("constants.undead_states")
 local water = require("policy.character.water")
+local species_ids = require("ids.species")
+local vampire = require("policy.character.vampire")
 
 local drowning = {}
 
@@ -22,11 +24,21 @@ function drowning.immune(ctx, target)
         local player = ctx:get(target, component.PLAYER)
         local species = catalog.get("species", player.species_id)
         local form = ctx:get(target, component.PLAYER_FORM)
+        local petrification = ctx:get(target,
+            component.PLAYER_PETRIFICATION)
 
         return species.undead_type == undead_states.UNDEAD or
+            player.species_id == species_ids.SP_GARGOYLE or
+            player.species_id == species_ids.SP_DJINNI or
+            vampire.bloodless(ctx, target) or
             water.can_swim(ctx, target) or
             form and (form.form_id == form_ids.TREE or
-                form.form_id == form_ids.ICE_BEAST)
+                form.form_id == form_ids.ICE_BEAST or
+                form.form_id == form_ids.LICH or
+                form.form_id == form_ids.STATUE or
+                form.form_id == form_ids.WISP or
+                form.form_id == form_ids.STORM) or
+            petrification and petrification.petrified_aut > 0
     end
 
     local actor = ctx:get(target, component.ACTOR)

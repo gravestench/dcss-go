@@ -9,6 +9,7 @@ local damage_causes = {
     BEAM = "beam",
     BLAST = "blast",
     CLOUD = "cloud",
+    WATER = "water",
     ACID = "acid",
     REFLECTED = "reflected",
 }

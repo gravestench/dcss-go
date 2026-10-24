@@ -5,12 +5,11 @@ local system = {}
 
 -- Theory of operation: The pass releases invalid holds, then applies drowning before death cleanup reads HP.
 -- Engulf damage is processed after attacks and before death cleanup examines HP.
-function system.update(ctx, active)
+function system.update(ctx, active, elapsed_aut)
     engulf.release_far_all(ctx)
 
-    if active ~= ctx:player() and
-        ctx:get(active, component.WATER_HOLD) then
-        engulf.tick(ctx, active)
+    if ctx:get(active, component.WATER_HOLD) then
+        engulf.tick(ctx, active, elapsed_aut)
     end
 end
 

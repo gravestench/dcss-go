@@ -32,6 +32,7 @@ local flavours = {
     RIFT = "AF_RIFT",
     DISTORT = "AF_DISTORT",
     CRUSH = "AF_CRUSH",
+    ENGULF = "AF_ENGULF",
     TRAMPLE = "AF_TRAMPLE",
     STEAL = "AF_STEAL",
     MUTATE = "AF_MUTATE",

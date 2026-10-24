@@ -21,7 +21,8 @@ function defense.evasion(ctx, monster, definition)
     local grip = ctx:get(monster, component.PLAYER_CONSTRICTION)
 
     if clutch and clutch.remaining_aut > 0 or
-        roots and roots.remaining_aut > 0 or grip then
+        roots and roots.remaining_aut > 0 or grip or
+        ctx:has(monster, component.CONSTRICTION) then
         local divisor = (size.rank[definition.size_id] or 3) + 2
         ev = math.floor(ev / divisor)
     end
