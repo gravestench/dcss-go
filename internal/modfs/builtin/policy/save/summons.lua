@@ -153,8 +153,13 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
     local owner_actor = ctx:get(state.owner, component.ACTOR)
     local owner_player = state.owner == ctx:player() and
         ctx:has(state.owner, component.PLAYER)
+    local owner_avatar = ctx:has(state.owner,
+        component.RELIGION_AVATAR_SOURCE) and
+        state.source_category == categories.SPELLS and
+        state.attitude == attitudes.HOSTILE
 
-    if (not owner_actor and not owner_player) or
+    if (not owner_actor and not owner_player and
+        not owner_avatar) or
         not valid_attitudes[state.attitude] or
         state.source_id == "" or
         (not permanent and state.expires_aut <= current_aut) or

@@ -156,9 +156,120 @@ local function failure_cleanup(ctx)
     end
 
     ok, message = pcall(avatar.cast, owner, player,
-        gods.TROG, spells.SPELL_STICKY_FLAME)
+        gods.TROG, "SPELL_UNREGISTERED_TEST")
     harness.falsy(ok)
-    harness.truthy(string.find(message, "durable source", 1, true))
+
+    for _, entity in ipairs(ctx:query({ component.ACTOR })) do
+        local actor = ctx:get(entity, component.ACTOR)
+
+        harness.falsy(actor.kind_id == monsters.MONS_PLAYER_SHADOW,
+            "missing spell resolver retained its shadow")
+    end
+
+end
+
+-- Sticky Flame keeps dealing damage after the cast. Its saved source must
+-- remain a hostile god entity without occupying the player's grid cell.
+local function lasting_flame_source(ctx)
+    local player = player_at(ctx, 58, 12)
+    local owner = fixture.context(ctx, player)
+    local okay, result = pcall(avatar.cast, owner, player,
+        gods.MAKHLEB, spells.SPELL_STICKY_FLAME)
+
+    harness.truthy(okay, tostring(result))
+    harness.truthy(result)
+
+    local flame = ctx:get(player, component.STICKY_FLAME)
+
+    harness.truthy(flame, "god spell did not apply Sticky Flame")
+    harness.truthy(ctx:has(flame.source,
+        component.RELIGION_AVATAR_SOURCE),
+        "lasting flame lost its god source")
+    harness.falsy(ctx:has(flame.source, component.POSITION),
+        "god source must not occupy the map after casting")
+
+    ctx:remove(player, component.STICKY_FLAME)
+    avatar.cleanup(owner)
+    harness.falsy(ctx:has(flame.source,
+        component.RELIGION_AVATAR_SOURCE),
+        "spent god source remained after its last effect")
+end
+
+-- Clouds, temporary terrain, and summons carry three different source
+-- representations. Keep one inert god owner until every one has gone.
+local function lasting_world_sources(ctx)
+    local player = player_at(ctx, 65, 12)
+    local owner = fixture.context(ctx, player)
+    local original = effects.effect
+    local dependents = {}
+
+    effects.effect = function()
+        return {
+            resolve = function(world, caster)
+                local cloud = world:create()
+                local terrain_change = world:create()
+                local summon = world:create()
+
+                world:add(cloud, component.WORLD_CLOUD, {
+                    source_actor_id = world:id(caster),
+                })
+                world:add(terrain_change, component.TEMPORARY_TERRAIN, {
+                    source_actor_id = world:id(caster),
+                })
+                world:add(summon, component.SUMMON, {
+                    owner = caster,
+                })
+                dependents = { cloud, terrain_change, summon }
+            end,
+        }
+    end
+
+    local okay, result = pcall(avatar.cast, owner, player,
+        gods.MAKHLEB, spells.SPELL_FIREBALL)
+
+    effects.effect = original
+    harness.truthy(okay, tostring(result))
+
+    local sources = ctx:query({ component.RELIGION_AVATAR_SOURCE })
+
+    harness.equal(#sources, 1)
+    harness.falsy(ctx:has(sources[1], component.POSITION))
+
+    for _, dependent in ipairs(dependents) do
+        ctx:destroy(dependent)
+    end
+
+    avatar.cleanup(owner)
+    harness.equal(#ctx:query({ component.RELIGION_AVATAR_SOURCE }), 0)
+end
+
+-- Vehumet can conjure hostile ball lightning through the same shadow.
+-- Its saved summons must keep a source owner after that shadow leaves.
+local function lasting_ball_lightning(ctx)
+    local player = player_at(ctx, 70, 15)
+    local owner = fixture.context(ctx, player)
+    local okay, result = pcall(avatar.cast, owner, player,
+        gods.VEHUMET, spells.SPELL_CONJURE_BALL_LIGHTNING)
+
+    harness.truthy(okay, tostring(result))
+    harness.truthy(result)
+
+    local sources = ctx:query({ component.RELIGION_AVATAR_SOURCE })
+
+    harness.equal(#sources, 1)
+
+    local balls = 0
+
+    for _, entity in ipairs(ctx:query({ component.SUMMON })) do
+        local state = ctx:get(entity, component.SUMMON)
+
+        if state.source_id == spells.SPELL_CONJURE_BALL_LIGHTNING then
+            harness.equal(state.owner, sources[1])
+            balls = balls + 1
+        end
+    end
+
+    harness.truthy(balls > 0, "god spell placed no ball lightning")
 end
 
 -- Both independent casts use production Lua component schemas and effects.
@@ -166,6 +277,9 @@ function test.run(ctx)
     trog_fireball(ctx)
     yred_draining(ctx)
     failure_cleanup(ctx)
+    lasting_flame_source(ctx)
+    lasting_world_sources(ctx)
+    lasting_ball_lightning(ctx)
 end
 
 return test

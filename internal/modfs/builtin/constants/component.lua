@@ -50,6 +50,7 @@ local component = {
     CHARACTER_ORIGIN = "character.origin",
     RELIGION_WORSHIP = "religion.worship",
     RELIGION_NEMELEX_DECKS = "religion.nemelex_decks",
+    RELIGION_AVATAR_SOURCE = "religion.avatar_source",
     RELIGION_CARD_ELIXIR = "religion.card_elixir",
     RELIGION_VEHUMET = "religion.vehumet",
     RELIGION_ASHENZARI = "religion.ashenzari",

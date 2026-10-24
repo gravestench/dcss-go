@@ -1,5 +1,6 @@
--- God spell wrath uses a temporary shadow at the player's feet. Only spells
--- whose effects finish within the cast can use this short-lived source.
+-- God spell wrath casts through a shadow at the player's feet. The shadow
+-- becomes an inert ECS source if a burn, cloud, terrain change, or summon
+-- still needs its attribution after the spell ends.
 local catalog = require("policy.catalog")
 local attitudes = require("constants.attitude")
 local categories = require("constants.catalog")
@@ -8,7 +9,6 @@ local component = require("constants.component")
 local gods = require("constants.gods")
 local monster_spells = require("policy.combat.monster_spells")
 local monsters = require("ids.monsters")
-local spells = require("ids.spells")
 local spell_flags = require("constants.spell_flags")
 local target_kind = require("constants.target_kind")
 
@@ -17,18 +17,118 @@ local avatar = {}
 local names = {
     [gods.TROG] = "the fiery rage of Trog",
     [gods.YREDELEMNUL] = "the anger of Yredelemnul",
+    [gods.MAKHLEB] = "the fury of Makhleb",
+    [gods.VEHUMET] = "the wrath of Vehumet",
+    [gods.FEDHAS] = "the enmity of Fedhas Madash",
 }
 
-local immediate = {
-    [gods.TROG] = { [spells.SPELL_FIREBALL] = true },
-    [gods.YREDELEMNUL] = { [spells.SPELL_BOLT_OF_DRAINING] = true },
+-- Mods may introduce a god without adding a central avatar name entry.
+-- Source gods keep their exact authored wrath phrasing above.
+local function source_name(god_id)
+    local known = names[god_id]
+
+    if known then
+        return known
+    end
+
+    return "the wrath of " ..
+        catalog.get(categories.GODS, god_id).name
+end
+
+-- Only these effects keep an actor reference after the cast. Every query
+-- uses production component schemas, so a save cannot silently orphan a
+-- continuing burn, cloud, terrain change, or summoned creature.
+local references = {
+    {
+        id = component.STICKY_FLAME,
+        field = "source",
+        entity = true,
+    },
+    {
+        id = component.SUMMON,
+        field = "owner",
+        entity = true,
+    },
+    {
+        id = component.WORLD_CLOUD,
+        field = "source_actor_id",
+    },
+    {
+        id = component.TEMPORARY_TERRAIN,
+        field = "source_actor_id",
+    },
 }
+
+-- A retained source lives only while a saved effect names it. This check
+-- also works immediately after casting, before the next ECS system tick.
+local function referenced(ctx, source)
+    local source_id = ctx:id(source)
+
+    for _, reference in ipairs(references) do
+        for _, entity in ipairs(ctx:query({ reference.id })) do
+            local state = ctx:get(entity, reference.id)
+            local value = state[reference.field]
+
+            if value == source or
+                not reference.entity and value == source_id then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
+-- Remove one inert source only after all ongoing effects have expired.
+-- The cleanup system calls this each turn; tests can call it directly.
+function avatar.cleanup(ctx)
+    for _, source in ipairs(ctx:query({
+        component.RELIGION_AVATAR_SOURCE,
+    })) do
+        if not referenced(ctx, source) then
+            ctx:destroy(source)
+        end
+    end
+end
+
+-- Saves must not turn an inert source into a second map actor or silently
+-- redirect its god credit. Require a real ongoing effect to own the source.
+function avatar.validate(ctx)
+    for _, source in ipairs(ctx:query({
+        component.RELIGION_AVATAR_SOURCE,
+    })) do
+        local state = ctx:get(source,
+            component.RELIGION_AVATAR_SOURCE)
+        local override = ctx:get(source,
+            component.VAULT_ACTOR_OVERRIDES)
+
+        if not override or
+            override.god_id ~= state.god_id or
+            override.attitude ~= attitudes.HOSTILE or
+            override.custom_name ~= source_name(state.god_id) or
+            ctx:has(source, component.ACTOR) or
+            ctx:has(source, component.HEALTH) or
+            ctx:has(source, component.POSITION) or
+            not referenced(ctx, source) then
+            error("invalid saved god avatar source " .. ctx:id(source))
+        end
+    end
+end
 
 -- Cloud spells and explosions save a cell target; other beams save the
 -- player entity. Both preserve the source's zero-length feet aim.
-local function feet_plan(ctx, player, spell_id)
-    local profile = catalog.get(categories.MONSTER_BEAMS, spell_id)
+local function feet_plan(ctx, shadow, player, spell_id, effect)
     local spell = catalog.get(categories.SPELLS, spell_id)
+
+    -- Self enchant spells have no beam profile. Use their own registered
+    -- plan, whose target is the temporary source rather than the player.
+    for _, flag in ipairs(spell.flags or {}) do
+        if flag == spell_flags.SELF_ENCHANT then
+            return effect.plan(ctx, shadow, player)
+        end
+    end
+
+    local profile = catalog.get(categories.MONSTER_BEAMS, spell_id)
     local area = profile.is_explosion
 
     for _, flag in ipairs(spell.flags or {}) do
@@ -79,21 +179,30 @@ local function create(ctx, player, god_id)
         attitude = attitudes.HOSTILE,
         god_id = god_id,
         hit_dice = level,
-        custom_name = names[god_id],
+        custom_name = source_name(god_id),
         name_adjective = false,
     })
 
     return shadow
 end
 
--- Resolve one immediate source priest cast through the registered spell
--- effect. Persistent flames, clouds, and summons need durable god provenance
--- before they can be admitted to this owner.
-function avatar.cast(ctx, player, god_id, spell_id, message)
-    if not immediate[god_id] or not immediate[god_id][spell_id] then
-        error("god avatar spell needs a durable source owner")
-    end
+-- Keep module loading, plan construction, and effect resolution inside one
+-- failure boundary. A missing mod spell must not leave a shadow behind.
+local function resolve(ctx, shadow, player, god_id, spell_id, message)
+    local effect = monster_spells.effect(spell_id)
+    local plan = feet_plan(ctx, shadow, player, spell_id, effect)
 
+    ctx:emit(channels.RELIGION,
+        message or source_name(god_id) ..
+            " rains destruction down upon you!")
+
+    return effect.resolve(ctx, shadow, player, nil, plan)
+end
+
+-- Resolve a source priest cast through its registered spell effect. The
+-- caster begins at the player's feet, then leaves the grid; ongoing
+-- effects retain its god credit until their final owner expires.
+function avatar.cast(ctx, player, god_id, spell_id, message)
     local position = ctx:get(player, component.POSITION)
     local occupant = ctx:actor_at(position.level_id, position.x, position.y)
 
@@ -105,16 +214,23 @@ function avatar.cast(ctx, player, god_id, spell_id, message)
     end
 
     local shadow = create(ctx, player, god_id)
-    local effect = monster_spells.effect(spell_id)
-
-    ctx:emit(channels.RELIGION, message or names[god_id] .. " rains destruction down upon you!")
-    local ok, result = pcall(effect.resolve, ctx, shadow, player, nil,
-        feet_plan(ctx, player, spell_id))
-
-    ctx:destroy(shadow)
+    local ok, result = pcall(resolve, ctx, shadow, player,
+        god_id, spell_id, message)
 
     if not ok then
+        ctx:destroy(shadow)
         error(result)
+    end
+
+    if referenced(ctx, shadow) then
+        ctx:remove(shadow, component.POSITION)
+        ctx:remove(shadow, component.HEALTH)
+        ctx:remove(shadow, component.ACTOR)
+        ctx:add(shadow, component.RELIGION_AVATAR_SOURCE, {
+            god_id = god_id,
+        })
+    else
+        ctx:destroy(shadow)
     end
 
     return true

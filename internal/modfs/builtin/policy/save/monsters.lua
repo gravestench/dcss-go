@@ -8,6 +8,7 @@ local poison = require("policy.combat.monster_poison")
 local slow = require("policy.combat.monster_slow")
 local sticky_flame = require("policy.magic.effects.zaps.sticky_flame")
 local summons = require("policy.save.summons")
+local avatar = require("policy.religion.wrath.avatar")
 local summon_branches = require("policy.combat.monster_summons.branches")
 local abyss = require("policy.world.abyss")
 local abyss_constants = require("constants.abyss")
@@ -346,6 +347,7 @@ end
 -- Monster save validation separates roster, vault, and banished actors because their origins differ.
 -- Example: module.run(ctx, input) rejects a banished monster left on an ordinary floor.
 function module.run(ctx, input)
+    avatar.validate(ctx)
     entities.validate(ctx)
     inventory.validate(ctx)
     links.validate(ctx)

@@ -48,7 +48,10 @@ function system.update(ctx, active)
         end
 
         local owner_health = ctx:get(state.owner, component.HEALTH)
+        local god_source = ctx:has(state.owner,
+            component.RELIGION_AVATAR_SOURCE)
         local dead_owner = state.owner ~= player and
+            not god_source and
             (not owner_health or owner_health.current <= 0)
 
         -- The source monster orb keeps flying when its caster dies. The
@@ -62,6 +65,7 @@ function system.update(ctx, active)
         end
 
         local orphaned = state.owner ~= player and
+            not god_source and
             (not ctx:has(state.owner, component.ACTOR) or
                 not owner_health or owner_health.current <= 0)
         local expired = active == player and state.expires_aut > 0 and

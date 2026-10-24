@@ -159,7 +159,11 @@ mechanics receive their own Lua owner and saved component as needed.
 **Current implementation boundary:** All 21 card IDs have Lua effect
 modules. Wrath can select every source god, and every eligible god now has
 a dedicated handler. Many handlers still reject branches whose shared
-mechanics are not yet ported, including god-avatar spells, Xom actions,
+mechanics are not yet ported, including the god-avatar spell selection
+and effect pools, Xom actions,
 several transformations and mutations, and special summons or placement.
+The shared god-avatar source is now a durable, nonspatial Lua ECS entity
+while a burn, cloud, terrain change, or summon references it. Valid saves
+round-trip that owner, and cleanup removes it after the last effect.
 Task 4 stays open until those outcomes resolve through source-faithful
 owners.
