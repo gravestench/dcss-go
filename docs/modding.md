@@ -4730,6 +4730,51 @@ without changing unrelated seeded draws or descriptions: the
 `presentation.religion` policy derives its conduct lists from the same
 resolved rule module, sorted by stable event ID.
 
+## Add or replace a Xom action
+
+Xom's action engine lives in `policy/religion/xom/`. Its source event IDs
+are named in `ids/xom_events.lua`, and each built-in event has one definition
+under `content/xom_events/`. The selector first decides whether an action
+is good or bad, then checks event gates in explicit numeric priority order.
+An early successful gate prevents later gates from spending RNG. The order
+is gameplay policy; directory names and file load order do not set it.
+
+To replace a built-in action, put a Lua file at the **same relative path**
+in your mod directory, such as `content/xom_events/bad_noise.lua`. Give it
+the existing event ID and an `effect_module` that returns a table with
+`apply(ctx, player, event_id, severity, request)`. A replacement may change
+the effect and badness. Its built-in selection gate still uses the source
+priority; replace `policy/religion/xom/selection_bad.lua` or
+`selection_good.lua` only if you need a different built-in eligibility rule.
+The action owner calls the effective effect module before changing Xom's
+interest or mood.
+
+To **add** an event, give its definition a new stable ID, `side` (`"good"`
+or `"bad"`), `effect_module`, positive integer `selection_stage`, and
+`selector_module`. A bad event also needs `badness_10x` or the supported
+dynamic badness rule. The selector module returns a table with
+`eligible(ctx, player, worship, severity, tension, stream)`; return true
+when this action can occur. Use `ctx:random(stream, bound)` for chance
+checks, and only draw after any earlier eligibility checks that the rule
+requires. `ctx` is the current game's context, `player` is its ECS entity,
+`worship` is the current `religion.worship` component for bad events,
+`severity` is Xom's current mood magnitude, and `tension` measures nearby
+danger. The `stream` is the saved RNG stream chosen by ordinary worship or
+Divine Wrath. A good event receives `nil` for `worship` because the good
+selector does not need the harmful-state checks. Read fresh components
+through `ctx:get` if the mod's good action needs worship state.
+
+Stages 10 through 190 contain source good gates in steps of ten; stages
+10 through 150 contain source bad gates. A custom stage 15 runs after the
+first built-in gate and before the second. At a shared stage, the built-in
+gate runs first, then added events by stable ID. Keep IDs in a mod-owned
+`ids/` module and import them in definitions, selectors, and tests. The
+fixture in `internal/script/testdata/xom-event-mod/` shows both an added
+event and a same-path replacement. Its test checks the effective catalog,
+source draw boundary, and ID tie order. Keep mutable durations on saved
+ECS components, as Xom's cloud trail and stair repulsion do; Lua module
+locals may hold functions and immutable definitions only.
+
 ## Test a mod
 
 Use a file ending in `_test.lua` under `tests/`. Import production modules

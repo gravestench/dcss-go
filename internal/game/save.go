@@ -156,10 +156,11 @@ func (g *Game) Snapshot() save.Snapshot {
 			BranchID:   level.BranchID,
 			LocalDepth: level.LocalDepth,
 
-			Cells:         level.Cells(),
-			Known:         level.KnownCells(),
-			Seen:          level.SeenCells(),
-			DetectedItems: level.DetectedItems(),
+			Cells:             level.Cells(),
+			Known:             level.KnownCells(),
+			Seen:              level.SeenCells(),
+			DetectedItems:     level.DetectedItems(),
+			DetectedCreatures: level.DetectedCreatures(),
 
 			InitialMonsters: level.initialMonsters,
 			InitialActors:   level.initialActors,

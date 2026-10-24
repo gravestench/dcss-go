@@ -1,14 +1,16 @@
 local ranged = require("policy.combat.ranged")
 local monster_stats = require("policy.combat.monster_stats")
+local brands = require("constants.weapon_brands")
 
 local sling_bullet = {}
 sling_bullet.reflectable = true
 
 local supported_brands = {
-    SPWPN_NORMAL = true,
-    SPWPN_FLAMING = true,
-    SPWPN_FREEZING = true,
-    SPWPN_VORPAL = true,
+    [brands.NORMAL] = true,
+    [brands.FLAMING] = true,
+    [brands.FREEZING] = true,
+    [brands.VORPAL] = true,
+    [brands.CHAOS] = true,
 }
 
 -- Example: sling_bullet.validate_launcher(item) with launcher ego = 'SPWPN_FLAMING' -> validation succeeds

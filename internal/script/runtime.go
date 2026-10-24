@@ -48,6 +48,14 @@ type Grid interface {
 	) error
 	MarkerProperty(levelID, x, y int, key string) (string, bool)
 	Remembered(levelID, x, y int) (terrain.ID, bool)
+	Seen(levelID, x, y int) (bool, bool)
+	DetectedItem(levelID, x, y int) (bool, bool)
+	DetectItem(levelID, x, y int) error
+	RestoreDetectedItem(levelID, x, y int, detected bool) error
+	DetectedCreature(levelID, x, y int) (string, bool)
+	DetectedCreatures(levelID int) ([][]string, bool)
+	SetDetectedCreature(levelID, x, y int, kindID string) error
+	LoadDetectedCreatures(levelID int, cells [][]string) error
 	MapCell(levelID, x, y int) error
 	RestoreRemembered(levelID, x, y int, feature terrain.ID) error
 	Size(levelID int) (int, int, bool)
@@ -60,6 +68,7 @@ type Grid interface {
 	Walkable(levelID, x, y int) bool
 	ActorAt(levelID, x, y int) (akara.Entity, bool)
 	StairAt(levelID, x, y int) (Stair, bool)
+	TravelFeatureAt(levelID, x, y int) bool
 	Visible(levelID, fromX, fromY, radius, targetX, targetY int) (bool, error)
 	VisibleNoTrans(levelID, fromX, fromY, radius, targetX, targetY int) (bool, error)
 	VisibleNoTransWithBlocked(
@@ -70,6 +79,7 @@ type Grid interface {
 	RouteStep(levelID, fromX, fromY, toX, toY int, goal akara.Entity) (int, int, bool)
 	ProjectileClear(levelID, fromX, fromY, toX, toY int) bool
 	SetCell(levelID, x, y int, feature terrain.ID) error
+	MoveStair(levelID, fromX, fromY, toX, toY int) error
 	CellColour(levelID, x, y int) (string, bool)
 	SetCellColour(levelID, x, y int, colour string) error
 	MoveActor(entity akara.Entity, levelID, x, y int) error

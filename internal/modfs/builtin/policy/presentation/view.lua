@@ -130,6 +130,10 @@ end
 -- Distinguish remembered terrain from currently seen terrain, and show
 -- detected items in green even if their underlying cell is not visible.
 function view.terrain_color(input)
+    if input.detected_creature then
+        return { fg = colors.light_red }
+    end
+
     if input.detected_item then
         return { fg = colors.green }
     end
@@ -159,6 +163,14 @@ end
 function view.detected_item()
     -- Source: viewchar.cc, CSET_ASCII item_detected.
     return { glyph = string.byte("{") }
+end
+
+-- Source creature detection paints the monster base glyph in light red.
+-- It is only a sensed genus: no exact actor identity or visibility leaks.
+function view.detected_creature(_, input)
+    local monster = catalog.get("monsters", input.kind_id)
+
+    return { glyph = monster.glyph }
 end
 
 -- An altar's saved god ID supplies its identity; the source B glyph is
@@ -290,6 +302,11 @@ register.policy({
 register.policy({
     id = "presentation.detected_item",
     run = view.detected_item,
+})
+
+register.policy({
+    id = "presentation.detected_creature",
+    run = view.detected_creature,
 })
 
 register.policy({

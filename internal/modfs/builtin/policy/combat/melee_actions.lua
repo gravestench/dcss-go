@@ -38,6 +38,7 @@ local brambles = require("policy.combat.monster_plants.brambles")
 local vine_grip = require("policy.combat.monster_plants.vine_grip")
 local component = require("constants.component")
 local attack_conduct = require("policy.religion.conduct.attack")
+local cleaving = require("policy.religion.xom.cleaving")
 
 local actions = {}
 
@@ -100,7 +101,7 @@ end
 -- A player attack first builds an attack from current gear and target stats,
 -- then resolves hit and damage. Brand and mutation callbacks only run at
 -- their corresponding contact phase; this order matters for DCSS effects.
-function actions.player(ctx, target, options)
+local function player_contact(ctx, target, options)
     local actor = ctx:get(target, "core.actor")
 
     if not actor then
@@ -121,6 +122,7 @@ function actions.player(ctx, target, options)
     local input = fighter.attack(ctx, defender)
     input.stab_target = target
     input.roll_distance = options and options.roll_distance or 0
+    input.cleave_secondary = options and options.cleave_secondary or false
     input.defender_ev = monster_defense.evasion(ctx, target, defender)
     input.defender_ac = monster_defense.armour(ctx, target, defender)
     input.defender_shield = monster_defense.shield(ctx, target, defender)
@@ -207,6 +209,12 @@ function actions.player(ctx, target, options)
         return
     end
 
+    -- Source secondary cleaves use an ordinary contact but do not generate
+    -- auxiliary attacks of their own.
+    if input.cleave_secondary then
+        return
+    end
+
     local auxiliary_input = auxiliary.input(ctx, target, defender)
     auxiliary_input.defender_ev = monster_defense.evasion(ctx, target,
         defender)
@@ -264,6 +272,41 @@ function actions.player(ctx, target, options)
             end
 
             ctx:emit("combat", message)
+        end
+    end
+end
+
+-- Capture other targets before the primary hit can kill or move its victim.
+-- Resolve those saved targets after the complete primary contact, including
+-- its brands and auxiliary strikes. A secondary call cannot cleave again.
+function actions.player(ctx, target, options)
+    local secondary = {}
+
+    if not (options and options.cleave_secondary) and
+        cleaving.active(ctx, ctx:player()) then
+        secondary = cleaving.targets(ctx, ctx:player(), target)
+    end
+
+    player_contact(ctx, target, options)
+
+    for _, victim in ipairs(secondary) do
+        local player_health_state = ctx:get(ctx:player(), component.HEALTH)
+        local health = ctx:get(victim, component.HEALTH)
+        local origin = ctx:get(ctx:player(), component.POSITION)
+        local position = ctx:get(victim, component.POSITION)
+
+        if not player_health_state or player_health_state.current <= 0 then
+            break
+        end
+
+        if health and health.current > 0 and origin and position and
+            origin.level_id == position.level_id and
+            math.max(math.abs(origin.x - position.x),
+                math.abs(origin.y - position.y)) == 1 and
+            targets.enemy(ctx, ctx:player(), victim) then
+            player_contact(ctx, victim, {
+                cleave_secondary = true,
+            })
         end
     end
 end

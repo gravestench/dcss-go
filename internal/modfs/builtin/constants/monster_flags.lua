@@ -3,6 +3,7 @@
 local flags = {
     CONJURED = "M_CONJURED",
     PROJECTILE = "M_PROJECTILE",
+    GHOST_DEMON = "M_GHOST_DEMON",
     AVATAR = "M_AVATAR",
     NO_EXP_GAIN = "M_NO_EXP_GAIN",
     FAST_REGEN = "M_FAST_REGEN",

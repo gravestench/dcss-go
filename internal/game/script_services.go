@@ -238,6 +238,92 @@ func (grid scriptGrid) Remembered(levelID, x, y int) (terrain.ID, bool) {
 	return level.remembered[y*level.width+x], true
 }
 
+// Actual sight is separate from magic-mapped memory. A missing level or
+// out-of-bounds cell cannot claim exploration of a source Xom candidate.
+func (grid scriptGrid) Seen(levelID, x, y int) (bool, bool) {
+	level := grid.levels[levelID]
+
+	if level == nil || !level.inBounds(x, y) {
+		return false, false
+	}
+
+	return level.seen[y*level.width+x], true
+}
+
+// Detection markers are saved independently of seen and remembered terrain.
+// Lua can request one marker without gaining access to the Level's slice.
+func (grid scriptGrid) DetectedItem(levelID, x, y int) (bool, bool) {
+	level := grid.levels[levelID]
+
+	if level == nil || !level.inBounds(x, y) {
+		return false, false
+	}
+
+	return level.detectedItems[y*level.width+x], true
+}
+
+func (grid scriptGrid) DetectItem(levelID, x, y int) error {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return fmt.Errorf("missing level %d", levelID)
+	}
+
+	return level.DetectItem(x, y)
+}
+
+func (grid scriptGrid) RestoreDetectedItem(
+	levelID, x, y int, detected bool,
+) error {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return fmt.Errorf("missing level %d", levelID)
+	}
+
+	return level.SetDetectedItem(x, y, detected)
+}
+
+func (grid scriptGrid) DetectedCreature(levelID, x, y int) (string, bool) {
+	level := grid.levels[levelID]
+
+	if level == nil || !level.inBounds(x, y) {
+		return "", false
+	}
+
+	return level.detectedCreatures[y*level.width+x], true
+}
+
+func (grid scriptGrid) DetectedCreatures(levelID int) ([][]string, bool) {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return nil, false
+	}
+
+	return level.DetectedCreatures(), true
+}
+
+func (grid scriptGrid) SetDetectedCreature(levelID, x, y int, kindID string) error {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return fmt.Errorf("missing level %d", levelID)
+	}
+
+	return level.SetDetectedCreature(x, y, kindID)
+}
+
+func (grid scriptGrid) LoadDetectedCreatures(levelID int, cells [][]string) error {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return fmt.Errorf("missing level %d", levelID)
+	}
+
+	return level.LoadDetectedCreatures(cells)
+}
+
 func (grid scriptGrid) MapCell(levelID, x, y int) error {
 	level := grid.levels[levelID]
 
@@ -296,6 +382,18 @@ func (grid scriptGrid) StairAt(levelID, x, y int) (script.Stair, bool) {
 		Exit:           link.Exit,
 		TargetBranchID: link.TargetBranchID,
 	}, found
+}
+
+// Xom can move directional portals as well as linked stairs. Shops use a
+// separate interaction and are excluded by the terrain property owner.
+func (grid scriptGrid) TravelFeatureAt(levelID, x, y int) bool {
+	level := grid.levels[levelID]
+
+	if level == nil || !level.inBounds(x, y) {
+		return false
+	}
+
+	return terrain.IsMovableTravelFeature(level.terrain[y][x])
 }
 
 func (grid scriptGrid) Visible(
@@ -460,6 +558,18 @@ func (grid scriptGrid) SetCell(levelID, x, y int, feature terrain.ID) error {
 	}
 
 	return level.SetCell(x, y, feature)
+}
+
+// Keep the linked destination beside the moved feature. Xom policy chooses
+// the destination; the level owner performs the atomic terrain/link change.
+func (grid scriptGrid) MoveStair(levelID, fromX, fromY, toX, toY int) error {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return fmt.Errorf("missing level %d", levelID)
+	}
+
+	return level.MoveStair(fromX, fromY, toX, toY)
 }
 
 func (grid scriptGrid) CellColour(levelID, x, y int) (string, bool) {

@@ -22,8 +22,9 @@ end
 
 -- Source monster_blink samples a 13-by-13 square up to 150 times. Adjacent
 -- cells do not count as a blink, and opaque walls block the old-to-new ray.
-function landing.ordinary(ctx, mover, adjacent_only)
+function landing.ordinary(ctx, mover, adjacent_only, stream)
     local origin = ctx:get(mover, component.POSITION)
+    stream = stream or streams.MONSTER_SPELL
 
     if not origin then
         return nil, nil
@@ -32,8 +33,8 @@ function landing.ordinary(ctx, mover, adjacent_only)
     for _ = 1, 150 do
         local width = adjacent_only and 3 or 13
         local offset = adjacent_only and 1 or 6
-        local dx = ctx:random(streams.MONSTER_SPELL, width) - offset
-        local dy = ctx:random(streams.MONSTER_SPELL, width) - offset
+        local dx = ctx:random(stream, width) - offset
+        local dy = ctx:random(stream, width) - offset
         local x = origin.x + dx
         local y = origin.y + dy
         local distance = math.max(math.abs(dx), math.abs(dy))
@@ -53,8 +54,9 @@ end
 
 -- Range/Away favor distant cells; Close favors nearby cells quadratically.
 -- Source random_space_weighted considers every habitable cell in mover LOS.
-function landing.weighted(ctx, mover, focus, close, keep_los)
+function landing.weighted(ctx, mover, focus, close, keep_los, stream)
     local origin = ctx:get(mover, component.POSITION)
+    stream = stream or streams.MONSTER_SPELL
 
     if not origin or not focus or origin.level_id ~= focus.level_id then
         return nil, nil
@@ -93,7 +95,7 @@ function landing.weighted(ctx, mover, focus, close, keep_los)
         return nil, nil
     end
 
-    local chosen = ctx:random(streams.MONSTER_SPELL, total)
+    local chosen = ctx:random(stream, total)
 
     for _, cell in ipairs(choices) do
         if chosen < cell.weight then

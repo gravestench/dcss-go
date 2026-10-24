@@ -32,14 +32,14 @@ end
 
 -- Capture the source's Xom timeout draws and transition events without
 -- replacing the real ECS access methods or production rules.
-local function observed(ctx, draws)
+local function observed(ctx, draws, bounds)
     local proxy = setmetatable({}, { __index = ctx })
     local events = {}
     local used = 0
 
     function proxy:random(_, bound)
         used = used + 1
-        harness.equal(bound, 40)
+        harness.equal(bound, bounds and bounds[used] or 40)
 
         return draws and draws[used] or 0
     end
@@ -243,11 +243,15 @@ local function special_rewards(ctx)
 
     local altar_xom = player(ctx)
 
-    worship.join(observed(ctx, { 3, 5 }), altar_xom, gods.XOM,
+    worship.join(observed(ctx, { 3, 5, 150 }, {
+        40,
+        40,
+        200,
+    }), altar_xom, gods.XOM,
         sources.ECUMENICAL)
 
-    harness.equal(ctx:get(altar_xom, component.RELIGION_XOM)
-        .pending_stimulation, 200)
+    harness.equal(ctx:get(altar_xom, component.RELIGION_WORSHIP)
+        .gift_timeout, 150)
 
     local monk_yred = player(ctx, jobs.JOB_MONK)
 

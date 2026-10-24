@@ -335,6 +335,18 @@ func prepareRegionMetadata(level *Level, plan map[string]any) error {
 		}
 	}
 
+	if raw, present := plan["detected_creatures"]; present {
+		cells, err := regionStringRows(raw)
+
+		if err != nil {
+			return err
+		}
+
+		if err := level.LoadDetectedCreatures(cells); err != nil {
+			return err
+		}
+	}
+
 	return regionCellColours(level, plan["cell_colours"])
 }
 
@@ -381,6 +393,39 @@ func regionBoolRows(raw any) ([][]bool, error) {
 		}
 
 		result[y] = row
+	}
+
+	return result, nil
+}
+
+// Keep sensed monster IDs with the terrain during a regional rewrite.
+func regionStringRows(raw any) ([][]string, error) {
+	rows, okay := raw.([]any)
+
+	if !okay {
+		return nil, fmt.Errorf("region sensed creatures is not a row list")
+	}
+
+	result := make([][]string, len(rows))
+
+	for y, value := range rows {
+		entries, okay := value.([]any)
+
+		if !okay {
+			return nil, fmt.Errorf("region sensed creatures row %d is invalid", y)
+		}
+
+		result[y] = make([]string, len(entries))
+
+		for x, entry := range entries {
+			kindID, okay := entry.(string)
+
+			if !okay {
+				return nil, fmt.Errorf("region sensed creature cell (%d,%d) is invalid", x, y)
+			}
+
+			result[y][x] = kindID
+		}
 	}
 
 	return result, nil

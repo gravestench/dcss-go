@@ -3,7 +3,17 @@ local fighter = require("policy.combat.fighter")
 local poison = require("policy.combat.monster_poison")
 local slow = require("policy.combat.monster_slow")
 local dispersal = require("policy.combat.dispersal")
+local chaos_missile = require("policy.combat.chaos_missile")
+local chaos_effects = require(
+    "policy.combat.monster_target_brands.chaos_effects")
+local confusion = require(
+    "policy.magic.effects.statuses.confusing_touch")
+local launcher_brands = require("policy.combat.launcher_brands")
+local monster_enchant = require("policy.combat.monster_enchant")
+local allegiance = require(
+    "policy.magic.effects.statuses.monster_allegiance")
 local missile_egos = require("constants.missile_egos")
+local weapon_brands = require("constants.weapon_brands")
 local item_ids = require("ids.items")
 local skills = require("ids.skills")
 
@@ -13,6 +23,12 @@ local effects = {}
 -- effects.missile(ctx, ego, missile, monster, defender, damage, remaining_hp) -> ego damage and poison handling
 -- Dispatch a missile ego only after base damage, preserving its remaining-HP contact context.
 function effects.missile(ctx, ego, missile, monster, defender, damage, remaining_hp)
+    -- Chaos chooses a fresh ordinary missile ego after this particular
+    -- contact. The item itself stays Chaos for its next shot or save.
+    if ego == missile_egos.CHAOS then
+        ego = chaos_missile.choose(ctx, monster)
+    end
+
     if missile.id == item_ids.MI_DART then
         local power = fighter.skill(ctx, skills.SK_THROWING, 1)
 
@@ -67,6 +83,45 @@ function effects.missile(ctx, ego, missile, monster, defender, damage, remaining
         if damage > 0 and remaining_hp > 0 then
             dispersal.blink(ctx, ctx:player(), monster, defender)
         end
+
+        return 0
+    end
+
+    if ego == missile_egos.FLAME or ego == missile_egos.FROST then
+        local brand = ego == missile_egos.FLAME and
+            weapon_brands.FLAMING or weapon_brands.FREEZING
+        local extra, message = launcher_brands.apply(ctx,
+            brand, missile, defender, damage)
+
+        if message then
+            ctx:emit("combat", message)
+        end
+
+        return extra or 0
+    end
+
+    if ego == missile_egos.BLINDING then
+        monster_enchant.blind(ctx, monster, defender)
+        confusion.apply_turns(ctx, monster, defender,
+            math.floor(damage / 3))
+
+        return 0
+    end
+
+    if ego == missile_egos.FRENZY then
+        if not allegiance.frenzied(ctx, monster) then
+            allegiance.start_berserk(ctx, monster)
+        end
+
+        return 0
+    end
+
+    if ego == missile_egos.CHAOS then
+        chaos_effects.apply(ctx, {
+            defender = monster,
+            definition = defender,
+            damage_done = damage,
+        })
 
         return 0
     end

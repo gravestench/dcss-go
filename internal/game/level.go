@@ -13,15 +13,16 @@ import (
 // Level owns terrain, stair links, away time, and its actor occupancy index.
 // Position remains the source of truth for actor location.
 type Level struct {
-	ID            int
-	BranchID      string
-	LocalDepth    int
-	terrain       [][]terrain.ID
-	remembered    []terrain.ID
-	seen          []bool
-	detectedItems []bool
-	width         int
-	mappingLevel  int
+	ID                int
+	BranchID          string
+	LocalDepth        int
+	terrain           [][]terrain.ID
+	remembered        []terrain.ID
+	seen              []bool
+	detectedItems     []bool
+	detectedCreatures []string
+	width             int
+	mappingLevel      int
 
 	// Population choices may generate bands with multiple actors.
 	initialMonsters int
@@ -98,12 +99,13 @@ func NewLevel(id int, cells [][]terrain.ID, positions *akara.Store[ecs.Position]
 	}
 
 	return &Level{
-		ID:            id,
-		terrain:       owned,
-		remembered:    make([]terrain.ID, width*len(cells)),
-		seen:          make([]bool, width*len(cells)),
-		detectedItems: make([]bool, width*len(cells)),
-		width:         width,
+		ID:                id,
+		terrain:           owned,
+		remembered:        make([]terrain.ID, width*len(cells)),
+		seen:              make([]bool, width*len(cells)),
+		detectedItems:     make([]bool, width*len(cells)),
+		detectedCreatures: make([]string, width*len(cells)),
+		width:             width,
 
 		positions: positions,
 		actors:    make(map[point]akara.Entity),
@@ -256,6 +258,81 @@ func (l *Level) StairLinks() []StairLink {
 	})
 
 	return links
+}
+
+// Feature-attached source records travel with a portal. Item and monster
+// placement history stays at its original cell after materialization.
+func travelsWithFeature(kind vault.Kind) bool {
+	switch kind {
+	case vault.KindSourceFeature,
+		vault.KindFeature,
+		vault.KindMarker,
+		vault.KindFeatureName,
+		vault.KindColour,
+		vault.KindTile:
+		return true
+
+	default:
+		return false
+	}
+}
+
+// MoveStair slides one directional travel feature onto a floor cell,
+// carrying its link when it has one and its attached source records. The
+// caller checks occupancy; undo may restore a stair beneath the player.
+func (l *Level) MoveStair(fromX, fromY, toX, toY int) error {
+	if !l.inBounds(fromX, fromY) ||
+		!l.inBounds(toX, toY) ||
+		(fromX == toX && fromY == toY) {
+		return fmt.Errorf("level %d has invalid stair movement", l.ID)
+	}
+
+	from := point{
+		x: fromX,
+		y: fromY,
+	}
+
+	to := point{
+		x: toX,
+		y: toY,
+	}
+
+	link, found := l.stairs[from]
+	feature := l.terrain[fromY][fromX]
+
+	if !terrain.IsMovableTravelFeature(feature) ||
+		(terrain.IsLinkedStair(feature) && !found) ||
+		l.terrain[toY][toX] != terrain.Floor {
+		return fmt.Errorf("level %d cannot move stair from (%d,%d) to (%d,%d)",
+			l.ID, fromX, fromY, toX, toY)
+	}
+
+	if _, occupied := l.stairs[to]; occupied {
+		return fmt.Errorf("level %d destination already has a stair link", l.ID)
+	}
+
+	l.changeDoorCells([]point{from}, terrain.Floor)
+	l.changeDoorCells([]point{to}, feature)
+
+	if found {
+		delete(l.stairs, from)
+		link.X = toX
+		link.Y = toY
+		l.stairs[to] = link
+	}
+
+	for index := range l.vaultRecords {
+		record := &l.vaultRecords[index]
+
+		if record.X == fromX &&
+			record.Y == fromY &&
+			travelsWithFeature(record.Kind) {
+			record.X = toX
+			record.Y = toY
+		}
+	}
+
+	return nil
 }
 
 func (l *Level) SetVaultID(id string) error {
@@ -804,13 +881,68 @@ func (l *Level) LoadDetectedItems(cells [][]bool) error {
 }
 
 func (l *Level) DetectItem(x, y int) error {
+	return l.SetDetectedItem(x, y, true)
+}
+
+// A structural Lua command can restore the prior marker when a later
+// command in the same action fails. The ordinary detector only sets true.
+func (l *Level) SetDetectedItem(x, y int, detected bool) error {
 	if !l.inBounds(x, y) {
 		return fmt.Errorf("level %d cannot detect item at (%d,%d)", l.ID, x, y)
 	}
 
-	l.detectedItems[y*l.width+x] = true
+	l.detectedItems[y*l.width+x] = detected
 
 	return nil
+}
+
+// Creature detection records a suspected kind at a cell. This is player
+// knowledge, not actor occupancy: source detection may deliberately fuzz it.
+func (l *Level) DetectedCreatures() [][]string {
+	cells := make([][]string, len(l.terrain))
+
+	for y := range cells {
+		start := y * l.width
+		row := l.detectedCreatures[start : start+l.width]
+
+		cells[y] = append([]string(nil), row...)
+	}
+
+	return cells
+}
+
+func (l *Level) LoadDetectedCreatures(cells [][]string) error {
+	if len(cells) != len(l.terrain) {
+		return fmt.Errorf("level %d has %d detected creature rows, want %d", l.ID, len(cells), len(l.terrain))
+	}
+
+	detected := make([]string, l.width*len(cells))
+
+	for y, row := range cells {
+		if len(row) != l.width {
+			return fmt.Errorf("level %d detected creature row %d has width %d, want %d", l.ID, y, len(row), l.width)
+		}
+
+		copy(detected[y*l.width:(y+1)*l.width], row)
+	}
+
+	l.detectedCreatures = detected
+
+	return nil
+}
+
+func (l *Level) SetDetectedCreature(x, y int, kindID string) error {
+	if !l.inBounds(x, y) {
+		return fmt.Errorf("level %d cannot detect creature at (%d,%d)", l.ID, x, y)
+	}
+
+	l.detectedCreatures[y*l.width+x] = kindID
+
+	return nil
+}
+
+func (l *Level) ClearDetectedCreatures() {
+	clear(l.detectedCreatures)
 }
 
 // LoadKnownCells validates and replaces saved map knowledge without exposing
@@ -888,6 +1020,7 @@ func (l *Level) Remember(visible []bool) ([]point, error) {
 			if visible[index] {
 				l.remembered[index] = row[x]
 				l.detectedItems[index] = false
+				l.detectedCreatures[index] = ""
 
 				if !l.seen[index] {
 					l.seen[index] = true

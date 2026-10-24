@@ -12,6 +12,9 @@ local brands = {
     DATURA = "frenzy",
     SILVER = "silver",
     DISPERSAL = "dispersal",
+    CHAOS = "chaos",
+    FLAME = "flame",
+    FROST = "frost",
 }
 
 return brands

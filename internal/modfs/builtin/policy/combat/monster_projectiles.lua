@@ -7,6 +7,9 @@ local monster_projectiles = {}
 local shared_policies = {
     [items.MI_ARROW] = "launched",
     [items.MI_BOLT] = "launched",
+    [items.MI_BOOMERANG] = "thrown",
+    [items.MI_JAVELIN] = "thrown",
+    [items.MI_NEEDLE] = "thrown",
 }
 
 -- Example: monster_projectiles.effect(kind_id) with invalid missile ID -> resolver lookup error

@@ -14,6 +14,7 @@ const (
 	BloodFountain      ID = "DNGN_FOUNTAIN_BLOOD"
 	Altar              ID = "DNGN_RANDOM_ALTAR"
 	LugonuAltar        ID = "DNGN_ALTAR_LUGONU"
+	XomAltar           ID = "DNGN_ALTAR_XOM"
 	ShopEntrance       ID = "DNGN_ENTER_SHOP"
 	RockWall           ID = "DNGN_ROCK_WALL"
 	StoneWall          ID = "DNGN_STONE_WALL"
@@ -134,6 +135,11 @@ var definitions = map[ID]Feature{
 	},
 
 	LugonuAltar: {
+		Glyph:    '_',
+		Walkable: true,
+	},
+
+	XomAltar: {
 		Glyph:    '_',
 		Walkable: true,
 	},
@@ -534,6 +540,15 @@ func Walkable(id ID) bool {
 	return found && feature.Walkable
 }
 
+// Solid describes a feature that blocks space itself. The source treats
+// deep water and lava as open, but their impassable boundary variants as
+// solid. Walkable here is a feature property, not player habitat safety.
+func Solid(id ID) bool {
+	feature, found := Lookup(id)
+
+	return !found || !feature.Walkable
+}
+
 func Opaque(id ID) bool {
 	feature, found := Lookup(id)
 
@@ -559,4 +574,55 @@ func IsLinkedStair(id ID) bool {
 	return IsStair(id) ||
 		id == SealedStairsUp ||
 		id == SealedStairsDown
+}
+
+// Travel features have a source up/down command and can slide under Xom's
+// stair repulsion. Shops and transporters use different interaction rules.
+// The grid owns this property so Lua does not repeat a long feature ID list.
+var movableTravelFeatures = map[ID]bool{
+	StairsUp:           true,
+	StairsDown:         true,
+	SealedStairsUp:     true,
+	SealedStairsDown:   true,
+	EnterBazaar:        true,
+	ExitBazaar:         true,
+	EnterSewer:         true,
+	ExitSewer:          true,
+	EnterOssuary:       true,
+	ExitOssuary:        true,
+	EnterWizlab:        true,
+	ExitWizlab:         true,
+	EnterDesolation:    true,
+	ExitDesolation:     true,
+	EnterGauntlet:      true,
+	ExitGauntlet:       true,
+	EnterBailey:        true,
+	ExitBailey:         true,
+	EnterIceCave:       true,
+	ExitIceCave:        true,
+	EnterVolcano:       true,
+	ExitVolcano:        true,
+	EnterTrove:         true,
+	ExitTrove:          true,
+	EnterPandemonium:   true,
+	TransitPandemonium: true,
+	ExitPandemonium:    true,
+	ExitThroughAbyss:   true,
+	EnterAbyss:         true,
+	ExitAbyss:          true,
+	AbyssalStair:       true,
+	EnterHell:          true,
+	ExitHell:           true,
+	EnterDis:           true,
+	ExitDis:            true,
+	EnterGehenna:       true,
+	ExitGehenna:        true,
+	EnterCocytus:       true,
+	ExitCocytus:        true,
+	EnterTartarus:      true,
+	ExitTartarus:       true,
+}
+
+func IsMovableTravelFeature(id ID) bool {
+	return movableTravelFeatures[id]
 }

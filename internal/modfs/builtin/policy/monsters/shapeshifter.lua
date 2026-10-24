@@ -7,9 +7,10 @@ local stats = require("policy.combat.monster_stats")
 
 local shapeshifter = {}
 
--- Natural species and Chaos use one durable identity. The first body change
--- happens immediately, as in DCSS placement, before any AI action can run.
-function shapeshifter.attach(ctx, monster, variant_id)
+-- Xom can mark a natural monster as a permanent shifter immediately before
+-- his own relative-power polymorph. Ordinary creation calls attach below,
+-- which also rolls the first body through the common polymorph owner.
+function shapeshifter.mark(ctx, monster, variant_id)
     local actor = ctx:get(monster, component.ACTOR)
 
     if not actor or ctx:has(monster, component.MONSTER_SHAPESHIFTER) then
@@ -29,6 +30,17 @@ function shapeshifter.attach(ctx, monster, variant_id)
         original_kind_id = original,
     })
 
+    return true
+end
+
+-- Natural species and Chaos use one durable identity. The first body change
+-- happens immediately, as in DCSS placement, before any AI action can run.
+function shapeshifter.attach(ctx, monster, variant_id)
+    if not shapeshifter.mark(ctx, monster, variant_id) then
+        return false
+    end
+
+    local actor = ctx:get(monster, component.ACTOR)
     local source = catalog.get("monsters", actor.kind_id)
 
     return polymorph.random_shifter(ctx, monster, source,

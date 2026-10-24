@@ -17,11 +17,12 @@ const (
 )
 
 type CellView struct {
-	Glyph        rune
-	State        CellState
-	DetectedItem bool
-	ColorID      string
-	Name         string
+	Glyph            rune
+	State            CellState
+	DetectedItem     bool
+	DetectedCreature bool
+	ColorID          string
+	Name             string
 }
 
 type EntityView struct {
@@ -324,6 +325,18 @@ func (g *Game) fillTerrainView(view *View, level *Level) {
 				Glyph:        detectedGlyph,
 				State:        Explored,
 				DetectedItem: true,
+			}
+		}
+
+		if kindID := level.detectedCreatures[i]; kindID != "" {
+			presentation := g.mustPresentationPolicy("presentation.detected_creature", map[string]any{
+				"kind_id": kindID,
+			})
+
+			view.Cells[i] = CellView{
+				Glyph:            rune(presentation["glyph"].(int64)),
+				State:            Explored,
+				DetectedCreature: true,
 			}
 		}
 	}

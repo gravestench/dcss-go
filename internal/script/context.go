@@ -26,6 +26,7 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "id", r.state.NewFunction(r.luaEntityID))
 	r.state.SetField(context, "cell", r.state.NewFunction(r.luaGridCell))
 	r.state.SetField(context, "remembered", r.state.NewFunction(r.luaGridRemembered))
+	r.state.SetField(context, "seen", r.state.NewFunction(r.luaGridSeen))
 	r.state.SetField(context, "records_at", r.state.NewFunction(r.luaGridRecordsAt))
 	r.state.SetField(context, "replace_record_string",
 		r.state.NewFunction(r.luaGridReplaceRecordString))
@@ -38,6 +39,7 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "shoals_tide_clock", r.state.NewFunction(r.luaGridShoalsTideClock))
 	r.state.SetField(context, "set_shoals_tide_clock", r.state.NewFunction(r.luaGridSetShoalsTideClock))
 	r.state.SetField(context, "set_cell", r.state.NewFunction(r.luaGridSetCell))
+	r.state.SetField(context, "move_stair", r.state.NewFunction(r.luaGridMoveStair))
 	r.state.SetField(context, "replace_region",
 		r.state.NewFunction(r.luaGridReplaceRegion))
 	r.state.SetField(context, "region_plan",
@@ -52,9 +54,15 @@ func (r *Runtime) installContextAPI() {
 		r.state.NewFunction(r.luaReplaceSessionState))
 	r.state.SetField(context, "set_cell_colour", r.state.NewFunction(r.luaGridSetCellColour))
 	r.state.SetField(context, "map_cell", r.state.NewFunction(r.luaGridMapCell))
+	r.state.SetField(context, "detect_item", r.state.NewFunction(r.luaGridDetectItem))
+	r.state.SetField(context, "detect_creature", r.state.NewFunction(r.luaGridDetectCreature))
+	r.state.SetField(context, "clear_detected_creatures", r.state.NewFunction(r.luaGridClearDetectedCreatures))
 	r.state.SetField(context, "walkable", r.state.NewFunction(r.luaGridWalkable))
+	r.state.SetField(context, "solid", r.state.NewFunction(r.luaGridSolid))
+	r.state.SetField(context, "opaque", r.state.NewFunction(r.luaGridOpaque))
 	r.state.SetField(context, "actor_at", r.state.NewFunction(r.luaGridActorAt))
 	r.state.SetField(context, "stair_at", r.state.NewFunction(r.luaGridStairAt))
+	r.state.SetField(context, "travel_feature_at", r.state.NewFunction(r.luaGridTravelFeatureAt))
 	r.state.SetField(context, "visible", r.state.NewFunction(r.luaGridVisible))
 	r.state.SetField(context, "visible_no_trans", r.state.NewFunction(r.luaGridVisibleNoTrans))
 	r.state.SetField(context, "visible_no_trans_with_blocked",
@@ -346,6 +354,21 @@ func (r *Runtime) luaGridRemembered(state *lua.LState) int {
 	return 1
 }
 
+// Keep actual sight distinct from remembered terrain. Xom's exploration
+// estimate can count magic-mapped cells only when its source rule permits.
+func (r *Runtime) luaGridSeen(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	seen, found := r.services.Grid.Seen(levelID, x, y)
+
+	if !found {
+		state.Push(lua.LNil)
+	} else {
+		state.Push(lua.LBool(seen))
+	}
+
+	return 1
+}
+
 // Return saved placement facts at one cell without giving Lua a mutable
 // reference to the level's record slice. Rules interpret the typed facts.
 func (r *Runtime) luaGridRecordsAt(state *lua.LState) int {
@@ -573,6 +596,66 @@ func (r *Runtime) luaGridSetCell(state *lua.LState) int {
 	return 0
 }
 
+// Xom stages a stair slide with the same reversible command path as terrain
+// and actor movement. The level moves its link and glyph as one mutation.
+func (r *Runtime) luaGridMoveStair(state *lua.LState) int {
+	values := r.gridIntegers(state, 5)
+	levelID := values[0]
+	fromX, fromY := values[1], values[2]
+	toX, toY := values[3], values[4]
+
+	from, foundFrom := r.services.Grid.Cell(levelID, fromX, fromY)
+	to, foundTo := r.services.Grid.Cell(levelID, toX, toY)
+
+	if !foundFrom ||
+		!foundTo ||
+		!r.services.Grid.TravelFeatureAt(levelID, fromX, fromY) ||
+		to != terrain.Floor {
+		state.RaiseError("stair slide needs a travel feature and floor")
+
+		return 0
+	}
+
+	if _, occupied := r.stagedActorAt(gridCell{
+		levelID: levelID,
+		x:       toX,
+		y:       toY,
+	}); occupied {
+		state.RaiseError("stair slide destination is occupied")
+
+		return 0
+	}
+
+	fromCell := gridCell{
+		levelID: levelID,
+		x:       fromX,
+		y:       fromY,
+	}
+
+	toCell := gridCell{
+		levelID: levelID,
+		x:       toX,
+		y:       toY,
+	}
+
+	r.pendingCells[fromCell] = terrain.Floor
+	r.pendingCells[toCell] = from
+
+	r.pending = append(r.pending, structuralCommand{
+		spatialLevel: levelID,
+		apply: func() error {
+			return r.services.Grid.MoveStair(levelID,
+				fromX, fromY, toX, toY)
+		},
+		undo: func() error {
+			return r.services.Grid.MoveStair(levelID,
+				toX, toY, fromX, fromY)
+		},
+	})
+
+	return 0
+}
+
 // A vault callback may recolour terrain after changing it. Stage the tint
 // with structural commands so a failed Lua turn restores the previous view.
 func (r *Runtime) luaGridSetCellColour(state *lua.LState) int {
@@ -637,6 +720,99 @@ func (r *Runtime) luaGridMapCell(state *lua.LState) int {
 	return 1
 }
 
+// Item detection is a saved grid marker, separate from remembered terrain.
+// Staging and undo keep a failed Xom effect from publishing a false marker.
+func (r *Runtime) luaGridDetectItem(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	previous, found := r.services.Grid.DetectedItem(levelID, x, y)
+
+	if !found {
+		state.RaiseError("cannot detect item at missing grid cell")
+
+		return 0
+	}
+
+	if previous {
+		state.Push(lua.LBool(false))
+
+		return 1
+	}
+
+	r.pending = append(r.pending, structuralCommand{
+		spatialLevel: levelID,
+		apply: func() error {
+			return r.services.Grid.DetectItem(levelID, x, y)
+		},
+		undo: func() error {
+			return r.services.Grid.RestoreDetectedItem(
+				levelID, x, y, previous)
+		},
+	})
+
+	state.Push(lua.LBool(true))
+
+	return 1
+}
+
+// Sensed monster glyphs are map knowledge. Stage them so an event failure
+// cannot leak a false marker into the player's saved map.
+func (r *Runtime) luaGridDetectCreature(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	kindID := state.CheckString(5)
+	previous, found := r.services.Grid.DetectedCreature(levelID, x, y)
+
+	if !found || kindID == "" {
+		state.RaiseError("cannot detect creature at missing cell or with empty kind")
+
+		return 0
+	}
+
+	r.pending = append(r.pending, structuralCommand{
+		spatialLevel: levelID,
+		apply: func() error {
+			return r.services.Grid.SetDetectedCreature(levelID, x, y, kindID)
+		},
+		undo: func() error {
+			return r.services.Grid.SetDetectedCreature(levelID, x, y, previous)
+		},
+	})
+
+	state.Push(lua.LBool(true))
+
+	return 1
+}
+
+// Each detection replaces old guesses, matching source map behavior. A
+// detached snapshot also gives the transaction an exact rollback image.
+func (r *Runtime) luaGridClearDetectedCreatures(state *lua.LState) int {
+	levelID := state.CheckInt(2)
+	previous, found := r.services.Grid.DetectedCreatures(levelID)
+
+	if !found {
+		state.RaiseError("cannot clear detected creatures on missing level")
+
+		return 0
+	}
+
+	empty := make([][]string, len(previous))
+
+	for y, row := range previous {
+		empty[y] = make([]string, len(row))
+	}
+
+	r.pending = append(r.pending, structuralCommand{
+		spatialLevel: levelID,
+		apply: func() error {
+			return r.services.Grid.LoadDetectedCreatures(levelID, empty)
+		},
+		undo: func() error {
+			return r.services.Grid.LoadDetectedCreatures(levelID, previous)
+		},
+	})
+
+	return 0
+}
+
 func (r *Runtime) luaGridWalkable(state *lua.LState) int {
 	levelID, x, y := r.gridArgs(state)
 	cellKey := gridCell{
@@ -646,6 +822,57 @@ func (r *Runtime) luaGridWalkable(state *lua.LState) int {
 	}
 
 	state.Push(lua.LBool(r.stagedWalkable(cellKey)))
+
+	return 1
+}
+
+// Walking and spatial solidity answer different questions at dangerous
+// terrain. Xom's exploration estimate needs the latter classification.
+func (r *Runtime) luaGridSolid(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	cellKey := gridCell{
+		levelID: levelID,
+		x:       x,
+		y:       y,
+	}
+
+	feature, found := r.services.Grid.Cell(levelID, x, y)
+
+	if pending, changed := r.pendingCells[cellKey]; changed {
+		feature = pending
+	}
+
+	if !found {
+		state.Push(lua.LNil)
+	} else {
+		state.Push(lua.LBool(terrain.Solid(feature)))
+	}
+
+	return 1
+}
+
+// Rules need the same terrain transparency used by line of sight. Keep
+// classification in the generic terrain owner so Lua need not list every
+// wall, door, and transparent feature to sample exploration correctly.
+func (r *Runtime) luaGridOpaque(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	cellKey := gridCell{
+		levelID: levelID,
+		x:       x,
+		y:       y,
+	}
+
+	feature, found := r.services.Grid.Cell(levelID, x, y)
+
+	if pending, changed := r.pendingCells[cellKey]; changed {
+		feature = pending
+	}
+
+	if !found {
+		state.Push(lua.LNil)
+	} else {
+		state.Push(lua.LBool(terrain.Opaque(feature)))
+	}
 
 	return 1
 }
@@ -685,6 +912,15 @@ func (r *Runtime) luaGridStairAt(state *lua.LState) int {
 	state.SetField(value, "exit", lua.LBool(stair.Exit))
 	state.SetField(value, "target_branch_id", lua.LString(stair.TargetBranchID))
 	state.Push(value)
+
+	return 1
+}
+
+// A boolean travel query keeps Go's feature list out of Lua policy. The
+// source Xom rule excludes shops even though they also use an entry glyph.
+func (r *Runtime) luaGridTravelFeatureAt(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	state.Push(lua.LBool(r.services.Grid.TravelFeatureAt(levelID, x, y)))
 
 	return 1
 }

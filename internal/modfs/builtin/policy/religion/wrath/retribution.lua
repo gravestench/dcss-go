@@ -3,6 +3,7 @@
 local component = require("constants.component")
 local confusion = require("policy.magic.player_confusion")
 local gods = require("constants.gods")
+local alignments = require("constants.god_alignments")
 local roster = require("policy.religion.wrath.roster")
 local slow = require("policy.character.slow")
 local streams = require("constants.rng_streams")
@@ -42,19 +43,6 @@ local no_retribution = {
     [gods.HEPLIAKLQANA] = true,
 }
 
-local good = {
-    [gods.ZIN] = true,
-    [gods.SHINING_ONE] = true,
-    [gods.ELYVILON] = true,
-}
-
-local chaotic = {
-    [gods.XOM] = true,
-    [gods.MAKHLEB] = true,
-    [gods.LUGONU] = true,
-    [gods.JIYVA] = true,
-}
-
 local evil = {
     [gods.KIKUBAAQUDGHA] = true,
     [gods.MAKHLEB] = true,
@@ -71,11 +59,11 @@ local function hates(god_id, worship_id)
         return false
     end
 
-    if not good[god_id] then
+    if not alignments.GOOD[god_id] then
         return true
     end
 
-    if god_id == gods.ZIN and chaotic[worship_id] then
+    if god_id == gods.ZIN and alignments.CHAOTIC[worship_id] then
         return true
     end
 
@@ -131,7 +119,7 @@ function retribution.invoke_god(ctx, player, god_id, options)
     end
 
     if not force and
-        ((god_id == current and good[god_id]) or
+        ((god_id == current and alignments.GOOD[god_id]) or
             (god_id ~= current and not hates(god_id, current))) then
         return false
     end

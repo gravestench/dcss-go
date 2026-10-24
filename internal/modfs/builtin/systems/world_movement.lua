@@ -12,6 +12,8 @@ local trap_held = require("policy.traps.held")
 local barbs = require("policy.combat.barbs")
 local roll = require("policy.combat.monster_roll")
 local opportunity = require("policy.combat.opportunity_attacks")
+local xom_cloud_trail = require("policy.religion.xom.cloud_trail")
+local xom_stairs = require("policy.religion.xom.stair_repel")
 
 -- Theory of operation: Movement first handles escape and occupied cells, then commits a legal destination.
 -- A failed constriction escape spends the movement action; a successful one costs the holder energy.
@@ -132,12 +134,22 @@ function system.update(ctx, actor, elapsed_aut)
     end
 
     -- Only a free destination and completed escape reaches the position mutation.
+    -- Xom's trail clouds the vacated cell, not a failed move's origin.
+    if actor == ctx:player() then
+        xom_cloud_trail.leave(ctx, actor, position)
+    end
+
     ctx:move_actor(actor, position.level_id, x, y)
     barbs.moved(ctx, actor, elapsed_aut)
     roll.moved(ctx, actor)
 
     if actor == ctx:player() then
         acrobat.moved(ctx, actor)
+        xom_stairs.on_move(ctx, actor, {
+            level_id = position.level_id,
+            x = x,
+            y = y,
+        })
     end
 end
 

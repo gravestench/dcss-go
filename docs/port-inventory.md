@@ -319,7 +319,9 @@ library knowledge, and renunciation withdraws the rest. One Lua transition
 path now joins or renounces any registered god, preserves good-god piety
 transfer, records
 source penance, charges Gozag, and preserves Ignis's spent reserve. Ru,
-Ashenzari, Yredelemnul, and Xom entry exceptions retain typed pending state.
+Ashenzari and Yredelemnul entry exceptions retain typed pending state.
+Xom's ecumenical altar now increases his saved interest immediately through
+the same stimulation rule used by ordinary events.
 The saved god-time clock now starts at 200 aut, then runs source 100–300 aut
 checks. Nineteen gods use their source one-in-17 or one-in-35 piety decay;
 seven gods use alternative piety mechanics and skip that roll. A zero-piety
@@ -362,8 +364,8 @@ their usual owners. Shaft arrival checks dangerous terrain, clouds,
 teleport masks, slime walls, and hostile sight through Lua. A committed
 text snapshot shows D:1–D:3 and their stair links after a three-floor
 fall. Source branches that still need a shared mechanic, such as Xom
-actions or special summons,
-and certain mutation or transformation effects, raise an explicit error
+actions, special summons, and certain mutation or transformation effects,
+raise an explicit error
 at that branch. These outcomes remain part of the open card domain work.
 A lingering god spell now retains an inert Lua ECS source
 for burn, cloud, terrain, and summon attribution through save and restore.
@@ -945,6 +947,21 @@ definitions, policies, and ECS systems in actual Lua files; extend Go only
 for reusable engine primitives. Delete the previous rule path in the same
 change. Do not add compatibility adapters or parallel implementations. Keep
 generated content checked in and refresh it explicitly.
+
+Xom's 42 source event IDs now resolve through individual Lua catalog
+definitions and focused effect owners. The good and bad selectors keep
+source priority and RNG order as named stages; a sparse mod may replace
+one event file or add an event with its own selector at a numeric stage.
+Ordinary worship and Divine Wrath share the action owner. Per-action mood,
+interest, and stimulation use saved worship state. Cloud trails, Cleaving,
+stair repulsion, displaced timed portals, generated allies, item gifts,
+and Abyss return sites use real saved ECS or level records. The focused
+Lua cases, game rollback, timing, and save/restore tests cover these paths.
+Interested, unpenitent Xom also restores a worshipper after an accidentally
+lethal action; boredom and penance leave that action lethal. Save version 36
+rejects the earlier Xom schema and pre-detection level records explicitly.
+Unusual death and item-destruction stimulation hooks still belong to their
+later action domains; Xom's stimulation policy is ready for those calls.
 
 ## Running the slice
 

@@ -21,6 +21,7 @@ local catalog = {
     SHOPS = "shops",
     TRAPS = "traps",
     VAULTS = "vaults",
+    XOM_EVENTS = "xom_events",
 }
 
 return catalog

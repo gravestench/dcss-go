@@ -172,6 +172,12 @@ function player_attack.damage(ctx, input)
     -- Source Weak scales raw melee power before AC, including stab hits.
     damage = weakness.melee_damage(ctx, ctx:player(), damage)
 
+    -- A cleave is another real contact, with 70% of the final raw damage.
+    -- Armour then applies to that reduced blow independently.
+    if input.cleave_secondary then
+        damage = roll.random_divide(ctx, damage * 7, 10)
+    end
+
     local saved = roll.armour(ctx, input.defender_ac)
 
     return statuses.confusing_touch_damage(ctx, ctx:player(),

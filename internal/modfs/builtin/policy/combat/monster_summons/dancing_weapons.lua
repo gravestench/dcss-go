@@ -8,28 +8,10 @@ local streams = require("constants.rng_streams")
 
 local weapons = {}
 
--- The ordinary monster and the card share the same carried-item and ghost
--- body ownership. Card power scales the derived body, while Sheza's normal
--- dancing weapons pass 100 and retain their existing combat profile.
-local function equip(ctx, creature, kind_id, plus, ego, power,
-    artefact)
-    local definition = catalog.get("items", kind_id)
-    local item = ctx:create()
-
-    ctx:add(item, component.ITEM, {
-        kind_id = kind_id,
-        quantity = 1,
-        plus = plus,
-        ego = ego,
-        charges = 0,
-    })
-    ctx:add(item, component.CARRIED_BY, { holder = creature })
-    ctx:add(item, component.EQUIPPED, { slot = "weapon" })
-
-    if artefact then
-        ctx:add(item, component.ITEM_ARTEFACT, artefact)
-    end
-
+-- The equipped weapon determines the dancer's body, regardless of whether
+-- a card generated the item or Xom took it from another monster. Keeping
+-- this one derivation path avoids different combat stats for equal items.
+local function derive(ctx, creature, definition, power)
     local delay = definition.weapon.speed
     local damage = definition.weapon.damage
     local actor = ctx:get(creature, component.ACTOR)
@@ -55,6 +37,60 @@ local function equip(ctx, creature, kind_id, plus, ego, power,
         damage = math.max(1,
             math.floor(2 * damage * strength / 100)),
     })
+
+end
+
+-- The ordinary monster and the card create an item before deriving the
+-- body. A borrowed weapon instead keeps its original item entity below.
+local function equip(ctx, creature, kind_id, plus, ego, power,
+    artefact)
+    local definition = catalog.get("items", kind_id)
+    local item = ctx:create()
+
+    ctx:add(item, component.ITEM, {
+        kind_id = kind_id,
+        quantity = 1,
+        plus = plus,
+        ego = ego,
+        charges = 0,
+    })
+    ctx:add(item, component.CARRIED_BY, { holder = creature })
+    ctx:add(item, component.EQUIPPED, { slot = "weapon" })
+
+    if artefact then
+        ctx:add(item, component.ITEM_ARTEFACT, artefact)
+    end
+
+    derive(ctx, creature, definition, power)
+
+    return item
+end
+
+-- Xom animates an existing monster weapon. Reassign its carrier and slot
+-- on that same ECS entity, retaining artefact identity, enchantment, and
+-- later summon death behavior while the normal dancer stats are derived.
+function weapons.attach_existing(ctx, creature, item, power)
+    local state = ctx:get(item, component.ITEM)
+
+    if not state or
+        not ctx:has(item, component.CARRIED_BY) or
+        not ctx:has(item, component.EQUIPPED) then
+        error("dancing weapon needs an equipped item")
+    end
+
+    local definition = catalog.get("items", state.kind_id)
+
+    if not definition.weapon then
+        error("dancing weapon item is not a weapon")
+    end
+
+    ctx:set(item, component.CARRIED_BY, {
+        holder = creature,
+    })
+    ctx:set(item, component.EQUIPPED, {
+        slot = "weapon",
+    })
+    derive(ctx, creature, definition, power)
 
     return item
 end

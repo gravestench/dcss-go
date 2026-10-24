@@ -253,12 +253,14 @@ local function heard_by_monsters(ctx, origin, cells, producer)
     end
 end
 
--- Suppress sound inside Silence before propagating one field to listeners and wake-up rules.
--- Example: a shout builds one noise field, then wakes or redirects monsters reached by that field.
-function noise.emit(ctx, origin, loudness, producer)
+-- Suppress ordinary sound inside Silence before propagating one field.
+-- Divine fake noise can bypass source Silence at its origin, but a silenced
+-- player still cannot hear the result. Monster hearing uses the same field.
+function noise.emit(ctx, origin, loudness, producer, bypass_silence)
     local player = ctx:player()
     local player_position = ctx:get(player, component.POSITION)
-    if silence.at(ctx, origin.level_id, origin.x, origin.y) then
+    if not bypass_silence and
+        silence.at(ctx, origin.level_id, origin.x, origin.y) then
         return 0, false
     end
 

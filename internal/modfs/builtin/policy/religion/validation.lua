@@ -1,6 +1,7 @@
 -- A saved worship record must be a possible live state before any god rule
 -- reads it. This owner checks IDs and arithmetic bounds in one place.
 local component = require("constants.component")
+local catalog = require("policy.catalog")
 local gods = require("constants.gods")
 local limits = require("constants.piety")
 local tithe_rules = require("constants.zin_tithe_rules")
@@ -98,10 +99,27 @@ function validation.check(ctx, player)
         error("invalid Ru sacrifice progress")
     end
 
-    local xom = ctx:get(player, component.RELIGION_XOM)
+    local xom_trail = ctx:get(player, component.XOM_CLOUD_TRAIL)
 
-    if xom and xom.pending_stimulation < 0 then
-        error("invalid Xom stimulation")
+    if xom_trail then
+        if xom_trail.remaining_aut <= 0 or
+            xom_trail.remaining_aut > 1200 then
+            error("invalid Xom cloud trail duration")
+        end
+
+        -- A modded trail can choose a new registered kind, but an unknown
+        -- saved ID cannot silently become a different cloud on movement.
+        catalog.get(categories.CLOUDS, xom_trail.cloud_kind)
+    end
+
+    local xom_stairs = ctx:get(player, component.XOM_STAIR_REPEL)
+
+    if xom_stairs and
+        (xom_stairs.move_aut < 0 or xom_stairs.move_aut > 1000 or
+            xom_stairs.climb_aut < 0 or xom_stairs.climb_aut > 500 or
+            (xom_stairs.move_aut == 0 and
+                xom_stairs.climb_aut == 0)) then
+        error("invalid Xom stair repulsion duration")
     end
 
     local yred = ctx:get(player, component.RELIGION_YREDELEMNUL)

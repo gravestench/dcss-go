@@ -13,6 +13,7 @@ local piety = {
         50,
         80,
         120,
+        150,
         180,
     },
     BREAKPOINTS = {

@@ -15,6 +15,7 @@ local phases = require("constants.endgame")
 local pan_travel = require("policy.world.pan.travel")
 local hell_travel = require("policy.world.hell.travel")
 local temporary_portals = require("policy.world.portals.catalog")
+local xom_stairs = require("policy.religion.xom.stair_repel")
 
 -- Rooted movement is rejected before checking the destination cell.
 local function rooted(ctx)
@@ -118,6 +119,7 @@ function navigation.stairs(ctx, position, downstairs, actor, forced,
     local missing = downstairs and "There are no stairs down here." or
         "There are no stairs up here."
     local cell = ctx:cell(position.level_id, position.x, position.y)
+
     local portal = pan_travel.prepare(ctx, position, downstairs,
         pan_state, pan_current_vault_ids)
 
@@ -189,6 +191,17 @@ function navigation.stairs(ctx, position, downstairs, actor, forced,
     if cell ~= glyph or not stair then
         return {
             message = missing,
+        }
+    end
+
+    -- A wrong-direction command never attempts to climb this feature.
+    -- Xom's refusal acts only after the requested stair is established.
+    if xom_stairs.attempt_climb(ctx, actor or ctx:player(), position) then
+        return {
+            intent = {
+                kind = intent_ids.WAIT,
+            },
+            cost = 10,
         }
     end
 

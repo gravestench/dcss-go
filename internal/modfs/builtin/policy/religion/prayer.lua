@@ -27,6 +27,13 @@ local function altar_at(ctx, position)
         return {}, gods.LUGONU
     end
 
+    -- Xom can create permanent altars during a scenery act. Their typed
+    -- terrain identifies the patron without inventing a DES source record.
+    if ctx:cell(position.level_id, position.x, position.y) ==
+        terrain.DNGN_ALTAR_XOM then
+        return {}, gods.XOM
+    end
+
     if ctx:cell(position.level_id, position.x, position.y) ~=
         terrain.DNGN_RANDOM_ALTAR then
         return nil

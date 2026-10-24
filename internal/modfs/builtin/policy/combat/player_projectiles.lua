@@ -18,6 +18,7 @@ local monster_health = require("policy.combat.monster_health")
 local attack_conduct = require("policy.religion.conduct.attack")
 local projectile_conduct = require("policy.religion.conduct.projectiles")
 local missile_egos = require("constants.missile_egos")
+local weapon_brands = require("constants.weapon_brands")
 local item_ids = require("ids.items")
 local skills = require("ids.skills")
 
@@ -142,7 +143,8 @@ local function attack_input(ctx, player, missile, launcher, item, target, defend
 end
 
 -- Nets and darts use contact only; damaging missiles apply brands after base HP loss.
-local function resolve_target(ctx, player, missile, launcher, item, target)
+local function resolve_target(ctx, player, missile, launcher, item,
+    item_entity, target)
     local defender_actor = ctx:get(target, "core.actor")
     local defender = catalog.get("monsters", defender_actor.kind_id)
 
@@ -180,13 +182,24 @@ local function resolve_target(ctx, player, missile, launcher, item, target)
             local health = ctx:get(target, "core.health")
             local brand_damage = 0
 
-            if launcher then
+            local chaos_launcher = launcher and
+                item.ego == weapon_brands.CHAOS
+
+            if launcher and not chaos_launcher then
                 brand_damage, effect_message = launcher_brands.apply(ctx,
                     item.ego, missile, defender, outcome.damage)
             end
 
             health, outcome.damage = monster_health.damage(ctx, target,
                 outcome.damage, player)
+            local base_killed = health.current == 0
+
+            if chaos_launcher and health.current > 0 then
+                brand_damage = launcher_brands.apply(ctx,
+                    item.ego, missile, defender, outcome.damage,
+                    target, player, health, item_entity)
+                health = ctx:get(target, "core.health")
+            end
 
             if health.current > 0 and not launcher then
                 brand_damage = brand_damage + effects.missile(ctx,
@@ -196,7 +209,8 @@ local function resolve_target(ctx, player, missile, launcher, item, target)
 
             health = monster_health.damage(ctx, target, brand_damage, player)
 
-            if health.current == 0 then
+            if health.current == 0 and
+                (not chaos_launcher or base_killed) then
                 ctx:signal("player_kill", target)
             end
         end
@@ -257,7 +271,7 @@ function projectiles.resolve(ctx, player, intent)
     for _, contact in ipairs(impact.contacts) do
         local outcome
         defender, caught, outcome = resolve_target(ctx, player, missile,
-            launcher, item, contact.actor)
+            launcher, item, entity, contact.actor)
 
         if caught then
             caught_target = contact.actor

@@ -54,19 +54,42 @@ end
 
 -- Scale charm by effective HD and actor speed, then fuzz the source duration
 -- on the melee stream before adding it to an existing charm.
-local function charm_duration(ctx, target, definition)
+local function charm_duration(ctx, target, definition, stream)
     local actor = ctx:get(target, component.ACTOR)
     local speed = math.max(1, actor.speed)
     local scaled_hd = math.max(1,
         math.floor((monster_stats.hit_dice(ctx, target, definition) + 10) *
             10 / speed))
     local centiturns = math.max(2, math.floor(500 / scaled_hd))
-    local raw = centiturns * roll.random_divide(ctx, 100, speed)
+    local raw = centiturns * roll.random_divide(ctx, 100, speed,
+        stream)
     local low = math.floor(raw * 60 / 100)
     local high = math.floor(raw * 40 / 100)
-    local fuzz = roll.average_two(ctx, "melee", low + high + 1)
+    local fuzz = roll.average_two(ctx, stream or "melee",
+        low + high + 1)
 
     return math.max(15, raw + fuzz - low)
+end
+
+-- Direct divine enchantments and Charm spells must save the same loyalty
+-- timer and clear the same patrol order. The spell owns its aim and will
+-- check; this function owns the status once a target has been accepted.
+function allegiance.apply_charm(ctx, target, stream)
+    local actor = ctx:get(target, component.ACTOR)
+    local definition = catalog.get("monsters", actor.kind_id)
+    local value = ensure(ctx, target)
+
+    value.charm_aut = value.charm_aut +
+        charm_duration(ctx, target, definition, stream)
+    save(ctx, target, value)
+
+    if ctx:has(target, component.MONSTER_PATROL) then
+        ctx:remove(target, component.MONSTER_PATROL)
+    end
+
+    ctx:emit("spell", "The " .. definition.name .. " is charmed.")
+
+    return true
 end
 
 -- Discord averages adjacent spell bounds to mimic the source duration roll.
@@ -229,17 +252,7 @@ function allegiance.cast_charm(ctx, player, intent, spell, power)
         return
     end
 
-    local value = ensure(ctx, target)
-    value.charm_aut = value.charm_aut + charm_duration(ctx, target, definition)
-    save(ctx, target, value)
-
-    -- A new ally follows the player instead of keeping its authored patrol.
-    -- Source charm drops the patrol point when allegiance changes.
-    if ctx:has(target, component.MONSTER_PATROL) then
-        ctx:remove(target, component.MONSTER_PATROL)
-    end
-
-    ctx:emit("spell", "The " .. definition.name .. " is charmed.")
+    allegiance.apply_charm(ctx, target)
 end
 
 -- Discord visits each visible eligible monster once, then rolls resistance

@@ -120,6 +120,10 @@ func (g *Game) restoreLevels(
 			return detectedErr
 		}
 
+		if detectedErr := level.LoadDetectedCreatures(record.DetectedCreatures); detectedErr != nil {
+			return detectedErr
+		}
+
 		for _, savedLink := range record.Stairs {
 			if linkErr := level.AddStairLink(StairLink{
 				X:         savedLink.X,

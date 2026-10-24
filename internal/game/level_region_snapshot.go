@@ -19,20 +19,21 @@ func (grid scriptGrid) RegionPlan(levelID int) (map[string]any, error) {
 	}
 
 	plan := map[string]any{
-		"cells":            level.Cells(),
-		"local_depth":      level.LocalDepth,
-		"known":            level.KnownCells(),
-		"seen":             regionBoolValues(level.SeenCells()),
-		"detected_items":   regionBoolValues(level.DetectedItems()),
-		"initial_monsters": level.initialMonsters,
-		"initial_actors":   level.initialActors,
-		"vault_ids":        level.VaultIDs(),
-		"vault_records":    regionVaultRecords(level.VaultRecords()),
-		"stairs":           regionStairs(level.StairLinks()),
-		"cell_colours":     regionColours(level),
-		"spawn_exclusions": regionExclusions(level),
-		"actor_moves":      []any{},
-		"actor_retire":     []any{},
+		"cells":              level.Cells(),
+		"local_depth":        level.LocalDepth,
+		"known":              level.KnownCells(),
+		"seen":               regionBoolValues(level.SeenCells()),
+		"detected_items":     regionBoolValues(level.DetectedItems()),
+		"detected_creatures": regionStringValues(level.DetectedCreatures()),
+		"initial_monsters":   level.initialMonsters,
+		"initial_actors":     level.initialActors,
+		"vault_ids":          level.VaultIDs(),
+		"vault_records":      regionVaultRecords(level.VaultRecords()),
+		"stairs":             regionStairs(level.StairLinks()),
+		"cell_colours":       regionColours(level),
+		"spawn_exclusions":   regionExclusions(level),
+		"actor_moves":        []any{},
+		"actor_retire":       []any{},
 	}
 
 	if id := level.VaultID(); id != "" {
@@ -40,6 +41,23 @@ func (grid scriptGrid) RegionPlan(levelID int) (map[string]any, error) {
 	}
 
 	return plan, nil
+}
+
+// A Lua region plan needs detached, one-based rows of sensed monster IDs.
+func regionStringValues(rows [][]string) []any {
+	result := make([]any, len(rows))
+
+	for y, row := range rows {
+		cells := make([]any, len(row))
+
+		for x, value := range row {
+			cells[x] = value
+		}
+
+		result[y] = cells
+	}
+
+	return result
 }
 
 // Gopher Lua's generic policy bridge accepts nested []any rather than a

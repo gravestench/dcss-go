@@ -104,27 +104,30 @@ local function blank_memory()
     local known = {}
     local seen = {}
     local detected = {}
+    local creatures = {}
 
     for y = 1, abyss.HEIGHT do
         known[y] = {}
         seen[y] = {}
         detected[y] = {}
+        creatures[y] = {}
 
         for x = 1, abyss.WIDTH do
             known[y][x] = terrain.DNGN_UNSEEN
             seen[y][x] = false
             detected[y][x] = false
+            creatures[y][x] = ""
         end
     end
 
-    return known, seen, detected
+    return known, seen, detected, creatures
 end
 
 -- Sample a complete next window, then overlay only the old protected
 -- cells. This keeps the world-coordinate terrain continuous at its edge.
 local function move_cells(ctx, state, plan, mask, dx, dy)
     local generated, updated = window.build(ctx, state)
-    local known, seen, detected = blank_memory()
+    local known, seen, detected, creatures = blank_memory()
 
     for y = 1, abyss.HEIGHT - 2 do
         for x = 1, abyss.WIDTH - 2 do
@@ -139,6 +142,8 @@ local function move_cells(ctx, state, plan, mask, dx, dy)
                     plan.seen[y + 1][x + 1]
                 detected[next_y + 1][next_x + 1] =
                     plan.detected_items[y + 1][x + 1]
+                creatures[next_y + 1][next_x + 1] =
+                    plan.detected_creatures[y + 1][x + 1]
             end
         end
     end
@@ -147,6 +152,7 @@ local function move_cells(ctx, state, plan, mask, dx, dy)
     plan.known = known
     plan.seen = seen
     plan.detected_items = detected
+    plan.detected_creatures = creatures
 
     return updated
 end

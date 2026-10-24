@@ -343,10 +343,23 @@ function polymorph.random_shifter(ctx, target, source, stream)
     return false
 end
 
--- Degeneration asks for a weaker body, rather than Polymorph's similar
--- body. Sample the same habitat-safe source species pool and relax the
--- lower-power window after misses, preserving the shared body transition.
-function polymorph.less(ctx, target, source, stream)
+-- PPT_LESS and PPT_MORE use different source power windows around the
+-- current monster. Both relax after unsuccessful samples, while species
+-- and habitat eligibility remain common to the body transition.
+local function relative_power_fits(source_hd, target_hd, relax, stronger)
+    if stronger then
+        return target_hd >= source_hd + 2 - relax and
+            target_hd <= source_hd + relax
+    end
+
+    return target_hd >= source_hd - math.floor(relax / 2) and
+        target_hd <= source_hd - 3 +
+            math.floor(relax * 3 / 2)
+end
+
+-- Sample the habitat-safe source species pool. A demon tier mismatch
+-- remains rare until relaxation broadens, as in monster_polymorph.
+local function relative(ctx, target, source, stream, stronger)
     if not can_polymorph(source) then
         return false
     end
@@ -379,12 +392,9 @@ function polymorph.less(ctx, target, source, stream)
             end
         end
 
-        local minimum = source_hd - math.floor(relax / 2)
-        local maximum = source_hd - 3 +
-            math.floor(relax * 3 / 2)
-
         if polymorph.shifter_eligible(ctx, source, chosen, position) and
-            chosen.hd >= minimum and chosen.hd <= maximum then
+            relative_power_fits(source_hd, chosen.hd, relax,
+                stronger) then
             local target_tier = demon_tier_for[chosen.id] or 0
 
             if source_tier == target_tier or
@@ -397,6 +407,17 @@ function polymorph.less(ctx, target, source, stream)
     end
 
     return false
+end
+
+-- Degen and Xom's helpful transformation ask for a weaker body.
+function polymorph.less(ctx, target, source, stream)
+    return relative(ctx, target, source, stream, false)
+end
+
+-- Xom's harmful transformation asks for a stronger body while preserving
+-- the same inventory drop, HP roll, saved original kind, and habitat check.
+function polymorph.more(ctx, target, source, stream)
+    return relative(ctx, target, source, stream, true)
 end
 
 -- Only visible living actors along clear in-range rays make the spell usable.

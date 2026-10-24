@@ -27,12 +27,14 @@ function launcher_brands.check(id)
 end
 
 -- Launcher brands only add damage after a missile deals positive base damage.
-function launcher_brands.apply(ctx, id, missile, defender, damage)
+function launcher_brands.apply(ctx, id, missile, defender, damage,
+    target, attacker, health, weapon_entity)
     if damage <= 0 then
         return 0
     end
 
-    return effect(id).apply(ctx, missile, defender, damage)
+    return effect(id).apply(ctx, missile, defender, damage,
+        target, attacker, health, weapon_entity)
 end
 
 return launcher_brands

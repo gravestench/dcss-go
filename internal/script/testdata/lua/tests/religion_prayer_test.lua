@@ -170,6 +170,27 @@ local function forbidden(ctx)
         gods.NO_GOD)
 end
 
+-- A scenery-created Xom altar has a dedicated terrain ID instead of a DES
+-- record. Prayer must still offer the patron before charging any time.
+local function xom_scenery_altar(ctx)
+    local actor = player(ctx)
+    local site = setmetatable({}, { __index = ctx })
+
+    function site:cell()
+        return terrain.DNGN_ALTAR_XOM
+    end
+
+    function site:records_at()
+        error("Xom scenery altar should not need a source vault record")
+    end
+
+    local offer = prayer.prepare(site, actor, {}, position)
+
+    harness.equal(offer.confirmation_id, gods.XOM)
+    harness.equal(ctx:get(actor, component.RELIGION_WORSHIP).god_id,
+        gods.NO_GOD)
+end
+
 -- An unknown altar stays unknown until the accepted timed action. The
 -- winning god and the level record then agree, using one sorted-ID draw.
 local function ecumenical(ctx)
@@ -235,6 +256,7 @@ end
 function test.run(ctx)
     ordinary(ctx)
     forbidden(ctx)
+    xom_scenery_altar(ctx)
     ecumenical(ctx)
     ecumenical_without_candidate(ctx)
     input_route()

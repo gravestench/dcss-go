@@ -24,3 +24,30 @@ func TestTransporterFeaturesAreWalkableAndDistinct(t *testing.T) {
 		t.Fatal("landing must remain distinct from outbound transporter")
 	}
 }
+
+// Xom's source stair action can move directional portals and exits, but
+// a shop and same-floor transporter have different interaction commands.
+func TestMovableTravelFeaturesExcludeShopsAndTransporters(t *testing.T) {
+	for _, feature := range []ID{
+		StairsDown,
+		EnterOssuary,
+		ExitOssuary,
+		EnterPandemonium,
+		EnterHell,
+	} {
+		if !IsMovableTravelFeature(feature) {
+			t.Fatalf("Xom cannot move travel feature %q", feature)
+		}
+	}
+
+	for _, feature := range []ID{
+		ShopEntrance,
+		Transporter,
+		TransporterLanding,
+		ExpiredPortal,
+	} {
+		if IsMovableTravelFeature(feature) {
+			t.Fatalf("Xom can move nontravel feature %q", feature)
+		}
+	}
+}

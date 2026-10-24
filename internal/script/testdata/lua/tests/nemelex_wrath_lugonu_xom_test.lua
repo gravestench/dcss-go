@@ -1,5 +1,5 @@
 -- Lugonu's no-translocation route exercises the ordinary saved summon
--- owner. Xom's separate event engine still fails clearly.
+-- owner. Xom's card wrath enters the same action owner as worship.
 local component = require("constants.component")
 local fixture = require("tests.monster_ally_support_fixture")
 local gods = require("constants.gods")
@@ -42,20 +42,46 @@ local function minor_minion(ctx)
         gods.LUGONU)
 end
 
--- Xom wrath must eventually call xom_acts. A placeholder punishment
--- would skew card behavior, so its missing event engine is explicit.
-local function xom_gap()
-    local ok, message = pcall(xom.apply)
+-- An interested but zero-piety worshipper suppresses the chosen nice
+-- action. The card still spends its niceness draw and returns cleanly.
+local function xom_wrath(ctx)
+    local player = ctx:create()
+    local game = fixture.context(ctx, player)
+    local card_draws = 0
 
-    harness.falsy(ok)
-    harness.truthy(string.find(message,
-        "Xom action engine", 1, true))
+    ctx:add(player, component.PLAYER, {})
+    ctx:add(player, component.POSITION, {
+        level_id = 1,
+        x = 7,
+        y = 7,
+    })
+    ctx:add(player, component.RELIGION_WORSHIP, {
+        god_id = gods.XOM,
+        piety = 0,
+        gift_timeout = 10,
+    })
+
+    -- Other streams stay in the real context; only the card's source
+    -- one-in-ten nice draw is fixed for this path.
+    function game:random(stream, bound)
+        if stream == streams.CARDS then
+            card_draws = card_draws + 1
+            harness.equal(bound, 10)
+
+            return 0
+        end
+
+        return ctx:random(stream, bound)
+    end
+
+    harness.truthy(xom.apply(game, player))
+    harness.equal(card_draws, 1)
 end
 
--- Keep the summon route and Xom gap under one source-backed Lua scenario.
+-- Keep both card wrath routes under one source-backed Lua scenario.
 function test.run(ctx)
     minor_minion(ctx)
-    xom_gap()
+    xom_wrath(ctx)
 end
 
 return test

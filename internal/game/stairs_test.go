@@ -7,7 +7,132 @@ import (
 
 	"crawl/internal/ecs"
 	"crawl/internal/save"
+	"crawl/internal/terrain"
+	"crawl/internal/vault"
 )
+
+// Moving a linked stair must move its destination record with its glyph.
+// Returning it to the original floor also supports transactional undo.
+func TestLevelMoveStairKeepsLinkAndRememberedTerrain(t *testing.T) {
+	game := newStepGame(t)
+	level, err := NewLevel(3, fixtureCells([]string{
+		"#####",
+		"#>..#",
+		"#...#",
+		"#####",
+	}), game.stores.Positions)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	link := StairLink{
+		X:         1,
+		Y:         1,
+		ToLevelID: 2,
+		ToX:       1,
+		ToY:       1,
+	}
+
+	if err := level.AddStairLink(link); err != nil {
+		t.Fatal(err)
+	}
+
+	level.remembered[1*level.width+1] = terrain.StairsDown
+	level.remembered[1*level.width+2] = terrain.Floor
+
+	if err := level.MoveStair(1, 1, 2, 1); err != nil {
+		t.Fatal(err)
+	}
+
+	if level.terrain[1][1] != terrain.Floor ||
+		level.terrain[1][2] != terrain.StairsDown ||
+		level.remembered[1*level.width+1] != terrain.Floor ||
+		level.remembered[1*level.width+2] != terrain.StairsDown {
+		t.Fatal("stair glyph or remembered terrain did not move")
+	}
+
+	if _, found := level.StairAt(1, 1); found {
+		t.Fatal("stair link remained at old cell")
+	}
+
+	if moved, found := level.StairAt(2, 1); !found ||
+		moved.X != 2 ||
+		moved.Y != 1 ||
+		moved.ToLevelID != link.ToLevelID {
+		t.Fatalf("moved stair link = %+v, found %t", moved, found)
+	}
+
+	if err := level.MoveStair(2, 1, 1, 1); err != nil {
+		t.Fatal(err)
+	}
+
+	if restored, found := level.StairAt(1, 1); !found ||
+		restored != link {
+		t.Fatalf("restored stair link = %+v, found %t", restored, found)
+	}
+}
+
+// Portal clocks refer to a marker by its stable record index. Sliding the
+// gate must move that marker with its glyph, while an unrelated item stays.
+func TestLevelMovePortalCarriesFeatureRecords(t *testing.T) {
+	game := newStepGame(t)
+	level, err := NewLevel(3, fixtureCells([]string{
+		"#####",
+		"#...#",
+		"#...#",
+		"#####",
+	}), game.stores.Positions)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := level.SetCell(1, 1, terrain.EnterOssuary); err != nil {
+		t.Fatal(err)
+	}
+
+	for _, kind := range []vault.Kind{
+		vault.KindSourceFeature,
+		vault.KindMarker,
+		vault.KindItem,
+	} {
+		if err := level.AddVaultRecord(vault.Record{
+			Kind:     kind,
+			SourceID: "test_ossuary",
+			Identity: "portal fixture",
+			X:        1,
+			Y:        1,
+		}); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if err := level.MoveStair(1, 1, 2, 1); err != nil {
+		t.Fatal(err)
+	}
+
+	if level.terrain[1][1] != terrain.Floor ||
+		level.terrain[1][2] != terrain.EnterOssuary {
+		t.Fatal("portal glyph did not move")
+	}
+
+	records := level.VaultRecords()
+
+	if records[0].X != 2 ||
+		records[1].X != 2 ||
+		records[2].X != 1 {
+		t.Fatalf("portal records moved incorrectly: %+v", records)
+	}
+
+	if err := level.MoveStair(2, 1, 1, 1); err != nil {
+		t.Fatal(err)
+	}
+
+	if level.VaultRecords()[1].X != 1 {
+		t.Fatal("portal marker did not return during undo")
+	}
+}
 
 func TestLinkedStairsReachThirdFloorAndSurviveSave(t *testing.T) {
 	g := newStepGame(t)
