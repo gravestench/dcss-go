@@ -14,6 +14,7 @@ local definition = {
     piety_mode = modes.ORDINARY,
     god_time_zero_check = true,
     conduct_module = "policy.religion.conduct.ru",
+    kill_progress_module = "policy.religion.ru.progress",
     behavior_module = "policy.religion.gods.ru",
 }
 

@@ -24,6 +24,7 @@ local engulf = require("policy.combat.engulf")
 local statuses = require("policy.magic.effects.statuses.player")
 local kill_effects = require("policy.combat.player_kill_effects")
 local kill_recovery = require("policy.religion.kill_recovery")
+local kill_progress = require("policy.religion.kill_progress")
 local conduct = require("policy.religion.conduct")
 local monster_facts = require("policy.religion.conduct.monster_facts")
 local monster_traits = require("policy.religion.conduct.monster_traits")
@@ -185,6 +186,7 @@ function system.update(ctx)
 
                     kill_recovery.on_kill(ctx, player, entity,
                         definition, rewarded_xp, mutation_healed)
+                    kill_progress.on_kill(ctx, player, rewarded_xp)
                     statuses.wereblood_kill(ctx, player, true,
                         adjacent, monster_traits.object(definition))
                 end

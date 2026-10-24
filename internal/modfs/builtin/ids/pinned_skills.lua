@@ -1,0 +1,35 @@
+-- These source skill IDs exist before species content is loaded. Ru's
+-- discoverable sacrifice definitions can name their lost skill without
+-- forcing the later species-derived skill catalog to initialize early.
+local skills = {
+    SK_FIGHTING = "SK_FIGHTING",
+    SK_SHORT_BLADES = "SK_SHORT_BLADES",
+    SK_LONG_BLADES = "SK_LONG_BLADES",
+    SK_AXES = "SK_AXES",
+    SK_MACES_FLAILS = "SK_MACES_FLAILS",
+    SK_POLEARMS = "SK_POLEARMS",
+    SK_STAVES = "SK_STAVES",
+    SK_RANGED_WEAPONS = "SK_RANGED_WEAPONS",
+    SK_THROWING = "SK_THROWING",
+    SK_ARMOUR = "SK_ARMOUR",
+    SK_DODGING = "SK_DODGING",
+    SK_STEALTH = "SK_STEALTH",
+    SK_SHIELDS = "SK_SHIELDS",
+    SK_UNARMED_COMBAT = "SK_UNARMED_COMBAT",
+    SK_SPELLCASTING = "SK_SPELLCASTING",
+    SK_CONJURATIONS = "SK_CONJURATIONS",
+    SK_HEXES = "SK_HEXES",
+    SK_SUMMONINGS = "SK_SUMMONINGS",
+    SK_NECROMANCY = "SK_NECROMANCY",
+    SK_TRANSLOCATIONS = "SK_TRANSLOCATIONS",
+    SK_TRANSMUTATIONS = "SK_TRANSMUTATIONS",
+    SK_FIRE_MAGIC = "SK_FIRE_MAGIC",
+    SK_ICE_MAGIC = "SK_ICE_MAGIC",
+    SK_AIR_MAGIC = "SK_AIR_MAGIC",
+    SK_EARTH_MAGIC = "SK_EARTH_MAGIC",
+    SK_POISON_MAGIC = "SK_POISON_MAGIC",
+    SK_INVOCATIONS = "SK_INVOCATIONS",
+    SK_EVOCATIONS = "SK_EVOCATIONS",
+}
+
+return skills

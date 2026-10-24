@@ -16,6 +16,7 @@ local catalog = {
     POPULATIONS = "populations",
     MUTATIONS = "mutations",
     RANDART_NAMES = "randart_names",
+    RU_SACRIFICES = "ru_sacrifices",
     SPECIES = "species",
     SPELLS = "spells",
     SHOPS = "shops",

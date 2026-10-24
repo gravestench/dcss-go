@@ -489,6 +489,12 @@ formula module, so a sparse mod can replace one formula without editing the
 death system. Death's Door still blocks HP recovery but permits MP recovery.
 Former neutral kills remain unrewarded unless frenzy restores source XP
 eligibility. Devour and divine HP gains from one death announce healing once.
+All seventeen Ru sacrifice IDs and their source mutation, skill, and base
+piety declarations now live in individually discoverable Lua content files.
+Credited player kills advance Ru's saved sacrifice progress on the source
+coin flip below 200 piety, after death conduct and recovery. Offer selection,
+acceptance, and rejection are still pending, so Ru's defining bargain is not
+yet playable.
 Okawaru's Heroism, Finesse, and Duel are now playable Lua powers with the
 source rank, failure, MP, and piety gates. Heroism projects mundane skill
 levels without changing training; Finesse changes attack delay and is
