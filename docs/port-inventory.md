@@ -82,7 +82,7 @@ context rather than a handler API for each game domain.
 | Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, forms, and Unravelling | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
 | Player mutations | Source definitions and Lua-owned mutation records, transitions, passive effects, abilities, and saved state; Vampire blood rituals and Bat Form are implemented; source consumers in other unported domains remain inventoried below | `content/mutations`, `policy/mutations`, `policy/abilities`, `schemas/character_*` |
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `policy/input`, `internal/terminal` |
-| Persistence | Version-33 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
+| Persistence | Version-38 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
 
 The Shoals layout uses source island counts and height bands. Exact source
 contour planning and flora are still fidelity work; the current heightmap
@@ -363,10 +363,10 @@ energy, visibility, alertness, and Beogh conversion eligibility through
 their usual owners. Shaft arrival checks dangerous terrain, clouds,
 teleport masks, slime walls, and hostile sight through Lua. A committed
 text snapshot shows D:1–D:3 and their stair links after a three-floor
-fall. Source branches that still need a shared mechanic, such as Xom
-actions, special summons, and certain mutation or transformation effects,
-raise an explicit error
-at that branch. These outcomes remain part of the open card domain work.
+fall. The Xom branch now invokes his complete action owner. All eligible
+Wrath gods have named Lua handlers, while five source gods decline a
+Wrath card draw. Royal Jelly death now has a saved player flag; after
+Jiyva is mollified and no longer worshipped, a Wrath draw skips him.
 A lingering god spell now retains an inert Lua ECS source
 for burn, cloud, terrain, and summon attribution through save and restore.
 Other god abilities, remaining passives, and ordinary timed wrath remain
@@ -663,6 +663,10 @@ follower now keeps a saved band origin even after its live leader link
 is cleared. Restore validation reads the leader's catalog band instead
 of a second monster list. Pikel's lemures carry an additional marker:
 his death or banishment dismisses only those actors and leaves black smoke.
+Common orc, gnoll, centaur, naga, tengu, merfolk, deep elf, and basic
+draconian leaders now declare source natural bands through that same
+policy. Beogh and Okawaru wrath permit these bands, and every wrath
+follower retains its god source and hostile allegiance through saves.
 Pan veto hooks read saved rune progress and Ignacio's one-time decision.
 Boris releases his unique claim on death and gets a one-in-six replacement offer
 on a new Depths, Vaults, Tomb, or Crypt floor. Natasha's first two deaths

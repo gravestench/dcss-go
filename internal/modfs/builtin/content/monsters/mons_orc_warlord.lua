@@ -12,8 +12,22 @@ local item_ids = require("ids.items")
 local sentinels = require("constants.monster_gear_sentinels")
 local spellbooks = require("ids.monster_spellbooks")
 
+local rosters = require("policy.population.bands.rosters")
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_ORC_WARLORD",
+    -- Warlords marshal a large army except in Vaults, where their escort
+    -- becomes two to four knights through the named source branch rule.
+    band = {
+        min = 8,
+        max = 16,
+        condition = "orc_warlord",
+        slots = { rosters.ORC_KNIGHT },
+        alternative_slots = {
+            { monsters.MONS_ORC_KNIGHT },
+        },
+    },
     status = "defined",
     name = "orc warlord",
     glyph = 111,

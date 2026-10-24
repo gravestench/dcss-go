@@ -13,6 +13,7 @@ local flags = require("constants.monster_flags")
 local monsters = require("ids.monsters")
 local piety = require("policy.religion.piety")
 local identity = require("policy.religion.jiyva.identity")
+local life = require("policy.religion.jiyva.life")
 local allegiance = require(
     "policy.magic.effects.statuses.monster_allegiance")
 local summons = require("policy.magic.effects.summons.common")
@@ -21,6 +22,16 @@ local senses = require("policy.character.senses")
 local targets = require("policy.ai.targets")
 
 local jiyva = {}
+
+-- The source no longer offers Jiyva at an altar once the Royal Jelly is
+-- dead, worship has ended, and all Jiyva penance has been paid.
+function jiyva.check(ctx, player)
+    if life.dead(ctx:get(player, component.RELIGION_WORSHIP)) then
+        return "Jiyva has vanished."
+    end
+
+    return nil
+end
 
 -- The source grants the vault release once per character, even if Jiyva
 -- is later abandoned and rejoined. The saved per-god bit also makes a

@@ -4,6 +4,7 @@ local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
 local avatar = require("policy.religion.wrath.avatar")
 local attributes = require("policy.character.attributes")
 local component = require("constants.component")
+local roll = require("policy.combat.roll")
 local gods = require("constants.gods")
 local monsters = require("ids.monsters")
 local spells = require("ids.spells")
@@ -53,10 +54,8 @@ end
 -- points before replacing cost with a rounded half-level roll.
 local function summon_cost(ctx, level, points)
     local bound = 1 + math.floor(level / 3)
-    local first = ctx:random(streams.CARDS, bound)
-    local second = ctx:random(streams.CARDS, bound)
     local cost = math.min(10,
-        math.floor((first + second) / 2) + 3, points)
+        roll.average_two(ctx, streams.CARDS, bound) + 3, points)
 
     if points > 20 and ctx:random(streams.CARDS, 2) == 0 then
         points = points - 10

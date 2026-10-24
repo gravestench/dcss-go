@@ -33,6 +33,12 @@ function game_methods.level_branch()
     return branches.BRANCH_DUNGEON
 end
 
+-- Focused actor tests use a sparse synthetic Dungeon floor rather than a
+-- generated grid record; its branch-local depth is the first floor.
+function game_methods.level_depth()
+    return 1
+end
+
 -- A sparse wall map is enough to exercise production beam geometry while
 -- ECS components stay in the actual test world.
 function game_methods.walkable(game, _, x, y)

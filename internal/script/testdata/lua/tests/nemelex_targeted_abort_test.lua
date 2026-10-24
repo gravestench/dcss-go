@@ -39,6 +39,8 @@ local function restored(owned)
         pending_selected = owned.pending_selected,
         pending_failed = owned.pending_failed,
         pending_tier = owned.pending_tier,
+        pending_dx = owned.pending_dx,
+        pending_dy = owned.pending_dy,
     }
 end
 

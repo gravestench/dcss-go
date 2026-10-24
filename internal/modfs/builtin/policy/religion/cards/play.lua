@@ -10,6 +10,7 @@ local draw = require("policy.religion.cards.draw")
 local cards = require("ids.cards")
 local power = require("policy.religion.cards.power")
 local state = require("policy.religion.cards.state")
+local targeted_effect = require("policy.religion.cards.effects.targeted")
 
 local play = {}
 
@@ -38,6 +39,7 @@ local function current_request(ctx, player, owned, response)
         target_id = response.target_id,
         dx = response.dx,
         dy = response.dy,
+        confirmed_friendly = response.confirmed_friendly,
         target_phase = owned.pending_phase == card_phases.TARGET_CARD,
     }
 end
@@ -109,6 +111,29 @@ function play.run(ctx, player, response)
             return { ready = true }
         end
 
+        if owned.pending_phase == card_phases.CONFIRM_FRIENDLY then
+            -- Yes replays the saved aim; no returns to the same card's aim
+            -- prompt. Both answers preserve the already sampled card/tier.
+            if not response.forced and not response.cancelled then
+                return {
+                    confirmation = targeted_effect.FRIENDLY_CONFIRMATION,
+                }
+            end
+
+            local accepted = response.forced
+            local dx, dy = owned.pending_dx, owned.pending_dy
+
+            owned.pending_phase = card_phases.TARGET_CARD
+            owned.pending_dx = 0
+            owned.pending_dy = 0
+            state.set(ctx, player, owned)
+            response = accepted and {
+                dx = dx,
+                dy = dy,
+                confirmed_friendly = true,
+            } or {}
+        end
+
         local prompt, wasted = target_response(ctx, player, owned, response)
 
         if prompt then
@@ -143,6 +168,15 @@ function play.run(ctx, player, response)
                 state.set(ctx, player, owned)
 
                 return result
+            end
+
+            if result and result.friendly_confirmation then
+                owned.pending_phase = card_phases.CONFIRM_FRIENDLY
+                owned.pending_dx = request.dx
+                owned.pending_dy = request.dy
+                state.set(ctx, player, owned)
+
+                return { confirmation = result.friendly_confirmation }
             end
 
             if result and result.confirmation then

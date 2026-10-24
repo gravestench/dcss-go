@@ -4,7 +4,7 @@ local component = require("constants.component")
 
 local schema = {
     id = component.RELIGION_NEMELEX_DECKS,
-    version = 3,
+    version = 4,
     fields = {
         counts = {
             type = "map<string,int64>",
@@ -46,6 +46,16 @@ local schema = {
         pending_tier = {
             type = "int64",
             default = -1,
+        },
+        -- A friendly-fire prompt is postcommit. Store its selected ray so
+        -- accepting after a save cannot aim somewhere else by accident.
+        pending_dx = {
+            type = "int64",
+            default = 0,
+        },
+        pending_dy = {
+            type = "int64",
+            default = 0,
         },
     },
 }

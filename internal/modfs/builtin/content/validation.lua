@@ -23,6 +23,7 @@ local gear_sentinels = require("constants.monster_gear_sentinels")
 local weapon_brands = require("constants.weapon_brands")
 local population_sentinels = require("constants.population_sentinels")
 local monster_ids = require("ids.monsters")
+local band_conditions = require("policy.population.bands.conditions")
 
 local known_brands = {
     [gear_sentinels.NO_FORCED_BRAND] = true,
@@ -637,57 +638,9 @@ end
 -- Bands live beside their leader's monster definition, so a new unique
 -- needs no central registration table. Validate every referenced follower
 -- after all mod layers have supplied their effective monster profiles.
-local function validate_band(monster)
-    local profile = monster.band
-
-    if profile == nil then
-        return
-    end
-
-    if monster.status ~= "defined" or type(profile) ~= "table" then
-        fail(categories.MONSTERS, monster.id,
-            "band requires a defined monster and table")
-    end
-
-    for _, field in ipairs({ "min", "max" }) do
-        local value = profile[field]
-
-        if type(value) ~= "number" or value < 1 or value % 1 ~= 0 then
-            fail(categories.MONSTERS, monster.id,
-                "band " .. field .. " must be a positive integer")
-        end
-    end
-
-    if profile.min > profile.max then
-        fail(categories.MONSTERS, monster.id, "band min exceeds max")
-    end
-
-    if profile.member_policy ~= nil and
-        (type(profile.member_policy) ~= "string" or
-            profile.member_policy == "") then
-        fail(categories.MONSTERS, monster.id,
-            "band member_policy must name a Lua module")
-    end
-
-    if profile.member_policy then
-        local ok, policy = pcall(require, profile.member_policy)
-
-        if not ok or type(policy.choose) ~= "function" then
-            fail(categories.MONSTERS, monster.id,
-                "band member_policy must export choose: " ..
-                    profile.member_policy)
-        end
-    end
-
-    local slots = optional_list(categories.MONSTERS, {
-        id = monster.id,
-        slots = profile.slots,
-    }, "slots")
-
-    if #slots == 0 and not profile.member_policy then
-        fail(categories.MONSTERS, monster.id, "band has no follower slots")
-    end
-
+-- Both ordinary and branch-specific follower rosters must reference live
+-- monster IDs. A save may retain either roster after its floor is gone.
+local function validate_band_slots(monster, slots)
     for _, slot in ipairs(slots) do
         if type(slot) ~= "table" or #slot == 0 then
             fail(categories.MONSTERS, monster.id,
@@ -716,6 +669,84 @@ local function validate_band(monster)
             end
         end
     end
+end
+
+-- Validate source size and eligibility independently of its member table;
+-- the same band schema serves unique, ambient, and god-sourced leaders.
+local function validate_band(monster)
+    local profile = monster.band
+
+    if profile == nil then
+        return
+    end
+
+    if monster.status ~= "defined" or type(profile) ~= "table" then
+        fail(categories.MONSTERS, monster.id,
+            "band requires a defined monster and table")
+    end
+
+    for _, field in ipairs({ "min", "max" }) do
+        local value = profile[field]
+
+        if type(value) ~= "number" or value < 1 or value % 1 ~= 0 then
+            fail(categories.MONSTERS, monster.id,
+                "band " .. field .. " must be a positive integer")
+        end
+    end
+
+    if profile.min > profile.max then
+        fail(categories.MONSTERS, monster.id, "band min exceeds max")
+    end
+
+    for _, field in ipairs({ "chance_denominator", "min_depth" }) do
+        local value = profile[field]
+
+        if value ~= nil and (type(value) ~= "number" or
+            value < 1 or value % 1 ~= 0) then
+            fail(categories.MONSTERS, monster.id,
+                "band " .. field .. " must be a positive integer")
+        end
+    end
+
+    if profile.condition ~= nil and
+        (type(profile.condition) ~= "string" or
+            not band_conditions.known(profile.condition)) then
+        fail(categories.MONSTERS, monster.id,
+            "band has an unknown condition")
+    end
+
+    if profile.member_policy ~= nil and
+        (type(profile.member_policy) ~= "string" or
+            profile.member_policy == "") then
+        fail(categories.MONSTERS, monster.id,
+            "band member_policy must name a Lua module")
+    end
+
+    if profile.member_policy then
+        local ok, policy = pcall(require, profile.member_policy)
+
+        if not ok or type(policy.choose) ~= "function" then
+            fail(categories.MONSTERS, monster.id,
+                "band member_policy must export choose: " ..
+                    profile.member_policy)
+        end
+    end
+
+    local slots = optional_list(categories.MONSTERS, {
+        id = monster.id,
+        slots = profile.slots,
+    }, "slots")
+    local alternatives = optional_list(categories.MONSTERS, {
+        id = monster.id,
+        alternative_slots = profile.alternative_slots,
+    }, "alternative_slots")
+
+    if #slots == 0 and not profile.member_policy then
+        fail(categories.MONSTERS, monster.id, "band has no follower slots")
+    end
+
+    validate_band_slots(monster, slots)
+    validate_band_slots(monster, alternatives)
 
     if profile.origin_component ~= nil and
         type(profile.origin_component) ~= "string" then

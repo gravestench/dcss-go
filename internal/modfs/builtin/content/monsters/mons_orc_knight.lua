@@ -12,8 +12,16 @@ local item_ids = require("ids.items")
 local sentinels = require("constants.monster_gear_sentinels")
 local spellbooks = require("ids.monster_spellbooks")
 
+local rosters = require("policy.population.bands.rosters")
+
 local definition = {
     id = "MONS_ORC_KNIGHT",
+    -- Knights lead three to seven members from the mixed heavy-orc band.
+    band = {
+        min = 3,
+        max = 7,
+        slots = { rosters.ORC_KNIGHT },
+    },
     status = "defined",
     name = "orc knight",
     glyph = 111,

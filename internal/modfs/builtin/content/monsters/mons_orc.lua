@@ -9,8 +9,17 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local rosters = require("policy.population.bands.rosters")
+
 local definition = {
     id = "MONS_ORC",
+    -- A half-chance starts the source two-to-five mixed orc pack.
+    band = {
+        min = 2,
+        max = 5,
+        chance_denominator = 2,
+        slots = { rosters.ORCS },
+    },
     status = "defined",
     name = "orc",
     glyph = 111,

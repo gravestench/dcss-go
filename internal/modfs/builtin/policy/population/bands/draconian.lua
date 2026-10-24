@@ -4,6 +4,7 @@
 -- leader's monster file owns the count and names this member policy.
 local monsters = require("ids.monsters")
 local streams = require("constants.rng_streams")
+local conditions = require("policy.population.bands.conditions")
 
 local policy = {}
 
@@ -48,10 +49,13 @@ end
 
 -- The authored Tiamat vault occurs only in Zot, which always satisfies the
 -- source's absolute-depth threshold for the classed draw.
-function policy.choose(ctx)
+function policy.choose(ctx, level, _, profile)
     local pool = species
 
-    if ctx:random(streams.BANDS, 40) < 13 then
+    local deep_enough = not profile or not profile.basic_draconian or
+        conditions.absolute_depth(ctx, level) >= 24
+
+    if deep_enough and ctx:random(streams.BANDS, 40) < 13 then
         pool = classed
     end
 

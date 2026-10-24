@@ -10,8 +10,18 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local rosters = require("policy.population.bands.rosters")
+
 local definition = {
     id = "MONS_MERFOLK_IMPALER",
+    -- Depths suppresses this merfolk escort; Shoals scales its chance by
+    -- local depth, while other branches retain the full source pack.
+    band = {
+        min = 2,
+        max = 5,
+        condition = "merfolk",
+        slots = { rosters.MERFOLK },
+    },
     status = "defined",
     name = "merfolk impaler",
     glyph = 109,

@@ -1,5 +1,6 @@
--- Torment uses the production player identity schema to decide between
--- the existing area owner and source Holy Word self-damage.
+-- The source card calls torment_player on living characters, so nearby
+-- monsters must not enter the area Torment owner. Undead and demonic players
+-- instead receive Holy Word self-damage.
 local area = require("policy.combat.torment_area")
 local cards = require("ids.cards")
 local component = require("constants.component")
@@ -40,8 +41,8 @@ function test.run(ctx)
 
     local success, message = pcall(function()
         effects.apply(ctx, player, cards.TORMENT, {})
-        harness.equal(area_calls, 1)
-        harness.equal(self_damage, 0)
+        harness.equal(area_calls, 0)
+        harness.equal(self_damage, 49)
 
         for _, kind_id in ipairs({
             species.SP_MUMMY,
@@ -54,8 +55,8 @@ function test.run(ctx)
             effects.apply(ctx, player, cards.TORMENT, {})
         end
 
-        harness.equal(area_calls, 1)
-        harness.equal(self_damage, 98)
+        harness.equal(area_calls, 0)
+        harness.equal(self_damage, 147)
     end)
 
     area.apply = old_area

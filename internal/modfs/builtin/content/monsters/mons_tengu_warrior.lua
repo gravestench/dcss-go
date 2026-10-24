@@ -11,8 +11,17 @@ local item_ids = require("ids.items")
 local sentinels = require("constants.monster_gear_sentinels")
 local spellbooks = require("ids.monster_spellbooks")
 
+local rosters = require("policy.population.bands.rosters")
+
 local definition = {
     id = "MONS_TENGU_WARRIOR",
+    -- Half of warrior leaders have one or two tengu followers.
+    band = {
+        min = 1,
+        max = 2,
+        chance_denominator = 2,
+        slots = { rosters.TENGU },
+    },
     status = "defined",
     name = "tengu warrior",
     glyph = 81,

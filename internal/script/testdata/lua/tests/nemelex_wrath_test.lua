@@ -7,6 +7,7 @@ local fixture = require("tests.monster_ally_support_fixture")
 local gods = require("constants.gods")
 local harness = require("tests.harness")
 local items = require("ids.items")
+local jiyva_life = require("policy.religion.jiyva.life")
 local makhleb = require("policy.religion.wrath.makhleb")
 local monsters = require("ids.monsters")
 local okawaru = require("policy.religion.wrath.okawaru")
@@ -62,22 +63,37 @@ local function worshipper(ctx, god_id, penance)
     return player
 end
 
+-- Give the sampled Sif Muna branch real saved MP and progression so a
+-- successful wrath can be distinguished from an old erroring stub.
+local function sif_target(ctx)
+    local player = worshipper(ctx, gods.NO_GOD)
+
+    ctx:add(player, component.MAGIC, {
+        current = 10,
+        max = 10,
+    })
+    ctx:add(player, component.PROGRESSION, {
+        level = 1,
+    })
+
+    return player
+end
+
 -- The source samples all 26 enum gods, including declined outcomes.
--- Vehumet's god-avatar spell still raises at its sampled god.
+-- Sif Muna at index eight drains actual MP after the roster draw.
 local function selection(ctx)
     harness.equal(#roster, 26)
     harness.equal(roster[1], gods.ZIN)
     harness.equal(roster[11], gods.NEMELEX_XOBEH)
     harness.equal(roster[26], gods.IGNIS)
 
-    local player = worshipper(ctx, gods.NO_GOD)
-    local owner = with_draws(ctx, { 10, 5 })
-    local success, message = pcall(retribution.sample, owner, player)
+    local player = sif_target(ctx)
+    local owner = with_draws(ctx, { 8, 6, 1, 0 })
+    local selected = retribution.sample(owner, player)
 
-    harness.falsy(success)
-    harness.truthy(string.find(message, "Vehumet god-avatar", 1,
-        true))
-    harness.equal(owner:draws_used(), 2)
+    harness.equal(selected, gods.SIF_MUNA)
+    harness.equal(ctx:get(player, component.MAGIC).current, 0)
+    harness.equal(owner:draws_used(), 4)
 end
 
 -- A hundred real source-declined Ashenzari draws spend the card and emit
@@ -110,8 +126,8 @@ end
 -- random_god rejects dead Ignis inside a single outer card attempt.
 -- Worship history and cleared penance are the saved source death rule.
 local function dead_ignis(ctx)
-    local player = worshipper(ctx, gods.NO_GOD)
-    local owner = with_draws(ctx, { 25, 5 })
+    local player = sif_target(ctx)
+    local owner = with_draws(ctx, { 25, 8, 6, 1, 0 })
 
     ctx:set(player, component.RELIGION_WORSHIP, {
         god_id = gods.NO_GOD,
@@ -121,12 +137,29 @@ local function dead_ignis(ctx)
         penance = {},
     })
 
-    local success, message = pcall(retribution.sample, owner, player)
+    local selected = retribution.sample(owner, player)
 
-    harness.falsy(success)
-    harness.truthy(string.find(message, "Vehumet god-avatar", 1,
-        true))
-    harness.equal(owner:draws_used(), 2)
+    harness.equal(selected, gods.SIF_MUNA)
+    harness.equal(ctx:get(player, component.MAGIC).current, 0)
+    harness.equal(owner:draws_used(), 5)
+end
+
+-- A dead, mollified Jiyva is redrawn inside this same card attempt.
+-- The saved death fact comes from the Royal Jelly's death hook.
+local function dead_jiyva(ctx)
+    local player = sif_target(ctx)
+    local owner = with_draws(ctx, { 14, 8, 6, 1, 0 })
+    local worship = ctx:get(player, component.RELIGION_WORSHIP)
+
+    worship.royal_jelly_dead = true
+    ctx:set(player, component.RELIGION_WORSHIP, worship)
+    harness.truthy(jiyva_life.dead(worship))
+
+    local selected = retribution.sample(owner, player)
+
+    harness.equal(selected, gods.SIF_MUNA)
+    harness.equal(ctx:get(player, component.MAGIC).current, 0)
+    harness.equal(owner:draws_used(), 5)
 end
 
 -- Good gods spare their own followers and non-hated Nemelex followers.
@@ -269,6 +302,22 @@ summon_context = function(ctx, player, draws)
     return owner
 end
 
+-- Query by this player and god, since another test's natural band can add
+-- followers without changing this action's own source roster.
+local function summons_for(ctx, player, god_id)
+    local found = {}
+
+    for _, entity in ipairs(ctx:query({ component.SUMMON })) do
+        local source = ctx:get(entity, component.SUMMON)
+
+        if source.owner == player and source.source_id == god_id then
+            found[#found + 1] = entity
+        end
+    end
+
+    return found
+end
+
 -- Beogh's third branch makes a permanent hostile dancing weapon with its
 -- source item attached; equipment survives in the actual item schema.
 local function beogh_weapon(ctx)
@@ -345,12 +394,23 @@ local function okawaru_warrior(ctx)
 
     local summoned = ctx:query({ component.SUMMON })
 
-    harness.equal(#summoned, 2)
-    harness.equal(ctx:get(summoned[2], component.ACTOR).kind_id,
+    local leader
+
+    for _, actor in ipairs(summoned) do
+        local source = ctx:get(actor, component.SUMMON)
+
+        if source.source_id == gods.OKAWARU and
+            not ctx:has(actor, component.FOLLOWER) then
+            leader = actor
+        end
+    end
+
+    harness.truthy(leader)
+    harness.equal(ctx:get(leader, component.ACTOR).kind_id,
         monsters.MONS_ORC)
-    harness.equal(ctx:get(summoned[2], component.SUMMON).source_id,
+    harness.equal(ctx:get(leader, component.SUMMON).source_id,
         gods.OKAWARU)
-    harness.equal(ctx:get(summoned[2], component.SUMMON).expires_aut, 0)
+    harness.equal(ctx:get(leader, component.SUMMON).expires_aut, 0)
     harness.equal(owner:draws_used(), 2)
 end
 
@@ -369,14 +429,14 @@ local function makhleb_servant(ctx)
 
     makhleb.apply(owner, player)
 
-    local summoned = ctx:query({ component.SUMMON })
+    local summoned = summons_for(ctx, player, gods.MAKHLEB)
 
-    harness.equal(#summoned, 3)
-    harness.equal(ctx:get(summoned[3], component.ACTOR).kind_id,
+    harness.equal(#summoned, 1)
+    harness.equal(ctx:get(summoned[1], component.ACTOR).kind_id,
         monsters.MONS_HELLWING)
-    harness.equal(ctx:get(summoned[3], component.SUMMON).source_id,
+    harness.equal(ctx:get(summoned[1], component.SUMMON).source_id,
         gods.MAKHLEB)
-    harness.equal(ctx:get(summoned[3], component.SUMMON).expires_aut, 0)
+    harness.equal(ctx:get(summoned[1], component.SUMMON).expires_aut, 0)
     harness.equal(owner:draws_used(), 3)
 end
 
@@ -408,12 +468,12 @@ local function okawaru_draconian(ctx)
         error(message)
     end
 
-    local summoned = ctx:query({ component.SUMMON })
+    local summoned = summons_for(ctx, player, gods.OKAWARU)
 
-    harness.equal(#summoned, 6)
-    harness.equal(ctx:get(summoned[4], component.ACTOR).kind_id,
+    harness.equal(#summoned, 3)
+    harness.equal(ctx:get(summoned[1], component.ACTOR).kind_id,
         monsters.MONS_BLACK_DRACONIAN)
-    harness.equal(ctx:get(summoned[4], component.SUMMON).source_id,
+    harness.equal(ctx:get(summoned[1], component.SUMMON).source_id,
         gods.OKAWARU)
 end
 
@@ -434,12 +494,12 @@ local function makhleb_greater(ctx)
 
     makhleb.apply(owner, player)
 
-    local summoned = ctx:query({ component.SUMMON })
+    local summoned = summons_for(ctx, player, gods.MAKHLEB)
 
-    harness.equal(#summoned, 8)
-    harness.equal(ctx:get(summoned[7], component.ACTOR).kind_id,
+    harness.equal(#summoned, 2)
+    harness.equal(ctx:get(summoned[1], component.ACTOR).kind_id,
         monsters.MONS_EXECUTIONER)
-    harness.equal(ctx:get(summoned[8], component.ACTOR).kind_id,
+    harness.equal(ctx:get(summoned[2], component.ACTOR).kind_id,
         monsters.MONS_EXECUTIONER)
     harness.equal(owner:draws_used(), 9)
 end
@@ -448,6 +508,7 @@ function test.run(ctx)
     selection(ctx)
     escaped_card(ctx)
     dead_ignis(ctx)
+    dead_jiyva(ctx)
     eligibility(ctx)
     sif_magic(ctx)
     sif_intelligence(ctx)

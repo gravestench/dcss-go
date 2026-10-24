@@ -140,8 +140,13 @@ func moveGeneratedPlayerToStair(
 func TestGeneratedDungeonBuildsSecondFloorOnDescent(t *testing.T) {
 	g := newGeneratedTestGame(t, 41)
 
-	if len(g.levels) != 2 || g.levels[2] != nil {
-		t.Fatalf("startup built %d levels, want D:1 and Abyss", len(g.levels))
+	if len(g.levels) != 3 ||
+		g.levels[1] == nil ||
+		g.levels[2] != nil ||
+		g.levels[abyssStorageID] == nil ||
+		g.levels[abyssTransitID] == nil {
+		t.Fatalf("startup built %d levels, want D:1 and two Abyss regions",
+			len(g.levels))
 	}
 
 	var down StairLink
@@ -475,8 +480,11 @@ func TestGeneratedDungeonReachesDepthFifteen(t *testing.T) {
 	g := newGeneratedTestGame(t, 41)
 	descendGeneratedTo(t, g, 15)
 
-	if len(g.levels) != 16 {
-		t.Fatalf("generated level count = %d, want Dungeon:1-15 and Abyss", len(g.levels))
+	if len(g.levels) != 17 ||
+		g.levels[abyssStorageID] == nil ||
+		g.levels[abyssTransitID] == nil {
+		t.Fatalf("generated level count = %d, want D:1-15 and two Abyss regions",
+			len(g.levels))
 	}
 
 	for depth := 1; depth <= 15; depth++ {
@@ -647,8 +655,23 @@ func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 	g := newGeneratedTestGame(t, 41)
 	descendGeneratedTo(t, g, 15)
 
-	if len(g.levels) != 16 {
-		t.Fatalf("generated level count = %d, want 16", len(g.levels))
+	// The Abyss has a playable floor and an inert transit region for saved
+	// actors. Both remain present while the Dungeon reaches D:15.
+	dungeonLevels := 0
+	abyssLevels := 0
+
+	for _, level := range g.levels {
+		switch level.BranchID {
+		case "BRANCH_DUNGEON":
+			dungeonLevels++
+		case "BRANCH_ABYSS":
+			abyssLevels++
+		}
+	}
+
+	if dungeonLevels != 15 || abyssLevels != 2 {
+		t.Fatalf("generated topology has %d Dungeon and %d Abyss levels",
+			dungeonLevels, abyssLevels)
 	}
 
 	vaultOrigins := g.scripts.Components()["vault.origin"]
@@ -669,8 +692,8 @@ func TestGeneratedDungeonTopologyPopulationAndBoundary(t *testing.T) {
 	// Sorting catalog IDs can select a different vault for the same seed.
 	expectedActors := vaultActors
 
-	for depth := 1; depth <= 15; depth++ {
-		expectedActors += g.levels[depth].initialActors
+	for _, level := range g.levels {
+		expectedActors += level.initialActors
 	}
 
 	if len(g.stores.AI.Entities()) != expectedActors {

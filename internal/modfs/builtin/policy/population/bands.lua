@@ -8,6 +8,7 @@ local component = require("constants.component")
 local factory = require("policy.population.factory")
 local history = require("policy.population.unique_history")
 local streams = require("constants.rng_streams")
+local conditions = require("policy.population.bands.conditions")
 
 local bands = {}
 
@@ -37,7 +38,8 @@ end
 -- permits a compulsory first member followed by a weighted common pool.
 local function member(ctx, profile, index, level)
     if profile.member_policy then
-        return require(profile.member_policy).choose(ctx, level, index)
+        return require(profile.member_policy).choose(ctx, level, index,
+            profile)
     end
 
     local slot = profile.slots[math.min(index, #profile.slots)]
@@ -65,9 +67,18 @@ end
 -- Spawn a source band around a placed leader. A full or blocked vicinity
 -- shortens the group, as in the original placement path. A previously seen
 -- unique follower is skipped while later slots can still take their turn.
-function bands.spawn(ctx, leader, level, excluded)
+function bands.spawn(ctx, leader, level, excluded, create_member)
     local actor = ctx:get(leader, component.ACTOR)
     local profile = catalog.get("monsters", actor.kind_id).band
+
+    if not profile then
+        return 0
+    end
+
+    -- Ordinary population and god-sourced arrivals use the same source
+    -- membership. Only the actual actor creation differs: wrath members
+    -- must inherit their leader's durable hostile god attribution.
+    profile = conditions.select(ctx, level, profile)
 
     if not profile then
         return 0
@@ -90,24 +101,33 @@ function bands.spawn(ctx, leader, level, excluded)
             end
 
             local cell = cells[ctx:random(streams.PLACEMENT, #cells) + 1]
-            local follower = factory.spawn(ctx, kind_id, level.id,
-                cell.x, cell.y)
+            local follower
 
-            ctx:add(follower, component.FOLLOWER, {
-                leader = leader,
-            })
-            ctx:add(follower, component.BAND_ORIGIN, {
-                leader_kind_id = actor.kind_id,
-                member_kind_id = kind_id,
-            })
-
-            if profile.origin_component then
-                ctx:add(follower, profile.origin_component, {
-                    band_member = true,
-                })
+            if create_member then
+                follower = create_member(kind_id, level.id, cell.x,
+                    cell.y)
+            else
+                follower = factory.spawn(ctx, kind_id, level.id,
+                    cell.x, cell.y)
             end
 
-            placed = placed + 1
+            if follower then
+                ctx:add(follower, component.FOLLOWER, {
+                    leader = leader,
+                })
+                ctx:add(follower, component.BAND_ORIGIN, {
+                    leader_kind_id = actor.kind_id,
+                    member_kind_id = kind_id,
+                })
+
+                if profile.origin_component then
+                    ctx:add(follower, profile.origin_component, {
+                        band_member = true,
+                    })
+                end
+
+                placed = placed + 1
+            end
         end
     end
 

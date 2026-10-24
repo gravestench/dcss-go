@@ -86,7 +86,10 @@ function okawaru.apply(ctx, player)
         local kind = concrete_kind(ctx,
             pool.pick(ctx, choices, total, streams.CARDS))
 
-        if summons.hostile(ctx, player, gods.OKAWARU, kind) then
+        local permit_band = kind ~= monsters.MONS_CYCLOPS
+
+        if summons.hostile(ctx, player, gods.OKAWARU,
+            kind, 0, nil, { permit_band = permit_band }) then
             created = created + 1
         end
     end

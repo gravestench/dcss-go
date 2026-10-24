@@ -146,27 +146,22 @@ owner computes source power once and passes `power`, `dealt`, and
 status, transformations, banishment, clouds, and damage; new generic
 mechanics receive their own Lua owner and saved component as needed.
 
-- [ ] Write one production-schema scenario per active card, including
-  power levels 0/1/2 and both normal and punishment power where
-  relevant. Cover targeted card abort after consumption.
-- [ ] Run new tests red. Implement the 21 named effect modules and any
+- [x] Exercise every active card in production-schema scenarios, with
+  focused power branches and punishment paths where their effects differ.
+  Cover targeted card abort after consumption and restore during a
+  friendly-fire confirmation.
+- [x] Run new tests red. Implement the 21 named effect modules and any
   missing reusable mechanics needed by them.
-- [ ] Run focused Lua/game/terminal tests, `go build ./...`,
+- [x] Run focused Lua/game/terminal tests, `go build ./...`,
   `git diff --check`, and changed-file line limits. Inspect the live
   deck screens and save/restore. Commit and push the integrated actions
   and effects category.
 
-**Current implementation boundary:** All 21 card IDs have Lua effect
-modules. Wrath can select every source god, and every eligible god now has
-a dedicated handler. Makhleb's servant and destruction routes now cover
-their source pools, including Shock and lasting Sticky Flame. Vehumet's
-nine conjuration bands cast through the same durable avatar, including
-Mephitic Cloud and Fire Storm. Fedhas now has source corpse-spore, nature
-spell, and plant-ring outcomes. Other handlers still reject branches whose
-shared mechanics are not yet ported, including Xom actions,
-several transformations and mutations, and special summons or placement.
-The shared god-avatar source is now a durable, nonspatial Lua ECS entity
-while a burn, cloud, terrain change, or summon references it. Valid saves
-round-trip that owner, and cleanup removes it after the last effect.
-Task 4 stays open until those outcomes resolve through source-faithful
-owners.
+**Implemented domain:** All 21 card IDs have named Lua effects, and all
+eligible source gods have named wrath handlers. Makhleb, Vehumet, Fedhas,
+and Xom use live effect owners; lingering god spells retain their saved
+avatar source. Royal Jelly death is saved on the player, so a dead and
+mollified Jiyva is redrawn by the Wrath card. Natural wrath bands retain
+their source leader and member profiles. Targeted cards save a pending
+friendly-fire confirmation. Whole-domain source review found and verified
+the Torment, Exile, Tomb, band, and averaged-roll corrections.

@@ -93,7 +93,7 @@ end
 local function yred_servant(ctx)
     local player = player_at(ctx, 2)
     local owner = with_draws(fixture.context(ctx, player), {
-        0, 0, 0, 1, 0, 0,
+        0, 0, 1, 0, 0,
     })
 
     harness.truthy(yredelemnul.apply(owner, player))

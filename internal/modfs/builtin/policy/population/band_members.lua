@@ -16,12 +16,19 @@ function members.allowed(profile, kind_id)
         return not policy.allows or policy.allows(kind_id)
     end
 
-    for _, slot in ipairs(profile.slots or {}) do
-        for _, choice in ipairs(slot) do
-            local id = type(choice) == "string" and choice or choice.id
+    -- Branch-specific bands have a second legal roster even though only
+    -- one of the two can be drawn on the leader's current floor.
+    for _, slot_set in ipairs({
+        profile.slots or {},
+        profile.alternative_slots or {},
+    }) do
+        for _, slot in ipairs(slot_set) do
+            for _, choice in ipairs(slot) do
+                local id = type(choice) == "string" and choice or choice.id
 
-            if id == kind_id then
-                return true
+                if id == kind_id then
+                    return true
+                end
             end
         end
     end

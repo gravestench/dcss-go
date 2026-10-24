@@ -38,6 +38,26 @@ local function skipped(ctx, power)
     return bound > 1 and ctx:random(streams.CARDS, bound) == 0
 end
 
+-- Source cast_tomb removes a trap before raising its wall and normalises
+-- that square to floor. The restoration marker must remember that floor,
+-- since the old trap feature cannot reappear when the wall expires.
+local function clear_trap(ctx, level_id, x, y)
+    local found = false
+
+    for _, entity in ipairs(ctx:query({ component.WORLD_TRAP })) do
+        local trap = ctx:get(entity, component.WORLD_TRAP)
+
+        if trap.level_id == level_id and trap.x == x and trap.y == y then
+            ctx:destroy(entity)
+            found = true
+        end
+    end
+
+    if found then
+        ctx:set_cell(level_id, x, y, terrain.DNGN_FLOOR)
+    end
+end
+
 -- decks.cc passes this exact power to cast_tomb, which uses it again as the
 -- wall lifetime in turns. Occupied cells and solid nondoors remain untouched.
 function tomb.apply(ctx, player, request)
@@ -63,9 +83,11 @@ function tomb.apply(ctx, player, request)
             local feature = ctx:cell(origin.level_id, x, y)
 
             if feature and
-                (ctx:walkable(origin.level_id, x, y) or
+                (not ctx:solid(origin.level_id, x, y) or
                     doors[feature]) and
                 not ctx:actor_at(origin.level_id, x, y) then
+                clear_trap(ctx, origin.level_id, x, y)
+
                 local placed, marker = temporary.place(ctx,
                     player, cards.TOMB, origin.level_id, x, y,
                     terrain.DNGN_ROCK_WALL, tomb_power * 10)

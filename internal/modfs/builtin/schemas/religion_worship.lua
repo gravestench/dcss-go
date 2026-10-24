@@ -6,7 +6,7 @@ local gods = require("constants.gods")
 
 local schema = {
     id = component.RELIGION_WORSHIP,
-    version = 3,
+    version = 4,
     fields = {
         god_id = {
             type = "string",
@@ -79,6 +79,13 @@ local schema = {
         min_ignis_piety = {
             type = "int64",
             default = 0,
+        },
+
+        -- Source Jiyva vanishes only after the Royal Jelly dies and
+        -- the player's remaining penance is paid off.
+        royal_jelly_dead = {
+            type = "bool",
+            default = false,
         },
     },
 }

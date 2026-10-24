@@ -10,8 +10,18 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local rosters = require("policy.population.bands.rosters")
+
 local definition = {
     id = "MONS_MERFOLK_JAVELINEER",
+    -- Javelineers use the same branch gate and two-to-five merfolk escort
+    -- as impalers, without duplicating the shared follower roster.
+    band = {
+        min = 2,
+        max = 5,
+        condition = "merfolk",
+        slots = { rosters.MERFOLK },
+    },
     status = "defined",
     name = "merfolk javelineer",
     glyph = 109,

@@ -13,6 +13,7 @@ local phases = {
     DRAW_STACK = "draw_stack",
     ORDER_STACK = "order_stack",
     TARGET_CARD = "target_card",
+    CONFIRM_FRIENDLY = "confirm_friendly",
     CONFIRM_WASTE = "confirm_waste",
 }
 

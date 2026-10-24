@@ -10,8 +10,12 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local basic_band = require("policy.population.bands.basic_draconian")
+
 local definition = {
     id = "MONS_RED_DRACONIAN",
+    -- This colour uses the shared source basic-draconian band gate.
+    band = basic_band,
     status = "defined",
     name = "red draconian",
     glyph = 100,

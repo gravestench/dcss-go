@@ -9,8 +9,17 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local rosters = require("policy.population.bands.rosters")
+
 local definition = {
     id = "MONS_GNOLL",
+    -- Natural gnoll packs begin at source absolute depth one (D:2).
+    band = {
+        min = 2,
+        max = 4,
+        min_depth = 1,
+        slots = { rosters.GNOLLS },
+    },
     status = "defined",
     name = "gnoll",
     glyph = 103,

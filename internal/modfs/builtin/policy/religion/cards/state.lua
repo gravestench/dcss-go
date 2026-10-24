@@ -45,6 +45,8 @@ local function empty()
         pending_selected = 0,
         pending_failed = false,
         pending_tier = -1,
+        pending_dx = 0,
+        pending_dy = 0,
     }
 end
 
@@ -91,7 +93,8 @@ local function validate_pending(value)
             value.pending_target_count ~= 0 or
             value.pending_selected ~= 0 or
             value.pending_failed or
-            value.pending_tier ~= -1 then
+            value.pending_tier ~= -1 or
+            value.pending_dx ~= 0 or value.pending_dy ~= 0 then
             error("inactive card operation has pending values")
         end
 
@@ -118,6 +121,19 @@ local function validate_pending(value)
 
     if value.pending_tier < -1 or value.pending_tier > 2 then
         error("invalid pending card power tier")
+    end
+
+    if phase == card_phases.CONFIRM_FRIENDLY then
+        local dx = value.pending_dx
+        local dy = value.pending_dy
+
+        if dx % 1 ~= 0 or dy % 1 ~= 0 or
+            (dx == 0 and dy == 0) or
+            math.max(math.abs(dx), math.abs(dy)) > 7 then
+            error("invalid pending friendly-fire ray")
+        end
+    elseif value.pending_dx ~= 0 or value.pending_dy ~= 0 then
+        error("card aim saved outside friendly-fire confirmation")
     end
 end
 

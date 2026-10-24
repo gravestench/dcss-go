@@ -548,6 +548,41 @@ Completed content and behavior files register themselves when discovered.
 There is no central switch to edit for each new monster, spell, item,
 component, or system. The loader
 rejects duplicate IDs and invalid definitions with their source paths.
+
+### Give a monster a natural band
+
+Put a `band` table in that monster's own `content/monsters/<name>.lua` file.
+`min` and `max` count **followers**, not the leader. `slots` is a list of
+follower pools: each pool contains monster IDs or `{ id, weight }` entries.
+The last pool repeats for any remaining followers. Import bundled IDs from
+`ids.monsters` where the definition uses them. For example:
+
+```lua
+local monsters = require("ids.monsters")
+
+definition.band = {
+    min = 2,
+    max = 4,
+    slots = {
+        {
+            { id = monsters.MONS_GNOLL, weight = 3 },
+            { id = monsters.MONS_GNOLL_SERGEANT, weight = 1 },
+        },
+    },
+}
+```
+
+Use `chance_denominator = 3` for a one-in-three leader chance and
+`min_depth` for the source absolute-depth gate. For branch-dependent
+eligibility, name a function in
+`policy/population/bands/conditions.lua` with `condition`; for a special
+follower draw, name a module exporting `choose(ctx, level, index, profile)`
+with `member_policy`. Give that module an `allows(kind_id)` method so saved
+followers remain valid after restore. See the Naga and draconian policies
+for examples. The ordinary population owner and god-sourced wrath both
+read this same band declaration. God-sourced followers keep the god's
+saved identity, while ambient followers remain ordinary monsters.
+
 For a god, import `constants.catalog`, `constants.gods` for bundled IDs,
 and `constants.god_piety_modes`. A new god can declare its own stable ID in
 its definition file. Define `name`, `starting_piety`, `piety_mode`, and

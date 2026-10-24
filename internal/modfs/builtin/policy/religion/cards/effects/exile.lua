@@ -55,13 +55,16 @@ function exile.apply(ctx, player, request)
         if not candidate then
             if index == 1 then
                 ctx:emit("religion", "Nothing happens.")
+
+                break
             end
 
-            break
+            -- A later empty reservoir is only a failed bonus roll. Other
+            -- bonus rolls still get their own chance at remaining monsters.
+        else
+            abyss.banish_monster(ctx, candidate.entity,
+                candidate.definition, player)
         end
-
-        abyss.banish_monster(ctx, candidate.entity,
-            candidate.definition, player)
     end
 end
 

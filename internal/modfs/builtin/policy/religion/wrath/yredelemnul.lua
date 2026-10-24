@@ -2,6 +2,7 @@
 -- sends hostile servants. Rare derived undead use the committed Dungeon
 -- population for their base, not a handwritten second monster roster.
 local component = require("constants.component")
+local roll = require("policy.combat.roll")
 local avatar = require("policy.religion.wrath.avatar")
 local gods = require("constants.gods")
 local monsters = require("ids.monsters")
@@ -65,14 +66,12 @@ local servants = {
     monsters.MONS_BONE_DRAGON,
 }
 
--- random2avg(n, 2) averages two draws before the summon attempt count.
--- Preserve the two draws even when n is one to keep source order visible.
+-- random2avg(n, 2) widens its second bound by one; the shared roll owner
+-- preserves that source distribution for each summon-attempt count.
 local function attempts(ctx, level)
     local bound = 1 + math.floor(level / 5)
-    local first = ctx:random(streams.CARDS, bound)
-    local second = ctx:random(streams.CARDS, bound)
 
-    return 1 + math.floor((first + second) / 2)
+    return 1 + roll.average_two(ctx, streams.CARDS, bound)
 end
 
 -- The hostile servant threshold grows with XL; selected kind and placement

@@ -3,6 +3,7 @@
 local component = require("constants.component")
 local confusion = require("policy.magic.player_confusion")
 local gods = require("constants.gods")
+local jiyva_life = require("policy.religion.jiyva.life")
 local alignments = require("constants.god_alignments")
 local roster = require("policy.religion.wrath.roster")
 local slow = require("policy.character.slow")
@@ -148,14 +149,17 @@ function retribution.invoke_god(ctx, player, god_id, options)
 end
 
 -- Ignis becomes unavailable after prior worship and paid-off penance.
--- Jiyva's separate royal_jelly_dead flag has no saved owner yet, so that
--- availability condition remains a known gap in the local god catalog.
+-- Jiyva's saved Royal Jelly death uses the same source availability rule.
 local function unavailable(ctx, player, god_id)
+    local worship = ctx:get(player, component.RELIGION_WORSHIP)
+
+    if god_id == gods.JIYVA then
+        return jiyva_life.dead(worship)
+    end
+
     if god_id ~= gods.IGNIS then
         return false
     end
-
-    local worship = ctx:get(player, component.RELIGION_WORSHIP)
 
     return (worship.worshipped[gods.IGNIS] or 0) > 0 and
         worship.god_id ~= gods.IGNIS and

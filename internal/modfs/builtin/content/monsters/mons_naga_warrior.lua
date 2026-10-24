@@ -13,6 +13,14 @@ local spellbooks = require("ids.monster_spellbooks")
 
 local definition = {
     id = "MONS_NAGA_WARRIOR",
+    -- Snake depth gates this escort. Its first two member rolls may name
+    -- elite naga, while later slots favour ordinary naga or salamanders.
+    band = {
+        min = 2,
+        max = 5,
+        condition = "naga",
+        member_policy = "policy.population.bands.nagas",
+    },
     status = "defined",
     name = "naga warrior",
     glyph = 78,

@@ -25,6 +25,28 @@ function test.run(ctx)
     })
 
     fixture.actor(ctx, monsters.MONS_RAT, 8, 7)
+    owner.cells["6:6"] = terrain.DNGN_DEEP_WATER
+    local trap = ctx:create()
+
+    ctx:add(trap, component.WORLD_TRAP, {
+        kind_id = "TRAP_ALARM",
+        level_id = 1,
+        x = 6,
+        y = 6,
+        charges = 1,
+        revealed = true,
+        source_record = "",
+    })
+
+    -- Deep water is nonsolid but cannot be walked through. Source Tomb
+    -- accepts it, destroys its trap, and leaves floor under the timed wall.
+    function owner:walkable(_, x, y)
+        return not (x == 6 and y == 6)
+    end
+
+    function owner:solid()
+        return false
+    end
 
     -- This sparse level records writes while keeping production ECS markers.
     function owner:set_cell(_, x, y, feature)
@@ -49,6 +71,7 @@ function test.run(ctx)
     local markers = ctx:query({ component.TEMPORARY_TERRAIN })
 
     harness.equal(#markers, 7)
+    harness.equal(ctx:has(trap, component.WORLD_TRAP), false)
     harness.equal(owner:cell(1, 8, 7), terrain.DNGN_FLOOR)
     local groups = ctx:query({ component.RELIGION_CARD_TOMB })
 
@@ -65,6 +88,10 @@ function test.run(ctx)
         harness.equal(state.expires_aut, 200)
         harness.equal(owner:cell(1, state.x, state.y),
             terrain.DNGN_ROCK_WALL)
+
+        if state.x == 6 and state.y == 6 then
+            harness.equal(state.original_feature, terrain.DNGN_FLOOR)
+        end
     end
 
     ctx:set(player, component.POSITION, {
@@ -78,6 +105,7 @@ function test.run(ctx)
     harness.equal(#ctx:query({ component.RELIGION_CARD_TOMB }), 0)
     harness.equal(#ctx:query({ component.TEMPORARY_TERRAIN }), 0)
     harness.equal(owner:cell(1, 7, 6), terrain.DNGN_FLOOR)
+    harness.equal(owner:cell(1, 6, 6), terrain.DNGN_FLOOR)
 end
 
 return test

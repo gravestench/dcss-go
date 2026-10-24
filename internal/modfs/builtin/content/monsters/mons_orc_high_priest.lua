@@ -11,8 +11,16 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local rosters = require("policy.population.bands.rosters")
+
 local definition = {
     id = "MONS_ORC_HIGH_PRIEST",
+    -- High priests travel with the same source heavy-orc roster as knights.
+    band = {
+        min = 4,
+        max = 8,
+        slots = { rosters.ORC_KNIGHT },
+    },
     status = "defined",
     name = "orc high priest",
     glyph = 111,

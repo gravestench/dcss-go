@@ -67,6 +67,48 @@ function test.run(ctx)
     harness.equal(bounds[2], 2)
     harness.equal(bounds[3], 3)
     harness.equal(bounds[4], 2)
+
+    -- An empty bonus reservoir does not cancel later bonus attempts. The
+    -- first attempt is special because it can end the entire card early.
+    local third = fixture.actor(ctx, monsters.MONS_RAT, 8, 7)
+    local fourth = fixture.actor(ctx, monsters.MONS_RAT, 9, 7)
+    local draws = { 0, 0, 1, 1, 0 }
+    local next_draw = 1
+    local bonus_chosen = {}
+
+    function owner:random(stream, bound)
+        harness.equal(stream, streams.CARDS)
+        local draw = draws[next_draw]
+        next_draw = next_draw + 1
+        harness.truthy(draw ~= nil and draw < bound)
+
+        return draw
+    end
+
+    abyss.banish_monster = function(_, monster)
+        bonus_chosen[#bonus_chosen + 1] = monster
+        ctx:remove(monster, component.POSITION)
+
+        return true
+    end
+
+    success, message = pcall(function()
+        effects.apply(owner, player, cards.EXILE, {
+            tier = 2,
+            power = 400,
+        })
+    end)
+
+    abyss.banish_monster = original
+
+    if not success then
+        error(message)
+    end
+
+    harness.equal(#bonus_chosen, 2)
+    harness.equal(bonus_chosen[1], third)
+    harness.equal(bonus_chosen[2], fourth)
+    harness.equal(next_draw, 6)
 end
 
 return test

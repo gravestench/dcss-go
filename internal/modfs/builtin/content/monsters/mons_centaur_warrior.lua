@@ -10,8 +10,22 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local rosters = require("policy.population.bands.rosters")
+local monsters = require("ids.monsters")
+
 local definition = {
     id = "MONS_CENTAUR_WARRIOR",
+    -- Deep centaur bands are rare; Vaults substitutes a smaller warrior
+    -- escort through the named source branch rule.
+    band = {
+        min = 2,
+        max = 6,
+        condition = "centaur_warrior",
+        slots = { rosters.CENTAURS },
+        alternative_slots = {
+            { monsters.MONS_CENTAUR_WARRIOR },
+        },
+    },
     status = "defined",
     name = "centaur warrior",
     glyph = 99,

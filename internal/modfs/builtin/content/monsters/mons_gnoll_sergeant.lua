@@ -10,8 +10,16 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local rosters = require("policy.population.bands.rosters")
+
 local definition = {
     id = "MONS_GNOLL_SERGEANT",
+    -- Sergeants bring three to six ordinary gnoll followers.
+    band = {
+        min = 3,
+        max = 6,
+        slots = { rosters.GNOLLS },
+    },
     status = "defined",
     name = "gnoll sergeant",
     glyph = 103,

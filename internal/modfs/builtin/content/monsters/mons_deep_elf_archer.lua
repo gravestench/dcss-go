@@ -11,8 +11,18 @@ local categories = require("constants.catalog")
 local item_ids = require("ids.items")
 local spellbooks = require("ids.monster_spellbooks")
 
+local rosters = require("policy.population.bands.rosters")
+
 local definition = {
     id = "MONS_DEEP_ELF_ARCHER",
+    -- Archers share the knight band's half-chance gate; changing one
+    -- weighted roster updates both source leaders.
+    band = {
+        min = 3,
+        max = 5,
+        chance_denominator = 2,
+        slots = { rosters.DEEP_ELF_KNIGHT },
+    },
     status = "defined",
     name = "deep elf archer",
     glyph = 101,

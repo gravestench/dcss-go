@@ -11,8 +11,16 @@ local item_ids = require("ids.items")
 local sentinels = require("constants.monster_gear_sentinels")
 local spellbooks = require("ids.monster_spellbooks")
 
+local rosters = require("policy.population.bands.rosters")
+
 local definition = {
     id = "MONS_ORC_WARRIOR",
+    -- Warrior leaders draw the source priest, wizard, and orc weights.
+    band = {
+        min = 2,
+        max = 5,
+        slots = { rosters.ORC_WARRIOR },
+    },
     status = "defined",
     name = "orc warrior",
     glyph = 111,

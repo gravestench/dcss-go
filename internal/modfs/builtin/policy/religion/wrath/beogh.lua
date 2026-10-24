@@ -62,7 +62,8 @@ local function send_orcs(ctx, player, level)
         kind = monsters.MONS_ORC
     end
 
-    local created = summons.hostile(ctx, player, gods.BEOGH, kind)
+    local created = summons.hostile(ctx, player, gods.BEOGH,
+        kind, 0, nil, { permit_band = true })
 
     ctx:emit("religion", created and
         "Beogh sends forth an army of orcs." or

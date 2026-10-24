@@ -5,6 +5,7 @@ local clouds = require("ids.clouds")
 local component = require("constants.component")
 local death = require("systems.actor_death")
 local factory = require("policy.population.factory")
+local gods = require("constants.gods")
 local harness = require("tests.harness")
 local links = require("policy.save.links")
 local save_monsters = require("policy.save.monsters")
@@ -229,6 +230,11 @@ local function marked_minion_has_no_reward(ctx, world)
         species_id = species.SP_HUMAN,
         job_id = jobs.JOB_FIGHTER,
         name = "Band lifecycle test",
+    })
+    -- The real player always owns worship state when a kill records
+    -- conduct, including a piety-free kill of a marked Pikel minion.
+    ctx:add(player, component.RELIGION_WORSHIP, {
+        god_id = gods.NO_GOD,
     })
     ctx:add(player, component.POSITION, {
         level_id = 1,
