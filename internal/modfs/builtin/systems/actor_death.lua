@@ -122,9 +122,15 @@ function system.update(ctx)
                 local definition = catalog.get("monsters", actor.kind_id)
 
                 local summoned = ctx:has(entity, component.SUMMON)
+                local wretch = ctx:has(entity,
+                    component.RELIGION_KIKU_WRETCH)
+                local wretch_expired = wretch and
+                    ctx:get(entity,
+                        component.RELIGION_KIKU_WRETCH).remaining_aut == 0
 
                 -- Only a credited, nonsummoned kill grants player XP and advances XP-driven recovery clocks.
                 if kills[ctx:id(entity)] and not summoned and
+                    not wretch and
                     not ctx:has(entity, component.ELYVILON_PACIFIED) and
                     not ctx:has(entity, component.PIKEL_BAND) and
                     not (ctx:get(entity, component.BEOGH_ORC) or {}).gift then
@@ -151,7 +157,7 @@ function system.update(ctx)
                 -- victim's actor, spellbook, side, and flags still exist.
                 -- A summoned or allied victim can still offend a god, but
                 -- the conduct owner suppresses ordinary piety gain.
-                if kills[ctx:id(entity)] then
+                if kills[ctx:id(entity)] and not wretch then
                     for _, event in ipairs(monster_facts.death(ctx,
                         entity, definition)) do
                         conduct.record(ctx, event)
@@ -175,7 +181,7 @@ function system.update(ctx)
                 local beogh_gift = (ctx:get(entity,
                     component.BEOGH_ORC) or {}).gift
 
-                if (kills[ctx:id(entity)] or beogh_gift or
+                if (kills[ctx:id(entity)] or wretch or beogh_gift or
                     definition.genus_id == monsters.MONS_ORC) and
                     not consumed_corpse and
                     not summoned and
@@ -197,7 +203,12 @@ function system.update(ctx)
                 clear_orb_targets(ctx, entity)
                 beogh_recall.forget(ctx, ctx:player(), entity)
                 ctx:destroy(entity)
-                ctx:emit("death", "The " .. definition.name .. " dies.")
+
+                -- The expiry owner already printed the visible source
+                -- wording; a player kill still gets the normal death line.
+                if not wretch_expired then
+                    ctx:emit("death", "The " .. definition.name .. " dies.")
+                end
             end
         end
     end

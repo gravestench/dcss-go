@@ -46,6 +46,12 @@ function threat.monster(ctx, player, monster, definition)
         error("monster threat requires live health")
     end
 
+    -- Source mons_threat_level treats sacrificial wretches as trivial even
+    -- when their underlying species would normally reward a dangerous kill.
+    if ctx:has(monster, component.RELIGION_KIKU_WRETCH) then
+        return bands.TRIVIAL
+    end
+
     local max_hp = math.floor(definition.average_hp_10x * 133 / 1000)
 
     if definition.id == monsters.MONS_PLAYER_GHOST or

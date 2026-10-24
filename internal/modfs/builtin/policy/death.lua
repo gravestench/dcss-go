@@ -168,8 +168,13 @@ function death.corpse(ctx, definition, position, source_origin, monster)
     local source_id = shape and shape.original_kind_id or
         form and form.original_kind_id or definition.id
 
+    -- Kiku's wretches always leave the real corpse that their invocation
+    -- raised them to provide. Ordinary monsters still use the source coin flip.
+    local wretch = monster and
+        ctx:has(monster, component.RELIGION_KIKU_WRETCH)
+
     if not species.leaves_corpse or
-        ctx:random(streams.CORPSE, 2) == 1 then
+        (not wretch and ctx:random(streams.CORPSE, 2) == 1) then
         return
     end
 

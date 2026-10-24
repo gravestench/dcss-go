@@ -8,6 +8,7 @@ local pool = require("policy.population.pool")
 local generic_late_zombie = require("policy.population.generic_late_zombie")
 local monster_ids = require("ids.monsters")
 local branch_ids = require("ids.branches")
+local late_zombie_branches = require("constants.late_zombie_branches")
 local item_ids = require("ids.items")
 local object_classes = require("ids.object_classes")
 local weapon_brands = require("constants.weapon_brands")
@@ -52,20 +53,6 @@ local random_undead_names = {
     [monster_requests.RANDOM_SIMULACRUM] = true,
     [monster_requests.RANDOM_ZOMBIE] = true,
     [monster_requests.RANDOM_SKELETON] = true,
-}
-
--- DCSS shares one late-game corpse roster across these branches. Their
--- ambient inhabitants are not the source of random zombie bodies.
-local late_zombie_branches = {
-    [branch_ids.BRANCH_VESTIBULE] = true,
-    [branch_ids.BRANCH_DIS] = true,
-    [branch_ids.BRANCH_GEHENNA] = true,
-    [branch_ids.BRANCH_COCYTUS] = true,
-    [branch_ids.BRANCH_TARTARUS] = true,
-    [branch_ids.BRANCH_CRYPT] = true,
-    [branch_ids.BRANCH_TOMB] = true,
-    [branch_ids.BRANCH_ABYSS] = true,
-    [branch_ids.BRANCH_PANDEMONIUM] = true,
 }
 
 local random_item_names = {

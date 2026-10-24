@@ -5,6 +5,7 @@
 local catalog = require("policy.catalog")
 local habitat = require("policy.combat.monster_habitat")
 local hand = require("policy.combat.monster_support.trogs_hand")
+local component = require("constants.component")
 
 -- Keep fractional healing deterministic through the named RNG stream instead of truncating every turn.
 local function random_divide(ctx, numerator, denominator)
@@ -38,6 +39,12 @@ local system = {}
 -- Monster healing is calculated before AI evaluates current HP and position.
 function system.update(ctx, entity)
     if not ctx:has(entity, "core.ai") then
+        return
+    end
+
+    -- Kiku's one-HP fodder carries an actor-specific no-regeneration flag.
+    -- Its catalog species may normally heal, so class flags are insufficient.
+    if ctx:has(entity, component.RELIGION_KIKU_WRETCH) then
         return
     end
 

@@ -38,7 +38,7 @@ local black_mark = require("policy.combat.monster_black_mark")
 local brambles = require("policy.combat.monster_plants.brambles")
 local vine_grip = require("policy.combat.monster_plants.vine_grip")
 local component = require("constants.component")
-local player_contact = require("policy.combat.player_contact")
+local contact_report = require("policy.combat.player_contact")
 local cleaving = require("policy.religion.xom.cleaving")
 local attack_sequence = require("policy.combat.monster_attack_sequence")
 local reach = require("policy.combat.monster_reach")
@@ -114,7 +114,7 @@ local function player_contact(ctx, target, options)
     local defender = monster_profile.definition(ctx, target,
         catalog.get("monsters", actor.kind_id))
 
-    player_contact.report(ctx, target, defender)
+    contact_report.report(ctx, target, defender)
 
     rage.melee(ctx, ctx:player())
     mutation_effects.trigger(ctx, ctx:player(),

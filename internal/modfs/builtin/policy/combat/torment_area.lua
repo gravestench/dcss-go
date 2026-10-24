@@ -11,9 +11,10 @@ local player_health = require("policy.combat.player_health")
 local player_resistance = require("policy.combat.player_resistance")
 local senses = require("policy.character.senses")
 local targets = require("policy.ai.targets")
+local spell_range = require("constants.spell_range")
 
 local area = {}
-local SIGHT_RADIUS = 7
+local SIGHT_RADIUS = spell_range.LOS_RADIUS
 
 -- Check source LOS_NO_TRANS before consulting victim resistance. The fixed
 -- radius belongs to Torment itself, not to the player's current sight.

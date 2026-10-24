@@ -22,10 +22,12 @@ local function duration(ctx, power)
     return (5 + average) * time.AUT_PER_TURN
 end
 
--- Summons and monsters worth no XP cannot seed a scarab on death.
+-- Source beam.cc lets Kiku's no-XP wretches carry Infestation. That is one
+-- reason to create real corpses rather than ordinary disappearing summons.
 local function eligible(ctx, monster, definition, health)
     return not ctx:has(monster, component.SUMMON) and
-        death.experience(definition, health.max) > 0
+        (ctx:has(monster, component.RELIGION_KIKU_WRETCH) or
+            death.experience(definition, health.max) > 0)
 end
 
 -- Reject a blocked aim square before spending MP on an infestation that could mark nothing.

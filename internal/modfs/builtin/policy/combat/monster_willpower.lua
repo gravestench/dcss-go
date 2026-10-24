@@ -100,6 +100,12 @@ function willpower.level(ctx, monster, definition)
         return units.INVULNERABLE
     end
 
+    -- Source marks Kiku's helpless wretches with zero willpower after the
+    -- absolute-immunity check, so Necromancy hexes work on their real bodies.
+    if ctx:has(monster, component.RELIGION_KIKU_WRETCH) then
+        return 0
+    end
+
     local worn = equipment.worn(ctx, monster, {
         weapon = true,
         alternate_weapon = true,

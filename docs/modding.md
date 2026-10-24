@@ -2091,6 +2091,24 @@ cannot permit a second choice. No Grasping hides weapon blessings but leaves
 Forbidden Knowledge available. A new one-time god power should use the same
 durable worship history key and validate pending choices on restore.
 
+Kiku's recurring powers show how to split an ability from the actor state it
+creates. `policy/abilities/kikubaaqudgha/torment.lua` pays the source cost
+and calls the shared Torment area with the `KIKU_INVOKED` source tag. The
+area and resistance owners then decide who is hit, including Kiku's partial
+self shield. `unearth_wretches.lua` handles the invocation and delegates
+body selection and placement to
+`policy/religion/kikubaaqudgha/wretches.lua`. That policy reads the effective
+branch population catalog, so a new natural, corpse-bearing monster can join
+the eligible pool through its own content and population files. Its live
+actor gets `religion.kiku_wretch`; the matching schema saves remaining life,
+and the system ages it on the active floor. The death owner sees that marker
+to suppress XP and guarantee a corpse. It deliberately does not add
+`magic.summon`, because summon expiry destroys bodies instead of leaving
+corpses. A mod replacing the wretch policy should preserve this marker and
+the death contract, or supply an equivalent saved lifecycle and restore
+validation. Numeric rank, cost, radius, and clock values live in
+`constants.kikubaaqudgha` and are imported where used.
+
 TSO's holy word uses `policy.combat.holy_word` for living target selection,
 damage, daze, and blood cleansing. Kiku's brand calls the normal Torment
 area with `constants.torment_sources.KIKU_BLESSING`, which suppresses Kiku's

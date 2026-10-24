@@ -13,6 +13,9 @@ local summon_branches = require("policy.combat.monster_summons.branches")
 local abyss = require("policy.world.abyss")
 local abyss_constants = require("constants.abyss")
 local component = require("constants.component")
+local monster_flags = require("constants.monster_flags")
+local monster_holiness = require("constants.monster_holiness")
+local kiku = require("constants.kikubaaqudgha")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
 local monsters = require("ids.monsters")
 local tactical = require("constants.monster_tactical")
@@ -122,6 +125,7 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     ai, state)
     local polymorph = ctx:get(entity, "magic.monster_polymorph")
     local clone = ctx:get(entity, component.CHAOS_CLONE)
+    local wretch = ctx:get(entity, component.RELIGION_KIKU_WRETCH)
     local roster_id = clone and clone.roster_kind_id or
         polymorph and polymorph.original_kind_id or actor.kind_id
 
@@ -173,7 +177,7 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     local born_from_split = growth and growth.born_from_split or
         slime_birth ~= nil
 
-    if not fixed and not clone and not born_from_split and
+    if not fixed and not clone and not wretch and not born_from_split and
         (not transit or state.budgets[level_id]) then
         local count = (state.live_by_level[level_id] or 0) + 1
 
@@ -193,7 +197,8 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
         allowed = roster.allowed(state.scenario_id, transit.branch_id)
     end
 
-    if not clone and not born_from_split and not allowed[roster_id] then
+    if not clone and not wretch and not born_from_split and
+        not allowed[roster_id] then
         error("unsupported melee attacker " .. roster_id ..
             " on level " .. tostring(level_id))
     end
@@ -484,6 +489,44 @@ local function validate_doom_arrival(ctx, entity, actor, health, position,
         ai, current_aut, slime_hp_bound)
 end
 
+-- Wretches are real monsters outside the ambient roster budget. Verify the
+-- source body and paralysis before their marker can bypass those two checks.
+local function validate_kiku_wretch(ctx, entity)
+    local marker = ctx:get(entity, component.RELIGION_KIKU_WRETCH)
+    local actor = ctx:get(entity, component.ACTOR)
+    local health = ctx:get(entity, component.HEALTH)
+    local paralysis = ctx:get(entity, component.PARALYSIS)
+
+    if not actor or not ctx:has(entity, component.AI) or
+        not ctx:has(entity, component.POSITION) or
+        ctx:has(entity, component.SUMMON) or
+        not health or health.current ~= 1 or
+        not paralysis or paralysis.remaining_aut < 1 or
+        marker.remaining_aut < 1 or
+        marker.remaining_aut >= kiku.WRETCH_MIN_LIFE_AUT +
+            kiku.WRETCH_LIFE_SPAN_AUT then
+        error("invalid Kiku wretch " .. ctx:id(entity))
+    end
+
+    local definition = catalog.get("monsters", actor.kind_id)
+    local species = catalog.get("monsters",
+        definition.species_id or definition.id)
+    local natural = false
+    local excluded = false
+
+    for _, id in ipairs(species.holiness or {}) do
+        natural = natural or id == monster_holiness.NATURAL
+    end
+
+    for _, id in ipairs(species.flags or {}) do
+        excluded = excluded or id == monster_flags.NO_ZOMBIE
+    end
+
+    if not natural or not species.leaves_corpse or excluded then
+        error("invalid Kiku wretch body " .. actor.kind_id)
+    end
+end
+
 -- Monster save validation separates roster, vault, and banished actors because their origins differ.
 -- Example: module.run(ctx, input) rejects a banished monster left on an ordinary floor.
 function module.run(ctx, input)
@@ -494,6 +537,14 @@ function module.run(ctx, input)
     entities.validate(ctx)
     inventory.validate(ctx)
     links.validate(ctx)
+
+    -- Marker validation also catches an orphan component that would never
+    -- enter the ordinary AI monster loop below.
+    for _, entity in ipairs(ctx:query({
+        component.RELIGION_KIKU_WRETCH,
+    })) do
+        validate_kiku_wretch(ctx, entity)
+    end
 
     -- Waterlogged is a phial-owned monster timer. A player or orphan
     -- carrying it would bypass the normal active-floor expiry system.

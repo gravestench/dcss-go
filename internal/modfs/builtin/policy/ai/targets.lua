@@ -122,6 +122,14 @@ function targets.enemy(ctx, attacker, defender)
         return false
     end
 
+    -- Kiku's hostile wretches are meant for the player to harvest. Source
+    -- monster foe selection ignores them so allied AI does not consume the
+    -- corpse fodder before a Necromancy spell or player attack can use it.
+    if attacker ~= ctx:player() and
+        ctx:has(defender, component.RELIGION_KIKU_WRETCH) then
+        return false
+    end
+
     if allegiance.frenzied(ctx, attacker) then
         return true
     end
