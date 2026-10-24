@@ -6,6 +6,7 @@ local ammunition = require("ids.ammunition")
 local component = require("constants.component")
 local brands = require("constants.weapon_brands")
 local boons = require("policy.combat.monster_support.boons")
+local ignis_champion = require("policy.religion.wrath.ignis_champion")
 
 local energy = {}
 
@@ -179,6 +180,10 @@ function energy.cost(ctx, input)
 
     if field == "move" and input.actor then
         local actor = ctx:entity(input.actor)
+
+        if actor then
+            cost = ignis_champion.movement_cost(ctx, actor, cost)
+        end
 
         -- monster.cc:action_energy subtracts three only from movement.
         -- Preserve the source floor even for a naturally quick monster.

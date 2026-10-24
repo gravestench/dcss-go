@@ -1,10 +1,11 @@
--- Ignis tries a shaft, then a fire champion, then fire elementals. Only
--- elemental summons have a complete saved effect owner in the Lua rules.
+-- Ignis tries a shaft, then a fire champion, then fire elementals.
 local gods = require("constants.gods")
 local channels = require("constants.message_channels")
 local monsters = require("ids.monsters")
+local champion = require("policy.religion.wrath.ignis_champion")
 local streams = require("constants.rng_streams")
 local summons = require("policy.religion.wrath.summons")
+local shaft = require("policy.world.shaft")
 
 local ignis = {}
 
@@ -47,16 +48,18 @@ local function summon_elementals(ctx, player)
     end
 end
 
--- A true shaft draw needs source shaftability and do_shaft, including the
--- Mountain Boots exception. A true champion draw needs ENCH_FIRE_CHAMPION.
--- Stop at each unsupported branch without consuming later branch draws.
+-- A true shaft draw still needs source shaftability, including the
+-- Mountain Boots exception. A true champion draw needs a suitable body.
+-- Each failed choice falls through using the next source draw.
 function ignis.apply(ctx, player)
-    if ctx:random(streams.CARDS, 3) == 0 then
-        error("unimplemented Ignis wrath shaft eligibility and effect")
+    if ctx:random(streams.CARDS, 3) == 0 and
+        shaft.ignis(ctx, player, streams.CARDS) then
+        return true
     end
 
-    if ctx:random(streams.CARDS, 2) == 0 then
-        error("unimplemented Ignis fire champion wrath")
+    if ctx:random(streams.CARDS, 2) == 0 and
+        champion.anoint(ctx, player) then
+        return true
     end
 
     summon_elementals(ctx, player)

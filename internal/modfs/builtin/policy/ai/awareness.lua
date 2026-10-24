@@ -67,4 +67,23 @@ function awareness.wake_from_damage(ctx, monster, attacker)
     ctx:set(monster, component.AI, state)
 end
 
+-- A deliberate alert bypasses the stealth contest. Divine anointment
+-- points the monster at its source even when it was naturally asleep.
+function awareness.alert(ctx, monster, source)
+    local state = ctx:get(monster, component.AI)
+    local origin = ctx:get(source, component.POSITION)
+    local position = ctx:get(monster, component.POSITION)
+
+    if not state or not origin or not position or
+        origin.level_id ~= position.level_id then
+        error("cannot alert a monster without a same-level target")
+    end
+
+    state.behavior = behaviors.SEEK
+    state.target_x = origin.x
+    state.target_y = origin.y
+    state.memory_until_aut = ctx:aut() + 250
+    ctx:set(monster, component.AI, state)
+end
+
 return awareness

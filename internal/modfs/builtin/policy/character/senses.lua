@@ -58,6 +58,10 @@ function senses.perceive(ctx, player, monster, cell_visible, cell_known)
     local invisible = has_flag(definition, flags.INVISIBLE) or
         (enchant and (enchant.invisible_aut or 0) > 0)
 
+    if ctx:has(monster, component.IGNIS_FIRE_CHAMPION) then
+        invisible = false
+    end
+
     if not invisible or senses.see_invisible(ctx, player) then
         return "visible"
     end

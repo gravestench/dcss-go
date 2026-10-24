@@ -1,5 +1,6 @@
 -- Elemental wrath tests use actual saved summons and fixed card draw gates.
 local component = require("constants.component")
+local behaviors = require("constants.ai_behaviors")
 local fixture = require("tests.monster_ally_support_fixture")
 local gods = require("constants.gods")
 local harness = require("tests.harness")
@@ -9,7 +10,6 @@ local monsters = require("ids.monsters")
 local qazlal = require("policy.religion.wrath.qazlal")
 local species = require("ids.species")
 local streams = require("constants.rng_streams")
-local vehumet = require("policy.religion.wrath.vehumet")
 
 local test = {}
 
@@ -109,32 +109,33 @@ local function ignis_servants(ctx)
     harness.equal(owner:bounds()[#owner:bounds()], 70)
 end
 
--- Reject shaft and champion draws before attempting any fallback summons;
--- each lacks a reusable source effect owner in the current Lua rules.
-local function ignis_gaps(ctx)
+-- A successful shaft stops before champion and summons; a separate
+-- champion draw stops before elemental placement. Both write ECS state.
+local function ignis_earlier_branches(ctx)
     local player = player_at(ctx, 40, 10)
-    local shaft = with_draws(fixture.context(ctx, player), { 0 })
-    local ok, message = pcall(ignis.apply, shaft, player)
+    local shaft = with_draws(fixture.context(ctx, player), { 0, 0 })
 
-    harness.falsy(ok)
-    harness.truthy(string.find(message, "shaft eligibility", 1, true))
-    harness.equal(#shaft:bounds(), 1)
+    function shaft:level_depth(_)
+        return 1
+    end
 
-    local champion = with_draws(fixture.context(ctx, player), { 1, 0 })
-    ok, message = pcall(ignis.apply, champion, player)
+    harness.truthy(ignis.apply(shaft, player))
+    harness.truthy(ctx:has(player, component.PENDING_SHAFT))
+    harness.equal(shaft:bounds()[1], 3)
+    harness.equal(shaft:bounds()[2], 1)
 
-    harness.falsy(ok)
-    harness.truthy(string.find(message, "fire champion", 1, true))
-    harness.equal(#champion:bounds(), 2)
-end
+    local other = player_at(ctx, 60, 10)
+    local ogre = fixture.actor(ctx, monsters.MONS_OGRE, 62, 10)
+    local champion = with_draws(fixture.context(ctx, other), { 1, 0 })
 
--- Avatar creation happens before Vehumet selects severity or a spell, so
--- the missing caster must fail before any card draw can be consumed.
-local function vehumet_gap()
-    local ok, message = pcall(vehumet.apply)
+    ctx:add(ogre, component.AI, {
+        behavior = behaviors.SLEEP,
+    })
 
-    harness.falsy(ok)
-    harness.truthy(string.find(message, "god-avatar spell", 1, true))
+    harness.truthy(ignis.apply(champion, other))
+    harness.truthy(ctx:has(ogre, component.IGNIS_FIRE_CHAMPION))
+    harness.equal(champion:bounds()[1], 3)
+    harness.equal(champion:bounds()[2], 2)
 end
 
 -- Exercise independent saved outcomes in source branch order so an earlier
@@ -142,8 +143,7 @@ end
 function test.run(ctx)
     qazlal_servants(ctx)
     ignis_servants(ctx)
-    ignis_gaps(ctx)
-    vehumet_gap()
+    ignis_earlier_branches(ctx)
 end
 
 return test

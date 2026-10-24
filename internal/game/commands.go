@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"crawl/internal/ecs"
+	"crawl/internal/save"
 	"github.com/gravestench/akara"
 )
 
@@ -96,6 +97,15 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 		return StepResult{}, fmt.Errorf("player %d has no position", g.player)
 	}
 
+	// Lua ability preparation can commit a card effect that asks for travel.
+	// Keep its pre-draw state until the destination is known to be valid.
+	var abilityCheckpoint *save.Snapshot
+
+	if command.Kind == CommandAbility {
+		checkpoint := g.Snapshot()
+		abilityCheckpoint = &checkpoint
+	}
+
 	prepared, err := g.prepareScriptCommand(command, position)
 
 	if err != nil {
@@ -107,6 +117,12 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 			prepared.response.Events...)
 
 		return prepared.response, nil
+	}
+
+	shaftRequest, pendingShaft, err := g.pendingShaft()
+
+	if err != nil {
+		return StepResult{}, err
 	}
 
 	var portal portalAction
@@ -121,10 +137,16 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 		}
 	}
 
-	if prepared.portal != nil || pendingStair {
+	if prepared.portal != nil ||
+		pendingStair ||
+		pendingShaft {
 		// First entry to a portal or generated branch changes floors,
 		// actors, and RNG. A failed destination must restore the run.
 		checkpoint := g.Snapshot()
+
+		if pendingShaft && abilityCheckpoint != nil {
+			checkpoint = *abilityCheckpoint
+		}
 
 		defer func() {
 			if portal != nil && portal.staged() != nil {
@@ -137,7 +159,13 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 			}
 		}()
 
-		if prepared.portal != nil {
+		if pendingShaft {
+			portal, err = g.prepareShaftPortal(shaftRequest, position)
+
+			if err != nil {
+				return StepResult{}, err
+			}
+		} else if prepared.portal != nil {
 			portal, err = g.preparePortal(prepared.portal, position)
 
 			if err != nil {

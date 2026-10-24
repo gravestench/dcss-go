@@ -352,7 +352,17 @@ Yredelemnul's wrath now reclaims permanent undead gifts from current
 worshippers, chooses source-weighted Dungeon zombie or skeleton bases, and
 sends level-scaled hostile undead servants. The god source, allegiance,
 expiry, and derived monster base survive save and restore. Source branches
-that still need a shared mechanic, such as Xom actions, special summons,
+Ignis now tries a source-bounded shaft, anoints the strongest eligible
+visible enemy, then falls back to fire elementals. Shafts stage and
+populate missing Dungeon floors before the player lands, and a failed
+destination restores the card action and RNG. The permanent champion
+marker survives saves and changes first-attack Fire flavour, movement
+energy, visibility, alertness, and Beogh conversion eligibility through
+their usual owners. Shaft arrival checks dangerous terrain, clouds,
+teleport masks, slime walls, and hostile sight through Lua. A committed
+text snapshot shows D:1–D:3 and their stair links after a three-floor
+fall. Source branches that still need a shared mechanic, such as Xom
+actions or special summons,
 and certain mutation or transformation effects, raise an explicit error
 at that branch. These outcomes remain part of the open card domain work.
 A lingering god spell now retains an inert Lua ECS source

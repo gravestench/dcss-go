@@ -21,6 +21,7 @@ local rage = require("policy.character.rage")
 local monster_stats = require("policy.combat.monster_stats")
 local monster_profile = require("policy.combat.monster_profile")
 local attack_flavours = require("policy.combat.monster_attack_flavours")
+local ignis_champion = require("policy.religion.wrath.ignis_champion")
 local trample = require("policy.combat.trample")
 local monster_roll = require("policy.combat.monster_roll")
 local roll = require("policy.combat.roll")
@@ -361,6 +362,8 @@ function actions.monster(ctx, attacker, options)
     local definition = monster_profile.definition(ctx, attacker,
         catalog.get("monsters", actor.kind_id))
     local attack = definition.attacks[1]
+    local flavour_id = ignis_champion.attack_flavour(ctx, attacker,
+        attack.flavour_id)
     local attack_type = monster_roll.active(ctx, attacker) and
         attack_types.HIT or attack.type_id
     local defense = fighter.defense(ctx)
@@ -380,7 +383,7 @@ function actions.monster(ctx, attacker, options)
         damage = monster_roll.attack_damage(ctx, attacker,
             slime_blob.attack_damage(ctx, attacker, attack.damage)),
         type_id = attack_type,
-        flavour_id = attack.flavour_id,
+        flavour_id = flavour_id,
         weapon = weapon,
     }
     local outcome = melee.monster_contact(ctx, attack_input, defense)
@@ -451,7 +454,7 @@ function actions.monster(ctx, attacker, options)
             player_moving = player_moving,
         }
 
-        attack_flavours.apply(ctx, attack.flavour_id, flavour_hit)
+        attack_flavours.apply(ctx, flavour_id, flavour_hit)
     end
 
     if outcome.kind == "hit" and dealt > 0 then
@@ -471,9 +474,9 @@ function actions.monster(ctx, attacker, options)
 
     retreat_bat(ctx, attacker, definition)
 
-    if outcome.kind == "hit" and (attack.flavour_id == "AF_POISON" or
-        attack.flavour_id == "AF_POISON_STRONG" or
-        attack.flavour_id == "AF_REACH_STING") then
+    if outcome.kind == "hit" and (flavour_id == "AF_POISON" or
+        flavour_id == "AF_POISON_STRONG" or
+        flavour_id == "AF_REACH_STING") then
         local venom = require("policy.combat.monster_tactical.concentrate_venom")
         local dice = monster_stats.hit_dice(ctx, attacker, definition)
 
@@ -484,7 +487,7 @@ function actions.monster(ctx, attacker, options)
                 require("policy.combat.monster_tactical.curare")
                     .apply(ctx, attacker, player, "melee")
             end
-        elseif attack.flavour_id == "AF_POISON_STRONG" then
+        elseif flavour_id == "AF_POISON_STRONG" then
             if roll.melee(ctx, 3) == 0 then
                 local low = math.floor(dice * 11 / 3)
                 local high = math.floor(dice * 13 / 2)
@@ -544,6 +547,9 @@ function actions.monster_target(ctx, attacker, target)
         return
     end
 
+    local flavour_id = ignis_champion.attack_flavour(ctx, attacker,
+        attack.flavour_id)
+
     local attack_type = monster_roll.active(ctx, attacker) and
         attack_types.HIT or attack.type_id
     local summon_stats = ctx:get(attacker, "magic.summon_stats")
@@ -569,7 +575,7 @@ function actions.monster_target(ctx, attacker, target)
         damage = monster_roll.attack_damage(ctx, attacker,
             slime_blob.attack_damage(ctx, attacker, attack.damage)),
         type_id = attack_type,
-        flavour_id = attack.flavour_id,
+        flavour_id = flavour_id,
         weapon = weapon,
     }, defense)
 
@@ -637,7 +643,7 @@ function actions.monster_target(ctx, attacker, target)
                 statuses.frenzied(ctx, attacker),
         }
 
-        attack_flavours.apply(ctx, attack.flavour_id, flavour_hit)
+        attack_flavours.apply(ctx, flavour_id, flavour_hit)
 
         ctx:emit("combat", "The " .. attacker_def.name .. " hits the " ..
             target_def.name .. " for " .. dealt .. " damage.")

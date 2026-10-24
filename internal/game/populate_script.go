@@ -111,8 +111,14 @@ func (g *Game) populateStairDestination(
 		return nil
 	}
 
+	return g.populateNextFloorResult(staged)
+}
+
+// Stairs and forced falls both populate a new floor before the player
+// arrives. A bundle can add several maps, so install every entry once.
+func (g *Game) populateNextFloorResult(staged nextFloorResult) error {
 	// Install every new floor's actors before travel. The command's pending
-	// stair checkpoint covers the entire ECS population if one fails.
+	// travel checkpoint covers the entire ECS population if one fails.
 	ids := make([]int, 0, len(staged.entries))
 
 	for id := range staged.entries {

@@ -157,7 +157,10 @@ local function attempt(ctx, player, entity, contact)
     local worship = worship_state(ctx, player)
     local definition = orc_definition(ctx, entity)
 
+    -- A fire champion is bound to Ignis. Source Beogh conversion checks
+    -- the enchantment before even recording a one-time conversion attempt.
     if not worship or not definition or
+        ctx:has(entity, component.IGNIS_FIRE_CHAMPION) or
         targets.attitude(ctx, entity) == attitudes.FRIENDLY or
         not contact and not sees_player(ctx, player, entity) then
         return false

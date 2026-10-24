@@ -71,6 +71,21 @@ local function sight_and_desertion(ctx)
     harness.truthy(ctx:get(orc, component.BEOGH_ORC).gift)
 end
 
+-- Ignis's permanent fire enchantment binds an orc against Beogh's
+-- invitation before the one-time conversion-attempt flag is written.
+local function fire_champion_refuses_beogh(ctx)
+    local owner, player = follower_case(ctx, 70)
+    local orc = fixture.actor(ctx, monsters.MONS_ORC_KNIGHT,
+        71, 10)
+
+    ctx:add(orc, component.IGNIS_FIRE_CHAMPION, {
+        active = true,
+    })
+
+    harness.falsy(beogh.convert_on_turn(owner, player, orc))
+    harness.falsy(ctx:has(orc, component.BEOGH_ORC))
+end
+
 -- The source deathbed path rescues a visible orc killed by its potential
 -- Hill Orc messiah, restoring a fraction of maximum HP instead of a kill.
 local function deathbed(ctx)
@@ -189,6 +204,7 @@ end
 -- One test transaction can inspect all persisted component transitions;
 -- each helper uses independent actors so the prior case cannot steer RNG.
 function test.run(ctx)
+    fire_champion_refuses_beogh(ctx)
     sight_and_desertion(ctx)
     deathbed(ctx)
     contact_and_restore(ctx)

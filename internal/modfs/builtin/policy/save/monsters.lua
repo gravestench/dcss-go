@@ -585,6 +585,25 @@ function module.run(ctx, input)
         jiyva.validate(ctx, entity)
     end
 
+    -- Ignis's marker is a permanent monster enchantment. Reject orphaned
+    -- or player-attached records before the ordinary AI loop could skip
+    -- them and silently grant movement or attack effects to the wrong role.
+    for _, entity in ipairs(ctx:query({
+        component.IGNIS_FIRE_CHAMPION,
+    })) do
+        local marker = ctx:get(entity,
+            component.IGNIS_FIRE_CHAMPION)
+
+        if not marker.active or
+            ctx:has(entity, component.PLAYER) or
+            not ctx:has(entity, component.ACTOR) or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("invalid Ignis fire champion " .. ctx:id(entity))
+        end
+    end
+
     -- The fed/split marker must belong to a complete monster, even when a
     -- malformed save omits AI and would miss the monster loop below.
     for _, entity in ipairs(ctx:query({ component.JIYVA_GROWTH })) do
