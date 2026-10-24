@@ -101,10 +101,10 @@ function ranged.shot(ctx, shot, defense)
 end
 
 -- Poison Dart shares contact rules with launched missiles but rolls its own damage on hit.
-function ranged.poison_dart(ctx, hd, defense)
+function ranged.poison_dart(ctx, hd, defense, poisoned)
     local outcome = contact(ctx, hd, 0, 0, defense)
 
-    if outcome.kind ~= "hit" then
+    if outcome.kind ~= "hit" or poisoned == false then
         return outcome, 0
     end
 

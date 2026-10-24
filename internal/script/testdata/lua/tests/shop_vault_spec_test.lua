@@ -10,7 +10,7 @@ local stock_request = require("policy.shops.stock_request")
 local quality = require("constants.vault_item_quality")
 local armour_egos = require("constants.armour_egos")
 local weapon_brands = require("constants.weapon_brands")
-local missile_brands = require("constants.missile_brands")
+local missile_brands = require("constants.missile_egos")
 
 local test = {}
 

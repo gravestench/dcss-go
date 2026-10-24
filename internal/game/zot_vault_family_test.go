@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"os"
 	"reflect"
 	"slices"
 	"strings"
@@ -162,6 +163,13 @@ func TestZotGateHallAndOrbSurviveSave(t *testing.T) {
 	health.Current = 18
 
 	before := g.Snapshot()
+
+	if directory := os.Getenv("CRAWL_ZOT_SNAPSHOT_DIR"); directory != "" {
+		if err := writeZotRouteTextSnapshots(before, directory); err != nil {
+			t.Fatal(err)
+		}
+	}
+
 	restored, err := Restore(before)
 
 	if err != nil {

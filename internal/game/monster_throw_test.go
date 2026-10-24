@@ -3,6 +3,7 @@ package game
 import (
 	"crawl/internal/ecs"
 	"github.com/gravestench/akara"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -69,4 +70,57 @@ func TestKoboldStoneRunsThroughOrderedMonsterSystems(t *testing.T) {
 	}
 
 	t.Fatal("no seed selected an integrated kobold throw")
+}
+
+// A generated monster turn must resolve a branded throw through Lua, then
+// preserve that same equipped ego and turn state in the saved ECS snapshot.
+func TestBrandedMonsterThrowSurvivesSaveRestore(t *testing.T) {
+	for seed := uint64(1); seed <= 30; seed++ {
+		g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		monsterID := ratID(t, g)
+		missileID := giveTestMonsterItem(
+			t, g, monsterID, "MI_BOOMERANG", "missile", 4)
+		missile, _ := g.stores.Items.Get(missileID)
+
+		missile.Ego = "dispersal"
+
+		_, err = g.runAction(monsterID, ecs.Intent{}, 0, "monster")
+
+		if err != nil {
+			g.Close()
+			t.Fatal(err)
+		}
+
+		if g.turn.ResolvedIntent != ecs.IntentRanged {
+			g.Close()
+
+			continue
+		}
+
+		before := g.Snapshot()
+		restored, err := Restore(before)
+
+		if err != nil {
+			g.Close()
+			t.Fatal(err)
+		}
+
+		if !reflect.DeepEqual(before, restored.Snapshot()) {
+			restored.Close()
+			g.Close()
+			t.Fatal("branded monster throw changed across save restore")
+		}
+
+		restored.Close()
+		g.Close()
+
+		return
+	}
+
+	t.Fatal("no seed selected an integrated branded monster throw")
 }

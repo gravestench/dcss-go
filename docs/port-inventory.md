@@ -806,6 +806,13 @@ those layouts alongside its authored primary maps.
 Forest generation exposed a missing bow and crossbow missile policy;
 arrows and bolts now use one Lua launcher resolver with their catalog
 projectile values.
+Monster-thrown missiles now validate saved egos before spending a shot.
+Poisoned, Curare, flame, frost, blinding, frenzy, dispersal, silver, and
+Chaos effects run through focused Lua owners after contact. Exploding
+missiles use a radius-one fragment blast on contact, including a returned
+shot. Reflected hits reuse monster-facing missile effects. The Zot route
+integration test exports text maps and stair connections at
+`docs/level-snapshots/zot-route` when requested.
 The three Dis:1–6 divisions layouts now use their source weights and map
 geometry: recursive rooms, an irregular-room lattice, and overlapping boxes.
 Their procedural Lua hooks retain source statue style directives as typed

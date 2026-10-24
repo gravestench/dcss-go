@@ -1,7 +1,7 @@
 -- Chaotic ammunition uses the ranged source table after an ordinary hit.
 -- It must draw a brand by weight, independent of file discovery order.
 local chaos = require("policy.combat.chaos_missile")
-local chaos_player = require("policy.combat.chaos_missile_player")
+local missile_effects = require("policy.combat.monster_missile_egos")
 local melee_brands = require("policy.combat.brands")
 local component = require("constants.component")
 local catalog = require("policy.catalog")
@@ -64,7 +64,8 @@ function test.run(ctx)
     local shooter_definition = catalog.get("monsters",
         monsters.MONS_GOBLIN)
 
-    chaos_player.apply(battle, shooter, shooter_definition, stone, 5)
+    missile_effects.apply_player(battle, shooter,
+        shooter_definition, stone, missile_egos.CHAOS, 5)
     harness.equal(ctx:get(player, component.HEALTH).current, 19)
 
     -- Exercise the real monster action boundary with an upgraded stack.

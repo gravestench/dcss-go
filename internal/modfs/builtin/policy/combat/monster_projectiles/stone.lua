@@ -1,17 +1,15 @@
 local ranged = require("policy.combat.ranged")
 local monster_stats = require("policy.combat.monster_stats")
-local missile_egos = require("constants.missile_egos")
+local missile_egos = require("policy.combat.monster_missile_egos")
 
 local stone = {}
 stone.show_damage = true
 stone.reflectable = true
 
--- Example: stone.validate(item) with item.ego = 'poisoned' -> validation error
--- Thrown stones validate missile identity before the ranged action uses its combat profile.
-function stone.validate(item)
-    if item.ego ~= "" and item.ego ~= missile_egos.CHAOS then
-        error("unsupported monster stone ego " .. item.ego)
-    end
+-- Stones have no ordinary coating pool, but Chaos may give one a
+-- temporary brand on contact. The common validator knows that exception.
+function stone.validate(item, kind_id)
+    missile_egos.validate(kind_id, item)
 end
 
 -- Thrown stones use missile damage without launcher bonuses and remain eligible for reflection.

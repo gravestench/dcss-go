@@ -2,6 +2,8 @@
 
 local forms = {
     LICH = "lich",
+    APPENDAGE = "appendage",
+    BLADE_HANDS = "blade_hands",
     TREE = "tree",
     ICE_BEAST = "ice_beast",
     STATUE = "statue",

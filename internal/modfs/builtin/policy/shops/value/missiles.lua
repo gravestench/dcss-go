@@ -1,4 +1,4 @@
-local brands = require("constants.missile_brands")
+local brands = require("constants.missile_egos")
 
 local missiles = {}
 

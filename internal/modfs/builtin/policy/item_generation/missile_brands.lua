@@ -1,5 +1,5 @@
 local streams = require("constants.rng_streams")
-local brands = require("constants.missile_brands")
+local brands = require("constants.missile_egos")
 local ids = require("ids.items")
 local quality = require("constants.vault_item_quality")
 local source = require("policy.item_generation.source_roll")

@@ -3,7 +3,7 @@ local gear = require("policy.population.gear")
 local registry = require("policy.population.gear.registry")
 local items = require("ids.items")
 local monsters = require("ids.monsters")
-local missile_brands = require("constants.missile_brands")
+local missile_brands = require("constants.missile_egos")
 
 local handler = {}
 

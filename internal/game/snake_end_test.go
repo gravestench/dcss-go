@@ -53,9 +53,9 @@ func followBranch(t *testing.T, g *Game, parent *Level,
 			t.Fatalf("%s entrance is sealed: %+v", branchID, link)
 		}
 
-		if err := parent.MoveActor(g.player, link.X, link.Y); err != nil {
-			t.Fatal(err)
-		}
+		// A wandering monster can occupy the branch entrance during a
+		// structural travel test. Move it aside before taking the stair.
+		moveGeneratedPlayerToStair(t, g, parent, link)
 
 		result, err := g.Step(Command{Kind: CommandDownstairs})
 

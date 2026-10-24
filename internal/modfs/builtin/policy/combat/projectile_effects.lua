@@ -13,6 +13,7 @@ local monster_enchant = require("policy.combat.monster_enchant")
 local allegiance = require(
     "policy.magic.effects.statuses.monster_allegiance")
 local missile_egos = require("constants.missile_egos")
+local silver = require("policy.combat.monster_missile_egos.silver")
 local weapon_brands = require("constants.weapon_brands")
 local item_ids = require("ids.items")
 local skills = require("ids.skills")
@@ -85,6 +86,10 @@ function effects.missile(ctx, ego, missile, monster, defender, damage, remaining
         end
 
         return 0
+    end
+
+    if ego == missile_egos.SILVER then
+        return silver.monster_bonus(ctx, monster, defender, damage)
     end
 
     if ego == missile_egos.FLAME or ego == missile_egos.FROST then

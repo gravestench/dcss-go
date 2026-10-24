@@ -17,7 +17,11 @@ local artefact_ids = require("ids.artefact_properties")
 local monster_flags = require("constants.monster_flags")
 local missile_egos = require("constants.missile_egos")
 local weapon_brands = require("constants.weapon_brands")
-local chaos_missile = require("policy.combat.chaos_missile_player")
+local item_ids = require("ids.items")
+local ego_effects = require("policy.combat.monster_missile_egos")
+local ego_poison = require("policy.combat.monster_missile_egos.poison")
+local exploding = require(
+    "policy.combat.monster_missile_egos.exploding")
 local projectile_effects = require("policy.combat.projectile_effects")
 
 local actions = {}
@@ -181,6 +185,8 @@ end
 -- Returned missiles can poison the shooter only if the reflected target survives.
 local function return_missile(ctx, attacker, definition, kind, effect,
     item, name, outcome)
+    local ego = item.ego or ""
+
     if outcome.kind ~= "block" or not effect.reflectable or
         not reflection.active(ctx, ctx:player()) then
         return
@@ -196,25 +202,39 @@ local function return_missile(ctx, attacker, definition, kind, effect,
     reflection.begin(ctx, name)
 
     local rebound, poison = effect.resolve(ctx, attacker, definition,
-        defense, kind)
+        defense, kind, item)
     local remaining = reflection.return_outcome(ctx, ctx:player(), attacker,
         definition, name, rebound)
+
+    if ego == missile_egos.EXPLODING and
+        (rebound.kind == "hit" or rebound.kind == "block") then
+        local position = ctx:get(attacker, "core.position")
+
+        exploding.impact(ctx, ctx:player(), position.level_id,
+            position.x, position.y)
+    end
 
     if remaining and remaining.current > 0 and (poison or 0) > 0 then
         monster_poison.apply(ctx, attacker, definition, poison,
             ctx:player(), true)
     end
 
+    local dart_poison = kind.id == item_ids.MI_DART and
+        ego == missile_egos.POISONED
+
     if remaining and remaining.current > 0 and
-        item.ego == missile_egos.CHAOS then
-        -- Reflection changes the defender, so run the same monster-facing
-        -- ego path as a player-thrown chaos stone after the returned hit.
-        local extra = projectile_effects.missile(ctx, item.ego,
+        ego ~= "" and not dart_poison and
+        ego ~= missile_egos.EXPLODING then
+        -- Reflection changes the defender. Reuse the monster-facing ego
+        -- owner that handles player-thrown ammo after its landed hit.
+        local extra = projectile_effects.missile(ctx, ego,
             kind, attacker, definition, rebound.damage,
             remaining.current)
 
         reflection.extra_damage(ctx, ctx:player(), attacker, extra)
     end
+
+    return true
 end
 
 -- Validate ammo against the equipped launcher before resolving damage and after-death brand effects.
@@ -260,15 +280,16 @@ end
 local function missile_attack(ctx, attacker, missile, definition, defense, health)
     local kind = missile.definition
     local item = missile.item
+    local ego = item.ego or ""
 
     if item.quantity <= 0 or kind.class ~= classes.MISSILES or not kind.missile then
         error("monster has no matching missile stack")
     end
 
     local effect = projectiles.effect(kind.id)
-    effect.validate(item)
+    effect.validate(item, kind.id)
     local outcome, poison, name = effect.resolve(ctx, attacker,
-        definition, defense, kind)
+        definition, defense, kind, item)
 
     health = apply(ctx, outcome, health, defense, attacker)
 
@@ -276,19 +297,28 @@ local function missile_attack(ctx, attacker, missile, definition, defense, healt
         items.phrase(name, 1) .. ".")
     ctx:emit("combat", hit_message(name, outcome, effect.show_damage))
 
-    return_missile(ctx, attacker, definition, kind, effect,
+    local reflected = return_missile(ctx, attacker, definition, kind, effect,
         item, name, outcome)
 
-    if poison > 0 then
-        brands.poison(ctx, poison, definition.id)
+    if ego == missile_egos.EXPLODING and
+        (outcome.kind == "hit" or
+            outcome.kind == "block" and not reflected) then
+        local position = ctx:get(ctx:player(), "core.position")
+
+        exploding.impact(ctx, attacker, position.level_id,
+            position.x, position.y)
     end
 
-    -- A chaotic stack retains its ego; only this landed shot draws a
-    -- temporary brand. The result uses ordinary player status owners.
+    if poison > 0 then
+        ego_poison.deliver(ctx, poison, definition.id)
+    end
+
+    -- The saved ego acts only after base damage leaves a living target.
+    -- Chaos selects a temporary effect without changing the item state.
     if outcome.kind == "hit" and health.current > 0 and
-        item.ego == missile_egos.CHAOS then
-        chaos_missile.apply(ctx, attacker, definition,
-            kind, outcome.damage)
+        ego ~= "" and ego ~= missile_egos.EXPLODING then
+        ego_effects.apply_player(ctx, attacker, definition,
+            kind, ego, outcome.damage)
     end
 
     if outcome.kind == "hit" then

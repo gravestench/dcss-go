@@ -9,7 +9,7 @@ local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local armour_egos = require("constants.armour_egos")
 local weapon_brands = require("constants.weapon_brands")
-local missile_brands = require("constants.missile_brands")
+local missile_brands = require("constants.missile_egos")
 
 local stock_request = {}
 

@@ -9,7 +9,7 @@ local function distance(a_x, a_y, b_x, b_y)
 end
 
 -- Bound the random search and skip duplicate offsets before trying legal landing cells.
-local function nearby_space(ctx, position)
+local function nearby_space(ctx, position, eligible)
     local visited = {}
 
     -- teleport.cc samples a 13-by-13 square at most 150 times.
@@ -27,7 +27,8 @@ local function nearby_space(ctx, position)
             if distance(position.x, position.y, x, y) > 1 and
                 ctx:walkable(position.level_id, x, y) and
                 not ctx:actor_at(position.level_id, x, y) and
-                ctx:visible(position.level_id, position.x, position.y, 7, x, y) then
+                ctx:visible(position.level_id, position.x, position.y, 7, x, y) and
+                (not eligible or eligible(x, y)) then
                 return {
                     x = x,
                     y = y,

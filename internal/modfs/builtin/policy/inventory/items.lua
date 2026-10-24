@@ -1,6 +1,6 @@
 local catalog = require("policy.catalog")
 local armour_egos = require("constants.armour_egos")
-local missile_brands = require("constants.missile_brands")
+local missile_brands = require("constants.missile_egos")
 local identification = require("policy.items.identification")
 local weapon_brands = require("policy.inventory.weapon_brand_compatibility")
 local classes = require("ids.object_classes")

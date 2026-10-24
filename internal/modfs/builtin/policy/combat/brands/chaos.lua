@@ -1,7 +1,7 @@
 -- A monster's Chaos weapon redraws a melee brand on every landed blow.
 -- This is attack.cc's weapon table; Chaos itself enters the smaller actor
 -- effect table, shared with a chaotic missile's self-selected result.
-local player_effects = require("policy.combat.chaos_missile_player")
+local player_effects = require("policy.combat.monster_missile_egos.chaos")
 local streams = require("constants.rng_streams")
 local weapon_brands = require("constants.weapon_brands")
 
@@ -46,8 +46,8 @@ function brand.apply(ctx, hit, brands)
 
     if chosen == weapon_brands.CHAOS then
         if hit.health.current > 0 then
-            player_effects.inner_effect(ctx, hit.attacker,
-                hit.defender, hit.damage_done)
+            player_effects.apply(ctx, hit.attacker,
+                nil, nil, hit.damage_done)
         end
 
         return

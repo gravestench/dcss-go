@@ -81,7 +81,7 @@ function ranged.choose_throw(ctx, monster, position, player)
         error("monster has invalid ranged missile " .. kind.id)
     end
 
-    projectiles.effect(kind.id).validate(item)
+    projectiles.effect(kind.id).validate(item, kind.id)
 
     -- Ordinary monster shots consume no stack item; nets are a source exception.
     if ctx:random("ai", 3) ~= 0 or not clear_distant_shot(ctx, position, player) then

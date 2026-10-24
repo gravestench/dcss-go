@@ -10,6 +10,10 @@ local egos = {
     FRENZY = "frenzy",
     FROST = "frost",
     POISONED = "poisoned",
+    SILVER = "silver",
+    -- DES calls the two dart coatings by name; saves use their effect IDs.
+    ATROPA = "blinding",
+    DATURA = "frenzy",
 }
 
 return egos
