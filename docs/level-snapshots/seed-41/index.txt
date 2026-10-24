@@ -11,119 +11,129 @@ Dungeon:1  D-01.txt  vault dpeg_arrival_three_same_balls
   (37,46) < -> outside the dungeon
   (34,56) < -> outside the dungeon
 
-Dungeon:2  D-02.txt  vault minmay_strange_pillars
-  (29,25) > -> Dungeon:3 (39,38)
+Dungeon:2  D-02.txt  vault chequers_serial_rivers_small_a
+  (29,25) > -> Dungeon:3 (29,13)
   (35,27) < -> Dungeon:1 (67,19)
   (64,51) < -> Dungeon:1 (11,29)
-  (68,52) > -> Dungeon:3 (20,45)
-  (51,54) > -> Dungeon:3 (42,48)
+  (68,52) > -> Dungeon:3 (19,32)
+  (51,54) > -> Dungeon:3 (49,32)
   (55,62) < -> Dungeon:1 (50,36)
 
-Dungeon:3  D-03.txt  vault serial_shops
-  (41,28) > -> Dungeon:4 (46,17)
-  (39,38) < -> Dungeon:2 (29,25)
-  (20,45) < -> Dungeon:2 (68,52)
-  (11,48) > -> Dungeon:4 (42,26)
-  (42,48) < -> Dungeon:2 (51,54)
-  (41,54) > -> Dungeon:4 (14,45)
+Dungeon:3  D-03.txt
+  (29,13) < -> Dungeon:2 (29,25)
+  (38,20) > -> Dungeon:4 (67,27)
+  (19,32) < -> Dungeon:2 (68,52)
+  (49,32) < -> Dungeon:2 (51,54)
+  (24,34) > -> Dungeon:4 (31,42)
+  (58,44) > -> Dungeon:4 (18,48)
 
-Dungeon:4  D-04.txt  vault serial_undead
-  (46,17) < -> Dungeon:3 (41,28)
-  (42,26) < -> Dungeon:3 (11,48)
-  (35,34) > -> Dungeon:5 (59,29)
-  (44,40) > -> Dungeon:5 (17,35)
-  (14,45) < -> Dungeon:3 (41,54)
-  (20,46) > -> Dungeon:5 (19,45)
+Dungeon:4  D-04.txt
+  (67,27) < -> Dungeon:3 (38,20)
+  (31,42) < -> Dungeon:3 (24,34)
+  (54,44) > -> Dungeon:5 (52,10)
+  (18,48) < -> Dungeon:3 (58,44)
+  (11,49) > -> Dungeon:5 (45,39)
+  (11,50) > -> Dungeon:5 (36,43)
 
-Dungeon:5  D-05.txt
-  (15,12) > -> Dungeon:6 (41,41)
-  (59,29) < -> Dungeon:4 (35,34)
-  (52,31) > -> Dungeon:6 (63,45)
-  (51,33) > -> Dungeon:6 (12,47)
-  (17,35) < -> Dungeon:4 (44,40)
-  (19,45) < -> Dungeon:4 (20,46)
+Dungeon:5  D-05.txt  vault gup_sewer_entry_pipe
+  (52,10) < -> Dungeon:4 (54,44)
+  (68,11) > -> Dungeon:6 (19,5)
+  (45,39) < -> Dungeon:4 (11,49)
+  (54,42) > -> Dungeon:6 (7,15)
+  (36,43) < -> Dungeon:4 (11,50)
+  (20,50) > -> Dungeon:6 (20,48)
 
-Dungeon:6  D-06.txt  vault chequers_serial_rivers_large_a
-  (33,32) > -> TEMPLE (level ID 101) (pending)
-  (61,36) > -> Dungeon:7 (52,31)
-  (41,41) < -> Dungeon:5 (15,12)
-  (63,45) < -> Dungeon:5 (52,31)
-  (12,47) < -> Dungeon:5 (51,33)
-  (45,52) > -> Dungeon:7 (67,31)
-  (25,54) > -> Dungeon:7 (38,36)
+Dungeon:6  D-06.txt  vault serial_shops
+  (19,5) < -> Dungeon:5 (68,11)
+  (31,10) > -> TEMPLE (level ID 101) (pending)
+  (7,15) < -> Dungeon:5 (54,42)
+  (24,15) > -> Dungeon:7 (22,12)
+  (20,26) > -> Dungeon:7 (23,12)
+  (47,32) > -> Dungeon:7 (45,32)
+  (32,45) > -> Dungeon:7 (60,54)
+  (20,48) < -> Dungeon:5 (20,50)
 
 Dungeon:7  D-07.txt
-  (46,17) > -> Dungeon:8 (38,14)
-  (29,18) > -> Dungeon:8 (38,24)
-  (52,31) < -> Dungeon:6 (61,36)
-  (67,31) < -> Dungeon:6 (45,52)
-  (38,36) < -> Dungeon:6 (25,54)
-  (33,61) > -> Dungeon:8 (25,43)
+  (10,11) > -> Dungeon:8 (45,16)
+  (22,12) < -> Dungeon:6 (24,15)
+  (23,12) < -> Dungeon:6 (20,26)
+  (65,17) > -> Dungeon:8 (33,19)
+  (45,32) < -> Dungeon:6 (47,32)
+  (60,42) > -> Dungeon:8 (68,51)
+  (60,54) < -> Dungeon:6 (32,45)
 
-Dungeon:8  D-08.txt  vault nicolae_inconvenience_store
-  (38,14) < -> Dungeon:7 (46,17)
-  (33,21) > -> Dungeon:9 (63,17)
-  (38,24) < -> Dungeon:7 (29,18)
-  (25,43) < -> Dungeon:7 (33,61)
-  (72,45) > -> Dungeon:9 (49,31)
-  (51,46) > -> Dungeon:9 (68,48)
+Dungeon:8  D-08.txt  vault serial_shops
+  (23,3) > -> Dungeon:9 (60,22)
+  (45,16) < -> Dungeon:7 (10,11)
+  (33,19) < -> Dungeon:7 (65,17)
+  (68,51) < -> Dungeon:7 (60,42)
+  (51,63) > -> Dungeon:9 (27,28)
+  (25,64) > -> Dungeon:9 (41,29)
 
-Dungeon:9  D-09.txt  vault guppyfry_shop_venom
-  (52,17) > -> Dungeon:10 (27,22)
-  (63,17) < -> Dungeon:8 (33,21)
-  (22,24) > -> Dungeon:10 (33,31)
-  (49,31) < -> Dungeon:8 (72,45)
-  (46,48) > -> Dungeon:10 (28,39)
-  (68,48) < -> Dungeon:8 (51,46)
+Dungeon:9  D-09.txt  vault nicolae_shop_vocational
+  (17,15) > -> Dungeon:10 (33,24)
+  (62,21) > -> Dungeon:10 (30,34)
+  (60,22) < -> Dungeon:8 (23,3)
+  (27,28) < -> Dungeon:8 (51,63)
+  (41,29) < -> Dungeon:8 (25,64)
+  (44,50) > -> Dungeon:10 (29,53)
 
-Dungeon:10  D-10.txt
-  (32,9) > -> LAIR (level ID 501) (pending)
-  (27,22) < -> Dungeon:9 (52,17)
-  (33,31) < -> Dungeon:9 (22,24)
-  (28,39) < -> Dungeon:9 (46,48)
-  (44,41) > -> Dungeon:11 (55,3)
-  (22,49) > -> Dungeon:11 (41,11)
-  (17,55) > -> Dungeon:11 (61,15)
+Dungeon:10  D-10.txt  vault serial_shops
+  (33,24) < -> Dungeon:9 (17,15)
+  (30,34) < -> Dungeon:9 (62,21)
+  (53,34) > -> LAIR (level ID 501) (pending)
+  (58,47) > -> Dungeon:11 (38,15)
+  (61,51) > -> Dungeon:11 (6,20)
+  (29,53) < -> Dungeon:9 (44,50)
+  (39,59) > -> Dungeon:11 (20,20)
 
-Dungeon:11  D-11.txt  vault minmay_shop_grid_forest
-  (55,3) < -> Dungeon:10 (44,41)
-  (41,11) < -> Dungeon:10 (22,49)
-  (61,15) < -> Dungeon:10 (17,55)
-  (64,17) > -> Dungeon:12 (67,18)
-  (16,22) > -> Dungeon:12 (69,24)
-  (63,35) > -> Dungeon:12 (69,26)
-  (21,56) > -> ORC (level ID 201) (pending)
+Dungeon:11  D-11.txt  vault serial_bayou_ford_a
+  (54,12) > -> Dungeon:12 (59,17)
+  (55,12) > -> Dungeon:12 (10,28)
+  (38,15) < -> Dungeon:10 (58,47)
+  (6,20) < -> Dungeon:10 (61,51)
+  (20,20) < -> Dungeon:10 (39,59)
+  (23,22) > -> Dungeon:12 (69,44)
+  (70,45) > -> ORC (level ID 201) (pending)
+  (50,54) > -> Dungeon:12 (11,53)
 
-Dungeon:12  D-12.txt  vault chequers_serial_rivers_large_b
-  (63,10) > -> Dungeon:13 (50,16)
-  (67,18) < -> Dungeon:11 (64,17)
-  (69,24) < -> Dungeon:11 (16,22)
-  (69,26) < -> Dungeon:11 (63,35)
-  (17,38) > -> Dungeon:13 (17,19)
-  (29,41) > -> Dungeon:13 (17,20)
+Dungeon:12  D-12.txt  vault serial_shops
+  (59,17) < -> Dungeon:11 (54,12)
+  (10,28) < -> Dungeon:11 (55,12)
+  (26,28) > -> Dungeon:13 (12,9)
+  (6,32) > -> Dungeon:13 (51,23)
+  (23,41) > -> Dungeon:13 (51,37)
+  (69,44) < -> Dungeon:11 (23,22)
+  (64,51) > -> Dungeon:13 (11,56)
+  (11,53) < -> Dungeon:11 (50,54)
 
-Dungeon:13  D-13.txt  vault nicolae_alphabet_shops
-  (25,14) > -> Dungeon:14 (28,22)
-  (50,16) < -> Dungeon:12 (63,10)
-  (17,19) < -> Dungeon:12 (17,38)
-  (17,20) < -> Dungeon:12 (29,41)
-  (35,31) > -> Dungeon:14 (3,32)
-  (36,53) > -> Dungeon:14 (24,38)
+Dungeon:13  D-13.txt  vault chequers_serial_rivers_micro_e
+  (12,5) > -> Dungeon:14 (59,31)
+  (12,9) < -> Dungeon:12 (26,28)
+  (25,10) > -> Dungeon:14 (43,32)
+  (51,23) < -> Dungeon:12 (6,32)
+  (51,37) < -> Dungeon:12 (23,41)
+  (15,49) > -> Dungeon:14 (38,43)
+  (40,53) > -> Dungeon:14 (58,48)
+  (11,56) < -> Dungeon:12 (64,51)
 
-Dungeon:14  D-14.txt  vault dungeon_decor
-  (62,19) > -> Dungeon:15 (7,24)
-  (13,22) > -> Dungeon:15 (9,33)
-  (28,22) < -> Dungeon:13 (25,14)
-  (33,22) > -> VAULTS (level ID 1101) (pending)
-  (3,32) < -> Dungeon:13 (35,31)
-  (24,38) < -> Dungeon:13 (36,53)
-  (55,43) > -> Dungeon:15 (17,38)
+Dungeon:14  D-14.txt  vault gauntlet_entry_generic
+  (44,28) > -> Dungeon:15 (59,6)
+  (46,30) > -> Dungeon:15 (59,7)
+  (59,31) < -> Dungeon:13 (12,5)
+  (43,32) < -> Dungeon:13 (25,10)
+  (48,32) > -> VAULTS (level ID 1101) (pending)
+  (42,33) > -> Dungeon:15 (31,36)
+  (63,35) > -> Dungeon:15 (58,39)
+  (38,43) < -> Dungeon:13 (15,49)
+  (58,48) < -> Dungeon:13 (40,53)
 
-Dungeon:15  D-15.txt  vault serial_glass
-  (7,24) < -> Dungeon:14 (62,19)
-  (57,29) > -> unavailable: The Depths are unavailable in the Go port.
-  (30,31) > -> DEPTHS (level ID 3401) (pending)
-  (9,33) < -> Dungeon:14 (13,22)
-  (17,38) < -> Dungeon:14 (55,43)
-  (9,47) > -> unavailable: The Depths are unavailable in the Go port.
-  (53,56) > -> unavailable: The Depths are unavailable in the Go port.
+Dungeon:15  D-15.txt  vault dungeon_decor
+  (59,6) < -> Dungeon:14 (44,28)
+  (59,7) < -> Dungeon:14 (46,30)
+  (65,7) > -> unavailable: The Depths are unavailable in the Go port.
+  (41,17) > -> unavailable: The Depths are unavailable in the Go port.
+  (31,36) < -> Dungeon:14 (42,33)
+  (58,39) < -> Dungeon:14 (63,35)
+  (21,41) > -> unavailable: The Depths are unavailable in the Go port.
+  (19,57) > -> DEPTHS (level ID 3401) (pending)
