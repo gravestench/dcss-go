@@ -23,8 +23,10 @@ local constriction = require("policy.combat.constriction")
 local engulf = require("policy.combat.engulf")
 local statuses = require("policy.magic.effects.statuses.player")
 local kill_effects = require("policy.combat.player_kill_effects")
+local kill_recovery = require("policy.religion.kill_recovery")
 local conduct = require("policy.religion.conduct")
 local monster_facts = require("policy.religion.conduct.monster_facts")
+local monster_traits = require("policy.religion.conduct.monster_traits")
 local flay = require("policy.combat.monster_flay")
 local component = require("constants.component")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
@@ -127,16 +129,19 @@ function system.update(ctx)
                 local wretch_expired = wretch and
                     ctx:get(entity,
                         component.RELIGION_KIKU_WRETCH).remaining_aut == 0
+                local rewarded_xp = 0
 
                 -- Only a credited, nonsummoned kill grants player XP and advances XP-driven recovery clocks.
                 if kills[ctx:id(entity)] and not summoned and
                     not wretch and
+                    death.former_neutral_rewardable(ctx, entity) and
                     not ctx:has(entity, component.ELYVILON_PACIFIED) and
                     not ctx:has(entity, component.PIKEL_BAND) and
                     not (ctx:get(entity, component.BEOGH_ORC) or {}).gift then
                     local xp = death.experience(definition, health.max)
                     local player = ctx:player()
-                    local player_pos = ctx:get(player, "core.position")
+
+                    rewarded_xp = xp
                     experience_award.monster(ctx, player, xp)
                     record_extra_reward(ctx, player, entity,
                         component.CHAOS_CLONE,
@@ -144,13 +149,6 @@ function system.update(ctx)
                     record_extra_reward(ctx, player, entity,
                         doom_howl.ARRIVAL, doom_howl.REWARDS, xp)
 
-                    kill_effects.run(ctx, player, definition, xp)
-                    local adjacent = player_pos.level_id == position.level_id and
-                        math.abs(player_pos.x - position.x) <= 1 and
-                        math.abs(player_pos.y - position.y) <= 1
-
-                    statuses.wereblood_kill(ctx, player, xp > 0,
-                        adjacent, false)
                 end
 
                 -- Source mon-death.cc resolves every kill conduct while the
@@ -162,6 +160,33 @@ function system.update(ctx)
                         entity, definition)) do
                         conduct.record(ctx, event)
                     end
+                end
+
+                -- Source kill conduct changes piety before mutation and
+                -- divine aftermath roll. The victim still exists here so
+                -- both policies can read its live traits and original HD.
+                if rewarded_xp > 0 then
+                    local player = ctx:player()
+                    local player_pos = ctx:get(player, component.POSITION)
+                    local adjacent =
+                        player_pos.level_id == position.level_id and
+                        math.abs(player_pos.x - position.x) <= 1 and
+                        math.abs(player_pos.y - position.y) <= 1
+
+                    local health_before =
+                        ctx:get(player, component.HEALTH).current
+
+                    kill_effects.run(ctx, player, definition, rewarded_xp)
+
+                    -- Devour may have already announced HP healing. The
+                    -- source combines it with divine HP into one message.
+                    local mutation_healed =
+                        ctx:get(player, component.HEALTH).current > health_before
+
+                    kill_recovery.on_kill(ctx, player, entity,
+                        definition, rewarded_xp, mutation_healed)
+                    statuses.wereblood_kill(ctx, player, true,
+                        adjacent, monster_traits.object(definition))
                 end
 
                 -- Release trapping links before inventory drops and corpse hooks inspect the dying actor.

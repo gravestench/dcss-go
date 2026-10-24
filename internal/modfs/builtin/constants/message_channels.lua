@@ -14,6 +14,8 @@ local channels = {
     WARNING = "warning",
     STAIRS = "stairs",
     HELL_EFFECT = "hell_effect",
+    HEALTH = "health",
+    MAGIC = "magic",
 }
 
 return channels

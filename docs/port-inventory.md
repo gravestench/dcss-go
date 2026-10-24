@@ -481,6 +481,14 @@ A lingering god spell now retains an inert Lua ECS source
 for burn, cloud, terrain, and summon attribution through save and restore.
 Other god abilities, remaining passives, and ordinary timed wrath remain
 separate religion slices.
+Credited XP kills now run conduct before mutation and divine recovery.
+Makhleb restores HP, Vehumet restores MP, and The Shining One restores both
+against evil victims after the source piety gate. Conjured and source object
+bodies cannot trigger the recovery. Each god definition names its own Lua
+formula module, so a sparse mod can replace one formula without editing the
+death system. Death's Door still blocks HP recovery but permits MP recovery.
+Former neutral kills remain unrewarded unless frenzy restores source XP
+eligibility. Devour and divine HP gains from one death announce healing once.
 Okawaru's Heroism, Finesse, and Duel are now playable Lua powers with the
 source rank, failure, MP, and piety gates. Heroism projects mundane skill
 levels without changing training; Finesse changes attack delay and is

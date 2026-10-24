@@ -14,6 +14,7 @@ local definition = {
     piety_mode = modes.ORDINARY,
     piety_decay_chance = 17,
     conduct_module = "policy.religion.conduct.makhleb",
+    kill_recovery_module = "policy.religion.kill_recovery.makhleb",
 }
 
 register.definition(categories.GODS, definition)

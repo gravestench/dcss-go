@@ -2499,6 +2499,20 @@ It runs for a credited, XP-eligible monster death and receives the player,
 monster definition, and effective mutation level. Keep any lasting buff in
 a Lua ECS component so save/restore preserves it.
 
+Divine kill recovery is a separate reaction after death conduct and mutation
+kill effects. A god definition may set `kill_recovery_module` to a Lua path,
+such as `policy.religion.kill_recovery.makhleb`. That module returns a local
+table with `amounts(ctx, victim, definition)`, which returns the HP and MP
+amounts to award. The shared `policy.religion.kill_recovery` owner checks
+player credit, XP, object status, penance, and piety, then clamps those
+amounts to the saved pools. The victim entity is still alive for policy
+queries at that point. For example, a modded patron that grants two MP on
+eligible kills can return `0, 2`; it needs no change to the death system.
+Keep its formula in a separate policy file so another mod layer can replace
+that file alone. The death owner suppresses XP and recovery for formerly
+neutral victims unless they are frenzied; if Devour on Kill and a god both
+restore HP on one death, the player sees one health message.
+
 The effective tree is sorted by path. A file at the same relative path as a
 bundled file replaces it before Lua starts. A new path adds a definition.
 Registering the same category and ID from two effective paths fails at

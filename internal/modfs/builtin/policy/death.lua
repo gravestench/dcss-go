@@ -9,8 +9,17 @@ local origin_policy = require("policy.population.origin")
 local item_ids = require("ids.items")
 local streams = require("constants.rng_streams")
 local draconian_base = require("policy.monsters.draconian_base")
+local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
 
 local death = {}
+
+-- Fedhas and Jiyva can leave a former neutral follower hostile. The
+-- source withholds XP after that change unless frenzy has taken over.
+-- Keep conduct credit and death rewards on the same live eligibility rule.
+function death.former_neutral_rewardable(ctx, monster)
+    return not ctx:has(monster, component.RELIGION_WAS_NEUTRAL) or
+        allegiance.frenzied(ctx, monster)
+end
 
 -- Source monster flags gate XP and corpse handling without assuming every definition has flags.
 local function has_flag(definition, wanted)

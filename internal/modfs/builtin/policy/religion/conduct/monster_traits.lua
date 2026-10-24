@@ -85,6 +85,24 @@ local priest_patron = {
     [monsters.MONS_MENNAS] = gods.ZIN,
 }
 
+local object_kinds = {
+    [monsters.MONS_TWISTER] = true,
+    [monsters.MONS_BALLISTOMYCETE_SPORE] = true,
+    [monsters.MONS_LURKING_HORROR] = true,
+    [monsters.MONS_DANCING_WEAPON] = true,
+    [monsters.MONS_LIGHTNING_SPIRE] = true,
+    [monsters.MONS_CREEPING_INFERNO] = true,
+}
+
+-- Source mons_is_object excludes conjured bodies and these exceptional
+-- constructs from kill-based divine recovery, even if a mod gives XP.
+function traits.object(definition)
+    return object_kinds[definition.id] == true or
+        contains(definition.flags, flags.CONJURED) or
+        contains(definition.flags, flags.PROJECTILE) or
+        contains(definition.flags, flags.AVATAR)
+end
+
 -- Source mon-place.cc gives priests either an explicit authored patron,
 -- a species default, or the nameless god. This is only used when the
 -- resolved spellbook actually marks the actor as a priest.

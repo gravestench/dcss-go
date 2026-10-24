@@ -53,6 +53,13 @@ local function has_spell_flag(definition, wanted)
     return false
 end
 
+-- TSO's kill recovery and first-sight conduct must agree about whether
+-- a living priest or spellcaster is evil. Keep the spell-slot lookup here.
+function facts.evil(ctx, monster, definition)
+    return traits.evil(ctx, monster, definition,
+        has_spell_flag(definition, spell_flags.PRIEST))
+end
+
 -- A source event captures live victim facts while its entity still exists.
 -- Piety-gain eligibility is a separate flag because a prohibited kill can
 -- still make a god angry even when it awards no XP.
@@ -120,8 +127,7 @@ function facts.sight(ctx, monster, definition)
     local observed = event(ctx, kinds.SEE_MONSTER, monster, definition,
         true, side)
 
-    observed.evil = traits.evil(ctx, monster, definition,
-        has_spell_flag(definition, spell_flags.PRIEST))
+    observed.evil = facts.evil(ctx, monster, definition)
 
     return observed
 end
@@ -177,6 +183,7 @@ function facts.death(ctx, monster, definition)
     local experience = death.experience(definition, health.max)
     local credited = side == attitudes.HOSTILE and
         not ctx:has(monster, component.SUMMON) and
+        death.former_neutral_rewardable(ctx, monster) and
         not contains(definition.flags, flags.NO_EXP_GAIN)
     local events = {}
 
@@ -193,8 +200,7 @@ function facts.death(ctx, monster, definition)
         contains(definition.holiness, holiness.PLANT) then
         add(kinds.KILL_LIVING)
 
-        if traits.evil(ctx, monster, definition,
-            has_spell_flag(definition, spell_flags.PRIEST)) then
+        if facts.evil(ctx, monster, definition) then
             add(kinds.KILL_NATURAL_EVIL)
         end
     elseif contains(definition.holiness, holiness.UNDEAD) then
