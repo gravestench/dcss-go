@@ -147,7 +147,8 @@ local function sleep_monster(ctx, caster, target, profile)
     local power = beam_power.caster_power(ctx, caster, profile)
     local enchantment = calculators.enchantment_power(profile, power)
 
-    if will.resists(ctx, definition, enchantment, target) then
+    if will.resists(ctx, definition, enchantment,
+        target, nil, caster) then
         return
     end
 

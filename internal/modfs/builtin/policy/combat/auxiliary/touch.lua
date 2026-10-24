@@ -4,6 +4,7 @@ local levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
 local roll = require("policy.combat.roll")
 local lowered_will = require("policy.magic.effects.statuses.lowered_will")
+local willpower = require("constants.willpower")
 
 local touch = {
     id = attacks.TOUCH.id,
@@ -36,7 +37,7 @@ end
 -- Only a damaging rank-three touch can lower a nonimmune monster's will.
 function touch.on_hit(ctx, target, definition, result)
     if result.damage <= 0 or level(ctx) < 3 or
-        (definition.willpower or 0) >= 5000 then
+        (definition.willpower or 0) >= willpower.INVULNERABLE then
         return 0
     end
 

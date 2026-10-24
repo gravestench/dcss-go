@@ -17,9 +17,9 @@ local artefacts = require("policy.item_generation.artefacts.properties")
 local artefact_properties = require("ids.artefact_properties")
 local hex_status = require("policy.combat.monster_hexes.status")
 local trog_hand = require("policy.religion.trog.hand")
+local willpower_units = require("constants.willpower")
 
 local resistance = {}
-local willpower_pip = 40
 
 local form_poison = {
     spider = -1,
@@ -151,7 +151,8 @@ function resistance.willpower(ctx, player)
 
     end
 
-    local value = progress.level * species.mr + pips * willpower_pip
+    local value = progress.level * species.mr +
+        pips * willpower_units.PIP
     local status = ctx:get(player, component.PLAYER_STATUS)
 
     if status and status.lowered_will_aut > 0 then

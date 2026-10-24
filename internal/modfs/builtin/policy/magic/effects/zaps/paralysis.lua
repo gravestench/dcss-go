@@ -111,7 +111,8 @@ function paralysis.resolve(ctx, player, intent, spell, power)
     -- zap-data.h:_mon_hex_zap gives player paralysis raw capped power.
     local enchant_power = math.min(power, 100)
 
-    if will.resists(ctx, definition, enchant_power, target) then
+    if will.resists(ctx, definition, enchant_power,
+        target, nil, player) then
         ctx:emit("spell", "The " .. definition.name .. " resists paralysis.")
         return
     end

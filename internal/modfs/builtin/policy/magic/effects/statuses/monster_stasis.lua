@@ -184,7 +184,8 @@ function stasis.cast_hibernation(ctx, player, intent, spell, power)
         return
     end
 
-    if will.resists(ctx, definition, math.min(power, 50), target) then
+    if will.resists(ctx, definition, math.min(power, 50),
+        target, nil, player) then
         ctx:emit("spell", "The " .. definition.name .. " resists sleep.")
         return
     end
@@ -213,7 +214,8 @@ function stasis.cast_petrify(ctx, player, intent, spell, power)
         return
     end
 
-    if will.resists(ctx, definition, power, target) then
+    if will.resists(ctx, definition, power,
+        target, nil, player) then
         ctx:emit("spell", "The " .. definition.name .. " resists petrification.")
         return
     end

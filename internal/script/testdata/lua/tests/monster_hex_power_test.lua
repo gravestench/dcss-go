@@ -39,6 +39,11 @@ function test.run()
         return false
     end
 
+    -- This isolated spell-power fixture has no equipped item entities.
+    function ctx:query()
+        return {}
+    end
+
     -- Choose the low roll for the source power-factor boundary.
     function ctx:random(_, bound)
         return 0

@@ -409,7 +409,7 @@ function statuses.confusing_touch_contact(ctx, player, target, definition)
     end
 
     local affected, immune = confusing_touch.apply(ctx, target, definition,
-        value.confusing_touch_power)
+        value.confusing_touch_power, player)
 
     if affected then
         value.confusing_touch_aut = 0

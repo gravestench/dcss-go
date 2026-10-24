@@ -344,10 +344,11 @@ function test.run(ctx)
         return 50
     end
 
-    local resistant = {
-        name = rat_definition.name,
-        willpower = 100,
-    }
+    -- Override only willpower; live saves still need the catalog's HD,
+    -- identity, flags, and item-use fields for the target actor.
+    local resistant = setmetatable({ willpower = 100 }, {
+        __index = rat_definition,
+    })
 
     harness.truthy(will.resists(spell, resistant, 100),
         "a monster resists before Demonic Touch")

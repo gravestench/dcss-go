@@ -38,7 +38,7 @@ function hex.resisted(ctx, caster, target, profile, arc_power)
         local definition = catalog.get("monsters", actor.kind_id)
 
         return will.resists(ctx, definition, enchant_power, target,
-            profile.rng_stream)
+            profile.rng_stream, caster)
     end
 
     local adjusted = math.floor(35 * math.log(1 + enchant_power / 35) /

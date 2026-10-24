@@ -16,7 +16,8 @@ local eyeballs = {
 function eyeballs.after_attack(ctx, player, monster, definition, level)
     if not reactions.adjacent(ctx, player, monster) or
         roll.melee(ctx, 20) >= level or
-        will.resists(ctx, definition, level * 30, monster) then
+        will.resists(ctx, definition, level * 30,
+            monster, nil, player) then
         return
     end
 

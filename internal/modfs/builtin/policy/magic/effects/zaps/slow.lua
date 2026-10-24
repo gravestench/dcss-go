@@ -106,7 +106,8 @@ function slow.resolve(ctx, player, intent, spell, power)
     -- zap-data.h:ZAP_SLOW enchants at 3*power/2 (cap 100).
     local ench_power = math.floor(math.min(power, 100) * 3 / 2)
 
-    if will.resists(ctx, definition, ench_power, target) then
+    if will.resists(ctx, definition, ench_power,
+        target, nil, player) then
         ctx:emit("spell", "The " .. definition.name .. " resists slowing.")
         return
     end

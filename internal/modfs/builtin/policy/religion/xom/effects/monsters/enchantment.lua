@@ -15,6 +15,7 @@ local paralysis = require("policy.magic.effects.zaps.paralysis")
 local slow = require("policy.combat.monster_slow")
 local stasis = require("policy.magic.effects.statuses.monster_stasis")
 local streams = require("constants.rng_streams")
+local willpower = require("constants.willpower")
 
 local effect = {}
 
@@ -29,7 +30,8 @@ function effect.enchant_candidates(ctx, player)
             local definition = actor and catalog.get("monsters",
                 actor.kind_id)
 
-            if definition and definition.willpower ~= 5000 then
+            if definition and definition.willpower ~=
+                willpower.INVULNERABLE then
                 candidates[#candidates + 1] = monster
             end
         end

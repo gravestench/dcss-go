@@ -247,7 +247,8 @@ function allegiance.cast_charm(ctx, player, intent, spell, power)
     local actor = ctx:get(target, component.ACTOR)
     local definition = catalog.get("monsters", actor.kind_id)
 
-    if will.resists(ctx, definition, power, target) then
+    if will.resists(ctx, definition, power,
+        target, nil, player) then
         ctx:emit("spell", "The " .. definition.name .. " resists charm.")
         return
     end
@@ -279,7 +280,7 @@ function allegiance.cast_discord(ctx, player, power)
                     messaged = true
 
                     if will.resists(ctx, definition, enchant_power,
-                        target) then
+                        target, nil, player) then
                         ctx:emit("spell", "The " .. definition.name .. " resists.")
                     else
                         local value = ensure(ctx, target)

@@ -87,7 +87,7 @@ local function contact(ctx, player, intent)
         actor.kind_id)
 
     if will.resists(ctx, definition,
-        banish.power(ctx, player), target) then
+        banish.power(ctx, player), target, nil, player) then
         ctx:emit("spell", "The " .. definition.name ..
             " resists banishment.")
 

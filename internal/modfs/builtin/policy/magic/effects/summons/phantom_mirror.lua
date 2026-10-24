@@ -4,6 +4,7 @@ local catalog = require("policy.catalog")
 local registry = require("policy.magic.effects.registry")
 local summons = require("policy.magic.effects.summons.common")
 local monster_stats = require("policy.combat.monster_stats")
+local will = require("policy.magic.effects.zaps.will")
 
 local spell_id = spells.SPELL_PHANTOM_MIRROR
 local uncloneable = {
@@ -64,7 +65,7 @@ function spell_effects.prepare(ctx, player, _, dx, dy)
 end
 
 -- Recheck the target, then derive clone life and HD from its current actor state and resistance.
-function spell_effects.resolve(ctx, player, intent, _, power)
+function spell_effects.resolve(ctx, player, intent)
     local target = target_at(ctx, player, intent.dx, intent.dy)
 
     if not target then
@@ -76,9 +77,10 @@ function spell_effects.resolve(ctx, player, intent, _, power)
     local position = ctx:get(target, component.POSITION)
     local definition = catalog.get("monsters", actor.kind_id)
     local evo = evocations(ctx, player)
-    local willpower = definition.willpower or 0
-    local resistance = math.floor(100 * willpower /
-        math.max(1, willpower + 5 + 3 * evo + power))
+    -- Source Phantom Mirror uses the actual rolled check_willpower margin
+    -- at Evocations power, so gear and Lowered Will alter clone duration.
+    local resistance = will.margin(ctx, definition,
+        5 + 3 * evo, target, nil, player)
     local duration = math.min(6, math.max(1,
         math.floor((math.floor(evo / 4) + 1) * (100 - resistance) / 100)))
     local hd = monster_stats.hit_dice(ctx, target, definition)

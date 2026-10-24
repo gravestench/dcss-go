@@ -76,7 +76,8 @@ function demonic_magic.on_success(ctx, player, spell)
     })) do
         local definition = eligible(ctx, player, monster, origin, rank)
 
-        if definition and not will.resists(ctx, definition, power, monster) then
+        if definition and not will.resists(ctx, definition,
+            power, monster, nil, player) then
             paralyze(ctx, monster, definition)
         end
     end

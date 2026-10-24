@@ -174,7 +174,8 @@ function teleport.resolve(ctx, player, intent, spell, power)
 
     -- zap-data.h:ZAP_TELEPORT_OTHER has player enchant power 3*power/2.
     if will.resists(ctx, definition,
-        math.floor(math.min(power, 100) * 3 / 2), target) then
+        math.floor(math.min(power, 100) * 3 / 2),
+        target, nil, player) then
         ctx:emit("spell", "The " .. definition.name ..
             " resists teleportation.")
         return

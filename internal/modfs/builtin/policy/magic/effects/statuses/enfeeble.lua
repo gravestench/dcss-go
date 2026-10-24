@@ -101,10 +101,11 @@ local function duration(ctx, power)
 end
 
 -- Weakness and antimagic can land despite a resisted blind/daze roll; each timer only extends.
-local function apply(ctx, target, definition, power)
+local function apply(ctx, player, target, definition, power)
     local weak = has_attacks(definition)
     local antimagic = spell_sensitive(definition)
-    local resisted = will.resists(ctx, definition, power, target)
+    local resisted = will.resists(ctx, definition, power,
+        target, nil, player)
     local blind = not resisted and not has(definition.flags, "M_UNBLINDABLE")
     local dazed = not resisted
 
@@ -268,7 +269,8 @@ function enfeeble.cast(ctx, player, intent, spell, power)
         return
     end
 
-    apply(ctx, contact.actor, catalog.get("monsters", actor.kind_id), power)
+    apply(ctx, player, contact.actor,
+        catalog.get("monsters", actor.kind_id), power)
 end
 
 -- Sight penalties require an active blind timer, not just a saved Enfeeble record.

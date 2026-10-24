@@ -25,7 +25,7 @@ function spell_effects.resolve(ctx, player, _, spell, power)
             not teleport.no_tele(monster.actor, monster.definition,
                 ctx, monster.entity) then
             if will.resists(ctx, monster.definition, power,
-                monster.entity) then
+                monster.entity, nil, player) then
                 moved = blink.blink(ctx, player, monster.entity,
                     monster.definition) or moved
             else
@@ -37,7 +37,7 @@ function spell_effects.resolve(ctx, player, _, spell, power)
                     ctx:move_actor(monster.entity, center.level_id, x, y)
                     moved = true
                     if not will.resists(ctx, monster.definition, power,
-                        monster.entity) then
+                        monster.entity, nil, player) then
                         confusion.apply_innate(ctx, monster.entity,
                             monster.definition)
                     end

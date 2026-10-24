@@ -103,7 +103,8 @@ function effect.resolve(ctx, caster, _, _, plan)
         local actor = current:get(victim, component.ACTOR)
         local definition = catalog.get("monsters", actor.kind_id)
 
-        mass.apply_monster_fear(current, victim, definition, power)
+        mass.apply_monster_fear(current, victim, definition,
+            power, source)
     end
 
     area.each(ctx, caster, eligible, frighten)

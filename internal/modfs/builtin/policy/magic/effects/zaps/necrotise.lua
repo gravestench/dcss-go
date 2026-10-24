@@ -92,7 +92,7 @@ function necrotise.resolve(ctx, player, intent, spell, power)
     local capped = math.min(power, 100)
 
     if will.resists(ctx, definition, math.floor(capped * 7 / 2),
-        target) then
+        target, nil, player) then
         ctx:emit("spell", "The " .. definition.name .. " resists necrotising.")
         return
     end

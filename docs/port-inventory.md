@@ -112,6 +112,12 @@ consume that result, including source item-use limits and poison's
 one-pip equipment cap. Worn Cigotuvi's Embrace also grants monster
 miasma immunity. Further spell families remain for their later
 combat domains.
+Monster willpower now reads the live actor's HD, active artefacts,
+armour, jewellery, Trog's Hand, and Lowered Will before each saving
+throw. Removing gear changes the next roll immediately; a caster's
+Guile armour reduces the target's effective will only for that roll.
+Phantom Mirror uses the same rolled margin for clone duration. The
+unported Kiku wretch property remains part of the later Kiku domain.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except

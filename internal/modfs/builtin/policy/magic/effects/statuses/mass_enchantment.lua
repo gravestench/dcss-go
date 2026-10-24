@@ -77,7 +77,8 @@ local function susceptible(definition, kind)
 end
 
 -- Skip an already active effect before the will roll, then save only a successful new timer.
-local function apply(ctx, target, definition, kind, power, stream)
+local function apply(ctx, target, definition, kind, power, stream,
+    source)
     if not susceptible(definition, kind) then
         return false
     end
@@ -88,7 +89,8 @@ local function apply(ctx, target, definition, kind, power, stream)
         return false
     end
 
-    if will.resists(ctx, definition, power, target, stream) then
+    if will.resists(ctx, definition, power,
+        target, stream, source) then
         if not stream or senses.player_sees_actor(ctx, target) then
             ctx:emit("spell", "The " .. definition.name .. " resists.")
         end
@@ -116,9 +118,10 @@ end
 
 -- Monster Cause Fear uses the same saved retreat status as the player
 -- spell, but its will contest draws from the monster spell stream.
-function mass.apply_monster_fear(ctx, target, definition, power)
+function mass.apply_monster_fear(ctx, target, definition, power,
+    caster)
     return apply(ctx, target, definition, "fear_aut", power,
-        streams.MONSTER_SPELL)
+        streams.MONSTER_SPELL, caster)
 end
 
 -- Innate fear bypasses spell willpower but uses the same saved fear duration.
@@ -171,7 +174,8 @@ function mass.cast(ctx, player, spell_id, power)
                 local actor = ctx:get(target, component.ACTOR)
                 local definition = catalog.get("monsters", actor.kind_id)
 
-                if apply(ctx, target, definition, kind, enchant_power) then
+                if apply(ctx, target, definition, kind,
+                    enchant_power, nil, player) then
                     messaged = true
                 end
             end

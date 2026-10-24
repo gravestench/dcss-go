@@ -8,6 +8,7 @@ local nearby = require("policy.religion.cards.effects.nearby")
 local slow = require("policy.combat.monster_slow")
 local streams = require("constants.rng_streams")
 local targets = require("policy.ai.targets")
+local willpower = require("constants.willpower")
 
 local velocity = {}
 
@@ -30,7 +31,7 @@ end
 -- Source mons_invuln_will excludes only the catalog's absolute 5000 Will.
 -- A normal resisted Slow spell does not govern this card's direct enchant.
 local function vulnerable(candidate)
-    return candidate.definition.willpower ~= 5000
+    return candidate.definition.willpower ~= willpower.INVULNERABLE
 end
 
 -- The source scans each visible body once, choosing hostile Slow or allied

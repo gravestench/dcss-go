@@ -93,7 +93,8 @@ local function enchantment_contact(ctx, player, target,
     local enchant_power = spec.hit.base +
         math.floor(capped * spec.hit.numerator / spec.hit.denominator)
 
-    if will.resists(ctx, definition, enchant_power, target) then
+    if will.resists(ctx, definition, enchant_power,
+        target, nil, player) then
         ctx:emit("spell", "The " .. definition.name ..
             " resists " .. spec.name .. ".")
 

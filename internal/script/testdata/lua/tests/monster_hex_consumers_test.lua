@@ -41,6 +41,11 @@ function test.run()
         return self:get(actor, id) ~= nil
     end
 
+    -- The status-only fixture has no equipped item entities to inspect.
+    function ctx:query()
+        return {}
+    end
+
     -- Persist a new status component so later consumers see the same effect.
     function ctx:add(actor, id, value)
         values[actor][id] = value

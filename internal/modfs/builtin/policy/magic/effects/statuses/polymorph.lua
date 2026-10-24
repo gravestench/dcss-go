@@ -464,7 +464,8 @@ function polymorph.cast(ctx, player, intent, spell, power)
         return
     end
 
-    if will.resists(ctx, source, power, target) then
+    if will.resists(ctx, source, power,
+        target, nil, player) then
         ctx:emit(channels.SPELL, "The " .. source.name ..
             " resists polymorph.")
         return
@@ -478,9 +479,10 @@ end
 
 -- Chaos melee uses the same legal forms and saved transformation as the
 -- spell, but spends its own combat RNG stream.
-function polymorph.chaos(ctx, target, source, power)
+function polymorph.chaos(ctx, target, source, power, attacker)
     if not can_polymorph(source) or
-        will.resists(ctx, source, math.max(1, power), target) then
+        will.resists(ctx, source, math.max(1, power),
+            target, nil, attacker) then
         return false
     end
 

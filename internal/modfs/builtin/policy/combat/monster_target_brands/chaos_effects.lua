@@ -14,6 +14,7 @@ local roll = require("policy.combat.roll")
 local shapeshifter = require("policy.monsters.shapeshifter")
 local monsters = require("ids.monsters")
 local streams = require("constants.rng_streams")
+local willpower = require("constants.willpower")
 
 local effects = {}
 
@@ -59,7 +60,7 @@ local function polyable(_, hit)
     return not firewood(hit) and
         not has(hit.definition.holiness, holiness.UNDEAD) and
         not has(hit.definition.holiness, holiness.NONLIVING) and
-        (hit.definition.willpower or 0) < 5000
+        (hit.definition.willpower or 0) < willpower.INVULNERABLE
 end
 
 -- Cloning unique monsters or summon constructs would duplicate special lifecycle state.
@@ -200,7 +201,7 @@ end
 -- Damage already dealt is passed to polymorph so its chaos strength follows the triggering hit.
 local function transform(ctx, hit)
     polymorph.chaos(ctx, hit.defender, hit.definition,
-        hit.damage_done)
+        hit.damage_done, hit.attacker)
 end
 
 -- Mark the monster before reshaping it so later turns continue the shifter behaviour.

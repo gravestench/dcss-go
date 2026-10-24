@@ -61,7 +61,7 @@ function mindburst.resolve(ctx, player, intent, spell, power)
                 local enchant_power = math.floor(math.min(power, 100) * 5 / 2)
 
                 if will.resists(ctx, definition, enchant_power,
-                    target) then
+                    target, nil, player) then
                     ctx:emit("spell", "The " .. definition.name .. " resists Mindburst.")
                 else
                     damage.apply(ctx, target, roll_damage(ctx, power))

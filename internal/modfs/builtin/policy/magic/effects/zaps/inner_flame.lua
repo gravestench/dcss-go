@@ -69,7 +69,7 @@ function flame.resolve(ctx, player, intent, spell, power)
 
     if health.current <= 0 or ctx:has(target, component.INNER_FLAME) or
         will.resists(ctx, definition, math.min(power, 100) * 3,
-            target) then
+            target, nil, player) then
         return
     end
 

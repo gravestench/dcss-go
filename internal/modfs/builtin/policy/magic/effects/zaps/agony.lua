@@ -74,7 +74,8 @@ function agony.resolve(ctx, player, intent, spell, power)
     -- zap-data.h:ZAP_AGONY enchants at 5*power (cap 100).
     local enchant_power = 5 * math.min(power, 100)
 
-    if will.resists(ctx, definition, enchant_power, target) then
+    if will.resists(ctx, definition, enchant_power,
+        target, nil, player) then
         ctx:emit("spell", "The " .. definition.name .. " resists Agony.")
         return
     end

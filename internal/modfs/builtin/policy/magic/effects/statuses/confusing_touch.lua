@@ -17,14 +17,15 @@ local function duration(power)
 end
 
 -- Check life and will resistance before creating monster confusion state.
-function touch.apply(ctx, target, definition, power)
+function touch.apply(ctx, target, definition, power, source)
     local health = ctx:get(target, component.HEALTH)
 
     if not health or health.current <= 0 then
         return false, true
     end
 
-    if will.resists(ctx, definition, power, target) then
+    if will.resists(ctx, definition, power,
+        target, nil, source) then
         return false, false
     end
 
