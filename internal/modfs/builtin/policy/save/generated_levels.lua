@@ -15,6 +15,7 @@ local ossuary_levels = require("policy.save.ossuary_levels")
 local wizlab_levels = require("policy.save.wizlab_levels")
 local desolation_levels = require("policy.save.desolation_levels")
 local gauntlet_levels = require("policy.save.gauntlet_levels")
+local arena_levels = require("policy.save.arena_levels")
 local bailey_levels = require("policy.save.bailey_levels")
 local ice_cave_levels = require("policy.save.ice_cave_levels")
 local volcano_levels = require("policy.save.volcano_levels")
@@ -188,6 +189,7 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
     wizlab_levels.validate(levels)
     desolation_levels.validate(levels)
     gauntlet_levels.validate(levels)
+    arena_levels.validate(levels)
     bailey_levels.validate(levels)
     ice_cave_levels.validate(levels)
     volcano_levels.validate(levels)
@@ -313,6 +315,7 @@ function generated.validate(levels, by_id, chosen_schedule, pan_state,
             level.branch_id ~= branches.BRANCH_WIZLAB and
             level.branch_id ~= branches.BRANCH_DESOLATION and
             level.branch_id ~= branches.BRANCH_GAUNTLET and
+            level.branch_id ~= branches.BRANCH_ARENA and
             level.branch_id ~= branches.BRANCH_BAILEY and
             level.branch_id ~= branches.BRANCH_ICE_CAVE and
             level.branch_id ~= branches.BRANCH_VOLCANO and

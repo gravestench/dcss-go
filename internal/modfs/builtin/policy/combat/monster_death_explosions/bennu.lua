@@ -44,6 +44,14 @@ function bennu.on_death(ctx, actor, definition, position)
         ctx:add(next_life, component.BENNU_REVIVAL, {
             revives = 1,
         })
+
+        -- The resurrected body is the same Duel opponent. Copy only this
+        -- lineage mark, never the old body's inventory or arena position.
+        local duel = ctx:get(actor, component.MONSTER_ARENA_DUEL)
+
+        if duel and duel.current then
+            ctx:add(next_life, component.MONSTER_ARENA_DUEL, duel)
+        end
     end
 
     return true

@@ -76,6 +76,19 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     local banishment = ctx:get(entity, component.BANISHMENT)
     local level_id = banishment and banishment.origin_level_id or
         position.level_id
+    local arena_mark = ctx:get(entity, component.MONSTER_ARENA_DUEL)
+
+    -- Duel moves the same roster actor to a temporary branch. Its source
+    -- roster slot and allowed species still belong to the outside floor.
+    if arena_mark and arena_mark.current then
+        local visit = ctx:get(ctx:player(), component.PLAYER_ARENA_VISIT)
+
+        if not visit or position.level_id ~= visit.level_id then
+            error("Arena challenger has no matching player visit")
+        end
+
+        level_id = visit.origin_level_id
+    end
     if level_id == abyss_constants.TRANSIT_LEVEL_ID then
         level_id = abyss.level_id
     end

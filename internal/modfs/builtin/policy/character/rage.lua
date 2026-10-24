@@ -10,6 +10,7 @@ local formulas = require("policy.character.formulas")
 local slow = require("policy.character.slow")
 local traits = require("policy.character.traits")
 local undead_states = require("constants.undead_states")
+local okawaru_status = require("policy.religion.okawaru.status")
 
 local rage = {}
 
@@ -113,6 +114,11 @@ function rage.begin(ctx, player, stream, intentional, potion)
     if not health or not regeneration or health.max <= 0 then
         error("rage requires live player health and regeneration")
     end
+
+    -- Source Berserk and Finesse are incompatible. End Finesse only after
+    -- the rage eligibility and health checks have accepted this action.
+    okawaru_status.remove(ctx, player, "finesse",
+        "Your finesse ends abruptly.")
 
     stream = stream or "mutation"
 

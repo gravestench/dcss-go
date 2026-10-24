@@ -1,0 +1,21 @@
+# Dungeon Crawl source Arena map. Shared Lua setup lives in the named hook.
+NAME: okawaru_arena_2
+ORIENT: encompass
+: vault.run("shared.setup")
+MAP
+   vvvvvvvvv
+  vv'1'v'1'vv
+ vv''ooooo''vv
+vv'1oo...oo1'vv
+v''oo.....oo''v
+v1oo.......oo1v
+voo.........oov
+vo.....A.....ov
+voo.........oov
+v1oo.......oo1v
+v''oo.....oo''v
+vv'1oo...oo1'vv
+ vv''ooBoo''vv
+  vv'1o<o1'vv
+   vvvvvvvvv
+ENDMAP

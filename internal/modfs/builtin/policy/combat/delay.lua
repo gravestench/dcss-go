@@ -7,6 +7,7 @@ local items = require("policy.inventory.items")
 local component = require("constants.component")
 local artefact_properties = require("policy.item_generation.artefacts.properties")
 local artefact_ids = require("ids.artefact_properties")
+local okawaru_status = require("policy.religion.okawaru.status")
 
 local delay = {}
 
@@ -24,6 +25,40 @@ local function rounded_values(numerator, denominator)
     end
 
     return values
+end
+
+-- Source applies Finesse after shield and armour delay. If Haste already
+-- shortened the player's turn, its 3/2 inverse runs before the halving
+-- so two speed grants do not compound. Keep both rounding distributions.
+local function finesse_values(action, active, hasted)
+    if not active then
+        return { { value = action, weight = 1 } }
+    end
+
+    local before = hasted and rounded_values(action * 3, 2) or
+        { { value = action, weight = 1 } }
+    local values = {}
+
+    for _, boosted in ipairs(before) do
+        for _, halved in ipairs(rounded_values(boosted.value, 2)) do
+            values[#values + 1] = {
+                value = halved.value,
+                weight = boosted.weight * halved.weight,
+            }
+        end
+    end
+
+    return values
+end
+
+-- Both melee and projectile attacks read one patron timer and the same
+-- Haste duration. Throwing, launchers, and unarmed blows then share policy.
+local function okawaru_mode(ctx)
+    local player = ctx:player()
+    local durations = ctx:get(player, component.DURATIONS)
+
+    return okawaru_status.active(ctx, player, "finesse"),
+        durations and durations.haste_aut > 0 or false
 end
 
 -- Clamp base delay by weapon speed, with Short Blades' lower five-aut cap.
@@ -63,7 +98,8 @@ end
 -- Convolve skill, shield, armour, speed brand, and action-time rounding;
 -- drawing once preserves the exact resulting AUT distribution.
 local function action_cost(ctx, time_taken, base, reduction, denominator,
-    shield_penalty20, minimum, armour_penalty20, speed_brand)
+    shield_penalty20, minimum, armour_penalty20, speed_brand,
+    finesse_active, hasted)
     local weights = {}
     local low = math.huge
     local high = 0
@@ -80,13 +116,19 @@ local function action_cost(ctx, time_taken, base, reduction, denominator,
                 for _, speed in ipairs(speed_values) do
                     local action = math.max(2, speed.value + shield.value + armour.value)
 
-                    for _, scaled in ipairs(rounded_values(action * time_taken, 10)) do
-                        local value = math.max(2, scaled.value)
-                        weights[value] = (weights[value] or 0) +
-                            skill.weight * shield.weight * armour.weight *
-                            speed.weight * scaled.weight
-                        low = math.min(low, value)
-                        high = math.max(high, value)
+                    for _, adjusted in ipairs(finesse_values(action,
+                        finesse_active, hasted)) do
+                        for _, scaled in ipairs(rounded_values(
+                            adjusted.value * time_taken, 10)) do
+                            local value = math.max(2, scaled.value)
+
+                            weights[value] = (weights[value] or 0) +
+                                skill.weight * shield.weight *
+                                armour.weight * speed.weight *
+                                adjusted.weight * scaled.weight
+                            low = math.min(low, value)
+                            high = math.max(high, value)
+                        end
                     end
                 end
             end
@@ -143,9 +185,12 @@ function delay.player(ctx, time_taken)
     end
 
     -- The source combines random_var distributions before making one melee draw.
+    local finesse_active, hasted = okawaru_mode(ctx)
+
     return action_cost(ctx, time_taken, base, reduction, denominator,
         shield_penalty(ctx), 3, nil,
-        attack.using_weapon and attack.weapon_brand == brands.SPEED)
+        attack.using_weapon and attack.weapon_brand == brands.SPEED,
+        finesse_active, hasted)
 end
 
 -- Thrown missiles and launchers use different skill reductions; launcher
@@ -194,8 +239,11 @@ function delay.projectile(ctx, time_taken, item_id)
         error("ranged action has invalid projectile item")
     end
 
+    local finesse_active, hasted = okawaru_mode(ctx)
+
     return action_cost(ctx, time_taken, base, reduction, 20,
-        shield_penalty(ctx), minimum, armour_penalty20, speed_brand)
+        shield_penalty(ctx), minimum, armour_penalty20, speed_brand,
+        finesse_active, hasted)
 end
 
 return delay

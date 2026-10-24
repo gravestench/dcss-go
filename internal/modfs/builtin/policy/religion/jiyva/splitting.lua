@@ -128,6 +128,14 @@ function splitting.try(ctx, parent, definition)
         ctx:add(child, component.JIYVA_SLIME, lineage)
     end
 
+    -- Both living halves descend from the challenged body. The Arena
+    -- remains locked until every current half has been defeated.
+    local duel = ctx:get(parent, component.MONSTER_ARENA_DUEL)
+
+    if duel and duel.current then
+        ctx:add(child, component.MONSTER_ARENA_DUEL, duel)
+    end
+
     growth.split(ctx, parent, child)
 
     announce(ctx, parent, position, site, definition)

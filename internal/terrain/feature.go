@@ -60,6 +60,8 @@ const (
 	ExitDesolation     ID = "DNGN_EXIT_DESOLATION"
 	EnterGauntlet      ID = "DNGN_ENTER_GAUNTLET"
 	ExitGauntlet       ID = "DNGN_EXIT_GAUNTLET"
+	EnterArena         ID = "DNGN_ENTER_ARENA"
+	ExitArena          ID = "DNGN_EXIT_ARENA"
 	EnterBailey        ID = "DNGN_ENTER_BAILEY"
 	ExitBailey         ID = "DNGN_EXIT_BAILEY"
 	EnterIceCave       ID = "DNGN_ENTER_ICE_CAVE"
@@ -351,6 +353,16 @@ var definitions = map[ID]Feature{
 		Walkable: true,
 	},
 
+	EnterArena: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
+	ExitArena: {
+		Glyph:    '∩',
+		Walkable: true,
+	},
+
 	EnterBailey: {
 		Glyph:    '∩',
 		Walkable: true,
@@ -596,6 +608,8 @@ var movableTravelFeatures = map[ID]bool{
 	ExitDesolation:     true,
 	EnterGauntlet:      true,
 	ExitGauntlet:       true,
+	EnterArena:         true,
+	ExitArena:          true,
 	EnterBailey:        true,
 	ExitBailey:         true,
 	EnterIceCave:       true,

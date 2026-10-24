@@ -2,40 +2,18 @@
 -- player component. A reaction system converts the whole turn's pooled
 -- damage into piety, then clears the pool. Quiet turns slowly drain piety
 -- toward the first star after a short grace period.
-local catalog = require("policy.catalog")
-local categories = require("constants.catalog")
 local component = require("constants.component")
-local formulas = require("policy.character.formulas")
 local gods = require("constants.gods")
 local kinds = require("constants.religion_conduct")
 local piety = require("policy.religion.piety")
+local monster_threat = require("policy.combat.monster_threat")
 
 local uskayaw = {}
 
 -- The source's mons_threat_level compares XP with the player's current
 -- level threshold. The four bands change the damage percentage weight.
 local function threat(ctx, player, experience)
-    local progress = ctx:get(player, component.PROGRESSION)
-    local identity = ctx:get(player, component.PLAYER)
-
-    if not progress or not identity then
-        error("Uskayaw damage requires player level and species")
-    end
-
-    local species = catalog.get(categories.SPECIES, identity.species_id)
-    local needed = formulas.experience_needed(progress.level, species.xp)
-    local tension = math.floor(experience /
-        (1 + math.sqrt(needed / 30)))
-
-    if tension <= 0 then
-        return 0
-    elseif tension <= 5 then
-        return 1
-    elseif tension <= 32 then
-        return 2
-    end
-
-    return 3
+    return monster_threat.band(ctx, player, experience)
 end
 
 -- Source stepdown_value(5, 10, 20, 40) softens large bursts before the

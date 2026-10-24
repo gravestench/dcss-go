@@ -5,6 +5,7 @@ local channels = require("constants.message_channels")
 local component = require("constants.component")
 local summons = require("policy.magic.effects.summons.common")
 local targets = require("policy.ai.targets")
+local status = require("policy.religion.okawaru.status")
 
 local okawaru = {}
 
@@ -41,6 +42,17 @@ function okawaru.join(ctx, player)
     if #dismissed > 0 then
         ctx:emit(channels.MONSTER, "Your summoned allies are dismissed!")
     end
+end
+
+-- Source excommunication revokes both temporary combat boons. Arena
+-- return is owned by the Duel travel module when that visit is present.
+function okawaru.leave(ctx, player)
+    status.clear(ctx, player)
+end
+
+-- Penance suspends combat grants immediately without ending a Duel.
+function okawaru.on_penance(ctx, player)
+    status.clear(ctx, player)
 end
 
 return okawaru

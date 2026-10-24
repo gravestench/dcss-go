@@ -49,6 +49,15 @@ function renounce.prepare(ctx, player, input)
         return "Your faith changed before you answered."
     end
 
+    -- Renouncing Okawaru inside a Duel is a forced return. Prepare the
+    -- destination now so an impossible landing cannot strand the player
+    -- after excommunication has already been committed.
+    if god_id == gods.OKAWARU and
+        ctx:has(player, component.PLAYER_ARENA_VISIT) then
+        return require("policy.world.arena.travel")
+            .prepare_forced(ctx, player)
+    end
+
     return nil
 end
 

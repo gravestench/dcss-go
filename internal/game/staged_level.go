@@ -18,6 +18,7 @@ type stagedLevel struct {
 	priorEntities   map[akara.Entity]bool
 	priorComponents map[akara.Entity][]save.DynamicComponentRecord
 	priorRNG        map[string]uint64
+	portalData      map[string]any
 	closed          bool
 }
 
@@ -123,6 +124,17 @@ func (g *Game) stageGeneratedLevel(
 
 	if !okay {
 		return nil, fmt.Errorf("Lua generated level is not a record")
+	}
+
+	// A domain may return its authored landing and marker coordinates to
+	// its own Lua commit policy without teaching the kernel that domain.
+	if data, found := result["portal_data"]; found {
+		var valid bool
+		stage.portalData, valid = data.(map[string]any)
+
+		if !valid {
+			return nil, fmt.Errorf("Lua generated portal data is not a record")
+		}
 	}
 
 	levelID, err := decisionInteger(record, "id")

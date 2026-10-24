@@ -39,11 +39,18 @@ local pinned = {
 }
 
 local magic = {}
+local mundane = {}
+local within_mundane = true
 local within_magic = false
 
 for _, id in ipairs(pinned) do
     if id == skills.SK_SPELLCASTING then
+        within_mundane = false
         within_magic = true
+    end
+
+    if within_mundane then
+        mundane[id] = true
     end
 
     if within_magic then
@@ -53,6 +60,12 @@ for _, id in ipairs(pinned) do
     if id == skills.SK_POISON_MAGIC then
         within_magic = false
     end
+end
+
+-- Heroism affects source SK_FIGHTING through SK_UNARMED_COMBAT. A shared
+-- group prevents combat and presentation from maintaining another list.
+function order.is_mundane(id)
+    return mundane[id] == true
 end
 
 -- Source SK_LAST_MAGIC is Poison Magic. Keeping the group beside the pinned

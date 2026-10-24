@@ -371,6 +371,21 @@ A lingering god spell now retains an inert Lua ECS source
 for burn, cloud, terrain, and summon attribution through save and restore.
 Other god abilities, remaining passives, and ordinary timed wrath remain
 separate religion slices.
+Okawaru's Heroism, Finesse, and Duel are now playable Lua powers with the
+source rank, failure, MP, and piety gates. Heroism projects mundane skill
+levels without changing training; Finesse changes attack delay and is
+cancelled by Berserk. Their saved timers expire, refresh, and clear on
+penance or departure. Duel selects one of four committed source Arena
+maps, alerts and moves an eligible challenger, preserves the exact outside
+return site, and opens the authored barrier after the final marked enemy
+dies. Bennu revival and Jiyva splits preserve the mark; banished targets
+release it. Victors receive the source 15–25-turn return clock. Live
+opponents return beside the player, and renunciation or automatic
+excommunication forces a return. Player banishment is blocked in Arena as
+in source. Text snapshots
+show all four Arena maps and the entry, target, barrier, and exit cells.
+Ordinary slime merge lineage is not yet represented; Arena mode outside
+Okawaru's Duel is a separate feature.
 Fedhas now neutralises eligible hostile plants as they act, reverses plant
 allegiance across loaded levels on desertion, cancels an active forest on
 joining, and prevents hostile Awaken Forest under its passive. Okawaru now
@@ -762,7 +777,9 @@ Their original
 MAP blocks are intact, and the two shared palette scripts are a named Lua
 hook. Arena maps have no Dungeon depth rule, so normal Dungeon generation
 does not draw them. An arena game mode and whole-level palette behavior
-remain future work. The deep Dungeon decoration controller now draws from
+remain future work. Okawaru's separate Duel Arena uses its four authored
+one-floor `.des` maps as described above. The deep Dungeon decoration
+controller now draws from
 the effective `decor` tagged map pool at source chance and depth. All 22
 Pandemonium division definitions are committed: two authored layouts and
 twenty weighted helpers. Both parent layouts assemble and complete stairs

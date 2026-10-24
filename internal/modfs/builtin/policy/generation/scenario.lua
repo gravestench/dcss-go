@@ -9,6 +9,7 @@ local ossuary = require("policy.generation.ossuary.level")
 local wizlab = require("policy.generation.wizlab.level")
 local desolation = require("policy.generation.desolation.level")
 local gauntlet = require("policy.generation.gauntlet.level")
+local arena = require("policy.generation.arena.level")
 local bailey = require("policy.generation.bailey.level")
 local ice_cave = require("policy.generation.ice_cave.level")
 local volcano = require("policy.generation.volcano.level")
@@ -328,6 +329,12 @@ register.policy({
 register.policy({
     id = "world.generate_gauntlet_level",
     run = module.gauntlet,
+})
+
+-- Arena is a temporary branch entered by Duel rather than ordinary stairs.
+register.policy({
+    id = "world.generate_arena_level",
+    run = arena.generate,
 })
 
 register.policy({

@@ -119,6 +119,14 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 		return prepared.response, nil
 	}
 
+	forced, err := g.scripts.Policy("world.pending_forced_portal", nil)
+
+	if err != nil {
+		return StepResult{}, err
+	}
+
+	forcedPortalPotential, _ := forced["potential"].(bool)
+
 	shaftRequest, pendingShaft, err := g.pendingShaft()
 
 	if err != nil {
@@ -139,12 +147,14 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 
 	if prepared.portal != nil ||
 		pendingStair ||
-		pendingShaft {
+		pendingShaft ||
+		forcedPortalPotential {
 		// First entry to a portal or generated branch changes floors,
 		// actors, and RNG. A failed destination must restore the run.
 		checkpoint := g.Snapshot()
 
-		if pendingShaft && abilityCheckpoint != nil {
+		if abilityCheckpoint != nil &&
+			(pendingShaft || prepared.portal != nil) {
 			checkpoint = *abilityCheckpoint
 		}
 
@@ -222,6 +232,29 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 
 	events = append(prepared.response.Events, events...)
 	events = append(revivalEvents, events...)
+
+	if portal == nil && forcedPortalPotential {
+		forced, forcedErr := g.scripts.Policy(
+			"world.pending_forced_portal", nil)
+
+		if forcedErr != nil {
+			return StepResult{}, forcedErr
+		}
+
+		if plan, found := forced["portal"].(map[string]any); found {
+			current, positioned := g.stores.Positions.Get(g.player)
+
+			if !positioned {
+				return StepResult{}, fmt.Errorf("forced portal player has no position")
+			}
+
+			portal, err = g.preparePortal(plan, current)
+
+			if err != nil {
+				return StepResult{}, err
+			}
+		}
+	}
 
 	if outcome, err := g.outcome(); err != nil {
 		return StepResult{}, err

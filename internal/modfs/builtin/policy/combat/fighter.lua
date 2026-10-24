@@ -24,6 +24,9 @@ local acrobat = require("policy.jewellery.acrobat")
 local corrosion = require("policy.combat.player_corrosion")
 local artefact_properties = require("policy.item_generation.artefacts.properties")
 local artefact_ids = require("ids.artefact_properties")
+local skill_order = require("data.skill_order")
+local okawaru_status = require("policy.religion.okawaru.status")
+local okawaru = require("constants.okawaru")
 
 local fighter = {}
 
@@ -67,6 +70,14 @@ end
 function fighter.skill(ctx, id, scale)
     local skills = required(ctx, ctx:player(), "core.skills")
     local species = fighter.species(ctx)
+    local available = species.aptitudes[id]
+
+    -- Source useless skills stay zero even under Heroism. This matters for
+    -- species such as Felids, which cannot use Armour or weapon skills.
+    if not available or not available.allowed then
+        return 0
+    end
+
     local aptitude = formulas.effective_skill_aptitude(ctx,
         ctx:player(), species, id)
 
@@ -79,9 +90,23 @@ function fighter.skill(ctx, id, scale)
             local previous = cost(entry.level, aptitude)
             local next_cost = cost(entry.level + 1, aptitude)
 
-            return entry.level * scale +
-                math.floor((entry.points - previous) * scale / (next_cost - previous))
+            local effective = entry.level * scale +
+                math.floor((entry.points - previous) * scale /
+                    (next_cost - previous))
+
+            if skill_order.is_mundane(id) and
+                okawaru_status.active(ctx, ctx:player(), "heroism") then
+                effective = math.min(27 * scale,
+                    effective + okawaru.HEROISM_SKILL_BONUS * scale)
+            end
+
+            return effective
         end
+    end
+
+    if skill_order.is_mundane(id) and
+        okawaru_status.active(ctx, ctx:player(), "heroism") then
+        return 5 * scale
     end
 
     return 0
@@ -91,11 +116,28 @@ end
 -- the fractional progress returned by fighter.skill.
 function fighter.skill_level(ctx, id)
     local skills = required(ctx, ctx:player(), "core.skills")
+    local species = fighter.species(ctx)
+    local available = species.aptitudes[id]
+
+    if not available or not available.allowed then
+        return 0
+    end
 
     for _, entry in ipairs(skills.entries) do
         if entry.id == id then
+            if skill_order.is_mundane(id) and
+                okawaru_status.active(ctx, ctx:player(), "heroism") then
+                return math.min(27,
+                    entry.level + okawaru.HEROISM_SKILL_BONUS)
+            end
+
             return entry.level
         end
+    end
+
+    if skill_order.is_mundane(id) and
+        okawaru_status.active(ctx, ctx:player(), "heroism") then
+        return 5
     end
 
     return 0

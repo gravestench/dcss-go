@@ -15,6 +15,7 @@ local streams = require("constants.rng_streams")
 local conduct = require("policy.religion.conduct")
 local monster_facts = require("policy.religion.conduct.monster_facts")
 local transporters = require("policy.world.transporters")
+local arena_victory = require("policy.world.arena.victory")
 
 local abyss = {}
 
@@ -309,6 +310,15 @@ function abyss.banish(ctx, player, options)
         return
     end
 
+    -- DCSS's player::banish refuses to pull the worshipper out of the
+    -- Arena. Keeping the Duel floor active also preserves its save link.
+    if ctx:has(player, component.PLAYER_ARENA_VISIT) then
+        ctx:emit("religion",
+            "Okawaru prevents your banishment from the Arena!")
+
+        return
+    end
+
     local depth = options.power and
         abyss.depth_for_power(ctx, options.power,
             options.stream or streams.PLACEMENT) or 1
@@ -408,10 +418,14 @@ function abyss.banish_monster(ctx, monster, definition, attacker)
 
     local x, y = landing(ctx)
 
+    local arena_return = arena_victory.on_departure(ctx,
+        monster, position)
+    local return_site = arena_return or position
+
     ctx:add(monster, component.BANISHMENT, {
-        origin_level_id = position.level_id,
-        origin_x = position.x,
-        origin_y = position.y,
+        origin_level_id = return_site.level_id,
+        origin_x = return_site.x,
+        origin_y = return_site.y,
     })
     relocation.move(ctx, monster, abyss.level_id, x, y)
     pikel.depart(ctx, monster, definition)

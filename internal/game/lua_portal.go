@@ -18,6 +18,7 @@ type luaPortal struct {
 	toLevelID    int
 	destination  point
 	retireID     int
+	payload      map[string]any
 }
 
 // A prepared plan must name the cell the player actually stands on. This
@@ -51,6 +52,7 @@ func (g *Game) prepareLuaPortal(
 
 	portal.operation, _ = plan["operation"].(string)
 	portal.commitPolicy, _ = plan["commit_policy"].(string)
+	portal.payload, _ = plan["payload"].(map[string]any)
 
 	if portal.operation == "" || portal.commitPolicy == "" {
 		return nil, fmt.Errorf("Lua portal has no operation or commit policy")
@@ -164,6 +166,11 @@ func (portal *luaPortal) commit(g *Game) (Event, error) {
 			"y":        portal.destination.y,
 		},
 		"vault_id": level.VaultID(),
+		"payload":  portal.payload,
+	}
+
+	if portal.stage != nil {
+		input["generation_output"] = portal.stage.portalData
 	}
 
 	result, err := g.scripts.Policy(portal.commitPolicy, input)

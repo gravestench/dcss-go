@@ -9,6 +9,8 @@ local stats = require("constants.stats")
 local restrictions = require("constants.safety_restrictions")
 local rage = require("policy.character.rage")
 local trog_hand = require("policy.religion.trog.hand")
+local okawaru_status = require("policy.religion.okawaru.status")
+local arena_visit = require("policy.save.arena_visit")
 local zot_clock = require("policy.world.zot_clock")
 
 local module = {}
@@ -18,6 +20,8 @@ local module = {}
 function module.run(ctx)
     local player = ctx:player()
     trog_hand.validate(ctx, player)
+    okawaru_status.validate(ctx, player)
+    arena_visit.validate(ctx, player)
     local durations = ctx:get(player, "core.durations")
     local poison = ctx:get(player, "core.poison")
     local barbs = ctx:get(player, component.BARBS)
