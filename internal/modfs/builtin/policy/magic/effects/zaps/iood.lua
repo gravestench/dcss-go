@@ -10,7 +10,7 @@ local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local rng_streams = require("constants.rng_streams")
 local summons = require("policy.magic.effects.summons.common")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 
 local iood = {}
 
@@ -75,7 +75,7 @@ local function burst(ctx, owner, level, x, y, power, distance, stream)
 
                 if definition and current.current > 0 then
                     if owner == ctx:player() then
-                        attack_conduct.report(ctx, victim, definition)
+                        player_contact.report(ctx, victim, definition)
                     end
 
                     local ac = defense.armour(ctx, victim, definition)

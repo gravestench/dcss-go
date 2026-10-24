@@ -6,7 +6,7 @@ local damage = require("policy.magic.damage")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local targets = require("policy.ai.targets")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 
 local scorch = {}
 
@@ -77,7 +77,7 @@ function scorch.resolve(ctx, player, _, spell, power)
     local selected = found[1 + ctx:random("spell", #found)]
     local target = selected.entity
     local definition = selected.definition
-    attack_conduct.report(ctx, target, definition)
+    player_contact.report(ctx, target, definition)
     local max_damage = 10 + random_round(ctx, power, 5)
     local sides = random_round(ctx, max_damage, 2)
     local raw = 2 + ctx:random("spell", sides) +

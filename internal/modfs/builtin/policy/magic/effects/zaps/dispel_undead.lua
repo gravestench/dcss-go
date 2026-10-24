@@ -5,7 +5,7 @@ local damage = require("policy.magic.damage")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 
 local dispel_undead = {}
 
@@ -74,7 +74,7 @@ function dispel_undead.resolve(ctx, player, intent, spell, power)
         error("Dispel Undead struck an actor without health")
     end
 
-    attack_conduct.report(ctx, target, definition)
+    player_contact.report(ctx, target, definition)
 
     if not undead(definition) then
         ctx:emit("spell", "The " .. definition.name .. " is unaffected.")

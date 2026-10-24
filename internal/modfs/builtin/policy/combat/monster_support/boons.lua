@@ -1,5 +1,6 @@
 local allegiance = require("policy.magic.effects.statuses.monster_allegiance")
 local component = require("constants.component")
+local enchantments = require("constants.monster_enchantment")
 
 local boons = {}
 
@@ -89,7 +90,10 @@ function boons.tick(ctx, monster, elapsed_aut)
         return
     end
 
-    value.haste_aut = math.max(0, value.haste_aut - elapsed_aut)
+    if value.haste_aut < enchantments.INFINITE_DURATION_AUT then
+        value.haste_aut = math.max(0,
+            value.haste_aut - elapsed_aut)
+    end
     value.might_aut = math.max(0, value.might_aut - elapsed_aut)
     value.swift_aut = math.max(0, value.swift_aut - elapsed_aut)
 

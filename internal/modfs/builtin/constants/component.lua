@@ -133,6 +133,7 @@ local component = {
     MONSTER_SHAPESHIFTER = "combat.monster_shapeshifter",
     MONSTER_DRACONIAN_BASE = "monster.draconian_base",
     MONSTER_POLYMORPH_SET = "monster.polymorph_set",
+    MONSTER_ELVEN_TWIN = "monster.elven_twin",
     MONSTER_BOONS = "combat.monster_boons",
     MONSTER_BLACK_MARK = "combat.monster_black_mark",
     MONSTER_INJURY_BOND = "combat.monster_injury_bond",

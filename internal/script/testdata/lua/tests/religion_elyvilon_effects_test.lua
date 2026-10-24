@@ -3,11 +3,14 @@
 local abilities = require("ids.abilities")
 local behaviors = require("constants.ai_behaviors")
 local attitudes = require("constants.attitude")
+local player_contact = require("policy.combat.player_contact")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local cleansing = require("policy.religion.elyvilon.cleansing")
 local component = require("constants.component")
 local death = require("policy.death")
+local twin_causes = require("constants.elven_twin")
+local twin_lifecycle = require("policy.monsters.elven_twins")
 local fixture = require("tests.monster_ally_support_fixture")
 local formulas = require("policy.character.formulas")
 local gods = require("constants.gods")
@@ -280,9 +283,82 @@ local function elven_twins(ctx)
     harness.equal(game:get(player, component.PROGRESSION).total_xp,
         expected)
 
-    pacification.attempt(game, player, duvessa, 20, 10000)
+    -- A player attack is reported before hit rolls. Even a miss must
+    -- anger both twins, while their earlier nonlethal XP stays credited.
+    player_contact.report(game, duvessa, first)
+    harness.equal(targets.real_attitude(game, duvessa),
+        attitudes.HOSTILE)
+    harness.equal(targets.real_attitude(game, dowan),
+        attitudes.HOSTILE)
     harness.equal(game:get(player, component.PROGRESSION).total_xp,
         expected)
+
+    -- Restore accepts a past pacification marker whose current side has
+    -- become hostile; its presence still prevents duplicate XP.
+    pacification.validate(game)
+
+    pacification.attempt(game, player, duvessa, 20, 10000)
+    harness.equal(targets.real_attitude(game, duvessa),
+        attitudes.NEUTRAL)
+    harness.equal(targets.real_attitude(game, dowan),
+        attitudes.NEUTRAL)
+    harness.equal(game:get(player, component.PROGRESSION).total_xp,
+        expected)
+
+    -- The source searches only the current floor. A separated partner
+    -- retains peace until a later local encounter changes its own side.
+    local away = game:get(dowan, component.POSITION)
+
+    away.level_id = 2
+    game:set(dowan, component.POSITION, away)
+    player_contact.report(game, duvessa, first)
+    harness.equal(targets.real_attitude(game, duvessa),
+        attitudes.HOSTILE)
+    harness.equal(targets.real_attitude(game, dowan),
+        attitudes.NEUTRAL)
+
+    ctx:destroy(duvessa)
+    ctx:destroy(dowan)
+end
+
+-- If a neutral twin leaves while the other is still hostile, source
+-- converts the survivor without grief, a second offer, or duplicate XP.
+local function neutral_twin_departure(ctx)
+    local game, player = worshipper(ctx)
+    local duvessa = fixture.actor(ctx, monsters.MONS_DUVESSA,
+        14, 15, 30)
+    local dowan = fixture.actor(ctx, monsters.MONS_DOWAN,
+        15, 15, 30)
+
+    game:add(duvessa, component.AI, {
+        behavior = behaviors.WANDER,
+    })
+    game:add(dowan, component.AI, {
+        behavior = behaviors.WANDER,
+    })
+    game:add(duvessa, component.ELYVILON_PACIFIED, {
+        pacified = true,
+    })
+
+    local definition = catalog.get(categories.MONSTERS,
+        monsters.MONS_DOWAN)
+    local expected = death.experience(definition, 100)
+
+    harness.falsy(twin_lifecycle.grieve(game, duvessa, nil,
+        game:get(duvessa, component.POSITION), twin_causes.DEATH))
+    harness.equal(targets.real_attitude(game, dowan),
+        attitudes.NEUTRAL)
+    harness.falsy(game:has(dowan, component.MONSTER_ELVEN_TWIN))
+    harness.equal(game:get(player, component.PROGRESSION).total_xp,
+        expected)
+
+    twin_lifecycle.grieve(game, duvessa, nil,
+        game:get(duvessa, component.POSITION), twin_causes.DEATH)
+    harness.equal(game:get(player, component.PROGRESSION).total_xp,
+        expected)
+
+    ctx:destroy(duvessa)
+    ctx:destroy(dowan)
 end
 
 -- Self-healing uses the source base and two dice; at zero Invocations
@@ -423,6 +499,7 @@ function test.run(ctx)
     kirke_hogs(ctx)
     warden_seal(ctx)
     elven_twins(ctx)
+    neutral_twin_departure(ctx)
 end
 
 return test

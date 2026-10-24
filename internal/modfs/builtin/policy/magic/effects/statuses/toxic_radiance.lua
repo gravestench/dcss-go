@@ -5,7 +5,7 @@ local catalog = require("policy.catalog")
 local damage = require("policy.magic.damage")
 local poison = require("policy.combat.monster_poison")
 local common = require("policy.magic.effects.statuses.common")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 
 local radiance = {}
 
@@ -46,7 +46,7 @@ local function emit_poison(ctx, player, power, aut, on_cast)
                 local definition = catalog.get("monsters", actor.kind_id)
 
                 if on_cast then
-                    attack_conduct.report(ctx, monster, definition)
+                    player_contact.report(ctx, monster, definition)
                 end
 
                 if poison.effective_resistance(ctx, monster,

@@ -1,5 +1,5 @@
 local targets = require("policy.ai.targets")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 
 local target = {}
 
@@ -49,7 +49,7 @@ function target.at_aim(ctx, player, intent)
     end
 
     if actor then
-        attack_conduct.report(ctx, actor)
+        player_contact.report(ctx, actor)
     end
 
     return actor, position.level_id, x, y

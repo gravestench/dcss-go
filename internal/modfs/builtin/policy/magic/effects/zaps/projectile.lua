@@ -11,7 +11,7 @@ local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 local accuracy = require("policy.character.accuracy")
 local monster_stats = require("policy.combat.monster_stats")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 local targets = require("policy.ai.targets")
 local beam_damage = require("policy.combat.monster_beams.damage")
 local flavours = require("constants.beam_flavours")
@@ -319,7 +319,7 @@ local function resolve(ctx, player, intent, spell, spec, power,
             end
 
             local definition = catalog.get("monsters", actor.kind_id)
-            attack_conduct.report(ctx, target, definition)
+            player_contact.report(ctx, target, definition)
 
             if spec.enchantment then
                 enchantment_contact(ctx, player, target,

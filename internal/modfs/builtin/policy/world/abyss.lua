@@ -1,6 +1,8 @@
 local relocation = require("policy.world.monster_relocation")
 local component = require("constants.component")
 local pikel = require("policy.combat.monster_tactical.pikel")
+local elven_twins = require("policy.monsters.elven_twins")
+local twin_causes = require("constants.elven_twin")
 local constants = require("constants.abyss")
 local generator = require("policy.generation.abyss")
 local state = require("policy.generation.abyss.state")
@@ -429,6 +431,8 @@ function abyss.banish_monster(ctx, monster, definition, attacker)
     })
     relocation.move(ctx, monster, abyss.level_id, x, y)
     pikel.depart(ctx, monster, definition)
+    elven_twins.grieve(ctx, monster, definition, position,
+        twin_causes.BANISHMENT)
     ctx:emit("banishment", "The " .. definition.name ..
         " is cast into the Abyss!")
 

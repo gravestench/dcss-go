@@ -156,15 +156,22 @@ end
 -- Twin conversion calls it directly, skipping a second eligibility and
 -- chance roll while giving the other living monster its own XP credit.
 local function convert(ctx, player, target, definition, is_twin)
-    if ctx:has(target, component.ELYVILON_PACIFIED) then
+    local history = ctx:get(target, component.ELYVILON_PACIFIED)
+
+    if history and history.pacified then
         return false
     end
 
-    ctx:add(target, component.ELYVILON_PACIFIED, {
-        pacified = true,
-    })
+    if history then
+        history.pacified = true
+        ctx:set(target, component.ELYVILON_PACIFIED, history)
+    else
+        ctx:add(target, component.ELYVILON_PACIFIED, {
+            pacified = true,
+        })
+    end
 
-    if not ctx:has(target, component.SUMMON) then
+    if not history and not ctx:has(target, component.SUMMON) then
         local health = ctx:get(target, component.HEALTH)
         local xp = death.experience(definition, health.max)
 
@@ -204,6 +211,65 @@ local function convert(ctx, player, target, definition, is_twin)
     ctx:emit("religion", "The " .. definition.name .. message)
 
     return true
+end
+
+-- An attempted player attack ends a monster's present peace, even if its
+-- hit roll later misses. The marker stays to remember the XP already paid.
+local function anger_one(ctx, target)
+    local history = ctx:get(target, component.ELYVILON_PACIFIED)
+
+    if not history or not history.pacified then
+        return false
+    end
+
+    history.pacified = false
+    ctx:set(target, component.ELYVILON_PACIFIED, history)
+
+    local ai = ctx:get(target, component.AI)
+    local player_position = ctx:get(ctx:player(), component.POSITION)
+
+    if ai and player_position then
+        ai.behavior = behaviors.SEEK
+        ai.target_x = player_position.x
+        ai.target_y = player_position.y
+        ai.memory_until_aut = ctx:aut() + 250
+        ctx:set(target, component.AI, ai)
+    end
+
+    return true
+end
+
+-- The twins react together to aggression. Original-class lookup makes a
+-- polymorphed sibling follow the same rule without another XP transition.
+function pacification.anger(ctx, target)
+    if not anger_one(ctx, target) then
+        return false
+    end
+
+    local twin = elven_twins.other(ctx, target)
+
+    if twin and anger_one(ctx, twin) then
+        local actor = ctx:get(twin, component.ACTOR)
+        local definition = catalog.get(categories.MONSTERS, actor.kind_id)
+
+        ctx:emit("combat", "The " .. definition.name .. " gets angry again!")
+    end
+
+    return true
+end
+
+-- A linked companion follows an already accepted peace offer without
+-- another roll or heal. This also covers a neutral twin leaving a floor
+-- before the sibling's conversion was processed on that floor.
+function pacification.convert_linked(ctx, target)
+    if targets.real_attitude(ctx, target) ~= attitudes.HOSTILE then
+        return false
+    end
+
+    local actor = ctx:get(target, component.ACTOR)
+    local definition = catalog.get(categories.MONSTERS, actor.kind_id)
+
+    return convert(ctx, ctx:player(), target, definition, true)
 end
 
 -- A successful offer runs one chance roll for its chosen monster. The
@@ -248,13 +314,8 @@ function pacification.attempt(ctx, player, target, healed, power)
 
     local twin = elven_twins.other(ctx, target)
 
-    if twin and targets.real_attitude(ctx, twin) ==
-        attitudes.HOSTILE then
-        local other = ctx:get(twin, component.ACTOR)
-        local other_definition = catalog.get(categories.MONSTERS,
-            other.kind_id)
-
-        convert(ctx, player, twin, other_definition, true)
+    if twin then
+        pacification.convert_linked(ctx, twin)
     end
 
     pacification.heal(ctx, target, healed)
@@ -289,12 +350,11 @@ function pacification.validate(ctx)
     for _, entity in ipairs(ctx:query({ component.ELYVILON_PACIFIED })) do
         local state = ctx:get(entity, component.ELYVILON_PACIFIED)
 
-        if not state.pacified or
-            not ctx:has(entity, component.ACTOR) or
+        if not ctx:has(entity, component.ACTOR) or
             not ctx:has(entity, component.AI) or
             not ctx:has(entity, component.HEALTH) or
             not ctx:has(entity, component.POSITION) or
-            targets.real_attitude(ctx, entity) ~= attitudes.NEUTRAL then
+            (state.pacified and targets.real_attitude(ctx, entity) ~= attitudes.NEUTRAL) then
             error("invalid Elyvilon pacified monster")
         end
     end

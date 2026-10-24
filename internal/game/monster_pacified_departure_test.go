@@ -16,6 +16,7 @@ func TestPacifiedMonsterLeavesFromStairWithoutSecondXP(t *testing.T) {
 	if err := g.levels[1].MoveActor(rat, 7, 3); err != nil {
 		t.Fatal(err)
 	}
+
 	if _, err := g.scripts.Components()["religion.elyvilon_pacified"].Set(
 		rat,
 		map[string]any{
@@ -69,9 +70,11 @@ func TestPacifiedMonsterRoutesToStairAcrossRestore(t *testing.T) {
 	}
 
 	restored, err := Restore(g.Snapshot())
+
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	defer restored.Close()
 
 	for attempt := 0; attempt < 10 &&
@@ -120,5 +123,44 @@ func TestPacifiedMonsterSurvivesUnreachableExit(t *testing.T) {
 		t.Fatal(err)
 	} else {
 		restored.Close()
+	}
+}
+
+// An angered monster keeps its pacification history for the once-only XP
+// rule, but no longer follows Elyvilon's route to a Dungeon exit. Restore
+// must preserve that distinction instead of treating marker presence as peace.
+func TestFormerlyPacifiedMonsterStaysAfterRestore(t *testing.T) {
+	g := newStepGame(t)
+	rat := ratID(t, g)
+
+	if err := g.levels[1].MoveActor(rat, 7, 3); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := g.scripts.Components()["religion.elyvilon_pacified"].Set(
+		rat,
+		map[string]any{
+			"pacified": false,
+		},
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	restored, err := Restore(g.Snapshot())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	for attempt := 0; attempt < 5; attempt++ {
+		if _, err := restored.Step(Command{Kind: CommandWait}); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if !restored.world.EntityExists(rat) {
+		t.Fatal("formerly pacified rat left through a stair")
 	}
 }

@@ -126,7 +126,9 @@ end
 -- Source dismisses an already pacified actor on an exit, or once it is
 -- three normal sight radii from the player. Other neutral actors stay.
 local function ready(ctx, monster, position)
-    if not ctx:has(monster, component.ELYVILON_PACIFIED) then
+    local peace = ctx:get(monster, component.ELYVILON_PACIFIED)
+
+    if not peace or not peace.pacified then
         return false
     end
 

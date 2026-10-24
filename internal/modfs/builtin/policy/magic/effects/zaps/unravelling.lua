@@ -10,7 +10,7 @@ local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local spells = require("ids.spells")
 local summons = require("policy.magic.effects.summons.common")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 
 local unravelling = {}
 
@@ -78,7 +78,7 @@ function unravelling.affect_monster(ctx, target, power)
         return
     end
 
-    attack_conduct.report(ctx, target, definition)
+    player_contact.report(ctx, target, definition)
 
     local raw = roll_damage(ctx, power)
     local ac = defense.armour(ctx, target, definition)

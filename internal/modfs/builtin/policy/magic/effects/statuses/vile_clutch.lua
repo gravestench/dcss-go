@@ -9,7 +9,7 @@ local equipment = require("policy.combat.equipment")
 local range = require("policy.magic.range")
 local trajectory = require("policy.combat.trajectory")
 local common = require("policy.magic.effects.statuses.common")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 
 local clutch = {}
 
@@ -69,7 +69,7 @@ function clutch.cast(ctx, player, intent, spell, power)
         if target ~= player and actor and health and health.current > 0 then
             local definition = catalog.get("monsters", actor.kind_id)
 
-            attack_conduct.report(ctx, target, definition)
+            player_contact.report(ctx, target, definition)
 
             if eligible(ctx, target, definition) then
                 local bound = math.max(1, divide(ctx, power, 10))

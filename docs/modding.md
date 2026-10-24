@@ -1960,6 +1960,21 @@ Dowan and Duvessa illustrate a coupled unique rule:
 The pacification owner converts it without another RNG roll or heal.
 The partner receives its own once-only XP marker, which the ordinary save
 path retains.
+Player attacks should report a monster contact through
+`policy.combat.player_contact` before resolving accuracy or resistance.
+That entry point records religious conduct while the target is still
+peaceful, then clears its active peace flag and angers the same-floor twin.
+The marker remains as once-only XP history: a false `pacified` field means
+the actor is hostile again and must not take the pacified exit route.
+For example, a new offensive evoker should call
+`player_contact.report(ctx, target, definition)` for each contacted monster,
+even if its later damage roll is zero. Dowan and Duvessa also demonstrate
+`policy.monsters.elven_twins` as the owner of a saved pair relationship:
+death, Abyss banishment, and Arena separation call its grief operation;
+the ordinary monster spellbook and status owners read that saved state.
+Mods adding a linked pair should put the durable relation on ECS actors and
+connect every separation path through one owner. The current climb marker
+is reserved for the later monster stair-following travel slice.
 Divine Vigour stores an amount and timer in `religion.elyvilon_vigour`.
 The normal HP and MP formulas read that amount, so later training or level
 changes still produce the correct maxima. The god's `behavior_module`

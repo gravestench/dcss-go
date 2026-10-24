@@ -16,7 +16,7 @@ local vision = require("policy.character.vision")
 local player_slay = require("policy.combat.player_slay")
 local monster_health = require("policy.combat.monster_health")
 local target_brands = require("policy.combat.monster_target_brands")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 local projectile_conduct = require("policy.religion.conduct.projectiles")
 local missile_egos = require("constants.missile_egos")
 local weapon_brands = require("constants.weapon_brands")
@@ -150,7 +150,7 @@ local function resolve_target(ctx, player, missile, launcher, item,
     local defender_actor = ctx:get(target, "core.actor")
     local defender = catalog.get("monsters", defender_actor.kind_id)
 
-    attack_conduct.report(ctx, target, defender)
+    player_contact.report(ctx, target, defender)
 
     local input = attack_input(ctx, player, missile, launcher, item, target, defender)
     local outcome

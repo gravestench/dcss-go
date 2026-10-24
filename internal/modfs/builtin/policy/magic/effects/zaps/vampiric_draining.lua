@@ -6,7 +6,7 @@ local health_policy = require("policy.combat.player_health")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 
 local vampiric_draining = {}
 
@@ -107,7 +107,7 @@ function vampiric_draining.resolve(ctx, player, intent, spell, power)
         error("Vampiric Draining struck an actor without health")
     end
 
-    attack_conduct.report(ctx, target, definition)
+    player_contact.report(ctx, target, definition)
 
     local negative = damage.monster_resistance(ctx, target,
         resistances.NEGATIVE_ENERGY)

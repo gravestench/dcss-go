@@ -4,7 +4,7 @@ local spells = require("ids.spells")
 local damage = require("policy.magic.damage")
 local player_health = require("policy.combat.player_health")
 local registry = require("policy.magic.effects.registry")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 
 local discharge = {}
 
@@ -81,7 +81,7 @@ local function arc(ctx, player, target, power, remaining)
     else
         local definition = damage.monster(ctx, target)
 
-        attack_conduct.report(ctx, target, definition)
+        player_contact.report(ctx, target, definition)
 
         -- spl-damage.cc:_discharge_monsters does not hit or propagate
         -- through any monster with positive rElec.

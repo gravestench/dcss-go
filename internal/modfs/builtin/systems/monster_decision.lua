@@ -23,6 +23,7 @@ local awareness = require("policy.ai.awareness")
 local invisibility = require("policy.potions.invisibility")
 local component = require("constants.component")
 local ugly_thing = require("policy.monsters.ugly_thing")
+local elven_twins = require("policy.monsters.elven_twins")
 local slime_lifecycle = require("policy.monsters.slime_lifecycle")
 local breath = require("policy.combat.monster_breath")
 local behaviors = require("constants.ai_behaviors")
@@ -99,7 +100,9 @@ local function choose_intent(ctx, entity, state)
 
     -- A pacified neutral actor pursues an exit before ordinary neutral
     -- wandering can replace its saved destination.
-    if ctx:has(entity, component.ELYVILON_PACIFIED) then
+    local pacified = ctx:get(entity, component.ELYVILON_PACIFIED)
+
+    if pacified and pacified.pacified then
         local next_state, intent = pacified_departure.intent(ctx,
             entity, state, position)
 
@@ -234,6 +237,10 @@ function system.update(ctx, entity)
     if not health or health.current <= 0 then
         return
     end
+
+    -- The source waits until the survivor sees the player to activate a
+    -- pending twin grief response. Do this before choosing its action.
+    elven_twins.maybe_energize(ctx, entity)
 
     breath.advance(ctx, entity)
 

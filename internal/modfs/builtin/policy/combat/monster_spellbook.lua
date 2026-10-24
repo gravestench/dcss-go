@@ -5,6 +5,7 @@ local book_ids = require("ids.monster_spellbooks")
 local spell_flags = require("constants.monster_spell_flags")
 local source_spellbook = require("policy.monsters.source_spellbook")
 local beast_profile = require("policy.monsters.mutant_beast.profile")
+local elven_twins = require("policy.monsters.elven_twins")
 
 local spellbook = {}
 
@@ -24,7 +25,8 @@ function spellbook.for_actor(ctx, entity)
     end
 
     if overrides and overrides.spells[1] then
-        return source_spellbook.parse(overrides.spells[1])
+        return elven_twins.spellbook(ctx, entity,
+            source_spellbook.parse(overrides.spells[1]))
     end
 
     -- The beast's saved facets replace the generic empty catalog book.
@@ -134,7 +136,8 @@ function spellbook.for_actor(ctx, entity)
         return nil
     end
 
-    return catalog.get("monster_spellbooks", monster.spellbook_id)
+    return elven_twins.spellbook(ctx, entity,
+        catalog.get("monster_spellbooks", monster.spellbook_id))
 end
 
 -- The selected slot must still contain the requested spell when an intent is resolved.

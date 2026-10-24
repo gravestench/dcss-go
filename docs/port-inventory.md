@@ -547,6 +547,17 @@ death or banishment. Pacifying Kirke restores her marked hogs through her
 existing release rule. Dowan and Duvessa find one another by original
 class after polymorph, and the other hostile twin becomes neutral without
 a second chance roll or healing; each gains its once-only nonlethal XP.
+Player attack contact now checks religious conduct before changing peace.
+A miss still angers the attacked twin and its same-floor partner. The
+marker keeps nonlethal XP history when its active peace flag becomes false,
+so anger, restore, and later pacification cannot pay that XP twice.
+Death, Abyss banishment, and Okawaru's Arena challenge leave a surviving
+twin with a saved grief state. Dowan's unpolymorphed spellbook gains Stone
+Arrow, Throw Icicle, and Blink in the source slots and he gains permanent
+Haste; Duvessa gains permanent Berserk. A survivor that cannot yet see the
+player activates its pending power on a later decision. The saved climb
+allowance awaits the broader monster stair-following travel domain, and
+exact source speech selection is still pending.
 Temporary terrain sourced by any monster, including Vault Warden's seals,
 reverts immediately when its source is pacified or killed. Unrelated
 markers and later permanent terrain edits remain intact.

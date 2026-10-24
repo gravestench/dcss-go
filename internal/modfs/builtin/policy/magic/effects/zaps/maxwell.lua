@@ -7,7 +7,7 @@ local damage = require("policy.magic.damage")
 local death_hooks = require("policy.combat.death_hooks")
 local registry = require("policy.magic.effects.registry")
 local targets = require("policy.ai.targets")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 
 local maxwell = { continuation_mp = 0 }
 
@@ -142,7 +142,7 @@ function maxwell.continue(ctx, player, _, aut)
 
     local definition, health = damage.monster(ctx, target)
 
-    attack_conduct.report(ctx, target, definition)
+    player_contact.report(ctx, target, definition)
     ctx:add(target, zap_ids.component.MAXWELL_VAPORIZE, { active = true })
     damage.apply(ctx, target, health.current)
     ctx:emit("spell", "The electricity discharges through the " ..

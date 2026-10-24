@@ -5,7 +5,7 @@ local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 
 local mindburst = {}
 
@@ -53,7 +53,7 @@ function mindburst.resolve(ctx, player, intent, spell, power)
         end
 
         if health.current > 0 then
-            attack_conduct.report(ctx, target, definition)
+            player_contact.report(ctx, target, definition)
 
             if definition.intelligence_id == "I_BRAINLESS" then
                 ctx:emit("spell", "The " .. definition.name .. " is unaffected.")

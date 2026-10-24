@@ -7,7 +7,7 @@ local monster_health = require("policy.combat.monster_health")
 local range = require("policy.magic.range")
 local registry = require("policy.magic.effects.registry")
 local trajectory = require("policy.combat.trajectory")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 local streams = require("constants.rng_streams")
 
 local explosive = { specs = {} }
@@ -114,7 +114,7 @@ local function hurt(ctx, player, target, spec, power, stream)
     -- A divine or environmental blast has no player attacker. It must
     -- neither record player conduct nor award a player kill on death.
     if not spec.uncredited then
-        attack_conduct.report(ctx, target, definition)
+        player_contact.report(ctx, target, definition)
     end
 
     local after_ac = raw

@@ -6,6 +6,8 @@ local awareness = require("policy.ai.awareness")
 local component = require("constants.component")
 local costs = require("policy.abilities.god_costs")
 local domains = require("constants.portal_domains")
+local elven_twins = require("policy.monsters.elven_twins")
+local twin_causes = require("constants.elven_twin")
 local levels = require("policy.generation.branch_levels")
 local terrain = require("constants.terrain")
 local okawaru = require("constants.okawaru")
@@ -81,6 +83,9 @@ local function enter(ctx, input)
 
     stop_delay(ctx, player, target)
     destroy_inventory(ctx, target)
+    -- The source treats an Arena challenge as a departure from the
+    -- outside floor. Resolve the sibling before moving its target away.
+    elven_twins.grieve(ctx, target, nil, position, twin_causes.DUEL)
     ctx:add(target, component.MONSTER_ARENA_DUEL, {
         current = true,
         abandoned = false,

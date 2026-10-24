@@ -37,6 +37,7 @@ local gods = require("constants.gods")
 local vault_effects = require("constants.vault_effects")
 local beast_form = require("policy.monsters.mutant_beast.form")
 local pacification = require("policy.religion.elyvilon.pacification")
+local elven_twins = require("policy.monsters.elven_twins")
 
 -- A merge may consume an authored slime whose fixed HP differs from the
 -- survivor's. Saved vault records retain that source maximum after death;
@@ -461,6 +462,7 @@ end
 -- Example: module.run(ctx, input) rejects a banished monster left on an ordinary floor.
 function module.run(ctx, input)
     pacification.validate(ctx)
+    elven_twins.validate(ctx)
     avatar.validate(ctx)
     entities.validate(ctx)
     inventory.validate(ctx)

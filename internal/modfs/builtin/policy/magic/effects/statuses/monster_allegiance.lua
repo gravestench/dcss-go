@@ -1,6 +1,7 @@
 -- Source: beam.cc:BEAM_CHARM and mass_enchantment, monster.cc:go_frenzy,
 -- mon-ench.cc:calc_duration and frenzy expiry.
 local component = require("constants.component")
+local enchantments = require("constants.monster_enchantment")
 local catalog = require("policy.catalog")
 local range = require("policy.magic.range")
 local roll = require("policy.combat.roll")
@@ -197,6 +198,17 @@ function allegiance.start_berserk(ctx, target, stream)
     local definition = catalog.get("monsters", actor.kind_id)
 
     ctx:emit("spell", "The " .. definition.name .. " goes berserk!")
+end
+
+-- Duvessa's bereavement uses the normal Berserk start, including its HP
+-- scaling and source RNG, then marks the enchant as nondecaying.
+function allegiance.start_permanent_berserk(ctx, target)
+    allegiance.start_berserk(ctx, target)
+
+    local current = state(ctx, target)
+
+    current.frenzy_aut = enchantments.INFINITE_DURATION_AUT
+    ctx:set(target, component.MONSTER_ALLEGIANCE, current)
 end
 
 -- Charm's menu predicate requires a visible living actor and a clear
@@ -397,8 +409,10 @@ function allegiance.tick(ctx, target, elapsed_aut)
         current.charm_aut - elapsed_aut)
 
     if current.frenzy_aut > 0 then
-        current.frenzy_aut = math.max(0,
-            current.frenzy_aut - elapsed_aut)
+        if current.frenzy_aut < enchantments.INFINITE_DURATION_AUT then
+            current.frenzy_aut = math.max(0,
+                current.frenzy_aut - elapsed_aut)
+        end
 
         if current.frenzy_aut == 0 then
             if current.berserk_hp then

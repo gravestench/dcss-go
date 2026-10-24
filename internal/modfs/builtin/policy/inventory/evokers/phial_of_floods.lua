@@ -3,7 +3,7 @@
 -- breathing monster even when its center tile could not become water.
 local catalog = require("policy.catalog")
 local accuracy = require("policy.character.accuracy")
-local attack_conduct = require("policy.religion.conduct.attack")
+local player_contact = require("policy.combat.player_contact")
 local component = require("constants.component")
 local defense = require("policy.combat.monster_defense")
 local displacement = require("policy.combat.monster_beams.displacement")
@@ -203,7 +203,7 @@ function phial.resolve(ctx, player, chosen)
             local definition = catalog.get("monsters", actor.kind_id)
             local raw = water_damage(ctx, strength)
 
-            attack_conduct.report(ctx, monster, definition)
+            player_contact.report(ctx, monster, definition)
 
             if strikes(ctx, player, monster, definition, strength) then
                 local ac = defense.armour(ctx, monster, definition)
