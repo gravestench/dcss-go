@@ -16,6 +16,7 @@ local jewellery_capabilities = require("constants.jewellery_capabilities")
 local artefacts = require("policy.item_generation.artefacts.properties")
 local artefact_properties = require("ids.artefact_properties")
 local hex_status = require("policy.combat.monster_hexes.status")
+local trog_hand = require("policy.religion.trog.hand")
 
 local resistance = {}
 local willpower_pip = 40
@@ -114,8 +115,8 @@ local function armour_willpower(entry)
     return value
 end
 
--- Source: player.cc:player_willpower. Equipment and mutations contribute
--- forty-point pips after the species' per-level base.
+-- Source: player.cc:player_willpower. Equipment, mutations, and Trog's
+-- active Hand contribute forty-point pips after species' per-level base.
 function resistance.willpower(ctx, player)
     local choice = ctx:get(player, component.PLAYER)
     local progress = ctx:get(player, component.PROGRESSION)
@@ -125,6 +126,7 @@ function resistance.willpower(ctx, player)
         jewellery_capabilities.WILLPOWER_PIPS)
     pips = pips + artefacts.sum_worn(ctx, player,
         artefact_properties.WILLPOWER)
+    pips = pips + (trog_hand.active(ctx, player) and 2 or 0)
     local worn = equipment.worn(ctx, player, {
         body = true,
         cloak = true,

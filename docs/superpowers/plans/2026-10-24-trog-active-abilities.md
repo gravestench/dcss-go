@@ -26,6 +26,8 @@ generic effects.
 ## Review Focus
 
 - A rage-ineligible player sees no Berserk action and loses no time.
+- Confusion blocks Trog invocations; deliberate Berserk bypasses Clarity.
+- A Brother expires when its own Berserk action clock ends.
 - An ability failure spends its turn but neither piety nor MP.
 - A Hand timer at the cap remains valid after refresh and restore.
 - A Brother whose landing is blocked still costs piety after success.
@@ -38,11 +40,11 @@ generic effects.
 **Files:** `ids/abilities.lua`, `policy/abilities/trog/*.lua`, and
 `internal/script/testdata/lua/tests/religion_trog_abilities_test.lua`.
 
-- [ ] Write production-schema tests for rank, penance, source failure
+- [x] Write production-schema tests for rank, penance, source failure
   arithmetic, successful piety costs, and no MP or Invocations use.
-- [ ] Run the new tests red; register the three abilities using the
+- [x] Run the new tests red; register the three abilities using the
   existing `god_costs` and ability registry interfaces.
-- [ ] Make Berserk call the shared `rage.can_begin` and `rage.begin`
+- [x] Make Berserk call the shared `rage.can_begin` and `rage.begin`
   owner. Test both legal rage and each existing refusal gate.
 
 ### Task 2: Trog's Hand
@@ -52,11 +54,12 @@ generic effects.
 `policy/character/regeneration.lua`,
 `policy/combat/player_resistance.lua`, and the Trog ability module.
 
-- [ ] Test duration formula, cap, refresh, messages, expiry,
+- [x] Test duration formula, cap, refresh, messages, expiry,
   regeneration through inhibition, and two willpower pips.
-- [ ] Run red; add the saved component, focused tick owner, and shared
-  consumer reads. Keep the existing player status schema unchanged.
-- [ ] Test save/restore and cleanup on conversion and penance.
+- [x] Add the saved component, focused tick owner, and shared consumer
+  reads; run the focused rules. Keep the existing player status schema
+  unchanged.
+- [x] Test save/restore and cleanup on conversion and penance.
 
 ### Task 3: Brothers in Arms
 
@@ -65,17 +68,18 @@ and allegiance owners only where a generic operation is missing,
 `internal/script/testdata/lua/tests/religion_trog_brothers_test.lua`,
 and a focused Game restore test.
 
-- [ ] Test jitter, source species bands and weights, friendly attitude,
+- [x] Test jitter, source species bands and weights, friendly attitude,
   god source, immediate Berserk, expiry, and blocked placement.
-- [ ] Run red; spawn one real ECS monster with an extended berserk and
-  matching summon lifetime. Preserve normal monster gear and source.
-- [ ] Test departure or penance dismisses only temporary Trog gifts.
+- [x] Spawn one real ECS monster with an extended Berserk action clock
+  that also owns its summon lifetime; run the focused rules. Preserve
+  normal monster gear and source.
+- [x] Test departure or penance dismisses only temporary Trog gifts.
 
 ### Task 4: Integrated verification
 
 **Files:** `docs/modding.md` and `docs/port-inventory.md`.
 
-- [ ] Verify ability menus, save continuation, focused Lua and Game
+- [x] Verify ability menus, save continuation, focused Lua and Game
   tests, `go build ./...`, `git diff --check`, and 120-column limits.
-- [ ] Explain the Trog ability and Hand component contracts for modders.
-- [ ] Commit this complete category once and push `origin/main`.
+- [x] Explain the Trog ability and Hand component contracts for modders.
+- [x] Commit this complete category once and push `origin/main`.

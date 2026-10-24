@@ -344,10 +344,23 @@ function piety.offend(ctx, player, loss, penance)
 
     if penance > 0 then
         local god_id = state.god_id
+        local already_punished = (state.penance[god_id] or 0) > 0
 
         state.penance[god_id] = math.min(limits.MAX_PENANCE,
             (state.penance[god_id] or 0) + penance)
         ctx:set(player, component.RELIGION_WORSHIP, state)
+
+        -- Source penance starts by cancelling temporary patron gifts.
+        -- Let the winning god behavior own that cleanup, once per debt.
+        if not already_punished then
+            local definition = catalog.get(categories.GODS, god_id)
+            local module = definition.behavior_module and
+                require(definition.behavior_module)
+
+            if module and module.on_penance then
+                module.on_penance(ctx, player)
+            end
+        end
     end
 
     return true

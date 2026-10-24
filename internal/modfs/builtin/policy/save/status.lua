@@ -8,6 +8,7 @@ local mutations = require("ids.mutations")
 local stats = require("constants.stats")
 local restrictions = require("constants.safety_restrictions")
 local rage = require("policy.character.rage")
+local trog_hand = require("policy.religion.trog.hand")
 local zot_clock = require("policy.world.zot_clock")
 
 local module = {}
@@ -16,6 +17,7 @@ local module = {}
 -- Example: module.run(ctx) rejects a saved Might duration above the 800-aut cap.
 function module.run(ctx)
     local player = ctx:player()
+    trog_hand.validate(ctx, player)
     local durations = ctx:get(player, "core.durations")
     local poison = ctx:get(player, "core.poison")
     local barbs = ctx:get(player, component.BARBS)

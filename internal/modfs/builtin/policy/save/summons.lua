@@ -18,6 +18,7 @@ local living_spells = require("policy.combat.monster_summons.living_spells")
 local resistance_ids = require("constants.resistance_ids")
 local holiness = require("constants.monster_holiness")
 local wizlab = require("constants.wizlab")
+local trog_roster = require("policy.religion.trog.brothers_roster")
 
 local constructs = require("constants.monster_construct_components")
 local monster_profile = require("policy.combat.monster_profile")
@@ -146,6 +147,10 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         state.source_id == gods.YREDELEMNUL and owner_player and
         state.attitude == attitudes.FRIENDLY and
         state.expires_aut == 0
+    local trog_gift_source = state.source_category == categories.GODS and
+        state.source_id == gods.TROG and owner_player and
+        state.attitude == attitudes.FRIENDLY and
+        state.expires_aut == 0
     local permanent_spell = state.source_category == categories.SPELLS and
         (state.source_id == spells.SPELL_SIMULACRUM or
             state.source_id == spells.SPELL_DEATH_CHANNEL or
@@ -159,7 +164,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
     local trap_source = state.source_category == categories.TRAPS and
         state.source_id == traps.TRAP_ZOT
     local permanent = (permanent_spell or trap_source or
-        wrath_god_source or yred_gift_source) and
+        wrath_god_source or yred_gift_source or trog_gift_source) and
         state.expires_aut == 0
 
     local owner_actor = ctx:get(state.owner, component.ACTOR)
@@ -201,6 +206,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         not lugonu_source and
         not wrath_god_source and
         not yred_gift_source and
+        not trog_gift_source and
         not wizlab_source then
         error("summon " .. ctx:id(entity) .. " has invalid origin category")
     end
@@ -235,6 +241,18 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
             state.attitude ~= attitudes.FRIENDLY or
             state.owner ~= ctx:player()) then
         error("summon " .. ctx:id(entity) .. " has invalid Xom origin")
+    end
+
+    -- Brothers in Arms uses the monster's Berserk action clock as its
+    -- abjuration clock. No independent world-time deadline can drift.
+    if trog_gift_source then
+        local allegiance = ctx:get(entity, component.MONSTER_ALLEGIANCE)
+
+        if not trog_roster.allowed[actor.kind_id] or
+            not allegiance or allegiance.frenzy_aut <= 0 then
+            error("summon " .. ctx:id(entity) ..
+                " has invalid Trog gift")
+        end
     end
 
     catalog.get(state.source_category, state.source_id)

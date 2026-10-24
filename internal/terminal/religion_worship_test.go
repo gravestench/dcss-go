@@ -1,11 +1,27 @@
 package terminal
 
 import (
+	"regexp"
 	"strings"
 	"testing"
 
 	"crawl/internal/game"
 )
+
+// The ability list is alphabetized, so added divine powers can move
+// Renounce without changing the key the test should choose.
+func selectRenounceReligion(t *testing.T, m *AppModel) {
+	t.Helper()
+
+	rows := plainApp(m)
+	match := regexp.MustCompile(`(?m)  ([a-z]) - Renounce Religion`).FindStringSubmatch(rows)
+
+	if len(match) != 2 {
+		t.Fatalf("renunciation has no menu key:\n%s", rows)
+	}
+
+	m.handleKey(match[1])
+}
 
 // The source ability belongs in the ordinary ability menu. Both prompts
 // must be explicit, and cancelling either one leaves worship and time alone.
@@ -41,7 +57,7 @@ func TestRenounceReligionMenuAndTwoPrompts(t *testing.T) {
 		t.Fatal("renunciation is absent from the ability menu")
 	}
 
-	m.handleKey("a")
+	selectRenounceReligion(t, m)
 
 	if m.screen != ScreenActionConfirm ||
 		!strings.Contains(plainApp(m), "Really renounce your faith") {
@@ -57,7 +73,7 @@ func TestRenounceReligionMenuAndTwoPrompts(t *testing.T) {
 	}
 
 	m.handleKey("a")
-	m.handleKey("a")
+	selectRenounceReligion(t, m)
 	m.handleKey("y")
 
 	if m.screen != ScreenActionConfirm ||

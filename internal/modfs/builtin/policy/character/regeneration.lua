@@ -8,6 +8,7 @@ local powered = require("policy.character.powered_by_death")
 local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
 local jiyva_defenses = require("policy.religion.jiyva.defenses")
+local trog_hand = require("policy.religion.trog.hand")
 
 local regeneration = {}
 
@@ -27,6 +28,7 @@ function regeneration.rates(ctx, player, maximum_hp, maximum_mp)
     hp = hp + powered.strength(ctx, player) * 100
     hp = math.max(1, hp)
     hp = hp + jiyva_defenses.hp_bonus(ctx, player)
+    hp = hp + (trog_hand.active(ctx, player) and 100 or 0)
 
     local mp = 7 + math.floor(maximum_mp / 2)
 
@@ -95,14 +97,15 @@ function regeneration.hp_allowed(ctx, player)
     return true
 end
 
--- A natural-regeneration blocker must not grant the ordinary HP rate,
--- while Jiyva's separate pip survives that blocker just as in player.cc.
+-- A natural-regeneration blocker must not grant the ordinary HP rate.
+-- Jiyva's separate pip and Trog's Hand survive it, as in player.cc.
 function regeneration.effective_hp_rate(ctx, player, total_rate)
     if regeneration.hp_allowed(ctx, player) then
         return total_rate
     end
 
-    return jiyva_defenses.hp_bonus(ctx, player)
+    return jiyva_defenses.hp_bonus(ctx, player) +
+        (trog_hand.active(ctx, player) and 100 or 0)
 end
 
 -- Source: player-reacts.cc:regen_hp diverts each HP pip to MP when Mana

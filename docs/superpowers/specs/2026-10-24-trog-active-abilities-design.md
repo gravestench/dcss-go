@@ -27,9 +27,11 @@ Invocations. Their failure values are `45 - piety / 2`,
 ability failure draw and cost commitment path is already available.
 
 Berserk calls the shared player rage owner after its source eligibility
-gate. It must reject undead, stasis, exhaustion, and other conditions
-that prevent rage before committing the action. The god power does not
-create a separate berserk state.
+gate. It rejects undead, stasis, exhaustion, fear, and mesmerism before
+committing the action. Deliberate god rage bypasses Clarity; involuntary
+rage does not. Confusion blocks all three Trog invocations. Wielding a
+launcher or other non-melee item asks for confirmation before spending
+time. The god power does not create a separate berserk state.
 
 Trog's Hand increases a saved player timer by
 `5 + roll_dice(2, floor((piety / 2) / 3) + 1)` turns, capped at 100
@@ -42,8 +44,9 @@ Brothers in Arms uses the source piety jitter to select a power band.
 Bears, ogres, trolls, and giants are chosen at the source thresholds of
 100, 140, and 180, with their source weights. One ordinary friendly
 summon appears near the player with Trog as its saved source. It enters
-berserk immediately, and its summon timeout follows the extended
-berserk lifetime. Failed placement still spends the successful ability.
+berserk immediately. Its abjuration ends on the same monster action as
+its extended Berserk rather than a second world-time deadline. Failed
+placement still spends the successful ability.
 Temporary Trog gifts disappear when Trog is abandoned or his penance
 begins.
 

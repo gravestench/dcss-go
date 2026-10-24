@@ -411,6 +411,14 @@ donations and fractional carry across piles and save/restore.
 Trog's source magic-skill restriction now runs through its god behavior
 module and the shared training owner; Gnoll distributed training keeps its
 source exception without a permanent skill-point loss.
+Trog's Berserk, Trog's Hand, and Brothers in Arms now use three Lua ability
+modules. The Hand's saved timer adds source regeneration and willpower;
+Brothers creates a friendly, temporary, berserk ECS monster from one shared
+source roster. Its summon expiry follows its monster-action Berserk clock.
+Confusion blocks invocations, and deliberate Berserk bypasses Clarity.
+Penance and departure end the Hand and dismiss temporary
+Trog summons. The ordinary ability menu and Go save path exercise these
+powers without Trog-specific Go handlers.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 still-unported vault families and their Lua scripts,

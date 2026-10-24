@@ -6,6 +6,9 @@ local visibility = require("policy.combat.monster_summons.visibility")
 local channels = require("constants.message_channels")
 local zap_ids = require("policy.magic.effects.zaps.ids")
 local monsters = require("ids.monsters")
+local gods = require("constants.gods")
+local categories = require("constants.catalog")
+local attitudes = require("constants.attitude")
 
 -- Theory of operation: Expired summons are torn down before ordinary death cleanup, preserving source-specific effects.
 -- Source: monster::mark_summoned and ENCH_ABJ expiry. The component belongs
@@ -70,6 +73,18 @@ function system.update(ctx, active)
                 not owner_health or owner_health.current <= 0)
         local expired = active == player and state.expires_aut > 0 and
             ctx:aut() >= state.expires_aut
+        local trog_brother = state.source_category == categories.GODS and
+            state.source_id == gods.TROG and
+            state.attitude == attitudes.FRIENDLY and
+            state.expires_aut == 0
+        local frenzy = trog_brother and
+            ctx:get(entity, component.MONSTER_ALLEGIANCE)
+
+        -- Source abjuration and Berserk are one monster-action clock.
+        -- This system runs after combat, so its own final action may end
+        -- before removing the actor from the level.
+        expired = expired or trog_brother and
+            (not frenzy or frenzy.frenzy_aut <= 0)
 
         local dead_vortex = state.source_id == spells.SPELL_FIRE_STORM and
             health and health.current <= 0
@@ -87,7 +102,7 @@ function system.update(ctx, active)
         local dead_explosive = explosive and health and
             health.current <= 0
 
-        if (entity ~= active or orphaned) and
+        if (entity ~= active or orphaned or trog_brother and expired) and
             not dead_vortex and not dead_spore and not dead_inferno and
             not dead_explosive and
             (orphaned or expired or not health or health.current <= 0) then
@@ -112,7 +127,7 @@ register.system({
     id = "magic.summon.expiry",
     scope = "active",
     query = {},
-    after = { "status.constriction" },
+    after = { "status.constriction", "magic.monster_allegiance.tick" },
     before = { "actor.death" },
     update = system.update,
 })

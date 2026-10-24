@@ -73,8 +73,10 @@ function rage.scale_hp(ctx, player, base)
     return base
 end
 
--- A new Berserk attempt must pass form and status gates before rolling its duration.
-function rage.can_begin(ctx, player)
+-- A new Berserk attempt checks shared body and status gates before rolling.
+-- Only involuntary rage checks Clarity; deliberate god rage and potions are
+-- allowed through that one gate, as in the source can_go_berserk contract.
+function rage.can_begin(ctx, player, intentional, potion)
     local value = state(ctx, player)
 
     if value and (value.remaining_aut > 0 or value.cooldown_aut > 0) then
@@ -84,18 +86,24 @@ function rage.can_begin(ctx, player)
     local choice = ctx:get(player, component.PLAYER)
     local species = catalog.get("species", choice.species_id)
     local status = ctx:get(player, component.PLAYER_STATUS)
+    local fear = ctx:get(player, component.PLAYER_FEAR)
+    local mesmerism = ctx:get(player, component.PLAYER_MESMERISM)
 
     local forms = require("policy.magic.effects.forms.player")
 
     return not traits.stasis(species) and not forms.stasis(ctx, player) and
         species.undead_type ~= undead_states.UNDEAD and
         not (status and status.death_door_aut > 0) and
-        effects.sum(ctx, player, capabilities.CLARITY) == 0
+        not (fear and fear.remaining_aut > 0) and
+        not (mesmerism and mesmerism.remaining_aut > 0 and
+            require("policy.character.player_mesmerism").any(ctx, player)) and
+        (intentional or potion or
+            effects.sum(ctx, player, capabilities.CLARITY) == 0)
 end
 
 -- Persist the initial rage state before action restrictions or HP scaling read it.
-function rage.begin(ctx, player, stream)
-    if not rage.can_begin(ctx, player) then
+function rage.begin(ctx, player, stream, intentional, potion)
+    if not rage.can_begin(ctx, player, intentional, potion) then
         return false
     end
 

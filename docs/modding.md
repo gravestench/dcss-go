@@ -1850,6 +1850,37 @@ may supply the same optional method through its `behavior_module`. Keep a
 temporary god restriction out of permanent mutation-skill rules: leaving
 the god must not erase learned points or the player's saved choices.
 
+Trog's three powers show how to add a complete god ability family without
+a Go command case. Files under `policy/abilities/trog/` register Berserk,
+Trog's Hand, and Brothers in Arms through `policy.abilities.registry`.
+Each file owns its rank, free preparation, failure tuple, effect, and piety
+cost. `policy.abilities.god_costs` supplies the common worship gate and
+cost arithmetic; the power calls it only after its own effect commits.
+The existing `policy.character.rage` owns Berserk, so changing the god
+ability never requires a second rage component.
+The ability command rejects invocations while confused. Deliberate
+Trog Berserk ignores Clarity, while involuntary rage still checks it.
+The Berserk module asks for confirmation when the player wields a
+launcher or other non-melee item.
+
+Trog's Hand writes `religion.trog_hand` on the player. Its separate Lua
+system ages that timer before HP regeneration, and the regeneration and
+willpower owners read the same component. Brothers in Arms selects from
+`policy.religion.trog.brothers_roster`, spawns one ordinary ECS monster
+with a `magic.summon` source of Trog, and gives it a saved berserk timer.
+The monster's own action clock ends both Berserk and its summoning; a
+world-time `expires_aut` would drift when monster and player speeds differ.
+For this Trog source, `expires_aut = 0` denotes that source-specific
+clock. The summon expiry system and save validator recognize it by the
+stable Trog source ID and require a live frenzy on restore.
+The roster is imported by save validation as well as selection. To change
+this power in a mod, override its ability or roster file by relative path;
+do not add a second list of allowed monster names. Trog's behavior module
+exports `leave` and `on_penance` to clear the Hand and dismiss temporary
+god summons. The piety owner calls `on_penance` once when an offense
+first creates debt, after recording that debt. Another god can supply the
+same optional hook for its own temporary gifts.
+
 #### Prayer, renunciation, and the HUD
 
 The source stair keys (`<` and `>`) request prayer when the player stands on

@@ -54,6 +54,7 @@ local component = {
     RELIGION_NEMELEX_DECKS = "religion.nemelex_decks",
     RELIGION_AVATAR_SOURCE = "religion.avatar_source",
     RELIGION_CARD_ELIXIR = "religion.card_elixir",
+    RELIGION_TROG_HAND = "religion.trog_hand",
     RELIGION_VEHUMET = "religion.vehumet",
     RELIGION_ASHENZARI = "religion.ashenzari",
     RELIGION_RU = "religion.ru",
