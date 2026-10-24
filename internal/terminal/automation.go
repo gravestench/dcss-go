@@ -55,19 +55,21 @@ func automationView(view game.View) map[string]any {
 	}
 
 	return map[string]any{
-		"width":          view.Width,
-		"height":         view.Height,
-		"player_x":       view.PlayerX,
-		"player_y":       view.PlayerY,
-		"hp":             view.PlayerHP,
-		"max_hp":         view.PlayerMaxHP,
-		"mp":             view.PlayerMP,
-		"max_mp":         view.PlayerMaxMP,
-		"can_recover_hp": view.CanRecoverHP,
-		"can_recover_mp": view.CanRecoverMP,
-		"cells":          cells,
-		"entities":       entities,
-		"clouds":         clouds,
+		"width":                view.Width,
+		"height":               view.Height,
+		"player_x":             view.PlayerX,
+		"player_y":             view.PlayerY,
+		"hp":                   view.PlayerHP,
+		"max_hp":               view.PlayerMaxHP,
+		"mp":                   view.PlayerMP,
+		"max_mp":               view.PlayerMaxMP,
+		"can_recover_hp":       view.CanRecoverHP,
+		"can_recover_mp":       view.CanRecoverMP,
+		"can_cross_lava":       view.CanCrossLava,
+		"can_cross_deep_water": view.CanCrossDeepWater,
+		"cells":                cells,
+		"entities":             entities,
+		"clouds":               clouds,
 	}
 }
 
@@ -162,6 +164,19 @@ func (m *AppModel) advanceAutomation() tea.Cmd {
 		m.stopAutomation()
 
 		return nil
+	}
+
+	if updated, found := decision["state"]; found {
+		state, valid := updated.(map[string]any)
+
+		if !valid {
+			m.stopAutomation()
+			m.notice = "Automatic movement returned invalid route state."
+
+			return nil
+		}
+
+		m.automationState = state
 	}
 
 	command, err := playCommandFromDecision(decision)

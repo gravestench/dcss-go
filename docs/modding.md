@@ -90,13 +90,13 @@ The policy receives an `input` table with `phase`, current `state`, and a
 `view` made from the player's *observed* map. Cells are row-major and have
 `feature`, `state` (0 unknown, 1 remembered, 2 visible), and `walkable`;
 unknown cells reveal neither feature nor collision. The view also gives
-player position and HP/MP, whether each pool can recover by waiting, visible
-entities with hostility, and visible clouds. This callback has no live game
-`ctx`: choose a next command from the supplied snapshot and let the game
-execute it. For a mechanic that needs live ECS state, add a separate
-read-only presentation policy, as `presentation.rest_capabilities` does, and
-project its answer into the observed view. This keeps routing rules from
-reading hidden terrain or mutating actors during a timer callback.
+player position and HP/MP, recovery and dangerous-terrain capabilities,
+visible entities with hostility, and visible clouds. This callback has no
+live game `ctx`: choose a next command from the supplied snapshot and let
+the game execute it. For a mechanic that needs live ECS state, add a separate
+read-only presentation policy, as `presentation.automation_capabilities`
+does, and project its answer into the observed view. This keeps routing
+rules from reading hidden terrain or mutating actors during a timer callback.
 
 ### A first live mod
 

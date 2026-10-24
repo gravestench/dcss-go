@@ -33,6 +33,8 @@ local function open_view()
         max_mp = 5,
         can_recover_hp = true,
         can_recover_mp = true,
+        can_cross_lava = false,
+        can_cross_deep_water = false,
         cells = cells,
         entities = {},
         clouds = {},
@@ -59,6 +61,12 @@ local function source_keys()
         { key = "N", dx = 1, dy = 1 },
         { key = "shift+left", dx = -1, dy = 0 },
         { key = "shift+right", dx = 1, dy = 0 },
+        { key = "shift+up", dx = 0, dy = -1 },
+        { key = "shift+down", dx = 0, dy = 1 },
+        { key = "shift+home", dx = -1, dy = -1 },
+        { key = "shift+pgup", dx = 1, dy = -1 },
+        { key = "shift+end", dx = -1, dy = 1 },
+        { key = "shift+pgdown", dx = 1, dy = 1 },
     }
 
     for _, binding in ipairs(bindings) do
@@ -183,11 +191,110 @@ local function explore_frontier()
     harness.truthy(first.dx > 0,
         "explore did not approach the only unknown region")
 
+    -- At a known frontier, do not blindly step onto a tile whose
+    -- terrain remains hidden. Another known frontier may remain.
+    view.player_x = 4
+    local second = automation.next({ state = first.state,
+        view = view })
+    local destination = cell(view, view.player_x + second.dx,
+        view.player_y + second.dy)
+
+    harness.equal(second.kind, commands.move)
+    harness.truthy(destination.state > 0,
+        "explore attempted to enter unseen terrain")
+
     view.entities = {
         { role = "monster", hostile = true },
     }
     harness.equal(automation.next({ state = state, view = view }).action,
         modes.STOP)
+end
+
+-- A frontier already reached without revealing its neighboring cells is
+-- exhausted. The same route then continues toward another frontier.
+local function explore_other_frontier()
+    local view = open_view()
+
+    for _, observed in ipairs(view.cells) do
+        observed.walkable = false
+    end
+
+    for x = 1, 4 do
+        cell(view, x, 3).walkable = true
+    end
+
+    cell(view, 5, 3).state = 0
+    cell(view, 5, 3).feature = ""
+    cell(view, 5, 3).walkable = false
+    cell(view, 0, 3).state = 0
+    cell(view, 0, 3).feature = ""
+    cell(view, 0, 3).walkable = false
+    view.player_x = 4
+
+    local state = automation.start({ mode = modes.EXPLORE,
+        view = view })
+    local next_step = automation.next({ state = state, view = view })
+
+    harness.equal(next_step.kind, commands.move)
+    harness.truthy(next_step.dx < 0,
+        "explore did not leave an exhausted frontier")
+
+    -- When this is the only reachable observation point, stop safely
+    -- rather than guessing that its unseen neighbor is traversable.
+    cell(view, 0, 3).state = 2
+    cell(view, 0, 3).feature = features.DNGN_ROCK_WALL
+
+    local exhausted = automation.next({
+        state = next_step.state,
+        view = view,
+    })
+
+    harness.equal(exhausted.action, modes.STOP)
+end
+
+-- Friendly actors and clouds cannot become path cells. Deep water and
+-- lava require the player's live movement capabilities, not grid walkable.
+local function explore_avoids_obstacles()
+    local view = open_view()
+
+    for _, observed in ipairs(view.cells) do
+        observed.walkable = false
+    end
+
+    cell(view, 3, 3).walkable = true
+    cell(view, 4, 3).walkable = true
+    cell(view, 5, 3).state = 0
+
+    local state = automation.start({ mode = modes.EXPLORE,
+        view = view })
+
+    view.entities = {
+        { x = 4, y = 3, role = "monster", hostile = false },
+    }
+    harness.equal(automation.next({ state = state,
+        view = view }).action, modes.STOP)
+
+    view.entities = {}
+    view.clouds = { { x = 4, y = 3 } }
+    harness.equal(automation.next({ state = state,
+        view = view }).action, modes.STOP)
+
+    view.clouds = {}
+    cell(view, 4, 3).feature = features.DNGN_LAVA
+    harness.equal(automation.next({ state = state,
+        view = view }).action, modes.STOP)
+
+    view.can_cross_lava = true
+    harness.equal(automation.next({ state = state,
+        view = view }).kind, commands.move)
+
+    cell(view, 4, 3).feature = features.DNGN_DEEP_WATER
+    harness.equal(automation.next({ state = state,
+        view = view }).action, modes.STOP)
+
+    view.can_cross_deep_water = true
+    harness.equal(automation.next({ state = state,
+        view = view }).kind, commands.move)
 end
 
 -- Every check calls the production owner and shared identifiers.
@@ -196,6 +303,8 @@ function test.run()
     run_interrupts()
     rest_and_wait()
     explore_frontier()
+    explore_other_frontier()
+    explore_avoids_obstacles()
 end
 
 return test

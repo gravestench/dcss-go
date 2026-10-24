@@ -10,6 +10,8 @@ local component = require("constants.component")
 local mutation_effects = require("policy.mutations.effects.registry")
 local regeneration = require("policy.character.regeneration")
 local statuses = require("policy.magic.effects.statuses.player")
+local flight = require("policy.combat.flight")
+local water = require("policy.character.water")
 
 local automation = {}
 
@@ -98,33 +100,31 @@ function automation.key(key)
     return nil
 end
 
--- Rest only waits for pools that the current character can recover by
--- waiting. This matches the source's `is_sufficiently_rested` gate and
--- prevents an endless rest for no-regeneration or explore-healing forms.
-function automation.rest_capabilities(ctx)
+-- Project live recovery and movement traits into the player's observed
+-- view. Automatic routing cannot safely infer either trait from a species
+-- name or raw terrain walkability.
+function automation.player_capabilities(ctx)
     local player = ctx:player()
     local health = ctx:get(player, component.HEALTH)
     local magic = ctx:get(player, component.MAGIC)
 
     if not health or not magic then
-        error("rest requires live player resources")
+        error("automation requires live player resources")
     end
 
-    if mutation_effects.sum(ctx, player,
-        capabilities.EXPLORE_REGEN) > 0 then
-        return {
-            hp = false,
-            mp = false,
-        }
-    end
-
+    local explore_recovery = mutation_effects.sum(ctx, player,
+        capabilities.EXPLORE_REGEN) > 0
     local hp_rate, mp_rate = regeneration.rates(ctx, player,
         health.max, magic.max)
+    local flying = flight.active(ctx, player)
 
     return {
-        hp = statuses.hp_regen_allowed(ctx, player) and
+        hp = not explore_recovery and
+            statuses.hp_regen_allowed(ctx, player) and
             regeneration.effective_hp_rate(ctx, player, hp_rate) > 0,
-        mp = mp_rate > 0,
+        mp = not explore_recovery and mp_rate > 0,
+        lava = flying,
+        deep_water = flying or water.can_swim(ctx, player),
     }
 end
 
@@ -206,7 +206,10 @@ function automation.start(input)
     end
 
     if mode == modes.EXPLORE then
-        return { mode = modes.EXPLORE }
+        return {
+            mode = modes.EXPLORE,
+            exhausted = {},
+        }
     end
 
     error("unknown automatic movement mode " .. tostring(mode))
@@ -242,6 +245,31 @@ local function occupied_or_cloudy(view, x, y)
     return false
 end
 
+-- Grid walkability permits swimming and flight hazards, but an automatic
+-- route may enter those tiles only when the current character can cross
+-- them. Visible actors and clouds are avoided before the move command can
+-- become an attack or a dangerous wait.
+local function safe_known_cell(view, x, y)
+    local observed = cell(view, x, y)
+
+    if not observed or observed.state == 0 or not observed.walkable or
+        occupied_or_cloudy(view, x, y) then
+        return false
+    end
+
+    if observed.feature == features.DNGN_LAVA and
+        not view.can_cross_lava then
+        return false
+    end
+
+    if observed.feature == features.DNGN_DEEP_WATER and
+        not view.can_cross_deep_water then
+        return false
+    end
+
+    return true
+end
+
 -- A diagonal run can pass a door beside the route without seeing it in
 -- the ordinary forward/flank checks. Source travel inspects the two
 -- perpendicular cells separately for this reason.
@@ -263,11 +291,9 @@ end
 local function next_run(state, view)
     local x = view.player_x + state.dx
     local y = view.player_y + state.dy
-    local target = cell(view, x, y)
 
-    if not target or not target.walkable or
-        diagonal_passes_door(state, view) or
-        occupied_or_cloudy(view, x, y) then
+    if not safe_known_cell(view, x, y) or
+        diagonal_passes_door(state, view) then
         return { action = modes.STOP }
     end
 
@@ -306,10 +332,34 @@ local function next_rest(state, view)
     }
 end
 
--- Explore paths through remembered walkable cells toward the nearest
--- frontier. Unknown terrain is tried only when standing at that frontier;
--- a failed ordinary move then ends automation without spending a turn.
-local function next_explore(view)
+-- A frontier is a known tile bordering unknown space. Routing stops at
+-- that tile so an unseen wall, lake, or monster is never guessed safe.
+local function borders_unknown(view, x, y)
+    for _, direction in ipairs(compass) do
+        local neighbor = cell(view, x + direction.dx,
+            y + direction.dy)
+
+        if neighbor and neighbor.state == 0 then
+            return true
+        end
+    end
+
+    return false
+end
+
+-- Explore routes only through observed, safe cells. Once the player has
+-- reached a frontier and it still reveals nothing, remember it for this
+-- automatic command and search for another one instead of bouncing back.
+local function next_explore(state, view)
+    local exhausted = state.exhausted or {}
+    local current_key = view.player_x .. ":" .. view.player_y
+
+    if borders_unknown(view, view.player_x, view.player_y) then
+        exhausted[current_key] = true
+    end
+
+    state.exhausted = exhausted
+
     local queue = {
         {
             x = view.player_x,
@@ -326,31 +376,24 @@ local function next_explore(view)
 
         cursor = cursor + 1
 
-        for _, direction in ipairs(compass) do
-            local x = point.x + direction.dx
-            local y = point.y + direction.dy
-            local neighbor = cell(view, x, y)
+        local point_key = point.x .. ":" .. point.y
 
-            if neighbor and neighbor.state == 0 then
-                local first = point.first or direction
-
-                return {
-                    action = "step",
-                    kind = commands.move,
-                    dx = first.dx,
-                    dy = first.dy,
-                }
-            end
+        if point.first and not exhausted[point_key] and
+            borders_unknown(view, point.x, point.y) then
+            return {
+                action = "step",
+                kind = commands.move,
+                dx = point.first.dx,
+                dy = point.first.dy,
+                state = state,
+            }
         end
 
         for _, direction in ipairs(compass) do
             local x = point.x + direction.dx
             local y = point.y + direction.dy
             local key = x .. ":" .. y
-            local neighbor = cell(view, x, y)
-
-            if neighbor and neighbor.state > 0 and
-                neighbor.walkable and not seen[key] then
+            if not seen[key] and safe_known_cell(view, x, y) then
                 seen[key] = true
                 queue[#queue + 1] = {
                     x = x,
@@ -383,7 +426,7 @@ function automation.next(input)
     end
 
     if state.mode == modes.EXPLORE then
-        return next_explore(view)
+        return next_explore(state, view)
     end
 
     error("unknown active automation mode " .. tostring(state.mode))
@@ -408,8 +451,8 @@ register.policy({
 })
 
 register.policy({
-    id = "presentation.rest_capabilities",
-    run = automation.rest_capabilities,
+    id = "presentation.automation_capabilities",
+    run = automation.player_capabilities,
 })
 
 return automation

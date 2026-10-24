@@ -41,6 +41,44 @@ func TestDetectedCreatureClearsOnSight(t *testing.T) {
 	}
 }
 
+// A sensing glyph changes presentation but must retain the remembered
+// terrain that automatic routing uses for walkability and feature changes.
+func TestDetectedOverlayRetainsKnownTerrain(t *testing.T) {
+	g := newStepGame(t)
+	before := g.View()
+	index := before.PlayerY*before.Width + before.PlayerX
+	known := before.Cells[index]
+	level := g.levels[before.LevelID]
+
+	if known.State != Visible || !known.Walkable {
+		t.Fatal("player's current tile is not visible floor")
+	}
+
+	if err := level.SetDetectedItem(before.PlayerX, before.PlayerY, true); err != nil {
+		t.Fatal(err)
+	}
+
+	item := g.View().Cells[index]
+
+	if !item.DetectedItem || item.FeatureID != known.FeatureID ||
+		item.Walkable != known.Walkable {
+		t.Fatalf("item overlay lost known terrain: %+v", item)
+	}
+
+	if err := level.SetDetectedCreature(before.PlayerX, before.PlayerY,
+		"MONS_ORC"); err != nil {
+		t.Fatal(err)
+	}
+
+	creature := g.View().Cells[index]
+
+	if !creature.DetectedCreature ||
+		creature.FeatureID != known.FeatureID ||
+		creature.Walkable != known.Walkable {
+		t.Fatalf("creature overlay lost known terrain: %+v", creature)
+	}
+}
+
 // Saved detection data must match the level dimensions; a malformed save
 // cannot put a sensed monster outside the map owner's coordinate space.
 func TestDetectedCreatureRejectsMalformedRows(t *testing.T) {

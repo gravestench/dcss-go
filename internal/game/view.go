@@ -74,20 +74,22 @@ type View struct {
 	Outcome    string
 	PlayerName string
 
-	PlayerHP     int
-	PlayerMaxHP  int
-	PlayerMP     int
-	PlayerMaxMP  int
-	CanRecoverHP bool
-	CanRecoverMP bool
-	PlayerAC     int
-	PlayerEV     int
-	PlayerSH     int
-	Gold         int64
-	DefenseKnown bool
-	GodName      string
-	PietyStars   string
-	Penance      int
+	PlayerHP          int
+	PlayerMaxHP       int
+	PlayerMP          int
+	PlayerMaxMP       int
+	CanRecoverHP      bool
+	CanRecoverMP      bool
+	CanCrossLava      bool
+	CanCrossDeepWater bool
+	PlayerAC          int
+	PlayerEV          int
+	PlayerSH          int
+	Gold              int64
+	DefenseKnown      bool
+	GodName           string
+	PietyStars        string
+	Penance           int
 
 	CharacterName           string
 	SpeciesID               string
@@ -330,11 +332,9 @@ func (g *Game) fillTerrainView(view *View, level *Level) {
 				detectedGlyph = rune(presentation["glyph"].(int64))
 			}
 
-			view.Cells[i] = CellView{
-				Glyph:        detectedGlyph,
-				State:        Explored,
-				DetectedItem: true,
-			}
+			view.Cells[i].Glyph = detectedGlyph
+			view.Cells[i].State = Explored
+			view.Cells[i].DetectedItem = true
 		}
 
 		if kindID := level.detectedCreatures[i]; kindID != "" {
@@ -342,11 +342,9 @@ func (g *Game) fillTerrainView(view *View, level *Level) {
 				"kind_id": kindID,
 			})
 
-			view.Cells[i] = CellView{
-				Glyph:            rune(presentation["glyph"].(int64)),
-				State:            Explored,
-				DetectedCreature: true,
-			}
+			view.Cells[i].Glyph = rune(presentation["glyph"].(int64))
+			view.Cells[i].State = Explored
+			view.Cells[i].DetectedCreature = true
 		}
 	}
 }
@@ -463,9 +461,11 @@ func (g *Game) fillPlayerView(view *View) {
 		view.PlayerMaxMP = magic.Max
 	}
 
-	recovery := g.mustPresentationPolicy("presentation.rest_capabilities", nil)
-	view.CanRecoverHP = recovery["hp"].(bool)
-	view.CanRecoverMP = recovery["mp"].(bool)
+	capabilities := g.mustPresentationPolicy("presentation.automation_capabilities", nil)
+	view.CanRecoverHP = capabilities["hp"].(bool)
+	view.CanRecoverMP = capabilities["mp"].(bool)
+	view.CanCrossLava = capabilities["lava"].(bool)
+	view.CanCrossDeepWater = capabilities["deep_water"].(bool)
 
 	if state, ok := g.scripts.Components()["character.vampire"].Get(g.player); ok {
 		remaining, err := state.Get("ritual_remaining_aut")

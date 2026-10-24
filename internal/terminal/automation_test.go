@@ -75,3 +75,88 @@ func TestAutomationViewHidesUnknownTerrain(t *testing.T) {
 		t.Fatalf("unknown cell leaked terrain: %#v", unknown)
 	}
 }
+
+// A Lua route's exhausted-frontier table must survive the Go policy
+// boundary, or an explore command would revisit the same dead end.
+func TestExploreStateSurvivesPolicyRoundTrip(t *testing.T) {
+	m := pregameModel(t)
+	view := game.View{
+		Width:   7,
+		Height:  7,
+		PlayerX: 3,
+		PlayerY: 3,
+		Cells:   make([]game.CellView, 49),
+	}
+
+	for index := range view.Cells {
+		view.Cells[index] = game.CellView{
+			State:     game.Visible,
+			FeatureID: "DNGN_FLOOR",
+			Walkable:  true,
+		}
+	}
+
+	view.Cells[3*view.Width+5] = game.CellView{}
+	observed := automationView(view)
+	state, err := m.presentationRuntime.PolicyReadOnly(
+		automationPolicy,
+		map[string]any{
+			"phase": automationStartPhase,
+			"mode":  automationExplore,
+			"view":  observed,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	decision, err := m.presentationRuntime.PolicyReadOnly(
+		automationPolicy,
+		map[string]any{
+			"phase": automationNextPhase,
+			"state": state,
+			"view":  observed,
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if decision["action"] != "step" {
+		t.Fatalf("explore did not route to a known frontier: %#v", decision)
+	}
+
+	routeState, ok := decision["state"].(map[string]any)
+
+	if !ok {
+		t.Fatalf("route state did not cross the policy boundary: %#v", decision)
+	}
+
+	view.PlayerX = 4
+	continued, err := m.presentationRuntime.PolicyReadOnly(
+		automationPolicy,
+		map[string]any{
+			"phase": automationNextPhase,
+			"state": routeState,
+			"view":  automationView(view),
+		},
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	updated, ok := continued["state"].(map[string]any)
+
+	if !ok {
+		t.Fatalf("continued route lost state: %#v", continued)
+	}
+
+	exhausted, ok := updated["exhausted"].(map[string]any)
+
+	if !ok || exhausted["4:3"] != true {
+		t.Fatalf("reached frontier was not remembered: %#v", updated)
+	}
+}
