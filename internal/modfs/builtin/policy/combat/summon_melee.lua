@@ -15,59 +15,6 @@ local targets = require("policy.ai.targets")
 
 local summon_melee = {}
 
--- Source: melee-attack.cc:AF_PURE_FIRE and monster::suicide(-10). A vortex
--- has no physical strike; successful contact burns and destroys it.
-local function fire_vortex_attack(ctx, summon, target, attacker)
-    local victim = ctx:get(target, component.ACTOR)
-    local health = ctx:get(target, component.HEALTH)
-    local vortex_health = ctx:get(summon, component.HEALTH)
-
-    if not victim or not health or not vortex_health then
-        error("fire vortex contact requires actor and health")
-    end
-
-    local attacker_def = catalog.get("monsters", attacker.kind_id)
-    local victim_def = catalog.get("monsters", victim.kind_id)
-    local combat = ctx:get(target, "core.combat")
-    local outcome = melee.monster(ctx, {
-        attacker = summon,
-        hd = monster_stats.hit_dice(ctx, summon, attacker_def),
-        damage = 0,
-        type_id = "AT_HIT",
-        flavour_id = "AF_PURE_FIRE",
-    }, {
-        ev = defense.evasion(ctx, target, victim_def),
-        ac = defense.armour(ctx, target, victim_def),
-        gdr = 0,
-        shield_class = 0,
-        shield_blocks = combat and combat.shield_blocks or 0,
-    })
-
-    if combat then
-        combat.shield_blocks = outcome.shield_blocks
-        ctx:set(target, "core.combat", combat)
-    end
-
-    if outcome.kind == "hit" then
-        local hd = monster_stats.hit_dice(ctx, summon, attacker_def)
-        local raw = math.floor(hd * 3 / 2) +
-            ctx:random("spell", hd)
-        local ac = defense.armour(ctx, target, victim_def)
-        local after_ac = math.max(0, raw -
-            math.floor(ctx:random("spell", ac + 1) / 2))
-        local amount = magic_damage.monster_elemental(ctx, target,
-            after_ac, "MR_RES_FIRE")
-
-        magic_damage.apply(ctx, target, amount, summon)
-        vortex_health.current = 0
-        ctx:set(summon, component.HEALTH, vortex_health)
-        ctx:emit("combat", "Your fire vortex burns the " ..
-            victim_def.name .. ".")
-    end
-
-    return true
-end
-
 -- Inherit base monster attacks for undead summons, with simulacra adding their icy contact behavior.
 local function strikes(ctx, summon, attacker, state)
     local simulacrum = ctx:get(summon, "magic.summon_simulacrum")
@@ -118,10 +65,6 @@ function summon_melee.attack(ctx, summon, target)
     end
 
     local attacker = ctx:get(summon, component.ACTOR)
-
-    if attacker.kind_id == monsters.MONS_FIRE_VORTEX then
-        return fire_vortex_attack(ctx, summon, target, attacker)
-    end
 
     local adjusted = ctx:get(summon, component.SUMMON_STATS)
     local blob = ctx:get(summon, component.SLIME_BLOB)

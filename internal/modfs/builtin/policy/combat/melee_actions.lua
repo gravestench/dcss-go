@@ -449,7 +449,12 @@ local function monster_player_contact(ctx, attacker, selected,
 
     local flavour_hit
 
-    if outcome.kind == "hit" then
+    -- Physical injury can trigger a reflected hit that kills the attacker.
+    -- Source melee skips later flavour effects for a dead monster.
+    local live_attacker = ctx:get(attacker, component.HEALTH)
+
+    if outcome.kind == "hit" and live_attacker and
+        live_attacker.current > 0 then
         flavour_hit = {
             kind = outcome.kind,
             attacker = attacker,
@@ -457,6 +462,10 @@ local function monster_player_contact(ctx, attacker, selected,
             defender = player,
             attack_type = attack_type,
             hit_dice = attack_input.hd,
+            attack_base_damage = attack.damage,
+            -- Sanguine Armour can activate during physical HP loss.
+            defender_ac = fighter.defense(ctx).ac,
+            physical_damage = outcome.damage,
             damage_done = dealt,
             player_moving = player_moving,
             pending_blinks = pending_blinks,
@@ -621,7 +630,12 @@ local function monster_target_contact(ctx, attacker, target,
 
     local flavour_hit
 
-    if outcome.kind == "hit" then
+    -- Reflective damage from the physical hit may kill the attacker before
+    -- source melee considers Holy, Pure Fire, or any other flavour.
+    local live_attacker = ctx:get(attacker, component.HEALTH)
+
+    if outcome.kind == "hit" and live_attacker and
+        live_attacker.current > 0 then
         flavour_hit = {
             kind = outcome.kind,
             attacker = attacker,
@@ -630,6 +644,10 @@ local function monster_target_contact(ctx, attacker, target,
             defender_definition = target_def,
             attack_type = attack_type,
             hit_dice = monster_stats.hit_dice(ctx, attacker, attacker_def),
+            attack_base_damage = attack.damage,
+            defender_ac = monster_defense.armour(ctx, target,
+                target_def),
+            physical_damage = dealt,
             damage_done = actual_dealt,
             player_credit = targets.allied(ctx, attacker) or
                 statuses.frenzied(ctx, attacker),
@@ -637,7 +655,9 @@ local function monster_target_contact(ctx, attacker, target,
         }
 
         attack_flavours.apply(ctx, flavour_id, flavour_hit)
+    end
 
+    if outcome.kind == "hit" then
         ctx:emit("combat", "The " .. attacker_def.name .. " hits the " ..
             target_def.name .. " for " .. dealt .. " damage.")
     elseif outcome.kind == "block" then

@@ -161,6 +161,12 @@ whole melee round ends. The attacker uses the ordinary blink landing and
 the original victim joins it on a legal neighboring cell when available.
 Repeated contact events merge within the round; stasis and DES no-teleport
 cells remain effective at resolution.
+Holy, Pure Fire, and Sear monster contacts now run through one Lua flavour
+owner for player and monster defenders. Holy checks live undead or demonic
+susceptibility; Pure Fire applies half armour and current fire resistance
+even when physical contact dealt no HP loss; Sear adds the saved fire
+vulnerability read by later fire damage. Summoned fire vortices use the
+ordinary melee sequence and burn themselves out after a successful hit.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except
