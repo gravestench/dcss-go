@@ -188,6 +188,14 @@ slot capacity and the gold diversion decide what he takes. Gold debits the
 saved wallet without recording a purchase and becomes recoverable carried
 loot with Zin tithe metadata. A stolen two-handed weapon drops his shield.
 Monster death drops and save validation use those same item entities.
+Five source-guaranteed monster artefacts now enter the same item history and
+Akara inventory path as other uniques: Cerebov, Dispater, and Asmodeus carry
+their named weapons; the Enchantress and Tiamat wear their named armour.
+The latter two also retain their catalogued weapon rolls, and Tiamat's
+draconian cloak occupies the monster body-armour inventory slot.
+Their `none` generation mode still excludes random drops, while explicit
+source gear claims the unique and leaves loot on death. Cerebov's later
+disarm exception and chance-based named gear remain follow-up work.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except

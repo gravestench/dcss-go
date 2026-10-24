@@ -1,4 +1,5 @@
 local catalog = require("policy.catalog")
+local monster_armour = require("policy.combat.monster_armour")
 
 local inventory = {}
 
@@ -46,8 +47,7 @@ function inventory.validate(ctx)
                     error("item " .. ctx:id(entity) .. " is not a monster shield")
                 end
             elseif slot == "body" then
-                if kind.class ~= "OBJ_ARMOUR" or not kind.armour or
-                    kind.armour.slot_id ~= "EQ_BODY_ARMOUR" then
+                if not monster_armour.wears_body(ctx, holder, kind) then
                     error("item " .. ctx:id(entity) .. " is not monster body armour")
                 end
             else

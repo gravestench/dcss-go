@@ -36,6 +36,7 @@ local draconian_base = require("policy.monsters.draconian_base")
 local streams = require("constants.rng_streams")
 local beast_form = require("policy.monsters.mutant_beast.form")
 local beast_profile = require("policy.monsters.mutant_beast.profile")
+local monster_armour = require("policy.combat.monster_armour")
 
 local factory = {}
 
@@ -119,28 +120,81 @@ local function starting_item(ctx, holder, kind_id, quantity, plus, ego, slot,
     return entity
 end
 
+-- A named signature uses the item generator's unique claim and component
+-- rules. The source gear handler names only the artefact, never a duplicate
+-- base kind or list of properties that could drift from the catalog.
+local function signature_item(ctx, monster, entry, slot, origin,
+    occurrence, depth)
+    local artefact = catalog.get("artefacts", entry.unique_id)
+
+    if (slot == "weapon" or slot == "alternate_weapon") and
+        artefact.class ~= object_classes.OBJ_WEAPONS or
+        slot == "body" and
+        not monster_armour.wears_body(ctx, monster,
+            catalog.get("items", artefact.kind_id)) then
+        error("signature artefact has wrong equipment class " ..
+            entry.unique_id)
+    end
+
+    local rolled = generation.roll(ctx, {
+        kind_id = artefact.kind_id,
+        unique_id = artefact.id,
+        depth = depth,
+        quality = item_quality.ORDINARY,
+        allow_uniques = false,
+        purpose = item_purpose.VAULT,
+        site = "monster signature gear " .. artefact.id,
+    })
+    local entity = generation.create(ctx, rolled, {
+        carrier = monster,
+    })
+
+    ctx:add(entity, component.EQUIPPED, {
+        slot = slot,
+    })
+
+    if origin then
+        ctx:add(entity, component.VAULT_ORIGIN,
+            origin_component.for_entity(origin,
+                rolled.kind_id, occurrence))
+    end
+
+    return entity
+end
+
+-- Ordinary gear keeps its existing quality rolls; named gear uses the
+-- explicit unique path while both create ordinary carried item entities.
+local function loadout_item(ctx, monster, entry, slot, origin,
+    occurrence, depth)
+    if not entry then
+        return
+    end
+
+    if entry.unique_id then
+        return signature_item(ctx, monster, entry, slot,
+            origin, occurrence, depth)
+    end
+
+    return starting_item(ctx, monster, entry.kind_id,
+        entry.quantity or 1, entry.quality and entry.quality.plus or 0,
+        entry.quality and entry.quality.ego or entry.ego or "",
+        slot, origin, occurrence)
+end
+
 -- Create each generated equipment entity after the monster actor exists.
-local function create_loadout(ctx, monster, loadout, origin)
+local function create_loadout(ctx, monster, loadout, origin, depth)
     if not loadout then
         return
     end
 
-    local primary = loadout.primary
-    starting_item(ctx, monster, primary.kind_id, 1,
-        primary.quality.plus, primary.quality.ego, "weapon", origin, 2)
-
-    if loadout.alternate then
-        local alternate = loadout.alternate
-        starting_item(ctx, monster, alternate.kind_id, 1,
-            alternate.quality.plus, alternate.quality.ego,
-            "alternate_weapon", origin, 3)
-    end
-
-    if loadout.ammunition then
-        local ammunition = loadout.ammunition
-        starting_item(ctx, monster, ammunition.kind_id,
-            ammunition.quantity, 0, ammunition.ego, "missile", origin, 4)
-    end
+    loadout_item(ctx, monster, loadout.primary,
+        "weapon", origin, 2, depth)
+    loadout_item(ctx, monster, loadout.alternate,
+        "alternate_weapon", origin, 3, depth)
+    loadout_item(ctx, monster, loadout.ammunition,
+        "missile", origin, 4, depth)
+    loadout_item(ctx, monster, loadout.body,
+        "body", origin, 5, depth)
 end
 
 -- Parse every source option before drawing so malformed alternatives fail
@@ -529,7 +583,8 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
             count = heads,
         })
     end
-    create_loadout(ctx, monster, loadout, options.origin)
+    create_loadout(ctx, monster, loadout,
+        options.origin, options.depth or level_id)
     give_explicit_equipment(ctx, monster, equipment, options.origin)
 
     if options.origin then

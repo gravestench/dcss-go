@@ -6,6 +6,7 @@ local component = require("constants.component")
 local artefact_ids = require("ids.artefact_properties")
 local item_use = require("constants.monster_item_use")
 local monster_flags = require("constants.monster_flags")
+local monster_armour = require("policy.combat.monster_armour")
 local object_classes = require("ids.object_classes")
 
 local equipment = {}
@@ -176,9 +177,8 @@ end
 function equipment.monster_body(ctx, monster)
     local body = equipment.worn(ctx, monster, { body = true }).body
 
-    if body and (body.definition.class ~= "OBJ_ARMOUR" or
-        not body.definition.armour or
-        body.definition.armour.slot_id ~= "EQ_BODY_ARMOUR") then
+    if body and not monster_armour.wears_body(ctx, monster,
+        body.definition) then
         error("monster has non-armour in body slot")
     end
 

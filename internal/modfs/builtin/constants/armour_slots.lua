@@ -4,6 +4,7 @@
 local slots = {
     BODY_ARMOUR = "EQ_BODY_ARMOUR",
     SHIELD = "EQ_SHIELD",
+    CLOAK = "EQ_CLOAK",
 }
 
 return slots

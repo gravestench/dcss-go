@@ -123,14 +123,10 @@ function gear.quality(ctx, kind_id, depth)
     }
 end
 
--- Species-specific handlers override the ordinary gear path without changing spawn order.
-function gear.loadout(ctx, monster_id, depth)
-    local special = registry.loadout(ctx, monster_id, depth)
-
-    if special then
-        return special
-    end
-
+-- Read the catalog weapon row independently so a named armour grant can
+-- preserve its ordinary weapon draw. Other special handlers may still
+-- replace this path when source gear has a distinct roll order.
+function gear.ordinary_loadout(ctx, monster_id, depth)
     local definition = catalog.get(categories.MONSTERS, monster_id)
     local owned = definition.weapon_gear
 
@@ -171,6 +167,17 @@ function gear.loadout(ctx, monster_id, depth)
     end
 
     return loadout
+end
+
+-- Species-specific handlers override the ordinary gear path without changing spawn order.
+function gear.loadout(ctx, monster_id, depth)
+    local special = registry.loadout(ctx, monster_id, depth)
+
+    if special then
+        return special
+    end
+
+    return gear.ordinary_loadout(ctx, monster_id, depth)
 end
 
 gear.nice_plusses = nice_plusses

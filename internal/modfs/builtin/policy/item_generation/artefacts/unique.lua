@@ -75,8 +75,12 @@ function unique.choose(ctx, base, request)
 end
 
 -- Claim the unique only after copying its properties into the result component.
+-- Explicitly named source gear may use a `none`-mode artefact; that mode
+-- excludes random choice, not an authored request for the named item.
 function unique.apply(ctx, chosen, request, result)
-    if not unique.eligible(chosen) then
+    if chosen.class == classes.OBJ_UNASSIGNED or
+        (not unique.eligible(chosen) and
+            request.unique_id ~= chosen.id) then
         error("ineligible unique artefact " .. tostring(chosen.id))
     end
 
