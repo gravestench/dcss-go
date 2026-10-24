@@ -80,6 +80,7 @@ context rather than a handler API for each game domain.
 | Combat | Fighter melee and headbutts; generated melee brands through shared monster-target Lua effects for player, monster, summon, and illusion attackers; saved spectral allies with damage sharing, distortion banishment, and chaos monster effects; all seven active magical staves with source skill procs and AC/resistance routes; player fire/throw with eight launcher types, penetrating javelins, monster shields, launcher fire/frost/vorpal, and missile poison/curare/dispersal; monster natural/weapon/ranged hits, early weapon brands against the player, Freeze, Slug Dart, sling bullets, stones, poisoned darts, AC/EV, constriction, kills, XP, and corpses | `policy/combat`, `policy/death.lua`, `systems/attack_*`, `systems/actor_death.lua` |
 | Items and status | Equipment, consumables, statuses, and identification | `policy/inventory`, `policy/items`, `systems/item_*` |
 | XP evokers | All eight source XP evokers have Lua-owned charge debt, XP recharge, item selection, effects, and saved state. Geryon carries the Horn. Phial flooding and Waterlogged, Tin blasts, Condenser clouds, mirror clones, Box beasts, Rod Thunderbolt, Horn beasts, and Chessboard statuses resolve through their existing combat and summon owners | `policy/inventory/evokers`, `systems/item_evoker.lua`, `schemas/character_xp_evokers.lua` |
+| Elyvilon active abilities | Purification, Heal Other, Heal Self, and Divine Vigour register as Lua powers. Purification cures represented ailments even while confused; Heal Other can heal or permanently pacify a monster for one nonlethal XP award; Divine Vigour's saved timer changes derived HP and MP until expiry, penance, or departure | `policy/abilities/elyvilon`, `policy/religion/elyvilon`, `schemas/religion_elyvilon_*` |
 | Player magic | Spell learning and casting, source-backed spell IDs, Lua effect families for direct damage, zaps, summons, terrain, statuses, forms, and Unravelling | `policy/magic`, `systems/player_spell.lua`, `schemas/magic_*` |
 | Player mutations | Source definitions and Lua-owned mutation records, transitions, passive effects, abilities, and saved state; Vampire blood rituals and Bat Form are implemented; source consumers in other unported domains remain inventoried below | `content/mutations`, `policy/mutations`, `policy/abilities`, `schemas/character_*` |
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `policy/input`, `internal/terminal` |
@@ -535,6 +536,11 @@ Confusion blocks invocations, and deliberate Berserk bypasses Clarity.
 Penance and departure end the Hand and dismiss temporary
 Trog summons. The ordinary ability menu and Go save path exercise these
 powers without Trog-specific Go handlers.
+Elyvilon's four active powers now use the same command bridge. The
+pacification marker is durable, and the source's class intelligence,
+holiness, mobility, and average HP gate the offer. The resulting neutral
+monster currently wanders rather than deliberately finding an exit; that
+movement behavior remains a fidelity task in the broader monster AI domain.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 still-unported vault families and their Lua scripts,

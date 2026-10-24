@@ -1907,8 +1907,10 @@ cost. `policy.abilities.god_costs` supplies the common worship gate and
 cost arithmetic; the power calls it only after its own effect commits.
 The existing `policy.character.rage` owns Berserk, so changing the god
 ability never requires a second rage component.
-The ability command rejects invocations while confused. Deliberate
-Trog Berserk ignores Clarity, while involuntary rage still checks it.
+The ability command normally rejects invocations while confused. A power
+whose source explicitly permits it sets `confusion_ok = true` in its
+registry entry; Elyvilon's Purification does this so it can cure confusion.
+Deliberate Trog Berserk ignores Clarity, while involuntary rage still checks it.
 The Berserk module asks for confirmation when the player wields a
 launcher or other non-melee item.
 
@@ -1929,6 +1931,22 @@ exports `leave` and `on_penance` to clear the Hand and dismiss temporary
 god summons. The piety owner calls `on_penance` once when an offense
 first creates debt, after recording that debt. Another god can supply the
 same optional hook for its own temporary gifts.
+
+Elyvilon's four Lua ability files under `policy/abilities/elyvilon/`
+illustrate a patron whose powers share several existing owners. Purification
+uses `policy.religion.elyvilon.cleansing` to remove player ailments and
+recalculate HP after drain; Heal Self changes the ordinary health component;
+Heal Other asks `policy.religion.elyvilon.pacification` to examine the
+monster catalog class and store a neutral ECS marker. Pacification grants
+the same credited XP as a kill through `policy.character.experience_award`,
+but the marker prevents that monster from paying XP again if it later dies.
+Divine Vigour stores an amount and timer in `religion.elyvilon_vigour`.
+The normal HP and MP formulas read that amount, so later training or level
+changes still produce the correct maxima. The god's `behavior_module`
+clears this status on penance or departure. For a modded god with a lasting
+resource effect, follow that owner pattern: save one timer and make all
+derived resource readers consult it instead of directly editing a maximum
+once and hoping later recalculations preserve it.
 
 #### Prayer, renunciation, and the HUD
 

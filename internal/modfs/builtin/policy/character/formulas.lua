@@ -2,6 +2,7 @@
 local mutation_effects = require("policy.mutations.effects.registry")
 local mutation_capabilities = require("constants.mutation_capabilities")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
+local component = require("constants.component")
 
 local formulas = {}
 
@@ -254,7 +255,10 @@ function formulas.max_hp(ctx, player, level, species, skills)
     hp = hp + mutation_effects.sum(ctx, player,
         mutation_capabilities.HP_FLAT)
 
-    local percent = 100 + mutation_effects.sum(ctx, player,
+    local vigour = ctx:get(player, component.ELYVILON_VIGOUR)
+    local bonus = vigour and vigour.remaining_aut > 0 and
+        vigour.amount * 5 or 0
+    local percent = 100 + bonus + mutation_effects.sum(ctx, player,
         mutation_capabilities.HP_PERCENT)
 
     return math.max(1, math.floor(hp * percent / 100))
@@ -289,8 +293,11 @@ function formulas.max_mp(ctx, player, level, species, skills)
     local highest = math.max(spellcasting, math.floor(invocations / 2))
     local scaled = math.min(2300, level * 100)
     scaled = scaled + highest + math.floor(math.min(800, highest, level * 100) / 2)
+    local vigour = ctx:get(player, component.ELYVILON_VIGOUR)
+    local bonus = vigour and vigour.remaining_aut > 0 and
+        vigour.amount * 5 or 0
     scaled = math.floor(scaled *
-        (100 + mutation_effects.sum(ctx, player,
+        (100 + bonus + mutation_effects.sum(ctx, player,
             mutation_capabilities.MP_PERCENT)) / 100)
 
     local jewellery_effects = require("policy.inventory.jewellery_effects")

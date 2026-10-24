@@ -7,12 +7,15 @@ local abilities = {}
 -- Ability commands delegate preparation to the ability registry before action timing begins.
 -- Example: abilities.prepare(ctx, player, { ability_id = abilities.HOP, dx = 1 }) preflights Hop.
 function abilities.prepare(ctx, player, input)
-    if confusion.active(ctx, player) then
-        return { message = "You are too confused!" }
-    end
-
     local id = input.ability_id
     local definition = registry.get(id)
+
+    -- Purification is source-conf_ok: looking up the selected definition
+    -- first lets it cure the same confusion that blocks other powers.
+    if confusion.active(ctx, player) and
+        (not definition or not definition.confusion_ok) then
+        return { message = "You are too confused!" }
+    end
 
     if not definition or
         (not registry.usable_now(ctx, player, definition) and

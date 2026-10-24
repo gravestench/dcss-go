@@ -16,14 +16,11 @@ require("policy.combat.monster_death.slime_pit")
 require("policy.religion.jiyva.life")
 require("policy.combat.monster_death.pan_pigsty")
 require("policy.world.wizlab.events.borgnjor")
-local draining = require("policy.combat.brands.draining")
+local experience_award = require("policy.character.experience_award")
 local net = require("policy.combat.net")
 local constriction = require("policy.combat.constriction")
 local engulf = require("policy.combat.engulf")
 local statuses = require("policy.magic.effects.statuses.player")
-local stat_loss = require("policy.character.stat_loss")
-local temporary_mutations = require("policy.mutations.temporary")
-local evolution = require("policy.mutations.evolution")
 local kill_effects = require("policy.combat.player_kill_effects")
 local conduct = require("policy.religion.conduct")
 local monster_facts = require("policy.religion.conduct.monster_facts")
@@ -31,8 +28,6 @@ local flay = require("policy.combat.monster_flay")
 local component = require("constants.component")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
 local zap_ids = require("policy.magic.effects.zaps.ids")
-local abyss_exits = require("policy.world.abyss.exits")
-local evokers = require("policy.inventory.evokers")
 local beogh_recall = require("policy.abilities.beogh.recall")
 local beogh_corpse = require("policy.abilities.beogh.corpse")
 local monsters = require("ids.monsters")
@@ -129,34 +124,19 @@ function system.update(ctx)
 
                 -- Only a credited, nonsummoned kill grants player XP and advances XP-driven recovery clocks.
                 if kills[ctx:id(entity)] and not summoned and
+                    not ctx:has(entity, component.ELYVILON_PACIFIED) and
                     not ctx:has(entity, component.PIKEL_BAND) and
                     not (ctx:get(entity, component.BEOGH_ORC) or {}).gift then
                     local xp = death.experience(definition, health.max)
                     local player = ctx:player()
                     local player_pos = ctx:get(player, "core.position")
-                    local progress = ctx:get(player, "core.progression")
-                    local training = ctx:get(player, "core.skill_training")
-
-                    if not progress or not training or progress.total_xp < 0 then
-                        error("invalid Dungeon experience state")
-                    end
-
-                    progress.total_xp = progress.total_xp + xp
-                    training.available_xp = training.available_xp + 10 * xp
-                    ctx:set(player, "core.progression", progress)
-                    ctx:set(player, "core.skill_training", training)
-                    abyss_exits.award(ctx, player, xp)
-                    evokers.award_xp(ctx, player, xp)
+                    experience_award.monster(ctx, player, xp)
                     record_extra_reward(ctx, player, entity,
                         component.CHAOS_CLONE,
                         component.CHAOS_CLONE_REWARDS, xp)
                     record_extra_reward(ctx, player, entity,
                         doom_howl.ARRIVAL, doom_howl.REWARDS, xp)
 
-                    temporary_mutations.gain_experience(ctx, player, xp)
-                    evolution.gain_experience(ctx, player, xp)
-                    stat_loss.gain_experience(ctx, player, xp, training.cost_level)
-                    draining.recover(ctx, player, xp)
                     kill_effects.run(ctx, player, definition, xp)
                     local adjacent = player_pos.level_id == position.level_id and
                         math.abs(player_pos.x - position.x) <= 1 and

@@ -14,6 +14,14 @@ function targets.real_attitude(ctx, entity)
         return attitudes.FRIENDLY
     end
 
+    -- Elyvilon changes real allegiance. It is neither a charm timer nor
+    -- a property of the monster's original vault or summon placement.
+    local pacified = ctx:get(entity, component.ELYVILON_PACIFIED)
+
+    if pacified and pacified.pacified then
+        return attitudes.NEUTRAL
+    end
+
     -- Kirke's death makes a formerly hostile restored hog good-neutral.
     -- This persistent source rule must win over a summoned or authored side.
     local freed = ctx:get(entity, tactical.KIRKE_FREED)

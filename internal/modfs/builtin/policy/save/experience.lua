@@ -47,6 +47,9 @@ function module.run(ctx, input)
         -- Jiyva and ordinary slime births do not consume a second slot in
         -- the initial population used to bound possible Dungeon rewards.
         if not ctx:has(entity, component.SUMMON) and
+            -- Pacification already paid the monster's XP even though its
+            -- neutral body remains on the floor until it departs.
+            not ctx:has(entity, component.ELYVILON_PACIFIED) and
             not ctx:has(entity, component.CHAOS_CLONE) and
             not ctx:has(entity, doom_howl.ARRIVAL) and
             not ctx:has(entity, component.JIYVA_SPAWN) and
