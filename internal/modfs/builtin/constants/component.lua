@@ -213,6 +213,7 @@ local component = {
     MONSTER_BROTHERS = "magic.monster_brothers",
     -- Slime size is actor state whether the creature came from a vault or a spell.
     SLIME_BLOB = "monster.slime_blob",
+    SLIME_BIRTH = "monster.slime_birth",
     VAULT_ITEM_APPEARANCE = "vault.item_appearance",
     VAULT_ITEM_MIMIC = "vault.item_mimic",
     SLIME_SEAL = "world.slime_seal",

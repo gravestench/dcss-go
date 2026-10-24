@@ -24,11 +24,59 @@ local monster_spells = require("policy.combat.monster_spells")
 local pan_traits = require("constants.pan_lord_traits")
 local pan_colours = require("constants.pan_lord_colours")
 local ugly_thing = require("policy.monsters.ugly_thing")
+local slime_lifecycle = require("policy.monsters.slime_lifecycle")
+local slime_blob = require("policy.monsters.slime_blob")
 local fedhas = require("policy.religion.gods.fedhas")
 local beogh = require("policy.religion.gods.beogh")
 local jiyva = require("policy.religion.gods.jiyva")
 local jiyva_growth = require("policy.religion.jiyva.growth")
 local gods = require("constants.gods")
+local vault_effects = require("constants.vault_effects")
+
+-- A merge may consume an authored slime whose fixed HP differs from the
+-- survivor's. Saved vault records retain that source maximum after death;
+-- taking the largest possible source value bounds any merged blob without
+-- trusting the new body's own reshaped HP marker as proof.
+local function authored_slime_maximum(input)
+    local by_level = {}
+    local global_maximum = 0
+
+    for _, level in ipairs(input.vault_levels or {}) do
+        for _, record in ipairs(level.vault_records or {}) do
+            local arguments = record.arguments or {}
+
+            if record.kind == vault_effects.MONSTER and
+                arguments.kind_id == monsters.MONS_SLIME_CREATURE and
+                not record.pending and not arguments.no_spawn then
+                local hp = arguments.hp or 0
+
+                by_level[level.id] = math.max(by_level[level.id] or 0, hp)
+                global_maximum = math.max(global_maximum, hp)
+            end
+        end
+    end
+
+    return by_level, global_maximum
+end
+
+-- Runtime combinations take place on one floor. Use that floor's authored
+-- HP cap; transit through the Abyss may carry bodies from different floors.
+local function slime_bound_for(ctx, entity, position, state)
+    local origin = ctx:get(entity, component.VAULT_ORIGIN)
+    local banishment = ctx:get(entity, component.BANISHMENT)
+    local duel = ctx:get(entity, component.MONSTER_ARENA_DUEL)
+    local visit = duel and duel.current and
+        ctx:get(ctx:player(), component.PLAYER_ARENA_VISIT)
+    local level_id = origin and origin.level_id or
+        banishment and banishment.origin_level_id or
+        visit and visit.origin_level_id or position.level_id
+
+    if level_id == abyss.level_id then
+        return state.slime_hp_global
+    end
+
+    return state.slime_hp_by_level[level_id] or 0
+end
 
 -- Banished monsters have different location requirements from level residents.
 local function validate_banishment(ctx, entity, position)
@@ -94,7 +142,9 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     end
     local fixed = state.fixed and level_id ~= abyss.level_id
     local growth = ctx:get(entity, component.JIYVA_GROWTH)
-    local born_from_split = growth and growth.born_from_split
+    local slime_birth = ctx:get(entity, component.SLIME_BIRTH)
+    local born_from_split = growth and growth.born_from_split or
+        slime_birth ~= nil
 
     if not fixed and not clone and not born_from_split then
         local count = (state.live_by_level[level_id] or 0) + 1
@@ -125,13 +175,17 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
     local profile_id = overrides and overrides.base_id ~= "" and
         overrides.base_id or roster_id
-    local profile = roster.profile(growth and actor.kind_id or profile_id)
+    local live_slime = actor.kind_id == monsters.MONS_SLIME_CREATURE
+    local live_profile_id = (growth or live_slime and polymorph) and
+        actor.kind_id or profile_id
+    local profile = roster.profile(live_profile_id)
 
-    if fixed and state.seen[roster_id] and not clone then
+    if fixed and state.seen[roster_id] and not clone and
+        not born_from_split then
         error("duplicate fixed animal " .. roster_id)
     end
 
-    if not clone then
+    if not clone and not born_from_split then
         state.seen[roster_id] = true
     end
 
@@ -140,9 +194,22 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
         error("invalid polymorphed monster " .. ctx:id(entity))
     end
 
+    local slime_fixed_hp = polymorph and 0 or
+        overrides and overrides.fixed_hp
+
+    slime_lifecycle.validate(ctx, entity, health, profile,
+        state.current_aut, slime_fixed_hp,
+        slime_bound_for(ctx, entity, position, state))
+
     if growth then
-        jiyva_growth.validate(ctx, entity, health, profile, 0)
+        local size = slime_blob.size(ctx, entity)
+
+        jiyva_growth.validate(ctx, entity, health, {
+            minimum = profile.minimum * size,
+            maximum = profile.maximum * size,
+        }, 0, slime_bound_for(ctx, entity, position, state))
     elseif not polymorph and not clone and
+        actor.kind_id ~= monsters.MONS_SLIME_CREATURE and
         (health.max < profile.minimum or health.max > profile.maximum) then
         error("impossible fixed monster maximum HP " .. health.max)
     end
@@ -289,24 +356,32 @@ end
 
 -- Vault actors are validated against authored origin overrides instead of roster limits.
 local function validate_vault_monster(ctx, entity, actor, health, position,
-    ai, current_aut)
+    ai, current_aut, slime_hp_bound)
     local definition = catalog.get("monsters", actor.kind_id)
     local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
     local profile_id = overrides and overrides.base_id ~= "" and
         overrides.base_id or actor.kind_id
     local polymorph = ctx:get(entity, component.MONSTER_POLYMORPH)
     local growth_profile_id = polymorph and actor.kind_id or profile_id
-    local profile = roster.profile(profile_id)
+    local profile = roster.profile(polymorph and
+        actor.kind_id == monsters.MONS_SLIME_CREATURE and
+        actor.kind_id or profile_id)
     local growth_profile = roster.profile(growth_profile_id)
     local fixed_hp = overrides and overrides.fixed_hp or 0
     local blob = ctx:get(entity, component.SLIME_BLOB)
     local blob_size = blob and blob.size or 1
+    local reshaped = blob and blob.reshaped_max > 0
     local generated = ctx:get(entity, component.PANDEMONIUM_LORD)
-    local invalid_health = fixed_hp > 0 and
+    local invalid_health = not reshaped and not polymorph and
+        fixed_hp > 0 and
         health.max ~= fixed_hp * blob_size or
-        fixed_hp == 0 and not generated and
+        not reshaped and (fixed_hp == 0 or polymorph) and
+        not generated and
         (health.max < profile.minimum * blob_size or
             health.max > profile.maximum * blob_size)
+
+    slime_lifecycle.validate(ctx, entity, health, profile,
+        current_aut, polymorph and 0 or fixed_hp, slime_hp_bound)
 
     if generated then
         validate_pan_lord(ctx, entity, actor, health, definition, overrides)
@@ -324,7 +399,7 @@ local function validate_vault_monster(ctx, entity, actor, health, position,
         jiyva_growth.validate(ctx, entity, health, {
             minimum = growth_profile.minimum * growth_size,
             maximum = growth_profile.maximum * growth_size,
-        }, growth_fixed_hp)
+        }, growth_fixed_hp, slime_hp_bound)
     elseif invalid_health then
         error("vault monster " .. ctx:id(entity) .. " has impossible HP")
     end
@@ -344,7 +419,7 @@ end
 -- explicit saved origin admits them outside the fixed starting roster,
 -- while the ordinary monster profile and AI invariants still apply.
 local function validate_doom_arrival(ctx, entity, actor, health, position,
-    ai, current_aut)
+    ai, current_aut, slime_hp_bound)
     local origin = ctx:get(entity, doom_howl.ARRIVAL)
 
     if not doom_howl.beast(actor.kind_id) or
@@ -354,7 +429,7 @@ local function validate_doom_arrival(ctx, entity, actor, health, position,
     end
 
     validate_vault_monster(ctx, entity, actor, health, position,
-        ai, current_aut)
+        ai, current_aut, slime_hp_bound)
 end
 
 -- Monster save validation separates roster, vault, and banished actors because their origins differ.
@@ -554,6 +629,8 @@ function module.run(ctx, input)
         allowed.MONS_KOBOLD = true
     end
 
+    local slime_hp_by_level, slime_hp_global =
+        authored_slime_maximum(input)
     local roster_state = {
         allowed = allowed,
         allowed_by_level = allowed_by_level,
@@ -562,6 +639,8 @@ function module.run(ctx, input)
         budgets = budgets,
         live_by_level = live_by_level,
         current_aut = input.current_aut,
+        slime_hp_by_level = slime_hp_by_level,
+        slime_hp_global = slime_hp_global,
     }
 
     -- Plant allegiance is independent of the roster's origin, so validate
@@ -625,6 +704,28 @@ function module.run(ctx, input)
             not ctx:has(entity, component.HEALTH) or
             not ctx:has(entity, component.POSITION) then
             error("orphan Jiyva growth " .. ctx:id(entity))
+        end
+    end
+
+    -- A forged birth marker must not vanish from validation merely because
+    -- its alleged body is missing the AI component used by the main loop.
+    for _, entity in ipairs(ctx:query({ component.SLIME_BIRTH })) do
+        if not ctx:has(entity, component.ACTOR) or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("orphan slime birth " .. ctx:id(entity))
+        end
+    end
+
+    -- Blob size without a complete actor would otherwise evade the main
+    -- roster loop while still appearing in the dynamic component save.
+    for _, entity in ipairs(ctx:query({ component.SLIME_BLOB })) do
+        if not ctx:has(entity, component.ACTOR) or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("orphan slime blob " .. ctx:id(entity))
         end
     end
 
@@ -711,7 +812,8 @@ function module.run(ctx, input)
                 summon, input.current_aut)
         elseif ctx:get(entity, doom_howl.ARRIVAL) then
             validate_doom_arrival(ctx, entity, actor, health,
-                position, ai, input.current_aut)
+                position, ai, input.current_aut,
+                slime_bound_for(ctx, entity, position, roster_state))
         elseif ctx:get(entity, component.BEOGH_RESURRECTED) or
             ctx:get(entity, component.JIYVA_SPAWN) or
             ctx:get(entity, component.PANDEMONIUM_LORD) or
@@ -719,7 +821,8 @@ function module.run(ctx, input)
             ctx:get(entity, component.WORLD_VAULT_SPAWN) or
             ctx:get(entity, component.WORLD_WIZLAB_EVENT_ACTOR) then
             validate_vault_monster(ctx, entity, actor, health,
-                position, ai, input.current_aut)
+                position, ai, input.current_aut,
+                slime_bound_for(ctx, entity, position, roster_state))
         -- Kirke's extra band and released actors have explicit origins, not
         -- roster slots. The marker loop above checks their ownership; the
         -- ordinary monster profile still checks HP, speed, and AI here.
@@ -730,7 +833,8 @@ function module.run(ctx, input)
             ctx:get(entity, tactical.KIRKE_BAND) or
             ctx:get(entity, tactical.KIRKE_FREED) then
             validate_vault_monster(ctx, entity, actor, health,
-                position, ai, input.current_aut)
+                position, ai, input.current_aut,
+                slime_bound_for(ctx, entity, position, roster_state))
         else
             validate_roster_monster(ctx, entity, actor, health,
                 position, ai, roster_state)

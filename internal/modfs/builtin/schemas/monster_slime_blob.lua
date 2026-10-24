@@ -4,11 +4,17 @@ local component = require("constants.component")
 -- Planerend both set this size; HP, melee damage, and display read it.
 local schema = {
     id = component.SLIME_BLOB,
-    version = 1,
+    version = 2,
     fields = {
         size = {
             type = "int64",
             default = 1,
+        },
+        -- Splitting rounds HP; merging pools possibly different authored
+        -- rolls. The resulting maximum is no longer fixed HP times size.
+        reshaped_max = {
+            type = "int64",
+            default = 0,
         },
     },
 }

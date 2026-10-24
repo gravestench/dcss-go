@@ -259,6 +259,13 @@ local function transform(ctx, target, source, definition, stream)
         ctx:remove(target, component.JIYVA_GROWTH)
     end
 
+    -- A transformed body starts as one creature of its new species. Keep a
+    -- split-birth marker for roster accounting, but discard the old blob
+    -- multiplier before save and combat inspect the new form.
+    if ctx:has(target, component.SLIME_BLOB) then
+        ctx:remove(target, component.SLIME_BLOB)
+    end
+
     -- An ugly thing's ghost profile is individual actor state. A new body
     -- rolls it once; a departed body cannot keep stale colour or attacks.
     local ugly_thing = require("policy.monsters.ugly_thing")

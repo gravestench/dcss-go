@@ -23,6 +23,8 @@ local makhleb_roster = require("policy.religion.makhleb.roster")
 
 local constructs = require("constants.monster_construct_components")
 local monster_profile = require("policy.combat.monster_profile")
+local roster = require("policy.population.roster")
+local slime_lifecycle = require("policy.monsters.slime_lifecycle")
 
 local summons = {}
 
@@ -276,11 +278,20 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
 
     local blob = ctx:get(entity, component.SLIME_BLOB)
 
+    local split_slime = ctx:has(entity, component.SLIME_BIRTH) or
+        blob and blob.reshaped_max > 0
+
     if blob and (state.source_id ~= spells.SPELL_PLANEREND or
         actor.kind_id ~= monsters.MONS_SLIME_CREATURE or
-        blob.size ~= 5) then
+        blob.size ~= 5 and not split_slime) then
         error("summon " .. ctx:id(entity) ..
             " has invalid Planerend slime size")
+    end
+
+    if actor.kind_id == monsters.MONS_SLIME_CREATURE then
+        slime_lifecycle.validate(ctx, entity,
+            ctx:get(entity, component.HEALTH),
+            roster.profile(actor.kind_id), current_aut)
     end
 
     local haunting = ctx:get(entity, component.SUMMON_HAUNTING)

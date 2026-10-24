@@ -32,6 +32,7 @@ local streams = {
     POPULATION_COUNT = "population-count",
     SHOP = "shop",
     SLIME_WALL = "slime_wall",
+    SLIME_CREATURE = "slime_creature",
     SPELL = "spell",
     TRAPS = "traps",
     WANDERER = "wanderer",

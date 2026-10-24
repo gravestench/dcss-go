@@ -22,6 +22,7 @@ local awareness = require("policy.ai.awareness")
 local invisibility = require("policy.potions.invisibility")
 local component = require("constants.component")
 local ugly_thing = require("policy.monsters.ugly_thing")
+local slime_lifecycle = require("policy.monsters.slime_lifecycle")
 local behaviors = require("constants.ai_behaviors")
 local intents = require("constants.intent")
 
@@ -305,6 +306,18 @@ function system.update(ctx, entity)
         ctx:add(entity, component.INTENT, {
             kind = 6,
         })
+
+        return
+    end
+
+    -- Slime creatures choose division or combination before their usual
+    -- route, spending the same scheduled action as another natural ability.
+    if slime_lifecycle.tick(ctx, entity) then
+        if ctx:has(entity, component.ACTOR) then
+            ctx:add(entity, component.INTENT, {
+                kind = intents.WAIT,
+            })
+        end
 
         return
     end

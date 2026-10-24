@@ -41,10 +41,11 @@ function module.run(ctx, input)
 
     for _, entity in ipairs(ctx:query({ "core.ai", "core.actor" })) do
         local growth = ctx:get(entity, component.JIYVA_GROWTH)
-        local born_from_split = growth and growth.born_from_split
+        local born_from_split = growth and growth.born_from_split or
+            ctx:has(entity, component.SLIME_BIRTH)
 
-        -- Jiyva births do not consume one of the initial population slots
-        -- used to bound XP from ordinary Dungeon monsters.
+        -- Jiyva and ordinary slime births do not consume a second slot in
+        -- the initial population used to bound possible Dungeon rewards.
         if not ctx:has(entity, component.SUMMON) and
             not ctx:has(entity, component.CHAOS_CLONE) and
             not ctx:has(entity, doom_howl.ARRIVAL) and

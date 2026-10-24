@@ -5,6 +5,7 @@ local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local component = require("constants.component")
 local identity = require("policy.religion.jiyva.identity")
+local monsters = require("ids.monsters")
 
 local growth = {}
 
@@ -46,10 +47,62 @@ function growth.split(ctx, parent, child)
     })
 end
 
--- A marker permits only the source's four-times-average fed HP ceiling.
+-- An ordinary slime creature divides a merged body by blob count, whereas
+-- M_SPLITS jellies divide into two equal full species. Scale each saved
+-- birth maximum with that body so later feeding and restore can still
+-- verify the original HP reservoir after the two actors diverge.
+function growth.split_blob(ctx, parent, child, old_size, child_size)
+    local birth = ctx:get(parent, component.JIYVA_GROWTH).birth_max
+
+    growth.split(ctx, parent, child)
+
+    local parent_state = ctx:get(parent, component.JIYVA_GROWTH)
+    local child_state = ctx:get(child, component.JIYVA_GROWTH)
+
+    parent_state.birth_max = math.max(1,
+        math.floor(birth * (old_size - child_size) / old_size))
+    child_state.birth_max = math.max(1,
+        math.floor(birth * child_size / old_size))
+
+    ctx:set(parent, component.JIYVA_GROWTH, parent_state)
+    ctx:set(child, component.JIYVA_GROWTH, child_state)
+end
+
+-- Two fed slime creatures pool their original HP reservoirs as well as live
+-- HP. An un-fed half contributes its current maximum as its untouched base.
+-- The surviving actor keeps its own birth role for roster accounting.
+function growth.merge_blob(ctx, source, target, source_max, target_max)
+    local from = ctx:get(source, component.JIYVA_GROWTH)
+    local into = ctx:get(target, component.JIYVA_GROWTH)
+
+    if not from and not into then
+        return
+    end
+
+    local state = into or {
+        birth_max = target_max,
+        split_count = 0,
+        born_from_split = false,
+    }
+
+    state.birth_max = (from and from.birth_max or source_max) +
+        (into and into.birth_max or target_max)
+    state.split_count = (from and from.split_count or 0) +
+        (into and into.split_count or 0)
+
+    if into then
+        ctx:set(target, component.JIYVA_GROWTH, state)
+    else
+        ctx:add(target, component.JIYVA_GROWTH, state)
+    end
+end
+
+-- A marker permits only the source's four-times-average fed HP ceiling per
+-- blob. Merge combines legal HP reservoirs, so one-body limits no longer fit.
 -- An unsplit body cannot shrink below birth max; a split body may do so.
 -- Original actors still must prove a legal initial spawn profile.
-function growth.validate(ctx, monster, health, profile, fixed_hp)
+function growth.validate(ctx, monster, health, profile, fixed_hp,
+    authored_max)
     local state = ctx:get(monster, component.JIYVA_GROWTH)
 
     if not state then
@@ -61,13 +114,23 @@ function growth.validate(ctx, monster, health, profile, fixed_hp)
         catalog.get(categories.MONSTERS, actor.kind_id)
     local average = definition and
         math.floor(definition.average_hp_10x / 10) or 0
+    local blob = ctx:get(monster, component.SLIME_BLOB)
+    local size = blob and blob.size or 1
+    local reshaped = blob and blob.reshaped_max > 0
+    local ordinary_birth_max = profile and profile.maximum or 0
+    local source_authored_max = reshaped and actor and
+        actor.kind_id == monsters.MONS_SLIME_CREATURE and
+        (authored_max or 0) * size or 0
+    local source_birth_max = math.max(ordinary_birth_max,
+        fixed_hp or 0, source_authored_max)
     local legal_birth = state.born_from_split or
+        (reshaped and state.birth_max <= source_birth_max) or
         (fixed_hp and fixed_hp > 0 and
             state.birth_max == fixed_hp) or
         (profile and state.birth_max >= profile.minimum and
             state.birth_max <= profile.maximum)
     local ceiling = math.min(10000,
-        math.max(state.birth_max, average * 4))
+        math.max(state.birth_max, average * 4 * size))
 
     if not definition or not identity.slime(definition) or
         not legal_birth or state.birth_max < 1 or
