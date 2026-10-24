@@ -39,12 +39,13 @@ local vine_grip = require("policy.combat.monster_plants.vine_grip")
 local component = require("constants.component")
 local attack_conduct = require("policy.religion.conduct.attack")
 local cleaving = require("policy.religion.xom.cleaving")
+local attack_sequence = require("policy.combat.monster_attack_sequence")
 
 local actions = {}
 
--- These entry points coordinate one contact. The smaller combat policies
--- calculate hit, damage, brands and reactions; this module orders them so
--- on-hit effects see the actual outcome and death stops later contacts.
+-- These entry points coordinate a full monster attack round. The smaller
+-- combat policies calculate each contact, brand, and reaction; this module
+-- orders them so death and displacement stop later contacts.
 
 -- Read monster flags for attack-specific movement and immunity decisions.
 local function has_flag(flags, wanted)
@@ -344,12 +345,11 @@ local function retreat_bat(ctx, attacker, definition)
     ctx:set(attacker, "core.ai", ai)
 end
 
--- The second attack slot can start constriction only after the victim survives and is not already held.
-local function grab(ctx, attacker, definition, player_health)
-    local attack = definition.attacks[2]
-
-    if not attack or attack.type_id ~= "AT_CONSTRICT" or
-        player_health.current <= 0 or ctx:has(ctx:player(), "core.constricted") then
+-- A constricting slot starts a saved hold only after a living victim
+-- survives the slot's own hit roll; it is not a bonus after the round.
+local function grab(ctx, attacker, definition, attack, player_health)
+    if player_health.current <= 0 or
+        ctx:has(ctx:player(), "core.constricted") then
         return
     end
 
@@ -388,7 +388,8 @@ end
 -- A monster attacking the player uses player defense and reaction phases.
 -- The monster-to-monster path below has different allegiance and summon
 -- handling, so it has a separate entry point.
-function actions.monster(ctx, attacker, options)
+local function monster_player_contact(ctx, attacker, selected,
+    contact_index, options)
     local player_moving = options and options.player_moving or false
     local actor = ctx:get(attacker, "core.actor")
 
@@ -396,24 +397,19 @@ function actions.monster(ctx, attacker, options)
         error("monster melee attacker lacks actor")
     end
 
-    if ctx:has(attacker, component.MONSTER_VINE) then
-        vine_grip.contact(ctx, attacker, ctx:player())
-
-        return
-    end
-
     local definition = monster_profile.definition(ctx, attacker,
         catalog.get("monsters", actor.kind_id))
-    local attack = definition.attacks[1]
+    local attack = selected.attack
     local flavour_id = ignis_champion.attack_flavour(ctx, attacker,
         attack.flavour_id)
     local attack_type = monster_roll.active(ctx, attacker) and
-        attack_types.HIT or attack.type_id
+        attack_types.HIT or attack_sequence.contact_type(ctx, attack)
     local defense = fighter.defense(ctx)
     local weapon = nil
 
     if attack_type == attack_types.HIT then
-        weapon = equipment.monster_melee(ctx, attacker)
+        weapon = equipment.monster_melee(ctx, attacker,
+            contact_index)
 
         if weapon then
             brands.check(weapon.brand)
@@ -543,9 +539,6 @@ function actions.monster(ctx, attacker, options)
         end
     end
 
-    if not player_moving then
-        grab(ctx, attacker, definition, ctx:get(player, "core.health"))
-    end
     player_reactions.after_attack(ctx, attacker, definition)
     trample.follow(ctx, flavour_hit)
 end
@@ -553,12 +546,8 @@ end
 -- Confusion and allegiance can make another monster the target. Validate
 -- that relationship before resolving combat so ordinary allies cannot be
 -- attacked through this API by accident.
-function actions.monster_target(ctx, attacker, target)
-    if not targets.enemy(ctx, attacker, target) and
-        not confusion.active(ctx, attacker) then
-        error("monster cannot attack an allied actor")
-    end
-
+local function monster_target_contact(ctx, attacker, target,
+    selected, contact_index)
     local attacker_actor = ctx:get(attacker, "core.actor")
     local target_actor = ctx:get(target, "core.actor")
 
@@ -566,25 +555,11 @@ function actions.monster_target(ctx, attacker, target)
         error("monster melee requires two actors")
     end
 
-    if ctx:has(attacker, component.MONSTER_VINE) then
-        vine_grip.contact(ctx, attacker, target)
-
-        return
-    end
-
-    if summon_melee.attack(ctx, attacker, target) then
-        if ctx:has(target, component.ACTOR) then
-            brambles.thorns(ctx, attacker, target, false)
-        end
-
-        return
-    end
-
     local attacker_def = monster_profile.definition(ctx, attacker,
         catalog.get("monsters", attacker_actor.kind_id))
     local target_def = monster_profile.definition(ctx, target,
         catalog.get("monsters", target_actor.kind_id))
-    local attack = attacker_def.attacks[1]
+    local attack = selected.attack
 
     if not attack or attack.type_id == "AT_NONE" then
         return
@@ -594,14 +569,15 @@ function actions.monster_target(ctx, attacker, target)
         attack.flavour_id)
 
     local attack_type = monster_roll.active(ctx, attacker) and
-        attack_types.HIT or attack.type_id
+        attack_types.HIT or attack_sequence.contact_type(ctx, attack)
     local summon_stats = ctx:get(attacker, "magic.summon_stats")
     local weapon = nil
 
     -- Natural attacks cannot transmit a brand from an item merely held by
     -- the monster. This matches the monster-against-player contact path.
     if attack_type == attack_types.HIT then
-        weapon = equipment.monster_melee(ctx, attacker)
+        weapon = equipment.monster_melee(ctx, attacker,
+            contact_index)
     end
     local combat = ctx:get(target, "core.combat")
     local defense = {
@@ -651,7 +627,7 @@ function actions.monster_target(ctx, attacker, target)
     local lord_brand = lord and lord.brand_id ~= weapon_brands.NORMAL and
         lord.brand_id
     local brand_id = weapon and weapon.brand or
-        attack.type_id == attack_types.HIT and illusion and
+        attack_type == attack_types.HIT and illusion and
         illusion.brand_id or lord_brand
 
     if outcome.kind == "hit" and brand_id then
@@ -704,6 +680,153 @@ function actions.monster_target(ctx, attacker, target)
     trample.follow(ctx, flavour_hit)
 
     return health
+end
+
+-- Source hydras prefer an adjacent hostile player, then another living
+-- monster. Search positions, not a cached target list, after each head.
+local function adjacent_enemy(ctx, attacker, lost)
+    local origin = ctx:get(attacker, component.POSITION)
+
+    if not origin then
+        return nil
+    end
+
+    local player = ctx:player()
+    local player_position = ctx:get(player, component.POSITION)
+    local player_health_state = ctx:get(player, component.HEALTH)
+
+    if player ~= lost and player_position and player_health_state and
+        player_health_state.current > 0 and
+        player_position.level_id == origin.level_id and
+        math.max(math.abs(player_position.x - origin.x),
+            math.abs(player_position.y - origin.y)) == 1 and
+        targets.enemy(ctx, attacker, player) then
+        return player
+    end
+
+    for dx = -1, 1 do
+        for dy = -1, 1 do
+            if dx ~= 0 or dy ~= 0 then
+                local candidate = ctx:actor_at(origin.level_id,
+                    origin.x + dx, origin.y + dy)
+                local health = candidate and ctx:get(candidate,
+                    component.HEALTH)
+
+                if candidate and candidate ~= attacker and
+                    candidate ~= lost and health and
+                    health.current > 0 and
+                    targets.enemy(ctx, attacker, candidate) then
+                    return candidate
+                end
+            end
+        end
+    end
+
+    return nil
+end
+
+-- Source melee spends one action on every live slot. When the current
+-- defender dies or moves, only living hydras and Serpents may pick another
+-- adjacent enemy. Both public entry points share this round boundary.
+local function run_round(ctx, attacker, target, options)
+    local actor = ctx:get(attacker, component.ACTOR)
+
+    if not actor then
+        error("monster melee attacker lacks actor")
+    end
+
+    local definition = monster_profile.definition(ctx, attacker,
+        catalog.get("monsters", actor.kind_id))
+    local contacts = attack_sequence.for_actor(ctx, attacker, definition)
+    local origin = ctx:get(target, component.POSITION)
+    local last_health
+
+    for index, selected in ipairs(contacts) do
+        local attacker_health = ctx:get(attacker, component.HEALTH)
+        local defender_health = ctx:get(target, component.HEALTH)
+        local position = ctx:get(target, component.POSITION)
+
+        if not attacker_health or attacker_health.current <= 0 then
+            break
+        end
+
+        local lost = not defender_health or
+            defender_health.current <= 0 or not origin or not position or
+            position.level_id ~= origin.level_id or
+            position.x ~= origin.x or position.y ~= origin.y
+
+        if lost then
+            if not attack_sequence.can_retarget(definition) then
+                break
+            end
+
+            target = adjacent_enemy(ctx, attacker, target)
+
+            if not target then
+                break
+            end
+
+            origin = ctx:get(target, component.POSITION)
+            defender_health = ctx:get(target, component.HEALTH)
+        end
+
+        if target == ctx:player() then
+            if selected.attack.type_id == attack_types.CONSTRICT then
+                if not (options and options.player_moving) then
+                    grab(ctx, attacker, definition,
+                        selected.attack, defender_health)
+                end
+            else
+                monster_player_contact(ctx, attacker, selected,
+                    index, options)
+            end
+
+            last_health = ctx:get(target, component.HEALTH)
+        else
+            last_health = monster_target_contact(ctx, attacker,
+                target, selected, index)
+        end
+    end
+
+    return last_health
+end
+
+-- The player's current enemy uses the same ordered round as monster versus
+-- monster combat; contact resolution still reads the player's real ECS data.
+function actions.monster(ctx, attacker, options)
+    if ctx:has(attacker, component.MONSTER_VINE) then
+        vine_grip.contact(ctx, attacker, ctx:player())
+
+        return
+    end
+
+    return run_round(ctx, attacker, ctx:player(), options)
+end
+
+-- Confusion can authorize a monster target outside normal allegiance. The
+-- special summon and vine attacks own their single contact before the
+-- ordinary catalog sequence is considered.
+function actions.monster_target(ctx, attacker, target)
+    if not targets.enemy(ctx, attacker, target) and
+        not confusion.active(ctx, attacker) then
+        error("monster cannot attack an allied actor")
+    end
+
+    if ctx:has(attacker, component.MONSTER_VINE) then
+        vine_grip.contact(ctx, attacker, target)
+
+        return
+    end
+
+    if summon_melee.attack(ctx, attacker, target) then
+        if ctx:has(target, component.ACTOR) then
+            brambles.thorns(ctx, attacker, target, false)
+        end
+
+        return
+    end
+
+    return run_round(ctx, attacker, target)
 end
 
 return actions

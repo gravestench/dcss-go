@@ -127,6 +127,14 @@ monster resistance and willpower. Saved Bat and Weird mutant-beast
 facets supply their source flight and sight traits. Zombies, skeletons,
 simulacra, spectral things, and bound souls inherit flight from their saved
 base species.
+Monster melee now visits its complete ordered attack sequence against
+players and monsters in one action. Saved hydra and Serpent head counts
+repeat the first bite, living hydras can retarget adjacent enemies after
+a kill or displacement, derived undead borrow downscaled base attacks,
+and dual wielders alternate their active weapons. Cherub and random
+attack types choose their contact shape on each attempt. A constricting
+slot starts one hold; later damage reads that slot's base damage rather
+than a fixed second slot.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except

@@ -2,11 +2,15 @@
 
 local attack_types = {
     NONE = "AT_NONE",
+    RANDOM = "AT_RANDOM",
+    CHERUB = "AT_CHERUB",
     HIT = "AT_HIT",
     BITE = "AT_BITE",
     STING = "AT_STING",
+    SPORE = "AT_SPORE",
     TOUCH = "AT_TOUCH",
     ENGULF = "AT_ENGULF",
+    CONSTRICT = "AT_CONSTRICT",
     CLAW = "AT_CLAW",
     PECK = "AT_PECK",
     HEADBUTT = "AT_HEADBUTT",

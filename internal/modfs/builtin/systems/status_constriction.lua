@@ -2,6 +2,9 @@ local catalog = require("policy.catalog")
 local constriction = require("policy.combat.constriction")
 local fighter = require("policy.combat.fighter")
 local player_health_policy = require("policy.combat.player_health")
+local attack_sequence = require("policy.combat.monster_attack_sequence")
+local attack_types = require("constants.monster_attack_types")
+local monster_profile = require("policy.combat.monster_profile")
 
 -- Use king-move adjacency to release a grip when either participant has moved out of reach.
 local function adjacent(a, b)
@@ -46,9 +49,28 @@ function system.update(ctx, active)
         error("constrictor has no actor")
     end
 
-    local definition = catalog.get("monsters", actor.kind_id)
+    local definition = monster_profile.definition(ctx, grip.by,
+        catalog.get("monsters", actor.kind_id))
+    local constrict_attack
+
+    for _, selected in ipairs(attack_sequence.for_actor(ctx,
+        grip.by, definition)) do
+        if selected.attack.type_id == attack_types.CONSTRICT then
+            constrict_attack = selected.attack
+            break
+        end
+    end
+
+    -- Polymorph may have removed the constricting body since the original
+    -- contact; no catalog slot should keep a stale grip alive.
+    if not constrict_attack then
+        ctx:remove(player, "core.constricted")
+
+        return
+    end
+
     local defense = fighter.defense(ctx)
-    local amount = constriction.damage(ctx, definition.attacks[2].damage,
+    local amount = constriction.damage(ctx, constrict_attack.damage,
         defense.ac, actor.speed)
     player_health = player_health_policy.damage(ctx, player, amount,
         false, grip.by)

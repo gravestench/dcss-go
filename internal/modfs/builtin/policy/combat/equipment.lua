@@ -103,8 +103,10 @@ function equipment.monster_artefact_value(ctx, monster, definition,
     return value
 end
 
--- Monster weapon selection reads the validated equipped-item snapshot rather than raw inventory.
-function equipment.monster_melee(ctx, monster)
+-- A dual wielder alternates hands by contact number. Other callers may
+-- ask for the actor's current melee weapon without selecting a contact;
+-- ordinary monsters never activate an alternate inventory weapon.
+function equipment.monster_melee(ctx, monster, contact_index)
     for _, entity in ipairs(ctx:query({ "core.equipped", "core.carried_by" })) do
         local carrier = ctx:get(entity, "core.carried_by")
         local slot = ctx:get(entity, "core.equipped")
@@ -121,7 +123,19 @@ function equipment.monster_melee(ctx, monster)
         alternate_weapon = true,
     })
 
-    for _, slot in ipairs({ "weapon", "alternate_weapon" }) do
+    local actor = ctx:get(monster, component.ACTOR)
+    local definition = actor and catalog.get("monsters", actor.kind_id)
+    local dual = definition and has_flag(definition.flags,
+        monster_flags.TWO_WEAPONS)
+    local slots = { "weapon" }
+
+    if dual and contact_index and contact_index % 2 == 0 then
+        slots = { "alternate_weapon", "weapon" }
+    elseif dual and not contact_index then
+        slots = { "weapon", "alternate_weapon" }
+    end
+
+    for _, slot in ipairs(slots) do
         local entry = worn[slot]
 
         if entry then

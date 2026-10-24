@@ -33,8 +33,32 @@ local pan_lord = require("policy.population.pan_lord")
 local ugly_thing = require("policy.monsters.ugly_thing")
 local cloud_ring = require("policy.combat.monster_cloud_ring")
 local draconian_base = require("policy.monsters.draconian_base")
+local streams = require("constants.rng_streams")
 
 local factory = {}
+
+-- Source monsters keep their head count on the actor. An authored DES
+-- count wins; ordinary hydras roll once and named hydra/serpent uniques
+-- have fixed counts before the first melee action or save.
+local function starting_heads(ctx, source, authored)
+    if authored and authored > 0 then
+        return authored
+    end
+
+    if source.id == monsters.MONS_LERNAEAN_HYDRA then
+        return 27
+    end
+
+    if source.species_id == monsters.MONS_SERPENT_OF_HELL then
+        return 3
+    end
+
+    if source.genus_id == monsters.MONS_HYDRA then
+        return 4 + ctx:random(streams.MONSTER_TRAITS, 5)
+    end
+
+    return nil
+end
 
 -- Source dungeon placement converts an incompatible authored monster cell
 -- to its primary habitat before the actor enters the grid.
@@ -473,9 +497,11 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
         ctx:add(monster, component.SLIME_BLOB, { size = blob_size })
     end
 
-    if options.hydra_heads and options.hydra_heads > 0 then
+    local heads = starting_heads(ctx, source, options.hydra_heads)
+
+    if heads then
         ctx:add(monster, component.MONSTER_HYDRA_HEADS, {
-            count = options.hydra_heads,
+            count = heads,
         })
     end
     create_loadout(ctx, monster, loadout, options.origin)
