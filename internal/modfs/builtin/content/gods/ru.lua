@@ -15,6 +15,7 @@ local definition = {
     god_time_zero_check = true,
     conduct_module = "policy.religion.conduct.ru",
     kill_progress_module = "policy.religion.ru.progress",
+    time_module = "policy.religion.ru.offers",
     behavior_module = "policy.religion.gods.ru",
 }
 

@@ -492,9 +492,16 @@ eligibility. Devour and divine HP gains from one death announce healing once.
 All seventeen Ru sacrifice IDs and their source mutation, skill, and base
 piety declarations now live in individually discoverable Lua content files.
 Credited player kills advance Ru's saved sacrifice progress on the source
-coin flip below 200 piety, after death conduct and recovery. Offer selection,
-acceptance, and rejection are still pending, so Ru's defining bargain is not
-yet playable.
+coin flip below 200 piety, after death conduct and recovery. At god time,
+Ru now chooses and saves three distinct eligible offers from stable ID
+order, including rolled mutation variants and source-shaped piety quotes.
+Existing offers are not rerolled. Acceptance, rejection, and the UI remain
+pending, so Ru's defining bargain is not yet playable.
+The saved Ru component is version 2 because choices now hold stable string
+IDs and quoted prices; earlier Go saves containing version 1 Ru state do not
+restore under this schema. The source's Frail exclusion for a Demonspawn
+whose future facet includes Robust remains pending until that scheduled
+trait is represented in the port's saved character state.
 Okawaru's Heroism, Finesse, and Duel are now playable Lua powers with the
 source rank, failure, MP, and piety gates. Heroism projects mundane skill
 levels without changing training; Finesse changes attack delay and is

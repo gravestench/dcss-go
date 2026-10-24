@@ -15,6 +15,7 @@ function ru.prepare(ctx, player)
         essence = {},
         purity = {},
         arcana = {},
+        quoted_piety = {},
     }
 
     if ctx:get(player, component.RELIGION_RU) then

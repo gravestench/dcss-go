@@ -10,6 +10,7 @@ local definition = {
     milestone_text = "sacrificed arcana",
     base_piety = 25,
     variant_pool = pools.ARCANA,
+    offer_rule_module = "policy.religion.ru.rules.arcana",
 }
 
 register.definition(categories.RU_SACRIFICES, definition)

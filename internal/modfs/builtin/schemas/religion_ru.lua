@@ -4,7 +4,7 @@ local component = require("constants.component")
 
 local schema = {
     id = component.RELIGION_RU,
-    version = 1,
+    version = 2,
     fields = {
         sacrifice_progress = {
             type = "int64",
@@ -19,19 +19,22 @@ local schema = {
             default = 0,
         },
         available = {
-            type = "list<int64>",
+            type = "list<string>",
         },
         health = {
-            type = "list<int64>",
+            type = "list<string>",
         },
         essence = {
-            type = "list<int64>",
+            type = "list<string>",
         },
         purity = {
-            type = "list<int64>",
+            type = "list<string>",
         },
         arcana = {
-            type = "list<int64>",
+            type = "list<string>",
+        },
+        quoted_piety = {
+            type = "map<string,int64>",
         },
     },
 }

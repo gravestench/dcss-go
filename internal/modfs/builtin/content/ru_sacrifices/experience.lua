@@ -10,6 +10,7 @@ local definition = {
     milestone_text = "sacrificed experience",
     base_piety = 35,
     mutation_id = mutations.MUT_INEXPERIENCED,
+    offer_rule_module = "policy.religion.ru.rules.experience",
 }
 
 register.definition(categories.RU_SACRIFICES, definition)

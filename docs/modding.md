@@ -622,6 +622,31 @@ owner, such as Ru's sacrifices or Uskayaw's combat momentum. Ashenzari and
 Ru set `god_time_zero_check = true`: their periodic check expels a character
 already at zero devotion without rolling random decay. Other alternative
 gods return from the source god-time handler before that zero check.
+Set `time_module` to a Lua module with `at_god_time(ctx, player)` when a god
+has another periodic rule. Ru uses this hook to turn saved sacrifice
+progress into offers. The shared clock invokes it after the zero-piety
+check and before scheduling the next deadline.
+
+Ru's bundled sacrifices live in `content/ru_sacrifices/`, one file per
+definition. A definition declares an ID from `ids.ru_sacrifices`, a `name`,
+the source `sacrifice_text` and `milestone_text`, `base_piety`, and either a
+`mutation_id` or a `variant_pool` from `constants.ru_variant_pools`.
+Optional `skill_id` names a trained skill whose current value affects offer
+selection and later acceptance. `offer_rule_module` may name a Lua module
+with `eligible(ctx, player)` for a condition specific to that sacrifice.
+`price_module` may name a Lua module with
+`adjust(ctx, player, selected, amount)` to change its base quote. The
+selected argument is a list of mutation IDs; the returned amount is before
+Ru's small random blur. Keep such rules in separate commented Lua files so
+one declaration stays easy to read.
+
+When Ru's saved progress meets its delay at god time, the offer owner reads
+effective definitions in stable ID order, checks eligibility, rolls
+variable mutations, and saves three distinct IDs with their selected
+mutations and quoted piety in the `religion.ru` component. Inspecting an
+outstanding offer does not reroll it. The UI and acceptance path are still
+being ported; adding a declaration now makes it eligible for the saved
+offer set, but does not yet make a new sacrifice actionable.
 
 Write comments for the next human reader. Give each Lua file its own purpose
 and explain each function's reason for existing and how it implements the

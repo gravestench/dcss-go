@@ -10,6 +10,7 @@ local definition = {
     milestone_text = "sacrificed drink",
     base_piety = 30,
     mutation_id = mutations.MUT_DRINK_SAFETY,
+    offer_rule_module = "policy.religion.ru.rules.drink",
 }
 
 register.definition(categories.RU_SACRIFICES, definition)

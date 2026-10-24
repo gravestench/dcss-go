@@ -65,6 +65,20 @@ local function decay_check(ctx, player, state)
     return state
 end
 
+-- A god with its own clock action owns that behavior in a named Lua file.
+-- Dispatch after decay so an expulsion cannot create a stale offer.
+local function god_time_action(ctx, player, state)
+    if state.god_id == gods.NO_GOD then
+        return
+    end
+
+    local definition = catalog.get(categories.GODS, state.god_id)
+
+    if definition.time_module then
+        require(definition.time_module).at_god_time(ctx, player)
+    end
+end
+
 -- Resolve every crossed deadline for a long action. The next deadline is
 -- relative to the previous one, not the current action's end, so grouping
 -- player aut into large or small actions cannot skip a god-time check.
@@ -96,6 +110,7 @@ function upkeep.tick(ctx, player, elapsed_aut)
         local due = state.next_god_time_aut
 
         state = decay_check(ctx, player, state)
+        god_time_action(ctx, player, state)
         state.next_god_time_aut = due + limits.MIN_INTERVAL_AUT +
             ctx:random(streams.RELIGION, limits.INTERVAL_SPAN)
     end
