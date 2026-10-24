@@ -18,8 +18,19 @@ local size = require("constants.size")
 local skills = require("ids.pinned_skills")
 local species_ids = require("ids.species")
 local streams = require("constants.rng_streams")
+local descriptions = require("constants.ru_piety_descriptions")
 
 local pricing = {}
+
+-- Give a saved bargain the source's broad strength label without rolling a
+-- fresh quote. The caller may add live skill value before asking for this.
+function pricing.describe(gain)
+    for _, row in ipairs(descriptions) do
+        if gain >= row.minimum then
+            return row.adjective
+        end
+    end
+end
 
 -- The source bases a sacrificed skill's value on its achieved level and
 -- aptitude, not on unspent XP. Distributed Training makes that value zero.

@@ -1,6 +1,5 @@
 local items = require("ids.items")
 local catalog = require("policy.catalog")
-local formulas = require("policy.character.formulas")
 local experience_limit = require("policy.character.experience_limit")
 local fighter = require("policy.combat.fighter")
 local colors = require("policy.presentation.colors")
@@ -21,9 +20,8 @@ function view.player(ctx, input)
     local name = input.name or ""
     local species = catalog.get("species", input.species_id)
     local job = catalog.get("jobs", input.job_id)
-    local maximum = experience_limit.max_level(ctx, ctx:player())
-    local percent = formulas.level_progress(input.total_xp, input.level,
-        species.xp, maximum)
+    local percent = experience_limit.progress(ctx, ctx:player(),
+        input.total_xp, input.level)
 
     if name == "" then
         name = "Adventurer"

@@ -93,6 +93,31 @@ local function signal_rank(ctx, player, state, old_points)
     end
 end
 
+-- A Ru sacrifice is a direct bargain, not ordinary conduct. It bypasses
+-- gift timeout, hysteresis, and upper taper while retaining the shared rank
+-- notification and highest-piety ledger used by presentation and saves.
+function piety.award_ru_sacrifice(ctx, player, amount)
+    if type(amount) ~= "number" or amount < 0 or amount % 1 ~= 0 then
+        error("Ru sacrifice requires nonnegative integer piety")
+    end
+
+    local state = ctx:get(player, component.RELIGION_WORSHIP)
+
+    if not state or state.god_id ~= gods.RU then
+        error("Ru sacrifice requires current worship")
+    end
+
+    local old_points = state.piety
+
+    state.piety = math.min(limits.RU_MAX, state.piety + amount)
+    state.piety_max[gods.RU] = math.max(
+        state.piety_max[gods.RU] or 0, state.piety)
+    ctx:set(player, component.RELIGION_WORSHIP, state)
+    signal_rank(ctx, player, state, old_points)
+
+    return state.piety
+end
+
 -- Source checks gifts after an accepted point or an upper taper. Other
 -- systems may observe this signal without owning gift dispatch itself.
 local function signal_gift(ctx, player, state)

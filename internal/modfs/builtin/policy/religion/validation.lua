@@ -7,6 +7,7 @@ local limits = require("constants.piety")
 local tithe_rules = require("constants.zin_tithe_rules")
 local wallet_limits = require("constants.wallet_limits")
 local categories = require("constants.catalog")
+local ru_pools = require("data.ru_variant_mutations")
 
 local validation = {}
 -- Resolve current IDs at the boundary so a mod's added god is valid in a
@@ -97,6 +98,67 @@ function validation.check(ctx, player)
     if ru and (ru.sacrifice_progress < 0 or ru.sacrifice_delay < 0 or
         ru.sacrifice_penalty < 0) then
         error("invalid Ru sacrifice progress")
+    end
+
+    if ru then
+        local offered = {}
+        local active_pools = {}
+
+        -- An offer stores IDs and prices, never copied definitions. On
+        -- restore every ID must still resolve in the effective mod catalog.
+        for _, id in ipairs(ru.available) do
+            if offered[id] then
+                error("duplicate saved Ru sacrifice " .. id)
+            end
+
+            local definition = catalog.get(
+                categories.RU_SACRIFICES, id)
+
+            offered[id] = true
+
+            if definition.variant_pool then
+                active_pools[definition.variant_pool] = true
+            end
+
+            if not ru.quoted_piety[id] or
+                ru.quoted_piety[id] <= 0 then
+                error("saved Ru sacrifice lacks a price")
+            end
+        end
+
+        for id in pairs(ru.quoted_piety) do
+            if not offered[id] then
+                error("saved Ru price has no offer " .. id)
+            end
+        end
+
+        for _, field in ipairs({
+            "health", "essence", "purity", "arcana",
+        }) do
+            local selected = ru[field]
+            local expected = field == "arcana" and 3 or 1
+
+            if #selected ~= (active_pools[field] and expected or 0) then
+                error("saved Ru variant set is incomplete")
+            end
+
+            for index, id in ipairs(selected) do
+                catalog.get(categories.MUTATIONS, id)
+
+                local pool = ru_pools[field]
+                local choices = field == "arcana" and
+                    pool[index] or pool
+                local member = false
+
+                for _, candidate in ipairs(choices) do
+                    member = member or candidate == id
+                end
+
+                if not member then
+                    error("saved Ru variant is outside its pool")
+                end
+            end
+        end
     end
 
     local xom_trail = ctx:get(player, component.XOM_CLOUD_TRAIL)

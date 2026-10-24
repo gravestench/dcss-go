@@ -82,11 +82,9 @@ function extra_lives.on_experience(ctx, player)
     end
 
     local progress = ctx:get(player, component.PROGRESSION)
-    local choice = ctx:get(player, component.PLAYER)
-    local species = catalog.get("species", choice.species_id)
-
     while state.max_level < 127 and progress.total_xp >=
-        formulas.experience_needed(state.max_level + 1, species.xp) do
+        experience_limit.needed(ctx, player,
+            state.max_level + 1) do
         extra_lives.on_level(ctx, player, state.max_level + 1)
         state = extra_lives.state(ctx, player)
     end
@@ -191,26 +189,28 @@ local function lose_level(ctx, player)
         return progress
     end
 
-    local choice = ctx:get(player, component.PLAYER)
-    local species = catalog.get("species", choice.species_id)
     local old_level = progress.level
     local maximum = experience_limit.max_level(ctx, player)
 
     if old_level <= 1 then
         progress.total_xp = 0
     elseif old_level - 1 >= maximum then
-        progress.total_xp = formulas.experience_needed(maximum, species.xp)
+        progress.total_xp = experience_limit.needed(ctx, player,
+            maximum)
     elseif progress.total_xp >=
-        formulas.experience_needed(maximum, species.xp) then
+        experience_limit.needed(ctx, player, maximum) then
         -- player.cc:adjust_level subtracts one capped-level interval before
         -- doing the fractional conversion. That consumes this level loss.
         progress.total_xp = progress.total_xp -
-            formulas.experience_needed(maximum, species.xp) +
-            formulas.experience_needed(maximum - 1, species.xp)
+            experience_limit.needed(ctx, player, maximum) +
+            experience_limit.needed(ctx, player, maximum - 1)
     else
-        local old_min = formulas.experience_needed(old_level, species.xp)
-        local old_max = formulas.experience_needed(old_level + 1, species.xp)
-        local new_min = formulas.experience_needed(old_level - 1, species.xp)
+        local old_min = experience_limit.needed(ctx, player,
+            old_level)
+        local old_max = experience_limit.needed(ctx, player,
+            old_level + 1)
+        local new_min = experience_limit.needed(ctx, player,
+            old_level - 1)
         local new_max = old_min
         local earned = progress.total_xp - old_min
 
@@ -218,8 +218,8 @@ local function lose_level(ctx, player)
             earned * (new_max - new_min) / (old_max - old_min))
     end
 
-    progress.level = formulas.level_for_experience(
-        progress.total_xp, species.xp, maximum)
+    progress.level = experience_limit.earned_level(ctx,
+        player, progress.total_xp, maximum)
     progress.pending_stat_level = 0
     ctx:set(player, component.PROGRESSION, progress)
 

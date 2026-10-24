@@ -110,6 +110,49 @@ function test.run(ctx)
     harness.equal(effects.sum(ctx, player,
         capabilities.SKILL_FORBIDDEN, skills.SK_SHIELDS), 1,
         "Missing Hand makes Shields training useless")
+
+    -- A small body needs two hands for staves. Missing Hand therefore
+    -- removes Staves points for a Spriggan, but not for this Human.
+    harness.equal(effects.sum(ctx, player,
+        capabilities.SKILL_FORBIDDEN, skills.SK_STAVES), 0)
+
+    local small = ctx:create()
+
+    ctx:add(small, component.PLAYER, {
+        species_id = species.SP_SPRIGGAN,
+        job_id = jobs.JOB_FIGHTER,
+        name = "Small hand test",
+    })
+    ctx:add(small, component.HEALTH, {
+        current = 18,
+        max = 18,
+    })
+    ctx:add(small, component.SKILLS, {
+        entries = {
+            {
+                id = skills.SK_STAVES,
+                level = 2,
+                points = 150,
+            },
+        },
+    })
+    ctx:add(small, component.SKILL_TRAINING, {
+        settings = {
+            {
+                id = skills.SK_STAVES,
+                enabled = true,
+                focused = true,
+            },
+        },
+    })
+    local hand_result = transition.grant(ctx, small,
+        mutations.MUT_MISSING_HAND, classes.INNATE, true)
+
+    harness.equal(hand_result.kind, "granted")
+    harness.equal(effects.sum(ctx, small,
+        capabilities.SKILL_FORBIDDEN, skills.SK_STAVES), 1)
+    harness.equal(ctx:get(small,
+        component.SKILLS).entries[1].points, 0)
 end
 
 return test

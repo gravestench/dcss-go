@@ -2,10 +2,8 @@
 -- classes select eligible victims, while this god's method owns the
 -- source's two-draw fuzzed difficulty instead of a fixed kill curve.
 local common = require("policy.religion.conduct.common")
-local catalog = require("policy.catalog")
-local categories = require("constants.catalog")
 local component = require("constants.component")
-local formulas = require("policy.character.formulas")
+local experience_limit = require("policy.character.experience_limit")
 local kinds = require("constants.religion_conduct")
 
 local likes = common.kills()
@@ -25,8 +23,8 @@ local function difficulty(ctx, player, event)
         error("Okawaru kill requires player level and species")
     end
 
-    local species = catalog.get(categories.SPECIES, identity.species_id)
-    local needed = formulas.experience_needed(progress.level, species.xp)
+    local needed = experience_limit.needed(ctx, player,
+        progress.level)
     local factor = math.sqrt(needed / 30)
     local bound = event.experience * 100
     local fuzzed = 0

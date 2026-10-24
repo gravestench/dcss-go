@@ -8,6 +8,7 @@ local spell_records = require("policy.character.spell_records")
 local mutation_transition = require("policy.mutations.transition")
 local forms = require("policy.magic.effects.forms.player")
 local rage = require("policy.character.rage")
+local availability = require("policy.character.skill_availability")
 
 local advancement = {}
 
@@ -125,7 +126,7 @@ function advancement.advance(ctx, actor)
     -- The current mutation-adjusted cap bounds this entire level-gain pass.
     while progress.level < maximum do
         local next_level = progress.level + 1
-        local needed = formulas.experience_needed(next_level, species.xp)
+        local needed = experience_limit.needed(ctx, actor, next_level)
 
         if progress.total_xp < needed then
             break
@@ -143,6 +144,37 @@ function advancement.advance(ctx, actor)
     end
 
     extra_lives.on_experience(ctx, actor)
+end
+
+-- Ru's Inexperienced mutation raises every XP threshold immediately.
+-- Match level_change's loss loop after the mutation, then recalculate
+-- resources using the same owner that reacts to skill aptitude changes.
+function advancement.reconcile_loss(ctx, actor)
+    local progress = ctx:get(actor, component.PROGRESSION)
+    local maximum = experience_limit.max_level(ctx, actor)
+    local old_level = progress.level
+
+    while progress.level > 1 and
+        (progress.level > maximum or
+            progress.total_xp < experience_limit.needed(
+                ctx, actor, progress.level)) do
+        progress.level = progress.level - 1
+        ctx:emit("level-up",
+            "You are now level " .. progress.level .. "!")
+    end
+
+    if progress.level == old_level then
+        return false
+    end
+
+    if progress.pending_stat_level > progress.level then
+        progress.pending_stat_level = 0
+    end
+
+    ctx:set(actor, component.PROGRESSION, progress)
+    availability.reassess(ctx, actor)
+
+    return true
 end
 
 -- Accept only the pending next-level choice, then write the selected base attribute.

@@ -125,8 +125,10 @@ end
 
 -- Scale the source level threshold by species XP aptitude after validating its range.
 function formulas.experience_needed(level, xp_aptitude)
-    if level < 1 or level > 128 then
-        error("experience level " .. level .. " is outside 1..128")
+    -- Historical Felid level 127 asks for the next threshold. Three Ru
+    -- sacrifices can shift that final request as high as level 131.
+    if level < 1 or level > 131 then
+        error("experience level " .. level .. " is outside 1..131")
     end
 
     local factor = aptitude_factor(xp_aptitude - 1)

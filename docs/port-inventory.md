@@ -495,8 +495,18 @@ Credited player kills advance Ru's saved sacrifice progress on the source
 coin flip below 200 piety, after death conduct and recovery. At god time,
 Ru now chooses and saves three distinct eligible offers from stable ID
 order, including rolled mutation variants and source-shaped piety quotes.
-Existing offers are not rerolled. Acceptance, rejection, and the UI remain
-pending, so Ru's defining bargain is not yet playable.
+Existing offers are not rerolled. The ability menu now exposes each saved
+choice and Reject Sacrifices. Confirmation shows the current piety reward
+and is free. Acceptance grants the permanent mutation ranks, erases
+unusable skill training, pays the saved quote plus live skill value up to
+Ru's cap, and resets the offer clock.
+Missing Hand releases illegal equipment and refreshes MP if a ring loses
+its magical-power bonus. Experience shifts XP thresholds and reconciles
+the current level and resources immediately. Rejection clears the set
+and increases the next saved delay. Save validation checks offer IDs,
+quotes, and mutation pools.
+Ru's active powers, retaliation, and its detailed sacrifice-count effects
+remain separate work.
 The saved Ru component is version 2 because choices now hold stable string
 IDs and quoted prices; earlier Go saves containing version 1 Ru state do not
 restore under this schema. The source's Frail exclusion for a Demonspawn
@@ -1100,9 +1110,9 @@ messages, unrand item effects, religious evil status, monster spell choice,
 and extended character status. Those consumers belong to the item, religion,
 monster AI spell, and status screen slices; they must read the saved Vampire
 state when those domains are implemented.
-Ru's Missing Hand sacrifice must also release a newly unavailable ring slot
-and recalculate derived MP if that ring grants magical power. The current
-mutation has no playable acquisition path.
+Ru's Missing Hand sacrifice releases a newly unavailable ring slot and
+recalculates derived MP if that ring grants magical power. Other source
+consumers of the missing-hand mutation still need their own domain audits.
 
 The item identification policy now gives each active identifying type a
 saved, unique appearance and discovers all copies when a potion is quaffed

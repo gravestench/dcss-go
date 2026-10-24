@@ -3,6 +3,9 @@ local mutations = require("ids.mutations")
 local registry = require("policy.mutations.effects.registry")
 local schools = require("constants.spell_schools")
 local skills = require("ids.skills")
+local catalog = require("policy.catalog")
+local component = require("constants.component")
+local size = require("constants.size")
 
 local sacrifices = {}
 
@@ -104,11 +107,38 @@ function sacrifices.on_change(ctx, owner)
     require("policy.character.skill_availability").sanitize(ctx, owner)
 end
 
+-- Small species cannot wield staves with the remaining hand. This extra
+-- source restriction is conditional on anatomy, so it lives beside the
+-- ordinary missing-hand Shields restriction rather than in a hand handler.
+local function missing_hand_skill(level, ctx, owner, requested)
+    if level <= 0 then
+        return 0
+    end
+
+    if requested == skills.SK_SHIELDS then
+        return 1
+    end
+
+    if requested ~= skills.SK_STAVES then
+        return 0
+    end
+
+    local identity = ctx:get(owner, component.PLAYER)
+    local species = catalog.get("species", identity.species_id)
+
+    return size.rank[species.size] <= size.rank[size.SMALL] and 1 or 0
+end
+
 for _, restriction in ipairs(restrictions) do
     local handlers = {
         [capabilities.SKILL_FORBIDDEN] = matching(restriction.skill),
         [capabilities.ON_CHANGE] = sacrifices.on_change,
     }
+
+    if restriction.mutation == mutations.MUT_MISSING_HAND then
+        handlers[capabilities.SKILL_FORBIDDEN] =
+            missing_hand_skill
+    end
 
     if restriction.school then
         handlers[capabilities.SPELL_SCHOOL_FORBIDDEN] =

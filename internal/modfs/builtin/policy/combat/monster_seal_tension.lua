@@ -7,6 +7,7 @@ local death = require("policy.death")
 local doors = require("policy.inventory.doors")
 local flags = require("constants.monster_flags")
 local formulas = require("policy.character.formulas")
+local experience_limit = require("policy.character.experience_limit")
 local confusion = require("policy.magic.player_confusion")
 local targets = require("policy.ai.targets")
 local vision = require("policy.character.vision")
@@ -136,8 +137,10 @@ local function score(ctx, player, origin, closed, moved, destination)
     local character = ctx:get(player, component.PLAYER)
     local species = character and catalog.get("species",
         character.species_id)
-    local needed = formulas.experience_needed(progress.level,
-        species and species.xp or 1)
+    local needed = character and
+        experience_limit.needed(ctx, player, progress.level) or
+        formulas.experience_needed(progress.level,
+            species and species.xp or 1)
     local divisor = 1 + math.ceil(math.sqrt(needed / 30))
 
     scaled = math.floor(scaled / divisor)

@@ -90,12 +90,13 @@ local function validate(ctx)
         error("invalid player level " .. progress.level)
     end
 
-    if progress.total_xp < formulas.experience_needed(progress.level, species.xp) then
+    if progress.total_xp < experience_limit.needed(ctx, entity,
+        progress.level) then
         error("player XL" .. progress.level .. " lacks experience")
     end
 
-    local earned = formulas.level_for_experience(progress.total_xp,
-        species.xp, maximum)
+    local earned = experience_limit.earned_level(ctx, entity,
+        progress.total_xp, maximum)
     local pending = progress.pending_stat_level
 
     -- A pending manual stat choice is the only accepted gap between earned XL and committed XL.
@@ -105,7 +106,8 @@ local function validate(ctx)
         end
     elseif pending ~= progress.level + 1 or pending > maximum or
         not formulas.needs_manual_stat(ctx, entity, pending) or
-        progress.total_xp < formulas.experience_needed(pending, species.xp) then
+        progress.total_xp < experience_limit.needed(ctx,
+            entity, pending) then
         error("invalid pending player stat choice at XL" .. pending)
     end
 

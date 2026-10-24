@@ -1,4 +1,3 @@
-local catalog = require("policy.catalog")
 local component = require("constants.component")
 local formulas = require("policy.character.formulas")
 local experience_limit = require("policy.character.experience_limit")
@@ -38,7 +37,6 @@ function experience.grant(ctx, player)
         error("experience potion requires player progression and training")
     end
 
-    local species = catalog.get("species", identity.species_id)
     local maximum = experience_limit.max_level(ctx, player)
     local old_level = progress.level
     local old_total = progress.total_xp
@@ -54,10 +52,10 @@ function experience.grant(ctx, player)
 
         if target == maximum then
             progress.total_xp = math.max(old_total,
-                formulas.experience_needed(maximum, species.xp))
+                experience_limit.needed(ctx, player, maximum))
         else
-            progress.total_xp = experience.adjusted_total(old_total,
-                old_level, target, species.xp)
+            progress.total_xp = experience_limit.adjusted_total(
+                ctx, player, old_total, old_level, target)
         end
 
         state.untrained_level_xp = state.untrained_level_xp +

@@ -12,6 +12,7 @@ local definition = {
     base_piety = 65,
     mutation_id = mutations.MUT_MISSING_HAND,
     skill_id = skills.SK_SHIELDS,
+    accept_module = "policy.religion.ru.consequences.hand",
 }
 
 register.definition(categories.RU_SACRIFICES, definition)

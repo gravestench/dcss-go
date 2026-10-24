@@ -556,6 +556,7 @@ without changing its effective Lua files does not change that identity.
 | Ring or amulet | `content/items/<name>.lua` | It needs a new effect capability. |
 | Job | `content/jobs/<name>.lua` | It needs a new starting-gear rule or other behavior. |
 | God | `content/gods/<name>.lua` | It needs a focused join, leave, or piety behavior rule. |
+| Ru sacrifice | `content/ru_sacrifices/<name>.lua` | It needs a price, offer, or acceptance policy. |
 | Item class | An item file with a new `class` ID | It needs class-specific rules or UI. |
 | Mutation | `content/mutations/<name>.lua` | It needs an effect under `policy/mutations/effects/`. |
 | Branch, cloud, trap, or shop | `content/<category>/<name>.lua` | It needs a new selection or effect rule. |
@@ -1704,6 +1705,39 @@ with the player and god IDs. Mod systems can observe those signals for divine
 abilities and passives. On each eligible piety candidate, it also asks the
 current god's optional `gift_module` to act; altar prayer uses the same
 worship owner.
+
+#### Ru sacrifices
+
+Add a file under `content/ru_sacrifices/` to register another Ru offer.
+Copy a nearby definition such as `health.lua` or `hand.lua` and give it a
+unique stable `id`, a menu `name`, `sacrifice_text`, `milestone_text`, and
+`base_piety`. A fixed choice names `mutation_id`; a variable choice names
+one of the supported `constants.ru_variant_pools` keys. Import mutation
+IDs from `ids.mutations` and register under
+`constants.catalog.RU_SACRIFICES`. The file is discovered automatically;
+the ability menu also registers each resolved definition automatically.
+
+The `religion.ru` component owns the waiting clock, three offered IDs,
+chosen mutation variants, and their quoted prices. God time creates the
+whole set once. Looking at the ability menu and declining confirmation
+does not reroll it or spend a turn. A confirmed choice grants its lasting
+mutation, adds the saved quote plus the current value of any named
+`skill_id`, caps Ru piety at six stars, and resets the clock. Rejection
+clears the set and lengthens the next wait. These operations live in
+`policy/religion/ru/offers.lua`, `resolution.lua`, and
+`policy/abilities/ru/sacrifices.lua`.
+
+For an exception, add a focused module and name it with
+`offer_rule_module`, `price_module`, or `accept_module` on your definition.
+The offer module exports `eligible(ctx, player)`; the price module exports
+`adjust(ctx, player, selected, amount)`; an acceptance module exports
+`apply(ctx, player, previous)` and may export `before(ctx, player)` to
+capture state before permanent mutation changes the character. Missing
+Hand uses that last hook to compare the old and new magical-power ring
+bonus. Store lasting effects in ECS components; module variables are not
+saved. Test the rule in a `_test.lua` file with the production catalog and
+schemas, including confirmation cancellation and save/restore when you add
+new state.
 
 #### Divine gifts
 

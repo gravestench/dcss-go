@@ -32,7 +32,9 @@ end
 
 -- Earned XP cannot advance past the Inexperienced cap.
 function test.run(ctx)
-    local xp = formulas.experience_needed(25, 1)
+    -- Three sacrificed ranks shift the XL24 threshold to ordinary XL27.
+    -- Give the fixture enough XP for its stated level before presenting it.
+    local xp = formulas.experience_needed(27, 1)
     local player = player_at_level(ctx, 24, xp)
 
     harness.equal(experience_limit.max_level(ctx, player), 27,

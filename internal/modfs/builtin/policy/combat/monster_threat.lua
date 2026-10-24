@@ -4,7 +4,7 @@ local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local component = require("constants.component")
 local death = require("policy.death")
-local formulas = require("policy.character.formulas")
+local experience_limit = require("policy.character.experience_limit")
 local bands = require("constants.monster_threat")
 local monsters = require("ids.monsters")
 
@@ -20,8 +20,8 @@ function threat.band(ctx, player, experience)
         error("monster threat requires player level and species")
     end
 
-    local species = catalog.get(categories.SPECIES, identity.species_id)
-    local needed = formulas.experience_needed(progress.level, species.xp)
+    local needed = experience_limit.needed(ctx, player,
+        progress.level)
     local tension = math.floor(experience /
         (1 + math.sqrt(needed / 30)))
 

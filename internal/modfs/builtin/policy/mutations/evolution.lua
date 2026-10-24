@@ -1,5 +1,4 @@
-local catalog = require("policy.catalog")
-local formulas = require("policy.character.formulas")
+local experience_limit = require("policy.character.experience_limit")
 local classes = require("constants.mutation_classes")
 local choices = require("constants.mutation_choices")
 local mutations = require("ids.mutations")
@@ -41,10 +40,9 @@ local function threshold(ctx, owner, mutation_id)
         error("Evolution requires player progression and species")
     end
 
-    local species = catalog.get("species", player.species_id)
     local level = progress.level
-    local gap = formulas.experience_needed(level + 1, species.xp) -
-        formulas.experience_needed(level, species.xp)
+    local gap = experience_limit.needed(ctx, owner, level + 1) -
+        experience_limit.needed(ctx, owner, level)
 
     if mutation_id == mutations.MUT_DEVOLUTION then
         return math.floor(gap / 4)

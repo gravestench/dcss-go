@@ -4,7 +4,7 @@ local catalog = require("policy.catalog")
 local component = require("constants.component")
 local death = require("policy.death")
 local flags = require("constants.monster_flags")
-local formulas = require("policy.character.formulas")
+local experience_limit = require("policy.character.experience_limit")
 local horror = require("policy.character.horror")
 local levels = require("policy.mutations.levels")
 local mutations = require("ids.mutations")
@@ -71,8 +71,8 @@ function threat_policy.current(ctx, player)
         error("Cowardice requires player position and progression")
     end
 
-    local species = catalog.get("species", character.species_id)
-    local needed = formulas.experience_needed(progress.level, species.xp)
+    local needed = experience_limit.needed(ctx, player,
+        progress.level)
     local factor = math.sqrt(needed / 30)
     local sight = vision.radius(ctx, player)
     local total = 0

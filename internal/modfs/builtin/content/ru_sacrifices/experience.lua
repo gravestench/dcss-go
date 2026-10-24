@@ -11,6 +11,7 @@ local definition = {
     base_piety = 35,
     mutation_id = mutations.MUT_INEXPERIENCED,
     offer_rule_module = "policy.religion.ru.rules.experience",
+    accept_module = "policy.religion.ru.consequences.experience",
 }
 
 register.definition(categories.RU_SACRIFICES, definition)
