@@ -397,6 +397,9 @@ func TestNextFloorLuaPolicyPairsLiveParentStairs(t *testing.T) {
 		"from_x":            selected.X,
 		"from_y":            selected.Y,
 		"branch_schedule":   luaBranchSchedule(g.branchSchedule),
+		// Match the production boundary: map generation consumes the run's
+		// saved Temple choice even when this test only inspects stair links.
+		"temple_plan": luaTemplePlan(g.templePlan),
 		"parent": map[string]any{
 			"id":          1,
 			"branch_id":   parent.BranchID,
