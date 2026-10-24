@@ -1947,6 +1947,19 @@ teleport trap, or shaft, the post-movement system removes it with its
 carried gear. Mods that add a new exit should expose it as a travel feature
 or a trap type recognized by this policy. A new pacification effect must
 award nonlethal XP once and set the marker; the AI owner then routes it.
+The shared conversion also releases actor-owned temporary terrain through
+`policy.world.temporary_terrain`; expiry and monster death use that same
+restore operation. A spell that makes temporary terrain should call
+`temporary_terrain.place` with its real source actor. If the caster later
+dies or becomes peaceful, only that caster's markers are removed. Pikel's
+marked lemures and Kirke's marked hogs use their existing death-release
+owners at pacification too; custom linked monsters should keep their
+release behavior in one owner and invoke it from each departure trigger.
+Dowan and Duvessa illustrate a coupled unique rule:
+`policy.monsters.elven_twins` finds the living partner by original class.
+The pacification owner converts it without another RNG roll or heal.
+The partner receives its own once-only XP marker, which the ordinary save
+path retains.
 Divine Vigour stores an amount and timer in `religion.elyvilon_vigour`.
 The normal HP and MP formulas read that amount, so later training or level
 changes still produce the correct maxima. The god's `behavior_module`

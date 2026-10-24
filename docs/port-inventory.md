@@ -542,9 +542,14 @@ holiness, mobility, and average HP gate the offer. A pacified monster now
 routes toward a reachable stair, gate, or qualifying trap, then leaves
 without a corpse, carried gear, or another XP award. Geryon discards the
 Horn on conversion; constriction and flaying stop immediately.
-The remaining source-specific consequences for pacifying Pikel, Kirke,
-the elven twins, and a Vault Warden still need their existing unique
-owners to handle nonlethal departure as well as death.
+Pacifying Pikel dismisses his marked lemures through the same owner as
+death or banishment. Pacifying Kirke restores her marked hogs through her
+existing release rule. Dowan and Duvessa find one another by original
+class after polymorph, and the other hostile twin becomes neutral without
+a second chance roll or healing; each gains its once-only nonlethal XP.
+Temporary terrain sourced by any monster, including Vault Warden's seals,
+reverts immediately when its source is pacified or killed. Unrelated
+markers and later permanent terrain edits remain intact.
 Major missing domains include the remaining spell mechanics, religion
 actions, mutation-adjacent systems, unported forms, full monster abilities,
 still-unported vault families and their Lua scripts,

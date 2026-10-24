@@ -1,4 +1,5 @@
 local component = require("constants.component")
+local temporary = require("policy.world.temporary_terrain")
 
 local system = {}
 
@@ -15,13 +16,7 @@ function system.update(ctx, actor)
         local state = ctx:get(marker, component.TEMPORARY_TERRAIN)
 
         if ctx:aut() >= state.expires_aut then
-            if ctx:cell(state.level_id, state.x, state.y) ==
-                state.changed_feature then
-                ctx:set_cell(state.level_id, state.x, state.y,
-                    state.original_feature)
-            end
-
-            ctx:destroy(marker)
+            temporary.restore(ctx, marker, state)
         end
     end
 end

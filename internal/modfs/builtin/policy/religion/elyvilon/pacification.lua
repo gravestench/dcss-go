@@ -10,14 +10,18 @@ local death = require("policy.death")
 local awards = require("policy.character.experience_award")
 local constriction = require("policy.combat.constriction")
 local engulf = require("policy.combat.engulf")
+local elven_twins = require("policy.monsters.elven_twins")
 local flags = require("constants.monster_flags")
 local flay = require("policy.combat.monster_flay")
 local holiness = require("constants.monster_holiness")
 local intelligence = require("constants.monster_intelligence")
 local items = require("ids.items")
 local monsters = require("ids.monsters")
+local pikel = require("policy.combat.monster_tactical.pikel")
+local porkalator = require("policy.combat.monster_tactical.porkalator")
 local streams = require("constants.rng_streams")
 local targets = require("policy.ai.targets")
+local temporary_terrain = require("policy.world.temporary_terrain")
 
 local pacification = {}
 
@@ -148,8 +152,62 @@ local function biased_roll(ctx, sides)
     return 0
 end
 
--- A successful offer grants full nonlethal XP once, changes real
--- allegiance, drops its active pursuit, and heals the new neutral actor.
+-- Conversion owns the once-only marker, XP, and source side effects.
+-- Twin conversion calls it directly, skipping a second eligibility and
+-- chance roll while giving the other living monster its own XP credit.
+local function convert(ctx, player, target, definition, is_twin)
+    if ctx:has(target, component.ELYVILON_PACIFIED) then
+        return false
+    end
+
+    ctx:add(target, component.ELYVILON_PACIFIED, {
+        pacified = true,
+    })
+
+    if not ctx:has(target, component.SUMMON) then
+        local health = ctx:get(target, component.HEALTH)
+        local xp = death.experience(definition, health.max)
+
+        awards.monster(ctx, player, xp)
+    end
+
+    -- Source ends the monster's holds and flaying at allegiance change,
+    -- not when it eventually reaches a stair. A freed player acts next.
+    flay.release_for_ghost(ctx, target)
+    temporary_terrain.release_source(ctx, target)
+    constriction.release_for(ctx, target)
+    engulf.release_for(ctx, target)
+
+    if ctx:has(target, component.PLAYER_CONSTRICTION) then
+        ctx:remove(target, component.PLAYER_CONSTRICTION)
+    end
+
+    discard_geryon_horn(ctx, target)
+    pikel.depart(ctx, target, definition)
+    porkalator.release_for_kirke(ctx, target, definition)
+
+    local ai = ctx:get(target, component.AI)
+
+    if ai then
+        ai.behavior = behaviors.WANDER
+        ai.memory_until_aut = 0
+        ctx:set(target, component.AI, ai)
+    end
+
+    if ctx:has(target, component.MONSTER_PATROL) then
+        ctx:remove(target, component.MONSTER_PATROL)
+    end
+
+    local message = is_twin and " likewise turns neutral." or
+        " turns neutral."
+
+    ctx:emit("religion", "The " .. definition.name .. message)
+
+    return true
+end
+
+-- A successful offer runs one chance roll for its chosen monster. The
+-- other elven twin follows by class identity without another roll or heal.
 function pacification.attempt(ctx, player, target, healed, power)
     local actor = ctx:get(target, component.ACTOR)
     local definition = catalog.get(categories.MONSTERS, actor.kind_id)
@@ -186,44 +244,19 @@ function pacification.attempt(ctx, player, target, healed, power)
         return "failed"
     end
 
-    if not ctx:has(target, component.ELYVILON_PACIFIED) then
-        ctx:add(target, component.ELYVILON_PACIFIED, {
-            pacified = true,
-        })
+    convert(ctx, player, target, definition, false)
 
-        if not ctx:has(target, component.SUMMON) then
-            local health = ctx:get(target, component.HEALTH)
-            local xp = death.experience(definition, health.max)
+    local twin = elven_twins.other(ctx, target)
 
-            awards.monster(ctx, player, xp)
-        end
+    if twin and targets.real_attitude(ctx, twin) ==
+        attitudes.HOSTILE then
+        local other = ctx:get(twin, component.ACTOR)
+        local other_definition = catalog.get(categories.MONSTERS,
+            other.kind_id)
+
+        convert(ctx, player, twin, other_definition, true)
     end
 
-    -- Source ends the monster's holds and flaying at allegiance change,
-    -- not when it eventually reaches a stair. A freed player acts next.
-    flay.release_for_ghost(ctx, target)
-    constriction.release_for(ctx, target)
-    engulf.release_for(ctx, target)
-
-    if ctx:has(target, component.PLAYER_CONSTRICTION) then
-        ctx:remove(target, component.PLAYER_CONSTRICTION)
-    end
-
-    discard_geryon_horn(ctx, target)
-
-    local ai = ctx:get(target, component.AI)
-
-    if ai then
-        ai.behavior = behaviors.WANDER
-        ai.memory_until_aut = 0
-        ctx:set(target, component.AI, ai)
-    end
-
-    if ctx:has(target, component.MONSTER_PATROL) then
-        ctx:remove(target, component.MONSTER_PATROL)
-    end
-
-    ctx:emit("religion", "The " .. definition.name .. " turns neutral.")
     pacification.heal(ctx, target, healed)
 
     return "pacified"

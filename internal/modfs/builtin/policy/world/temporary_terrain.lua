@@ -39,4 +39,30 @@ function terrain.place(ctx, source_actor, source_kind_id,
     return true, marker
 end
 
+-- Restore only a cell that still has the marker's changed feature. A
+-- later permanent spell or vault edit wins over this older timer.
+function terrain.restore(ctx, marker, state)
+    if ctx:cell(state.level_id, state.x, state.y) ==
+        state.changed_feature then
+        ctx:set_cell(state.level_id, state.x, state.y,
+            state.original_feature)
+    end
+
+    ctx:destroy(marker)
+end
+
+-- Source terrain markers end when their caster dies or becomes pacified.
+-- Compare saved actor IDs, not kind IDs: another Warden keeps its seals.
+function terrain.release_source(ctx, actor)
+    local source_id = ctx:id(actor)
+
+    for _, marker in ipairs(ctx:query({ component.TEMPORARY_TERRAIN })) do
+        local state = ctx:get(marker, component.TEMPORARY_TERRAIN)
+
+        if state.source_actor_id == source_id then
+            terrain.restore(ctx, marker, state)
+        end
+    end
+end
+
 return terrain

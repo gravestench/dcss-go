@@ -1,6 +1,7 @@
 package game
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -196,5 +197,41 @@ func TestElyvilonHealOtherPacifiesAndRestores(t *testing.T) {
 	if !restored.scripts.Components()["religion.elyvilon_pacified"].Has(
 		rat) {
 		t.Fatal("restored rat lost its pacified allegiance")
+	}
+}
+
+// Twin conversion creates two independent once-only pacification markers.
+// The Lua rule test exercises the conversion itself; this checks that the
+// ordinary game save keeps more than one marker without inventing XP.
+func TestElyvilonPairedPacificationStateRestores(t *testing.T) {
+	g := newPopulatedTestGame(t, 41)
+	actors := g.stores.AI.Entities()
+	if len(actors) < 2 {
+		t.Fatal("population has fewer than two monsters")
+	}
+	markers := g.scripts.Components()["religion.elyvilon_pacified"]
+
+	for _, actor := range actors[:2] {
+		if _, err := markers.Set(actor, map[string]any{
+			"pacified": true,
+		}); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	before := g.Snapshot()
+	loaded, err := Restore(before)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer loaded.Close()
+
+	for _, actor := range actors[:2] {
+		if !loaded.scripts.Components()["religion.elyvilon_pacified"].Has(actor) {
+			t.Fatalf("pacified actor %d lost its marker", actor)
+		}
+	}
+	if !reflect.DeepEqual(before, loaded.Snapshot()) {
+		t.Fatal("paired pacification state changed on restore")
 	}
 }

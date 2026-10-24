@@ -33,13 +33,13 @@ function pork.remember(ctx, target)
 end
 
 -- Source mons_is_mons_class also recognizes a unique that was polymorphed
--- before death. The saved original-kind marker lets that death free hogs.
-local function was_kirke(ctx, dead, definition)
+-- before death or pacification. Either departure releases her hogs.
+local function was_kirke(ctx, kirke, definition)
     if definition.id == monsters.MONS_KIRKE then
         return true
     end
 
-    local form = ctx:get(dead, component.MONSTER_POLYMORPH)
+    local form = ctx:get(kirke, component.MONSTER_POLYMORPH)
 
     return form and form.original_kind_id == monsters.MONS_KIRKE
 end
@@ -108,11 +108,11 @@ local function restore_spell_hog(ctx, target, original)
 end
 
 -- Theory of operation: every floor's actors remain in the ECS even while
--- their AI is inactive. Kirke's death visits all of them once, so a hog on an
--- away floor is already restored when that floor is activated or saved.
+-- their AI is inactive. Kirke's death or pacification visits all of them
+-- once, so an away-floor hog is restored before that floor is activated.
 -- The source queues this as a delayed action because it unloads whole floors.
-function pork.restore_on_kirke_death(ctx, dead, definition)
-    if not was_kirke(ctx, dead, definition) then
+function pork.release_for_kirke(ctx, kirke, definition)
+    if not was_kirke(ctx, kirke, definition) then
         return false
     end
 
@@ -123,7 +123,7 @@ function pork.restore_on_kirke_death(ctx, dead, definition)
         local actor = ctx:get(target, component.ACTOR)
         local health = ctx:get(target, component.HEALTH)
 
-        if target ~= dead and health.current > 0 and is_hog(actor) then
+        if target ~= kirke and health.current > 0 and is_hog(actor) then
             local original = ctx:get(target, tactical.PORKALATOR_ORIGINAL)
             local band = ctx:get(target, tactical.KIRKE_BAND)
 
@@ -158,6 +158,6 @@ function pork.restore_on_kirke_death(ctx, dead, definition)
     return false
 end
 
-death_hooks.add("porkalator.kirke", pork.restore_on_kirke_death)
+death_hooks.add("porkalator.kirke", pork.release_for_kirke)
 
 return pork

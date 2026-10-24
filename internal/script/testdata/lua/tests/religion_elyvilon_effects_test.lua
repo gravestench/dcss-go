@@ -7,6 +7,7 @@ local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local cleansing = require("policy.religion.elyvilon.cleansing")
 local component = require("constants.component")
+local death = require("policy.death")
 local fixture = require("tests.monster_ally_support_fixture")
 local formulas = require("policy.character.formulas")
 local gods = require("constants.gods")
@@ -20,7 +21,10 @@ local patron = require("policy.religion.gods.elyvilon")
 local registry = require("policy.abilities.registry")
 local species = require("ids.species")
 local stats = require("constants.stats")
+local tactical = require("constants.monster_tactical")
 local targets = require("policy.ai.targets")
+local temporary_terrain = require("policy.world.temporary_terrain")
+local terrain = require("constants.terrain")
 local vigour = require("policy.religion.elyvilon.vigour")
 local zap = require("policy.magic.effects.zaps.ids").component
 
@@ -169,6 +173,118 @@ local function geryon_horn(ctx)
     harness.equal(game:get(horn, component.POSITION).x, 13)
 end
 
+-- Source Pikel's marked lemures vanish when he accepts peace, just as
+-- they do when he dies or is banished. An unrelated lemure stays alive.
+local function pikel_band(ctx)
+    local game, player = worshipper(ctx)
+    local pikel = fixture.actor(ctx, monsters.MONS_PIKEL,
+        14, 10, 30)
+    local minion = fixture.actor(ctx, monsters.MONS_LEMURE,
+        15, 10, 20)
+    local unrelated = fixture.actor(ctx, monsters.MONS_LEMURE,
+        16, 10, 20)
+
+    game:add(pikel, component.AI, {
+        behavior = behaviors.WANDER,
+    })
+    game:add(minion, component.PIKEL_BAND, {
+        band_member = true,
+    })
+
+    harness.equal(pacification.attempt(game, player, pikel,
+        20, 10000), "pacified")
+    harness.falsy(game:has(minion, component.ACTOR))
+    harness.truthy(game:has(unrelated, component.ACTOR))
+end
+
+-- Kirke's naturally spawned hogs regain human bodies and a neutral side
+-- on pacification, using the same durable owner as their death release.
+local function kirke_hogs(ctx)
+    local game, player = worshipper(ctx)
+    local kirke = fixture.actor(ctx, monsters.MONS_KIRKE,
+        14, 11, 30)
+    local hog = fixture.actor(ctx, monsters.MONS_HOG,
+        15, 11, 20)
+
+    game:add(kirke, component.AI, {
+        behavior = behaviors.WANDER,
+    })
+    game:add(hog, tactical.KIRKE_BAND, {
+        band_member = true,
+    })
+
+    harness.equal(pacification.attempt(game, player, kirke,
+        20, 10000), "pacified")
+    harness.equal(game:get(hog, component.ACTOR).kind_id,
+        monsters.MONS_HUMAN)
+    harness.equal(targets.real_attitude(game, hog),
+        attitudes.GOOD_NEUTRAL)
+end
+
+-- A Warden's seal is tied to that actor, so accepting Elyvilon's peace
+-- restores the door immediately without waiting for its normal timer.
+local function warden_seal(ctx)
+    local game, player = worshipper(ctx)
+    local warden = fixture.actor(ctx, monsters.MONS_VAULT_WARDEN,
+        14, 13, 30)
+
+    game:add(warden, component.AI, {
+        behavior = behaviors.WANDER,
+    })
+    game.cells["14:14"] = terrain.DNGN_CLOSED_DOOR
+
+    local placed, marker = temporary_terrain.place(game, warden,
+        monsters.MONS_VAULT_WARDEN, 1, 14, 14,
+        terrain.DNGN_SEALED_DOOR, 100)
+
+    harness.truthy(placed)
+    harness.equal(pacification.attempt(game, player, warden,
+        20, 10000), "pacified")
+    harness.equal(game:cell(1, 14, 14), terrain.DNGN_CLOSED_DOOR)
+    harness.falsy(game:has(marker, component.TEMPORARY_TERRAIN))
+end
+
+-- A polymorphed Duvessa still finds Dowan by original class. Both real
+-- sides change once, and each living twin contributes its own source XP.
+local function elven_twins(ctx)
+    local game, player = worshipper(ctx)
+    local duvessa = fixture.actor(ctx, monsters.MONS_DUVESSA,
+        14, 12, 30)
+    local dowan = fixture.actor(ctx, monsters.MONS_DOWAN,
+        15, 12, 30)
+    local changed = game:get(duvessa, component.ACTOR)
+
+    changed.kind_id = monsters.MONS_ORC
+    game:set(duvessa, component.ACTOR, changed)
+    game:add(duvessa, component.MONSTER_POLYMORPH, {
+        original_kind_id = monsters.MONS_DUVESSA,
+    })
+    game:add(duvessa, component.AI, {
+        behavior = behaviors.WANDER,
+    })
+    game:add(dowan, component.AI, {
+        behavior = behaviors.WANDER,
+    })
+
+    local first = catalog.get(categories.MONSTERS, monsters.MONS_ORC)
+    local second = catalog.get(categories.MONSTERS, monsters.MONS_DOWAN)
+    local expected = death.experience(first, 100) +
+        death.experience(second, 100)
+
+    harness.equal(pacification.attempt(game, player, duvessa,
+        20, 10000), "pacified")
+    harness.equal(targets.real_attitude(game, duvessa),
+        attitudes.NEUTRAL)
+    harness.equal(targets.real_attitude(game, dowan),
+        attitudes.NEUTRAL)
+    harness.equal(game:get(player, component.PROGRESSION).total_xp,
+        expected)
+
+    pacification.attempt(game, player, duvessa, 20, 10000)
+    harness.equal(game:get(player, component.PROGRESSION).total_xp,
+        expected)
+end
+
 -- Self-healing uses the source base and two dice; at zero Invocations
 -- and maximum RNG rolls it restores 28 HP before the max-HP clamp.
 local function heal_self(game, player)
@@ -303,6 +419,10 @@ function test.run(ctx)
     empty_healing(ctx)
     vigour_patron_loss(ctx)
     geryon_horn(ctx)
+    pikel_band(ctx)
+    kirke_hogs(ctx)
+    warden_seal(ctx)
+    elven_twins(ctx)
 end
 
 return test
