@@ -1739,6 +1739,23 @@ saved. Test the rule in a `_test.lua` file with the production catalog and
 schemas, including confirmation cancellation and save/restore when you add
 new state.
 
+#### Ru active powers
+
+Ru's three command policies live under `policy/abilities/ru/`. Each file
+registers one stable ability ID and exports named `available`, `prepare`,
+and `resolve` functions. A mod can replace a file at the same relative path
+to change its policy. The ability registry supplies the terminal menu and
+the normal paid intent; the policy must reject a canceled or impossible
+target in `prepare` before time or RNG is spent.
+
+`constants.ru_powers` names the source ranks, costs, durations, and damage
+divisors. The `character.exhaustion` component stores the shared cooldown
+in aut; `policy.character.exhaustion` checks and ages it. Continuing monster
+effects use the existing saved Slow, Paralysis, and Enfeeble components.
+Draw Out Power and Apocalypse use the player drain owner for their temporary
+maximum-HP cost. A new power should reuse these owners so saves and other
+abilities see one authoritative status rather than a private timer.
+
 #### Divine gifts
 
 Set `gift_module = "policy.religion.gifts.<name>"` in a god definition to

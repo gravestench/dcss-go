@@ -132,6 +132,25 @@ function paralysis.apply_unresisted(ctx, target, definition, enchant_power)
     end
 end
 
+-- Ru's Apocalypse rolls a fixed enchantment duration directly; it should
+-- not pass through the beam power-to-duration conversion a second time.
+function paralysis.apply_fixed(ctx, target, duration_aut)
+    local existing = ctx:get(target, component.PARALYSIS)
+    -- Source monster enchantments add duration when the same effect lands
+    -- again; keeping only the longer timer would shorten repeat casts.
+    local remaining = (existing and
+        existing.remaining_aut or 0) + duration_aut
+    local state = {
+        remaining_aut = remaining,
+    }
+
+    if existing then
+        ctx:set(target, component.PARALYSIS, state)
+    else
+        ctx:add(target, component.PARALYSIS, state)
+    end
+end
+
 -- Tick only AI actors so player paralysis remains on its separate status clock.
 function paralysis.update(ctx, entity)
     if ctx:has(entity, component.AI) then

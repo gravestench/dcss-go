@@ -8,6 +8,7 @@ local mutations = require("ids.mutations")
 local stats = require("constants.stats")
 local restrictions = require("constants.safety_restrictions")
 local rage = require("policy.character.rage")
+local exhaustion = require("policy.character.exhaustion")
 local trog_hand = require("policy.religion.trog.hand")
 local okawaru_status = require("policy.religion.okawaru.status")
 local elyvilon_vigour = require("policy.religion.elyvilon.vigour")
@@ -220,6 +221,7 @@ function module.run(ctx)
     end
 
     rage.validate(ctx, player)
+    exhaustion.validate(ctx, player)
     zot_clock.validate(ctx, player)
 
     return {}

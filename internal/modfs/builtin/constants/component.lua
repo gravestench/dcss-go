@@ -191,6 +191,7 @@ local component = {
     MONSTER_TOXIC_RADIANCE = "magic.monster_toxic_radiance",
     MONSTER_VORTEX_COOLDOWN = "magic.monster_vortex_cooldown",
     PLAYER_SLOW = "character.slow",
+    PLAYER_EXHAUSTION = "character.exhaustion",
     PLAYER_DRAIN = "status.drain",
     ELYVILON_VIGOUR = "religion.elyvilon_vigour",
     ELYVILON_PACIFIED = "religion.elyvilon_pacified",

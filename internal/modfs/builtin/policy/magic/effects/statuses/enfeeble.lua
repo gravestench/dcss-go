@@ -175,6 +175,22 @@ function enfeeble.apply_antimagic(ctx, target, definition, power)
     return true
 end
 
+-- Ru supplies an already rolled enchantment duration. Store it in the
+-- shared antimagic field without Enfeeble's damage-scaled second roll.
+function enfeeble.apply_fixed_antimagic(ctx, target, duration_aut)
+    if not spell_sensitive(ctx, target) then
+        return false
+    end
+
+    local next_state, existed = status(ctx, target)
+
+    next_state.antimagic_aut = next_state.antimagic_aut +
+        duration_aut
+    save_status(ctx, target, next_state, existed)
+
+    return true
+end
+
 -- Source: beam.cc:BEAM_DRAIN_MAGIC uses enchantment power per target HD,
 -- then rolls the antimagic duration in baseline delays.
 function enfeeble.apply_drain_magic(ctx, target, definition, power)

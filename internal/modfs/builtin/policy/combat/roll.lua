@@ -49,6 +49,18 @@ function roll.random_divide(ctx, numerator, denominator, stream)
     return quotient
 end
 
+-- Roll source dice individually so a later RNG consumer sees the same
+-- stream position whether a policy calls this helper or writes a loop.
+function roll.dice(ctx, stream, count, sides)
+    local total = 0
+
+    for _ = 1, count do
+        total = total + 1 + roll.draw(ctx, stream, sides)
+    end
+
+    return total
+end
+
 -- Example: roll.armour(ctx, 0) with zero RNG draws -> 0 armour saved
 -- Preserve the odd-AC rounding draw even when no guaranteed reduction applies.
 function roll.armour(ctx, ac)

@@ -9,6 +9,7 @@ local slow = require("policy.character.slow")
 local traits = require("policy.character.traits")
 local undead_states = require("constants.undead_states")
 local okawaru_status = require("policy.religion.okawaru.status")
+local exhaustion = require("policy.character.exhaustion")
 
 local rage = {}
 
@@ -79,7 +80,8 @@ end
 function rage.can_begin(ctx, player, intentional, potion)
     local value = state(ctx, player)
 
-    if value and (value.remaining_aut > 0 or value.cooldown_aut > 0) then
+    if (value and value.remaining_aut > 0) or
+        exhaustion.active(ctx, player) then
         return false
     end
 

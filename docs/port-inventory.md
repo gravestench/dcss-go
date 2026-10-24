@@ -505,8 +505,12 @@ its magical-power bonus. Experience shifts XP thresholds and reconciles
 the current level and resources immediately. Rejection clears the set
 and increases the next saved delay. Save validation checks offer IDs,
 quotes, and mutation pools.
-Ru's active powers, retaliation, and its detailed sacrifice-count effects
-remain separate work.
+Ru's active powers now use Lua ability modules: Draw Out Power restores HP
+and MP while curing urgent restraints, Power Leap moves to a chosen nearby
+cell and damages adjacent foes, and Apocalypse damages visible nonfriendly
+monsters with a rolled continuing effect. Exhaustion is saved and shared
+with the Berserk gate. Ru's attack interference, retaliation, and detailed
+sacrifice-count effects remain separate work.
 The saved Ru component is version 2 because choices now hold stable string
 IDs and quoted prices; earlier Go saves containing version 1 Ru state do not
 restore under this schema. The source's Frail exclusion for a Demonspawn

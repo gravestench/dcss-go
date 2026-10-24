@@ -126,4 +126,33 @@ function held.release(ctx, actor)
     ctx:remove(actor, component.TRAP_HELD)
 end
 
+-- Draw Out Power destroys a trapping net rather than leaving its projectile
+-- on the floor. A web is cleared through the same placement owner as escape.
+function held.break_free(ctx, actor)
+    local state = ctx:get(actor, component.TRAP_HELD)
+
+    if not state then
+        return false
+    end
+
+    if state.kind_id == ids.TRAP_NET then
+        local net = ctx:entity(state.net_item_id)
+
+        if net then
+            ctx:destroy(net)
+        end
+
+        ctx:emit("trap", "You burst free from the net!")
+    elseif state.kind_id == ids.TRAP_WEB then
+        placement.clear_temporary_web(ctx, actor)
+        ctx:emit("trap", "You burst free from the webs!")
+    else
+        error("unknown trap restraint " .. state.kind_id)
+    end
+
+    ctx:remove(actor, component.TRAP_HELD)
+
+    return true
+end
+
 return held
