@@ -101,8 +101,13 @@ still clear. The Faith multiplier and ordinary conduct consequences now live
 in the Lua piety and conduct owners. God gifts, wrath execution, and other
 divine effects still need their religion slices.
 The monster beam family now includes player amulet reflection and monster
-shield reflection. Armour reflection ego and further spell families remain
-for their later combat domains.
+shield reflection. Player Reflection shields now share the amulet's block
+and return path. All seven generated player shield egos have their source
+resistance, +3 Protection AC, or reflection effect while worn; a melded
+or removed shield loses its effect. Monster shield reflection already
+runs; the remaining monster armour resistance effects belong to the
+monster equipment slice. Further spell families remain for their later
+combat domains.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except

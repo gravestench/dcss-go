@@ -5,6 +5,7 @@ local fixture = require("tests.fixtures.ranged_reflection")
 local harness = require("tests.harness")
 local ids = require("ids.items")
 local ranged_actions = require("policy.combat.ranged_actions")
+local reflection = require("policy.combat.reflection")
 local brands = require("constants.weapon_brands")
 local armour_egos = require("constants.armour_egos")
 local slug_dart = require("policy.combat.monster_spells.slug_dart")
@@ -44,6 +45,47 @@ local function ordinary_block(ctx)
         "ordinary shield blocks the stone")
     harness.equal(ctx:get(shooter, component.HEALTH).current, 40,
         "ordinary shield does not return the stone")
+end
+
+-- A generated Reflection buckler returns a blocked stone with no amulet.
+-- Removing it disables the shared predicate used by launcher and beam paths.
+local function reflected_by_shield_ego(ctx)
+    local battle, player, shooter, missile = fixture.scene(ctx,
+        ids.MI_STONE, false)
+    local shield
+
+    for _, entity in ipairs(ctx:query({
+        component.EQUIPPED,
+        component.CARRIED_BY,
+    })) do
+        local carrier = ctx:get(entity, component.CARRIED_BY)
+        local equipped = ctx:get(entity, component.EQUIPPED)
+
+        if carrier.holder == player and equipped.slot == "shield" then
+            shield = entity
+            break
+        end
+    end
+
+    harness.truthy(shield, "reflection fixture has a worn buckler")
+
+    local item = ctx:get(shield, component.ITEM)
+
+    item.ego = armour_egos.REFLECTION
+    ctx:set(shield, component.ITEM, item)
+
+    fixture.block_then_return(battle)
+    ranged_actions.monster(battle, shooter, { item_id = missile })
+
+    harness.equal(ctx:get(player, component.HEALTH).current, 20,
+        "Reflection shield blocks incoming stone damage")
+    harness.truthy(ctx:get(shooter, component.HEALTH).current < 40,
+        "Reflection shield returns the blocked stone")
+
+    ctx:remove(shield, component.EQUIPPED)
+
+    harness.falsy(reflection.active(battle, player),
+        "removed Reflection shield cannot return another stone")
 end
 
 -- Equipment state at impact controls reflection; a carried but unequipped amulet has no effect.
@@ -460,6 +502,7 @@ end
 function test.run(ctx)
     stone_bounce(ctx)
     ordinary_block(ctx)
+    reflected_by_shield_ego(ctx)
     removed_reflector(ctx)
     reflector_without_shield(ctx)
     beam_shield_roll_order(ctx)

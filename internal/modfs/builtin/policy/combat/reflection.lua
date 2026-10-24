@@ -1,16 +1,29 @@
 local component = require("constants.component")
 local capabilities = require("constants.jewellery_capabilities")
 local effects = require("policy.inventory.jewellery_effects")
+local equipment = require("policy.combat.equipment")
+local armour_egos = require("constants.armour_egos")
 local monster_defense = require("policy.combat.monster_defense")
 local monster_health = require("policy.combat.monster_health")
 
 local reflection = {}
 
--- Source: actor.cc and ranged-attack.cc. Only a
--- successful block can reverse the current projectile toward its source.
+-- Source actor.cc gives a worn Reflection shield the same post-block
+-- return behavior as the amulet. The equipment owner suppresses a shield
+-- that is removed or melded by the player's current form.
 function reflection.active(ctx, defender)
-    return ctx:has(defender, component.PLAYER) and
-        effects.has(ctx, defender, capabilities.REFLECTION)
+    if not ctx:has(defender, component.PLAYER) then
+        return false
+    end
+
+    if effects.has(ctx, defender, capabilities.REFLECTION) then
+        return true
+    end
+
+    local worn = equipment.worn(ctx, defender, { shield = true })
+
+    return worn.shield ~= nil and
+        worn.shield.ego == armour_egos.REFLECTION
 end
 
 -- Rebuild the shooter's defense for the return path after verifying a clear trajectory.

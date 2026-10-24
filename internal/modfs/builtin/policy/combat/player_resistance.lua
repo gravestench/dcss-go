@@ -59,9 +59,12 @@ function resistance.poison(ctx, player)
         return 3
     end
 
+    -- Poison resistance on a shield is live only while that shield is
+    -- wearable in the player's current form.
     local worn = equipment.worn(ctx, player, {
         weapon = true,
         body = true,
+        shield = true,
         cloak = true,
         head = true,
         gloves = true,

@@ -48,6 +48,71 @@ func removeFixtureRat(t *testing.T, g *Game) {
 	}
 }
 
+// A generated Protection shield adds source +3 AC while worn. The shield
+// and its derived view must agree across save/restore and after removal.
+func TestProtectionShieldAddsThreeACAndSurvivesRestore(t *testing.T) {
+	g := newStepGame(t)
+	defer g.Close()
+
+	shield := carriedItemByKind(t, g, "ARM_BUCKLER")
+	item, _ := g.stores.Items.Get(shield)
+	baseline := g.View().PlayerAC
+
+	item.Ego = "SPARM_PROTECTION"
+
+	if got := g.View().PlayerAC; got != baseline+3 {
+		t.Fatalf("Protection shield AC = %d, want %d", got, baseline+3)
+	}
+
+	restored, err := Restore(g.Snapshot())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	if got := restored.View().PlayerAC; got != baseline+3 {
+		t.Fatalf("restored Protection shield AC = %d, want %d",
+			got, baseline+3)
+	}
+
+	if _, err := g.scripts.Components()["magic.player_form"].Set(g.player,
+		map[string]any{
+			"form_id":       "fungus",
+			"remaining_aut": int64(100),
+		}); err != nil {
+		t.Fatal(err)
+	}
+
+	// Fungus form supplies its own AC, so compare the same form with and
+	// without the ego to isolate the melded shield's contribution.
+	formAC := g.View().PlayerAC
+
+	item.Ego = ""
+
+	if got := g.View().PlayerAC; got != formAC {
+		t.Fatalf("melded Protection shield AC = %d, want %d",
+			got, formAC)
+	}
+
+	item.Ego = "SPARM_PROTECTION"
+
+	g.scripts.Components()["magic.player_form"].Remove(g.player)
+
+	if got := g.View().PlayerAC; got != baseline+3 {
+		t.Fatalf("unmelded Protection shield AC = %d, want %d",
+			got, baseline+3)
+	}
+
+	g.stores.Equipped.Remove(shield)
+
+	if got := g.View().PlayerAC; got != baseline {
+		t.Fatalf("removed Protection shield AC = %d, want %d",
+			got, baseline)
+	}
+}
+
 func TestTakeOffArmourSpendsFiveTurnsAndCanBeInterrupted(t *testing.T) {
 	g := newStepGame(t)
 	shield := carriedItemByKind(t, g, "ARM_BUCKLER")

@@ -16,6 +16,7 @@ local component = require("constants.component")
 local rage = require("policy.character.rage")
 local ammunition = require("ids.ammunition")
 local weapon_brands = require("constants.weapon_brands")
+local armour_egos = require("constants.armour_egos")
 local form_ids = require("constants.form_ids")
 local staves = require("policy.inventory.staves")
 local jewellery_effects = require("policy.inventory.jewellery_effects")
@@ -389,6 +390,12 @@ function fighter.defense(ctx)
         jewellery_capabilities.AC)
     scaled_ac = scaled_ac + 100 * artefact_properties.sum_worn(ctx,
         player, artefact_ids.AC)
+
+    -- Source player::base_ac_with_specific_items grants +3 for a
+    -- Protection shield even though shield base armour counts as SH.
+    if worn.shield and worn.shield.ego == armour_egos.PROTECTION then
+        scaled_ac = scaled_ac + 300
+    end
 
     if weapon_protection.active(ctx, player) then
         scaled_ac = scaled_ac + 700

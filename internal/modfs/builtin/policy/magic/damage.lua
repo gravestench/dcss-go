@@ -222,9 +222,12 @@ function damage.player_resistance(ctx, player, resistance_id)
         end
     end
 
+    -- A shield can carry the same resistance egos as body armour; the
+    -- worn snapshot also excludes one melded by the player's form.
     local worn = equipment.worn(ctx, player, {
         weapon = true,
         body = true,
+        shield = true,
         cloak = true,
         head = true,
         gloves = true,
