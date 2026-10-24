@@ -68,6 +68,12 @@ local function fixture()
         return self:cell(1, x, y) ~= terrain.DNGN_TREE
     end
 
+    -- This fixture has terrain and clouds but no dynamic actors. The
+    -- production placement owner still asks for every cell occupant.
+    function ctx:actors_at()
+        return {}
+    end
+
     -- The first eligible neighbor is always chosen by the seeded draw.
     function ctx:random(_, _)
         return 0

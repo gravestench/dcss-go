@@ -11,6 +11,8 @@ local spells = require("ids.spells")
 local streams = require("constants.rng_streams")
 local target_kind = require("constants.target_kind")
 local trajectory = require("policy.combat.trajectory")
+local plant_protection = require(
+    "policy.religion.fedhas.protection")
 
 local mephitic_cloud = {}
 local profile = catalog.get(categories.MONSTER_BEAMS,
@@ -52,7 +54,8 @@ function mephitic_cloud.resolve(ctx, caster, foe, _, plan)
         local ray = trajectory.to_target(ctx, source.level_id,
             source.x, source.y, center_x, center_y,
             power.spell_range(ctx, caster, profile))
-        local contact = ray.contacts[1]
+        local contact = plant_protection.first_unprotected_contact(ctx,
+            caster, ray.contacts)
 
         center_x = contact and contact.x or ray.x
         center_y = contact and contact.y or ray.y

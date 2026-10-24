@@ -11,6 +11,8 @@ local spell_flags = require("constants.spell_flags")
 local targets = require("policy.ai.targets")
 local target_kind = require("constants.target_kind")
 local trajectory = require("policy.combat.trajectory")
+local plant_protection = require(
+    "policy.religion.fedhas.protection")
 
 local targeting = {}
 
@@ -71,26 +73,28 @@ function targeting.plan(ctx, caster, foe, profile, options)
     local foe_ratio = options and options.foe_ratio
 
     for _, contact in ipairs(trace.contacts) do
-        if foe_ratio then
-            ray_victims[#ray_victims + 1] = contact.actor
-        elseif not targets.enemy(ctx, caster, contact.actor) then
-            return nil
-        end
+        if not plant_protection.ignores(ctx, caster, contact.actor) then
+            if foe_ratio then
+                ray_victims[#ray_victims + 1] = contact.actor
+            elseif not targets.enemy(ctx, caster, contact.actor) then
+                return nil
+            end
 
-        if is_cloud then
-            cloud_centers[#cloud_centers + 1] = contact
-        end
+            if is_cloud then
+                cloud_centers[#cloud_centers + 1] = contact
+            end
 
-        if contact.actor == foe then
-            reached = true
-        end
+            if contact.actor == foe then
+                reached = true
+            end
 
-        if reached and area_target then
-            break
-        end
+            if reached and area_target then
+                break
+            end
 
-        if not reached and not profile.can_beam then
-            return nil
+            if not reached and not profile.can_beam then
+                return nil
+            end
         end
     end
 
@@ -119,7 +123,8 @@ function targeting.plan(ctx, caster, foe, profile, options)
                 local actor = ctx:actor_at(source.level_id,
                     cell.x, cell.y)
 
-                if actor and not targets.enemy(ctx, caster, actor) then
+                if actor and not targets.enemy(ctx, caster, actor) and
+                    not plant_protection.ignores(ctx, caster, actor) then
                     return nil
                 end
             end
@@ -135,7 +140,8 @@ function targeting.plan(ctx, caster, foe, profile, options)
         for _, cell in ipairs(cells) do
             local actor = ctx:actor_at(source.level_id, cell.x, cell.y)
 
-            if actor and not targets.enemy(ctx, caster, actor) then
+            if actor and not targets.enemy(ctx, caster, actor) and
+                not plant_protection.ignores(ctx, caster, actor) then
                 return nil
             end
         end

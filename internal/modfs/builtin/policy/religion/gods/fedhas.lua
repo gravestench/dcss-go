@@ -19,7 +19,7 @@ local fedhas = {}
 
 -- A monster's catalog holiness is the source plant test. A mod can add a
 -- plant by setting its holiness without editing this god's rule.
-local function is_plant(definition)
+function fedhas.plant_class(definition)
     for _, value in ipairs(definition.holiness or {}) do
         if value == holiness.PLANT then
             return true
@@ -32,7 +32,7 @@ end
 -- Snaplasher vines are plant-holy but explicitly excluded from the source
 -- neutralisation rule; desertion still affects them like other plants.
 local function can_neutralise(actor, definition)
-    return is_plant(definition) and
+    return fedhas.plant_class(definition) and
         actor.kind_id ~= monsters.MONS_SNAPLASHER_VINE and
         actor.kind_id ~= monsters.MONS_SNAPLASHER_VINE_SEGMENT
 end
@@ -115,7 +115,7 @@ function fedhas.leave(ctx)
         local actor = ctx:get(entity, component.ACTOR)
         local definition = catalog.get(categories.MONSTERS, actor.kind_id)
 
-        if is_plant(definition) then
+        if fedhas.plant_class(definition) then
             -- Source desertion strips charm before restoring hostility.
             -- Preserve unrelated frenzy and berserk state on the actor.
             local former = targets.real_attitude(ctx, entity)
@@ -172,7 +172,7 @@ function fedhas.validate(ctx, entity)
         not state.attempted or
         state.attitude == attitudes.GOOD_NEUTRAL and state.attempted
 
-    if not is_plant(definition) or not coherent then
+    if not fedhas.plant_class(definition) or not coherent then
         error("invalid saved Fedhas plant allegiance " .. ctx:id(entity))
     end
 end

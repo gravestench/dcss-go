@@ -7,7 +7,6 @@ local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local component = require("constants.component")
 local flags = require("constants.monster_flags")
-local holiness = require("constants.monster_holiness")
 local monsters = require("ids.monsters")
 local fedhas = require("policy.religion.gods.fedhas")
 local targets = require("policy.ai.targets")
@@ -43,7 +42,7 @@ function passage.kind(kind_id)
     local definition = catalog.get(categories.MONSTERS, kind_id)
 
     return definition and
-        has(definition.holiness, holiness.PLANT) and
+        fedhas.plant_class(definition) and
         has(definition.flags, flags.STATIONARY) or false
 end
 

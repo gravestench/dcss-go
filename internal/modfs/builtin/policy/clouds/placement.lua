@@ -4,10 +4,13 @@ local attribution = require("constants.cloud_attribution")
 local streams = require("constants.rng_streams")
 local content = require("policy.catalog")
 local ids = require("ids.clouds")
+local immunity = require("policy.clouds.immunity")
 local selectors = require("constants.cloud_selectors")
 local terrain = require("content.terrain_features")
 local targets = require("policy.ai.targets")
 local wind = require("policy.combat.monster_support.still_winds")
+local plant_protection = require(
+    "policy.religion.fedhas.protection")
 
 local placement = {}
 
@@ -131,6 +134,23 @@ function placement.place(ctx, kind_id, source_actor,
         kind_id ~= ids.CLOUD_VORTEX and
         kind_id ~= ids.CLOUD_INK then
         return nil
+    end
+
+    -- Source cloud placement refuses harmful clouds on plants sheltered
+    -- from their caster unless that plant is already immune to this kind.
+    -- Enumerate shared cells so a player glyph cannot hide a plant.
+    if not definition.harmless then
+        local effect = require(definition.effect)
+        local incoming = { kind_id = kind_id }
+
+        for _, occupant in ipairs(ctx:actors_at(level_id, x, y)) do
+            if plant_protection.ignores(ctx, source_actor, occupant) and
+                not immunity.all(ctx, occupant) and
+                not (effect.immune and
+                    effect.immune(ctx, occupant, incoming)) then
+                return nil
+            end
+        end
     end
 
     local entity, old_state = placement.at(ctx, level_id, x, y)

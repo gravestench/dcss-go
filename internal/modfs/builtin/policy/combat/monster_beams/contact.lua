@@ -11,6 +11,9 @@ local monster_health = require("policy.combat.monster_health")
 local player_health = require("policy.combat.player_health")
 local reflection = require("policy.combat.reflection")
 local senses = require("policy.character.senses")
+local outcomes = require("constants.beam_contact_outcomes")
+local plant_protection = require(
+    "policy.religion.fedhas.protection")
 
 local contact = {}
 
@@ -87,6 +90,16 @@ end
 -- the caller decides whether the ray continues or reflects.
 function contact.resolve(ctx, caster, defender, profile,
     power, to_hit, hook, incoming)
+    if plant_protection.ignores(ctx, caster, defender) then
+        plant_protection.report(ctx, caster, defender)
+
+        return {
+            kind = outcomes.PASS,
+            target = defender,
+            source = caster,
+        }
+    end
+
     local snapshot = defender_snapshot(ctx, defender)
     local outcome = defense.roll(ctx, snapshot, to_hit, profile)
 

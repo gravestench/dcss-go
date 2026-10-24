@@ -2,6 +2,8 @@ local contact = require("policy.combat.monster_beams.contact")
 local component = require("constants.component")
 local explosion = require("policy.combat.explosion")
 local explosion_sizes = require("constants.beam_explosion")
+local plant_protection = require(
+    "policy.religion.fedhas.protection")
 
 local blast = {}
 
@@ -13,9 +15,12 @@ function blast.resolve(ctx, caster, profile, trace,
     local center_x = destination.x
     local center_y = destination.y
 
-    if trace.contacts[1] then
-        center_x = trace.contacts[1].x
-        center_y = trace.contacts[1].y
+    local first = plant_protection.first_unprotected_contact(ctx,
+        caster, trace.contacts)
+
+    if first then
+        center_x = first.x
+        center_y = first.y
     elseif trace.blocked then
         center_x = trace.x
         center_y = trace.y

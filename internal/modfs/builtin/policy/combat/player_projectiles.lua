@@ -18,6 +18,8 @@ local monster_health = require("policy.combat.monster_health")
 local target_brands = require("policy.combat.monster_target_brands")
 local player_contact = require("policy.combat.player_contact")
 local projectile_conduct = require("policy.religion.conduct.projectiles")
+local plant_protection = require(
+    "policy.religion.fedhas.protection")
 local missile_egos = require("constants.missile_egos")
 local weapon_brands = require("constants.weapon_brands")
 local item_ids = require("ids.items")
@@ -275,21 +277,26 @@ function projectiles.resolve(ctx, player, intent)
     local caught_target
 
     for _, contact in ipairs(impact.contacts) do
-        local outcome
-        defender, caught, outcome = resolve_target(ctx, player, missile,
-            launcher, item, entity, contact.actor)
+        if plant_protection.ignores(ctx, player, contact.actor) then
+            plant_protection.report(ctx, player, contact.actor)
+        else
+            local outcome
 
-        if caught then
-            caught_target = contact.actor
-        end
+            defender, caught, outcome = resolve_target(ctx, player,
+                missile, launcher, item, entity, contact.actor)
 
-        -- Javelins continue through contacts; other missiles stop on a hit
-        -- or block, but a miss lets the flight continue.
-        if not penetrating and outcome ~= "miss" then
-            impact.x = contact.x
-            impact.y = contact.y
+            if caught then
+                caught_target = contact.actor
+            end
 
-            break
+            -- Javelins continue through contacts; other missiles stop on
+            -- a hit or block, while a miss keeps the ray in flight.
+            if not penetrating and outcome ~= "miss" then
+                impact.x = contact.x
+                impact.y = contact.y
+
+                break
+            end
         end
     end
 

@@ -1349,6 +1349,23 @@ traits before requesting sharing. Fedhas' implementation is in
 only a player and one eligible stationary plant. A mod that adds a new
 sharing rule must also extend that validator so its saves can be restored.
 
+Fedhas' shoot-through passive is separate from cell sharing. The Lua policy
+`policy.religion.fedhas.protection` reads the target monster's `MH_PLANT`
+holiness, the source actor's live allegiance, and the player's current
+worship and penance. A mobile plant can be protected from a friendly shot
+even though it cannot be walked through. For example, a modded friendly
+vine with `holiness = { "MH_PLANT" }` needs no special projectile flag:
+the player and allied monster rays skip its contact, and player-side
+clouds spare it. A friendly monster caster must have `ATT_FRIENDLY`:
+good-neutral casters do not qualify. Area rays continue past sheltered
+plants before choosing their burst cell. Harmful cloud placement checks
+the live source actor and allows a cloud if the plant is already immune;
+later exposure checks the cloud's saved `kill_category` (`KC_YOU` or
+`KC_FRIENDLY`), which remains meaningful after its source dies. A modded
+effect that resolves contact outside the shared projectile, beam, blast,
+and cloud owners should consult `protection.ignores` before rolling a ray
+hit, or `protection.ignores_cloud` for saved cloud exposure.
+
 `move_actors` accepts an array of records shaped like
 `{ actor = handle, level_id = id, x = x, y = y }`. Destinations must be
 walkable and distinct; an occupied destination is valid only when that

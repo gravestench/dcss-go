@@ -13,6 +13,8 @@ local accuracy = require("policy.character.accuracy")
 local monster_stats = require("policy.combat.monster_stats")
 local player_contact = require("policy.combat.player_contact")
 local targets = require("policy.ai.targets")
+local plant_protection = require(
+    "policy.religion.fedhas.protection")
 local beam_damage = require("policy.combat.monster_beams.damage")
 local flavours = require("constants.beam_flavours")
 local will = require("policy.magic.effects.zaps.will")
@@ -309,6 +311,11 @@ local function resolve(ctx, player, intent, spell, spec, power,
             else
                 ctx:emit("spell", "The " .. spec.name .. " misses you.")
             end
+
+        elseif plant_protection.ignores(ctx, player, target) then
+            -- A protected plant is absent from the ray's contact rolls.
+            -- The next cell is still eligible for this nonbeam zap.
+            plant_protection.report(ctx, player, target)
 
         else
             local actor = ctx:get(target, component.ACTOR)

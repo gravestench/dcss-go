@@ -8,6 +8,9 @@ local beam_power = require("policy.combat.monster_beams.power")
 local spell_flags = require("constants.spell_flags")
 local target_kind = require("constants.target_kind")
 local trajectory = require("policy.combat.trajectory")
+local contact_outcomes = require("constants.beam_contact_outcomes")
+local plant_protection = require(
+    "policy.religion.fedhas.protection")
 
 local resolution = {}
 
@@ -178,7 +181,17 @@ function resolution.resolve(ctx, caster, foe, profile, plan, hook)
 
             -- Chaos beams draw a new flavour before armour and resistance;
             -- their hook owns that contact while this resolver keeps ray stops.
-            if hook and hook.contact then
+            if hook and hook.contact and
+                plant_protection.ignores(ctx, caster,
+                    contact.actor) then
+                plant_protection.report(ctx, caster,
+                    contact.actor)
+                outcome = {
+                    kind = contact_outcomes.PASS,
+                    target = contact.actor,
+                    source = caster,
+                }
+            elseif hook and hook.contact then
                 outcome = hook.contact(ctx, caster, contact.actor,
                     profile, power, to_hit, leg_source)
             else

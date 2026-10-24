@@ -73,6 +73,12 @@ function test.run(ctx)
         speed = 10,
     })
 
+    -- Elemental immunity reads a live actor profile, which requires HP.
+    ctx:add(ally, component.HEALTH, {
+        current = 30,
+        max = 30,
+    })
+
     ctx:add(player, component.POSITION, {
         level_id = 1,
         x = 8,

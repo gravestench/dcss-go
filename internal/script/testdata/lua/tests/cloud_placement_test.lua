@@ -117,6 +117,12 @@ local function context()
         return 7
     end
 
+    -- Production now exposes every actor in a shared cell. This fixture
+    -- has one stationary occupant, matching actor_at's primary result.
+    function context:actors_at()
+        return { 7 }
+    end
+
     -- Return one chosen cloud draw while asserting the dedicated stream and
     -- legal bound, making selector changes visible without a seed.
     function context:random(stream, bound)

@@ -511,6 +511,14 @@ the source 1.5-times movement cost. Lua checks plant traits, allegiance,
 and worship before granting passage; save validation rejects unrelated
 shared cells. Other forms of actor overlap remain outside the current
 gameplay rules.
+Fedhas' shoot-through passive now skips aligned plant contacts for player
+projectiles and zaps and for allied monster beams, including custom beam
+hooks and area contacts. Beam planning accepts those protected plants as
+intervening cells, and area rays burst at the first unprotected contact.
+Harmful clouds cannot be placed onto a plant protected from their caster
+unless that plant is already immune, and saved player-side clouds do not expose
+aligned plants even when the original source actor has died. Hostile plants,
+penance, and unrelated monster kinds keep ordinary contact behavior.
 Jiyva now converts source jelly and eye genera on their monster turns.
 Attempted conversion under penance, retry when that debt ends, desertion,
 temporary charm removal, and off-level allegiance use saved actor state.
