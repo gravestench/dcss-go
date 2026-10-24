@@ -127,9 +127,41 @@ function death.drop_inventory(ctx, monster, position)
     return dropped
 end
 
--- Corpse creation uses the dead actor's definition after inventory has been released.
-function death.corpse(ctx, definition, position, source_origin)
-    if not definition.leaves_corpse or
+-- A changed body leaves its first recorded species' corpse. Polymorph and
+-- shapeshifter status both write ORIGINAL_TYPE_KEY only when it is absent,
+-- so the first transformation wins. Callers without an actor use definition.
+local function corpse_class(ctx, monster, definition)
+    local original_id = definition.id
+
+    if monster then
+        local shape = ctx:get(monster, component.MONSTER_SHAPESHIFTER)
+        local form = ctx:get(monster, component.MONSTER_POLYMORPH)
+
+        if shape then
+            original_id = shape.corpse_kind_id ~= "" and
+                shape.corpse_kind_id or shape.variant_id
+        elseif form then
+            original_id = form.original_kind_id
+        end
+    end
+
+    local original = catalog.get("monsters", original_id)
+    local species = catalog.get("monsters",
+        original.species_id or original_id)
+
+    return original, species
+end
+
+-- The species gates corpse existence; original class stays available to
+-- later resurrection and presentation rules through the typed host store.
+function death.corpse(ctx, definition, position, source_origin, monster)
+    local original, species = corpse_class(ctx, monster, definition)
+    local shape = monster and ctx:get(monster,
+        component.MONSTER_SHAPESHIFTER)
+    local shifter_source_id = shape and original.id == shape.variant_id and
+        shape.original_kind_id or ""
+
+    if not species.leaves_corpse or
         ctx:random(streams.CORPSE, 2) == 1 then
         return
     end
@@ -141,7 +173,10 @@ function death.corpse(ctx, definition, position, source_origin)
         quantity = 1,
     })
     ctx:add(corpse, "core.corpse", {
-        monster_id = definition.id,
+        monster_id = species.id,
+        original_monster_id = original.id,
+        death_kind_id = definition.id,
+        shapeshifter_source_id = shifter_source_id,
         freshness = 110,
         appearance = ctx:random(streams.CORPSE, 255) + 1,
     })

@@ -146,12 +146,16 @@ type Item struct {
 	Ego      string
 }
 
-// Corpse records source freshness and appearance for a floor corpse or skeleton.
+// Corpse keeps species, original class, and death-time body through decay.
+// Freshness and appearance apply to both a floor corpse and its skeleton.
 type Corpse struct {
-	MonsterID   string
-	Freshness   int
-	Appearance  int
-	NeverDecays bool
+	MonsterID            string
+	OriginalMonsterID    string
+	DeathKindID          string
+	ShapeshifterSourceID string
+	Freshness            int
+	Appearance           int
+	NeverDecays          bool
 }
 
 // An item has exactly one location: Position, CarriedBy, or ReservedBy.

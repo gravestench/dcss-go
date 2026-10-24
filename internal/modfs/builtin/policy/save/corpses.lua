@@ -3,6 +3,7 @@ local roster = require("policy.population.roster")
 local component = require("constants.component")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
 local branches = require("ids.branches")
+local monsters = require("ids.monsters")
 local beogh_corpse = require("policy.abilities.beogh.corpse")
 
 -- Corpse validation reads source monster flags without requiring every record to list them.
@@ -34,6 +35,12 @@ function module.run(ctx, input)
         local position = ctx:get(entity, "core.position")
         local origin = ctx:get(entity, component.VAULT_ORIGIN)
         local arrival = ctx:get(entity, doom_howl.ARRIVAL)
+        local original_id = corpse.original_monster_id ~= "" and
+            corpse.original_monster_id or corpse.monster_id
+        -- Population rows list actor classes. A shifter corpse lists its
+        -- permanent variant, so use the saved pre-shifter class instead.
+        local source_id = corpse.shapeshifter_source_id ~= "" and
+            corpse.shapeshifter_source_id or original_id
 
         if not item or not position or ctx:has(entity, "core.carried_by") or
             ctx:has(entity, "core.equipped") or item.quantity ~= 1 or
@@ -49,15 +56,23 @@ function module.run(ctx, input)
                 " has invalid Doom Howl corpse origin")
         end
 
-        if not allowed[corpse.monster_id] and not origin and
+        if not allowed[source_id] and not origin and
             not arrival then
-            error("fixed Dungeon save has unsupported corpse " .. corpse.monster_id)
+            error("fixed Dungeon save has unsupported corpse " .. source_id)
         end
 
         local profile = roster.profile(corpse.monster_id)
         local definition = catalog.get("monsters", corpse.monster_id)
+        local original = catalog.get("monsters", original_id)
+        local source = catalog.get("monsters", source_id)
+        local shifter = original_id == monsters.MONS_SHAPESHIFTER or
+            original_id == monsters.MONS_GLOWING_SHAPESHIFTER
 
-        if definition.average_hp_10x ~= profile.average or not definition.leaves_corpse then
+        if definition.average_hp_10x ~= profile.average or
+            not definition.leaves_corpse or
+            (corpse.shapeshifter_source_id ~= "" and
+                (not shifter or source.status ~= "defined")) or
+            original.species_id ~= corpse.monster_id then
             error("item " .. ctx:id(entity) .. " has impossible " .. corpse.monster_id .. " corpse")
         end
 

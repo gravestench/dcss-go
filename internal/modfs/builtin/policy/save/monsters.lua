@@ -590,6 +590,9 @@ function module.run(ctx, input)
             not ctx:has(entity, component.AI) or
             not (ordinary or glowing) or
             shape.original_kind_id == "" or
+            (shape.corpse_kind_id ~= "" and
+                shape.corpse_kind_id ~= shape.original_kind_id and
+                shape.corpse_kind_id ~= shape.variant_id) or
             not source or source.status ~= "defined" or
             not form or form.original_kind_id ~= shape.original_kind_id then
             error("entity " .. ctx:id(entity) ..

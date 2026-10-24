@@ -453,6 +453,13 @@ three-form polymorph set, generated at placement and rebuilt after a body
 change. Same-power casts select from that set; relative-power and shifter
 requests use the source species and tier gates. Byte-for-byte C++ RNG parity,
 including its draconian thinning draw, remains a follow-up.
+Monster corpses now record the original class and its corpse species
+separately. Polymorphed monsters leave their original species' corpse. A
+shifter marked before polymorph uses its permanent variant; an earlier
+polymorph origin survives a later shifter mark. Ordinary classes such as
+Orc Knights leave their broader species. Save validation retains these
+identities across generated rosters, Beogh Resurrection, and authored vault
+origins. Colored draconian job identity needs a dedicated port slice.
 Malmutate's abomination tile reroll remains. Ugly things now save their own
 colour, attack, damage, resistance, and spontaneous kin mutation traits;
 combat and display read that actor state after spawn, polymorph, and

@@ -193,7 +193,7 @@ function system.update(ctx)
                     not summoned and
                     not ctx:has(entity, component.PIKEL_BAND) then
                     local corpse = death.corpse(ctx, definition, position,
-                        ctx:get(entity, component.VAULT_ORIGIN))
+                        ctx:get(entity, component.VAULT_ORIGIN), entity)
                     local arrival = ctx:get(entity, doom_howl.ARRIVAL)
 
                     beogh_corpse.record(ctx, entity, corpse, dropped)

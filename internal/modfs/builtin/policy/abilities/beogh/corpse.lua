@@ -84,8 +84,8 @@ local function gear_fits(ctx, slot, id)
         kind.armour.slot_id == armour_slots.BODY_ARMOUR
 end
 
--- A corpse must still be an ordinary body for the saved orc species;
--- gear IDs may disappear if the player moved or consumed the items.
+-- The saved Beogh actor is the Orc body at death, which may differ from the
+-- corpse's pre-polymorph species. Gear may disappear after death.
 function corpse.validate(ctx, body)
     local state = ctx:get(body, component.BEOGH_CORPSE)
 
@@ -95,8 +95,10 @@ function corpse.validate(ctx, body)
 
     local ordinary = ctx:get(body, component.CORPSE)
     local actor = catalog.get(categories.MONSTERS, state.kind_id)
+    local death_id = ordinary and ordinary.death_kind_id ~= "" and
+        ordinary.death_kind_id or ordinary and ordinary.monster_id
 
-    if not ordinary or ordinary.monster_id ~= state.kind_id or
+    if not ordinary or death_id ~= state.kind_id or
         actor.genus_id ~= monsters.MONS_ORC or
         state.max_hp < 1 or state.max_hp > 10000 or
         state.speed < 1 or state.speed > 100 or

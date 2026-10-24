@@ -1475,8 +1475,10 @@ func TestPolymorphedMonsterDeathAndCorpseSave(t *testing.T) {
 
 	corpse, _ := g.stores.Corpses.Get(corpses[0])
 
-	if corpse.MonsterID != "MONS_QUOKKA" {
-		t.Fatalf("polymorphed corpse is %s", corpse.MonsterID)
+	if corpse.MonsterID != "MONS_RAT" ||
+		corpse.OriginalMonsterID != "MONS_RAT" ||
+		corpse.DeathKindID != "MONS_QUOKKA" {
+		t.Fatalf("polymorphed corpse kept temporary body: %+v", corpse)
 	}
 
 	loaded, err := Restore(g.Snapshot())
@@ -1486,6 +1488,12 @@ func TestPolymorphedMonsterDeathAndCorpseSave(t *testing.T) {
 	}
 
 	defer loaded.Close()
+
+	loadedCorpse, ok := loaded.stores.Corpses.Get(corpses[0])
+
+	if !ok || *loadedCorpse != *corpse {
+		t.Fatalf("restored corpse identity changed: %+v", loadedCorpse)
+	}
 }
 
 func TestEnglaciationSlowsVisibleColdVulnerableMonster(t *testing.T) {

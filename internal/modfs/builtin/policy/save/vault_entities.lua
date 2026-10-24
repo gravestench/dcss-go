@@ -256,9 +256,24 @@ local function validate_origin(ctx, entity, origin, levels, seen)
         end
     elseif origin.occurrence == origin_policy.CORPSE_OCCURRENCE then
         local corpse = ctx:get(entity, component.CORPSE)
+        local original_id = corpse and
+            corpse.original_monster_id ~= "" and
+            corpse.original_monster_id or
+            corpse and corpse.monster_id
+        local original = original_id and
+            catalog.get("monsters", original_id)
+        -- Chaos can turn an authored monster into a shifter. Its corpse may
+        -- name the shifter variant only if it also remembers the authored
+        -- source class, recorded while the actor was still alive.
+        local changed_to_shifter = (original_id ==
+            monsters.MONS_SHAPESHIFTER or original_id ==
+            monsters.MONS_GLOWING_SHAPESHIFTER) and
+            corpse.shapeshifter_source_id == arguments.kind_id
 
         if record.kind ~= effects.MONSTER or not corpse or
-            corpse.monster_id ~= arguments.kind_id or
+            (original_id ~= arguments.kind_id and
+                not changed_to_shifter) or
+            original.species_id ~= corpse.monster_id or
             (item.kind_id ~= item_ids.CORPSE_BODY and
                 item.kind_id ~= item_ids.CORPSE_SKELETON) then
             error("entity " .. ctx:id(entity) .. " has invalid vault corpse origin")

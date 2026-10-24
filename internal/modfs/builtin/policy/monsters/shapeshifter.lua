@@ -22,12 +22,15 @@ function shapeshifter.mark(ctx, monster, variant_id)
         error("unknown shapeshifter variant " .. tostring(variant_id))
     end
 
+    -- Polymorph may already have set source ORIGINAL_TYPE_KEY. Retain that
+    -- corpse identity while keeping the shifter's roster ancestry distinct.
     local form = ctx:get(monster, component.MONSTER_POLYMORPH)
     local original = form and form.original_kind_id or actor.kind_id
 
     ctx:add(monster, component.MONSTER_SHAPESHIFTER, {
         variant_id = variant_id,
         original_kind_id = original,
+        corpse_kind_id = form and form.original_kind_id or variant_id,
     })
 
     return true
