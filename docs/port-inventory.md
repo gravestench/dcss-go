@@ -156,6 +156,11 @@ source monster melee contacts to player and monster victims. Each effect
 uses the saved status owner already shared with spells, scrolls, or missiles.
 Spore confusion permanently spends the attacker's HD; poison paralysis
 keeps its independent poison and control chances and its rPois gates.
+Blink and Blink With contact now defer displacement until the monster's
+whole melee round ends. The attacker uses the ordinary blink landing and
+the original victim joins it on a legal neighboring cell when available.
+Repeated contact events merge within the round; stasis and DES no-teleport
+cells remain effective at resolution.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except

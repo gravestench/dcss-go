@@ -1,5 +1,6 @@
 local component = require("constants.component")
 local habitat = require("policy.combat.monster_habitat")
+local landings = require("policy.world.teleport_landings")
 local streams = require("constants.rng_streams")
 local translocation = require("policy.scrolls.translocation")
 
@@ -9,7 +10,8 @@ local sight = 7
 -- Player and monster movement have different terrain rules. Reuse their
 -- existing owners so a blink never invents a separate habitat exception.
 local function legal(ctx, mover, origin, x, y)
-    if ctx:actor_at(origin.level_id, x, y) then
+    if ctx:actor_at(origin.level_id, x, y) or
+        not landings.allowed(ctx, origin.level_id, x, y) then
         return false
     end
 

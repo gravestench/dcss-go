@@ -18,7 +18,7 @@ local relocate = {}
 function relocate.can_move(ctx, mover, force_player_blink)
     if ctx:has(mover, component.PLAYER) then
         return force_player_blink or
-            translocation.restriction(ctx, mover) == nil
+            translocation.restriction(ctx, mover, true) == nil
     end
 
     local actor = ctx:get(mover, component.ACTOR)
@@ -36,7 +36,7 @@ end
 -- short source cloud records a blink's origin. Recall uses the same movement
 -- checks without a blink cloud, matching its distinct source visual effect.
 function relocate.move(ctx, mover, x, y, source, clouded,
-    force_player_blink)
+    force_player_blink, stream)
     local origin = ctx:get(mover, component.POSITION)
 
     if not origin or
@@ -74,7 +74,7 @@ function relocate.move(ctx, mover, x, y, source, clouded,
     if clouded ~= false then
         cloud.place(ctx, cloud_ids.CLOUD_TLOC_ENERGY, source or mover,
             origin.level_id, origin.x, origin.y,
-            (1 + ctx:random(streams.MONSTER_SPELL, 3)) * 10)
+            (1 + ctx:random(stream or streams.MONSTER_SPELL, 3)) * 10)
 
         local player = ctx:player()
         local player_pos = player and ctx:get(player,

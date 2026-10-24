@@ -51,6 +51,12 @@ function game_methods.cell(game, _, x, y)
     return game.cells[x .. ":" .. y] or terrain.DNGN_FLOOR
 end
 
+-- Sparse test floors have no DES cell properties. Production movement
+-- still reads the real level's records through the same context method.
+function game_methods.records_at()
+    return {}
+end
+
 -- Reach and projectile rules distinguish blocked terrain from actors.
 -- The sparse fixture's wall markers mimic the production grid predicates.
 function game_methods.solid(game, _, x, y)

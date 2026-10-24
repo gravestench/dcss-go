@@ -11,6 +11,7 @@ local monster_poison = require("policy.combat.monster_poison")
 local life = require("policy.combat.monster_attack_flavours.life")
 local afflictions = require(
     "policy.combat.monster_attack_flavours.afflictions")
+local blinks = require("policy.combat.monster_attack_flavours.blinks")
 local concentrate_venom = require("policy.combat.monster_tactical.concentrate_venom")
 local curare = require("policy.combat.monster_tactical.curare")
 local player_corrosion = require("policy.combat.player_corrosion")
@@ -321,6 +322,8 @@ local effects = {
     [attack_ids.VULNERABILITY] = afflictions.vulnerability,
     [attack_ids.POISON_PARALYSE] =
         afflictions.poison_paralysis,
+    [attack_ids.BLINK] = blinks.self,
+    [attack_ids.BLINK_WITH] = blinks.with_target,
     [attack_ids.STICKY_FLAME] = napalm,
     [traits.corrode] = corrode,
     [traits.ensnare] = ensnare,

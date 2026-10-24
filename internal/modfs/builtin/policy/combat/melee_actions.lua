@@ -21,6 +21,8 @@ local rage = require("policy.character.rage")
 local monster_stats = require("policy.combat.monster_stats")
 local monster_profile = require("policy.combat.monster_profile")
 local attack_flavours = require("policy.combat.monster_attack_flavours")
+local contact_blinks = require(
+    "policy.combat.monster_attack_flavours.blinks")
 local ignis_champion = require("policy.religion.wrath.ignis_champion")
 local trample = require("policy.combat.trample")
 local monster_roll = require("policy.combat.monster_roll")
@@ -390,7 +392,7 @@ end
 -- The monster-to-monster path below has different allegiance and summon
 -- handling, so it has a separate entry point.
 local function monster_player_contact(ctx, attacker, selected,
-    contact_index, options)
+    contact_index, options, pending_blinks)
     local player_moving = options and options.player_moving or false
     local actor = ctx:get(attacker, "core.actor")
 
@@ -493,6 +495,7 @@ local function monster_player_contact(ctx, attacker, selected,
             hit_dice = attack_input.hd,
             damage_done = dealt,
             player_moving = player_moving,
+            pending_blinks = pending_blinks,
         }
 
         attack_flavours.apply(ctx, flavour_id, flavour_hit)
@@ -552,7 +555,7 @@ end
 -- that relationship before resolving combat so ordinary allies cannot be
 -- attacked through this API by accident.
 local function monster_target_contact(ctx, attacker, target,
-    selected, contact_index)
+    selected, contact_index, pending_blinks)
     local attacker_actor = ctx:get(attacker, "core.actor")
     local target_actor = ctx:get(target, "core.actor")
 
@@ -666,6 +669,7 @@ local function monster_target_contact(ctx, attacker, target,
             damage_done = actual_dealt,
             player_credit = targets.allied(ctx, attacker) or
                 statuses.frenzied(ctx, attacker),
+            pending_blinks = pending_blinks,
         }
 
         attack_flavours.apply(ctx, flavour_id, flavour_hit)
@@ -747,6 +751,7 @@ local function run_round(ctx, attacker, target, options)
     local origin = ctx:get(target, component.POSITION)
     local last_health
     local effective_index = 0
+    local pending_blinks = {}
 
     for _, selected in ipairs(contacts) do
         local attacker_health = ctx:get(attacker, component.HEALTH)
@@ -799,16 +804,20 @@ local function run_round(ctx, attacker, target, options)
                     end
                 else
                     monster_player_contact(ctx, attacker, selected,
-                        effective_index, options)
+                        effective_index, options, pending_blinks)
                 end
 
                 last_health = ctx:get(target, component.HEALTH)
             else
                 last_health = monster_target_contact(ctx, attacker,
-                    target, selected, effective_index)
+                    target, selected, effective_index, pending_blinks)
             end
         end
     end
+
+    -- Blink final effects fire after all contact slots, so a source that
+    -- blinks on its first hit can still make its later adjacent attacks.
+    contact_blinks.resolve(ctx, pending_blinks)
 
     return last_health
 end

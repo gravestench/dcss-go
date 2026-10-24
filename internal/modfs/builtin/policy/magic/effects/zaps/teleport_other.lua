@@ -11,6 +11,7 @@ local will = require("policy.magic.effects.zaps.will")
 local hex_status = require("policy.combat.monster_hexes.status")
 local streams = require("constants.rng_streams")
 local landings = require("policy.world.teleport_landings")
+local monster_stasis = require("policy.monsters.stasis")
 
 local teleport = {}
 local tentacles = {
@@ -42,7 +43,7 @@ local function no_tele(actor, definition, ctx, target)
     return ctx and target and hex_status.anchored(ctx, target) or
         has_flag(definition, "M_STATIONARY") or
         has_flag(definition, "M_PROJECTILE") or
-        has_flag(definition, "M_STASIS") or
+        monster_stasis.intrinsic(definition) or
         tentacles[actor.kind_id] == true
 end
 
