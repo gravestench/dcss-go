@@ -445,6 +445,11 @@ complete item and equipment system. The committed monster spellbook IDs
 now have Lua effect resolvers. Several effects still need source parity
 follow-ups, tracked in the monster spellbook slice; Porkalator now releases
 Kirke's band and spell-transformed victims when she dies.
+Monster polymorph requests now return active shapeshifters to their durable
+variant and usually force merged slime creatures to split before each body
+chooses a form. The same Lua route serves player Polymorph, monster hexes,
+chaos, Xom, and relative-power effects. The source's persistent three-form
+polymorph set and exact target-selection RNG remain a selection follow-up.
 Malmutate's abomination tile reroll remains. Ugly things now save their own
 colour, attack, damage, resistance, and spontaneous kin mutation traits;
 combat and display read that actor state after spawn, polymorph, and

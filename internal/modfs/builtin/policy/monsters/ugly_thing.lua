@@ -187,9 +187,9 @@ local function nearby_source(ctx, position, state)
     end
 end
 
--- Legacy Malmutate and Polymorph both call this same gated routine and
--- report success even if it finds no source. Natural ability use also calls
--- it, after the active-turn eligibility check below.
+-- An ordinary monster action uses the one-in-nine mutation chance and
+-- needs nearby kin or player contamination. Direct magic calls the forced
+-- owner below instead, matching ugly_thing_mutate(force=true) in DCSS.
 function ugly.try_mutate(ctx, entity, definition, stream)
     stream = stream or streams.MONSTER_TRAITS
 
@@ -216,6 +216,30 @@ function ugly.try_mutate(ctx, entity, definition, stream)
         ctx:emit(channels.MONSTER, "The " ..
             ugly.name(state, definition.name) ..
             " basks in " .. cause .. " and changes!")
+    end
+
+    return true
+end
+
+-- Direct Polymorph and Malmutate call ugly_thing_mutate with force=true in
+-- the source. They bypass the natural one-in-nine gate and do not need a
+-- nearby source of mutagenic energy; kin can still prescribe a new colour.
+function ugly.force_mutate(ctx, entity, definition, stream)
+    local state = ctx:get(entity, component.UGLY_THING)
+    local position = ctx:get(entity, component.POSITION)
+
+    if not state or not position or not ugly.kind(definition.id) then
+        return false
+    end
+
+    local forced = nearby_source(ctx, position, state)
+
+    ugly.mutate(ctx, entity, definition, forced, stream)
+
+    if senses.player_sees_actor(ctx, entity) then
+        ctx:emit(channels.MONSTER, "The " ..
+            ugly.name(state, definition.name) ..
+            " basks in the mutagenic energy and changes!")
     end
 
     return true

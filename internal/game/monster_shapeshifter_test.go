@@ -89,3 +89,42 @@ func TestMonsterShapeshifterRejectsInvalidVariant(t *testing.T) {
 		t.Fatal("accepted a saved shape state with an invalid variant")
 	}
 }
+
+// A permanent shifter may borrow its original species again. The saved
+// polymorph marker still records lineage even when current and original
+// kinds match, so restore must use the shifter component as the exception.
+func TestShapeshifterOriginalFormRestores(t *testing.T) {
+	g := newStepGame(t)
+	monster := ratID(t, g)
+
+	if _, err := g.scripts.Components()["magic.monster_polymorph"].Set(
+		monster,
+		map[string]any{
+			"original_kind_id": "MONS_RAT",
+		},
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := g.scripts.Components()["combat.monster_shapeshifter"].Set(
+		monster,
+		map[string]any{
+			"variant_id":       "MONS_SHAPESHIFTER",
+			"original_kind_id": "MONS_RAT",
+		},
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	loaded, err := Restore(g.Snapshot())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer loaded.Close()
+
+	if !loaded.scripts.Components()["combat.monster_shapeshifter"].Has(monster) {
+		t.Fatal("original form lost permanent shapeshifter state")
+	}
+}

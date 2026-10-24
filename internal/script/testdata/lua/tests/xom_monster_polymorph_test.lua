@@ -47,7 +47,8 @@ local function good_polymorph_gate(ctx, player)
 end
 
 -- Fix only Xom's selection and form choice. HP and status transitions
--- still go through the live monster polymorph owner.
+-- still go through the live monster polymorph owner. A newly marked
+-- shifter immediately reverts to its chosen permanent variant in DCSS.
 local function transform(ctx, player, before, after, event_id,
     make_shifter)
     local owner = fixture.context(ctx, player)
@@ -118,7 +119,8 @@ function test.run(ctx)
         ids.GOOD_POLYMORPH)
     transform(ctx, player, monsters.MONS_RAT, monsters.MONS_OGRE,
         ids.BAD_POLYMORPH)
-    transform(ctx, player, monsters.MONS_OGRE, monsters.MONS_RAT,
+    transform(ctx, player, monsters.MONS_OGRE,
+        monsters.MONS_GLOWING_SHAPESHIFTER,
         ids.GOOD_POLYMORPH, true)
 
     -- Keep source-backed monster definitions visible to the test reader.

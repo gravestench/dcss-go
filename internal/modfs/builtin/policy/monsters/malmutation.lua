@@ -91,7 +91,7 @@ function malmutation.apply(ctx, target, definition, stream)
     end
 
     if ugly_thing.kind(definition.id) then
-        ugly_thing.try_mutate(ctx, target, definition,
+        ugly_thing.force_mutate(ctx, target, definition,
             stream or streams.MUTATION)
 
         return true

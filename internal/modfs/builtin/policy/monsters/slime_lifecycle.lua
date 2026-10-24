@@ -138,10 +138,10 @@ end
 
 -- Source fair-adjacent iteration must not let loop ordering bias the child
 -- location. Reservoir sampling spends one draw per legal cell.
-local function split_site(ctx, entity, position, foe)
+local function split_site(ctx, entity, position, foe, forced)
     local old_distance = foe and distance(position, foe) or 0
 
-    if foe and old_distance > 1 then
+    if foe and old_distance > 1 and not forced then
         for dy = -1, 1 do
             for dx = -1, 1 do
                 if dx ~= 0 or dy ~= 0 then
@@ -167,7 +167,8 @@ local function split_site(ctx, entity, position, foe)
                 local y = position.y + dy
                 local next_site = { x = x, y = y }
 
-                if (not foe or distance(next_site, foe) <= old_distance) and
+                if (forced or not foe or
+                    distance(next_site, foe) <= old_distance) and
                     free_site(ctx, entity, position, x, y) then
                     count = count + 1
 
@@ -276,7 +277,7 @@ local function split(ctx, parent, position, health, size, site)
             slime_blob.name(ctx, parent, "slime creature") .. " splits.")
     end
 
-    return true
+    return child
 end
 
 -- Source attempts division before merging. Its coin flip is paid only when
@@ -290,7 +291,48 @@ local function try_split(ctx, entity, position, health, size)
     local site = split_site(ctx, entity, position,
         visible_foe(ctx, entity, position))
 
-    return site and split(ctx, entity, position, health, size, site) or false
+    if not site then
+        return false
+    end
+
+    return split(ctx, entity, position, health, size, site) ~= nil
+end
+
+-- A polymorph request may divide a merged body without spending its normal
+-- action. Source _slime_split still draws its coin flip but ignores the
+-- result when forced; it also skips the approach restriction. The common
+-- split owner apportions HP and lineage.
+function lifecycle.force_split(ctx, entity)
+    local actor = ctx:get(entity, component.ACTOR)
+    local health = ctx:get(entity, component.HEALTH)
+    local position = ctx:get(entity, component.POSITION)
+
+    if not actor or actor.kind_id ~= monsters.MONS_SLIME_CREATURE or
+        not health or health.current < 4 or not position then
+        return nil
+    end
+
+    local size = slime_blob.size(ctx, entity)
+
+    if size <= 1 then
+        return nil
+    end
+
+    -- The C++ condition evaluates coinflip() before !force_split. Keeping
+    -- this draw preserves later placement and polymorph RNG order.
+    ctx:random(streams.SLIME_CREATURE, 2)
+
+    if disabled(ctx, entity) then
+        return nil
+    end
+
+    local site = split_site(ctx, entity, position, nil, true)
+
+    if not site then
+        return nil
+    end
+
+    return split(ctx, entity, position, health, size, site)
 end
 
 -- Only actors with the same durable allegiance and summon classification

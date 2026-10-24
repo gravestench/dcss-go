@@ -161,9 +161,9 @@ local function check_spawn(ctx)
         "catalog was not mutated by one actor")
 end
 
--- The source Malmutate call reports that an ugly thing can mutate, but the
--- nested one-in-nine roll still needs nearby mutagenic energy. Once kin is
--- adjacent, combat reads the changed actor without losing HP or HD.
+-- Source Malmutate forces a change even without adjacent energy. A nearby
+-- different-coloured kin then supplies its own colour. Combat reads the
+-- changed actor without losing HP or HD.
 local function check_malmutation(ctx)
     local game = world(ctx)
     local actor = factory.spawn(game,
@@ -174,12 +174,12 @@ local function check_malmutation(ctx)
 
     harness.truthy(malmutation.apply(game, actor, definition,
         streams.MONSTER_TRAITS), "ugly thing accepts Malmutate")
-    harness.equal(ctx:get(actor, component.UGLY_THING).colour_id,
+    harness.truthy(ctx:get(actor, component.UGLY_THING).colour_id ~=
         initial.colour_id,
-        "Malmutate without nearby mutagenic energy leaves colour alone")
+        "Malmutate forces a new colour without nearby energy")
 
     factory.spawn(game, monsters.MONS_UGLY_THING, 1, 20, 15, {
-        colour = "brown",
+        colour = "green",
     })
 
     local ordinary_random = game.random
@@ -193,24 +193,20 @@ local function check_malmutation(ctx)
     end
 
     harness.truthy(malmutation.apply(game, actor, definition,
-        streams.MONSTER_TRAITS), "failed source chance still accepts Malmutate")
+        streams.MONSTER_TRAITS), "direct Malmutate ignores natural chance")
     harness.equal(ctx:get(actor, component.UGLY_THING).colour_id,
-        initial.colour_id,
-        "failed one-in-nine chance leaves adjacent ugly thing unchanged")
+        "GREEN", "forced mutation copies adjacent kin colour")
 
     game.random = ordinary_random
-
-    harness.truthy(malmutation.apply(game, actor, definition,
-        streams.MONSTER_TRAITS), "adjacent kin permits Malmutate reroll")
 
     local profile = monster_profile.definition(game, actor, definition)
     local after = ctx:get(actor, component.HEALTH)
 
-    harness.equal(profile.colour_id, "BROWN",
+    harness.equal(profile.colour_id, "GREEN",
         "Malmutate copies the neighbouring colour")
-    harness.equal(profile.attacks[1].flavour_id, flavours.ACID,
+    harness.equal(profile.attacks[1].flavour_id, flavours.POISON,
         "combat uses the new attack flavour")
-    harness.equal(profile.resistances[1].id, resistance.ACID,
+    harness.equal(profile.resistances[1].id, resistance.POISON,
         "combat uses the new resistance")
     harness.equal(after.current, before.current,
         "Malmutate preserves current HP")
@@ -321,8 +317,8 @@ local function check_polymorph(ctx)
         "polymorph away removes obsolete ugly traits")
 end
 
--- Source Polymorph treats an existing ugly thing specially: it attempts
--- the same gated colour mutation instead of choosing another species.
+-- Source Polymorph treats an existing ugly thing specially: it forces a
+-- colour mutation instead of choosing another species.
 local function check_ugly_polymorph(ctx)
     local game = world(ctx)
     local actor = factory.spawn(game,
@@ -335,9 +331,9 @@ local function check_ugly_polymorph(ctx)
     harness.equal(ctx:get(actor, component.ACTOR).kind_id,
         monsters.MONS_UGLY_THING,
         "Polymorph does not replace ugly species")
-    harness.equal(ctx:get(actor, component.UGLY_THING).colour_id,
+    harness.truthy(ctx:get(actor, component.UGLY_THING).colour_id ~=
         before.colour_id,
-        "Polymorph without adjacent energy keeps colour")
+        "Polymorph changes colour even without adjacent energy")
 end
 
 -- Save validation must reject a forged colour/flavour pairing instead of

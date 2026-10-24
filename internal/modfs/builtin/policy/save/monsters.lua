@@ -189,7 +189,11 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
         state.seen[roster_id] = true
     end
 
-    if polymorph and (roster_id == actor.kind_id or
+    -- A durable shifter can borrow its original species again. Its form
+    -- marker still carries lineage, and the shifter validator below checks
+    -- the permanent variant against that same origin.
+    if polymorph and (roster_id == actor.kind_id and
+        not ctx:has(entity, component.MONSTER_SHAPESHIFTER) or
         health.max <= 0 or health.current > health.max) then
         error("invalid polymorphed monster " .. ctx:id(entity))
     end

@@ -1,6 +1,8 @@
 -- Source: monster.cc:can_polymorph and mon-poly.cc:init_poly_set,
 -- monster_polymorph and change_monster_type.
 local monsters = require("ids.monsters")
+local categories = require("constants.catalog")
+local channels = require("constants.message_channels")
 local component = require("constants.component")
 local catalog = require("policy.catalog")
 local hit_points = require("policy.population.hit_points")
@@ -10,9 +12,10 @@ local will = require("policy.magic.effects.zaps.will")
 local monster_stats = require("policy.combat.monster_stats")
 local streams = require("constants.rng_streams")
 local demon_tiers = require("data.demon_tiers")
+local power_modes = require("constants.polymorph_power")
 
 local polymorph = {}
-local definitions = catalog.all("monsters")
+local definitions = catalog.all(categories.MONSTERS)
 local demon_tier_for = {}
 
 for tier, kinds in pairs(demon_tiers) do
@@ -68,7 +71,7 @@ function polymorph.can_actor(ctx, target)
         return false
     end
 
-    return can_polymorph(catalog.get("monsters", actor.kind_id))
+    return can_polymorph(catalog.get(categories.MONSTERS, actor.kind_id))
 end
 
 -- A transformed monster must survive its current environment, with flight handled specially.
@@ -174,7 +177,7 @@ local function weighted_candidates(ctx, source, position, stream)
             total = total + choice.weight
         end
 
-        local draw = ctx:random(stream or "spell", total)
+        local draw = ctx:random(stream or streams.SPELL, total)
 
         for index, choice in ipairs(choices) do
             draw = draw - choice.weight
@@ -243,7 +246,7 @@ local function transform(ctx, target, source, definition, stream)
     local original = marker and marker.original_kind_id or source.id
     local maximum = hit_points.roll(ctx, definition.average_hp_10x)
     local current = math.floor(maximum * health.current / health.max) +
-        ctx:random(stream or "spell", maximum)
+        ctx:random(stream or streams.SPELL, maximum)
 
     actor.kind_id = definition.id
     actor.speed = definition.speed
@@ -299,7 +302,7 @@ local function transform(ctx, target, source, definition, stream)
         })
     end
 
-    ctx:emit("spell", "The " .. source.name ..
+    ctx:emit(channels.SPELL, "The " .. source.name ..
         " evaporates and reforms as a " .. definition.name .. "!")
 end
 
@@ -416,15 +419,106 @@ local function relative(ctx, target, source, stream, stronger)
     return false
 end
 
--- Degen and Xom's helpful transformation ask for a weaker body.
-function polymorph.less(ctx, target, source, stream)
-    return relative(ctx, target, source, stream, false)
+-- The source has a separate target picker for relative-power requests but
+-- every accepted pick still changes the body through the common transition.
+local function ordinary(ctx, target, source, stream, mode)
+    if mode == power_modes.LESS then
+        return relative(ctx, target, source, stream, false)
+    end
+
+    if mode == power_modes.MORE then
+        return relative(ctx, target, source, stream, true)
+    end
+
+    local position = ctx:get(target, component.POSITION)
+
+    if not position then
+        return false
+    end
+
+    local choices = weighted_candidates(ctx, source, position, stream)
+
+    if #choices == 0 then
+        return false
+    end
+
+    local definition = choices[ctx:random(stream, #choices) + 1]
+
+    transform(ctx, target, source, definition, stream)
+
+    return true
 end
 
--- Xom's harmful transformation asks for a stronger body while preserving
--- the same inventory drop, HP roll, saved original kind, and habitat check.
+-- Source monster::polymorph handles special bodies before asking a power
+-- picker for another species. Recursive slime calls act on the new ECS child
+-- separately; each child retains its own rolled form and saved birth origin.
+function polymorph.monster(ctx, target, source, stream, mode)
+    local source_stream = stream or streams.SPELL
+    local source_mode = mode or power_modes.SAME
+    local ugly_thing = require("policy.monsters.ugly_thing")
+
+    if ugly_thing.kind(source.id) then
+        ugly_thing.force_mutate(ctx, target, source, source_stream)
+
+        return true
+    end
+
+    local shifter = ctx:get(target, component.MONSTER_SHAPESHIFTER)
+
+    if shifter then
+        local variant = catalog.get(categories.MONSTERS,
+            shifter.variant_id)
+        local position = ctx:get(target, component.POSITION)
+
+        -- Fixed reversion still runs source _valid_morph. A base-form
+        -- shifter or a borrowed flyer above unsafe water cannot revert.
+        if not position or not polymorph.shifter_eligible(ctx, source,
+            variant, position) then
+            return false
+        end
+
+        transform(ctx, target, source, variant, source_stream)
+
+        return true
+    end
+
+    if source.id == monsters.MONS_SLIME_CREATURE then
+        -- The source always chooses slime destinations from its same-power
+        -- polymorph set, even when the caller requested LESS or MORE.
+        source_mode = power_modes.SAME
+        local blob = ctx:get(target, component.SLIME_BLOB)
+
+        if blob and blob.size > 1 and
+            ctx:random(source_stream, 5) < 4 then
+            local slime = require("policy.monsters.slime_lifecycle")
+
+            for _ = 1, 11 do
+                local child = slime.force_split(ctx, target)
+
+                if not child then
+                    break
+                end
+
+                polymorph.monster(ctx, child, source, source_stream,
+                    source_mode)
+            end
+        end
+    end
+
+    return ordinary(ctx, target, source, source_stream, source_mode)
+end
+
+-- Degen and Xom's helpful transformation ask for a weaker body.
+function polymorph.less(ctx, target, source, stream)
+    return polymorph.monster(ctx, target, source, stream,
+        power_modes.LESS)
+end
+
+-- Xom's harmful transformation asks for a stronger body; special species
+-- routing still applies before the relative-power picker runs.
 function polymorph.more(ctx, target, source, stream)
-    return relative(ctx, target, source, stream, true)
+    return polymorph.monster(ctx, target, source, stream,
+        power_modes.MORE)
 end
 
 -- Only visible living actors along clear in-range rays make the spell usable.
@@ -469,44 +563,30 @@ function polymorph.cast(ctx, player, intent, spell, power)
     local contact = ray.contacts[1]
 
     if not contact then
-        ctx:emit("spell", "The mutagenic magic dissipates.")
+        ctx:emit(channels.SPELL, "The mutagenic magic dissipates.")
         return
     end
 
     local target = contact.actor
     local actor = ctx:get(target, component.ACTOR)
-    local source = catalog.get("monsters", actor.kind_id)
+    local source = catalog.get(categories.MONSTERS, actor.kind_id)
 
     if not can_polymorph(source) then
-        ctx:emit("spell", "The " .. source.name .. " is unaffected.")
+        ctx:emit(channels.SPELL, "The " .. source.name ..
+            " is unaffected.")
         return
     end
 
     if will.resists(ctx, source, power, target) then
-        ctx:emit("spell", "The " .. source.name .. " resists polymorph.")
+        ctx:emit(channels.SPELL, "The " .. source.name ..
+            " resists polymorph.")
         return
     end
 
-    -- Source monster::polymorph routes ugly things into their own gated
-    -- colour mutation and never chooses another species for this cast.
-    local ugly_thing = require("policy.monsters.ugly_thing")
-
-    if ugly_thing.kind(source.id) then
-        ugly_thing.try_mutate(ctx, target, source, streams.SPELL)
-
-        return
+    if not polymorph.monster(ctx, target, source, streams.SPELL,
+        power_modes.SAME) then
+        ctx:emit(channels.SPELL, "The " .. source.name .. " shudders.")
     end
-
-    local position = ctx:get(target, component.POSITION)
-    local choices = weighted_candidates(ctx, source, position)
-
-    if #choices == 0 then
-        ctx:emit("spell", "The " .. source.name .. " shudders.")
-        return
-    end
-
-    local definition = choices[ctx:random("spell", #choices) + 1]
-    transform(ctx, target, source, definition)
 end
 
 -- Chaos melee uses the same legal forms and saved transformation as the
@@ -517,43 +597,25 @@ function polymorph.chaos(ctx, target, source, power)
         return false
     end
 
-    return polymorph.shapeshift(ctx, target, source)
+    return polymorph.monster(ctx, target, source, streams.MELEE,
+        power_modes.SAME)
 end
 
 -- The shifter chaos effect transforms immediately without an enchantment
 -- resistance check; later shape changes use this same actor transition.
 function polymorph.shapeshift(ctx, target, source, stream)
-    local source_stream = stream or "melee"
-    local ugly_thing = require("policy.monsters.ugly_thing")
-
-    if ugly_thing.kind(source.id) then
-        ugly_thing.try_mutate(ctx, target, source, source_stream)
-
-        return true
-    end
-
-    local position = ctx:get(target, component.POSITION)
-    local choices = weighted_candidates(ctx, source, position,
-        source_stream)
-
-    if #choices == 0 then
-        return false
-    end
-
-    local definition = choices[ctx:random(source_stream, #choices) + 1]
-
-    transform(ctx, target, source, definition, source_stream)
-
-    return true
+    return polymorph.monster(ctx, target, source,
+        stream or streams.MELEE, power_modes.SAME)
 end
 
 -- Porkalator selects its fixed holiness-matched hog rather than a weighted
 -- polymorph candidate; keep the same HP, inventory, and original-kind transition.
 function polymorph.fixed(ctx, target, definition, stream)
     local actor = ctx:get(target, component.ACTOR)
-    local source = catalog.get("monsters", actor.kind_id)
+    local source = catalog.get(categories.MONSTERS, actor.kind_id)
 
-    transform(ctx, target, source, definition, stream or "monster_spell")
+    transform(ctx, target, source, definition,
+        stream or streams.MONSTER_SPELL)
 end
 
 return polymorph
