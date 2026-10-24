@@ -110,6 +110,12 @@ local function transform(ctx, target, source, definition, stream)
     ctx:set(target, component.ACTOR, actor)
     ctx:set(target, component.HEALTH, health)
 
+    -- A beast's saved facets describe its old body. The source excludes
+    -- mutant beasts as polymorph destinations, so any new body drops them.
+    if ctx:has(target, component.MONSTER_MUTANT_BEAST) then
+        ctx:remove(target, component.MONSTER_MUTANT_BEAST)
+    end
+
     -- A new body gets its own fixed color; an ordinary borrowed form must
     -- not keep the previous draconian job's living base component.
     local new_base = draconian_base.for_job(definition.id)

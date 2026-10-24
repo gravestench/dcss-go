@@ -34,6 +34,7 @@ local jiyva = require("policy.religion.gods.jiyva")
 local jiyva_growth = require("policy.religion.jiyva.growth")
 local gods = require("constants.gods")
 local vault_effects = require("constants.vault_effects")
+local beast_form = require("policy.monsters.mutant_beast.form")
 
 -- A merge may consume an authored slime whose fixed HP differs from the
 -- survivor's. Saved vault records retain that source maximum after death;
@@ -170,6 +171,12 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
 
     local definition = catalog.get("monsters", actor.kind_id)
 
+    -- Bat facet speed and movement belong to this saved beast, so restore
+    -- validates against its projected body instead of the catalog baseline.
+    if ctx:has(entity, component.MONSTER_MUTANT_BEAST) then
+        definition = monster_profile.definition(ctx, entity, definition)
+    end
+
     -- A polymorph rolls the live body's HP afresh. If that body later feeds,
     -- its Jiyva birth HP belongs to the new species, not its roster origin.
     -- Ambient corpse-form templates use a selected source body just as
@@ -182,7 +189,10 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     local live_slime = actor.kind_id == monsters.MONS_SLIME_CREATURE
     local live_profile_id = (growth or live_slime and polymorph) and
         actor.kind_id or profile_id
-    local profile = roster.profile(live_profile_id)
+    local beast = ctx:get(entity, component.MONSTER_MUTANT_BEAST)
+    local live_hd = overrides and overrides.hit_dice > 0 and
+        overrides.hit_dice or beast and beast.hit_dice
+    local profile = roster.profile(live_profile_id, live_hd)
 
     if fixed and state.seen[roster_id] and not clone and
         not born_from_split then
@@ -371,7 +381,10 @@ local function validate_vault_monster(ctx, entity, actor, health, position,
     local profile_id = polymorph and actor.kind_id or
         draconian_base.profile_kind(actor.kind_id,
             overrides and overrides.base_id)
-    local profile = roster.profile(profile_id)
+    local beast = ctx:get(entity, component.MONSTER_MUTANT_BEAST)
+    local live_hd = overrides and overrides.hit_dice > 0 and
+        overrides.hit_dice or beast and beast.hit_dice
+    local profile = roster.profile(profile_id, live_hd)
     local growth_profile = profile
     local fixed_hp = overrides and overrides.fixed_hp or 0
     local blob = ctx:get(entity, component.SLIME_BLOB)
@@ -391,6 +404,10 @@ local function validate_vault_monster(ctx, entity, actor, health, position,
 
     if generated then
         validate_pan_lord(ctx, entity, actor, health, definition, overrides)
+        definition = monster_profile.definition(ctx, entity, definition)
+    end
+
+    if ctx:has(entity, component.MONSTER_MUTANT_BEAST) then
         definition = monster_profile.definition(ctx, entity, definition)
     end
 
@@ -839,6 +856,7 @@ function module.run(ctx, input)
 
         ugly_thing.validate(ctx, entity,
             catalog.get("monsters", actor.kind_id))
+        beast_form.validate_actor(ctx, entity, actor)
 
         -- Every live monster may own a set, including summons and authored
         -- vault actors. Check it before dispatching to origin-specific rules.

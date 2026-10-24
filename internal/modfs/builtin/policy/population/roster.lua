@@ -84,15 +84,26 @@ function roster.allowed(scenario_id, branch_id)
 end
 
 -- Spawn profiles expose the catalog habitat and flags needed by placement after a roster pick.
-function roster.profile(id)
+function roster.profile(id, hit_dice)
     local definition = catalog.get(categories.MONSTERS, id)
     local average = definition.average_hp_10x
-    local variance = math.ceil(average * 33 / 100)
+    local low_average = average
+    local high_average = average
+
+    if hit_dice and hit_dice ~= definition.hd then
+        low_average = math.floor(average * hit_dice / definition.hd)
+        high_average = math.ceil(average * hit_dice / definition.hd)
+    end
+
+    local low_variance = math.ceil(low_average * 33 / 100)
+    local high_variance = math.ceil(high_average * 33 / 100)
 
     return {
         average = average,
-        minimum = math.max(1, math.floor((average - variance) / 10)),
-        maximum = math.min(10000, math.ceil((average + variance) / 10)),
+        minimum = math.max(1,
+            math.floor((low_average - low_variance) / 10)),
+        maximum = math.min(10000,
+            math.ceil((high_average + high_variance) / 10)),
     }
 end
 

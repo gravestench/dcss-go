@@ -34,6 +34,8 @@ local ugly_thing = require("policy.monsters.ugly_thing")
 local cloud_ring = require("policy.combat.monster_cloud_ring")
 local draconian_base = require("policy.monsters.draconian_base")
 local streams = require("constants.rng_streams")
+local beast_form = require("policy.monsters.mutant_beast.form")
+local beast_profile = require("policy.monsters.mutant_beast.profile")
 
 local factory = {}
 
@@ -395,7 +397,24 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
         error("cannot place monster " .. kind_id)
     end
 
-    local profile = roster.profile(source.id)
+    -- Resolve authored or rolled form before HP. Source vault HD rerolls
+    -- the body's average HP, then the same saved tier drives later combat.
+    local mutant_form = options.mutant_beast
+
+    if kind_id == monsters.MONS_MUTANT_BEAST and not mutant_form then
+        mutant_form = beast_form.roll(ctx, options.hd or definition.hd)
+    end
+
+    if mutant_form then
+        mutant_form = beast_form.complete(ctx,
+            beast_form.with_hit_dice(mutant_form, options.hd))
+    end
+
+    local hit_dice = options.hd or
+        mutant_form and mutant_form.hit_dice
+    local profile = roster.profile(source.id, hit_dice)
+    local average_hp = hit_points.scaled_average(ctx,
+        source.average_hp_10x, source.hd, hit_dice)
     local generated_lord
     local generated_ugly
 
@@ -411,7 +430,7 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
 
     local hp = options.hp or
         (generated_lord and generated_lord.hp) or
-        hit_points.roll(ctx, source.average_hp_10x)
+        hit_points.roll(ctx, average_hp)
     local blob_size = options.blob_size or 1
 
     if blob_size ~= 1 and
@@ -435,18 +454,24 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
     local equipment = explicit_equipment(ctx, options)
     local monster = ctx:create()
 
-    if options.mutant_beast then
+    if mutant_form then
         ctx:add(monster, component.MONSTER_MUTANT_BEAST, {
-            tier = options.mutant_beast.tier,
-            hit_dice = options.mutant_beast.hit_dice,
-            facets = options.mutant_beast.facets,
+            tier = mutant_form.tier,
+            hit_dice = mutant_form.hit_dice,
+            facets = mutant_form.facets,
         })
+    end
+
+    local speed = generated_lord and generated_lord.speed or
+        definition.speed or source.speed or 0
+
+    if mutant_form then
+        speed = beast_profile.speed(speed, mutant_form)
     end
 
     ctx:add(monster, "core.actor", {
         kind_id = kind_id,
-        speed = generated_lord and generated_lord.speed or
-            definition.speed or source.speed or 0,
+        speed = speed,
     })
 
     if colored_base then

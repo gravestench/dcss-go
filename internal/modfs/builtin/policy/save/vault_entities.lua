@@ -8,6 +8,7 @@ local monsters = require("ids.monsters")
 local vault_enchantments = require("policy.monsters.vault_enchantments")
 local catalog = require("policy.catalog")
 local draconian_base = require("policy.monsters.draconian_base")
+local beast_form = require("policy.monsters.mutant_beast.form")
 
 local vault_entities = {}
 
@@ -58,18 +59,44 @@ local function validate_actor_overrides(ctx, entity, record, arguments)
         component.MONSTER_MUTANT_BEAST)
     local source_beast = selected and selected.mutant_beast
 
+    if not source_beast and selected and
+        selected.name == "mutant beast" then
+        local hd = selected.hd or catalog.get("monsters",
+            monsters.MONS_MUTANT_BEAST).hd
+
+        source_beast = {
+            tier = beast_form.for_hit_dice(hd),
+            hit_dice = hd,
+            facets = {},
+        }
+    end
+
+    source_beast = beast_form.with_hit_dice(source_beast,
+        arguments.hd > 0 and arguments.hd or nil)
+
     if source_beast then
         if not beast or beast.tier ~= source_beast.tier or
-            beast.hit_dice ~= source_beast.hit_dice or
-            #beast.facets ~= #source_beast.facets then
+            beast.hit_dice ~= source_beast.hit_dice then
             error("entity " .. ctx:id(entity) ..
                 " has forged mutant beast form")
         end
 
-        for index, facet in ipairs(source_beast.facets) do
-            if beast.facets[index] ~= facet then
+        if #source_beast.facets == 0 then
+            if not beast_form.valid_rolled_facets(beast.facets) then
                 error("entity " .. ctx:id(entity) ..
-                    " has forged mutant beast facet")
+                    " has forged rolled mutant beast facets")
+            end
+        else
+            if #beast.facets ~= #source_beast.facets then
+                error("entity " .. ctx:id(entity) ..
+                    " has forged mutant beast facet count")
+            end
+
+            for index, facet in ipairs(source_beast.facets) do
+                if beast.facets[index] ~= facet then
+                    error("entity " .. ctx:id(entity) ..
+                        " has forged mutant beast facet")
+                end
             end
         end
     elseif beast then

@@ -23,6 +23,7 @@ local invisibility = require("policy.potions.invisibility")
 local component = require("constants.component")
 local ugly_thing = require("policy.monsters.ugly_thing")
 local slime_lifecycle = require("policy.monsters.slime_lifecycle")
+local breath = require("policy.combat.monster_breath")
 local behaviors = require("constants.ai_behaviors")
 local intents = require("constants.intent")
 
@@ -221,6 +222,8 @@ function system.update(ctx, entity)
     if not health or health.current <= 0 then
         return
     end
+
+    breath.advance(ctx, entity)
 
     allies.on_monster_turn(ctx, entity)
 

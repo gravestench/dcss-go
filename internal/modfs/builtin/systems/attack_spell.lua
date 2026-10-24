@@ -8,6 +8,7 @@ local hex_status = require("policy.combat.monster_hexes.status")
 local enfeeble = require("policy.magic.effects.statuses.enfeeble")
 local spell_flags = require("constants.monster_spell_flags")
 local component = require("constants.component")
+local breath = require("policy.combat.monster_breath")
 
 local system = {}
 
@@ -52,6 +53,10 @@ function system.update(ctx, caster)
 
     local effect = effects.effect(intent.spell_id)
     local plan = target.read(intent)
+
+    if breath.slot(slot) then
+        breath.begin(ctx, caster)
+    end
 
     effect.resolve(ctx, caster, foe, slot, plan)
 

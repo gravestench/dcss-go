@@ -2,6 +2,7 @@ local melee = require("policy.combat.melee_actions")
 local ranged = require("policy.combat.ranged_actions")
 local player_projectiles = require("policy.combat.player_projectiles")
 local roll = require("policy.combat.monster_roll")
+local reach = require("policy.combat.monster_reach")
 
 local system = {}
 
@@ -41,6 +42,15 @@ function system.update(ctx, attacker)
 
     if not target or target == attacker then
         error("melee attacker has no target")
+    end
+
+    -- Distant intents need a live reaching body and clear middle cell at
+    -- execution time. Adjacent contacts keep their ordinary route.
+    if math.max(math.abs(intent.dx), math.abs(intent.dy)) > 1 and
+        (attacker == ctx:player() or
+            not reach.can(ctx, attacker, position,
+                ctx:get(target, "core.position"))) then
+        return
     end
 
     if attacker == ctx:player() then

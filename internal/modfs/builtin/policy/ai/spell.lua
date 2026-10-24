@@ -10,6 +10,7 @@ local intents = require("constants.intent")
 local spell_flags = require("constants.spell_flags")
 local brilliance = require("policy.combat.monster_support.brilliance")
 local roll = require("policy.combat.monster_roll")
+local breath = require("policy.combat.monster_breath")
 
 local spell = {}
 
@@ -47,6 +48,7 @@ local function condition_for(ctx, entity, position, foe_position, fleeing)
         distance = distance_between(position, foe_position),
         fleeing = fleeing,
         silenced = silenced(ctx, entity, position),
+        breath_ready = breath.ready(ctx, entity),
     }
 end
 

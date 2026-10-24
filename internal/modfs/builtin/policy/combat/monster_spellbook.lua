@@ -4,6 +4,7 @@ local vault_spells = require("constants.vault_spell_override")
 local book_ids = require("ids.monster_spellbooks")
 local spell_flags = require("constants.monster_spell_flags")
 local source_spellbook = require("policy.monsters.source_spellbook")
+local beast_profile = require("policy.monsters.mutant_beast.profile")
 
 local spellbook = {}
 
@@ -24,6 +25,14 @@ function spellbook.for_actor(ctx, entity)
 
     if overrides and overrides.spells[1] then
         return source_spellbook.parse(overrides.spells[1])
+    end
+
+    -- The beast's saved facets replace the generic empty catalog book.
+    -- An authored vault spell override above still has precedence.
+    local beast = ctx:get(entity, component.MONSTER_MUTANT_BEAST)
+
+    if beast then
+        return beast_profile.spellbook(beast)
     end
 
     -- Source living spells carry one custom slot at frequency 200. The

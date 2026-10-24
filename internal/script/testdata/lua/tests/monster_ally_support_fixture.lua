@@ -51,6 +51,18 @@ function game_methods.cell(game, _, x, y)
     return game.cells[x .. ":" .. y] or terrain.DNGN_FLOOR
 end
 
+-- Reach and projectile rules distinguish blocked terrain from actors.
+-- The sparse fixture's wall markers mimic the production grid predicates.
+function game_methods.solid(game, _, x, y)
+    return game.walls[x .. ":" .. y] or false
+end
+
+-- Ordinary fixture walls are opaque; the production grid also handles
+-- clear walls and grates through their real terrain definitions.
+function game_methods.opaque(game, _, x, y)
+    return game.walls[x .. ":" .. y] or false
+end
+
 -- Temporary terrain spells write the same test grid they later read.
 -- Keeping this in the shared fixture avoids a one-off spell stub.
 function game_methods.set_cell(game, _, x, y, feature)

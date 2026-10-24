@@ -24,6 +24,21 @@ local function random_divide(ctx, numerator, denominator)
     return quotient
 end
 
+-- Source mon-place.cc rescales average HP before the ordinary HP roll
+-- when an authored HD replaces the catalog HD. The fractional point is
+-- rounded through the monster HP stream, then the usual spread applies.
+function hit_points.scaled_average(ctx, average, base_hd, live_hd)
+    if not live_hd or live_hd == base_hd then
+        return average
+    end
+
+    if base_hd <= 0 or live_hd <= 0 then
+        error("invalid monster hit dice for HP scaling")
+    end
+
+    return random_divide(ctx, average * live_hd, base_hd)
+end
+
 -- Seven independent contributions produce the source-style HP spread, then clamp to the actor limit.
 function hit_points.roll(ctx, average)
     if average <= 0 then

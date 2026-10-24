@@ -11,6 +11,7 @@ local flavours = {
     STICKY_FLAME = "AF_STICKY_FLAME",
     DRAIN = "AF_DRAIN",
     REACH = "AF_REACH",
+    REACH_STING = "AF_REACH_STING",
     CRUSH = "AF_CRUSH",
     TRAMPLE = "AF_TRAMPLE",
     STEAL = "AF_STEAL",

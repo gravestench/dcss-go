@@ -247,6 +247,7 @@ local component = {
     RELIGION_USKAYAW_MOMENTUM = "religion.uskayaw_momentum",
     ABILITY_COOLDOWNS = "character.ability_cooldowns",
     BREATH_COOLDOWN = "character.breath_cooldown",
+    MONSTER_BREATH_COOLDOWN = "monster.breath_cooldown",
     DEMONIC_GUARDIAN = "character.demonic_guardian",
     DAMAGE_SAFETY = "character.damage_safety",
     POTION_RESISTANCE = "character.potion_resistance",

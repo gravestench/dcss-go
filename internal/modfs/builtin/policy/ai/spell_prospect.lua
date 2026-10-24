@@ -33,6 +33,11 @@ local function eligible(slot, condition)
         return false
     end
 
+    if has(slot.flags, flags.BREATH) and
+        condition.breath_ready == false then
+        return false
+    end
+
     if has(slot.flags, flags.EMERGENCY) and
         condition.hp >= math.floor(condition.max_hp / 3) then
         return false
@@ -65,7 +70,7 @@ local function preferred_slot(book, condition, random, wanted)
     local weight = 0
 
     for index, slot in ipairs(book.slots) do
-        if allowed_by_silence(slot, condition) and
+        if eligible(slot, condition) and
             matching_spell(slot, wanted) then
             weight = weight + slot.frequency
 

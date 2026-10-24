@@ -40,6 +40,7 @@ local component = require("constants.component")
 local attack_conduct = require("policy.religion.conduct.attack")
 local cleaving = require("policy.religion.xom.cleaving")
 local attack_sequence = require("policy.combat.monster_attack_sequence")
+local reach = require("policy.combat.monster_reach")
 
 local actions = {}
 
@@ -513,7 +514,10 @@ local function monster_player_contact(ctx, attacker, selected,
 
     retreat_bat(ctx, attacker, definition)
 
-    if outcome.kind == "hit" and (flavour_id == "AF_POISON" or
+    -- Poison-bearing contact needs physical damage through armour before
+    -- either ordinary venom or concentrated curare can enter the wound.
+    if outcome.kind == "hit" and dealt > 0 and
+        (flavour_id == "AF_POISON" or
         flavour_id == "AF_POISON_STRONG" or
         flavour_id == "AF_REACH_STING") then
         local venom = require("policy.combat.monster_tactical.concentrate_venom")
@@ -770,21 +774,31 @@ local function run_round(ctx, attacker, target, options)
             defender_health = ctx:get(target, component.HEALTH)
         end
 
-        if target == ctx:player() then
-            if selected.attack.type_id == attack_types.CONSTRICT then
-                if not (options and options.player_moving) then
-                    grab(ctx, attacker, definition,
-                        selected.attack, defender_health)
-                end
-            else
-                monster_player_contact(ctx, attacker, selected,
-                    index, options)
-            end
+        local attacker_position = ctx:get(attacker, component.POSITION)
+        local target_position = ctx:get(target, component.POSITION)
+        local distance = math.max(
+            math.abs(attacker_position.x - target_position.x),
+            math.abs(attacker_position.y - target_position.y))
 
-            last_health = ctx:get(target, component.HEALTH)
-        else
-            last_health = monster_target_contact(ctx, attacker,
-                target, selected, index)
+        -- Source skips each ordinary slot independently when the foe is
+        -- beyond adjacency; the later Sting slot retains its source index.
+        if distance <= 1 or reach.contact(selected.attack) then
+            if target == ctx:player() then
+                if selected.attack.type_id == attack_types.CONSTRICT then
+                    if not (options and options.player_moving) then
+                        grab(ctx, attacker, definition,
+                            selected.attack, defender_health)
+                    end
+                else
+                    monster_player_contact(ctx, attacker, selected,
+                        index, options)
+                end
+
+                last_health = ctx:get(target, component.HEALTH)
+            else
+                last_health = monster_target_contact(ctx, attacker,
+                    target, selected, index)
+            end
         end
     end
 

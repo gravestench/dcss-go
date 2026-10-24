@@ -11,6 +11,12 @@ function stats.base_hit_dice(ctx, monster, definition)
         return authored.hit_dice
     end
 
+    local beast = ctx:get(monster, component.MONSTER_MUTANT_BEAST)
+
+    if beast then
+        return beast.hit_dice
+    end
+
     local lord = ctx:get(monster, component.PANDEMONIUM_LORD)
 
     if lord then

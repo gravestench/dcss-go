@@ -8,6 +8,9 @@ local enfeeble = require("policy.magic.effects.statuses.enfeeble")
 local monster_enchant = require("policy.combat.monster_enchant")
 local monster_health = require("policy.combat.monster_health")
 local monster_slow = require("policy.combat.monster_slow")
+local monster_poison = require("policy.combat.monster_poison")
+local concentrate_venom = require("policy.combat.monster_tactical.concentrate_venom")
+local curare = require("policy.combat.monster_tactical.curare")
 local player_corrosion = require("policy.combat.player_corrosion")
 local player_health = require("policy.combat.player_health")
 local player_slow = require("policy.character.slow")
@@ -100,6 +103,38 @@ end
 -- Electricity has a shorter bonus roll and a stronger resistance divisor.
 local function electricity(ctx, hit)
     return elemental(ctx, hit, attack_ids.ELECTRICITY)
+end
+
+-- Source melee applies the same one-in-three poison chance to an enemy
+-- monster as to the player. Monster::poison converts the raw HD-scaled
+-- amount to a saved degree before the normal poison status owner runs.
+local function poison_contact(ctx, hit, flavour_id)
+    if hit.damage_done <= 0 or
+        ctx:has(hit.defender, component.PLAYER) or
+        roll.melee(ctx, 3) ~= 0 then
+        return false
+    end
+
+    if concentrate_venom.active(ctx, hit.attacker) then
+        return curare.apply(ctx, hit.attacker, hit.defender,
+            streams.MELEE)
+    end
+
+    local hd = hit.hit_dice
+    local low = hd * 2
+    local high = hd * 4
+
+    if flavour_id == attack_ids.POISON_STRONG then
+        low = math.floor(hd * 11 / 3)
+        high = math.floor(hd * 13 / 2)
+    end
+
+    local raw = low + roll.melee(ctx, high - low + 1)
+    local levels = 1 + math.floor(raw / 7)
+
+    return monster_poison.apply(ctx, hit.defender,
+        hit.defender_definition, levels, hit.attacker, false,
+        hit.player_credit)
 end
 
 -- Source AF_ACID calls splash_with_acid rather than equipment corrosion
@@ -280,6 +315,12 @@ function flavours.apply(ctx, flavour_id, hit)
 
     if field then
         return drain_stat(ctx, hit, field)
+    end
+
+    if flavour_id == attack_ids.POISON or
+        flavour_id == attack_ids.POISON_STRONG or
+        flavour_id == attack_ids.REACH_STING then
+        return poison_contact(ctx, hit, flavour_id)
     end
 
     local effect = effects[flavour_id]

@@ -8,6 +8,7 @@ local constructs = require("constants.monster_construct_components")
 
 local resistance = require("policy.combat.monster_summons.resistance")
 local ugly_thing = require("policy.monsters.ugly_thing")
+local beast_profile = require("policy.monsters.mutant_beast.profile")
 
 local profile = {}
 
@@ -57,6 +58,12 @@ end
 -- Project saved per-actor values into the same read shape as a catalog
 -- monster. Consumers use their ordinary combat rules after this one read.
 function profile.definition(ctx, entity, definition)
+    local beast = ctx:get(entity, component.MONSTER_MUTANT_BEAST)
+
+    if beast then
+        definition = beast_profile.project(definition, beast)
+    end
+
     local ugly = ctx:get(entity, component.UGLY_THING)
 
     if ugly then

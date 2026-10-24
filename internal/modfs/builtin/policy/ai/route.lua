@@ -1,5 +1,6 @@
 local common = require("policy.ai.common")
 local cloud_danger = require("policy.clouds.danger")
+local reach = require("policy.combat.monster_reach")
 
 local route = {}
 
@@ -140,6 +141,17 @@ function route.follow(ctx, entity, state, position, target, target_entity,
     local level_id = position.level_id
     local goal = goal_actor(ctx, entity, state, position, target,
         target_entity)
+
+    -- Source monsters try a legal natural reach before stepping toward
+    -- their foe. The intent carries the full delta to the actual target.
+    if attack_goal and target_entity and goal == target_entity and
+        reach.can(ctx, entity, position, target) then
+        return {
+            kind = 2,
+            dx = target.x - position.x,
+            dy = target.y - position.y,
+        }
+    end
 
     if ctx:visible(level_id, position.x, position.y, 7, state.target_x, state.target_y) then
         local direct = direct_intent(ctx, entity, state, position, target,

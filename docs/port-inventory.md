@@ -996,8 +996,9 @@ graves, lich, and door have focused Lua event owners with Akara state.
 Generic door interaction reads authored door verbs, and teleport destination
 policy honors `no_tele_into` until Zonguldrok's door appears. Cigotuvi's
 mutant beast retains its source tier and facets in a saved ECS component;
-its facet-specific combat and resistances remain part of the broader
-mutant-beast rule domain. The
+the projected form drives live HD and HP, ordered melee contacts, Sting
+poison and reach, intrinsic resistance and armour, Bat speed and retreat,
+and Fire/Shock spells. Fire Breath has saved recovery state. The
 [Wizard Lab snapshot index](level-snapshots/wizlab/index.txt) shows all
 fifteen generated floors and their return connections. The outstanding
 cross-domain work is the full source interaction pass for terrain-destruction
