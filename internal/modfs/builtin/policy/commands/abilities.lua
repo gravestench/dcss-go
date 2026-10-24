@@ -40,6 +40,8 @@ function abilities.prepare(ctx, player, input)
             ability_id = id,
             dx = input.dx or 0,
             dy = input.dy or 0,
+            item_id = input.item_id,
+            target_id = input.target_id,
             forced = input.forced or false,
         },
         cost = 10,

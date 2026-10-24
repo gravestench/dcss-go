@@ -6,7 +6,7 @@ local component = require("constants.component")
 
 local schema = {
     id = component.BEOGH_ORC,
-    version = 1,
+    version = 2,
     fields = {
         attitude = {
             type = "string",
@@ -21,6 +21,11 @@ local schema = {
         gift = {
             type = "bool",
             default = false,
+        },
+
+        gift_category = {
+            type = "string",
+            default = "",
         },
     },
 }

@@ -357,7 +357,8 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
 
     -- Check run history before creating gear or an actor. A failed unique
     -- attempt must not leave entities behind or consume another claim.
-    if unique_history.is_unique(kind_id) and
+    if not options.restore_identity and
+        unique_history.is_unique(kind_id) and
         unique_history.seen(ctx, kind_id) then
         error("unique monster was already generated " .. kind_id)
     end
@@ -521,7 +522,9 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
         shapeshifter.attach(ctx, monster, kind_id)
     end
 
-    unique_history.mark(ctx, kind_id)
+    if not options.restore_identity then
+        unique_history.mark(ctx, kind_id)
+    end
 
     return monster
 end

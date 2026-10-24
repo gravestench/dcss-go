@@ -20,6 +20,7 @@ local senses = require("policy.character.senses")
 local targets = require("policy.ai.targets")
 
 local beogh = {}
+local gift_categories = require("constants.beogh_gift_categories")
 
 -- Source random2(0) yields zero and does not ask the runtime for an invalid
 -- bound. All four conversion contests share the religion stream.
@@ -116,6 +117,17 @@ local function make_follower(ctx, entity, previous)
     end
 
     return true
+end
+
+-- A resurrected orc is converted without a new sight contest. Its saved
+-- personal gift marker remains with the restored follower.
+function beogh.resurrect(ctx, entity, gift_category)
+    return make_follower(ctx, entity, {
+        attitude = attitudes.HOSTILE,
+        attempted = true,
+        gift = false,
+        gift_category = gift_category,
+    })
 end
 
 -- The monster must see the potential messiah. Source conversion is offered
@@ -248,7 +260,20 @@ end
 
 -- Renunciation flips every surviving companion, including off-level ones.
 -- The gift bit remains so killing an old follower cannot award XP.
-function beogh.leave(ctx)
+function beogh.leave(ctx, player)
+    if player and ctx:has(player, component.BEOGH_RECALL) then
+        ctx:remove(player, component.BEOGH_RECALL)
+    end
+
+    if player and ctx:has(player, component.BEOGH_GIFT_CHOICE) then
+        ctx:remove(player, component.BEOGH_GIFT_CHOICE)
+    end
+
+    if player and ctx:has(player,
+        component.BEOGH_RESURRECTION_CHOICE) then
+        ctx:remove(player, component.BEOGH_RESURRECTION_CHOICE)
+    end
+
     for _, entity in ipairs(ctx:query({ component.BEOGH_ORC })) do
         local state = ctx:get(entity, component.BEOGH_ORC)
 
@@ -273,9 +298,11 @@ function beogh.validate(ctx, entity)
     local valid_transition = (not state.gift and
         state.attitude == attitudes.HOSTILE) or
         (state.gift and state.attempted)
+    local valid_category = state.gift_category == "" or
+        (state.gift and gift_categories.valid(state.gift_category))
 
     if not orc_definition(ctx, entity) or not valid_attitude or
-        not valid_transition or
+        not valid_transition or not valid_category or
         not ctx:has(entity, component.AI) or
         not ctx:has(entity, component.HEALTH) or
         not ctx:has(entity, component.POSITION) then

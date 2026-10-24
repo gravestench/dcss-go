@@ -49,6 +49,7 @@ function module.run(ctx, input)
             not ctx:has(entity, component.CHAOS_CLONE) and
             not ctx:has(entity, doom_howl.ARRIVAL) and
             not ctx:has(entity, component.JIYVA_SPAWN) and
+            not ctx:has(entity, component.BEOGH_RESURRECTED) and
             not born_from_split then
             local actor = ctx:get(entity, "core.actor")
 

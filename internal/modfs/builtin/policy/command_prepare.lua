@@ -11,6 +11,7 @@ local registry = require("policy.commands.registry")
 local nemelex = require("policy.abilities.nemelex")
 local card_operations = require("constants.card_operations")
 local card_state = require("policy.religion.cards.state")
+local ability_ids = require("ids.abilities")
 
 -- Prepare accepted intents before timing; explicit cancellation may still clear an active delay.
 local function prepare_raw(ctx, input)
@@ -35,6 +36,21 @@ local function prepare_raw(ctx, input)
         return {
             message = "Finish your pending card action first.",
         }
+    end
+
+    -- Free Beogh selection prompts own the command slot until the chosen
+    -- action resumes or Esc cancels it. Other actions cannot stale the
+    -- selected actor or body while a prompt is saved.
+    if ctx:has(player, component.BEOGH_GIFT_CHOICE) and
+        (input.kind ~= commands.ability or
+            input.ability_id ~= ability_ids.BEOGH_GIFT_ITEM) then
+        return { message = "Finish your pending gift choice first." }
+    end
+
+    if ctx:has(player, component.BEOGH_RESURRECTION_CHOICE) and
+        (input.kind ~= commands.ability or
+            input.ability_id ~= ability_ids.BEOGH_RESURRECTION) then
+        return { message = "Finish your resurrection choice first." }
     end
 
     -- Involuntary states turn a requested command into a wait before dispatch can spend the chosen action.

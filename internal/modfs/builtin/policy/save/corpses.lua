@@ -3,6 +3,7 @@ local roster = require("policy.population.roster")
 local component = require("constants.component")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
 local branches = require("ids.branches")
+local beogh_corpse = require("policy.abilities.beogh.corpse")
 
 -- Corpse validation reads source monster flags without requiring every record to list them.
 local function flag(definition, wanted)
@@ -63,6 +64,12 @@ function module.run(ctx, input)
         if item.kind_id == "CORPSE_SKELETON" and flag(definition, "M_NO_SKELETON") then
             error("item " .. ctx:id(entity) .. " has impossible " .. corpse.monster_id .. " skeleton")
         end
+    end
+
+    -- A marker detached from its ordinary body must not evade the loop
+    -- above and later become a remotely resurrectable forged entity.
+    for _, entity in ipairs(ctx:query({ component.BEOGH_CORPSE })) do
+        beogh_corpse.validate(ctx, entity)
     end
 
     return {}

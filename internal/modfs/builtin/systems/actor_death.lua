@@ -28,6 +28,9 @@ local component = require("constants.component")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
 local zap_ids = require("policy.magic.effects.zaps.ids")
 local abyss_exits = require("policy.world.abyss.exits")
+local beogh_recall = require("policy.abilities.beogh.recall")
+local beogh_corpse = require("policy.abilities.beogh.corpse")
+local monsters = require("ids.monsters")
 
 local system = {}
 
@@ -179,12 +182,19 @@ function system.update(ctx)
                     kills[ctx:id(entity)] == true, dropped)
 
                 -- Death hooks may consume the body; ordinary corpse placement runs only afterward.
-                if kills[ctx:id(entity)] and not consumed_corpse and
+                local beogh_gift = (ctx:get(entity,
+                    component.BEOGH_ORC) or {}).gift
+
+                if (kills[ctx:id(entity)] or beogh_gift or
+                    definition.genus_id == monsters.MONS_ORC) and
+                    not consumed_corpse and
                     not summoned and
                     not ctx:has(entity, component.PIKEL_BAND) then
                     local corpse = death.corpse(ctx, definition, position,
                         ctx:get(entity, component.VAULT_ORIGIN))
                     local arrival = ctx:get(entity, doom_howl.ARRIVAL)
+
+                    beogh_corpse.record(ctx, entity, corpse, dropped)
 
                     if corpse and arrival then
                         ctx:add(corpse, doom_howl.ARRIVAL, {
@@ -195,6 +205,7 @@ function system.update(ctx)
 
                 clear_haunting(ctx, entity)
                 clear_orb_targets(ctx, entity)
+                beogh_recall.forget(ctx, ctx:player(), entity)
                 ctx:destroy(entity)
                 ctx:emit("death", "The " .. definition.name .. " dies.")
             end

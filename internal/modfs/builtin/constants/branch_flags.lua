@@ -2,6 +2,7 @@
 
 local flags = {
     NO_MAP = "no_map",
+    NO_X_LEVEL_TRAVEL = "no_x_level_travel",
 }
 
 return flags

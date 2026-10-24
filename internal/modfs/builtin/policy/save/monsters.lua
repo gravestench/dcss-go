@@ -559,6 +559,26 @@ function module.run(ctx, input)
         beogh.validate(ctx, entity)
     end
 
+    for _, entity in ipairs(ctx:query({ component.BEOGH_RESURRECTED })) do
+        local origin = ctx:get(entity, component.BEOGH_RESURRECTED)
+        local actor = ctx:get(entity, component.ACTOR)
+        local definition = actor and catalog.get("monsters",
+            actor.kind_id)
+        local allegiance = ctx:get(entity, component.BEOGH_ORC)
+
+        if not definition or
+            definition.genus_id ~= monsters.MONS_ORC or
+            not allegiance or not allegiance.gift or
+            origin.created_aut < 0 or
+            origin.created_aut > input.current_aut or
+            not ctx:has(entity, component.AI) or
+            not ctx:has(entity, component.HEALTH) or
+            not ctx:has(entity, component.POSITION) then
+            error("invalid Beogh resurrection origin " ..
+                ctx:id(entity))
+        end
+    end
+
     for _, entity in ipairs(ctx:query({ component.JIYVA_SLIME })) do
         jiyva.validate(ctx, entity)
     end
@@ -658,7 +678,8 @@ function module.run(ctx, input)
         elseif ctx:get(entity, doom_howl.ARRIVAL) then
             validate_doom_arrival(ctx, entity, actor, health,
                 position, ai, input.current_aut)
-        elseif ctx:get(entity, component.JIYVA_SPAWN) or
+        elseif ctx:get(entity, component.BEOGH_RESURRECTED) or
+            ctx:get(entity, component.JIYVA_SPAWN) or
             ctx:get(entity, component.PANDEMONIUM_LORD) or
             ctx:get(entity, component.VAULT_ORIGIN) or
             ctx:get(entity, component.WORLD_VAULT_SPAWN) or
