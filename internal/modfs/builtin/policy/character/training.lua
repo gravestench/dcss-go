@@ -271,7 +271,7 @@ local function refresh_resources(ctx, actor, species, skills,
             error("player lacks Fighting HP state")
         end
 
-        local drain = ctx:get(actor, "status.drain")
+        local drain = ctx:get(actor, component.PLAYER_DRAIN)
         local drain_loss = drain and drain.amount or 0
         local base_hp = math.max(1,
             formulas.max_hp(ctx, actor, progress.level, species, skills) - drain_loss)

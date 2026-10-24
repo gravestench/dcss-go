@@ -26,7 +26,7 @@ function module.run(ctx)
     local poison = ctx:get(player, "core.poison")
     local barbs = ctx:get(player, component.BARBS)
     local regeneration = ctx:get(player, "core.regeneration")
-    local drain = ctx:get(player, "status.drain")
+    local drain = ctx:get(player, component.PLAYER_DRAIN)
     local stat_loss = ctx:get(player, component.STAT_LOSS)
     local icy_defense = ctx:get(player, component.ICY_DEFENSE)
     local weapon_protection = ctx:get(player,

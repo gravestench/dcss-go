@@ -6,15 +6,12 @@ local range = require("policy.magic.range")
 local trajectory = require("policy.combat.trajectory")
 local will = require("policy.magic.effects.zaps.will")
 local monster_stats = require("policy.combat.monster_stats")
+local monster_spellbook = require("policy.combat.monster_spellbook")
 local roll = require("policy.combat.roll")
 local streams = require("constants.rng_streams")
+local spell_flags = require("constants.monster_spell_flags")
 
 local enfeeble = {}
-local books = {}
-
-for _, book in ipairs(catalog.all("monster_spellbooks")) do
-    books[book.id] = book
-end
 
 -- Missing spell flags or monster traits count as absent, preventing nil catalog lists from changing eligibility.
 local function has(values, wanted)
@@ -27,13 +24,14 @@ local function has(values, wanted)
     return false
 end
 
--- Only wizard or magical spellbook slots can be disrupted by Enfeeble's antimagic.
-local function spell_sensitive(definition)
-    local book = books[definition.spellbook_id]
+-- Read this actor's active slots: generated lords, vault overrides, and
+-- summoned casters can differ from the static monster catalog book.
+local function spell_sensitive(ctx, target)
+    local book = monster_spellbook.for_actor(ctx, target)
 
     for _, slot in ipairs(book and book.slots or {}) do
-        if has(slot.flags, "MON_SPELL_MAGICAL") or
-            has(slot.flags, "MON_SPELL_WIZARD") then
+        if has(slot.flags, spell_flags.MAGICAL) or
+            has(slot.flags, spell_flags.WIZARD) then
             return true
         end
     end
@@ -103,7 +101,7 @@ end
 -- Weakness and antimagic can land despite a resisted blind/daze roll; each timer only extends.
 local function apply(ctx, player, target, definition, power)
     local weak = has_attacks(definition)
-    local antimagic = spell_sensitive(definition)
+    local antimagic = spell_sensitive(ctx, target)
     local resisted = will.resists(ctx, definition, power,
         target, nil, player)
     local blind = not resisted and not has(definition.flags, "M_UNBLINDABLE")
@@ -143,8 +141,8 @@ local function apply(ctx, player, target, definition, power)
 end
 
 -- Chaos and Black Mark share the spellbook test with Enfeeble itself.
-function enfeeble.antimagic_susceptible(definition)
-    return spell_sensitive(definition)
+function enfeeble.antimagic_susceptible(ctx, target)
+    return spell_sensitive(ctx, target)
 end
 
 -- Other policies query the same melee eligibility used for Enfeeble weakness.
@@ -155,7 +153,7 @@ end
 -- Source: beam.cc:BEAM_DRAIN_MAGIC. Power is damage dealt times eight for
 -- Black Mark; the saved antimagic duration disrupts later wizard magic.
 function enfeeble.apply_antimagic(ctx, target, definition, power)
-    if not spell_sensitive(definition) then
+    if not spell_sensitive(ctx, target) then
         return false
     end
 
@@ -180,7 +178,7 @@ end
 -- Source: beam.cc:BEAM_DRAIN_MAGIC uses enchantment power per target HD,
 -- then rolls the antimagic duration in baseline delays.
 function enfeeble.apply_drain_magic(ctx, target, definition, power)
-    if not spell_sensitive(definition) then
+    if not spell_sensitive(ctx, target) then
         return 0
     end
 

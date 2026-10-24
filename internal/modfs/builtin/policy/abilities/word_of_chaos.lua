@@ -81,7 +81,7 @@ end
 -- one max HP, so repeated casts remain savable and nonfatal by themselves.
 local function drain_player(ctx, player)
     local health = ctx:get(player, component.HEALTH)
-    local old = ctx:get(player, "status.drain")
+    local old = ctx:get(player, component.PLAYER_DRAIN)
     local state = old or { amount = 0 }
     local real_max = health.max + state.amount
     local loss = 1 + roll.random_divide(ctx, 50 * real_max, 750)
@@ -93,9 +93,9 @@ local function drain_player(ctx, player)
     ctx:set(player, component.HEALTH, health)
 
     if old then
-        ctx:set(player, "status.drain", state)
+        ctx:set(player, component.PLAYER_DRAIN, state)
     else
-        ctx:add(player, "status.drain", state)
+        ctx:add(player, component.PLAYER_DRAIN, state)
     end
 
     ctx:emit("mutation", "You feel drained.")

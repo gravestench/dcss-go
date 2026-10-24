@@ -7,13 +7,12 @@ local channels = require("constants.message_channels")
 local enfeeble = require("policy.magic.effects.statuses.enfeeble")
 local monster_enchant = require("policy.combat.monster_enchant")
 local monster_health = require("policy.combat.monster_health")
-local monster_slow = require("policy.combat.monster_slow")
 local monster_poison = require("policy.combat.monster_poison")
+local life = require("policy.combat.monster_attack_flavours.life")
 local concentrate_venom = require("policy.combat.monster_tactical.concentrate_venom")
 local curare = require("policy.combat.monster_tactical.curare")
 local player_corrosion = require("policy.combat.player_corrosion")
 local player_health = require("policy.combat.player_health")
-local player_slow = require("policy.character.slow")
 local player_weakness = require("policy.combat.player_weakness")
 local roll = require("policy.combat.roll")
 local stat_loss = require("policy.character.stat_loss")
@@ -222,6 +221,10 @@ end
 -- fallback chance. A monster has no drainable attributes in the source, but
 -- the chance rolls still occur before its no-op actor method is called.
 local function drain_stat(ctx, hit, field)
+    if hit.damage_done <= 0 then
+        return false
+    end
+
     if roll.melee(ctx, 20) ~= 0 and roll.melee(ctx, 3) ~= 0 then
         return false
     end
@@ -257,25 +260,6 @@ local function ensnare(ctx, hit)
     end
 
     return web.after_hit(ctx, hit.attacker, hit.defender)
-end
-
--- Speed drain is a separate 3-in-5 chance after contact. The strength roll
--- belongs to the effect and changes the saved Slow owner on either target.
-local function drain_speed(ctx, hit)
-    if roll.melee(ctx, 5) >= 3 then
-        return false
-    end
-
-    local strength = 5 + roll.melee(ctx, 7)
-
-    if ctx:has(hit.defender, component.PLAYER) then
-        return player_slow.apply(ctx, hit.defender, strength)
-    end
-
-    monster_slow.apply(ctx, hit.defender,
-        hit.defender_definition, strength * 10)
-
-    return true
 end
 
 -- Water damage is a second damage event after the physical strike. Source
@@ -324,10 +308,15 @@ local effects = {
     [attack_ids.REACH_TONGUE] = acid,
     [attack_ids.DISTORT] = distortion,
     [attack_ids.RIFT] = distortion,
+    [attack_ids.DRAIN] = life.drain,
+    [attack_ids.VAMPIRIC] = life.vampiric,
+    [attack_ids.SCARAB] = life.scarab,
+    [attack_ids.PAIN] = life.pain,
+    [attack_ids.ANTIMAGIC] = life.antimagic,
     [attack_ids.STICKY_FLAME] = napalm,
     [traits.corrode] = corrode,
     [traits.ensnare] = ensnare,
-    [traits.drain_speed] = drain_speed,
+    [traits.drain_speed] = life.drain_speed,
     [traits.drown] = drown,
     [traits.weakness] = weaken,
     [traits.trample] = trample.attempt,

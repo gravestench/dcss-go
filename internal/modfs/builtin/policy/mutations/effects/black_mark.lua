@@ -44,7 +44,7 @@ function black_mark.after_melee(_, ctx, player, hit)
     local definition = catalog.get("monsters", actor.kind_id)
     local choices = {}
 
-    if enfeeble.antimagic_susceptible(definition) then
+    if enfeeble.antimagic_susceptible(ctx, hit.target) then
         choices[#choices + 1] = antimagic
     end
 

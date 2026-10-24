@@ -145,6 +145,12 @@ Tongue and ordinary Acid now share source acid splash on damaging contact;
 Rift and ordinary Distort share weighted warp, blink, and banishment through
 the existing player and monster distortion owners. Both effects use the
 resolved contact after reach geometry and preserve their damage gates.
+Drain Stat now selects Strength, Intelligence, or Dexterity on each live
+contact. Natural Drain, Vampiric, Scarab, Pain, and Antimagic melee use their
+source chances and power formulas against player and monster actors. Their
+secondary HP, MP, slow, and drain state stays in the existing ECS owners;
+ghost moths regain stolen MP and antimagic vine stalkers shorten their own
+enchantment on contact.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except

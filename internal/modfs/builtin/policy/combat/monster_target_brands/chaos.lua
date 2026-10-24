@@ -75,8 +75,8 @@ local function drainable(_, hit)
 end
 
 -- Use Enfeeble's susceptibility rule so anti-magic is not offered to immune monsters.
-local function antimagic(_, hit)
-    return enfeeble.antimagic_susceptible(hit.definition)
+local function antimagic(ctx, hit)
+    return enfeeble.antimagic_susceptible(ctx, hit.defender)
 end
 
 -- Innate clarity removes the confusion outcome before weights are summed.

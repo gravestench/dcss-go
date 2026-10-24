@@ -402,7 +402,7 @@ local function monster_player_contact(ctx, attacker, selected,
         catalog.get("monsters", actor.kind_id))
     local attack = selected.attack
     local flavour_id = ignis_champion.attack_flavour(ctx, attacker,
-        attack.flavour_id)
+        attack_sequence.contact_flavour(ctx, attack.flavour_id))
     local attack_type = monster_roll.active(ctx, attacker) and
         attack_types.HIT or attack_sequence.contact_type(ctx, attack)
     local defense = fighter.defense(ctx)
@@ -570,7 +570,7 @@ local function monster_target_contact(ctx, attacker, target,
     end
 
     local flavour_id = ignis_champion.attack_flavour(ctx, attacker,
-        attack.flavour_id)
+        attack_sequence.contact_flavour(ctx, attack.flavour_id))
 
     local attack_type = monster_roll.active(ctx, attacker) and
         attack_types.HIT or attack_sequence.contact_type(ctx, attack)

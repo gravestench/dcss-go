@@ -106,7 +106,7 @@ end
 local function monster_choices(ctx, target, definition)
     local choices = {}
 
-    if enfeeble.antimagic_susceptible(definition) then
+    if enfeeble.antimagic_susceptible(ctx, target) then
         choices[#choices + 1] = drain_monster_magic
     end
 

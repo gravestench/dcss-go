@@ -68,6 +68,7 @@ local function check_stat_drains(ctx)
             attacker = lord,
             defender = player,
             hit_dice = 20,
+            damage_done = 4,
         }
 
         flavours.apply(game, case.flavour, hit)
@@ -85,6 +86,17 @@ local function check_stat_drains(ctx)
 
     harness.equal(stat_loss.amount(game, player, stats.STRENGTH), 1,
         "a missed strike does not drain a stat")
+
+    flavours.apply(game, traits.drain_strength, {
+        kind = "hit",
+        attacker = lord,
+        defender = player,
+        hit_dice = 20,
+        damage_done = 0,
+    })
+
+    harness.equal(stat_loss.amount(game, player, stats.STRENGTH), 1,
+        "a zero-damage strike does not drain a stat")
 end
 
 -- A saved generated profile must reach the same policy through an actual

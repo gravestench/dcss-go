@@ -1,3 +1,4 @@
+local component = require("constants.component")
 local roll = require("policy.combat.roll")
 
 local drain = {}
@@ -7,7 +8,7 @@ local drain = {}
 -- this temporary loss through the saved status.drain component.
 function drain.apply(ctx, player, power, stream)
     local health = ctx:get(player, "core.health")
-    local previous = ctx:get(player, "status.drain")
+    local previous = ctx:get(player, component.PLAYER_DRAIN)
 
     if not health then
         error("drained player has no health")
@@ -31,9 +32,9 @@ function drain.apply(ctx, player, power, stream)
     ctx:set(player, "core.health", health)
 
     if previous then
-        ctx:set(player, "status.drain", state)
+        ctx:set(player, component.PLAYER_DRAIN, state)
     else
-        ctx:add(player, "status.drain", state)
+        ctx:add(player, component.PLAYER_DRAIN, state)
     end
 
     ctx:emit("combat", "You feel drained.")

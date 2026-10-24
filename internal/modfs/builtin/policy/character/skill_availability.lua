@@ -137,7 +137,7 @@ function availability.reassess(ctx, player)
 
     ctx:set(player, component.SKILLS, skills)
 
-    local drain = ctx:get(player, "status.drain")
+    local drain = ctx:get(player, component.PLAYER_DRAIN)
     local drain_loss = drain and drain.amount or 0
     local base_hp = math.max(1, formulas.max_hp(ctx, player,
         progress.level, species, skills.entries) - drain_loss)

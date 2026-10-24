@@ -47,7 +47,7 @@ end
 -- Severe drain turns Zot's next touch lethal once maximum HP is at most a tenth of its undrained value.
 local function fatal_range(ctx, player)
     local health = ctx:get(player, component.HEALTH)
-    local drain = ctx:get(player, "status.drain")
+    local drain = ctx:get(player, component.PLAYER_DRAIN)
 
     if not health or not drain or drain.amount <= 0 then
         return false

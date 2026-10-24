@@ -28,7 +28,7 @@ local statuses = {
     component.ZAP_FLIGHT,
     zap.CONTAMINATION,
     zap.PLAYER_CONFUSION,
-    "status.drain",
+    component.PLAYER_DRAIN,
 }
 
 return statuses

@@ -1,6 +1,8 @@
 -- Temporary max-HP loss persists through a save and recovers from XP.
+local component = require("constants.component")
+
 register.component{
-    id = "status.drain",
+    id = component.PLAYER_DRAIN,
     version = 1,
     -- The drain amount reduces derived maximum HP until experience repays the temporary loss.
     fields = {

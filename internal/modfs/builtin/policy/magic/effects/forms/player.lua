@@ -215,7 +215,7 @@ local function base_hp(ctx, player)
     end
 
     local species = character_catalog.get("species", origin.species_id)
-    local drain = ctx:get(player, "status.drain")
+    local drain = ctx:get(player, component.PLAYER_DRAIN)
     local permanent = ctx:get(player, component.PERMANENT_HP_LOSS)
     local loss = (drain and drain.amount or 0) +
         (permanent and permanent.amount or 0)

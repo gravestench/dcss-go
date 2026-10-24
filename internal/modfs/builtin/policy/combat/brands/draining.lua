@@ -1,4 +1,5 @@
 local formulas = require("policy.character.formulas")
+local component = require("constants.component")
 local roll = require("policy.combat.roll")
 local player_health = require("policy.combat.player_health")
 local player_drain = require("policy.combat.player_drain")
@@ -8,7 +9,7 @@ local draining = {}
 -- Earned XP pays down temporary drain using the pre-training skill cost so
 -- kill order cannot change the amount recovered.
 local function recover(ctx, actor, xp)
-    local state = ctx:get(actor, "status.drain")
+    local state = ctx:get(actor, component.PLAYER_DRAIN)
 
     if not state or state.amount <= 0 then
         return
@@ -37,10 +38,10 @@ local function recover(ctx, actor, xp)
     ctx:set(actor, "core.health", health)
 
     if state.amount == 0 then
-        ctx:remove(actor, "status.drain")
+        ctx:remove(actor, component.PLAYER_DRAIN)
         ctx:emit("recovery", "Your life force feels restored.")
     else
-        ctx:set(actor, "status.drain", state)
+        ctx:set(actor, component.PLAYER_DRAIN, state)
     end
 end
 

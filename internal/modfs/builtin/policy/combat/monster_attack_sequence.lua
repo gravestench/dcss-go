@@ -10,6 +10,12 @@ local roll = require("policy.combat.roll")
 
 local sequence = {}
 
+local drained_stats = {
+    flavours.DRAIN_STRENGTH,
+    flavours.DRAIN_INTELLIGENCE,
+    flavours.DRAIN_DEXTERITY,
+}
+
 local derived_species = {
     [monsters.MONS_ZOMBIE] = true,
     [monsters.MONS_SKELETON] = true,
@@ -140,6 +146,17 @@ function sequence.contact_type(ctx, attack)
     end
 
     return attack.type_id
+end
+
+-- `mons_attack_spec` replaces the abstract catalog flavour at contact time.
+-- Rolling here rather than at spawn keeps multiple claws in one round
+-- independent and leaves the authored catalog unchanged for later rounds.
+function sequence.contact_flavour(ctx, flavour_id)
+    if flavour_id ~= flavours.DRAIN_STAT then
+        return flavour_id
+    end
+
+    return drained_stats[roll.melee(ctx, #drained_stats) + 1]
 end
 
 -- Living hydras and Serpent variants can turn remaining heads toward an

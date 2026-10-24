@@ -1,5 +1,6 @@
 -- Example: A level gain reads the saved species choice before adding that species' attribute growth.
 local catalog = require("policy.catalog")
+local component = require("constants.component")
 local formulas = require("policy.character.formulas")
 local experience_limit = require("policy.character.experience_limit")
 local extra_lives = require("policy.character.extra_lives")
@@ -47,7 +48,7 @@ function advancement.apply_level(ctx, actor, level, species)
         error("player lacks advancement components")
     end
 
-    local drain = ctx:get(actor, "status.drain")
+    local drain = ctx:get(actor, component.PLAYER_DRAIN)
     local drain_loss = drain and drain.amount or 0
     mutation_transition.grant_scheduled(ctx, actor, species, level)
 
