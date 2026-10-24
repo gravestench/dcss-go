@@ -89,6 +89,22 @@ function wallet.spend(ctx, player, amount)
     ctx:set(player, component.WALLET, state)
 end
 
+-- Theft removes physical gold without recording a voluntary shop purchase.
+-- The monster's carried pile keeps the amount available as future loot.
+function wallet.steal(ctx, player, amount)
+    local state = balance(ctx, player)
+
+    if not valid_amount(amount) or amount == 0 or
+        state.gold < amount then
+        error("insufficient gold or invalid theft amount")
+    end
+
+    state.gold = state.gold - amount
+    ctx:set(player, component.WALLET, state)
+
+    return state.gold
+end
+
 -- Accept only floor gold outside shop stock, then destroy its entity after
 -- crediting the wallet so a repeated pickup cannot pay twice.
 function wallet.pickup(ctx, player, gold_entity)

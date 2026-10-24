@@ -181,6 +181,13 @@ Shadow bypasses evasion but not shields, gains the source pre-armour stab
 multiplier, and loses its temporary invisibility after a surviving target's
 successful contact even when armour absorbs the hit. Sleeping defenders
 grant the same damage bonus to ordinary monster melee.
+Maurice's Steal contact now scans eligible carried player items, weights
+them by fully identified source value, respects equipment and pending use,
+and transfers full or partial stacks into his Akara inventory. Source
+slot capacity and the gold diversion decide what he takes. Gold debits the
+saved wallet without recording a purchase and becomes recoverable carried
+loot with Zin tithe metadata. A stolen two-handed weapon drops his shield.
+Monster death drops and save validation use those same item entities.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except
