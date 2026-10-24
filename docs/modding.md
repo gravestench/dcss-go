@@ -1973,8 +1973,20 @@ even if its later damage roll is zero. Dowan and Duvessa also demonstrate
 death, Abyss banishment, and Arena separation call its grief operation;
 the ordinary monster spellbook and status owners read that saved state.
 Mods adding a linked pair should put the durable relation on ECS actors and
-connect every separation path through one owner. The current climb marker
-is reserved for the later monster stair-following travel slice.
+connect every separation path through one owner. The survivor's saved
+`can_climb` field is read by `policy.world.stair_followers` when an ordinary
+stair action is accepted. That owner tags eligible actors before monster
+decisions; `world.stairs` places them after the player reaches the linked
+floor and clears the action-only mark. For example, a modded friendly actor
+with live AI, energy, and ordinary-floor habitat can follow a connected
+stair with the same ECS identity and inventory. A new body class that
+cannot use stairs should be added to the stair owner's exclusion rule;
+new portal travel must call a separate follower policy because portal
+commit happens after the ordinary stair system. Branches tagged
+`no_x_level_travel` do not take ordinary followers, apart from the source
+Pandemonium exception. The owner reads `ctx:level_branch`, `ctx:stair_at`,
+`ctx:actor_at`, and `ctx:walkable` from the shared context rather than
+keeping a second map or actor registry in Lua.
 Divine Vigour stores an amount and timer in `religion.elyvilon_vigour`.
 The normal HP and MP formulas read that amount, so later training or level
 changes still produce the correct maxima. The god's `behavior_module`

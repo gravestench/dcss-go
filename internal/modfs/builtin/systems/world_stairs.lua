@@ -5,6 +5,7 @@ local terrain = require("constants.terrain")
 local transporters = require("policy.world.transporters")
 local intents = require("constants.intent")
 local landing = require("policy.world.stair_landing")
+local followers = require("policy.world.stair_followers")
 local endgame = require("policy.character.endgame")
 
 local system = {}
@@ -47,6 +48,7 @@ function system.update(ctx, actor, elapsed_aut)
         barbs.moved(ctx, actor, elapsed_aut)
 
         if ctx:get(actor, component.HEALTH).current <= 0 then
+            followers.clear(ctx)
             return
         end
 
@@ -97,6 +99,7 @@ function system.update(ctx, actor, elapsed_aut)
         barbs.moved(ctx, actor, elapsed_aut)
 
         if ctx:get(actor, component.HEALTH).current <= 0 then
+            followers.clear(ctx)
             return
         end
     end
@@ -106,6 +109,7 @@ function system.update(ctx, actor, elapsed_aut)
             error("only the player can leave the Dungeon")
         end
 
+        followers.clear(ctx)
         endgame.leave(ctx, actor)
 
         return
@@ -115,6 +119,12 @@ function system.update(ctx, actor, elapsed_aut)
         link.to_level_id, link.to_x, link.to_y)
 
     ctx:move_actor(actor, link.to_level_id, arrival_x, arrival_y)
+
+    if actor == ctx:player() then
+        followers.transfer(ctx, actor, position,
+            link.to_level_id, arrival_x, arrival_y)
+    end
+
     ctx:emit("stairs", "You take the stairs.")
 end
 

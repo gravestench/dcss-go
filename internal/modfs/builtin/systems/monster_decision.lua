@@ -238,6 +238,12 @@ function system.update(ctx, entity)
         return
     end
 
+    -- Stair followers were tagged at accepted action start. Source
+    -- MF_TAKING_STAIRS holds their movement until the player changes floor.
+    if ctx:has(entity, component.MONSTER_STAIR_FOLLOWER) then
+        return
+    end
+
     -- The source waits until the survivor sees the player to activate a
     -- pending twin grief response. Do this before choosing its action.
     elven_twins.maybe_energize(ctx, entity)

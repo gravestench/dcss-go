@@ -200,6 +200,9 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 	if _, err := g.scripts.Policy("command.action_start", map[string]any{
 		"waited_explicitly": prepared.waitedExplicitly,
 		"portal_travel":     prepared.portal != nil,
+		"stair_travel": prepared.portal == nil &&
+			(prepared.intent.Kind == ecs.IntentUpstairs ||
+				prepared.intent.Kind == ecs.IntentDownstairs),
 	}); err != nil {
 		g.scripts.DiscardPending()
 

@@ -1,5 +1,7 @@
 local acrobat = require("policy.jewellery.acrobat")
 local signals = require("constants.world_signals")
+local component = require("constants.component")
+local followers = require("policy.world.stair_followers")
 
 local action = {}
 
@@ -15,6 +17,15 @@ function action.run(ctx, input)
     -- cannot close during the same turn and invalidate the travel plan.
     if input.portal_travel == true then
         ctx:signal(signals.PORTAL_TRAVEL, ctx:player())
+    end
+
+    -- The destination has been validated by Go before this accepted
+    -- action, and monster decisions have not yet run for its stair delay.
+    if input.stair_travel == true then
+        local player = ctx:player()
+        local origin = ctx:get(player, component.POSITION)
+
+        followers.tag(ctx, player, origin)
     end
 
     return {}

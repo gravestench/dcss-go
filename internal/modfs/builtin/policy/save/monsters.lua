@@ -38,6 +38,7 @@ local vault_effects = require("constants.vault_effects")
 local beast_form = require("policy.monsters.mutant_beast.form")
 local pacification = require("policy.religion.elyvilon.pacification")
 local elven_twins = require("policy.monsters.elven_twins")
+local stair_followers = require("policy.world.stair_followers")
 
 -- A merge may consume an authored slime whose fixed HP differs from the
 -- survivor's. Saved vault records retain that source maximum after death;
@@ -463,6 +464,7 @@ end
 function module.run(ctx, input)
     pacification.validate(ctx)
     elven_twins.validate(ctx)
+    stair_followers.validate(ctx)
     avatar.validate(ctx)
     entities.validate(ctx)
     inventory.validate(ctx)
