@@ -2,39 +2,49 @@ local brands = require("constants.weapon_brands")
 
 local launcher_brands = {}
 
--- Resolve a launcher brand ID to its damage module while rejecting unknown egos.
-local function effect(id)
-    local brand_id = id == "" and brands.NORMAL or id
-    local name = brand_id:match("^SPWPN_([A-Z_]+)$")
+-- makeitem.cc permits these brands on ranged weapons, even when the
+-- ordinary launcher generation weights do not happen to choose one.
+local legal = {
+    [brands.NORMAL] = true,
+    [brands.VENOM] = true,
+    [brands.PROTECTION] = true,
+    [brands.SPEED] = true,
+    [brands.VORPAL] = true,
+    [brands.CHAOS] = true,
+    [brands.HOLY_WRATH] = true,
+    [brands.ELECTROCUTION] = true,
+    [brands.FLAMING] = true,
+    [brands.FREEZING] = true,
+    [brands.PENETRATION] = true,
+    [brands.ACID] = true,
+}
 
-    if not name then
+-- Speed and Penetration act before contact. Protection instead refreshes
+-- a player aura on a hit, so it must reach the target brand owner.
+local passive = {
+    [brands.SPEED] = true,
+    [brands.PENETRATION] = true,
+}
+
+local function normalized(id)
+    return (id == nil or id == "") and brands.NORMAL or id
+end
+
+-- Validate by source eligibility before loading the focused effect file.
+-- A mod cannot make a melee-only brand legal by adding a Lua module name.
+function launcher_brands.check(id)
+    local brand_id = normalized(id)
+
+    if not legal[brand_id] then
         error("invalid launcher brand " .. tostring(id))
     end
 
-    local module = require("policy.combat.launcher_brands." .. name:lower())
-
-    if type(module) ~= "table" or type(module.apply) ~= "function" then
-        error("launcher brand " .. brand_id .. " has no apply function")
-    end
-
-    return module
+    return brand_id
 end
 
--- Example: launcher_brands.check(id) with invalid launcher ego -> validation error
--- Validate a launcher ego by resolving its module before missiles are fired.
-function launcher_brands.check(id)
-    effect(id)
-end
-
--- Launcher brands only add damage after a missile deals positive base damage.
-function launcher_brands.apply(ctx, id, missile, defender, damage,
-    target, attacker, health, weapon_entity)
-    if damage <= 0 then
-        return 0
-    end
-
-    return effect(id).apply(ctx, missile, defender, damage,
-        target, attacker, health, weapon_entity)
+-- A passive brand has no post-hit handler; timing or trajectory owns it.
+function launcher_brands.passive(id)
+    return passive[launcher_brands.check(id)] == true
 end
 
 return launcher_brands

@@ -16,10 +16,10 @@ local artefact_properties = require("policy.item_generation.artefacts.properties
 local artefact_ids = require("ids.artefact_properties")
 local monster_flags = require("constants.monster_flags")
 local missile_egos = require("constants.missile_egos")
-local weapon_brands = require("constants.weapon_brands")
 local item_ids = require("ids.items")
 local ego_effects = require("policy.combat.monster_missile_egos")
-local ego_poison = require("policy.combat.monster_missile_egos.poison")
+local player_poison = require("policy.combat.player_poison")
+local target_brands = require("policy.combat.monster_target_brands")
 local exploding = require(
     "policy.combat.monster_missile_egos.exploding")
 local projectile_effects = require("policy.combat.projectile_effects")
@@ -154,31 +154,22 @@ local function return_launcher(ctx, attacker, launcher, definition,
     local weapon = launcher_profile(ctx, launcher)
     local rebound = effect.resolve_launcher(ctx, attacker, definition,
         defense, weapon, launcher.item, projectile)
-    local extra = 0
-    local extra_message
-    local chaos = launcher.ego == weapon_brands.CHAOS
-
-    if rebound.kind == "hit" and not chaos then
-        extra, extra_message = launcher_brands.apply(ctx,
-            launcher.ego or "", projectile, definition, rebound.damage)
-    end
-
     local remaining = reflection.return_outcome(ctx, ctx:player(), attacker,
         definition, projectile.name, rebound)
 
-    if remaining and remaining.current > 0 then
-        if chaos then
-            launcher_brands.apply(ctx, launcher.ego,
-                projectile, definition, rebound.damage,
-                attacker, ctx:player(), remaining,
-                launcher.entity)
-        end
-
-        reflection.extra_damage(ctx, ctx:player(), attacker, extra)
-    end
-
-    if extra_message then
-        ctx:emit("combat", extra_message)
+    if rebound.kind == "hit" and remaining and
+        not launcher_brands.passive(launcher.ego) then
+        target_brands.apply(ctx, launcher.ego or "", {
+            attacker = ctx:player(),
+            attacker_name = "you",
+            defender = attacker,
+            definition = definition,
+            damage_done = rebound.damage,
+            health = remaining,
+            weapon_entity = launcher.entity,
+            projectile_name = projectile.name,
+            player_credit = true,
+        })
     end
 end
 
@@ -265,7 +256,7 @@ local function launcher_attack(ctx, attacker, launcher, definition, defense, hea
     return_launcher(ctx, attacker, launcher, definition,
         projectile, effect, outcome)
 
-    if outcome.kind == "hit" and
+    if outcome.kind == "hit" and not launcher_brands.passive(brand) and
         (health.current > 0 or brands.after_death(brand)) then
         brands.apply(ctx, brand, outcome.damage, definition.id,
             projectile.name, health)
@@ -310,7 +301,7 @@ local function missile_attack(ctx, attacker, missile, definition, defense, healt
     end
 
     if poison > 0 then
-        ego_poison.deliver(ctx, poison, definition.id)
+        player_poison.deliver(ctx, poison, definition.id)
     end
 
     -- The saved ego acts only after base damage leaves a living target.

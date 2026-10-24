@@ -29,6 +29,8 @@ function module.run(ctx)
     local drain = ctx:get(player, "status.drain")
     local stat_loss = ctx:get(player, component.STAT_LOSS)
     local icy_defense = ctx:get(player, component.ICY_DEFENSE)
+    local weapon_protection = ctx:get(player,
+        component.WEAPON_PROTECTION)
     local sanguine_armour = ctx:get(player, component.SANGUINE_ARMOUR)
     local agility = ctx:get(player, component.AGILITY)
     local damage_safety = ctx:get(player, component.DAMAGE_SAFETY)
@@ -136,6 +138,12 @@ function module.run(ctx)
     if icy_defense and (icy_defense.remaining_aut < 0 or
         icy_defense.remaining_aut > 300) then
         error("invalid player icy defense depletion")
+    end
+
+    if weapon_protection and
+        (weapon_protection.remaining_aut < 1 or
+            weapon_protection.remaining_aut > 50) then
+        error("invalid player weapon protection duration")
     end
 
     if sanguine_armour and (sanguine_armour.remaining_aut < 0 or

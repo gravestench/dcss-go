@@ -813,6 +813,16 @@ missiles use a radius-one fragment blast on contact, including a returned
 shot. Reflected hits reuse monster-facing missile effects. The Zot route
 integration test exports text maps and stair connections at
 `docs/level-snapshots/zot-route` when requested.
+All twelve source-legal launcher weapon brands now validate before firing.
+The player and monster projectile actions send active brands through the
+ordinary Lua weapon-brand owners. Speed changes launcher delay; Protection
+refreshes a saved, short +7 AC aura after a qualifying player hit; and
+Penetration bypasses shields and continues along the player's traced ray.
+Holy Wrath recognizes live undead or demonic
+players, Electrocution respects rElec, and Venom uses the shared player
+poison gate. Current launchers use virtual ordinary arrows and bolts;
+physical branded ammo and its source launcher-brand suppression remain an
+explicit later ammunition-state slice.
 The three Dis:1–6 divisions layouts now use their source weights and map
 geometry: recursive rooms, an irregular-room lattice, and overlapping boxes.
 Their procedural Lua hooks retain source statue style directives as typed

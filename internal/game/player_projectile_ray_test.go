@@ -98,6 +98,64 @@ func TestMissedProjectileContinuesToSecondActor(t *testing.T) {
 	t.Fatal("no first-actor miss across tested seeds")
 }
 
+// Penetration keeps a launcher projectile on its traced ray after a real
+// first hit, so a second actor can still receive its own contact roll.
+func TestPenetrationLauncherContinuesAfterFirstHit(t *testing.T) {
+	for seed := uint64(1); seed <= 20; seed++ {
+		g, err := NewScenario(seed, "WPN_RAPIER", "Tester")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
+			g.Close()
+			t.Fatal(err)
+		}
+
+		cloneRatOnRay(t, g, 5, 1)
+		launcherID := equipPlayerLauncher(t, g, "WPN_SLING")
+		launcher, _ := g.stores.Items.Get(launcherID)
+
+		launcher.Ego = "SPWPN_PENETRATION"
+
+		result, err := g.Step(Command{
+			Kind: CommandFire,
+			DX:   2,
+		})
+
+		g.Close()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		contacts := 0
+		firstHit := false
+
+		for _, event := range result.Events {
+			if strings.Contains(event.Text, "sling bullet") &&
+				strings.Contains(event.Text, "the rat") {
+				contacts++
+
+				if contacts == 1 && strings.Contains(event.Text, "hits") {
+					firstHit = true
+				}
+			}
+		}
+
+		if firstHit {
+			if contacts != 2 {
+				t.Fatalf("penetrating shot touched %d actors, want 2", contacts)
+			}
+
+			return
+		}
+	}
+
+	t.Fatal("no first-actor launcher hit across tested seeds")
+}
+
 func TestThrownNetContinuesBeyondAimCell(t *testing.T) {
 	g := newStepGame(t)
 

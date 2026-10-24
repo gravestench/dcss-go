@@ -119,6 +119,98 @@ func TestPlayerFiresWieldedLauncherThroughRangedIntent(t *testing.T) {
 	t.Fatalf("firing had no shot event: %+v", result.Events)
 }
 
+// A source-legal Acid launcher uses the ordinary player firing command and
+// keeps its equipped brand after the resulting turn is saved and restored.
+func TestAcidLauncherShotSurvivesSaveRestore(t *testing.T) {
+	g := newStepGame(t)
+	defer g.Close()
+
+	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
+		t.Fatal(err)
+	}
+
+	rat := ratID(t, g)
+	ratHealth, _ := g.stores.Health.Get(rat)
+	originalMax := ratHealth.Max
+
+	ratHealth.Current = 1000
+	ratHealth.Max = 1000
+
+	launcherID := equipPlayerLauncher(t, g, "WPN_SLING")
+	launcher, _ := g.stores.Items.Get(launcherID)
+
+	launcher.Ego = "SPWPN_ACID"
+
+	splashed := false
+
+	for attempt := 0; attempt < 20 && !splashed; attempt++ {
+		result, err := g.Step(Command{
+			Kind: CommandFire,
+			DX:   1,
+		})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if result.Spent <= 0 {
+			t.Fatal("Acid launcher shot did not spend a turn")
+		}
+
+		for _, event := range result.Events {
+			if strings.Contains(event.Text, "rat is splashed with acid") {
+				splashed = true
+			}
+		}
+	}
+
+	if !splashed {
+		t.Fatal("Acid launcher never splashed its struck target")
+	}
+
+	// Restore source-valid rat HP before asking the save validator to load it.
+	ratHealth, _ = g.stores.Health.Get(rat)
+	ratHealth.Max = originalMax
+	ratHealth.Current = min(ratHealth.Current, originalMax)
+
+	before := g.Snapshot()
+	restored, err := Restore(before)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	if !reflect.DeepEqual(before, restored.Snapshot()) {
+		t.Fatal("Acid launcher turn changed across save restore")
+	}
+}
+
+// Melee-only brands on a saved launcher must be rejected before the player
+// spends time or changes the live ECS state.
+func TestInvalidLauncherBrandDoesNotSpendTurn(t *testing.T) {
+	g := newStepGame(t)
+	launcherID := equipPlayerLauncher(t, g, "WPN_SLING")
+	launcher, _ := g.stores.Items.Get(launcherID)
+
+	launcher.Ego = "SPWPN_VAMPIRISM"
+
+	before := g.Snapshot()
+	_, err := g.Step(Command{
+		Kind: CommandFire,
+		DX:   1,
+	})
+
+	if err == nil {
+		t.Fatal("melee-only launcher brand was accepted")
+	}
+
+	if !reflect.DeepEqual(before, g.Snapshot()) {
+		t.Fatal("invalid launcher brand spent a turn")
+	}
+}
+
 func TestPlayerCanFireEveryImportedLauncherFamily(t *testing.T) {
 	launchers := []string{
 		"WPN_BLOWGUN",

@@ -8,13 +8,13 @@ local chaos_effects = require(
     "policy.combat.monster_target_brands.chaos_effects")
 local confusion = require(
     "policy.magic.effects.statuses.confusing_touch")
-local launcher_brands = require("policy.combat.launcher_brands")
+local launcher_flame = require("policy.combat.launcher_brands.flaming")
+local launcher_frost = require("policy.combat.launcher_brands.freezing")
 local monster_enchant = require("policy.combat.monster_enchant")
 local allegiance = require(
     "policy.magic.effects.statuses.monster_allegiance")
 local missile_egos = require("constants.missile_egos")
 local silver = require("policy.combat.monster_missile_egos.silver")
-local weapon_brands = require("constants.weapon_brands")
 local item_ids = require("ids.items")
 local skills = require("ids.skills")
 
@@ -93,10 +93,10 @@ function effects.missile(ctx, ego, missile, monster, defender, damage, remaining
     end
 
     if ego == missile_egos.FLAME or ego == missile_egos.FROST then
-        local brand = ego == missile_egos.FLAME and
-            weapon_brands.FLAMING or weapon_brands.FREEZING
-        local extra, message = launcher_brands.apply(ctx,
-            brand, missile, defender, damage)
+        local effect = ego == missile_egos.FLAME and
+            launcher_flame or launcher_frost
+        local extra, message = effect.apply(ctx,
+            missile, defender, damage)
 
         if message then
             ctx:emit("combat", message)

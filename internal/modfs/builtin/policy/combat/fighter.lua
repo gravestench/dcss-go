@@ -22,6 +22,7 @@ local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
 local acrobat = require("policy.jewellery.acrobat")
 local corrosion = require("policy.combat.player_corrosion")
+local weapon_protection = require("policy.combat.player_weapon_protection")
 local artefact_properties = require("policy.item_generation.artefacts.properties")
 local artefact_ids = require("ids.artefact_properties")
 local skill_order = require("data.skill_order")
@@ -389,8 +390,8 @@ function fighter.defense(ctx)
     scaled_ac = scaled_ac + 100 * artefact_properties.sum_worn(ctx,
         player, artefact_ids.AC)
 
-    if worn.weapon and worn.weapon.ego == weapon_brands.PROTECTION then
-        scaled_ac = scaled_ac + 500
+    if weapon_protection.active(ctx, player) then
+        scaled_ac = scaled_ac + 700
     end
 
     local ac = math.max(0, math.floor(scaled_ac / 100) -

@@ -15,6 +15,7 @@ local player_attributes = require("policy.character.attributes")
 local vision = require("policy.character.vision")
 local player_slay = require("policy.combat.player_slay")
 local monster_health = require("policy.combat.monster_health")
+local target_brands = require("policy.combat.monster_target_brands")
 local attack_conduct = require("policy.religion.conduct.attack")
 local projectile_conduct = require("policy.religion.conduct.projectiles")
 local missile_egos = require("constants.missile_egos")
@@ -135,7 +136,8 @@ local function attack_input(ctx, player, missile, launcher, item, target, defend
         missile_repulsion = repulsion.active(ctx, target),
         defender_ac = monster_defense.armour(ctx, target, defender),
         defender_shield = monster_defense.shield(ctx, target, defender),
-        penetrating = missile.id == item_ids.MI_JAVELIN,
+        penetrating = missile.id == item_ids.MI_JAVELIN or
+            launcher and item.ego == weapon_brands.PENETRATION,
         mighty = false,
     }
 
@@ -161,7 +163,6 @@ local function resolve_target(ctx, player, missile, launcher, item,
     end
 
     local message = "The " .. missile.name .. " misses the " .. defender.name .. "."
-    local effect_message
     local caught = false
 
     if outcome.pierced_shield then
@@ -180,47 +181,46 @@ local function resolve_target(ctx, player, missile, launcher, item,
                 not ctx:has(target, "projectile.held")
         else
             local health = ctx:get(target, "core.health")
-            local brand_damage = 0
-
-            local chaos_launcher = launcher and
-                item.ego == weapon_brands.CHAOS
-
-            if launcher and not chaos_launcher then
-                brand_damage, effect_message = launcher_brands.apply(ctx,
-                    item.ego, missile, defender, outcome.damage)
-            end
 
             health, outcome.damage = monster_health.damage(ctx, target,
                 outcome.damage, player)
             local base_killed = health.current == 0
 
-            if chaos_launcher and health.current > 0 then
-                brand_damage = launcher_brands.apply(ctx,
-                    item.ego, missile, defender, outcome.damage,
-                    target, player, health, item_entity)
-                health = ctx:get(target, "core.health")
+            if base_killed then
+                ctx:signal("player_kill", target)
             end
 
-            if health.current > 0 and not launcher then
-                brand_damage = brand_damage + effects.missile(ctx,
+            if launcher then
+                if not launcher_brands.passive(item.ego) then
+                    local hit = {
+                        attacker = player,
+                        attacker_name = "you",
+                        defender = target,
+                        definition = defender,
+                        damage_done = outcome.damage,
+                        health = health,
+                        weapon_entity = item_entity,
+                        projectile_name = missile.name,
+                        player_credit = true,
+                    }
+
+                    target_brands.apply(ctx, item.ego or "", hit)
+                    health = hit.health
+                end
+            elseif health.current > 0 then
+                local extra = effects.missile(ctx,
                     item.ego, missile, target, defender, outcome.damage,
                     health.current)
-            end
+                health = monster_health.damage(ctx, target, extra, player)
 
-            health = monster_health.damage(ctx, target, brand_damage, player)
-
-            if health.current == 0 and
-                (not chaos_launcher or base_killed) then
-                ctx:signal("player_kill", target)
+                if health.current == 0 then
+                    ctx:signal("player_kill", target)
+                end
             end
         end
     end
 
     ctx:emit("combat", message)
-
-    if effect_message then
-        ctx:emit("combat", effect_message)
-    end
 
     return defender, caught, outcome.kind
 end
@@ -238,7 +238,13 @@ function projectiles.resolve(ctx, player, intent)
     local position = ctx:get(player, "core.position")
     local entity = intent.item_id
     local missile, launched, launcher, item = missile_for(ctx, entity)
-    local penetrating = not launched and missile.id == item_ids.MI_JAVELIN
+
+    if launched then
+        launcher_brands.check(item.ego)
+    end
+
+    local penetrating = not launched and missile.id == item_ids.MI_JAVELIN or
+        launched and item.ego == weapon_brands.PENETRATION
     local portal = statuses.portal_projectile_active(ctx, player)
     local impact
 

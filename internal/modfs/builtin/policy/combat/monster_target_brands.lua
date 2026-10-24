@@ -33,6 +33,10 @@ end
 -- captured brand, so describe its attack rather than inventing a weapon.
 function target_brands.subject(ctx, hit)
     if ctx:has(hit.attacker, component.PLAYER) then
+        if hit.projectile_name then
+            return "The " .. hit.projectile_name
+        end
+
         return "Your weapon"
     end
 

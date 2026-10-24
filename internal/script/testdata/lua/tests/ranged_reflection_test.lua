@@ -274,6 +274,69 @@ local function other_launcher_brands(ctx)
     end
 end
 
+-- A returned Acid bullet uses the ordinary monster-target splash owner;
+-- the original player block does not receive the launcher's corrosion.
+local function reflected_acid_launcher(ctx)
+    local battle, player, shooter = fixture.scene(ctx,
+        ids.MI_SLING_BULLET, true)
+    local launcher = fixture.launcher(ctx, shooter, brands.ACID)
+
+    fixture.block_then_return(battle)
+    ranged_actions.monster(battle, shooter, { item_id = launcher })
+
+    harness.equal(ctx:get(player, component.HEALTH).current, 20,
+        "reflecting an Acid bullet protects the player")
+
+    local splashed = false
+
+    for _, event in ipairs(battle.events()) do
+        if event.text:find("splashed with acid", 1, true) then
+            splashed = true
+        end
+    end
+
+    harness.truthy(splashed,
+        "Acid launcher effect follows the returned bullet")
+end
+
+-- A real monster-fired Acid shot reaches the player-facing brand owner
+-- after contact, even without reflection or a special projectile ego.
+local function monster_acid_launcher(ctx)
+    local battle, player, shooter = fixture.scene(ctx,
+        ids.MI_SLING_BULLET, false, nil, false)
+    local launcher = fixture.launcher(ctx, shooter, brands.ACID)
+    local draws = 0
+
+    function battle.random(_, _, bound)
+        draws = draws + 1
+
+        if draws == 2 or draws == 3 then
+            return 0
+        end
+
+        return bound - 1
+    end
+
+    ranged_actions.monster(battle, shooter, { item_id = launcher })
+
+    local splashed = false
+    local messages = {}
+
+    for _, event in ipairs(battle.events()) do
+        messages[#messages + 1] = event.text
+
+        if event.text:find("You are splashed with acid!", 1, true) then
+            splashed = true
+        end
+    end
+
+    harness.truthy(splashed,
+        "monster launcher routed Acid through the player brand owner: " ..
+            table.concat(messages, " | "))
+    harness.truthy(ctx:get(player, component.HEALTH).current < 20,
+        "monster Acid launcher damaged the player")
+end
+
 -- Slug Dart's bespoke ranged path still has to use the common reflection
 -- behavior after the player's shield blocks it.
 local function reflected_slug_dart(ctx)
@@ -409,6 +472,8 @@ function test.run(ctx)
     missed_dart_does_not_poison(ctx)
     reflected_launcher(ctx)
     other_launcher_brands(ctx)
+    reflected_acid_launcher(ctx)
+    monster_acid_launcher(ctx)
     reflected_slug_dart(ctx)
     monster_blocks_slug_dart(ctx)
     slug_dart_return_blocked(ctx)

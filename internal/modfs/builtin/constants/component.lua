@@ -156,6 +156,7 @@ local component = {
     CHAOS_CLONE_REWARDS = "combat.chaos_clone_rewards",
     BANISHMENT = "world.banishment",
     DURATIONS = "core.durations",
+    WEAPON_PROTECTION = "combat.player_weapon_protection",
     EQUIPPED = "core.equipped",
     EQUIPMENT_DELAY = "core.equipment_delay",
     CONSTRICTION = "core.constricted",

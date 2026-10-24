@@ -3,6 +3,7 @@
 -- equipped bow or crossbow supplies weapon damage, accuracy, enchantment,
 -- and brand. Reflection reuses this exact resolver against the shooter.
 local brands = require("policy.combat.launcher_brands")
+local weapon_brands = require("constants.weapon_brands")
 local ranged = require("policy.combat.ranged")
 local monster_stats = require("policy.combat.monster_stats")
 
@@ -27,6 +28,7 @@ local function resolve_launcher(ctx, attacker, definition, defense,
         weapon_plus = launcher.plus,
         projectile_damage = projectile.missile.damage,
         natural_damage = definition.attacks[1].damage,
+        penetrating = launcher.ego == weapon_brands.PENETRATION,
     }, defense)
 end
 

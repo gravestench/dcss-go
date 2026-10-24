@@ -10,7 +10,7 @@ local gods = require("constants.gods")
 local ranged_fixture = require("tests.fixtures.ranged_reflection")
 local harness = require("tests.harness")
 local items = require("ids.items")
-local launcher_brands = require("policy.combat.launcher_brands")
+local target_brands = require("policy.combat.monster_target_brands")
 local missile_egos = require("constants.missile_egos")
 local monsters = require("ids.monsters")
 local projectile_effects = require("policy.combat.projectile_effects")
@@ -153,9 +153,16 @@ function test.run(ctx)
         monsters.MONS_GOBLIN)
     local target_health = ctx:get(target, component.HEALTH)
 
-    launcher_brands.apply(launcher_context, weapon_brands.CHAOS,
-        stone, target_definition, 5, target, archer,
-        target_health)
+    target_brands.apply(launcher_context, weapon_brands.CHAOS, {
+        attacker = archer,
+        attacker_name = "you",
+        defender = target,
+        definition = target_definition,
+        damage_done = 5,
+        health = target_health,
+        projectile_name = stone.name,
+        player_credit = true,
+    })
     harness.equal(ctx:get(target, component.HEALTH).current, 39)
 
     -- The same item brand on a monster's melee weapon resolves against

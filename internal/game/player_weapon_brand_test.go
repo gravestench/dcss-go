@@ -132,17 +132,33 @@ func TestSpeedBrandShortensPlayerMeleeTurn(t *testing.T) {
 	}
 }
 
-func TestProtectionBrandAddsFiveACWhileWielded(t *testing.T) {
+func TestProtectionBrandGrantsTimedACAfterMeleeHit(t *testing.T) {
 	g := newStepGame(t)
 	defer g.Close()
 
-	baseline := g.View().PlayerAC
+	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
+		t.Fatal(err)
+	}
+
 	weapon, _ := g.stores.Items.Get(playerMeleeWeapon(t, g))
 
 	weapon.Ego = "SPWPN_PROTECTION"
 
-	if got := g.View().PlayerAC; got != baseline+5 {
-		t.Fatalf("protection brand AC = %d, want %d", got, baseline+5)
+	baseline := g.View().PlayerAC
+
+	for attempt := 0; attempt < 30 &&
+		g.View().PlayerAC == baseline; attempt++ {
+		if _, err := g.Step(Command{
+			Kind: CommandMove,
+			DX:   1,
+		}); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if got := g.View().PlayerAC; got != baseline+7 {
+		t.Fatalf("protection melee aura AC = %d, want %d",
+			got, baseline+7)
 	}
 
 	snapshot := g.Snapshot()
@@ -154,14 +170,66 @@ func TestProtectionBrandAddsFiveACWhileWielded(t *testing.T) {
 
 	defer restored.Close()
 
-	if got := restored.View().PlayerAC; got != baseline+5 {
-		t.Fatalf("restored protection AC = %d, want %d", got, baseline+5)
+	if got := restored.View().PlayerAC; got != baseline+7 {
+		t.Fatalf("restored protection aura AC = %d, want %d",
+			got, baseline+7)
 	}
 
-	weapon.Ego = ""
+	for attempt := 0; attempt < 6; attempt++ {
+		if _, err := g.Step(Command{Kind: CommandWait}); err != nil {
+			t.Fatal(err)
+		}
+	}
 
 	if got := g.View().PlayerAC; got != baseline {
-		t.Fatalf("unbranded weapon AC = %d, want %d", got, baseline)
+		t.Fatalf("expired protection aura AC = %d, want %d",
+			got, baseline)
+	}
+}
+
+// A launcher hit refreshes the same short aura as a melee Protection hit.
+func TestProtectionLauncherGrantsTimedACAfterHit(t *testing.T) {
+	g := newStepGame(t)
+	defer g.Close()
+
+	if err := g.levels[1].MoveActor(g.player, 3, 1); err != nil {
+		t.Fatal(err)
+	}
+
+	launcherID := equipPlayerLauncher(t, g, "WPN_SLING")
+	launcher, _ := g.stores.Items.Get(launcherID)
+
+	launcher.Ego = "SPWPN_PROTECTION"
+
+	baseline := g.View().PlayerAC
+
+	for attempt := 0; attempt < 30 &&
+		g.View().PlayerAC == baseline; attempt++ {
+		if _, err := g.Step(Command{
+			Kind: CommandFire,
+			DX:   1,
+		}); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if got := g.View().PlayerAC; got != baseline+7 {
+		t.Fatalf("protection launcher aura AC = %d, want %d",
+			got, baseline+7)
+	}
+
+	snapshot := g.Snapshot()
+	restored, err := Restore(snapshot)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	if got := restored.View().PlayerAC; got != baseline+7 {
+		t.Fatalf("restored protection launcher aura AC = %d, want %d",
+			got, baseline+7)
 	}
 }
 

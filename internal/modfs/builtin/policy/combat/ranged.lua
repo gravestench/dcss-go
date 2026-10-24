@@ -4,7 +4,8 @@ local player_attack = require("policy.combat.player_attack")
 local ranged = {}
 
 -- Apply missile repulsion before the monster hit roll, then compare against EV and shield.
-local function contact(ctx, hd, weapon_hit, weapon_plus, defense)
+local function contact(ctx, hd, weapon_hit, weapon_plus, defense,
+    penetrating)
     local hit_base = math.max(0, 18 + math.floor(hd * 3 / 2) + weapon_hit + weapon_plus)
     local modifier = defense.visible_hit_modifier or 0
 
@@ -27,7 +28,7 @@ local function contact(ctx, hd, weapon_hit, weapon_plus, defense)
 
     -- Source: attack.cc. The original shooter cannot shield
     -- against its own returned thrown or launched missile.
-    if defense.skip_shield then
+    if defense.skip_shield or penetrating then
         -- The self-directed return proceeds directly to EV.
     elseif defense.monster_shield then
         local blocked = player_attack.shield_contact(ctx, {
@@ -81,7 +82,7 @@ end
 -- Separate contact from damage so a blocked missile does not consume damage RNG.
 function ranged.shot(ctx, shot, defense)
     local outcome = contact(ctx, shot.hd, shot.weapon_hit or 0,
-        shot.weapon_plus or 0, defense)
+        shot.weapon_plus or 0, defense, shot.penetrating)
 
     if outcome.kind ~= "hit" then
         return outcome
