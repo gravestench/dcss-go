@@ -31,6 +31,27 @@ function costs.enough_magic(ctx, player, amount)
     return magic ~= nil and magic.current >= amount
 end
 
+-- Fixed divine HP costs cannot kill the invoker. Check before creating a
+-- timed intent and again at commitment because the actor may have changed.
+function costs.enough_health(ctx, player, amount)
+    local health = ctx:get(player, component.HEALTH)
+
+    return health ~= nil and health.current > amount
+end
+
+-- Spend HP directly after a successful divine effect. Damage reactions
+-- do not run because the source treats this as a voluntary ability cost.
+function costs.spend_health(ctx, player, amount)
+    if not costs.enough_health(ctx, player, amount) then
+        error("divine ability lacks HP at commitment")
+    end
+
+    local health = ctx:get(player, component.HEALTH)
+
+    health.current = health.current - amount
+    ctx:set(player, component.HEALTH, health)
+end
+
 -- Source fail_basis::invo subtracts effective Invocations and the
 -- integer piety fraction. The ability supplies its own source tuple.
 function costs.failure_chance(ctx, player, base, scale, divisor)

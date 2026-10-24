@@ -23,7 +23,7 @@ function abilities.run(ctx, input)
     local writes = {}
 
     write(writes, 0, 0, "Use which ability?", colors.white)
-    write(writes, 0, 1, "        Ability                    Range",
+    write(writes, 0, 1, "        Ability                          Range",
         colors.light_blue)
 
     for index, option in ipairs(options) do
@@ -33,7 +33,7 @@ function abilities.run(ctx, input)
             break
         end
 
-        local label = string.format("  %s - %-25.25s %5d",
+        local label = string.format("  %s - %-31.31s %5d",
             menu.letter(index), option.name, option.range)
 
         write(writes, 0, y, label, colors.light_grey)

@@ -12,6 +12,11 @@ local trajectory = require("policy.combat.trajectory")
 local accuracy = require("policy.character.accuracy")
 local monster_stats = require("policy.combat.monster_stats")
 local attack_conduct = require("policy.religion.conduct.attack")
+local targets = require("policy.ai.targets")
+local beam_damage = require("policy.combat.monster_beams.damage")
+local flavours = require("constants.beam_flavours")
+local will = require("policy.magic.effects.zaps.will")
+local monster_drain = require("policy.combat.monster_drain")
 
 local projectile = { specs = {} }
 
@@ -68,6 +73,43 @@ local function damage_dice(ctx, spec, power)
     end
 
     return spec.damage.count, amount
+end
+
+-- Pain is a source enchantment: immunity precedes its will save, then
+-- damage bypasses EV and AC while negative-energy resistance still applies.
+local function enchantment_contact(ctx, player, target,
+    definition, spec, power)
+    if spec.negative_energy and
+        monster_drain.resistance(ctx, target, definition) >= 3 then
+        ctx:emit("spell", "The " .. definition.name ..
+            " is unaffected.")
+
+        return
+    end
+
+    -- Source zap data uses Pain's 7*power/2 hit calculator as enchantment
+    -- power. Capping first keeps its will check aligned with its damage.
+    local capped = math.min(power, spec.cap)
+    local enchant_power = spec.hit.base +
+        math.floor(capped * spec.hit.numerator / spec.hit.denominator)
+
+    if will.resists(ctx, definition, enchant_power, target) then
+        ctx:emit("spell", "The " .. definition.name ..
+            " resists " .. spec.name .. ".")
+
+        return
+    end
+
+    local count, sides = damage_dice(ctx, spec, capped)
+    local raw = dice(ctx, count, sides)
+    local amount = spec.negative_energy and
+        beam_damage.resisted(ctx, target, raw, {
+            flavour = flavours.BEAM_NEG,
+        }) or raw
+
+    magic_damage.apply(ctx, target, amount, player)
+    ctx:emit("spell", "The " .. definition.name ..
+        " writhes in agony.")
 end
 
 -- Monster body size and effective HD alter the shield's source block score.
@@ -215,9 +257,11 @@ end
 
 -- Trace once, then process contacts in path order; a bolt continues after a
 -- hit, while a non-beam projectile stops on block or hit.
-local function resolve(ctx, player, intent, spell, spec, power)
+local function resolve(ctx, player, intent, spell, spec, power,
+    range_override)
     local source = ctx:get(player, component.POSITION)
-    local range = spec.range or spell_range.for_spell(ctx, player, spell)
+    local range = range_override or spec.range or
+        spell_range.for_spell(ctx, player, spell)
     local ray
 
     if spec.bounce then
@@ -244,8 +288,19 @@ local function resolve(ctx, player, intent, spell, spec, power)
             if hit(ctx, spec, zap_power, fighter.defense(ctx).ev) then
                 local after_ac = magic_damage.player_armour(ctx,
                     player, raw, spec.ac_rule)
-                local amount = magic_damage.player_elemental(ctx,
-                    player, after_ac, spec.element)
+                local amount = after_ac
+
+                if spec.element_fraction then
+                    local flavoured = math.floor(after_ac *
+                        spec.element_fraction / 100)
+
+                    amount = after_ac - flavoured +
+                        magic_damage.player_elemental(ctx, player,
+                            flavoured, spec.element)
+                elseif spec.element then
+                    amount = magic_damage.player_elemental(ctx,
+                        player, after_ac, spec.element)
+                end
 
                 player_health.damage(ctx, player, amount)
                 ctx:emit("spell", "The " .. spec.name .. " hits you.")
@@ -263,6 +318,14 @@ local function resolve(ctx, player, intent, spell, spec, power)
 
             local definition = catalog.get("monsters", actor.kind_id)
             attack_conduct.report(ctx, target, definition)
+
+            if spec.enchantment then
+                enchantment_contact(ctx, player, target,
+                    definition, spec, power)
+
+                return
+            end
+
             local zap_power = math.min(power, spec.cap)
             local count, sides = damage_dice(ctx, spec, zap_power)
             local raw = dice(ctx, count, sides)
@@ -272,6 +335,17 @@ local function resolve(ctx, player, intent, spell, spec, power)
 
             if spec.poison_arrow then
                 amount, poison_resistance = poison_arrow_damage(amount, definition)
+            elseif spec.negative_energy then
+                amount = beam_damage.resisted(ctx, target, amount, {
+                    flavour = flavours.BEAM_NEG,
+                })
+            elseif spec.element_fraction then
+                local flavoured = math.floor(amount *
+                    spec.element_fraction / 100)
+
+                amount = amount - flavoured +
+                    magic_damage.monster_elemental(ctx, target,
+                        flavoured, spec.element)
             elseif spec.element then
                 amount = magic_damage.monster_elemental(ctx, target,
                     amount, spec.element)
@@ -318,8 +392,28 @@ local function resolve(ctx, player, intent, spell, spec, power)
 end
 
 -- Expose the shared projectile resolver to spell-specific callers without changing its spec.
-function projectile.fire(ctx, player, intent, spell, spec, power)
-    return resolve(ctx, player, intent, spell, spec, power)
+function projectile.fire(ctx, player, intent, spell, spec, power,
+    range_override)
+    return resolve(ctx, player, intent, spell, spec, power,
+        range_override)
+end
+
+-- Divine random beams trace their maximum straight path before choosing a
+-- zap. Refuse friendly contacts without spending a turn or consuming costs.
+function projectile.safe_aim(ctx, player, intent, reach)
+    local origin = ctx:get(player, component.POSITION)
+    local ray = trajectory.trace(ctx, origin.level_id,
+        origin.x, origin.y,
+        origin.x + intent.dx, origin.y + intent.dy, reach)
+
+    for _, contact in ipairs(ray.contacts) do
+        if contact.actor ~= player and
+            not targets.enemy(ctx, player, contact.actor) then
+            return false
+        end
+    end
+
+    return true
 end
 
 -- Use the same range and target predicate for casting preflight as resolution.

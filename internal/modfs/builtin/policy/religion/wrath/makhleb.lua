@@ -2,7 +2,7 @@
 -- servants. Both routes carry Makhleb as their damage or summon source.
 local component = require("constants.component")
 local gods = require("constants.gods")
-local monsters = require("ids.monsters")
+local roster = require("policy.religion.makhleb.roster")
 local spells = require("ids.spells")
 local streams = require("constants.rng_streams")
 local summons = require("policy.religion.wrath.summons")
@@ -12,21 +12,8 @@ local makhleb = {}
 
 -- random_choose draws uniformly in source order. Every creature receives
 -- Makhleb's god source even though the player is the placement anchor.
-local greater_kinds = {
-    monsters.MONS_EXECUTIONER,
-    monsters.MONS_GREEN_DEATH,
-    monsters.MONS_BLIZZARD_DEMON,
-    monsters.MONS_BALRUG,
-    monsters.MONS_CACODEMON,
-}
-
-local lesser_kinds = {
-    monsters.MONS_HELLWING,
-    monsters.MONS_NEQOXEC,
-    monsters.MONS_ORANGE_DEMON,
-    monsters.MONS_SMOKE_DEMON,
-    monsters.MONS_YNOXINUL,
-}
+local greater_kinds = roster.greater
+local lesser_kinds = roster.lesser
 
 -- The three source destruction tiers grow with XL. Each registered spell
 -- owns its beam, resistance, cloud, or lasting-status effect in Lua.

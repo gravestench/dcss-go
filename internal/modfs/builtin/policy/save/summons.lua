@@ -19,6 +19,7 @@ local resistance_ids = require("constants.resistance_ids")
 local holiness = require("constants.monster_holiness")
 local wizlab = require("constants.wizlab")
 local trog_roster = require("policy.religion.trog.brothers_roster")
+local makhleb_roster = require("policy.religion.makhleb.roster")
 
 local constructs = require("constants.monster_construct_components")
 local monster_profile = require("policy.combat.monster_profile")
@@ -151,6 +152,12 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         state.source_id == gods.TROG and owner_player and
         state.attitude == attitudes.FRIENDLY and
         state.expires_aut == 0
+    local makhleb_servant_source =
+        state.source_category == categories.GODS and
+        state.source_id == gods.MAKHLEB and owner_player and
+        (state.attitude == attitudes.FRIENDLY or
+            state.attitude == attitudes.HOSTILE) and
+        state.expires_aut > current_aut
     local permanent_spell = state.source_category == categories.SPELLS and
         (state.source_id == spells.SPELL_SIMULACRUM or
             state.source_id == spells.SPELL_DEATH_CHANNEL or
@@ -207,6 +214,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         not wrath_god_source and
         not yred_gift_source and
         not trog_gift_source and
+        not makhleb_servant_source and
         not wizlab_source then
         error("summon " .. ctx:id(entity) .. " has invalid origin category")
     end
@@ -253,6 +261,15 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
             error("summon " .. ctx:id(entity) ..
                 " has invalid Trog gift")
         end
+    end
+
+    -- Finite player-invoked servants may be friendly or a paid hostile
+    -- failure. Permanent hostile wrath uses its existing zero clock.
+    if makhleb_servant_source and
+        not makhleb_roster.contains(actor.kind_id, "lesser") and
+        not makhleb_roster.contains(actor.kind_id, "greater") then
+        error("summon " .. ctx:id(entity) ..
+            " has invalid Makhleb servant")
     end
 
     catalog.get(state.source_category, state.source_id)

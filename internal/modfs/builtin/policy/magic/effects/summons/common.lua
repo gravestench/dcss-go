@@ -12,6 +12,7 @@ local monster_duration = require("policy.combat.monster_summons.duration")
 local visibility = require("policy.combat.monster_summons.visibility")
 local channels = require("constants.message_channels")
 local death_clouds = require("policy.combat.monster_death_clouds")
+local behaviors = require("constants.ai_behaviors")
 
 local summons = {}
 
@@ -243,7 +244,15 @@ function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
         max = hp,
     })
     ctx:add(actor, "core.combat", { shield_blocks = 0 })
-    ctx:add(actor, component.AI, { behavior = "wander" })
+    -- Save validation reads every AI field before the first monster turn.
+    -- Initialize them here just as ordinary monster creation does.
+    ctx:add(actor, component.AI, {
+        behavior = behaviors.WANDER,
+        target_x = 0,
+        target_y = 0,
+        memory_until_aut = 0,
+        bat_retreat_actions = 0,
+    })
     local source_category = options and options.source_category or
         categories.SPELLS
 
