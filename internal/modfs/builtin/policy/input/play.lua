@@ -1,5 +1,6 @@
 local commands = require("policy.input.commands")
 local directions = require("policy.input.directions")
+local automation = require("policy.input.automation")
 
 local screens = {
     a = {
@@ -112,11 +113,12 @@ function play.route(input)
             action = "door",
             kind = commands.close_door,
         }
-    elseif key == "L" then
-        return {
-            action = "notice",
-            text = "Running is unavailable in the Go port.",
-        }
+    end
+
+    local automatic = automation.key(key)
+
+    if automatic then
+        return automatic
     end
 
     local command = directions.command(key)

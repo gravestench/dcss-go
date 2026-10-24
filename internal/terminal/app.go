@@ -71,6 +71,10 @@ type vampireTick struct {
 	id uint64
 }
 
+type automationTick struct {
+	id uint64
+}
+
 type visualTick struct{}
 
 type menuWeaponOption struct {
@@ -117,6 +121,8 @@ type AppModel struct {
 	equipmentTickID     uint64
 	spellTickID         uint64
 	vampireTickID       uint64
+	automationTickID    uint64
+	automationState     map[string]any
 	visualTickPending   bool
 	aimKind             game.CommandKind
 	aimItemID           uint64
@@ -222,6 +228,12 @@ func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 		m.height = msg.Height
 
 	case tea.KeyPressMsg:
+		if m.automationState != nil {
+			m.stopAutomation()
+
+			return m, m.withVisualTick(nil)
+		}
+
 		return m, m.withVisualTick(m.handleKey(msg.String()))
 
 	case visualTick:
@@ -259,6 +271,15 @@ func (m *AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, m.withVisualTick(m.stepPlayCommand(
 			game.Command{Kind: game.CommandWait}))
+
+	case automationTick:
+		if msg.id != m.automationTickID ||
+			m.automationState == nil || m.screen != ScreenPlay ||
+			m.game == nil {
+			return m, nil
+		}
+
+		return m, m.withVisualTick(m.advanceAutomation())
 	}
 
 	return m, m.withVisualTick(nil)

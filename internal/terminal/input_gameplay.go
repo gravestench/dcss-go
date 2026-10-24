@@ -104,6 +104,9 @@ func (m *AppModel) applyGameplayDecision(action string, decision map[string]any)
 
 		return m.stepPlayCommand(command)
 
+	case "automation":
+		return m.beginAutomation(decision)
+
 	case "spell_step":
 		return m.applySpellStep(decision)
 

@@ -126,6 +126,7 @@ var gameInputActions = map[string]bool{
 	"mutation_detail":        true,
 	"mutation_close_detail":  true,
 	"save_exit":              true,
+	"automation":             true,
 	"step":                   true,
 	"spell_step":             true,
 	"ability_step":           true,
@@ -197,7 +198,7 @@ func (m *AppModel) applyInputDecision(decision map[string]any) tea.Cmd {
 		"cancel_memorise", "cancel_vampire", "confirm_cancel", "confirm_accept":
 		return m.applySessionDecision(action, decision)
 
-	case "aim", "door", "step", "spell_step", "ability_step",
+	case "aim", "door", "step", "automation", "spell_step", "ability_step",
 		"confirm_ability", "ability_confirm_accept",
 		"action_confirm_accept", "action_confirm_cancel",
 		"cancel_read_aim":

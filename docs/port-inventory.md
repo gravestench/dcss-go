@@ -86,6 +86,11 @@ context rather than a handler API for each game domain.
 | Client | Full-terminal 79×24 minimum, expanding dungeon view, DCSS-shaped startup and game screens, inventory, skills, help, fire/throw targeting, direction prompts, and unavailable-feature notices | `policy/presentation`, `policy/input`, `internal/terminal` |
 | Persistence | Version-39 JSON saves, named RNG state, terrain and ECS state, Lua schemas, ruleset hash, semantic restore validation | `policy/save`, `internal/game/save*.go`, `internal/save` |
 
+The terminal now accepts all eight shift-run directions, long rest on `5`,
+and autoexplore on `o`. Lua chooses each move from the player's observed
+map, and the terminal submits it through the ordinary turn command. A key
+interrupts before another action; the pending route is not saved.
+
 The Shoals layout uses source island counts and height bands. Exact source
 contour planning and flora are still fidelity work; the current heightmap
 feeds the already saved tide rules.

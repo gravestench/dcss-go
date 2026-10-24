@@ -10,6 +10,7 @@ local evokers = require("policy.inventory.evokers")
 local component = require("constants.component")
 local god_names = require("policy.religion.names")
 local monster_display = require("policy.combat.monster_support.display")
+local targets = require("policy.ai.targets")
 
 local view = {}
 
@@ -45,6 +46,7 @@ function view.entity(ctx, input)
     local name = ""
     local glyph = string.byte("?")
     local color_id = ""
+    local hostile = false
 
     if role == "player" then
         kind_id = "player"
@@ -61,6 +63,7 @@ function view.entity(ctx, input)
             local overrides = ctx:get(actor, component.VAULT_ACTOR_OVERRIDES)
 
             name = monster_display.name(ctx, actor)
+            hostile = targets.enemy(ctx, actor, ctx:player())
             local generated = ctx:get(actor, component.PANDEMONIUM_LORD)
             local ugly = ctx:get(actor, component.UGLY_THING)
 
@@ -109,6 +112,7 @@ function view.entity(ctx, input)
         glyph = glyph,
         color_id = color_id,
         animated_color = color_id == colors.random_effect_id,
+        hostile = hostile,
     }
 end
 

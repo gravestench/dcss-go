@@ -112,7 +112,6 @@ func TestPlayKeysSourceBindingsAndTurnCost(t *testing.T) {
 
 	for _, key := range []string{
 		"q",
-		"L",
 		"g",
 		"<",
 		"i",
@@ -123,10 +122,6 @@ func TestPlayKeysSourceBindingsAndTurnCost(t *testing.T) {
 
 		if key == "q" && m.screen != ScreenQuaff {
 			t.Fatal("q did not open potion choice")
-		}
-
-		if key == "L" && !strings.Contains(m.notice, "unavailable") {
-			t.Fatalf("%q did not explain unavailable action", key)
 		}
 
 		if m.screen != ScreenPlay {

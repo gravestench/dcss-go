@@ -19,6 +19,8 @@ const (
 type CellView struct {
 	Glyph            rune
 	State            CellState
+	FeatureID        string
+	Walkable         bool
 	DetectedItem     bool
 	DetectedCreature bool
 	ColorID          string
@@ -33,6 +35,7 @@ type EntityView struct {
 	KindID        string
 	Name          string
 	Role          string
+	Hostile       bool
 	ColorID       string
 	AnimatedColor bool
 }
@@ -75,6 +78,8 @@ type View struct {
 	PlayerMaxHP  int
 	PlayerMP     int
 	PlayerMaxMP  int
+	CanRecoverHP bool
+	CanRecoverMP bool
 	PlayerAC     int
 	PlayerEV     int
 	PlayerSH     int
@@ -303,15 +308,19 @@ func (g *Game) fillTerrainView(view *View, level *Level) {
 			colour, _ := level.CellColour(i%level.width, i/level.width)
 
 			view.Cells[i] = CellView{
-				Glyph:   terrain.Glyph(level.terrain[i/level.width][i%level.width]),
-				State:   Visible,
-				ColorID: colour,
+				Glyph:     terrain.Glyph(level.terrain[i/level.width][i%level.width]),
+				State:     Visible,
+				FeatureID: string(level.terrain[i/level.width][i%level.width]),
+				Walkable:  terrain.Walkable(level.terrain[i/level.width][i%level.width]),
+				ColorID:   colour,
 			}
 
 		case feature != terrain.Unseen:
 			view.Cells[i] = CellView{
-				Glyph: terrain.Glyph(feature),
-				State: Explored,
+				Glyph:     terrain.Glyph(feature),
+				State:     Explored,
+				FeatureID: string(feature),
+				Walkable:  terrain.Walkable(feature),
 			}
 		}
 
@@ -453,6 +462,10 @@ func (g *Game) fillPlayerView(view *View) {
 		view.PlayerMP = magic.Current
 		view.PlayerMaxMP = magic.Max
 	}
+
+	recovery := g.mustPresentationPolicy("presentation.rest_capabilities", nil)
+	view.CanRecoverHP = recovery["hp"].(bool)
+	view.CanRecoverMP = recovery["mp"].(bool)
 
 	if state, ok := g.scripts.Components()["character.vampire"].Get(g.player); ok {
 		remaining, err := state.Get("ritual_remaining_aut")
@@ -666,6 +679,7 @@ func (g *Game) fillEntityView(view *View, level *Level, levelID int) {
 			KindID:        presentation["kind_id"].(string),
 			Name:          presentation["name"].(string),
 			Role:          presentation["role"].(string),
+			Hostile:       presentation["hostile"].(bool),
 			ColorID:       presentation["color_id"].(string),
 			AnimatedColor: presentation["animated_color"].(bool),
 		})

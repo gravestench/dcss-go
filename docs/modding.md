@@ -26,6 +26,7 @@ relative path to change a bundled file.
 | Understand a callback's arguments and available game services | [Who supplies `ctx`](#who-supplies-ctx) and [the context API](#the-game-context-ctx) |
 | Trace a callback from registration to state change | [Trace a callback](#trace-a-callback-before-using-ctx) |
 | Find the accepted fields for a content type | [Definition contracts](#definition-contracts) |
+| Change run, rest, or explore behavior | [Automatic movement](#automatic-movement) |
 
 The [root README](../README.md) has the shortest launch and wizard examples.
 This guide explains the contracts those examples depend on. If a mechanic
@@ -74,6 +75,28 @@ streams, time, messages, and short-lived signals. There is no useful `ctx`
 while a file is loading. Do not store `ctx`, an entity handle, or changing
 game state in a module-level variable. Put lasting state in a component and
 read it with `ctx:get` each time the rule runs.
+
+### Automatic movement
+
+`policy/input/automation.lua` owns shift-run, long rest (`5`), and
+autoexplore (`o`). `policy/input/play.lua` delegates those keys to it. The
+terminal calls the registered `terminal.automation` policy once to start
+and once per repeated action; it then sends each chosen move or wait through
+the same game command path used by a manually pressed key. A key interrupts
+the repetition before the next action. This state lasts only in the terminal,
+so a save does not resume a half-finished route.
+
+The policy receives an `input` table with `phase`, current `state`, and a
+`view` made from the player's *observed* map. Cells are row-major and have
+`feature`, `state` (0 unknown, 1 remembered, 2 visible), and `walkable`;
+unknown cells reveal neither feature nor collision. The view also gives
+player position and HP/MP, whether each pool can recover by waiting, visible
+entities with hostility, and visible clouds. This callback has no live game
+`ctx`: choose a next command from the supplied snapshot and let the game
+execute it. For a mechanic that needs live ECS state, add a separate
+read-only presentation policy, as `presentation.rest_capabilities` does, and
+project its answer into the observed view. This keeps routing rules from
+reading hidden terrain or mutating actors during a timer callback.
 
 ### A first live mod
 
