@@ -167,6 +167,12 @@ susceptibility; Pure Fire applies half armour and current fire resistance
 even when physical contact dealt no HP loss; Sear adds the saved fire
 vulnerability read by later fire damage. Summoned fire vortices use the
 ordinary melee sequence and burn themselves out after a successful hit.
+Mutate and Chaotic natural contacts now reach player and monster mutation
+and chaos owners through actual melee rounds. Weapon Chaos and natural
+Chaotic contact share source eligibility and weighted selection, while
+their chosen effects retain the distinct weapon and natural formulas.
+Chaos Venom and ordinary Poison use the same saved player or monster poison
+path, so one physical contact cannot apply the dose twice.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except

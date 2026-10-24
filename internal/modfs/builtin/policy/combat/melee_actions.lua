@@ -26,7 +26,6 @@ local contact_blinks = require(
 local ignis_champion = require("policy.religion.wrath.ignis_champion")
 local trample = require("policy.combat.trample")
 local monster_roll = require("policy.combat.monster_roll")
-local roll = require("policy.combat.roll")
 local attack_types = require("constants.monster_attack_types")
 local weapon_brands = require("constants.weapon_brands")
 local stab = require("policy.combat.stab")
@@ -490,35 +489,6 @@ local function monster_player_contact(ctx, attacker, selected,
     end
 
     retreat_bat(ctx, attacker, definition)
-
-    -- Poison-bearing contact needs physical damage through armour before
-    -- either ordinary venom or concentrated curare can enter the wound.
-    if outcome.kind == "hit" and dealt > 0 and
-        (flavour_id == "AF_POISON" or
-        flavour_id == "AF_POISON_STRONG" or
-        flavour_id == "AF_REACH_STING") then
-        local venom = require("policy.combat.monster_tactical.concentrate_venom")
-        local dice = monster_stats.hit_dice(ctx, attacker, definition)
-
-        if venom.active(ctx, attacker) then
-            -- melee-attack.cc gates all three poison flavours at one in
-            -- three before Concentrate Venom changes the dose to curare.
-            if roll.melee(ctx, 3) == 0 then
-                require("policy.combat.monster_tactical.curare")
-                    .apply(ctx, attacker, player, "melee")
-            end
-        elseif flavour_id == "AF_POISON_STRONG" then
-            if roll.melee(ctx, 3) == 0 then
-                local low = math.floor(dice * 11 / 3)
-                local high = math.floor(dice * 13 / 2)
-
-                brands.poison(ctx, low + roll.melee(ctx, high - low + 1),
-                    actor.kind_id)
-            end
-        else
-            brands.poison_bite(ctx, dice, actor.kind_id)
-        end
-    end
 
     player_reactions.after_attack(ctx, attacker, definition)
     trample.follow(ctx, flavour_hit)

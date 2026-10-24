@@ -8,6 +8,7 @@ local enfeeble = require("policy.magic.effects.statuses.enfeeble")
 local monster_enchant = require("policy.combat.monster_enchant")
 local monster_health = require("policy.combat.monster_health")
 local monster_poison = require("policy.combat.monster_poison")
+local player_poison = require("policy.combat.player_poison")
 local life = require("policy.combat.monster_attack_flavours.life")
 local afflictions = require(
     "policy.combat.monster_attack_flavours.afflictions")
@@ -15,6 +16,8 @@ local blinks = require("policy.combat.monster_attack_flavours.blinks")
 local holds = require("policy.combat.monster_attack_flavours.holds")
 local elemental_contacts = require(
     "policy.combat.monster_attack_flavours.elemental")
+local alteration = require(
+    "policy.combat.monster_attack_flavours.alteration")
 local concentrate_venom = require("policy.combat.monster_tactical.concentrate_venom")
 local curare = require("policy.combat.monster_tactical.curare")
 local player_corrosion = require("policy.combat.player_corrosion")
@@ -112,10 +115,11 @@ end
 
 -- Source melee applies the same one-in-three poison chance to an enemy
 -- monster as to the player. Monster::poison converts the raw HD-scaled
--- amount to a saved degree before the normal poison status owner runs.
+-- amount to a saved degree; player exposure keeps the shared rPois gate.
 local function poison_contact(ctx, hit, flavour_id)
-    if hit.damage_done <= 0 or
-        ctx:has(hit.defender, component.PLAYER) or
+    local physical = hit.physical_damage or hit.damage_done
+
+    if physical <= 0 or
         roll.melee(ctx, 3) ~= 0 then
         return false
     end
@@ -135,6 +139,13 @@ local function poison_contact(ctx, hit, flavour_id)
     end
 
     local raw = low + roll.melee(ctx, high - low + 1)
+
+    if ctx:has(hit.defender, component.PLAYER) then
+        local attacker = ctx:get(hit.attacker, component.ACTOR)
+
+        return player_poison.deliver(ctx, raw, attacker.kind_id)
+    end
+
     local levels = 1 + math.floor(raw / 7)
 
     return monster_poison.apply(ctx, hit.defender,
@@ -332,6 +343,8 @@ local effects = {
     [attack_ids.HOLY] = elemental_contacts.holy,
     [attack_ids.PURE_FIRE] = elemental_contacts.pure_fire,
     [attack_ids.SEAR] = elemental_contacts.sear,
+    [attack_ids.MUTATE] = alteration.mutate,
+    [attack_ids.CHAOTIC] = alteration.chaotic,
     [attack_ids.STICKY_FLAME] = napalm,
     [traits.corrode] = corrode,
     [traits.ensnare] = ensnare,
