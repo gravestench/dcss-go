@@ -135,6 +135,7 @@ local component = {
     MONSTER_POLYMORPH_SET = "monster.polymorph_set",
     MONSTER_ELVEN_TWIN = "monster.elven_twin",
     MONSTER_STAIR_FOLLOWER = "world.stair_follower",
+    MONSTER_TRANSIT_ORIGIN = "world.monster_transit_origin",
     MONSTER_BOONS = "combat.monster_boons",
     MONSTER_BLACK_MARK = "combat.monster_black_mark",
     MONSTER_INJURY_BOND = "combat.monster_injury_bond",

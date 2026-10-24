@@ -71,11 +71,13 @@ end
 local function slime_bound_for(ctx, entity, position, state)
     local origin = ctx:get(entity, component.VAULT_ORIGIN)
     local banishment = ctx:get(entity, component.BANISHMENT)
+    local transit = ctx:get(entity, component.MONSTER_TRANSIT_ORIGIN)
     local duel = ctx:get(entity, component.MONSTER_ARENA_DUEL)
     local visit = duel and duel.current and
         ctx:get(ctx:player(), component.PLAYER_ARENA_VISIT)
     local level_id = origin and origin.level_id or
         banishment and banishment.origin_level_id or
+        transit and transit.level_id or
         visit and visit.origin_level_id or position.level_id
 
     if level_id == abyss.level_id then
@@ -129,7 +131,9 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     end
 
     local banishment = ctx:get(entity, component.BANISHMENT)
+    local transit = ctx:get(entity, component.MONSTER_TRANSIT_ORIGIN)
     local level_id = banishment and banishment.origin_level_id or
+        transit and transit.level_id or
         position.level_id
     local arena_mark = ctx:get(entity, component.MONSTER_ARENA_DUEL)
 
@@ -147,13 +151,30 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     if level_id == abyss_constants.TRANSIT_LEVEL_ID then
         level_id = abyss.level_id
     end
+
+    -- A traveling roster actor keeps the population rules of the branch
+    -- where it first spawned. Its source floor may already be retired in
+    -- Pan, but other missing source floors indicate a broken save.
+    if transit then
+        local source_branch = state.branch_by_level[transit.level_id]
+
+        if transit.level_id <= 0 or transit.branch_id == "" or
+            (source_branch and source_branch ~= transit.branch_id) or
+            (not source_branch and
+                transit.branch_id ~= branches.BRANCH_PANDEMONIUM) then
+            error("monster " .. ctx:id(entity) ..
+                " has invalid transit origin")
+        end
+    end
+
     local fixed = state.fixed and level_id ~= abyss.level_id
     local growth = ctx:get(entity, component.JIYVA_GROWTH)
     local slime_birth = ctx:get(entity, component.SLIME_BIRTH)
     local born_from_split = growth and growth.born_from_split or
         slime_birth ~= nil
 
-    if not fixed and not clone and not born_from_split then
+    if not fixed and not clone and not born_from_split and
+        (not transit or state.budgets[level_id]) then
         local count = (state.live_by_level[level_id] or 0) + 1
 
         if count > (state.budgets[level_id] or 0) then
@@ -167,6 +188,10 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     -- part of the ordinary scenario roster. The clone component records its
     -- source kind; the catalog/profile checks below still validate it.
     local allowed = state.allowed_by_level[level_id] or state.allowed
+
+    if transit then
+        allowed = roster.allowed(state.scenario_id, transit.branch_id)
+    end
 
     if not clone and not born_from_split and not allowed[roster_id] then
         error("unsupported melee attacker " .. roster_id ..
@@ -684,8 +709,10 @@ function module.run(ctx, input)
     local budgets = {}
     local live_by_level = {}
     local allowed_by_level = {}
+    local branch_by_level = {}
 
     for _, level in ipairs(input.levels) do
+        branch_by_level[level.id] = level.branch_id
         if not fixed or level.branch_id == branches.BRANCH_ABYSS then
             budgets[level.id] = level.initial_actors
 
@@ -709,6 +736,8 @@ function module.run(ctx, input)
     local roster_state = {
         allowed = allowed,
         allowed_by_level = allowed_by_level,
+        branch_by_level = branch_by_level,
+        scenario_id = input.scenario_id,
         fixed = fixed,
         seen = seen,
         budgets = budgets,

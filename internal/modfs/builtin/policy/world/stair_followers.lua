@@ -1,7 +1,8 @@
--- Theory of operation: tag nearby actors when an ordinary stair action
--- begins, before monster decisions can move them. The stair system later
+-- Theory of operation: tag nearby actors when a stair or portal action
+-- begins, before monster decisions can move them. The arrival owner then
 -- moves the marked ECS identities and removes every temporary mark.
 local catalog = require("policy.catalog")
+local behaviors = require("constants.ai_behaviors")
 local categories = require("constants.catalog")
 local component = require("constants.component")
 local modes = require("constants.follower_travel")
@@ -59,13 +60,13 @@ local function adjust_twins(ctx, tagged, level_id)
     end
 end
 
--- Select a connected wave from the player's cell. The eight-neighbor
--- order is fixed in Lua, so content load order cannot change a seed.
-function followers.tag(ctx, player, origin)
+-- Select a connected wave from the player's cell. An accepted portal
+-- action has no linked stone stair, but follows the same source tag wave.
+-- The destination branch decides which marks may actually transit.
+function followers.tag(ctx, player, origin, through_portal)
     followers.clear(ctx)
 
-    if not eligibility.linked_stair(ctx, origin) or
-        not eligibility.branch_allows(ctx, origin.level_id) then
+    if not through_portal and not eligibility.linked_stair(ctx, origin) then
         return 0
     end
 
@@ -126,11 +127,38 @@ local function ordered_marks(ctx)
     return entries
 end
 
+-- A remembered coordinate belongs to the old grid. Seekers now pursue
+-- the arrival cell; wanderers release their old map coordinate so a save
+-- and their next decision never interpret it in the destination map.
+local function retarget_after_transit(ctx, entity, x, y)
+    local ai = ctx:get(entity, component.AI)
+
+    if not ai then
+        return
+    end
+
+    if ai.behavior == behaviors.SEEK then
+        ai.target_x = x
+        ai.target_y = y
+    else
+        ai.target_x = 0
+        ai.target_y = 0
+        ai.memory_until_aut = 0
+    end
+
+    ctx:set(entity, component.AI, ai)
+end
+
 -- Transfer consumes the one-action marks after the player has settled.
 -- The source serializes followers through transit; Akara can retain the
 -- same entity directly because its dense grids and ECS IDs are separate.
 -- A full destination leaves an actor safe on the old floor.
 function followers.transfer(ctx, player, origin, level_id, x, y)
+    if not eligibility.branch_allows(ctx, level_id) then
+        followers.clear(ctx)
+        return 0
+    end
+
     local moved = 0
 
     for _, entry in ipairs(ordered_marks(ctx)) do
@@ -142,7 +170,18 @@ function followers.transfer(ctx, player, origin, level_id, x, y)
                 level_id, x, y)
 
             if arrival_x then
+                -- The saved roster belongs to the original spawn branch.
+                -- Keep that provenance across later portal or stair trips.
+                if not ctx:has(entity,
+                    component.MONSTER_TRANSIT_ORIGIN) then
+                    ctx:add(entity, component.MONSTER_TRANSIT_ORIGIN, {
+                        level_id = origin.level_id,
+                        branch_id = ctx:level_branch(origin.level_id),
+                    })
+                end
+
                 ctx:move_actor(entity, level_id, arrival_x, arrival_y)
+                retarget_after_transit(ctx, entity, x, y)
                 moved = moved + 1
             else
                 local actor = ctx:get(entity, component.ACTOR)
@@ -159,5 +198,30 @@ function followers.transfer(ctx, player, origin, level_id, x, y)
 
     return moved
 end
+
+-- The generic portal transaction calls this after its owner moves the
+-- player and before an ephemeral source floor can be retired. Forced
+-- movement carries no marks, so it cannot accidentally acquire a wave.
+function followers.portal_arrival(ctx, input)
+    local player = ctx:player()
+    local origin = input.origin
+    local arrival = ctx:get(player, component.POSITION)
+
+    if not origin or not arrival or
+        origin.level_id == arrival.level_id then
+        followers.clear(ctx)
+        return { moved = 0 }
+    end
+
+    return {
+        moved = followers.transfer(ctx, player, origin,
+            arrival.level_id, arrival.x, arrival.y),
+    }
+end
+
+register.policy({
+    id = "world.portal_followers",
+    run = followers.portal_arrival,
+})
 
 return followers

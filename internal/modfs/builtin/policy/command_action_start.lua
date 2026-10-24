@@ -20,12 +20,13 @@ function action.run(ctx, input)
     end
 
     -- The destination has been validated by Go before this accepted
-    -- action, and monster decisions have not yet run for its stair delay.
-    if input.stair_travel == true then
+    -- action. Tag before monster decisions can scatter the wave; the
+    -- arrival owner checks whether the destination admits followers.
+    if input.stair_travel == true or input.portal_travel == true then
         local player = ctx:player()
         local origin = ctx:get(player, component.POSITION)
 
-        followers.tag(ctx, player, origin)
+        followers.tag(ctx, player, origin, input.portal_travel == true)
     end
 
     return {}

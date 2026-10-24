@@ -59,6 +59,27 @@ func (g *Game) preparePortal(
 	}
 }
 
+// The source tags a wave before monster decisions and admits it only
+// after the portal owner has moved the player. Lua checks destination
+// topology and transfers the same ECS identities before Go retires an
+// ephemeral source floor.
+func (g *Game) transferPortalFollowers(origin ecs.Position) error {
+	_, err := g.scripts.Policy("world.portal_followers", map[string]any{
+		"origin": map[string]any{
+			"level_id": origin.LevelID,
+			"x":        origin.X,
+			"y":        origin.Y,
+		},
+	})
+
+	if err != nil {
+		g.scripts.DiscardPending()
+		return err
+	}
+
+	return g.scripts.ApplyPending()
+}
+
 // Pan replaces one region, so its staged floor and retired ID belong to
 // its existing transport transaction.
 func (portal *panPortal) staged() *stagedLevel {

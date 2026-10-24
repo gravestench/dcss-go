@@ -98,6 +98,8 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 		return StepResult{}, fmt.Errorf("player %d has no position", g.player)
 	}
 
+	portalOrigin := *position
+
 	// Lua ability preparation can commit a card effect that asks for travel.
 	// Keep its pre-draw state until the destination is known to be valid.
 	var abilityCheckpoint *save.Snapshot
@@ -263,6 +265,14 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 	if outcome, err := g.outcome(); err != nil {
 		return StepResult{}, err
 	} else if outcome != "" {
+		// A terminal result can stop travel before the portal commits. The
+		// source wave is action-local even if the player never arrives.
+		if portal != nil {
+			if err := g.transferPortalFollowers(portalOrigin); err != nil {
+				return StepResult{}, err
+			}
+		}
+
 		playerTurn, found := g.stores.PlayerTurn.Get(g.player)
 
 		if !found {
@@ -287,6 +297,10 @@ func (g *Game) Step(command Command) (result StepResult, err error) {
 
 		if travelErr != nil {
 			return StepResult{}, travelErr
+		}
+
+		if err := g.transferPortalFollowers(portalOrigin); err != nil {
+			return StepResult{}, err
 		}
 
 		if travelEvent.Text != "" {
