@@ -1,6 +1,6 @@
--- Source stair followers are selected by body, current action energy,
--- attitude, and the kind of stair. Keeping these gates together makes it
--- possible to audit every reason a monster stays on its original floor.
+-- Source followers are selected by body, current action energy, attitude,
+-- and travel mode. Keeping these gates together makes it possible to audit
+-- every reason a monster stays at its departure point.
 local attitudes = require("constants.attitude")
 local behaviors = require("constants.ai_behaviors")
 local branch_flags = require("constants.branch_flags")
@@ -9,6 +9,7 @@ local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local component = require("constants.component")
 local flags = require("constants.monster_flags")
+local modes = require("constants.follower_travel")
 local groups = require("constants.monster_groups")
 local habitat = require("policy.combat.monster_habitat")
 local monsters = require("ids.monsters")
@@ -88,7 +89,11 @@ end
 
 -- Source eligibility is checked at tag time, including current action
 -- energy. A later status tick must not retroactively admit an actor.
-function eligibility.can_follow(ctx, entity, origin)
+function eligibility.can_follow(ctx, entity, origin, mode)
+    if mode ~= modes.STAIRS and mode ~= modes.TRANSPORTER then
+        error("unknown follower travel mode " .. tostring(mode))
+    end
+
     local actor = ctx:get(entity, component.ACTOR)
     local health = ctx:get(entity, component.HEALTH)
     local energy = ctx:get(entity, component.MONSTER_ENERGY)
@@ -98,7 +103,8 @@ function eligibility.can_follow(ctx, entity, origin)
         not energy or energy.points < SOURCE_MINIMUM_ENERGY or
         not ai or ai.behavior == behaviors.SLEEP or
         ctx:has(entity, component.PARALYSIS) or
-        ctx:has(entity, component.SUMMON) then
+        (mode == modes.STAIRS and
+            ctx:has(entity, component.SUMMON)) then
         return false
     end
 
@@ -111,10 +117,12 @@ function eligibility.can_follow(ctx, entity, origin)
 
     local definition = catalog.get(categories.MONSTERS, actor.kind_id)
 
+    -- Transporters reject tentacles but can carry summoned and zombified
+    -- bodies; the stricter source body exclusions apply only to stairs.
     if actor.speed <= 0 or
         has_flag(definition, flags.STATIONARY) or
-        cannot_climb[actor.kind_id] or
         groups.tentacles[actor.kind_id] or
+        (mode == modes.STAIRS and cannot_climb[actor.kind_id]) or
         not habitat.at(ctx, entity, origin.level_id,
             origin.x, origin.y) then
         return false

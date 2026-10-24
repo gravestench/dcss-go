@@ -6,10 +6,12 @@ local behaviors = require("constants.ai_behaviors")
 local component = require("constants.component")
 local features = require("content.terrain_features")
 local fixture = require("tests.monster_ally_support_fixture")
+local follower_wave = require("policy.world.follower_wave")
 local grid = require("policy.generation.grid")
 local harness = require("tests.harness")
 local intents = require("constants.intent")
 local monsters = require("ids.monsters")
+local follower_modes = require("constants.follower_travel")
 local placement = require("policy.generation.vaults.placement")
 local terrain = require("constants.terrain")
 local transport_ids = require("constants.transporter")
@@ -65,6 +67,11 @@ local function game_context(ctx, player, level)
     -- Read the level built from the committed map at the actor's coordinates.
     function game:cell(_, x, y)
         return level.cells[y + 1] and level.cells[y + 1][x + 1]
+    end
+
+    -- The common follower wave needs the same floor bounds as the live grid.
+    function game:level_size()
+        return #level.cells[1], #level.cells
     end
 
     -- This fixture includes only the three passable feature kinds needed to
@@ -273,6 +280,8 @@ local function follower_eligibility(ctx)
     local isolated = fixture.actor(ctx, monsters.MONS_RAT, 5, 2)
     local seeker = fixture.actor(ctx, monsters.MONS_RAT, 2, 3)
     local distant = fixture.actor(ctx, monsters.MONS_RAT, 3, 4)
+    local tired = fixture.actor(ctx, monsters.MONS_RAT, 1, 2)
+    local paralysed = fixture.actor(ctx, monsters.MONS_RAT, 2, 1)
 
     for _, entity in ipairs({ ally, isolated }) do
         ctx:add(entity, component.VAULT_ACTOR_OVERRIDES, {
@@ -280,11 +289,21 @@ local function follower_eligibility(ctx)
         })
     end
 
-    for _, entity in ipairs({ seeker, distant }) do
+    for _, entity in ipairs({ ally, isolated, seeker, distant,
+        tired, paralysed }) do
         ctx:add(entity, component.AI, {
             behavior = behaviors.SEEK,
+            target_x = source.x,
+            target_y = source.y,
+        })
+        ctx:add(entity, component.MONSTER_ENERGY, {
+            points = entity == tired and 49 or 70,
         })
     end
+
+    ctx:add(paralysed, component.PARALYSIS, {
+        remaining_aut = 10,
+    })
 
     local game = game_context(ctx, player, level)
 
@@ -298,12 +317,97 @@ local function follower_eligibility(ctx)
             "eligible follower stayed at departure")
     end
 
-    for _, entity in ipairs({ isolated, distant }) do
+    for _, entity in ipairs({ isolated, distant, tired, paralysed }) do
         local stayed = ctx:get(entity, component.POSITION)
 
         harness.truthy(stayed.x <= 5 and stayed.y <= 4,
             "ineligible follower crossed transporter")
     end
+
+    -- Later cases share this ECS runtime, so leave no source-side actors
+    -- behind to impersonate occupants in their connected follower wave.
+    for _, entity in ipairs({ ally, isolated, seeker, distant,
+        tired, paralysed, player }) do
+        ctx:destroy(entity)
+    end
+end
+
+-- The source limits successful transfers to eighteen actors. The common
+-- wave order decides which eighteen, even when ECS creation order differs.
+local function follower_limit(ctx)
+    local _, source, destination = source_link(ctx)
+    local cells = {}
+
+    for y = 1, 20 do
+        cells[y] = {}
+
+        for x = 1, 20 do
+            cells[y][x] = terrain.DNGN_FLOOR
+        end
+    end
+
+    source.x = 2
+    source.y = 2
+    destination.x = 16
+    destination.y = 16
+    source.arguments[transport_ids.DESTINATION_X] = "16"
+    source.arguments[transport_ids.DESTINATION_Y] = "16"
+    cells[3][3] = terrain.DNGN_TRANSPORTER
+    cells[17][17] = terrain.DNGN_TRANSPORTER_LANDING
+
+    local level = {
+        cells = cells,
+        vault_records = {
+            source,
+            destination,
+        },
+    }
+    local player = fixture.actor(ctx, monsters.MONS_HUMAN, 2, 2)
+    local actors = {}
+
+    for y = 1, 5 do
+        for x = 1, 5 do
+            if x ~= 2 or y ~= 2 then
+                local entity = fixture.actor(ctx, monsters.MONS_RAT,
+                    x, y)
+
+                ctx:add(entity, component.VAULT_ACTOR_OVERRIDES, {
+                    attitude = attitudes.FRIENDLY,
+                })
+                ctx:add(entity, component.AI, {
+                    behavior = behaviors.SEEK,
+                    target_x = 2,
+                    target_y = 2,
+                })
+                ctx:add(entity, component.MONSTER_ENERGY, {
+                    points = 70,
+                })
+                actors[#actors + 1] = entity
+            end
+        end
+    end
+
+    local game = game_context(ctx, player, level)
+    local ordered = follower_wave.select(game, player,
+        game:get(player, component.POSITION),
+        follower_modes.TRANSPORTER)
+
+    harness.equal(#ordered, #actors)
+    harness.truthy(travel.take(game, player, 10))
+
+    for index, entity in ipairs(ordered) do
+        local position = game:get(entity, component.POSITION)
+        local arrived = position.x >= 11 and position.y >= 11
+
+        harness.equal(arrived, index <= 18,
+            "transporter violated connected-wave order or limit")
+    end
+
+    for _, entity in ipairs(actors) do
+        ctx:destroy(entity)
+    end
+
+    ctx:destroy(player)
 end
 
 -- The policy must remain an actual Lua module, not a fabricated test-only
@@ -317,6 +421,7 @@ function test.run(ctx)
     occupied_landing(ctx)
     sealed_landing(ctx)
     follower_eligibility(ctx)
+    follower_limit(ctx)
 end
 
 return test

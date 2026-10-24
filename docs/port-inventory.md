@@ -564,8 +564,10 @@ to free connected cells near the player's landing. Allies can form a
 five-cell chain; an adjacent nonfriendly actor reduces that range to one.
 The source's 18-follower cap, energy and body gates, paired twins, and
 disconnected-branch exclusion are Lua rules. Action-only marks are removed
-before save. Portal and transporter followers remain for their separate
-travel handlers. The current AI records a target cell rather than the
+before save. Transporters now use the same connected source wave but move
+followers within the current floor using their own body rule. Other portal
+followers remain for separate travel handlers. The current AI records a
+target cell rather than the
 source's foe identity, so hostile follower selection checks pursuit near
 the player's present cell.
 Temporary terrain sourced by any monster, including Vault Warden's seals,

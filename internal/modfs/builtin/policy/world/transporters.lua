@@ -1,18 +1,16 @@
 -- Named DES markers resolve to saved one-way links. The level grid owns the
 -- two features; this policy owns player passage and nearby monster transit.
 local barbs = require("policy.combat.barbs")
-local catalog = require("policy.catalog")
 local cloud = require("policy.clouds.placement")
 local cloud_ids = require("ids.clouds")
 local component = require("constants.component")
+local modes = require("constants.follower_travel")
 local habitat = require("policy.combat.monster_habitat")
-local flags = require("constants.monster_flags")
+local follower_wave = require("policy.world.follower_wave")
 local relocation = require("policy.world.monster_relocation")
 local streams = require("constants.rng_streams")
-local targets = require("policy.ai.targets")
 local terrain = require("constants.terrain")
 local ids = require("constants.transporter")
-local behaviors = require("constants.ai_behaviors")
 
 local transporters = {}
 
@@ -45,48 +43,6 @@ function transporters.remap_knowledge(ctx, player, level_id, remaps)
     knowledge.links = links
     ctx:set(player, component.TRANSPORTER_KNOWLEDGE,
         knowledge)
-end
-
--- A friendly monster can follow only if it can actually reach the portal.
--- Limit the search to the source's five-cell neighborhood so a wall cannot
--- turn a visually nearby monster into a follower from another room.
-local function connected(ctx, monster, origin, target)
-    local frontier = {
-        { x = origin.x, y = origin.y },
-    }
-    local seen = {
-        [origin.x .. ":" .. origin.y] = true,
-    }
-    local index = 1
-
-    while index <= #frontier do
-        local cell = frontier[index]
-        index = index + 1
-
-        if cell.x == target.x and cell.y == target.y then
-            return true
-        end
-
-        for dy = -1, 1 do
-            for dx = -1, 1 do
-                if dx ~= 0 or dy ~= 0 then
-                    local x = cell.x + dx
-                    local y = cell.y + dy
-                    local key = x .. ":" .. y
-                    local distance = math.max(math.abs(x - origin.x),
-                        math.abs(y - origin.y))
-
-                    if distance <= 5 and not seen[key] and
-                        habitat.at(ctx, monster, origin.level_id, x, y) then
-                        seen[key] = true
-                        frontier[#frontier + 1] = { x = x, y = y }
-                    end
-                end
-            end
-        end
-    end
-
-    return false
 end
 
 -- Search outward from the landing for a free cell suited to this monster.
@@ -198,70 +154,26 @@ local function remember(ctx, player, origin, destination)
     end
 end
 
--- Source follower transit admits friendly walkers farther away and hostile
--- pursuers only next to the departure cell. Stationary actors stay put.
-local function can_follow(ctx, entity, origin)
-    if entity == ctx:player() then
-        return false
-    end
-
-    local position = ctx:get(entity, component.POSITION)
-    local health = ctx:get(entity, component.HEALTH)
-    local actor = ctx:get(entity, component.ACTOR)
-
-    if not position or not health or health.current <= 0 or
-        not actor or position.level_id ~= origin.level_id then
-        return false
-    end
-
-    local definition = catalog.get("monsters", actor.kind_id)
-
-    for _, flag in ipairs(definition.flags or {}) do
-        if flag == flags.STATIONARY then
-            return false
-        end
-    end
-
-    if not habitat.at(ctx, entity, origin.level_id,
-        position.x, position.y) then
-        return false
-    end
-
-    local distance = math.max(math.abs(position.x - origin.x),
-        math.abs(position.y - origin.y))
-
-    if targets.allied(ctx, entity) then
-        return distance <= 5 and
-            connected(ctx, entity, origin, position)
-    end
-
-    local ai = ctx:get(entity, component.AI)
-
-    return distance <= 1 and ai and ai.behavior == behaviors.SEEK
-end
-
 -- Transport eligible nearby monsters to free landing cells after the player
--- arrives, keeping the source actor's identity and ECS state intact.
+-- arrives, keeping the source actor's identity and ECS state intact. An
+-- unplaced actor can still connect another follower in the source wave;
+-- only successful movements consume one of the source's 18 slots.
 local function followers(ctx, origin, destination)
     local moved = 0
+    local selected = follower_wave.select(ctx, ctx:player(),
+        origin, modes.TRANSPORTER)
 
-    for _, entity in ipairs(ctx:query({
-        component.ACTOR,
-        component.POSITION,
-        component.HEALTH,
-    })) do
+    for _, entity in ipairs(selected) do
         if moved >= 18 then
             break
         end
 
-        if can_follow(ctx, entity, origin) then
-            local x, y = nearby_home(ctx, entity,
-                origin.level_id, destination.x, destination.y)
+        local x, y = nearby_home(ctx, entity,
+            origin.level_id, destination.x, destination.y)
 
-            if x then
-                relocation.move(ctx, entity, origin.level_id, x, y)
-                moved = moved + 1
-            end
+        if x then
+            relocation.move(ctx, entity, origin.level_id, x, y)
+            moved = moved + 1
         end
     end
 end

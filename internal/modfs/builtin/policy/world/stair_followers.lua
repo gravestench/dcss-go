@@ -4,14 +4,15 @@
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
 local component = require("constants.component")
+local modes = require("constants.follower_travel")
 local monsters = require("ids.monsters")
 local twins = require("policy.monsters.elven_twins")
-local eligibility = require("policy.world.stair_followers.eligibility")
+local eligibility = require("policy.world.follower_eligibility")
 local placement = require("policy.world.stair_followers.placement")
+local wave = require("policy.world.follower_wave")
 
 local followers = {}
 local SOURCE_LIMIT = 18
-local directions = placement.directions
 
 -- A mark is live for only one stair action. Clear all marks, including
 -- actors no longer near the source cell after an aborted transition.
@@ -68,57 +69,17 @@ function followers.tag(ctx, player, origin)
         return 0
     end
 
-    local width, height = ctx:level_size(origin.level_id)
-    local maximum = eligibility.radius(ctx, origin, width, height,
-        directions)
-    local queue = {
-        {
-            x = origin.x,
-            y = origin.y,
-        },
-    }
-    local seen = {
-        [origin.x .. ":" .. origin.y] = true,
-    }
-    local cursor = 1
+    local selected = wave.select(ctx, player, origin, modes.STAIRS)
     local tagged = {}
-    local selected = {}
     local count = 0
 
-    while cursor <= #queue and count < SOURCE_LIMIT do
-        local point = queue[cursor]
-
-        cursor = cursor + 1
-
-        for _, direction in ipairs(directions) do
-            local x = point.x + direction.x
-            local y = point.y + direction.y
-            local key = x .. ":" .. y
-            local distance = math.max(math.abs(x - origin.x),
-                math.abs(y - origin.y))
-
-            if x >= 0 and y >= 0 and x < width and y < height and
-                distance <= maximum and not seen[key] then
-                seen[key] = true
-
-                local entity = ctx:actor_at(origin.level_id, x, y)
-
-                if entity and entity ~= player and
-                    eligibility.can_follow(ctx, entity, origin) then
-                    tagged[entity] = true
-                    count = count + 1
-                    selected[#selected + 1] = entity
-                    queue[#queue + 1] = {
-                        x = x,
-                        y = y,
-                    }
-
-                    if count >= SOURCE_LIMIT then
-                        break
-                    end
-                end
-            end
+    for _, entity in ipairs(selected) do
+        if count >= SOURCE_LIMIT then
+            break
         end
+
+        tagged[entity] = true
+        count = count + 1
     end
 
     adjust_twins(ctx, tagged, origin.level_id)

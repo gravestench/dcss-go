@@ -1,27 +1,10 @@
 -- Placement searches the connected walkable area around the player's
 -- arrival stair. Occupied cells may be crossed but cannot hold a follower.
 local habitat = require("policy.combat.monster_habitat")
+local wave = require("policy.world.follower_wave")
 
 local placement = {}
-
--- A fixed eight-neighbor order makes the same seed choose the same cells
--- regardless of Lua file discovery order or Akara query order.
-local directions = {}
-
-for dy = -1, 1 do
-    for dx = -1, 1 do
-        if dx ~= 0 or dy ~= 0 then
-            directions[#directions + 1] = {
-                x = dx,
-                y = dy,
-            }
-        end
-    end
-end
-
--- Export this order for source-floor wave selection as well. Both ends
--- should use the same deterministic concept of neighboring cells.
-placement.directions = directions
+local directions = wave.directions
 
 -- Walk the destination's connected open area in stable coordinate order.
 -- An occupied cell is still traversable for search, so a crowd around
