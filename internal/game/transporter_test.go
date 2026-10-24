@@ -1,12 +1,15 @@
 package game
 
 import (
+	"fmt"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
 	"testing"
 
 	"crawl/internal/modfs"
+	"crawl/internal/save"
 	"crawl/internal/terrain"
 	"crawl/internal/vault"
 )
@@ -171,6 +174,10 @@ func TestGeneratedTransporterSeed3167Restores(t *testing.T) {
 
 	snapshot := g.Snapshot()
 
+	if path := os.Getenv("CRAWL_ABYSS_TRANSPORTER_SNAPSHOT"); path != "" {
+		writeAbyssTransporterSnapshot(t, snapshot, path)
+	}
+
 	restored, err := Restore(snapshot)
 
 	if err != nil {
@@ -178,6 +185,59 @@ func TestGeneratedTransporterSeed3167Restores(t *testing.T) {
 	}
 
 	defer restored.Close()
+}
+
+// The opt-in export uses the saved grid and links, so the example shows
+// exactly what restore validates rather than a separate renderer's guess.
+func writeAbyssTransporterSnapshot(
+	t *testing.T,
+	snapshot save.Snapshot,
+	path string,
+) {
+	t.Helper()
+
+	var floor save.LevelRecord
+
+	for _, level := range snapshot.Levels {
+		if level.ID == abyssStorageID {
+			floor = level
+			break
+		}
+	}
+
+	if floor.ID != abyssStorageID {
+		t.Fatal("snapshot has no Abyss floor")
+	}
+
+	var body strings.Builder
+
+	fmt.Fprintf(&body, "Abyssal Knight starting window, seed %d\n\n",
+		snapshot.Seed)
+	body.WriteString(formatLevelTextSnapshot(floor, nil))
+	body.WriteString("\nThe © glyph marks both a transporter source and its landing.\n")
+	body.WriteString("\nNamed transporter connections:\n")
+
+	for _, record := range floor.VaultRecords {
+		if !strings.HasPrefix(record.Identity, "lua:transp_loc(") ||
+			record.Overridden {
+			continue
+		}
+
+		coordinates := map[string]string{}
+
+		for _, argument := range record.Arguments {
+			coordinates[argument.Name] = argument.String
+		}
+
+		fmt.Fprintf(&body, "  %s (%d,%d) -> (%s,%s)\n",
+			record.SourceID, record.X, record.Y,
+			coordinates["transporter_destination_x"],
+			coordinates["transporter_destination_y"])
+	}
+
+	if err := os.WriteFile(path, []byte(body.String()), 0o644); err != nil {
+		t.Fatal(err)
+	}
 }
 
 // A moving Abyss window must update a retained vault's named link after
