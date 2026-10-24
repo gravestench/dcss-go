@@ -178,17 +178,6 @@ local function dithmenos_petrification(ctx)
     end
 end
 
--- Nature spell selection stops before a god avatar can be improvised.
-local function fedhas_gap(ctx)
-    local player = player_at(ctx, 20)
-    local owner = with_draws(ctx, { 1 })
-    local ok, err = pcall(fedhas.apply, owner, player)
-
-    harness.falsy(ok)
-    harness.truthy(string.find(err, "Fedhas nature spell", 1, true))
-    harness.equal(owner:draws_used(), 1)
-end
-
 -- Independent player positions keep saved statuses and summons distinct.
 function test.run(ctx)
     jiyva_contaminates(ctx)
@@ -197,7 +186,6 @@ function test.run(ctx)
     dithmenos_shadows(ctx)
     dithmenos_sleeps(ctx)
     dithmenos_petrification(ctx)
-    fedhas_gap(ctx)
 end
 
 return test

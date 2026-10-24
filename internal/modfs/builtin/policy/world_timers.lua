@@ -1,6 +1,7 @@
 local catalog = require("policy.catalog")
 local component = require("constants.component")
 local item_ids = require("ids.items")
+local streams = require("constants.rng_streams")
 
 -- Corpse aging checks source monster flags while tolerating definitions without flag arrays.
 local function has_flag(definition, wanted)
@@ -46,7 +47,7 @@ local function age_one_corpse(ctx, entity, corpse, item, elapsed)
 
     item.kind_id = item_ids.CORPSE_SKELETON
     corpse.freshness = 110
-    corpse.appearance = ctx:random("corpse", 255) + 1
+    corpse.appearance = ctx:random(streams.CORPSE, 255) + 1
     ctx:set(entity, "core.item", item)
     ctx:set(entity, "core.corpse", corpse)
 

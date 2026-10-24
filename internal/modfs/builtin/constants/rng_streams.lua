@@ -8,6 +8,7 @@ local streams = {
     BANDS = "bands",
     BAZAAR_PORTAL = "bazaar_portal",
     CARDS = "cards",
+    CORPSE = "corpse",
     CLOUDS = "clouds",
     DAMAGE_REACTION = "damage_reaction",
     FOG_MACHINES = "fog_machines",

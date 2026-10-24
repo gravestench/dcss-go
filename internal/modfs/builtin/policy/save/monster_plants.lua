@@ -2,6 +2,9 @@
 -- Validate those links at save and restore so a broken vine chain or spore
 -- cannot survive as an actor with an unresolvable source relationship.
 local component = require("constants.component")
+local categories = require("constants.catalog")
+local attitudes = require("constants.attitude")
+local gods = require("constants.gods")
 local monsters = require("ids.monsters")
 local spells = require("ids.spells")
 
@@ -52,13 +55,21 @@ local function validate_segment(ctx, entity, actor, summon, position)
     end
 end
 
--- A spore is a one-use bomb; a saved spore whose explosion already fired
--- should have been destroyed before the save boundary.
+-- A spore is a one-use bomb. Sporulate creates spell-owned spores, while
+-- Fedhas wrath animates a corpse into a hostile player-targeting god spore.
+-- Either source must disappear after its one explosion has fired.
 local function validate_spore(ctx, entity, actor, summon)
     local state = ctx:get(entity, component.MONSTER_SPORE)
+    local spell_source = summon.source_category == categories.SPELLS and
+        summon.source_id == spells.SPELL_SPORULATE
+    local fedhas_source = summon.source_category == categories.GODS and
+        summon.source_id == gods.FEDHAS and
+        summon.attitude == attitudes.HOSTILE and
+        summon.owner == ctx:player() and
+        state and state.target == summon.owner
 
     if state and (actor.kind_id ~= monsters.MONS_BALLISTOMYCETE_SPORE or
-        summon.source_id ~= spells.SPELL_SPORULATE or
+        not spell_source and not fedhas_source or
         state.exploded) then
         error("summoned spore has an invalid explosion state")
     end

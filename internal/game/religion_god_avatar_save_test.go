@@ -183,3 +183,55 @@ func TestGodAvatarMephiticCloudSurvivesRestore(t *testing.T) {
 		t.Fatal("restore lost Vehumet's god source or noxious cloud")
 	}
 }
+
+// Corpse-spawned Fedhas spores survive as ordinary hostile ECS actors;
+// their consumed corpse remains a skeleton through the save boundary.
+func TestFedhasCorpseSporeSurvivesRestore(t *testing.T) {
+	rules, err := modfs.Load("testdata/avatar-wrath-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	g, err := newScenarioWithRules(
+		41,
+		startChoice{
+			SpeciesID: "SP_HUMAN",
+			JobID:     "JOB_FIGHTER",
+		},
+		"WPN_RAPIER",
+		"Tester",
+		ordinaryMonsterScenarioID,
+		rules,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer g.Close()
+
+	if _, err := g.scripts.Policy("test.fedhas_corpse_spore", nil); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := g.scripts.ApplyPending(); err != nil {
+		t.Fatal(err)
+	}
+
+	if len(g.scripts.Components()["combat.monster_spore"].Entities()) != 1 {
+		t.Fatal("Fedhas corpse path did not create a saved spore")
+	}
+
+	restored, err := RestoreWithRules(g.Snapshot(), rules, RestorePolicy{})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	if len(restored.scripts.Components()["combat.monster_spore"].Entities()) != 1 {
+		t.Fatal("restore lost Fedhas's corpse spore")
+	}
+}

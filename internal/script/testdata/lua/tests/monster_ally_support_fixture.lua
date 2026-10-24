@@ -45,6 +45,12 @@ function game_methods.cell(game, _, x, y)
     return game.cells[x .. ":" .. y] or terrain.DNGN_FLOOR
 end
 
+-- Temporary terrain spells write the same test grid they later read.
+-- Keeping this in the shared fixture avoids a one-off spell stub.
+function game_methods.set_cell(game, _, x, y, feature)
+    game.cells[x .. ":" .. y] = feature
+end
+
 -- Ray tracing observes all positioned actors, including ineligible ones
 -- that could intercept a beneficial beam before it reaches an ally.
 function game_methods.actor_at(game, level_id, x, y)

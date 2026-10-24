@@ -7,6 +7,7 @@ local component = require("constants.component")
 local constructs = require("constants.monster_construct_components")
 local origin_policy = require("policy.population.origin")
 local item_ids = require("ids.items")
+local streams = require("constants.rng_streams")
 
 local death = {}
 
@@ -128,7 +129,8 @@ end
 
 -- Corpse creation uses the dead actor's definition after inventory has been released.
 function death.corpse(ctx, definition, position, source_origin)
-    if not definition.leaves_corpse or ctx:random("corpse", 2) == 1 then
+    if not definition.leaves_corpse or
+        ctx:random(streams.CORPSE, 2) == 1 then
         return
     end
 
@@ -141,7 +143,7 @@ function death.corpse(ctx, definition, position, source_origin)
     ctx:add(corpse, "core.corpse", {
         monster_id = definition.id,
         freshness = 110,
-        appearance = ctx:random("corpse", 255) + 1,
+        appearance = ctx:random(streams.CORPSE, 255) + 1,
     })
     ctx:add(corpse, "core.position", position)
 

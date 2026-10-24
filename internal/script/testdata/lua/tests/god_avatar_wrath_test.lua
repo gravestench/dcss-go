@@ -7,6 +7,7 @@ local harness = require("tests.harness")
 local health = require("policy.combat.player_health")
 local avatar = require("policy.religion.wrath.avatar")
 local effects = require("policy.combat.monster_spells")
+local fedhas = require("policy.religion.wrath.fedhas")
 local jobs = require("ids.jobs")
 local makhleb = require("policy.religion.wrath.makhleb")
 local monsters = require("ids.monsters")
@@ -495,6 +496,51 @@ local function vehumet_mephitic_source(ctx)
     harness.falsy(ctx:has(source, component.POSITION))
 end
 
+-- Fedhas has three equal nature-spell choices. Cast each one with the
+-- same god identity, and keep Primal Wave's water source after casting.
+local function fedhas_nature_spells(ctx)
+    local choices = {
+        spells.SPELL_CORROSIVE_BOLT,
+        spells.SPELL_PRIMAL_WAVE,
+        spells.SPELL_THORN_VOLLEY,
+    }
+    local original = avatar.cast
+    local selected = nil
+
+    avatar.cast = function(world, player, god_id, spell_id, message)
+        selected = spell_id
+        return original(world, player, god_id, spell_id, message)
+    end
+
+    local okay, message = pcall(function()
+        for index, spell_id in ipairs(choices) do
+            local player = player_at(ctx, 500 + index * 10, 12)
+
+            ctx:add(player, component.RELIGION_WORSHIP, {
+                god_id = gods.NO_GOD,
+                penance = {},
+            })
+
+            local owner = with_draws(fixture.context(ctx, player),
+                { 1, index - 1 })
+
+            selected = nil
+            harness.truthy(fedhas.apply(owner, player))
+            harness.equal(selected, spell_id)
+            harness.equal(owner:draws_used(), 2)
+
+            if spell_id == spells.SPELL_PRIMAL_WAVE then
+                harness.truthy(#ctx:query({
+                    component.TEMPORARY_TERRAIN,
+                }) > 0, "Primal Wave left no water")
+            end
+        end
+    end)
+
+    avatar.cast = original
+    harness.truthy(okay, tostring(message))
+end
+
 -- Both independent casts use production Lua component schemas and effects.
 function test.run(ctx)
     trog_fireball(ctx)
@@ -507,6 +553,7 @@ function test.run(ctx)
     makhleb_spell_sources(ctx)
     vehumet_conjurations(ctx)
     vehumet_mephitic_source(ctx)
+    fedhas_nature_spells(ctx)
 end
 
 return test

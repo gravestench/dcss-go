@@ -135,6 +135,13 @@ end
 -- population. Their ownership and expiry survive a save and restore.
 -- Example: summons.validate(ctx, entity, actor, position, ai, state, now) checks summoning expiry.
 function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
+    -- Divine punishment creatures are hostile, player-anchored god gifts.
+    -- Most are permanent; their origin is still a registered god rather
+    -- than a fabricated spell or a member of the starting population.
+    local owner_player = state.owner == ctx:player() and
+        ctx:has(state.owner, component.PLAYER)
+    local wrath_god_source = state.source_category == categories.GODS and
+        owner_player and state.attitude == attitudes.HOSTILE
     local permanent_spell = state.source_category == categories.SPELLS and
         (state.source_id == spells.SPELL_SIMULACRUM or
             state.source_id == spells.SPELL_DEATH_CHANNEL or
@@ -147,12 +154,11 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
                     ctx:has(entity, component.SUMMON_SEGMENT)))
     local trap_source = state.source_category == categories.TRAPS and
         state.source_id == traps.TRAP_ZOT
-    local permanent = (permanent_spell or trap_source) and
+    local permanent = (permanent_spell or trap_source or
+        wrath_god_source) and
         state.expires_aut == 0
 
     local owner_actor = ctx:get(state.owner, component.ACTOR)
-    local owner_player = state.owner == ctx:player() and
-        ctx:has(state.owner, component.PLAYER)
     local owner_avatar = ctx:has(state.owner,
         component.RELIGION_AVATAR_SOURCE) and
         state.source_category == categories.SPELLS and
@@ -189,6 +195,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         not item_source and not scroll_source and
         not jiyva_source and not xom_source and
         not lugonu_source and
+        not wrath_god_source and
         not wizlab_source then
         error("summon " .. ctx:id(entity) .. " has invalid origin category")
     end
