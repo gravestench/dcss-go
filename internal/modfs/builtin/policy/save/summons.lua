@@ -20,6 +20,8 @@ local holiness = require("constants.monster_holiness")
 local wizlab = require("constants.wizlab")
 local trog_roster = require("policy.religion.trog.brothers_roster")
 local makhleb_roster = require("policy.religion.makhleb.roster")
+local spiders = require("policy.combat.monster_summons.spiders")
+local attack_flavours = require("constants.attack_flavours")
 
 local constructs = require("constants.monster_construct_components")
 local monster_profile = require("policy.combat.monster_profile")
@@ -35,6 +37,36 @@ local valid_attitudes = {
     [attitudes.GOOD_NEUTRAL] = true,
     [attitudes.FELLOW_SLIME] = true,
 }
+
+-- Native wound summons name the monster that made the bite. Bind that
+-- profile to the saved owner, including its retained original class after
+-- polymorph, so a player or unrelated monster cannot claim the child.
+local function valid_spider_origin(ctx, state, kind_id)
+    if state.source_category ~= categories.MONSTERS or
+        not spiders.contains(kind_id) then
+        return false
+    end
+
+    local owner = ctx:get(state.owner, component.ACTOR)
+    local polymorph = ctx:get(state.owner, component.MONSTER_POLYMORPH)
+
+    if not owner or ctx:has(state.owner, component.PLAYER) or
+        (owner.kind_id ~= state.source_id and
+            (not polymorph or
+                polymorph.original_kind_id ~= state.source_id)) then
+        return false
+    end
+
+    local source = catalog.get(categories.MONSTERS, state.source_id)
+
+    for _, attack in ipairs(source.attacks or {}) do
+        if attack.flavour_id == attack_flavours.SPIDER then
+            return true
+        end
+    end
+
+    return false
+end
 
 -- Validate the complete saved ghost snapshot before AI or combat reads it.
 -- The source player can move or change gear after creation, so no field is
@@ -206,6 +238,8 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
     local wizlab_source = state.source_category == categories.VAULTS and
         (state.source_id == wizlab.WUCAD_MAP_ID or
             state.source_id == wizlab.BORGNJOR_MAP_ID)
+    local native_spider_source = valid_spider_origin(ctx, state,
+        actor.kind_id)
 
     if state.source_category ~= categories.SPELLS and
         state.source_category ~= categories.MUTATIONS and
@@ -217,7 +251,8 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         not yred_gift_source and
         not trog_gift_source and
         not makhleb_servant_source and
-        not wizlab_source then
+        not wizlab_source and
+        not native_spider_source then
         error("summon " .. ctx:id(entity) .. " has invalid origin category")
     end
 

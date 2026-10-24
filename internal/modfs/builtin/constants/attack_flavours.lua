@@ -40,6 +40,7 @@ local flavours = {
     STEAL = "AF_STEAL",
     MUTATE = "AF_MUTATE",
     CHAOTIC = "AF_CHAOTIC",
+    SPIDER = "AF_SPIDER",
 }
 
 return flavours

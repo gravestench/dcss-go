@@ -14,6 +14,7 @@ local afflictions = require(
     "policy.combat.monster_attack_flavours.afflictions")
 local blinks = require("policy.combat.monster_attack_flavours.blinks")
 local holds = require("policy.combat.monster_attack_flavours.holds")
+local spider = require("policy.combat.monster_attack_flavours.spider")
 local elemental_contacts = require(
     "policy.combat.monster_attack_flavours.elemental")
 local alteration = require(
@@ -345,6 +346,7 @@ local effects = {
     [attack_ids.SEAR] = elemental_contacts.sear,
     [attack_ids.MUTATE] = alteration.mutate,
     [attack_ids.CHAOTIC] = alteration.chaotic,
+    [attack_ids.SPIDER] = spider.apply,
     [attack_ids.STICKY_FLAME] = napalm,
     [traits.corrode] = corrode,
     [traits.ensnare] = ensnare,
