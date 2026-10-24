@@ -41,6 +41,7 @@ local flavours = {
     MUTATE = "AF_MUTATE",
     CHAOTIC = "AF_CHAOTIC",
     SPIDER = "AF_SPIDER",
+    SHADOWSTAB = "AF_SHADOWSTAB",
 }
 
 return flavours

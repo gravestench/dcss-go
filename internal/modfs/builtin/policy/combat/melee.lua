@@ -2,6 +2,8 @@ local auxiliary = require("policy.combat.auxiliary")
 local player_attack = require("policy.combat.player_attack")
 local roll = require("policy.combat.roll")
 local enfeeble = require("policy.magic.effects.statuses.enfeeble")
+local shadowstab = require("policy.combat.monster_shadowstab")
+local flavours = require("constants.attack_flavours")
 
 local melee = {}
 
@@ -29,12 +31,12 @@ function melee.reflexive_headbutt(ctx, input)
 end
 
 -- Shield blocking is rolled before the auto miss and evasion checks; preserve this RNG order.
-local function contact(ctx, hd, hit, plus, defense)
+local function contact(ctx, hd, hit, plus, defense, automatic)
     local hit_bound = 19 + math.floor(hd * 3 / 2) + hit + plus +
         (defense.visible_hit_modifier or 0)
-    local to_hit = roll.melee(ctx, hit_bound)
+    local to_hit = automatic and 0 or roll.melee(ctx, hit_bound)
     local ev_roll = roll.average_two(ctx, "melee", 2 * defense.ev)
-    local auto_chance = roll.melee(ctx, 100)
+    local auto_chance = automatic and 100 or roll.melee(ctx, 100)
     local auto_miss = false
     local auto_hit = false
 
@@ -61,7 +63,7 @@ local function contact(ctx, hd, hit, plus, defense)
         return { kind = "miss", damage = 0, shield_blocks = defense.shield_blocks }
     end
 
-    if not auto_hit and to_hit < ev_roll then
+    if not automatic and not auto_hit and to_hit < ev_roll then
         return { kind = "dodge", damage = 0, shield_blocks = defense.shield_blocks }
     end
 
@@ -71,8 +73,18 @@ end
 -- Convert a selected monster weapon into the shared contact roll without dealing damage yet.
 function melee.monster_contact(ctx, attack, defense)
     local weapon = attack.weapon
-    return contact(ctx, attack.hd, weapon and weapon.hit or 0,
-        weapon and weapon.plus or 0, defense)
+    local automatic = attack.flavour_id == flavours.SHADOWSTAB and
+        attack.attacker and attack.defender and
+        shadowstab.unseen(ctx, attack.attacker, attack.defender)
+    local outcome = contact(ctx, attack.hd, weapon and weapon.hit or 0,
+        weapon and weapon.plus or 0, defense, automatic)
+
+    if automatic then
+        shadowstab.announce(ctx, attack.attacker, attack.defender)
+        outcome.darkness = true
+    end
+
+    return outcome
 end
 
 -- Damage rolls after contact use the monster's selected attack profile.
@@ -101,6 +113,8 @@ function melee.monster_damage(ctx, attack, defense)
     if attack.attacker then
         damage = enfeeble.melee_damage(ctx, attack.attacker, damage)
     end
+
+    damage = shadowstab.damage(ctx, attack, damage)
 
     local saved = roll.gdr_armour(ctx, defense, potential)
     return math.max(0, damage - saved)

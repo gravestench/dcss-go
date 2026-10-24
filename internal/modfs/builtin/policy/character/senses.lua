@@ -5,6 +5,7 @@ local catalog = require("policy.catalog")
 local component = require("constants.component")
 local effects = require("policy.mutations.effects.registry")
 local flags = require("constants.monster_flags")
+local hex_status = require("policy.combat.monster_hexes.status")
 local jewellery_effects = require("policy.inventory.jewellery_effects")
 local jewellery_capabilities = require("constants.jewellery_capabilities")
 local vision = require("policy.character.vision")
@@ -58,7 +59,10 @@ function senses.perceive(ctx, player, monster, cell_visible, cell_known)
     local invisible = has_flag(definition, flags.INVISIBLE) or
         (enchant and (enchant.invisible_aut or 0) > 0)
 
-    if ctx:has(monster, component.IGNIS_FIRE_CHAMPION) then
+    -- Source backlighting reveals an invisible monster to all observers;
+    -- perception must agree with combat's live visibility decision.
+    if ctx:has(monster, component.IGNIS_FIRE_CHAMPION) or
+        hex_status.backlit(ctx, monster) then
         invisible = false
     end
 

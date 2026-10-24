@@ -176,6 +176,11 @@ path, so one physical contact cannot apply the dose twice.
 Broodmother Spider bites now use the shared Summon Spiders species pool,
 create one timed Akara child beside the wounded actor on a successful
 contact chance, and preserve native monster provenance through save checks.
+Shadowstab now checks the live defender's sight before contact. An unseen
+Shadow bypasses evasion but not shields, gains the source pre-armour stab
+multiplier, and loses its temporary invisibility after a surviving target's
+successful contact even when armour absorbs the hit. Sleeping defenders
+grant the same damage bonus to ordinary monster melee.
 Vampiric Draining, Drain Life, and Malign Offering share live negative-energy
 resistance and HP-transfer rules. Their spell files separately own adjacent,
 LOS area, and beam targeting; Malign Offering heals every aligned actor except

@@ -381,6 +381,7 @@ local function monster_player_contact(ctx, attacker, selected,
 
     local attack_input = {
         attacker = attacker,
+        defender = ctx:player(),
         hd = monster_stats.hit_dice(ctx, attacker, definition),
         damage = monster_roll.attack_damage(ctx, attacker,
             slime_blob.attack_damage(ctx, attacker, attack.damage)),
@@ -428,7 +429,7 @@ local function monster_player_contact(ctx, attacker, selected,
         end
     end
 
-    if message ~= "" then
+    if message ~= "" and not outcome.darkness then
         ctx:emit("combat", message)
     end
 
@@ -540,6 +541,7 @@ local function monster_target_contact(ctx, attacker, target,
     }
     local outcome = melee.monster(ctx, {
         attacker = attacker,
+        defender = target,
         hd = monster_stats.hit_dice(ctx, attacker, attacker_def,
             summon_stats and summon_stats.hd or nil),
         damage = monster_roll.attack_damage(ctx, attacker,
@@ -627,18 +629,21 @@ local function monster_target_contact(ctx, attacker, target,
         attack_flavours.apply(ctx, flavour_id, flavour_hit)
     end
 
-    if outcome.kind == "hit" then
-        ctx:emit("combat", "The " .. attacker_def.name .. " hits the " ..
-            target_def.name .. " for " .. dealt .. " damage.")
-    elseif outcome.kind == "block" then
-        ctx:emit("combat", "The " .. target_def.name .. " blocks the " ..
-            attacker_def.name .. ".")
-    elseif outcome.kind == "dodge" then
-        ctx:emit("combat", "The " .. target_def.name .. " dodges the " ..
-            attacker_def.name .. ".")
-    else
-        ctx:emit("combat", "The " .. attacker_def.name .. " misses the " ..
-            target_def.name .. ".")
+    if not outcome.darkness then
+        if outcome.kind == "hit" then
+            ctx:emit("combat", "The " .. attacker_def.name ..
+                " hits the " .. target_def.name .. " for " ..
+                dealt .. " damage.")
+        elseif outcome.kind == "block" then
+            ctx:emit("combat", "The " .. target_def.name .. " blocks the " ..
+                attacker_def.name .. ".")
+        elseif outcome.kind == "dodge" then
+            ctx:emit("combat", "The " .. target_def.name .. " dodges the " ..
+                attacker_def.name .. ".")
+        else
+            ctx:emit("combat", "The " .. attacker_def.name .. " misses the " ..
+                target_def.name .. ".")
+        end
     end
 
     trample.follow(ctx, flavour_hit)
