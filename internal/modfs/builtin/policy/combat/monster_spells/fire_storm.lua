@@ -135,6 +135,20 @@ function effect.plan(ctx, caster, foe)
     return plan
 end
 
+-- God wrath fires from the player's own cell. Keep the ordinary Fire
+-- Storm radius roll in its own plan before the avatar resolves the blast.
+function effect.feet_plan(ctx, caster, player)
+    local plan = effect.plan(ctx, caster, player)
+
+    if not plan then
+        error("Fire Storm has no feet target plan")
+    end
+
+    plan.at_feet = true
+
+    return plan
+end
+
 -- A corrupt or unrelated target plan cannot widen the blast arbitrarily.
 -- The shared beam contact owner applies lava resistance to each victim.
 function effect.resolve(ctx, caster, foe, _, plan)

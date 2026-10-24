@@ -159,9 +159,11 @@ mechanics receive their own Lua owner and saved component as needed.
 **Current implementation boundary:** All 21 card IDs have Lua effect
 modules. Wrath can select every source god, and every eligible god now has
 a dedicated handler. Makhleb's servant and destruction routes now cover
-their source pools, including Shock and lasting Sticky Flame. Many other
-handlers still reject branches whose shared mechanics are not yet ported,
-including Vehumet's and Fedhas's avatar spell pools, Xom actions,
+their source pools, including Shock and lasting Sticky Flame. Vehumet's
+nine conjuration bands cast through the same durable avatar, including
+Mephitic Cloud and Fire Storm. Other handlers still reject branches whose
+shared mechanics are not yet ported, including Fedhas's avatar spell pool,
+Xom actions,
 several transformations and mutations, and special summons or placement.
 The shared god-avatar source is now a durable, nonspatial Lua ECS entity
 while a burn, cloud, terrain change, or summon references it. Valid saves

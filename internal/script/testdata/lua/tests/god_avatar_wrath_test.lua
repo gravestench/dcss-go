@@ -14,6 +14,7 @@ local species = require("ids.species")
 local spells = require("ids.spells")
 local streams = require("constants.rng_streams")
 local trog = require("policy.religion.wrath.trog")
+local vehumet = require("policy.religion.wrath.vehumet")
 local yredelemnul = require("policy.religion.wrath.yredelemnul")
 
 local test = {}
@@ -375,6 +376,125 @@ local function makhleb_spell_sources(ctx)
         component.RELIGION_AVATAR_SOURCE).god_id, gods.MAKHLEB)
 end
 
+-- Each source severity band chooses only from its own conjuration pool.
+-- Running every choice through production effects also catches a missing
+-- zap profile or an effect that cannot cast at the player's feet.
+local function vehumet_conjurations(ctx)
+    local tiers = {
+        { 1, 0, {
+            spells.SPELL_MAGIC_DART,
+            spells.SPELL_STING,
+            spells.SPELL_SHOCK,
+            spells.SPELL_FLAME_TONGUE,
+        } },
+        { 3, 1, {
+            spells.SPELL_THROW_FLAME,
+            spells.SPELL_THROW_FROST,
+        } },
+        { 6, 1, {
+            spells.SPELL_MEPHITIC_CLOUD,
+            spells.SPELL_STONE_ARROW,
+        } },
+        { 9, 2, {
+            spells.SPELL_STICKY_FLAME,
+            spells.SPELL_THROW_ICICLE,
+            spells.SPELL_ENERGY_BOLT,
+        } },
+        { 12, 2, {
+            spells.SPELL_FIREBALL,
+            spells.SPELL_LIGHTNING_BOLT,
+            spells.SPELL_BOLT_OF_MAGMA,
+            spells.SPELL_VENOM_BOLT,
+            spells.SPELL_BOLT_OF_DRAINING,
+            spells.SPELL_QUICKSILVER_BOLT,
+            spells.SPELL_METAL_SPLINTERS,
+        } },
+        { 15, 2, {
+            spells.SPELL_BOLT_OF_FIRE,
+            spells.SPELL_BOLT_OF_COLD,
+            spells.SPELL_CORROSIVE_BOLT,
+            spells.SPELL_FREEZING_CLOUD,
+            spells.SPELL_POISONOUS_CLOUD,
+            spells.SPELL_POISON_ARROW,
+            spells.SPELL_IRON_SHOT,
+            spells.SPELL_CONJURE_BALL_LIGHTNING,
+        } },
+        { 18, 3, {
+            spells.SPELL_ORB_OF_ELECTRICITY,
+            spells.SPELL_FLASH_FREEZE,
+        } },
+        { 21, 3, { spells.SPELL_LEHUDIBS_CRYSTAL_SPEAR } },
+        { 24, 4, { spells.SPELL_FIRE_STORM } },
+    }
+    local original = avatar.cast
+    local selected = nil
+    local next_x = 100
+
+    avatar.cast = function(world, player, god_id, spell_id)
+        selected = spell_id
+        return original(world, player, god_id, spell_id)
+    end
+
+    local okay, message = pcall(function()
+        for _, tier in ipairs(tiers) do
+            for index, spell_id in ipairs(tier[3]) do
+                local player = player_at(ctx, next_x, tier[1])
+                local draws = {}
+
+                if tier[1] > 1 then
+                    draws[#draws + 1] = tier[2]
+                end
+
+                if #tier[3] > 1 then
+                    draws[#draws + 1] = index - 1
+                end
+
+                local owner = with_draws(fixture.context(ctx, player),
+                    draws)
+
+                selected = nil
+                harness.truthy(vehumet.apply(owner, player))
+                harness.equal(selected, spell_id)
+                harness.equal(owner:draws_used(), #draws)
+                next_x = next_x + 10
+            end
+        end
+    end)
+
+    avatar.cast = original
+    harness.truthy(okay, tostring(message))
+end
+
+-- A god-cast Mephitic Cloud is a saved world hazard, not an immediate
+-- damage shortcut. Its owner stays alive solely for later cloud credit.
+local function vehumet_mephitic_source(ctx)
+    local player = player_at(ctx, 450, 6)
+    local owner = with_draws(fixture.context(ctx, player), { 1, 0 })
+
+    harness.truthy(vehumet.apply(owner, player))
+
+    local center = nil
+
+    for _, entity in ipairs(ctx:query({ component.WORLD_CLOUD })) do
+        local cloud = ctx:get(entity, component.WORLD_CLOUD)
+
+        if cloud.x == 450 and cloud.y == 10 then
+            center = cloud
+            break
+        end
+    end
+
+    harness.truthy(center, "Mephitic Cloud missed its target cell")
+
+    local source = ctx:entity(center.source_actor_id)
+
+    harness.truthy(ctx:has(source,
+        component.RELIGION_AVATAR_SOURCE))
+    harness.equal(ctx:get(source,
+        component.RELIGION_AVATAR_SOURCE).god_id, gods.VEHUMET)
+    harness.falsy(ctx:has(source, component.POSITION))
+end
+
 -- Both independent casts use production Lua component schemas and effects.
 function test.run(ctx)
     trog_fireball(ctx)
@@ -385,6 +505,8 @@ function test.run(ctx)
     lasting_ball_lightning(ctx)
     makhleb_destruction_pool(ctx)
     makhleb_spell_sources(ctx)
+    vehumet_conjurations(ctx)
+    vehumet_mephitic_source(ctx)
 end
 
 return test

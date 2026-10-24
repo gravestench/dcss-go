@@ -343,8 +343,10 @@ costs, and resolve Lua card modules through the generic command bridge.
 The 21 active card IDs have effect modules and focused scenarios. Divine
 Wrath routes every eligible god to a dedicated Lua handler. Makhleb's
 servant and destruction pools now resolve, including Shock and lasting
-Sticky Flame. Source branches that still need a shared mechanic, such as
-Vehumet's and Fedhas's avatar spell pools, Xom actions, special summons,
+Sticky Flame. Vehumet's nine conjuration bands now cast through the god
+avatar, including source-backed Sting, Flame Tongue, and Mephitic Cloud.
+Source branches that still need a shared mechanic, such as Fedhas's
+avatar spell pool, Xom actions, special summons,
 and certain mutation or transformation effects, raise an
 explicit error at that branch. These outcomes remain part of the open card
 domain work. A lingering god spell now retains an inert Lua ECS source

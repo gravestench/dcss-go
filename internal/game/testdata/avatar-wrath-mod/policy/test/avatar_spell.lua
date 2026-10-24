@@ -24,6 +24,15 @@ function spell.ball_lightning(ctx)
     return {}
 end
 
+-- A hostile noxious cloud remains tied to Vehumet after the avatar body
+-- disappears, so save/restore can keep future confusion attribution.
+function spell.mephitic_cloud(ctx)
+    avatar.cast(ctx, ctx:player(), gods.VEHUMET,
+        spells.SPELL_MEPHITIC_CLOUD)
+
+    return {}
+end
+
 register.policy({
     id = "test.avatar_spell",
     run = spell.cast,
@@ -32,6 +41,11 @@ register.policy({
 register.policy({
     id = "test.avatar_ball_lightning",
     run = spell.ball_lightning,
+})
+
+register.policy({
+    id = "test.avatar_mephitic_cloud",
+    run = spell.mephitic_cloud,
 })
 
 return spell

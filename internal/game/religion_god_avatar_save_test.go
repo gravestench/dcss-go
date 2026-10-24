@@ -129,3 +129,57 @@ func TestGodAvatarLastingSpellSurvivesRestore(t *testing.T) {
 		t.Fatal("restore lost god-owned ball lightning")
 	}
 }
+
+// Mephitic Cloud keeps Vehumet's source after the casting actor is gone.
+// Restoring the level must keep both the cloud and its god attribution.
+func TestGodAvatarMephiticCloudSurvivesRestore(t *testing.T) {
+	rules, err := modfs.Load("testdata/avatar-wrath-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	g, err := newScenarioWithRules(
+		41,
+		startChoice{
+			SpeciesID: "SP_HUMAN",
+			JobID:     "JOB_FIGHTER",
+		},
+		"WPN_RAPIER",
+		"Tester",
+		ordinaryMonsterScenarioID,
+		rules,
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer g.Close()
+
+	if _, err := g.scripts.Policy("test.avatar_mephitic_cloud", nil); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := g.scripts.ApplyPending(); err != nil {
+		t.Fatal(err)
+	}
+
+	if len(g.scripts.Components()["religion.avatar_source"].Entities()) != 1 ||
+		len(g.scripts.Components()["world.cloud"].Entities()) == 0 {
+		t.Fatal("god-cast Mephitic Cloud lacks a saved source or cloud")
+	}
+
+	restored, err := RestoreWithRules(g.Snapshot(), rules, RestorePolicy{})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer restored.Close()
+
+	if len(restored.scripts.Components()["religion.avatar_source"].Entities()) != 1 ||
+		len(restored.scripts.Components()["world.cloud"].Entities()) == 0 {
+		t.Fatal("restore lost Vehumet's god source or noxious cloud")
+	}
+}

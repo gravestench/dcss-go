@@ -120,6 +120,12 @@ end
 local function feet_plan(ctx, shadow, player, spell_id, effect)
     local spell = catalog.get(categories.SPELLS, spell_id)
 
+    -- Some spells carry per-cast data in their own plan. Give those
+    -- effects first chance to build a feet plan without a central switch.
+    if effect.feet_plan then
+        return effect.feet_plan(ctx, shadow, player)
+    end
+
     -- Self enchant spells have no beam profile. Use their own registered
     -- plan, whose target is the temporary source rather than the player.
     for _, flag in ipairs(spell.flags or {}) do
