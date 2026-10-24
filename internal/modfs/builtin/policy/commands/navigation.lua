@@ -16,6 +16,7 @@ local pan_travel = require("policy.world.pan.travel")
 local hell_travel = require("policy.world.hell.travel")
 local temporary_portals = require("policy.world.portals.catalog")
 local xom_stairs = require("policy.religion.xom.stair_repel")
+local passage = require("policy.religion.fedhas.pass_through")
 
 -- Rooted movement is rejected before checking the destination cell.
 local function rooted(ctx)
@@ -44,7 +45,11 @@ function navigation.move(ctx, position, dx, dy)
         }
     end
 
-    if rooted(ctx) and not ctx:actor_at(position.level_id, x, y) then
+    local passable_plant = passage.at(ctx, ctx:player(),
+        position.level_id, x, y)
+
+    if rooted(ctx) and
+        (passable_plant or not ctx:actor_at(position.level_id, x, y)) then
         return {
             message = "Your roots keep you in place.",
         }
@@ -54,7 +59,7 @@ function navigation.move(ctx, position, dx, dy)
     -- attack on the adjacent watcher still proceeds through melee policy.
     if not confusion.active(ctx, ctx:player()) and
         forms.nervous(ctx, ctx:player()) and
-        not ctx:actor_at(position.level_id, x, y) then
+        (passable_plant or not ctx:actor_at(position.level_id, x, y)) then
         return {
             message = "You're too terrified to move while being watched!",
         }
@@ -79,6 +84,10 @@ function navigation.move(ctx, position, dx, dy)
     end
 
     local target = ctx:actor_at(position.level_id, x, y)
+
+    if passable_plant then
+        target = nil
+    end
 
     if target then
         local actor = ctx:get(target, "core.actor")

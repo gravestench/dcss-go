@@ -9,6 +9,7 @@ local channels = {
     READ = "read",
     RELIGION = "religion",
     MONSTER = "monster",
+    MOVEMENT = "movement",
     VAULT = "vault",
     WARNING = "warning",
     STAIRS = "stairs",

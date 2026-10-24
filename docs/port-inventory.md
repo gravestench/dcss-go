@@ -505,9 +505,12 @@ surrounds the player with timed briar actors, Grow Ballistomycete and Grow
 Oklob create aimed plant allies, and Overgrow replaces eligible walls and
 trees with weighted source plants. The source rank, MP, piety, failure,
 range, vault veto, and save paths are covered by Lua and game tests.
-The current one-actor-per-cell level index still prevents source Fedhas
-pass-through and growing a stationary plant on the player's own square;
-these need a dedicated shared spatial-occupancy slice.
+The spatial index now holds ordered actor lists. Fedhas can grow a
+stationary plant beneath the player or walk through an eligible plant at
+the source 1.5-times movement cost. Lua checks plant traits, allegiance,
+and worship before granting passage; save validation rejects unrelated
+shared cells. Other forms of actor overlap remain outside the current
+gameplay rules.
 Jiyva now converts source jelly and eye genera on their monster turns.
 Attempted conversion under penance, retry when that debt ends, desertion,
 temporary charm removal, and off-level allegiance use saved actor state.

@@ -1314,7 +1314,8 @@ policy uses these values while the grid keeps the changing floor and water.
 | `ctx:remembered(level_id, x, y)` | Terrain ID in the player's saved map memory, or `nil` when unexplored. |
 | `ctx:records_at(level_id, x, y)` | Fresh array of saved vault records at the cell, or an empty array. Each record has `kind`, `source_id`, `identity`, `x`, `y`, `pending`, `overridden`, and typed `arguments`. |
 | `ctx:walkable(level_id, x, y)` | Whether an actor can walk on the current or staged terrain. |
-| `ctx:actor_at(level_id, x, y)` | Occupying actor handle, or `nil`; includes staged moves. |
+| `ctx:actor_at(level_id, x, y)` | Primary actor handle, or `nil`; includes staged moves. The player is primary when sharing a cell. |
+| `ctx:actors_at(level_id, x, y)` | Fresh ordered array of all actor handles at that cell, including staged placements and removals. |
 | `ctx:stair_at(level_id, x, y)` | Link `{ to_level_id, to_x, to_y, unavailable }`, or `nil`. |
 | `ctx:visible(level_id, from_x, from_y, radius, target_x, target_y)` | Ordinary sight. |
 | `ctx:visible_no_trans(level_id, from_x, from_y, radius, target_x, target_y)` | Clear walls block; actors do not. |
@@ -1337,6 +1338,16 @@ available after save and restore. Interpret each record in Lua policy rather
 than branching on its identity in Go.
 | `ctx:remove_actor(entity, level_id)` | Remove a positioned actor from that level's spatial index. |
 | `ctx:move_actors(moves)` | Atomically stage simultaneous moves; see the shape below. |
+
+An optional final `true` on `place_actor` or `move_actor` explicitly permits
+sharing a cell. Placement appends the new actor behind the existing primary;
+movement makes the mover primary. The grid checks positions and terrain but
+does not grant the gameplay permission. A Lua policy must inspect
+`ctx:actors_at`, the actors' live components, and the relevant content
+traits before requesting sharing. Fedhas' implementation is in
+`policy.religion.fedhas.pass_through`; its saved-cell validator accepts
+only a player and one eligible stationary plant. A mod that adds a new
+sharing rule must also extend that validator so its saves can be restored.
 
 `move_actors` accepts an array of records shaped like
 `{ actor = handle, level_id = id, x = x, y = y }`. Destinations must be

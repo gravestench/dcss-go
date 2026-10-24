@@ -382,6 +382,8 @@ func (g *Game) playerActionCost(prepared preparedCommand) (Aut, error) {
 	decision, err := g.scripts.Policy("command.timing", map[string]any{
 		"attack_target": prepared.attackTarget != 0,
 		"intent_kind":   int(prepared.intent.Kind),
+		"dx":            prepared.intent.DX,
+		"dy":            prepared.intent.DY,
 		"item_id":       uint64(prepared.intent.ItemID),
 		"ability_id":    prepared.intent.AbilityID,
 	})

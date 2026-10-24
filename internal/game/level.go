@@ -30,7 +30,7 @@ type Level struct {
 	spawnExclusions []point
 
 	positions *akara.Store[ecs.Position]
-	actors    map[point]akara.Entity
+	actors    map[point][]akara.Entity
 
 	// nil while active or before the player first visits this floor.
 	awaySinceAut *Aut
@@ -109,7 +109,7 @@ func NewLevel(id int, cells [][]terrain.ID, positions *akara.Store[ecs.Position]
 		width:             width,
 
 		positions: positions,
-		actors:    make(map[point]akara.Entity),
+		actors:    make(map[point][]akara.Entity),
 
 		stairs:      make(map[point]StairLink),
 		cellColours: make(map[point]string),
@@ -765,22 +765,45 @@ func (l *Level) SetCell(x, y int, feature terrain.ID) error {
 }
 
 func (l *Level) ActorAt(x, y int) (akara.Entity, bool) {
-	actor, ok := l.actors[point{
+	actors := l.actors[point{
 		x: x,
 		y: y,
 	}]
 
-	return actor, ok
+	if len(actors) == 0 {
+		return 0, false
+	}
+
+	return actors[0], true
+}
+
+// ActorsAt returns a snapshot of every actor at the cell. The first actor
+// is the primary occupant used by ordinary targeting and rendering.
+func (l *Level) ActorsAt(x, y int) []akara.Entity {
+	return append([]akara.Entity(nil), l.actors[point{
+		x: x,
+		y: y,
+	}]...)
 }
 
 func (l *Level) PlaceActor(entity akara.Entity, x, y int) error {
+	if _, occupied := l.ActorAt(x, y); occupied {
+		return fmt.Errorf("level %d location (%d,%d) is occupied", l.ID, x, y)
+	}
+
+	return l.PlaceActorShared(entity, x, y, false)
+}
+
+// PlaceActorShared is the grid primitive for an explicitly authorized
+// overlap. Gameplay policy decides whether the occupants may share.
+func (l *Level) PlaceActorShared(
+	entity akara.Entity,
+	x, y int,
+	primary bool,
+) error {
 	if !l.Walkable(x, y) &&
 		(!l.inBounds(x, y) || l.terrain[y][x] != terrain.MalignGateway) {
 		return fmt.Errorf("level %d location (%d,%d) is blocked", l.ID, x, y)
-	}
-
-	if _, occupied := l.ActorAt(x, y); occupied {
-		return fmt.Errorf("level %d location (%d,%d) is occupied", l.ID, x, y)
 	}
 
 	if l.positions.Has(entity) {
@@ -795,22 +818,36 @@ func (l *Level) PlaceActor(entity akara.Entity, x, y int) error {
 		return err
 	}
 
-	l.actors[point{
+	l.insertActor(point{
 		x: x,
 		y: y,
-	}] = entity
+	}, entity, primary)
 
 	return nil
 }
 
 func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
+	if other, occupied := l.ActorAt(x, y); occupied && other != entity {
+		return fmt.Errorf("level %d location (%d,%d) is occupied", l.ID, x, y)
+	}
+
+	return l.MoveActorShared(entity, x, y, false)
+}
+
+// MoveActorShared moves one indexed actor without displacing the actors
+// already there. A primary mover is inserted before the resident actors.
+func (l *Level) MoveActorShared(
+	entity akara.Entity,
+	x, y int,
+	primary bool,
+) error {
 	position, found := l.positions.Get(entity)
 
 	if !found ||
-		position.LevelID != l.ID || l.actors[point{
+		position.LevelID != l.ID || !l.hasActor(point{
 		x: position.X,
 		y: position.Y,
-	}] != entity {
+	}, entity) {
 		return fmt.Errorf("entity %d is not indexed on level %d", entity, l.ID)
 	}
 
@@ -818,21 +855,21 @@ func (l *Level) MoveActor(entity akara.Entity, x, y int) error {
 		return fmt.Errorf("level %d location (%d,%d) is blocked", l.ID, x, y)
 	}
 
-	if other, occupied := l.ActorAt(x, y); occupied && other != entity {
-		return fmt.Errorf("level %d location (%d,%d) is occupied", l.ID, x, y)
+	if position.X == x && position.Y == y {
+		return nil
 	}
 
-	delete(l.actors, point{
+	l.removeIndexedActor(point{
 		x: position.X,
 		y: position.Y,
-	})
+	}, entity)
 
 	position.X = x
 	position.Y = y
-	l.actors[point{
+	l.insertActor(point{
 		x: x,
 		y: y,
-	}] = entity
+	}, entity, primary)
 
 	return nil
 }
@@ -841,21 +878,58 @@ func (l *Level) RemoveActor(entity akara.Entity) error {
 	position, found := l.positions.Get(entity)
 
 	if !found ||
-		position.LevelID != l.ID || l.actors[point{
+		position.LevelID != l.ID || !l.hasActor(point{
 		x: position.X,
 		y: position.Y,
-	}] != entity {
+	}, entity) {
 		return fmt.Errorf("entity %d is not indexed on level %d", entity, l.ID)
 	}
 
-	delete(l.actors, point{
+	l.removeIndexedActor(point{
 		x: position.X,
 		y: position.Y,
-	})
+	}, entity)
 
 	l.positions.Remove(entity)
 
 	return nil
+}
+
+func (l *Level) hasActor(cell point, entity akara.Entity) bool {
+	for _, actor := range l.actors[cell] {
+		if actor == entity {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (l *Level) insertActor(cell point, entity akara.Entity, primary bool) {
+	if primary {
+		l.actors[cell] = append([]akara.Entity{entity}, l.actors[cell]...)
+		return
+	}
+
+	l.actors[cell] = append(l.actors[cell], entity)
+}
+
+func (l *Level) removeIndexedActor(cell point, entity akara.Entity) {
+	actors := l.actors[cell]
+
+	for index, actor := range actors {
+		if actor == entity {
+			actors = append(actors[:index], actors[index+1:]...)
+			break
+		}
+	}
+
+	if len(actors) == 0 {
+		delete(l.actors, cell)
+		return
+	}
+
+	l.actors[cell] = actors
 }
 
 // KnownCells returns the player's remembered feature IDs. Empty IDs are unseen.

@@ -13,6 +13,7 @@ local habitat = require("policy.combat.monster_habitat")
 local hit_points = require("policy.population.hit_points")
 local monsters = require("ids.monsters")
 local power = require("policy.magic.power")
+local passage = require("policy.religion.fedhas.pass_through")
 local roll = require("policy.combat.roll")
 local senses = require("policy.character.senses")
 local skills = require("ids.skills")
@@ -94,6 +95,8 @@ function plants.spawn(ctx, player, kind_id, x, y, base)
             },
             hd = live_hd,
             hp = live_hp,
+            share_with_player = passage.growth_under_player(ctx,
+                player, kind_id, x, y),
         })
 end
 
@@ -146,10 +149,6 @@ end
 -- Aiming, range, and habitat are checked before the action is timed.
 -- Occupied cells are rejected here when their actor is visible.
 function plants.grow_target(ctx, player, kind_id, dx, dy)
-    if dx == 0 and dy == 0 then
-        return nil, "Okay, then."
-    end
-
     if math.max(math.abs(dx), math.abs(dy)) > 2 then
         return nil, "That's too far away."
     end
@@ -167,10 +166,13 @@ function plants.grow_target(ctx, player, kind_id, dx, dy)
         return nil, "You cannot see that place."
     end
 
-    local occupant = ctx:actor_at(origin.level_id, x, y)
-
-    if occupant and senses.player_sees_actor(ctx, occupant) then
-        return nil, "That space is already occupied."
+    -- The player is primary on a shared cell. Inspect every occupant so
+    -- an existing visible plant rejects another Grow before time is paid.
+    for _, occupant in ipairs(ctx:actors_at(origin.level_id, x, y)) do
+        if occupant ~= player and
+            senses.player_sees_actor(ctx, occupant) then
+            return nil, "That space is already occupied."
+        end
     end
 
     return {
@@ -192,7 +194,12 @@ function plants.grow(ctx, player, kind_id, dx, dy)
 
     -- An invisible occupant is a paid successful no-effect use. Source
     -- checks that collision before rolling HD or summon duration.
-    if ctx:actor_at(origin.level_id, cell.x, cell.y) then
+    local occupants = ctx:actors_at(origin.level_id, cell.x, cell.y)
+    local under_player = passage.growth_under_player(ctx,
+        player, kind_id, cell.x, cell.y)
+
+    if #occupants > 0 and
+        not (under_player and #occupants == 1 and occupants[1] == player) then
         ctx:emit("religion",
             "Something you can't see occupies that space!")
 

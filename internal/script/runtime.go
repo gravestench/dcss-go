@@ -67,6 +67,7 @@ type Grid interface {
 	SetShoalsTideClock(levelID, height, velocity int, lastAut int64) error
 	Walkable(levelID, x, y int) bool
 	ActorAt(levelID, x, y int) (akara.Entity, bool)
+	ActorsAt(levelID, x, y int) []akara.Entity
 	StairAt(levelID, x, y int) (Stair, bool)
 	TravelFeatureAt(levelID, x, y int) bool
 	Visible(levelID, fromX, fromY, radius, targetX, targetY int) (bool, error)
@@ -85,8 +86,10 @@ type Grid interface {
 	CellBlood(levelID, x, y int) (bool, bool)
 	SetCellBlood(levelID, x, y int, bloody bool) error
 	MoveActor(entity akara.Entity, levelID, x, y int) error
+	MoveActorShared(entity akara.Entity, levelID, x, y int, primary bool) error
 	MoveActors(moves []ActorMove) error
 	PlaceActor(entity akara.Entity, levelID, x, y int) error
+	PlaceActorShared(entity akara.Entity, levelID, x, y int, primary bool) error
 	RemoveActor(entity akara.Entity, levelID int) error
 }
 
@@ -135,11 +138,15 @@ type VisibleCell struct {
 }
 
 // ActorMove is one destination in an atomic simultaneous grid movement.
+// Shared and Primary are host-prepared metadata for undoing or moving an
+// already shared group; Lua batch requests never set them directly.
 type ActorMove struct {
 	Actor   akara.Entity
 	LevelID int
 	X       int
 	Y       int
+	Shared  bool
+	Primary bool
 }
 
 type gridCell struct {
@@ -180,7 +187,7 @@ type Runtime struct {
 	pendingViews      map[componentTarget]*pendingComponent
 	pendingDestroy    map[akara.Entity]bool
 	pendingCells      map[gridCell]terrain.ID
-	pendingActors     map[gridCell]akara.Entity
+	pendingActors     map[gridCell][]akara.Entity
 	pendingPositions  map[akara.Entity]*gridCell
 	pendingSession    map[string]map[string]any
 	pendingRegions    map[int]RegionChange
@@ -243,7 +250,7 @@ func newRuntime(
 		pendingDestroy:    make(map[akara.Entity]bool),
 		pendingCells:      make(map[gridCell]terrain.ID),
 		pendingRegions:    make(map[int]RegionChange),
-		pendingActors:     make(map[gridCell]akara.Entity),
+		pendingActors:     make(map[gridCell][]akara.Entity),
 		pendingPositions:  make(map[akara.Entity]*gridCell),
 		signals:           make(map[string][]lua.LValue),
 	}

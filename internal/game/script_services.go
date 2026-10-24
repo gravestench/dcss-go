@@ -365,6 +365,16 @@ func (grid scriptGrid) ActorAt(levelID, x, y int) (akara.Entity, bool) {
 	return level.ActorAt(x, y)
 }
 
+func (grid scriptGrid) ActorsAt(levelID, x, y int) []akara.Entity {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return nil
+	}
+
+	return level.ActorsAt(x, y)
+}
+
 func (grid scriptGrid) StairAt(levelID, x, y int) (script.Stair, bool) {
 	level := grid.levels[levelID]
 
@@ -638,14 +648,61 @@ func (grid scriptGrid) MoveActor(entity akara.Entity, levelID, x, y int) error {
 	}
 
 	oldX, oldY := position.X, position.Y
+	oldActors := from.ActorsAt(oldX, oldY)
+	wasPrimary := len(oldActors) > 0 && oldActors[0] == entity
 
 	if err := from.RemoveActor(entity); err != nil {
 		return err
 	}
 
 	if err := positioned.PlaceActor(entity, x, y); err != nil {
-		_ = from.PlaceActor(entity, oldX, oldY)
+		_ = from.PlaceActorShared(entity, oldX, oldY, wasPrimary)
 
+		return err
+	}
+
+	return nil
+}
+
+// Shared movement is explicit. The Lua caller has already decided whether
+// this actor may enter the occupied destination.
+func (grid scriptGrid) MoveActorShared(
+	entity akara.Entity,
+	levelID, x, y int,
+	primary bool,
+) error {
+	to := grid.levels[levelID]
+
+	if to == nil {
+		return fmt.Errorf("missing level %d", levelID)
+	}
+
+	position, found := to.positions.Get(entity)
+
+	if !found {
+		return fmt.Errorf("actor %d has no position", entity)
+	}
+
+	if position.LevelID == levelID {
+		return to.MoveActorShared(entity, x, y, primary)
+	}
+
+	from := grid.levels[position.LevelID]
+
+	if from == nil {
+		return fmt.Errorf("actor %d has missing origin level %d", entity, position.LevelID)
+	}
+
+	oldX, oldY := position.X, position.Y
+	oldActors := from.ActorsAt(oldX, oldY)
+	wasPrimary := len(oldActors) > 0 && oldActors[0] == entity
+
+	if err := from.RemoveActor(entity); err != nil {
+		return err
+	}
+
+	if err := to.PlaceActorShared(entity, x, y, primary); err != nil {
+		_ = from.PlaceActorShared(entity, oldX, oldY, wasPrimary)
 		return err
 	}
 
@@ -673,9 +730,12 @@ func (grid scriptGrid) MoveActors(moves []script.ActorMove) error {
 			y:       move.Y,
 		}
 
+		previousShared, destinationUsed := occupied[next]
+
 		if level == nil ||
 			!level.Walkable(move.X, move.Y) ||
-			moving[move.Actor] || occupied[next] {
+			moving[move.Actor] ||
+			(destinationUsed && (!move.Shared || !previousShared)) {
 			return fmt.Errorf("invalid simultaneous actor move %d", move.Actor)
 		}
 
@@ -686,7 +746,7 @@ func (grid scriptGrid) MoveActors(moves []script.ActorMove) error {
 		}
 
 		moving[move.Actor] = true
-		occupied[next] = true
+		occupied[next] = move.Shared
 		positions[move.Actor] = position
 	}
 
@@ -695,16 +755,17 @@ func (grid scriptGrid) MoveActors(moves []script.ActorMove) error {
 		from := grid.levels[position.LevelID]
 		to := grid.levels[move.LevelID]
 
-		if from == nil || from.actors[point{
+		if from == nil || !from.hasActor(point{
 			x: position.X,
 			y: position.Y,
-		}] != move.Actor {
+		}, move.Actor) {
 			return fmt.Errorf("actor %d is not indexed", move.Actor)
 		}
 
-		if other, found := to.ActorAt(move.X, move.Y); found &&
-			!moving[other] {
-			return fmt.Errorf("actor %d destination is occupied", move.Actor)
+		for _, other := range to.ActorsAt(move.X, move.Y) {
+			if !moving[other] && !move.Shared {
+				return fmt.Errorf("actor %d destination is occupied", move.Actor)
+			}
 		}
 	}
 
@@ -712,10 +773,10 @@ func (grid scriptGrid) MoveActors(moves []script.ActorMove) error {
 		position := positions[move.Actor]
 		from := grid.levels[position.LevelID]
 
-		delete(from.actors, point{
+		from.removeIndexedActor(point{
 			x: position.X,
 			y: position.Y,
-		})
+		}, move.Actor)
 	}
 
 	for _, move := range moves {
@@ -725,10 +786,10 @@ func (grid scriptGrid) MoveActors(moves []script.ActorMove) error {
 		position.LevelID = move.LevelID
 		position.X = move.X
 		position.Y = move.Y
-		to.actors[point{
+		to.insertActor(point{
 			x: move.X,
 			y: move.Y,
-		}] = move.Actor
+		}, move.Actor, move.Primary)
 	}
 
 	return nil
@@ -742,6 +803,20 @@ func (grid scriptGrid) PlaceActor(entity akara.Entity, levelID, x, y int) error 
 	}
 
 	return level.PlaceActor(entity, x, y)
+}
+
+func (grid scriptGrid) PlaceActorShared(
+	entity akara.Entity,
+	levelID, x, y int,
+	primary bool,
+) error {
+	level := grid.levels[levelID]
+
+	if level == nil {
+		return fmt.Errorf("missing level %d", levelID)
+	}
+
+	return level.PlaceActorShared(entity, x, y, primary)
 }
 
 func (grid scriptGrid) RemoveActor(entity akara.Entity, levelID int) error {

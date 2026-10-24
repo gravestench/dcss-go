@@ -200,9 +200,12 @@ function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
 
     if options and options.exact then
         x, y = options.exact.x, options.exact.y
+        local occupants = ctx:actors_at(origin.level_id, x, y)
+        local share = options.share_with_player and
+            #occupants == 1 and occupants[1] == ctx:player()
 
         if not habitat.kind_at(ctx, kind_id, origin.level_id, x, y) or
-            ctx:actor_at(origin.level_id, x, y) then
+            (#occupants > 0 and not share) then
             return nil
         end
     else
@@ -282,7 +285,8 @@ function summons.spawn(ctx, owner, source_id, kind_id, degree, cap, options)
         ctx:add(actor, component.SUMMON_STATS, { hd = options.hd })
     end
 
-    ctx:place_actor(actor, origin.level_id, x, y)
+    ctx:place_actor(actor, origin.level_id, x, y,
+        options and options.share_with_player or false)
 
     if attitude == attitudes.HOSTILE and owner == ctx:player() and
         not (options and options.silent_hostility) then

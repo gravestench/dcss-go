@@ -12,19 +12,41 @@ import (
 
 func (g *Game) restoreEntityComponents(records []save.EntityRecord) error {
 	for _, record := range records {
-		entity := akara.Entity(record.ID)
+		if record.ID == uint64(g.player) {
+			if err := g.restoreEntityRecord(record); err != nil {
+				return err
+			}
+		}
+	}
 
-		if err := g.restoreActorComponents(record, entity); err != nil {
-			return err
+	for _, record := range records {
+		if record.ID == uint64(g.player) {
+			continue
 		}
 
-		if err := g.restoreRoleComponents(record, entity); err != nil {
+		if err := g.restoreEntityRecord(record); err != nil {
 			return err
 		}
+	}
 
-		if err := g.restoreLocationComponents(record, entity); err != nil {
-			return err
-		}
+	return nil
+}
+
+// Rebuild the player first so shared cells have the same primary actor
+// independent of the order of records in an external save file.
+func (g *Game) restoreEntityRecord(record save.EntityRecord) error {
+	entity := akara.Entity(record.ID)
+
+	if err := g.restoreActorComponents(record, entity); err != nil {
+		return err
+	}
+
+	if err := g.restoreRoleComponents(record, entity); err != nil {
+		return err
+	}
+
+	if err := g.restoreLocationComponents(record, entity); err != nil {
+		return err
 	}
 
 	return nil
@@ -203,7 +225,8 @@ func (g *Game) restoreLocationComponents(
 		}
 
 		if record.Actor != nil {
-			if err := level.PlaceActor(entity, record.Position.X, record.Position.Y); err != nil {
+			if err := level.PlaceActorShared(entity,
+				record.Position.X, record.Position.Y, false); err != nil {
 				return err
 			}
 		} else if _, err := g.stores.Positions.Set(entity, *record.Position); err != nil {
@@ -233,6 +256,10 @@ func (g *Game) restoreLocationComponents(
 }
 
 func (g *Game) validateRestoredPlacement() error {
+	if _, err := g.scripts.Policy("save.validate_shared_cells", nil); err != nil {
+		return err
+	}
+
 	if err := g.validateAbyssTransitPlacement(); err != nil {
 		return err
 	}

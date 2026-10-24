@@ -12,6 +12,7 @@ local jobs = require("ids.jobs")
 local monsters = require("ids.monsters")
 local piety = require("policy.religion.piety")
 local plants = require("policy.religion.fedhas.active_plants")
+local passage = require("policy.religion.fedhas.pass_through")
 local formulas = require("policy.character.formulas")
 local registry = require("policy.abilities.registry")
 local saved_summons = require("policy.save.summons")
@@ -156,7 +157,7 @@ local function check_summons(game, player)
     local oklob = registry.get(abilities.FEDHAS_GROW_OKLOB)
 
     harness.truthy(ballisto.prepare(game, player, { dx = 3, dy = 0 }))
-    harness.truthy(oklob.prepare(game, player, { dx = 0, dy = 0 }))
+    harness.falsy(oklob.prepare(game, player, { dx = 0, dy = 0 }))
     harness.falsy(ballisto.prepare(game, player, { dx = 2, dy = 0 }))
     ballisto.resolve(game, player, { dx = 2, dy = 0 })
 
@@ -168,6 +169,28 @@ local function check_summons(game, player)
     oklob.resolve(game, player, { dx = 0, dy = 2 })
     check_plant(game, player, game:actor_at(1, 20, 22),
         monsters.MONS_OKLOB_PLANT)
+
+end
+
+-- Source excludes hostile Oklobs by species, including the sapling kind.
+-- A different hostile stationary plant remains passable under the passive.
+local function check_passage(ctx)
+    local game, player = worshipper(ctx)
+    local sapling = ctx:create()
+
+    ctx:add(sapling, component.ACTOR, {
+        kind_id = monsters.MONS_OKLOB_SAPLING,
+        speed = 10,
+    })
+    game:place_actor(sapling, 1, 30, 20)
+
+    harness.falsy(passage.at(game, player, 1, 30, 20))
+
+    local actor = game:get(sapling, component.ACTOR)
+    actor.kind_id = monsters.MONS_BALLISTOMYCETE
+    game:set(sapling, component.ACTOR, actor)
+
+    harness.equal(passage.at(game, player, 1, 30, 20), sapling)
 end
 
 -- Fractional Invocations must use source stochastic rounding twice, HD
@@ -271,6 +294,7 @@ function test.run(ctx)
     check_summons(game, player)
     check_overgrow(game, player)
     check_fractional_skill(ctx)
+    check_passage(ctx)
 end
 
 return test

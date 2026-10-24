@@ -93,6 +93,34 @@ function game_methods.actor_at(game, level_id, x, y)
     return nil
 end
 
+-- Match the production multi-actor read while retaining the test world as
+-- the sole owner of positions. Player-first order mirrors grid priority.
+function game_methods.actors_at(game, level_id, x, y)
+    local actors = {}
+    local player = game:player()
+    local player_position = game.base:get(player, component.POSITION)
+
+    if player_position and player_position.level_id == level_id and
+        player_position.x == x and player_position.y == y then
+        actors[1] = player
+    end
+
+    for _, entity in ipairs(game.base:query({
+        component.ACTOR,
+        component.POSITION,
+    })) do
+        local position = game.base:get(entity, component.POSITION)
+
+        if entity ~= player and position.level_id == level_id and
+            position.x == x and
+            position.y == y then
+            actors[#actors + 1] = entity
+        end
+    end
+
+    return actors
+end
+
 -- A successful placement writes the same POSITION component that the
 -- production grid service owns; this fixture has no physical level grid.
 function game_methods.place_actor(game, entity, level_id, x, y)

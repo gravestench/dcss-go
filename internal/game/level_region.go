@@ -61,14 +61,14 @@ func (grid scriptGrid) PrepareRegion(
 	next.tideHeight = old.tideHeight
 	next.tideVelocity = old.tideVelocity
 	next.tideLastAut = old.tideLastAut
-	next.actors = make(map[point]akara.Entity, len(old.actors))
+	next.actors = make(map[point][]akara.Entity, len(old.actors))
 
 	for cell := range old.bloodCells {
 		next.bloodCells[cell] = true
 	}
 
-	for cell, actor := range old.actors {
-		next.actors[cell] = actor
+	for cell, actors := range old.actors {
+		next.actors[cell] = append([]akara.Entity(nil), actors...)
 	}
 
 	if raw, present := plan["initial_monsters"]; present {
@@ -241,7 +241,7 @@ func (grid scriptGrid) prepareRegionRetire(
 		}
 
 		if position.LevelID != old.ID ||
-			old.actors[origin] != actor {
+			!old.hasActor(origin, actor) {
 			return nil, nil, fmt.Errorf("region actor %d is not indexed", actor)
 		}
 
@@ -251,7 +251,7 @@ func (grid scriptGrid) prepareRegionRetire(
 
 		positions[actor] = *position
 		actors = append(actors, actor)
-		delete(next.actors, origin)
+		next.removeIndexedActor(origin, actor)
 	}
 
 	return actors, positions, nil
@@ -500,7 +500,7 @@ func (grid scriptGrid) prepareRegionActors(
 
 	moves := make([]script.ActorMove, 0, len(entries))
 	prior := make(map[akara.Entity]ecs.Position, len(entries))
-	destinations := make(map[point]bool, len(entries))
+	destinations := make(map[point]point, len(entries))
 
 	for _, value := range entries {
 		record, okay := value.(map[string]any)
@@ -552,18 +552,19 @@ func (grid scriptGrid) prepareRegionActors(
 
 		_, alreadyMoving := prior[actor]
 		_, alreadyRetired := retired[actor]
+		previousOrigin, destinationUsed := destinations[target]
 
 		if position.LevelID != old.ID ||
-			old.actors[origin] != actor ||
+			!old.hasActor(origin, actor) ||
 			!next.Walkable(x, y) ||
 			alreadyMoving ||
 			alreadyRetired ||
-			destinations[target] {
+			(destinationUsed && previousOrigin != origin) {
 			return nil, nil, fmt.Errorf("region actor %d move is invalid", actor)
 		}
 
 		prior[actor] = *position
-		destinations[target] = true
+		destinations[target] = origin
 		moves = append(moves, script.ActorMove{
 			Actor:   actor,
 			LevelID: old.ID,
@@ -572,19 +573,51 @@ func (grid scriptGrid) prepareRegionActors(
 		})
 	}
 
-	for cell, actor := range old.actors {
-		if _, gone := retired[actor]; gone {
+	// A translated shared group may keep one destination. Require the
+	// entire original group to move together, preserving its primary actor.
+	targetGroups := make(map[point][]int)
+
+	for index, move := range moves {
+		target := point{x: move.X, y: move.Y}
+		targetGroups[target] = append(targetGroups[target], index)
+	}
+
+	for _, indexes := range targetGroups {
+		if len(indexes) == 1 {
 			continue
 		}
 
-		if _, moving := prior[actor]; moving {
-			continue
+		first := prior[moves[indexes[0]].Actor]
+		origin := point{x: first.X, y: first.Y}
+		actors := old.ActorsAt(origin.x, origin.y)
+
+		if len(indexes) != len(actors) {
+			return nil, nil, fmt.Errorf("region moves only part of shared cell")
 		}
 
-		if !next.Walkable(cell.x, cell.y) ||
-			destinations[cell] {
-			return nil, nil, fmt.Errorf(
-				"region would block unmoved actor %d", actor)
+		for _, index := range indexes {
+			moves[index].Shared = true
+			moves[index].Primary = moves[index].Actor == actors[0]
+		}
+	}
+
+	for cell, actors := range old.actors {
+		for _, actor := range actors {
+			if _, gone := retired[actor]; gone {
+				continue
+			}
+
+			if _, moving := prior[actor]; moving {
+				continue
+			}
+
+			_, destinationUsed := destinations[cell]
+
+			if !next.Walkable(cell.x, cell.y) ||
+				destinationUsed {
+				return nil, nil, fmt.Errorf(
+					"region would block unmoved actor %d", actor)
+			}
 		}
 	}
 

@@ -63,6 +63,7 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "solid", r.state.NewFunction(r.luaGridSolid))
 	r.state.SetField(context, "opaque", r.state.NewFunction(r.luaGridOpaque))
 	r.state.SetField(context, "actor_at", r.state.NewFunction(r.luaGridActorAt))
+	r.state.SetField(context, "actors_at", r.state.NewFunction(r.luaGridActorsAt))
 	r.state.SetField(context, "stair_at", r.state.NewFunction(r.luaGridStairAt))
 	r.state.SetField(context, "travel_feature_at", r.state.NewFunction(r.luaGridTravelFeatureAt))
 	r.state.SetField(context, "visible", r.state.NewFunction(r.luaGridVisible))
@@ -937,6 +938,26 @@ func (r *Runtime) luaGridActorAt(state *lua.LState) int {
 	return 1
 }
 
+// actors_at is the explicit multi-occupant read for policies such as
+// Fedhas. Ordinary actor_at keeps returning the primary actor.
+func (r *Runtime) luaGridActorsAt(state *lua.LState) int {
+	levelID, x, y := r.gridArgs(state)
+	actors := r.stagedActorsAt(gridCell{
+		levelID: levelID,
+		x:       x,
+		y:       y,
+	})
+	result := state.NewTable()
+
+	for _, actor := range actors {
+		result.Append(r.entityHandle(actor))
+	}
+
+	state.Push(result)
+
+	return 1
+}
+
 func (r *Runtime) luaGridStairAt(state *lua.LState) int {
 	levelID, x, y := r.gridArgs(state)
 	stair, found := r.services.Grid.StairAt(levelID, x, y)
@@ -1140,6 +1161,7 @@ func (r *Runtime) luaGridProjectileClear(state *lua.LState) int {
 func (r *Runtime) luaGridMoveActor(state *lua.LState) int {
 	entity := r.gridEntity(state)
 	coordinates := r.gridIntegersAfterEntity(state, 3)
+	share := state.GetTop() >= 6 && state.CheckBool(6)
 	old, positioned, err := r.stagedPosition(entity)
 	next := gridCell{
 		levelID: coordinates[0],
@@ -1154,35 +1176,39 @@ func (r *Runtime) luaGridMoveActor(state *lua.LState) int {
 		return 0
 	}
 
-	indexed, found := r.stagedActorAt(old)
-
-	if !found ||
-		indexed != entity ||
-		!r.stagedWalkable(next) {
+	if !r.stagedHasActor(old, entity) || !r.stagedWalkable(next) {
 		state.RaiseError("move actor %d has invalid source or destination", entity)
 
 		return 0
 	}
 
 	if occupant, occupied := r.stagedActorAt(next); occupied &&
-		occupant != entity {
+		occupant != entity && !share {
 		state.RaiseError("move actor %d destination is occupied", entity)
 
 		return 0
 	}
 
-	r.stageActorPosition(entity, &old, &next)
+	oldActors := r.stagedActorsAt(old)
+	wasPrimary := len(oldActors) > 0 && oldActors[0] == entity
+	r.stageActorPositionShared(entity, &old, &next, share)
 	r.pending = append(r.pending, structuralCommand{
 		entity:       entity,
 		spatialLevel: old.levelID,
 		apply: func() error {
+			if share {
+				return r.services.Grid.MoveActorShared(
+					entity, next.levelID, next.x, next.y, true,
+				)
+			}
+
 			return r.services.Grid.MoveActor(
 				entity, next.levelID, next.x, next.y,
 			)
 		},
 		undo: func() error {
-			return r.services.Grid.MoveActor(
-				entity, old.levelID, old.x, old.y,
+			return r.services.Grid.MoveActorShared(
+				entity, old.levelID, old.x, old.y, wasPrimary,
 			)
 		},
 	})
@@ -1193,6 +1219,7 @@ func (r *Runtime) luaGridMoveActor(state *lua.LState) int {
 func (r *Runtime) luaGridPlaceActor(state *lua.LState) int {
 	entity := r.gridEntity(state)
 	coordinates := r.gridIntegersAfterEntity(state, 3)
+	share := state.GetTop() >= 6 && state.CheckBool(6)
 	next := gridCell{
 		levelID: coordinates[0],
 		x:       coordinates[1],
@@ -1220,17 +1247,23 @@ func (r *Runtime) luaGridPlaceActor(state *lua.LState) int {
 		return 0
 	}
 
-	if _, occupied := r.stagedActorAt(next); occupied {
+	if _, occupied := r.stagedActorAt(next); occupied && !share {
 		state.RaiseError("place actor %d destination is occupied", entity)
 
 		return 0
 	}
 
-	r.stageActorPosition(entity, nil, &next)
+	r.stageActorPositionShared(entity, nil, &next, false)
 	r.pending = append(r.pending, structuralCommand{
 		entity:       entity,
 		spatialLevel: next.levelID,
 		apply: func() error {
+			if share {
+				return r.services.Grid.PlaceActorShared(
+					entity, next.levelID, next.x, next.y, false,
+				)
+			}
+
 			return r.services.Grid.PlaceActor(
 				entity, next.levelID, next.x, next.y,
 			)
@@ -1256,14 +1289,14 @@ func (r *Runtime) luaGridRemoveActor(state *lua.LState) int {
 		return 0
 	}
 
-	indexed, found := r.stagedActorAt(old)
-
-	if !found || indexed != entity {
+	if !r.stagedHasActor(old, entity) {
 		state.RaiseError("remove actor %d is not indexed", entity)
 
 		return 0
 	}
 
+	oldActors := r.stagedActorsAt(old)
+	wasPrimary := len(oldActors) > 0 && oldActors[0] == entity
 	r.stageActorPosition(entity, &old, nil)
 	r.pending = append(r.pending, structuralCommand{
 		entity:       entity,
@@ -1272,8 +1305,8 @@ func (r *Runtime) luaGridRemoveActor(state *lua.LState) int {
 			return r.services.Grid.RemoveActor(entity, old.levelID)
 		},
 		undo: func() error {
-			return r.services.Grid.PlaceActor(
-				entity, old.levelID, old.x, old.y,
+			return r.services.Grid.PlaceActorShared(
+				entity, old.levelID, old.x, old.y, wasPrimary,
 			)
 		},
 	})

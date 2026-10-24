@@ -12,6 +12,7 @@ local display = require("policy.combat.monster_support.display")
 local terrain = require("constants.terrain")
 local trove_portal = require("policy.world.trove.portal")
 local trove_payment = require("policy.world.trove.payment")
+local passage = require("policy.religion.fedhas.pass_through")
 
 local entries = {}
 
@@ -36,6 +37,11 @@ function entries.move(ctx, player, input, position)
         }
         local target = ctx:actor_at(destination.level_id,
             destination.x, destination.y)
+
+        if passage.at(ctx, player, destination.level_id,
+            destination.x, destination.y) then
+            target = nil
+        end
 
         if target and fear.afraid_of(ctx, player, target) and
             ctx:random(streams.MELEE, 3) == 0 then

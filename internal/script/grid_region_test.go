@@ -25,7 +25,10 @@ func TestStageRegionActorsRetiredCellBecomesOccupied(t *testing.T) {
 	}
 
 	runtime := &Runtime{
-		pendingActors: map[gridCell]akara.Entity{},
+		pendingActors: map[gridCell][]akara.Entity{
+			oldSurvivor: {survivor},
+			oldRetired:  {retired},
+		},
 		pendingPositions: map[akara.Entity]*gridCell{
 			survivor: &oldSurvivor,
 			retired:  &oldRetired,
@@ -41,11 +44,11 @@ func TestStageRegionActorsRetiredCellBecomesOccupied(t *testing.T) {
 		},
 	}, []akara.Entity{retired})
 
-	if got := runtime.pendingActors[oldRetired]; got != survivor {
-		t.Fatalf("retired cell pending actor = %d, want %d", got, survivor)
+	if got := runtime.pendingActors[oldRetired]; len(got) != 1 || got[0] != survivor {
+		t.Fatalf("retired cell pending actors = %v, want %d", got, survivor)
 	}
 
-	if got := runtime.pendingActors[oldSurvivor]; got != 0 {
-		t.Fatalf("survivor old cell remains occupied by %d", got)
+	if got := runtime.pendingActors[oldSurvivor]; len(got) != 0 {
+		t.Fatalf("survivor old cell remains occupied by %v", got)
 	}
 }

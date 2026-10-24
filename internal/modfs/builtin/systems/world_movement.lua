@@ -15,6 +15,10 @@ local roll = require("policy.combat.monster_roll")
 local opportunity = require("policy.combat.opportunity_attacks")
 local xom_cloud_trail = require("policy.religion.xom.cloud_trail")
 local xom_stairs = require("policy.religion.xom.stair_repel")
+local passage = require("policy.religion.fedhas.pass_through")
+local channels = require("constants.message_channels")
+local categories = require("constants.catalog")
+local monsters = require("ids.monsters")
 
 -- Theory of operation: Movement first handles escape and occupied cells, then commits a legal destination.
 -- A failed constriction escape spends the movement action; a successful one costs the holder energy.
@@ -119,9 +123,11 @@ function system.update(ctx, actor, elapsed_aut)
     local x = position.x + intent.dx
     local y = position.y + intent.dy
     local occupied = ctx:actor_at(position.level_id, x, y)
+    local passable_plant = passage.at(ctx, actor,
+        position.level_id, x, y)
 
     -- Reclassify an occupied destination before the combat system reads this intent.
-    if occupied then
+    if occupied and not passable_plant then
         if actor ~= ctx:player() and
             not targets.enemy(ctx, actor, occupied) then
             intent.kind = intent_ids.WAIT
@@ -166,7 +172,24 @@ function system.update(ctx, actor, elapsed_aut)
         xom_cloud_trail.leave(ctx, actor, position)
     end
 
-    ctx:move_actor(actor, position.level_id, x, y)
+    if passable_plant then
+        local origin_actors = ctx:actors_at(position.level_id,
+            position.x, position.y)
+
+        if #origin_actors == 1 then
+            local plant_actor = ctx:get(passable_plant, component.ACTOR)
+            local definition = catalog.get(categories.MONSTERS,
+                plant_actor.kind_id)
+            local growth = definition.genus_id == monsters.MONS_FUNGUS and
+                "fungus" or "plants"
+
+            ctx:emit(channels.MOVEMENT,
+                "You walk carefully through the " .. growth .. ".")
+        end
+    end
+
+    ctx:move_actor(actor, position.level_id, x, y,
+        passable_plant ~= nil)
     barbs.moved(ctx, actor, elapsed_aut)
     roll.moved(ctx, actor)
 

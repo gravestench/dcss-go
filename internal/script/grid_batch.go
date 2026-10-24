@@ -69,9 +69,7 @@ func (r *Runtime) decodeActorMove(table *lua.LTable) (stagedActorMove, error) {
 		return stagedActorMove{}, fmt.Errorf("batch move actor %d has no position", actor)
 	}
 
-	indexed, found := r.stagedActorAt(old)
-
-	if !found || indexed != actor {
+	if !r.stagedHasActor(old, actor) {
 		return stagedActorMove{}, fmt.Errorf("batch move actor %d is not indexed", actor)
 	}
 
@@ -131,20 +129,25 @@ func (r *Runtime) luaGridMoveActors(state *lua.LState) int {
 	}
 
 	for index, move := range moves {
-		occupant, occupied := r.stagedActorAt(move.next)
+		for _, occupant := range r.stagedActorsAt(move.next) {
+			if !moving[occupant] {
+				state.RaiseError("batch move %d destination is occupied", index+1)
 
-		if occupied && !moving[occupant] {
-			state.RaiseError("batch move %d destination is occupied", index+1)
-
-			return 0
+				return 0
+			}
 		}
 	}
 
 	forward := make([]ActorMove, 0, len(moves))
 	reverse := make([]ActorMove, 0, len(moves))
+	originActors := make(map[gridCell][]akara.Entity, len(moves))
 
 	for _, move := range moves {
-		r.pendingActors[move.old] = 0
+		originActors[move.old] = r.stagedActorsAt(move.old)
+	}
+
+	for _, move := range moves {
+		r.stageActorPosition(move.actor, &move.old, nil)
 	}
 
 	for _, move := range moves {
@@ -161,6 +164,9 @@ func (r *Runtime) luaGridMoveActors(state *lua.LState) int {
 			LevelID: move.old.levelID,
 			X:       move.old.x,
 			Y:       move.old.y,
+			Shared:  len(originActors[move.old]) > 1,
+			Primary: len(originActors[move.old]) > 0 &&
+				originActors[move.old][0] == move.actor,
 		})
 	}
 

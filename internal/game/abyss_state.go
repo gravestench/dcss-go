@@ -130,9 +130,11 @@ func (g *Game) validateAbyssTransitPlacement() error {
 		}
 	}
 
-	for _, actor := range reserve.actors {
-		if !tracked[uint64(actor)] {
-			return fmt.Errorf("untracked Abyss transit actor %d", actor)
+	for _, actors := range reserve.actors {
+		for _, actor := range actors {
+			if !tracked[uint64(actor)] {
+				return fmt.Errorf("untracked Abyss transit actor %d", actor)
+			}
 		}
 	}
 

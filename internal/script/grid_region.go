@@ -209,7 +209,7 @@ func stageRegionActors(
 	for _, move := range moves {
 		old, _, _ := runtime.stagedPosition(move.Actor)
 
-		runtime.pendingActors[old] = 0
+		runtime.stageActorPosition(move.Actor, &old, nil)
 	}
 
 	// Retire before installing destinations: a survivor may move into a
@@ -227,6 +227,7 @@ func stageRegionActors(
 			y:       move.Y,
 		}
 
-		runtime.stageActorPosition(move.Actor, nil, &next)
+		runtime.stageActorPositionShared(move.Actor, nil, &next,
+			move.Primary)
 	}
 }

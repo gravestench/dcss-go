@@ -10,6 +10,9 @@ local intent = require("constants.intent")
 local time = require("constants.time")
 local abilities = require("ids.abilities")
 local phases = require("constants.equipment_phases")
+local passage = require("policy.religion.fedhas.pass_through")
+local roll = require("policy.combat.roll")
+local streams = require("constants.rng_streams")
 
 local timing = {}
 
@@ -48,7 +51,7 @@ function timing.player_speed(ctx, player, ignore_slow)
     local numerator = time_taken * HASTE_NUMERATOR
     time_taken = math.floor(numerator / HASTE_DENOMINATOR)
 
-    if ctx:random("speed", HASTE_DENOMINATOR) <
+    if ctx:random(streams.SPEED, HASTE_DENOMINATOR) <
         numerator % HASTE_DENOMINATOR then
         time_taken = time_taken + 1
     end
@@ -80,8 +83,18 @@ function timing.action_cost(ctx, player, input, time_taken)
     if input.intent_kind == intent.MOVE then
         local base = movement.base(ctx, player)
         local swift = statuses.move_delay(ctx, player, base, false)
+        local cost = movement.scale(ctx, swift, time_taken)
+        local position = ctx:get(player, component.POSITION)
 
-        return movement.scale(ctx, swift, time_taken)
+        if position and input.dx and input.dy and
+            passage.at(ctx, player, position.level_id,
+            position.x + input.dx, position.y + input.dy) then
+            -- Source increases the finalized move delay by 50 percent;
+            -- stochastic rounding matters for odd hasted delays.
+            cost = roll.random_divide(ctx, cost * 3, 2, streams.SPEED)
+        end
+
+        return cost
     end
 
     if input.intent_kind == intent.RANGED then
