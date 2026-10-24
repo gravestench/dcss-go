@@ -33,9 +33,11 @@ local function natural(definition)
     return false
 end
 
--- Spawn at the vacated death cell first, then nearby; retain base monster stats on the undead summon.
-function necromancy.raise(ctx, owner, spell_id, kind_id, base_kind_id,
-    position, attitude)
+-- Spawn at the authored cell first, then nearby, retaining base stats.
+-- Spell deaths and god wrath share this derived-undead body; the caller's
+-- source category distinguishes those causes on the saved summon.
+function necromancy.raise(ctx, owner, source_id, kind_id, base_kind_id,
+    position, attitude, source_category, stream)
     local base = catalog.get("monsters", base_kind_id)
     local hp = math.max(1, math.floor(base.average_hp_10x / 10))
     local options = {
@@ -45,13 +47,15 @@ function necromancy.raise(ctx, owner, spell_id, kind_id, base_kind_id,
         hd = math.max(1, base.hd),
         expires_aut = 0,
         attitude = attitude,
+        source_category = source_category,
+        stream = stream,
     }
-    local creature = summons.spawn(ctx, owner, spell_id, kind_id, 0, 999,
+    local creature = summons.spawn(ctx, owner, source_id, kind_id, 0, 999,
         options)
 
     if not creature then
         options.exact = nil
-        creature = summons.spawn(ctx, owner, spell_id, kind_id, 0, 999,
+        creature = summons.spawn(ctx, owner, source_id, kind_id, 0, 999,
             options)
     end
 

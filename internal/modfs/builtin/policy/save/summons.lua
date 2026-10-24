@@ -142,6 +142,10 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         ctx:has(state.owner, component.PLAYER)
     local wrath_god_source = state.source_category == categories.GODS and
         owner_player and state.attitude == attitudes.HOSTILE
+    local yred_gift_source = state.source_category == categories.GODS and
+        state.source_id == gods.YREDELEMNUL and owner_player and
+        state.attitude == attitudes.FRIENDLY and
+        state.expires_aut == 0
     local permanent_spell = state.source_category == categories.SPELLS and
         (state.source_id == spells.SPELL_SIMULACRUM or
             state.source_id == spells.SPELL_DEATH_CHANNEL or
@@ -155,7 +159,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
     local trap_source = state.source_category == categories.TRAPS and
         state.source_id == traps.TRAP_ZOT
     local permanent = (permanent_spell or trap_source or
-        wrath_god_source) and
+        wrath_god_source or yred_gift_source) and
         state.expires_aut == 0
 
     local owner_actor = ctx:get(state.owner, component.ACTOR)
@@ -196,6 +200,7 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
         not jiyva_source and not xom_source and
         not lugonu_source and
         not wrath_god_source and
+        not yred_gift_source and
         not wizlab_source then
         error("summon " .. ctx:id(entity) .. " has invalid origin category")
     end
@@ -374,6 +379,21 @@ function summons.validate(ctx, entity, actor, position, ai, state, current_aut)
     end
 
     local definition = catalog.get("monsters", actor.kind_id)
+
+    if yred_gift_source then
+        local undead = false
+
+        for _, kind in ipairs(definition.holiness or {}) do
+            undead = undead or kind == holiness.UNDEAD
+        end
+
+        if not undead or ctx:has(entity,
+            component.MONSTER_BOUND_SOUL) or
+            ctx:has(entity, component.SUMMON_SEGMENT) then
+            error("summon " .. ctx:id(entity) ..
+                " has invalid Yredelemnul gift")
+        end
+    end
 
     definition = monster_profile.definition(ctx, entity, definition)
 

@@ -1,14 +1,41 @@
--- Yredelemnul sends permanent hostile servants from religion.cc's ordered
--- roster. Soul reclaim and zombie bases still need source effect owners.
+-- Yredelemnul either fires a draining bolt or reclaims undead gifts and
+-- sends hostile servants. Rare derived undead use the committed Dungeon
+-- population for their base, not a handwritten second monster roster.
 local component = require("constants.component")
 local avatar = require("policy.religion.wrath.avatar")
 local gods = require("constants.gods")
 local monsters = require("ids.monsters")
+local souls = require("policy.religion.wrath.yredelemnul.souls")
 local spells = require("ids.spells")
 local streams = require("constants.rng_streams")
 local summons = require("policy.religion.wrath.summons")
+local zombies = require("policy.religion.wrath.yredelemnul.zombies")
 
 local yredelemnul = {}
+local MAX_PLACEMENT_FAILURES = 64
+
+-- A sealed floor has no destination for any servant. Stop after the
+-- first failed placement there; other floors may retry a different kind
+-- whose habitat fits an open adjacent cell.
+local function has_open_neighbor(ctx, player)
+    local position = ctx:get(player, component.POSITION)
+
+    for dy = -1, 1 do
+        for dx = -1, 1 do
+            if dx ~= 0 or dy ~= 0 then
+                local x = position.x + dx
+                local y = position.y + dy
+
+                if ctx:walkable(position.level_id, x, y) and
+                    not ctx:actor_at(position.level_id, x, y) then
+                    return true
+                end
+            end
+        end
+    end
+
+    return false
+end
 
 -- religion.cc:_yred_servants is ordered by power. The source clamps the
 -- upper index after computing its lower index from the unclamped value.
@@ -63,8 +90,9 @@ local function send_servant(ctx, player, level)
 end
 
 -- Source checks follower reclaim only on the servant half of the coinflip.
--- A failed servant placement retries that attempt; zombie selection cannot
--- be approximated without the source's depth-specific zombifiable pool.
+-- A failed regular servant placement retries that attempt. Bound its
+-- retries because a sealed map otherwise turns source's retry loop into
+-- an unending game action; zombie attempts consume their slot either way.
 function yredelemnul.apply(ctx, player)
     local level = math.max(1,
         ctx:get(player, component.PROGRESSION).level)
@@ -79,20 +107,33 @@ function yredelemnul.apply(ctx, player)
 
     if worship.god_id == gods.YREDELEMNUL and
         ctx:random(streams.CARDS, 2) == 0 then
-        error("unimplemented Yredelemnul soul reclaim wrath")
+        if souls.reclaim(ctx, player) then
+            return true
+        end
     end
 
     local remaining = attempts(ctx, level)
     local count = 0
+    local failures = 0
 
-    while remaining > 0 do
+    while remaining > 0 and
+        failures < MAX_PLACEMENT_FAILURES do
         if ctx:random(streams.CARDS, level) == 0 then
-            error("unimplemented Yredelemnul zombified hostile wrath")
-        end
+            if zombies.spawn(ctx, player, level) then
+                count = count + 1
+            end
 
-        if send_servant(ctx, player, level) then
+            remaining = remaining - 1
+        elseif send_servant(ctx, player, level) then
             count = count + 1
             remaining = remaining - 1
+            failures = 0
+        else
+            failures = failures + 1
+
+            if not has_open_neighbor(ctx, player) then
+                break
+            end
         end
     end
 

@@ -347,11 +347,15 @@ Sticky Flame. Vehumet's nine conjuration bands now cast through the god
 avatar, including source-backed Sting, Flame Tongue, and Mephitic Cloud.
 Fedhas's three wrath branches now convert visible corpses to hostile
 spores, fire nature spells through the avatar, or plant source-sized rings
-of hostile plants. Source branches that still need a shared mechanic,
-such as Xom actions, special summons, and certain mutation or
-transformation effects, raise an explicit error at that branch. These
-outcomes remain part of the open card
-domain work. A lingering god spell now retains an inert Lua ECS source
+of hostile plants.
+Yredelemnul's wrath now reclaims permanent undead gifts from current
+worshippers, chooses source-weighted Dungeon zombie or skeleton bases, and
+sends level-scaled hostile undead servants. The god source, allegiance,
+expiry, and derived monster base survive save and restore. Source branches
+that still need a shared mechanic, such as Xom actions, special summons,
+and certain mutation or transformation effects, raise an explicit error
+at that branch. These outcomes remain part of the open card domain work.
+A lingering god spell now retains an inert Lua ECS source
 for burn, cloud, terrain, and summon attribution through save and restore.
 Other god abilities, remaining passives, and ordinary timed wrath remain
 separate religion slices.
