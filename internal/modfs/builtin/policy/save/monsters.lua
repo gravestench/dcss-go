@@ -27,6 +27,7 @@ local ugly_thing = require("policy.monsters.ugly_thing")
 local polymorph_selection = require("policy.monsters.polymorph_selection")
 local slime_lifecycle = require("policy.monsters.slime_lifecycle")
 local slime_blob = require("policy.monsters.slime_blob")
+local draconian_base = require("policy.monsters.draconian_base")
 local fedhas = require("policy.religion.gods.fedhas")
 local beogh = require("policy.religion.gods.beogh")
 local jiyva = require("policy.religion.gods.jiyva")
@@ -175,8 +176,9 @@ local function validate_roster_monster(ctx, entity, actor, health, position,
     -- authored undead do. Validate rolled HP against that saved base
     -- instead of the template row, whose average HP is intentionally zero.
     local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
-    local profile_id = overrides and overrides.base_id ~= "" and
-        overrides.base_id or roster_id
+    local profile_id = polymorph and actor.kind_id or
+        draconian_base.profile_kind(actor.kind_id,
+            overrides and overrides.base_id)
     local live_slime = actor.kind_id == monsters.MONS_SLIME_CREATURE
     local live_profile_id = (growth or live_slime and polymorph) and
         actor.kind_id or profile_id
@@ -365,14 +367,12 @@ local function validate_vault_monster(ctx, entity, actor, health, position,
     ai, current_aut, slime_hp_bound)
     local definition = catalog.get("monsters", actor.kind_id)
     local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
-    local profile_id = overrides and overrides.base_id ~= "" and
-        overrides.base_id or actor.kind_id
     local polymorph = ctx:get(entity, component.MONSTER_POLYMORPH)
-    local growth_profile_id = polymorph and actor.kind_id or profile_id
-    local profile = roster.profile(polymorph and
-        actor.kind_id == monsters.MONS_SLIME_CREATURE and
-        actor.kind_id or profile_id)
-    local growth_profile = roster.profile(growth_profile_id)
+    local profile_id = polymorph and actor.kind_id or
+        draconian_base.profile_kind(actor.kind_id,
+            overrides and overrides.base_id)
+    local profile = roster.profile(profile_id)
+    local growth_profile = profile
     local fixed_hp = overrides and overrides.fixed_hp or 0
     local blob = ctx:get(entity, component.SLIME_BLOB)
     local blob_size = blob and blob.size or 1
@@ -445,6 +445,10 @@ function module.run(ctx, input)
     entities.validate(ctx)
     inventory.validate(ctx)
     links.validate(ctx)
+
+    for _, entity in ipairs(ctx:query({ component.ACTOR })) do
+        draconian_base.validate_actor(ctx, entity)
+    end
 
     -- Every marker needs a live monster owner, including authored monsters
     -- whose vault origin takes precedence later in the save dispatch.
@@ -584,6 +588,8 @@ function module.run(ctx, input)
         local glowing = shape.variant_id ==
             monsters.MONS_GLOWING_SHAPESHIFTER
         local source = register.get("monsters", shape.original_kind_id)
+        local first_corpse = form and form.corpse_kind_id ~= "" and
+            form.corpse_kind_id or form and form.original_kind_id
 
         if not actor or not health or health.current <= 0 or
             not ctx:has(entity, component.POSITION) or
@@ -591,12 +597,32 @@ function module.run(ctx, input)
             not (ordinary or glowing) or
             shape.original_kind_id == "" or
             (shape.corpse_kind_id ~= "" and
-                shape.corpse_kind_id ~= shape.original_kind_id and
+                shape.corpse_kind_id ~= first_corpse and
                 shape.corpse_kind_id ~= shape.variant_id) or
             not source or source.status ~= "defined" or
             not form or form.original_kind_id ~= shape.original_kind_id then
             error("entity " .. ctx:id(entity) ..
                 " has invalid shapeshifter identity")
+        end
+    end
+
+    -- Population ancestry stays as the job ID, but first-polymorph corpse
+    -- ancestry becomes its colored base. Recompute that source relationship
+    -- from committed catalog policy instead of trusting a free string.
+    for _, entity in ipairs(ctx:query({
+        component.MONSTER_POLYMORPH,
+    })) do
+        local form = ctx:get(entity, component.MONSTER_POLYMORPH)
+        local overrides = ctx:get(entity, component.VAULT_ACTOR_OVERRIDES)
+        local authored_id = overrides and overrides.base_id
+        local colored = draconian_base.for_job(form.original_kind_id,
+            authored_id)
+        local expected = colored or form.original_kind_id
+
+        if form.corpse_kind_id ~= "" and
+            form.corpse_kind_id ~= expected then
+            error("monster " .. ctx:id(entity) ..
+                " has invalid first corpse class")
         end
     end
 

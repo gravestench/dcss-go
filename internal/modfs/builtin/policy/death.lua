@@ -8,6 +8,7 @@ local constructs = require("constants.monster_construct_components")
 local origin_policy = require("policy.population.origin")
 local item_ids = require("ids.items")
 local streams = require("constants.rng_streams")
+local draconian_base = require("policy.monsters.draconian_base")
 
 local death = {}
 
@@ -132,22 +133,27 @@ end
 -- so the first transformation wins. Callers without an actor use definition.
 local function corpse_class(ctx, monster, definition)
     local original_id = definition.id
+    local species_id
 
     if monster then
         local shape = ctx:get(monster, component.MONSTER_SHAPESHIFTER)
         local form = ctx:get(monster, component.MONSTER_POLYMORPH)
+        local base = ctx:get(monster, component.MONSTER_DRACONIAN_BASE)
 
         if shape then
             original_id = shape.corpse_kind_id ~= "" and
                 shape.corpse_kind_id or shape.variant_id
         elseif form then
-            original_id = form.original_kind_id
+            original_id = form.corpse_kind_id ~= "" and
+                form.corpse_kind_id or form.original_kind_id
+        elseif base and draconian_base.is_job(definition.id) then
+            species_id = base.base_id
         end
     end
 
     local original = catalog.get("monsters", original_id)
     local species = catalog.get("monsters",
-        original.species_id or original_id)
+        species_id or original.species_id or original_id)
 
     return original, species
 end
@@ -158,8 +164,9 @@ function death.corpse(ctx, definition, position, source_origin, monster)
     local original, species = corpse_class(ctx, monster, definition)
     local shape = monster and ctx:get(monster,
         component.MONSTER_SHAPESHIFTER)
-    local shifter_source_id = shape and original.id == shape.variant_id and
-        shape.original_kind_id or ""
+    local form = monster and ctx:get(monster, component.MONSTER_POLYMORPH)
+    local source_id = shape and shape.original_kind_id or
+        form and form.original_kind_id or definition.id
 
     if not species.leaves_corpse or
         ctx:random(streams.CORPSE, 2) == 1 then
@@ -176,7 +183,7 @@ function death.corpse(ctx, definition, position, source_origin, monster)
         monster_id = species.id,
         original_monster_id = original.id,
         death_kind_id = definition.id,
-        shapeshifter_source_id = shifter_source_id,
+        source_monster_id = source_id,
         freshness = 110,
         appearance = ctx:random(streams.CORPSE, 255) + 1,
     })

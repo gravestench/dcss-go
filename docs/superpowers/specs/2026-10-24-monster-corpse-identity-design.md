@@ -20,8 +20,8 @@ polymorph, shapeshifters, and ordinary classes such as Orc Knights.
   and `original_monster_id` (true class), plus `death_kind_id` (the body at
   death) alongside freshness and appearance. Beogh's saved actor is the
   death-time Orc, even if the corpse species predates polymorph.
-  A corpse whose true class is a shifter also records
-  `shapeshifter_source_id`, the actor class present before the shifter mark.
+  `source_monster_id` records the actor class before transformation, so
+  roster and vault checks can read it without guessing from corpse species.
   Existing species-only records without the latter interpret it as
   `monster_id`; old class-shaped corpse records are not migrated.
 - Source species rules decide whether a corpse can exist. The corpse roll

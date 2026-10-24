@@ -30,7 +30,9 @@ function shapeshifter.mark(ctx, monster, variant_id)
     ctx:add(monster, component.MONSTER_SHAPESHIFTER, {
         variant_id = variant_id,
         original_kind_id = original,
-        corpse_kind_id = form and form.original_kind_id or variant_id,
+        corpse_kind_id = form and
+            (form.corpse_kind_id ~= "" and form.corpse_kind_id or
+                form.original_kind_id) or variant_id,
     })
 
     return true

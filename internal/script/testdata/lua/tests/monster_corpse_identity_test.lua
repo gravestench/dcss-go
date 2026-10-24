@@ -3,6 +3,7 @@
 local catalog = require("policy.catalog")
 local beogh_corpse = require("policy.abilities.beogh.corpse")
 local categories = require("constants.catalog")
+local branches = require("ids.branches")
 local component = require("constants.component")
 local scenarios = require("constants.scenarios")
 local death = require("policy.death")
@@ -108,6 +109,7 @@ local function ordinary_class(ctx)
 
     forged.monster_id = monsters.MONS_GLOWING_SHAPESHIFTER
     forged.original_monster_id = monsters.MONS_GLOWING_SHAPESHIFTER
+    forged.source_monster_id = ""
     ctx:set(corpse, component.CORPSE, forged)
 
     local valid = pcall(save.validate_vault_entities, game, vault)
@@ -123,7 +125,7 @@ local function ordinary_class(ctx)
     local changed = death.corpse(game, body, position, origin, monster)
     local changed_state = ctx:get(changed, component.CORPSE)
 
-    harness.equal(changed_state.shapeshifter_source_id,
+    harness.equal(changed_state.source_monster_id,
         monsters.MONS_ORC_KNIGHT,
         "shifter corpse retains its authored source class")
     save.validate_vault_entities(game, vault)
@@ -140,6 +142,12 @@ local function generated_roster_class(ctx)
     save_corpses.run(game, {
         scenario_id = scenarios.GENERATED_DUNGEON_BASIC,
         current_aut = 0,
+        levels = {
+            {
+                id = 1,
+                branch_id = branches.BRANCH_DUNGEON,
+            },
+        },
     })
 end
 
@@ -166,6 +174,12 @@ local function polymorphed_orc_snapshot(ctx)
     save_corpses.run(game, {
         scenario_id = scenarios.GENERATED_DUNGEON_BASIC,
         current_aut = 0,
+        levels = {
+            {
+                id = 1,
+                branch_id = branches.BRANCH_DUNGEON,
+            },
+        },
     })
 end
 

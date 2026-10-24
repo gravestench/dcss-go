@@ -1,14 +1,19 @@
--- Source: mon-poly.cc:change_monster_type retains the original monster kind.
+-- Source: mon-poly.cc retains the first class for corpses. A draconian job
+-- uses its colored base there, while roster validation still needs the job.
 local schema = {
     id = "magic.monster_polymorph",
-    version = 1,
-    -- Original kind ID preserves the source monster identity across a temporary polymorph.
+    version = 2,
     fields = {
+        -- Spawn lineage stays as a class for population and authored vaults.
         original_kind_id = {
             type = "string",
             default = "",
         },
-
+        -- The first corpse class may instead be a colored draconian base.
+        corpse_kind_id = {
+            type = "string",
+            default = "",
+        },
     },
 }
 

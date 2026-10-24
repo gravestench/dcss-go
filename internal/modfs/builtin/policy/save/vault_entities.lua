@@ -7,6 +7,7 @@ local slime_blob = require("policy.monsters.slime_blob")
 local monsters = require("ids.monsters")
 local vault_enchantments = require("policy.monsters.vault_enchantments")
 local catalog = require("policy.catalog")
+local draconian_base = require("policy.monsters.draconian_base")
 
 local vault_entities = {}
 
@@ -262,18 +263,26 @@ local function validate_origin(ctx, entity, origin, levels, seen)
             corpse and corpse.monster_id
         local original = original_id and
             catalog.get("monsters", original_id)
+        local authored_color = draconian_base.for_job(arguments.kind_id,
+            arguments.base_id)
+        local changed_from_job = authored_color and
+            original_id == authored_color and
+            corpse.source_monster_id == arguments.kind_id
         -- Chaos can turn an authored monster into a shifter. Its corpse may
         -- name the shifter variant only if it also remembers the authored
         -- source class, recorded while the actor was still alive.
         local changed_to_shifter = (original_id ==
             monsters.MONS_SHAPESHIFTER or original_id ==
             monsters.MONS_GLOWING_SHAPESHIFTER) and
-            corpse.shapeshifter_source_id == arguments.kind_id
+            corpse.source_monster_id == arguments.kind_id
+        local species_id = authored_color and
+            original_id == arguments.kind_id and authored_color or
+            original and original.species_id
 
         if record.kind ~= effects.MONSTER or not corpse or
             (original_id ~= arguments.kind_id and
-                not changed_to_shifter) or
-            original.species_id ~= corpse.monster_id or
+                not changed_to_shifter and not changed_from_job) or
+            species_id ~= corpse.monster_id or
             (item.kind_id ~= item_ids.CORPSE_BODY and
                 item.kind_id ~= item_ids.CORPSE_SKELETON) then
             error("entity " .. ctx:id(entity) .. " has invalid vault corpse origin")

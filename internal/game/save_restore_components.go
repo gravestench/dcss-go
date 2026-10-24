@@ -427,6 +427,8 @@ func (g *Game) validateRestoredPlacement() error {
 
 	if _, err := g.scripts.Policy("save.validate_corpses", map[string]any{
 		"scenario_id": g.scenarioID,
+		"current_aut": int64(g.currentAut),
+		"levels":      scenarioLevelPolicyRecords(g.levels),
 	}); err != nil {
 		return err
 	}

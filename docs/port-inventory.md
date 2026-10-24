@@ -459,7 +459,10 @@ shifter marked before polymorph uses its permanent variant; an earlier
 polymorph origin survives a later shifter mark. Ordinary classes such as
 Orc Knights leave their broader species. Save validation retains these
 identities across generated rosters, Beogh Resurrection, and authored vault
-origins. Colored draconian job identity needs a dedicated port slice.
+origins. Classed draconians now own a colored base ECS component, with source
+job defaults and authored overrides. First polymorph records that color as
+corpse lineage while keeping the job as roster lineage; corpse restore uses
+the branch of the saved floor for membership checks.
 Malmutate's abomination tile reroll remains. Ugly things now save their own
 colour, attack, damage, resistance, and spontaneous kin mutation traits;
 combat and display read that actor state after spawn, polymorph, and

@@ -3,8 +3,8 @@ local roster = require("policy.population.roster")
 local component = require("constants.component")
 local doom_howl = require("policy.combat.monster_doom_howl.ids")
 local branches = require("ids.branches")
-local monsters = require("ids.monsters")
 local beogh_corpse = require("policy.abilities.beogh.corpse")
+local draconian_base = require("policy.monsters.draconian_base")
 
 -- Corpse validation reads source monster flags without requiring every record to list them.
 local function flag(definition, wanted)
@@ -19,15 +19,23 @@ end
 
 local module = {}
 
+-- Corpse roster membership belongs to the floor where the corpse lies.
+-- Later branches admit jobs absent from Dungeon, including Zot draconians.
+local function floor_rosters(input)
+    local branches_by_level = {}
+
+    for _, level in ipairs(input.levels) do
+        branches_by_level[level.id] = level.branch_id
+    end
+
+    return branches_by_level
+end
+
 -- Corpse entities keep their decay and source-monster fields consistent across restore.
 -- Example: module.run(ctx, { scenario_id = "generated-dungeon-basic-v1" }) validates corpse freshness.
 function module.run(ctx, input)
-    local allowed = roster.allowed(input.scenario_id, branches.BRANCH_DUNGEON)
-
-    if input.scenario_id == "generated-dungeon-basic-v1" then
-        allowed.MONS_GOBLIN = true
-        allowed.MONS_KOBOLD = true
-    end
+    local branches_by_level = floor_rosters(input)
+    local allowed_by_branch = {}
 
     for _, entity in ipairs(ctx:query({ "core.corpse" })) do
         local corpse = ctx:get(entity, "core.corpse")
@@ -37,10 +45,10 @@ function module.run(ctx, input)
         local arrival = ctx:get(entity, doom_howl.ARRIVAL)
         local original_id = corpse.original_monster_id ~= "" and
             corpse.original_monster_id or corpse.monster_id
-        -- Population rows list actor classes. A shifter corpse lists its
-        -- permanent variant, so use the saved pre-shifter class instead.
-        local source_id = corpse.shapeshifter_source_id ~= "" and
-            corpse.shapeshifter_source_id or original_id
+        -- Population rows list actor classes. Corpses may list a colored
+        -- draconian or shifter variant, so keep spawn lineage separately.
+        local source_id = corpse.source_monster_id ~= "" and
+            corpse.source_monster_id or original_id
 
         if not item or not position or ctx:has(entity, "core.carried_by") or
             ctx:has(entity, "core.equipped") or item.quantity ~= 1 or
@@ -56,23 +64,44 @@ function module.run(ctx, input)
                 " has invalid Doom Howl corpse origin")
         end
 
+        local branch_id = branches_by_level[position.level_id]
+
+        if not branch_id then
+            error("corpse has no saved floor " .. ctx:id(entity))
+        end
+
+        local allowed = allowed_by_branch[branch_id]
+
+        if not allowed then
+            allowed = roster.allowed(input.scenario_id, branch_id)
+            allowed_by_branch[branch_id] = allowed
+
+            if input.scenario_id == "generated-dungeon-basic-v1" and
+                branch_id == branches.BRANCH_DUNGEON then
+                allowed.MONS_GOBLIN = true
+                allowed.MONS_KOBOLD = true
+            end
+        end
+
         if not allowed[source_id] and not origin and
             not arrival then
-            error("fixed Dungeon save has unsupported corpse " .. source_id)
+            error("saved floor has unsupported corpse " .. source_id)
         end
 
         local profile = roster.profile(corpse.monster_id)
         local definition = catalog.get("monsters", corpse.monster_id)
         local original = catalog.get("monsters", original_id)
         local source = catalog.get("monsters", source_id)
-        local shifter = original_id == monsters.MONS_SHAPESHIFTER or
-            original_id == monsters.MONS_GLOWING_SHAPESHIFTER
+        local colored_job = draconian_base.is_job(original_id) and
+            draconian_base.valid_color(corpse.monster_id) and
+            corpse.death_kind_id == original_id and
+            (origin or corpse.monster_id == draconian_base.for_job(original_id))
 
         if definition.average_hp_10x ~= profile.average or
             not definition.leaves_corpse or
-            (corpse.shapeshifter_source_id ~= "" and
-                (not shifter or source.status ~= "defined")) or
-            original.species_id ~= corpse.monster_id then
+            source.status ~= "defined" or
+            (original.species_id ~= corpse.monster_id and
+                not colored_job) then
             error("item " .. ctx:id(entity) .. " has impossible " .. corpse.monster_id .. " corpse")
         end
 

@@ -131,6 +131,7 @@ local component = {
     RELIGION_ZIN_GLOW_LECTURE = "religion.zin_glow_lecture",
     RELIGION_WAS_NEUTRAL = "religion.was_neutral",
     MONSTER_SHAPESHIFTER = "combat.monster_shapeshifter",
+    MONSTER_DRACONIAN_BASE = "monster.draconian_base",
     MONSTER_POLYMORPH_SET = "monster.polymorph_set",
     MONSTER_BOONS = "combat.monster_boons",
     MONSTER_BLACK_MARK = "combat.monster_black_mark",

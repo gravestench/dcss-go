@@ -32,6 +32,7 @@ local behaviors = require("constants.ai_behaviors")
 local pan_lord = require("policy.population.pan_lord")
 local ugly_thing = require("policy.monsters.ugly_thing")
 local cloud_ring = require("policy.combat.monster_cloud_ring")
+local draconian_base = require("policy.monsters.draconian_base")
 
 local factory = {}
 
@@ -339,6 +340,8 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
 
     local definition = catalog.get("monsters", kind_id)
     local source = definition
+    local colored_base = draconian_base.for_job(kind_id,
+        options.base_id)
 
     if options.base_id then
         source = catalog.get("monsters", options.base_id)
@@ -421,6 +424,13 @@ function factory.spawn(ctx, kind_id, level_id, x, y, options)
         speed = generated_lord and generated_lord.speed or
             definition.speed or source.speed or 0,
     })
+
+    if colored_base then
+        ctx:add(monster, component.MONSTER_DRACONIAN_BASE, {
+            base_id = colored_base,
+        })
+    end
+
     ctx:add(monster, "core.monster_energy", { points = energy.initial })
 
     if generated_lord then

@@ -13,6 +13,7 @@ local monster_stats = require("policy.combat.monster_stats")
 local streams = require("constants.rng_streams")
 local power_modes = require("constants.polymorph_power")
 local selection = require("policy.monsters.polymorph_selection")
+local draconian_base = require("policy.monsters.draconian_base")
 
 local polymorph = {}
 
@@ -96,6 +97,8 @@ local function transform(ctx, target, source, definition, stream)
     local position = ctx:get(target, component.POSITION)
     local marker = ctx:get(target, component.MONSTER_POLYMORPH)
     local original = marker and marker.original_kind_id or source.id
+    local old_base = ctx:get(target, component.MONSTER_DRACONIAN_BASE)
+    local corpse_kind = old_base and old_base.base_id or source.id
     local maximum = hit_points.roll(ctx, definition.average_hp_10x)
     local current = math.floor(maximum * health.current / health.max) +
         ctx:random(stream or streams.SPELL, maximum)
@@ -106,6 +109,20 @@ local function transform(ctx, target, source, definition, stream)
     health.current = math.max(1, math.min(maximum, current))
     ctx:set(target, component.ACTOR, actor)
     ctx:set(target, component.HEALTH, health)
+
+    -- A new body gets its own fixed color; an ordinary borrowed form must
+    -- not keep the previous draconian job's living base component.
+    local new_base = draconian_base.for_job(definition.id)
+
+    if old_base then
+        ctx:remove(target, component.MONSTER_DRACONIAN_BASE)
+    end
+
+    if new_base then
+        ctx:add(target, component.MONSTER_DRACONIAN_BASE, {
+            base_id = new_base,
+        })
+    end
 
     -- Polymorph rolls a new body and maximum HP. Any meal or split history
     -- belonged to the old body; a new slime begins its own history when it
@@ -151,6 +168,7 @@ local function transform(ctx, target, source, definition, stream)
     if not marker then
         ctx:add(target, component.MONSTER_POLYMORPH, {
             original_kind_id = original,
+            corpse_kind_id = corpse_kind,
         })
     end
 

@@ -146,16 +146,17 @@ type Item struct {
 	Ego      string
 }
 
-// Corpse keeps species, original class, and death-time body through decay.
+// Corpse separates species, source class, and the body present at death.
+// SourceMonsterID is the spawn lineage used by roster and vault checks.
 // Freshness and appearance apply to both a floor corpse and its skeleton.
 type Corpse struct {
-	MonsterID            string
-	OriginalMonsterID    string
-	DeathKindID          string
-	ShapeshifterSourceID string
-	Freshness            int
-	Appearance           int
-	NeverDecays          bool
+	MonsterID         string
+	OriginalMonsterID string
+	DeathKindID       string
+	SourceMonsterID   string
+	Freshness         int
+	Appearance        int
+	NeverDecays       bool
 }
 
 // An item has exactly one location: Position, CarriedBy, or ReservedBy.
