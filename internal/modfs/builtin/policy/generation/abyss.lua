@@ -8,6 +8,7 @@ local window = require("policy.generation.abyss.terrain")
 local vaults = require("policy.generation.abyss.vaults")
 local paths = require("policy.generation.abyss.paths")
 local proto = require("policy.generation.abyss.proto")
+local transporters = require("policy.generation.transporters")
 
 local abyss = {}
 
@@ -103,6 +104,11 @@ function abyss.generate(ctx, state, departure)
         actor_moves = {},
         actor_retire = {},
     }
+
+    -- Tagged exit and rune maps can contain named transporter pairs.
+    -- Resolve them after every map has been placed so saved links point
+    -- at the final destination coordinates in this Abyss window.
+    transporters.resolve(level)
 
     return level, updated, protected
 end

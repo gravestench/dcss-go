@@ -179,7 +179,11 @@ func luaVaultRecord(value any) (vault.Record, error) {
 
 	if record.Pending &&
 		(record.Kind == vault.KindFeature ||
-			record.Kind == vault.KindSourceFeature) {
+			record.Kind == vault.KindSourceFeature) &&
+		arguments["pending_reason"] == nil {
+		// Fresh DES records need this explanation. A region plan already
+		// carries it from the saved record, so adding it again would make
+		// the same feature invalid when an Abyss window shifts.
 		record.Arguments = append(record.Arguments, vault.Argument{
 			Name: "pending_reason",
 			Kind: vault.ValueString,

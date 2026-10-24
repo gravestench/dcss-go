@@ -15,6 +15,9 @@ local population = require("policy.world.abyss.population")
 local transit = require("policy.world.abyss.transit")
 local streams = require("constants.rng_streams")
 local behaviors = require("constants.ai_behaviors")
+local transporter_links = require("policy.generation.transporters")
+local transporter_ids = require("constants.transporter")
+local transporters = require("policy.world.transporters")
 
 local shift = {}
 
@@ -177,6 +180,36 @@ local function move_records(records, mask, dx, dy)
     end
 
     return moved
+end
+
+-- Only previously learned pairs whose whole vault moved may remain known.
+-- The newly resolved record supplies the destination in the new frame;
+-- dropped vaults and newly placed pairs cannot inherit stale knowledge.
+local function moved_transporter_knowledge(records, mask, dx, dy)
+    local remaps = {}
+
+    for _, record in ipairs(records) do
+        local kind = transporter_links.parse(record.identity or "")
+        local old_x = record.x - dx
+        local old_y = record.y - dy
+
+        if not record.overridden and
+            kind == transporter_ids.SOURCE_CALL and
+            mask[key(old_x, old_y)] then
+            local arguments = record.arguments or {}
+            local old_key = abyss.LEVEL_ID .. ":" ..
+                old_x .. ":" .. old_y
+
+            remaps[old_key] = {
+                key = abyss.LEVEL_ID .. ":" ..
+                    record.x .. ":" .. record.y,
+                destination = arguments[transporter_ids.DESTINATION_X] ..
+                    ":" .. arguments[transporter_ids.DESTINATION_Y],
+            }
+        end
+    end
+
+    return remaps
 end
 
 -- An origin points to an authored record, not to the entity's current
@@ -409,6 +442,11 @@ function shift.plan(ctx, state, player)
     for _, record in ipairs(path_records) do
         plan.vault_records[#plan.vault_records + 1] = record
     end
+
+    -- A retained pair moves with its vault; new tagged maps can also add
+    -- pairs. Recompute source coordinates after both record sets are final.
+    transporter_links.resolve(plan)
+
     plan.stairs = move_points(plan.stairs, mask, dx, dy)
     plan.cell_colours = move_points(plan.cell_colours,
         mask, dx, dy)
@@ -507,6 +545,8 @@ function shift.apply(ctx, state, player)
         plan.actor_retire, updated)
 
     ctx:replace_region(abyss.LEVEL_ID, plan)
+    transporters.remap_knowledge(ctx, player, abyss.LEVEL_ID,
+        moved_transporter_knowledge(plan.vault_records, mask, dx, dy))
     transit.store(ctx, parked)
     move_actor_targets(ctx, plan.actor_moves, mask, dx, dy)
     move_origins(ctx, plan.vault_records, mask, dx, dy)

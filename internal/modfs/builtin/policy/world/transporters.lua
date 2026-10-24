@@ -16,6 +16,37 @@ local behaviors = require("constants.ai_behaviors")
 
 local transporters = {}
 
+-- A replaced level invalidates learned portal coordinates. Abyss shifts
+-- supply remaps for pairs retained with the moving window; a fresh Abyss
+-- region supplies none. Knowledge on other levels stays untouched.
+function transporters.remap_knowledge(ctx, player, level_id, remaps)
+    local knowledge = ctx:get(player,
+        component.TRANSPORTER_KNOWLEDGE)
+
+    if not knowledge then
+        return
+    end
+
+    local prefix = level_id .. ":"
+    local links = {}
+
+    for key, destination in pairs(knowledge.links) do
+        if key:sub(1, #prefix) ~= prefix then
+            links[key] = destination
+        else
+            local remap = remaps and remaps[key]
+
+            if remap then
+                links[remap.key] = remap.destination
+            end
+        end
+    end
+
+    knowledge.links = links
+    ctx:set(player, component.TRANSPORTER_KNOWLEDGE,
+        knowledge)
+end
+
 -- A friendly monster can follow only if it can actually reach the portal.
 -- Limit the search to the source's five-cell neighborhood so a wall cannot
 -- turn a visually nearby monster into a follower from another room.

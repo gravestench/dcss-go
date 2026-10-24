@@ -14,6 +14,7 @@ local transit = require("policy.world.abyss.transit")
 local streams = require("constants.rng_streams")
 local conduct = require("policy.religion.conduct")
 local monster_facts = require("policy.religion.conduct.monster_facts")
+local transporters = require("policy.world.transporters")
 
 local abyss = {}
 
@@ -169,6 +170,7 @@ local function replace_visited_area(ctx, player, next_state, message)
         level.actor_retire, next_state)
 
     ctx:replace_region(abyss.level_id, level)
+    transporters.remap_knowledge(ctx, player, abyss.level_id)
     transit.store(ctx, parked)
     retire_old_window(ctx, discarded)
     rune.spawn(ctx, rune_cell)
@@ -205,6 +207,7 @@ function abyss.enter(ctx, player, site, options)
     -- structural command publishes the authored map before the player
     -- move; a later error reverses state and then the map.
     ctx:replace_region(abyss.level_id, level)
+    transporters.remap_knowledge(ctx, player, abyss.level_id)
     transit.store(ctx, parked)
     retire_old_window(ctx, discarded)
     rune.spawn(ctx, rune_cell)
@@ -247,6 +250,7 @@ function abyss.pocket_start(ctx, player)
     place_altar(ctx, level, true)
 
     ctx:replace_region(abyss.level_id, level)
+    transporters.remap_knowledge(ctx, player, abyss.level_id)
     ctx:replace_session_state(constants.SESSION_STATE, next_state)
     ctx:move_actor(player, abyss.level_id,
         level.entry_x, level.entry_y)
