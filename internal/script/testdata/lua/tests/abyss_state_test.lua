@@ -5,6 +5,7 @@ local abyss = require("policy.generation.abyss.state")
 local branches = require("ids.branches")
 local harness = require("tests.harness")
 local terrain = require("constants.terrain")
+local abyss_constants = require("constants.abyss")
 
 local test = {}
 
@@ -29,11 +30,11 @@ local function context()
     end
 
     function world:level_ids()
-        return { 1, 2, 1000 }
+        return { 1, 2, abyss_constants.LEVEL_ID }
     end
 
     function world:level_branch(id)
-        return id == 1000 and branches.BRANCH_ABYSS or
+        return id == abyss_constants.LEVEL_ID and branches.BRANCH_ABYSS or
             branches.BRANCH_DUNGEON
     end
 

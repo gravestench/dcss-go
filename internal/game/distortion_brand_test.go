@@ -63,12 +63,12 @@ func TestDistortionBanishmentCompletesStepAndReplaysEscape(t *testing.T) {
 
 		position, _ := g.stores.Positions.Get(g.player)
 
-		if position.LevelID == 1000 {
+		if position.LevelID == abyssStorageID {
 			banished = true
 
-			if result.View.LevelID != 1000 ||
+			if result.View.LevelID != abyssStorageID ||
 				g.levels[1].awaySinceAut == nil ||
-				g.levels[1000].awaySinceAut != nil {
+				g.levels[abyssStorageID].awaySinceAut != nil {
 				t.Fatal("Step did not activate the Abyss after banishment")
 			}
 		}
@@ -93,13 +93,13 @@ func TestDistortionBanishmentCompletesStepAndReplaysEscape(t *testing.T) {
 	}
 
 	for _, run := range []*Game{g, loaded} {
-		if err := run.levels[1000].MoveActor(run.player, 40, 35); err != nil {
+		if err := run.levels[abyssStorageID].MoveActor(run.player, 40, 35); err != nil {
 			t.Fatal(err)
 		}
 
 		// Banishment lands on ordinary floor. Install a real Abyss exit
 		// to test the return path without relying on the old fixed stair.
-		if err := run.levels[1000].SetCell(40, 35,
+		if err := run.levels[abyssStorageID].SetCell(40, 35,
 			terrain.ExitAbyss); err != nil {
 			t.Fatal(err)
 		}
@@ -167,7 +167,7 @@ func TestDistortionBlinkMovesPlayerAndOccupancy(t *testing.T) {
 
 		position, _ := g.stores.Positions.Get(g.player)
 
-		if position.LevelID == 1000 {
+		if position.LevelID == abyssStorageID {
 			t.Fatal("banishment preceded the expected blink")
 		}
 	}
@@ -195,8 +195,8 @@ func TestDistortionBanishesAndEscapesThroughSavedAbyss(t *testing.T) {
 
 		position, _ := g.stores.Positions.Get(g.player)
 
-		if position.LevelID == 1000 {
-			if err := g.activateTransition(1, 1000, g.currentAut); err != nil {
+		if position.LevelID == abyssStorageID {
+			if err := g.activateTransition(1, abyssStorageID, g.currentAut); err != nil {
 				t.Fatal(err)
 			}
 
@@ -206,7 +206,7 @@ func TestDistortionBanishesAndEscapesThroughSavedAbyss(t *testing.T) {
 
 	position, _ := g.stores.Positions.Get(g.player)
 
-	if position.LevelID != 1000 {
+	if position.LevelID != abyssStorageID {
 		t.Fatal("distortion never banished the player")
 	}
 
@@ -221,15 +221,15 @@ func TestDistortionBanishesAndEscapesThroughSavedAbyss(t *testing.T) {
 	defer loaded.Close()
 	position, _ = loaded.stores.Positions.Get(loaded.player)
 
-	if position.LevelID != 1000 {
+	if position.LevelID != abyssStorageID {
 		t.Fatalf("restored banished player on level %d", position.LevelID)
 	}
 
-	if err := loaded.levels[1000].MoveActor(loaded.player, 40, 35); err != nil {
+	if err := loaded.levels[abyssStorageID].MoveActor(loaded.player, 40, 35); err != nil {
 		t.Fatal(err)
 	}
 
-	if err := loaded.levels[1000].SetCell(40, 35,
+	if err := loaded.levels[abyssStorageID].SetCell(40, 35,
 		terrain.ExitAbyss); err != nil {
 		t.Fatal(err)
 	}

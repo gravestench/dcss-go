@@ -156,7 +156,7 @@ func TestPanAbyssExitPreservesOriginalReturn(t *testing.T) {
 	banishment := g.scripts.Components()["world.banishment"]
 
 	if !found ||
-		position.LevelID != 1000 ||
+		position.LevelID != abyssStorageID ||
 		g.levels[oldID] != nil ||
 		g.panState.ActiveLevelID != 0 ||
 		!banishment.Has(g.player) {

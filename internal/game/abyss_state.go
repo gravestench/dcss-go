@@ -7,9 +7,11 @@ import (
 	"crawl/internal/terrain"
 )
 
-const abyssStorageID = 1000
+// These positive IDs sit above ordinary branch floors. Keep them aligned
+// with constants/abyss.lua, which owns Lua generation and save validation.
+const abyssStorageID = 1000000000
 
-const abyssTransitID = 1001
+const abyssTransitID = 1000000001
 
 const abyssBranchID = "BRANCH_ABYSS"
 

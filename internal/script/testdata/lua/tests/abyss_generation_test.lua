@@ -5,6 +5,7 @@ local generator = require("policy.generation.abyss")
 local harness = require("tests.harness")
 local terrain = require("constants.terrain")
 local component = require("constants.component")
+local abyss_constants = require("constants.abyss")
 
 local test = {}
 
@@ -66,7 +67,7 @@ function test.run()
     }
     local level, updated = generator.generate(context(), state)
 
-    harness.equal(level.id, 1000)
+    harness.equal(level.id, abyss_constants.LEVEL_ID)
     harness.equal(level.local_depth, state.branch_depth)
     harness.equal(level.cells[36][41], terrain.DNGN_FLOOR)
     harness.truthy(#updated.sample_queue > 5000)

@@ -2438,7 +2438,10 @@ chooses one parent depth and stores it in the save. It places a pending
 entrance when the branch has a weighted primary layout, or a labelled
 unavailable entrance until that layout is ported. Its stable level ID is
 `numeric_id * 100 + local_depth`;
-Dungeon keeps IDs 1–15. Put ambient rows in a separate
+Dungeon keeps IDs 1–15. Keep the result below
+`constants.abyss.LEVEL_ID` because the high range belongs to permanent
+special regions; the branch allocator rejects a collision. Put ambient
+rows in a separate
 `content/populations/<branch>.lua` file as above. Add weighted branch layouts
 under `vaults/layout/` and named Lua carving hooks under
 `policy/generation/layouts/` when a layout needs a script. The shared

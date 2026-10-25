@@ -2,8 +2,11 @@
 -- Keep the vocabulary in one place so Lua systems, generation, and mods
 -- speak about the same 80x70 moving window and independent morph clock.
 local abyss = {
-    LEVEL_ID = 1000,
-    TRANSIT_LEVEL_ID = 1001,
+    -- Ordinary branch floors use numeric_id * 100 + depth. Keep these
+    -- permanent regions above that namespace so Slime:1 cannot alias the
+    -- transit region when a saved branch stair is validated.
+    LEVEL_ID = 1000000000,
+    TRANSIT_LEVEL_ID = 1000000001,
     WIDTH = 80,
     HEIGHT = 70,
     CENTRE_X = 40,

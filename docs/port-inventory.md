@@ -339,6 +339,11 @@ entry, save, and restore. Depths opens from one of eight source D:15 gates
 on its scheduled Dungeon entrance. Temple now opens through a source
 Dungeon entry vault, uses its
 saved source map and god partition, and returns through reciprocal stairs.
+The Abyss window and transit grid use reserved high level IDs; the branch
+allocator rejects that range, so Slime:1 cannot alias the transit grid.
+The longer Jiyva-to-Slime restore scenario now reaches Slime:5 but exposes
+an XP/level mismatch after a later turn; player advancement must reconcile
+that saved state in a separate gameplay pass.
 Vaults opens from its scheduled Dungeon entrance. Vaults:1–4 use eleven
 source primary layouts and tagged DES room pools. Vaults:5 uses the authored
 `vaults_vault` end map with four source quadrants and one silver rune. The

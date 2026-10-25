@@ -4,6 +4,7 @@
 local branches = require("ids.branches")
 local catalog = require("policy.catalog")
 local categories = require("constants.catalog")
+local abyss = require("constants.abyss")
 
 local levels = {}
 
@@ -24,6 +25,13 @@ function levels.id(branch_id, local_depth)
     end
 
     local id = branch.numeric_id * 100 + local_depth
+
+    -- The top of the positive ID space is reserved for permanent special
+    -- regions. Reject a mod branch there before it can overwrite one.
+    if id >= abyss.LEVEL_ID then
+        error("branch " .. branch_id ..
+            " floor ID enters the reserved level range")
+    end
 
     if branch_id == branches.BRANCH_DUNGEON then
         return local_depth

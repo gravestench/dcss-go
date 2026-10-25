@@ -287,7 +287,7 @@ func TestPlayerDistortionBanishesMonsterWithoutKillXP(t *testing.T) {
 			t.Fatal("distortion killed the practice monster before banishment")
 		}
 
-		if position.LevelID != 1000 {
+		if position.LevelID != abyssStorageID {
 			continue
 		}
 
