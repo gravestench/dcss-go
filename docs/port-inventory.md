@@ -524,9 +524,12 @@ only the minimum silver fragment in the source's mutation-based silver
 path, while shapechange keeps its separate damage rule.
 The saved Ru component is version 3 because it now carries sacrifice
 history. Earlier Go saves with older Ru schemas do not restore under this
-schema. The source's Frail exclusion for a Demonspawn
-whose future facet includes Robust remains pending until that scheduled
-trait is represented in the port's saved character state.
+schema. Demonspawn now roll all 33 source facets at creation, save their
+15 or 18 future mutation grants as ECS entities, and gain them at the
+scheduled levels. Source body-slot and elemental/cloud exclusions apply.
+Ru checks that future plan before offering Frail when Robust is scheduled.
+Level loss and regain do not duplicate a granted trait. The new trait
+schema also changes the Go save manifest, so older saves do not restore.
 Okawaru's Heroism, Finesse, and Duel are now playable Lua powers with the
 source rank, failure, MP, and piety gates. Heroism projects mundane skill
 levels without changing training; Finesse changes attack delay and is

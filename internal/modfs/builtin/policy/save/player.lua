@@ -6,6 +6,7 @@ local extra_lives = require("policy.character.extra_lives")
 local choice = require("policy.character_choice")
 local spell_records = require("policy.character.spell_records")
 local mutation_records = require("policy.mutations.records")
+local demonspawn = require("policy.character.demonspawn")
 local evolution = require("policy.mutations.evolution")
 local forms = require("policy.magic.effects.forms.player")
 local rage = require("policy.character.rage")
@@ -222,6 +223,7 @@ local function validate(ctx)
     end
 
     mutation_records.validate(ctx, entity, species, historical_level)
+    demonspawn.validate(ctx, entity, species.id, progress.level)
     vampire.validate(ctx, entity)
 
     local worship = religion_validation.check(ctx, entity)

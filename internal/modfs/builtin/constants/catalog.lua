@@ -6,6 +6,7 @@ local catalog = {
     CARDS = "cards",
     BRANCHES = "branches",
     CLOUDS = "clouds",
+    DEMONSPAWN_FACETS = "demonspawn_facets",
     GODS = "gods",
     ITEMS = "items",
     JOBS = "jobs",

@@ -45,6 +45,32 @@ func TestAbyssSparseMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/abyss_overlay_test.lua")
 }
 
+// A facet mod can add one candidate and override one bundled definition
+// through ordinary layered paths without a Go content handler.
+func TestDemonspawnFacetSparseMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua",
+		"testdata/demonspawn-facet-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/demonspawn_mod_test.lua")
+}
+
+// An impossible layered facet is rejected before its grants can reach a
+// character save; source mod files do not receive special trust.
+func TestDemonspawnInvalidFacetMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua",
+		"testdata/demonspawn-invalid-facet-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/demonspawn_invalid_test.lua")
+}
+
 // A sparse price kind joins the effective Lua policy set without changing
 // source Trove logic or adding a Go payment handler.
 func TestTroveModPrice(t *testing.T) {

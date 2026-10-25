@@ -3363,6 +3363,57 @@ import and Lua regeneration programs have been retired. Make content and
 behavior changes in their owning Lua files, add `_test.lua` coverage for
 rules, and run the Go/Lua tests before sharing the mod.
 
+### Demonspawn facets and future traits
+
+Demonspawn ancestry is selected once during character creation. Every
+facet is one discoverable file under `content/demonspawn_facets/`. A facet
+declares a stable ID, one tier from `constants.demonspawn_facets`, three
+ordered mutation IDs imported from `ids.mutations`, and three timing
+windows from the same facet constants. Body facets also name a slot from
+`constants.armour_slots`. The selector will not choose two body facets
+for the same slot. `elemental` and `cloud_producing` are optional flags;
+the selector rejects a group containing two facets with either flag.
+
+For example, to add a three-rank body facet, place one file at
+`content/demonspawn_facets/my_claws.lua` in your mod directory. Import
+`constants.catalog`, `constants.demonspawn_facets`, `ids.mutations`, and
+`constants.armour_slots`; build a local `definition` table with `id`,
+`tier`, `mutations`, `windows`, and `body_slot`; then call
+`register.definition(categories.DEMONSPAWN_FACETS, definition)` and
+return it. [This file](../internal/script/testdata/demonspawn-facet-mod/content/demonspawn_facets/test_claws.lua)
+is a runnable example. Each facet's requested ranks, and the total
+ranks across a selected set, must fit their mutations' `max_level`.
+Impossible mod definitions fail at character creation. A file at the
+same relative path as a bundled
+facet replaces that one definition. IDs are stable across saves, so
+changing an existing ID creates a different facet rather than renaming
+its saved records.
+
+`policy/character/demonspawn.lua` validates the effective catalog,
+selects one body, one scale, two secondary, and one final facet. One in
+ten starts chooses three distinct body slots instead of a scale. The
+owner orders each facet's grants within its timing windows, assigns
+distinct levels from XL2 to XL27, and writes one
+`character.demonspawn_trait` ECS entity per grant. The entity stores its
+player owner, facet ID, rank, mutation ID, level, and whether it has been
+granted. It is future player state, so save/restore keeps it. The named
+`character.demonspawn_ancestry` component records the highest XL the
+player has reached. Ru can lower the current XL without lowering that
+history, so restore can verify every grant flag against it. The named
+`constants.rng_streams.DEMONSPAWN` stream isolates these draws from other
+content. File load order cannot change the candidate order; registered
+IDs sort before the selector samples a tier.
+
+Level gains call `demonspawn.grant_level(ctx, player, level)` before HP
+and MP formulas. The mutation transition owner applies the rank and the
+saved `granted` flag prevents a second grant after level loss and regain.
+Other rules should call `demonspawn.has(ctx, player, mutation_id)` to ask
+about a future trait. Ru uses that API to withhold Frail when a future
+Robust facet is scheduled. Do not check only current mutation levels for
+that rule; Robust may not arrive until much later. Restore validation
+checks the saved schedule's facet shapes, slot conflicts, ranks, levels,
+and attained mutation grants.
+
 ## Monster weapon gear
 
 ### Melee brand effects

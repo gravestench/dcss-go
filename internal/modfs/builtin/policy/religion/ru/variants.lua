@@ -14,6 +14,8 @@ local physiology = require("policy.mutations.physiology")
 local records = require("policy.mutations.records")
 local source_pools = require("data.ru_variant_mutations")
 local streams = require("constants.rng_streams")
+local demonspawn = require("policy.character.demonspawn")
+local species_ids = require("ids.species")
 
 local variants = {}
 
@@ -72,6 +74,17 @@ function variants.valid(ctx, player, id)
     if id == mutations.MUT_INHIBITED_REGENERATION and
         levels.base(ctx, player, mutations.MUT_VAMPIRISM) > 0 then
         return false
+    end
+
+    -- The source checks all future Demonspawn traits, including an
+    -- unearned Robust facet, before offering Frail to Ru's worshipper.
+    if id == mutations.MUT_FRAIL then
+        local identity = ctx:get(player, component.PLAYER)
+
+        if identity.species_id == species_ids.SP_DEMONSPAWN and
+            demonspawn.has(ctx, player, mutations.MUT_ROBUST) then
+            return false
+        end
     end
 
     if id == mutations.MUT_NO_POTION_HEAL and
