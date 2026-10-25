@@ -68,6 +68,7 @@ func (g *Game) scriptServices() (script.Services, error) {
 		CurrentAut: func() int64 {
 			return int64(g.currentAut)
 		},
+		GameSeed: g.seed,
 
 		Random:         g.rng.Intn,
 		RandomWord:     g.rng.next,

@@ -64,6 +64,16 @@ function test.run(ctx)
     ctx:set(player, component.RELIGION_WORSHIP, state)
 
     harness.equal(religion.run(screen).piety_stars, "..*...")
+
+    -- Jiyva's second name is rolled once at creation and saved on the
+    -- player. The HUD reads it rather than inventing a fresh name.
+    ctx:add(player, component.JIYVA_SECOND_NAME, {
+        name = "Jowal",
+    })
+    state.god_id = gods.JIYVA
+    ctx:set(player, component.RELIGION_WORSHIP, state)
+
+    harness.equal(religion.run(screen).god_name, "Jiyva Jowal")
 end
 
 return test

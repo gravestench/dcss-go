@@ -78,10 +78,10 @@ end
 
 -- A range of caller streams catches malformed names and illegal colours
 -- from the normal morphology without redeclaring either production table.
-local function check_generated_range()
+local function check_generated_range(ctx)
     for seed = 1, 64 do
         local state = seed
-        local random = {}
+        local random = setmetatable({}, { __index = ctx })
 
         function random:random(_, bound)
             state = (state * 48271) % 2147483647
@@ -107,7 +107,7 @@ end
 function test.run(ctx)
     check_appearance(ctx, 0, colour_ids.RANDOM_EFFECT)
     check_appearance(ctx, 1, "WHITE")
-    check_generated_range()
+    check_generated_range(ctx)
 end
 
 return test

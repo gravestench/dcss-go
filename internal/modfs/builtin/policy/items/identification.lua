@@ -378,7 +378,7 @@ function identification.name(ctx, player, entity)
             error("missing appearance for " .. item.kind_id)
         end
 
-        name = appearances.name(pool, seed)
+        name = appearances.name(ctx, pool, seed)
     end
 
     if state.properties then
@@ -417,7 +417,7 @@ function identification.validate(ctx, player)
             error("missing item appearance for " .. id)
         end
 
-        appearances.name(pool, seed)
+        appearances.name(ctx, pool, seed)
         expected[id] = true
         used[pool] = used[pool] or {}
 

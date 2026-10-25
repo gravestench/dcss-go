@@ -67,18 +67,29 @@ end
 
 -- An item seed confines cosmetic draws to the item. The same seed and
 -- effective catalog yield the same true name and hidden appearance.
-local function equipment_names_use_saved_seed()
-    local ctx = {
+local function equipment_names_use_saved_seed(base)
+    local ctx = setmetatable({
         draws = 0,
-    }
+        fallback_draws = 0,
+    }, { __index = base })
 
-    -- Count outer item-seed draws without constraining the local cosmetic
-    -- generator's choices in either true names or appearances.
+    -- Cosmetic-only test names have no character, just as the live item
+    -- generator can roll a random artefact before player placement.
+    function ctx:player()
+        return nil
+    end
+
+    -- Count saved item-seed draws and direct make_name fallback seeds.
+    -- Database choices stay in the item-local cosmetic generator.
     function ctx:random(stream, bound)
         harness.equal(stream, streams.ITEM_GENERATION,
-            "one item-generation stream supplies the cosmetic seed")
+            "item generation owns name seeds")
         harness.truthy(bound > 0, "name seed bound")
         self.draws = self.draws + 1
+
+        if bound == 4294967296 then
+            self.fallback_draws = self.fallback_draws + 1
+        end
 
         return 12345
     end
@@ -111,8 +122,8 @@ local function equipment_names_use_saved_seed()
 
         harness.equal(item_seed, 12345,
             "saved cosmetic seed for " .. id)
-        harness.equal(ctx.draws, before + 1,
-            "outer seed draw for " .. id)
+        harness.truthy(ctx.draws >= before + 1,
+            "item seed draw for " .. id)
 
         harness.truthy(hidden:match(" " .. shape .. "$") ~= nil,
             "source appearance keeps " .. shape .. " shape")
@@ -120,16 +131,16 @@ local function equipment_names_use_saved_seed()
             "source appearance replaces generic fallback")
     end
 
-    harness.equal(ctx.draws, 6,
-        "one outer draw per generated item name")
+    harness.equal(ctx.draws, 6 + ctx.fallback_draws,
+        "each fallback spends one additional gameplay seed")
 end
 
 -- Exercise import, expansion, and seeded naming as one catalog contract.
-function test.run()
+function test.run(ctx)
     all_source_groups_are_available()
     weighted_source_phrases_expand()
     weighted_boundary_resolves_player_name()
-    equipment_names_use_saved_seed()
+    equipment_names_use_saved_seed(ctx)
 end
 
 return test

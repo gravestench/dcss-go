@@ -9,6 +9,8 @@ local item_sets = require("policy.item_generation.item_sets")
 local shop_ids = require("ids.shops")
 local terrain = require("constants.terrain")
 local shop_spec = require("policy.generation.vaults.shop_spec")
+local name_modes = require("constants.name_modes")
+local names = require("policy.names.source")
 
 local test = {}
 
@@ -70,6 +72,11 @@ function test.run(ctx)
     harness.equal(state.kind_id, shop_ids.SHOP_WEAPON,
         "shop keeps resolved type")
     harness.equal(state.greed, 12, "source greed override")
+    local keeper = names.from_seed(ctx, state.keeper_seed,
+        name_modes.ORDINARY)
+
+    harness.truthy(state.name:sub(1, #keeper + 3) == keeper .. "'s ",
+        "ordinary shop displays the source-seeded keeper")
     harness.equal(generation.at(grid, 1, 3, 2), shop,
         "one shop owns its entrance")
     harness.equal(grid:cell(1, 3, 2), terrain.DNGN_ENTER_SHOP,

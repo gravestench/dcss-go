@@ -25,6 +25,7 @@ type Services struct {
 	PlayerEntity   func() akara.Entity
 	EntityCreated  func(akara.Entity)
 	CurrentAut     func() int64
+	GameSeed       uint64
 	Random         func(stream string, bound int) (int, error)
 	RandomWord     func(stream string) uint64
 	RandomSnapshot func() map[string]uint64

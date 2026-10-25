@@ -38,6 +38,49 @@ If this is your first mod, read [what `ctx` is](#ctx-in-one-minute), then
 [follow a rule from entry to state change](#follow-one-rule-from-entry-to-state-change).
 Those two sections explain when Lua runs and where changing game state lives.
 
+### Generated names
+
+`policy/names/source.lua` owns Crawl's generated-word spelling. Its
+`from_seed(ctx, seed, mode)` method takes an unsigned 32-bit seed and one
+mode from `constants.name_modes`: `ORDINARY`, `SCROLL`, or `JIYVA`.
+`generate(ctx, stream, mode)` first draws a seed from the named, saved
+gameplay stream, then calls `from_seed`. Use `generate` when the caller
+does not already own a seed; use `from_seed` to replay one already stored.
+The caller must save the finished name or seed. For example:
+
+```lua
+local modes = require("constants.name_modes")
+local names = require("policy.names.source")
+local streams = require("constants.rng_streams")
+
+local owner_name = names.generate(ctx, streams.PAN_LORD,
+    modes.ORDINARY)
+```
+
+Spelling uses `ctx:subgenerator(seed)`, a temporary PCG object seeded
+from the run seed and the supplied name seed. Its `:random(bound)` method
+returns a zero-based bounded draw. It does not advance the named gameplay
+stream, and its cursor is not saved. Keep that object local to one rule
+call; save the outcome, not the object. Scroll appearance indices are
+packed into the source's two 0–150 seed bytes and class byte by
+`policy/items/appearances.lua`, using `constants.name_seeds`. Jiyva's
+second name is rolled at character creation, saved on the player as
+`character.jiyva_second_name`, and displayed when the character worships
+Jiyva. Vault hooks expose `api:random_name()` for the ordinary mode; they
+draw a seed from the layout builder before private spelling. Ordinary shops
+store two keeper bytes as `keeper_seed` and pass that seed to `from_seed`;
+an explicit DES shop owner takes precedence. Artefact and book fallbacks
+draw a fresh seed from `ITEM_GENERATION` for each generated word.
+
+To change all generated spelling, replace only
+`policy/names/source.lua` at that relative path in your mod directory.
+Keep both public methods and the three modes so scrolls, vault hooks, Pan
+lords, shops, and item fallback names remain usable. The
+[sparse override example](../internal/script/testdata/generated-name-mod/policy/names/source.lua)
+shows the smallest working replacement. To alter one caller's naming
+policy instead, override that caller's Lua file and import the shared
+name owner there.
+
 ### A mod file's path to the game
 
 The path and the caller determine whether a file *describes* content or

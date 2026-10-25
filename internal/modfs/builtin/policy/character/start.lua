@@ -23,6 +23,9 @@ local runes = require("policy.character.runes")
 local endgame = require("policy.character.endgame")
 local job_ids = require("ids.jobs")
 local abyss = require("policy.world.abyss")
+local name_modes = require("constants.name_modes")
+local names = require("policy.names.source")
+local streams = require("constants.rng_streams")
 
 local start = {}
 
@@ -106,7 +109,8 @@ local function starting_state(ctx, species, job, profile, generated)
 
     if job.id == "JOB_CHAOS_KNIGHT" then
         timeout = math.max(5,
-            ctx:random("character", 40) + ctx:random("character", 40))
+            ctx:random(streams.CHARACTER, 40) +
+            ctx:random(streams.CHARACTER, 40))
     end
 
     local origin = {
@@ -175,6 +179,12 @@ function start.run_start(ctx, input)
     ctx:add(player, component.CHARACTER_ORIGIN, origin)
     ctx:add(player, component.RELIGION_WORSHIP, religion)
     spell_records.start(ctx, player, library, memorized, future)
+
+    -- Source ng-setup rolls this after initial character construction. A
+    -- future Jiyva conversion reveals the saved epithet without rerolling.
+    ctx:add(player, component.JIYVA_SECOND_NAME, {
+        name = names.generate(ctx, streams.CHARACTER, name_modes.JIYVA),
+    })
 
     return {}
 end

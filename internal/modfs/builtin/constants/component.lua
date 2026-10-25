@@ -52,6 +52,7 @@ local component = {
     UGLY_THING = "monster.ugly_thing",
     PLAYER = "core.player",
     CHARACTER_ORIGIN = "character.origin",
+    JIYVA_SECOND_NAME = "character.jiyva_second_name",
     DEMONSPAWN_ANCESTRY = "character.demonspawn_ancestry",
     DEMONSPAWN_TRAIT = "character.demonspawn_trait",
     RELIGION_WORSHIP = "religion.worship",

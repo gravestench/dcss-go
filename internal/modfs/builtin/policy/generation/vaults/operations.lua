@@ -7,6 +7,8 @@ local catalog = require("policy.generation.vaults.catalog")
 local selection = require("policy.generation.vaults.selection")
 local used = require("policy.generation.vaults.used")
 local entity_specs = require("policy.generation.vaults.specs.validate")
+local name_modes = require("constants.name_modes")
+local names = require("policy.names.source")
 
 -- Walk declarations in source order. Hooks insert operations at their exact
 -- source position, and non-terrain effects become typed level intent.
@@ -903,21 +905,13 @@ local function hook_api(random, events, line, player, cells, state,
         return player.run_choices[key]
     end
 
-    -- Build one stable owner name from layout-stream syllable choices.
+    -- Source crawl.make_name takes one 32-bit seed from level generation,
+    -- then spells privately. Vault retries may redraw that seed, but one
+    -- name never spends later layout decisions on its internal letters.
     function api:random_name()
-        local syllables = {
-            "an", "ar", "bel", "dar", "en", "far", "gil", "is",
-            "kor", "lin", "mor", "nar", "or", "ran", "sil", "vor",
-        }
-        local parts = {}
+        local seed = random:roll(4294967296)
 
-        for _ = 1, 3 do
-            parts[#parts + 1] = self:random_from(syllables)
-        end
-
-        local name = table.concat(parts)
-
-        return name:sub(1, 1):upper() .. name:sub(2)
+        return names.from_seed(random.ctx, seed, name_modes.ORDINARY)
     end
 
     -- Queue a typed effect record at this hook location for later placement.
@@ -988,7 +982,8 @@ function operations.apply(vault, cells, random, depth, player, state,
     nested_context)
     local resolved_tags = {}
 
-    for tag, present in pairs(vault.tags) do
+    -- Hand-built helper maps may omit tags; absence means no source tags.
+    for tag, present in pairs(vault.tags or {}) do
         resolved_tags[tag] = present
     end
 

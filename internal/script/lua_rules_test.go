@@ -71,6 +71,19 @@ func TestDemonspawnInvalidFacetMod(t *testing.T) {
 	runLuaRule(t, rules, "tests/demonspawn_invalid_test.lua")
 }
 
+// One layered Lua policy file changes all generated-name consumers without
+// a new Go registry or copies of item definitions.
+func TestGeneratedNameSparseMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua",
+		"testdata/generated-name-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/generated_name_mod_test.lua")
+}
+
 // A sparse price kind joins the effective Lua policy set without changing
 // source Trove logic or adding a Go payment handler.
 func TestTroveModPrice(t *testing.T) {
@@ -531,7 +544,8 @@ func runLuaRule(t *testing.T, rules modfs.Ruleset, name string) {
 		world,
 		rules,
 		Services{
-			Emit: func(string, string) {},
+			GameSeed: 0,
+			Emit:     func(string, string) {},
 			Random: func(_ string, _ int) (int, error) {
 				return 0, nil
 			},

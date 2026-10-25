@@ -6,6 +6,7 @@
 local spells = require("ids.spells")
 local streams = require("constants.rng_streams")
 local names = require("policy.names.source")
+local name_modes = require("constants.name_modes")
 local colours = require("constants.pan_lord_colours")
 local traits = require("constants.pan_lord_traits")
 local rings = require("constants.monster_cloud_rings")
@@ -355,7 +356,8 @@ end
 -- Roll the source body before creating an ECS actor. A failed placement can
 -- discard this value without leaving a half-built creature in the world.
 function pan_lord.roll(ctx, friendly)
-    local name = names.generate(ctx, streams.PAN_LORD)
+    local name = names.generate(ctx, streams.PAN_LORD,
+        name_modes.ORDINARY)
     local spellcaster = draw(ctx, 4) < 3
     local hp = 100 + dice(ctx, 3, 50)
     local total_defense = 10 + average_three(ctx, 40)

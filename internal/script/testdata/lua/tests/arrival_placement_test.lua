@@ -207,6 +207,7 @@ local function assert_array_directives_append_slots()
     local vault = {
         id = "array_fixture",
         path = "vaults/arrival/array_fixture.des",
+        tags = {},
         operations = {
             { kind = directives.MONS, argument = "goblin", line = 1 },
             { kind = directives.MONS, argument = "rat", line = 2 },

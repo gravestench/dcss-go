@@ -1134,9 +1134,17 @@ consumers of the missing-hand mutation still need their own domain audits.
 
 The item identification policy now gives each active identifying type a
 saved, unique appearance and discovers all copies when a potion is quaffed
-or a wand is successfully evoked. The current scroll label generator keeps
-unique deterministic labels but does not yet reproduce DCSS's exact
-`make_name` syllable algorithm or its RNG sequence. Artefact discovery now
+or a wand is successfully evoked. Scroll labels now unpack their saved
+151-by-151 appearance index into the pinned source's three-byte seed and
+use the shared Lua `make_name` policy with a private source PCG stream.
+The first eight labels match the source binary's output byte for byte.
+Pan lords, vault hooks, Jiyva's saved second name, ordinary shopkeepers,
+and direct artefact or book fallback words use that owner too. Artefact
+and book fallbacks take each word seed from the saved item-generation
+stream. The main game's named SplitMix
+streams still differ from the C++ global PCG sequence, so matching a
+whole source run's name-seed draw order remains future RNG work.
+Artefact discovery now
 uses per-item knowledge and source self-identifying fixed-name rules; random
 equipment artefacts use the source weighted name and appearance groups.
 Random books use source title groups, though exact source RNG parity remains

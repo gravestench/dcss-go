@@ -81,6 +81,8 @@ func (r *Runtime) installContextAPI() {
 	r.state.SetField(context, "actor", r.state.NewFunction(r.luaActiveActor))
 	r.state.SetField(context, "player", r.state.NewFunction(r.luaPlayerEntity))
 	r.state.SetField(context, "random", r.state.NewFunction(r.luaRandom))
+	r.state.SetField(context, "subgenerator",
+		r.state.NewFunction(r.luaSubgenerator))
 	r.state.SetField(context, "hash_with_seed", r.state.NewFunction(r.luaHashWithSeed))
 	r.state.SetField(context, "hash3_quotient_mod",
 		r.state.NewFunction(r.luaHash3QuotientMod))
@@ -1649,6 +1651,45 @@ func (r *Runtime) luaRandom(state *lua.LState) int {
 	}
 
 	state.Push(lua.LNumber(value))
+
+	return 1
+}
+
+// Create one private seeded PCG stream. Lua owns the policy that consumes
+// these draws; the Go kernel only supplies source-compatible random words.
+// The table must remain local to the operation because its cursor is not
+// saved. A caller saves the generated value or the seed for later replay.
+func (r *Runtime) luaSubgenerator(state *lua.LState) int {
+	value, err := exactLuaNumber(state.Get(2))
+
+	if err != nil ||
+		value < 0 ||
+		value > 4294967295 {
+		state.RaiseError("subgenerator sequence must be a uint32")
+
+		return 0
+	}
+
+	private := newSourceSubgenerator(r.services.GameSeed, uint64(value))
+	table := state.NewTable()
+
+	state.SetField(table, "random", state.NewFunction(func(state *lua.LState) int {
+		value, err := exactLuaNumber(state.Get(2))
+
+		if err != nil ||
+			value < 1 ||
+			value > 4294967295 {
+			state.RaiseError("subgenerator bound must be a positive uint32")
+
+			return 0
+		}
+
+		state.Push(lua.LNumber(private.intn(uint32(value))))
+
+		return 1
+	}))
+
+	state.Push(table)
 
 	return 1
 }

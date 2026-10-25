@@ -11,6 +11,8 @@ local terrain = require("constants.terrain")
 local stock_request = require("policy.shops.stock_request")
 local item_sets = require("policy.item_generation.item_sets")
 local branches = require("ids.branches")
+local name_modes = require("constants.name_modes")
+local names = require("policy.names.source")
 
 local generation = {}
 
@@ -245,15 +247,21 @@ local function roll_stock(ctx, definition, spec, count)
     return results
 end
 
--- Use explicit vault names when given; otherwise combine owner, shop kind,
--- and a coordinate-derived suffix so naming adds no extra RNG draws.
-local function shop_name(definition, spec)
+-- Use a DES owner when one is authored. Otherwise spell the packed keeper
+-- bytes through source make_name, which adds no draws to the shop stream.
+local function shop_name(ctx, definition, spec, keeper_seed)
     if spec.full_name and spec.full_name ~= "" then
         return spec.full_name
     end
 
     local type_name = spec.type_name or definition.name
-    local owner = spec.name and spec.name ~= "" and spec.name .. "'s " or ""
+    local owner = spec.name
+
+    if not owner or owner == "" then
+        owner = names.from_seed(ctx, keeper_seed, name_modes.ORDINARY)
+    end
+
+    owner = owner .. "'s "
     local suffix = spec.suffix
 
     if suffix == nil then
@@ -312,6 +320,7 @@ function generation.place(ctx, spec)
     local stock = roll_stock(ctx, definition, spec, count)
     local keeper_a = ctx:random(streams.SHOP, 200) + 1
     local keeper_b = ctx:random(streams.SHOP, 200) + 1
+    local keeper_seed = keeper_a + keeper_b * 256 + keeper_b * 65536
     local shop = ctx:create()
 
     ctx:add(shop, component.SHOP, {
@@ -319,10 +328,10 @@ function generation.place(ctx, spec)
         level_id = spec.level_id,
         x = spec.x,
         y = spec.y,
-        name = shop_name(definition, spec),
+        name = shop_name(ctx, definition, spec, keeper_seed),
         greed = shop_greed,
         open = true,
-        keeper_seed = keeper_a + keeper_b * 256 + keeper_b * 65536,
+        keeper_seed = keeper_seed,
     })
 
     for order, result in ipairs(stock) do

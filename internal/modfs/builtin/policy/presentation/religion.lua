@@ -42,8 +42,20 @@ function religion.run(ctx)
         stars = string.rep("*", rank) .. string.rep(".", 6 - rank)
     end
 
+    local god_name = names[state.god_id]
+
+    if state.god_id == gods.JIYVA then
+        local second = ctx:get(player, component.JIYVA_SECOND_NAME)
+
+        if not second or second.name == "" then
+            error("Jiyva's second name is missing")
+        end
+
+        god_name = god_name .. " " .. second.name
+    end
+
     return {
-        god_name = names[state.god_id],
+        god_name = god_name,
         piety_stars = stars,
         penance = state.penance[state.god_id] or 0,
         likes = conduct_text.likes,

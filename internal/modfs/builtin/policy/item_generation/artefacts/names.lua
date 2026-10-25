@@ -11,6 +11,8 @@ local groups = require("constants.randart_name_groups")
 local name_gods = require("policy.item_generation.artefacts.name_gods")
 local name_catalog = require("policy.item_generation.artefacts.name_catalog")
 local book_names = require("policy.item_generation.random_book_names")
+local name_modes = require("constants.name_modes")
+local source_names = require("policy.names.source")
 local names = {}
 
 -- Source naming uses an equipment class for both its true-name database and
@@ -143,168 +145,35 @@ local function source_database_name(random, definition, group, facts)
     return definition.name .. " " .. phrase
 end
 
--- Source: crawl-ref/source/item-name.cc.
-local vowels = "aeiouaeiouaeiouy  "
-local consonants = "bcdfghjklmnpqrstvwxzcdfghlmnrstlmnrst"
-local consonant_pairs = {
-    "kl", "gr", "cl", "cr", "fr", "pr", "tr", "tw", "br", "pl",
-    "bl", "str", "shr", "thr", "sm", "sh", "ch", "th", "ph",
-    "pn", "kh", "gh", "mn", "ps", "st", "sk", "sch", "ts",
-    "cs", "xt", "nt", "ll", "rr", "ss", "wk", "wn", "ng",
-    "cw", "mp", "ck", "nk", "dd", "tt", "bb", "pp", "nn",
-    "mm", "kk", "gg", "ff", "pt", "tz", "dgh", "rgh",
-    "rph", "rch", "cz", "xk", "zx", "xz", "cv", "vv",
-    "nl", "rh", "dw", "nw", "khl",
-}
-
-local consonant_lookup = {}
-
-for char in consonants:gmatch(".") do
-    consonant_lookup[char] = true
-end
-
--- Example: seeded_random(123) keeps a randart name tied to its saved seed.
--- Return a private LCG so cosmetic syllables reproduce without consuming item-generation draws.
+-- Catalog phrase choices keep their saved cosmetic seed, while a direct
+-- make_name fallback delegates spelling to policy.names.source.
 local function seeded_random(seed)
     local state = seed
 
-    -- Advance a private PRNG for each syllable so name spelling cannot perturb item rolls.
+    -- This existing item-local choice stream keeps name database lookups
+    -- reproducible from the saved item seed.
     return function(bound)
-        -- A local stream keeps cosmetic syllable draws from perturbing
-        -- later item-generation decisions.
         state = (state * 1664525 + 1013904223) % 4294967296
 
         return state % bound
     end
 end
-
--- The seeded generator chooses letters from its current syllable set.
-local function choice(random, letters)
-    local index = random(#letters) + 1
-
-    return letters:sub(index, index)
-end
-
--- Position-sensitive consonant pairs keep generated names pronounceable.
-local function consonant_pair(random, beginning, ending)
-    local first = 1
-    local last = 67
-
-    if beginning then
-        last = 27
-    elseif ending then
-        first = 15
-        last = 56
-    end
-
-    return consonant_pairs[first + random(last - first + 1)]
-end
-
--- Vowel choice depends on the growing name to avoid invalid runs.
-local function next_vowel(random, name, length)
-    local vowel = choice(random, vowels)
-    local previous = name:sub(-1)
-    local penultimate = name:sub(-2, -2)
-
-    if vowel == " " then
-        if length < 7 or #name <= 2 or #name >= length - 3 or
-            previous == " " or penultimate == " " or
-            (consonant_lookup[previous] and
-                consonant_lookup[penultimate]) then
-            return nil
-        end
-    elseif vowel == previous and
-        (vowel == "y" or vowel == "i" or random(5) <= 1) then
-        return nil
-    end
-
-    return vowel
-end
-
--- Consonant choice respects boundary rules while extending the name.
-local function next_consonant(random, name, length)
-    local beginning = name == "" or name:sub(-1) == " "
-    local ending = #name >= length - 2
-
-    if (length > 3 or name ~= "") and
-        random(7) <= 1 and
-        (not beginning or not ending) then
-        return consonant_pair(random, beginning, ending)
-    end
-
-    return choice(random, consonants)
-end
-
--- Build a name fragment from the local seeded generator, independent of global RNG.
-local function word(random)
-    -- Source: crawl-ref/source/item-name.cc. The source uses
-    -- a game-seed subgenerator; this port uses an item-local seed.
-    local length = 3 + random(5)
-
-    if random(5) == 0 then
-        length = length + random(6)
-    else
-        length = length + 1
-    end
-
-    local name = ""
-    local has_space = false
-
-    for _ = 1, 150 do
-        if #name >= length then
-            break
-        end
-
-        local previous = name:sub(-1)
-        local penultimate = name:sub(-2, -2)
-        local added
-
-        if name == "" or previous == " " then
-            added = string.char(string.byte("a") + random(26))
-        elseif not has_space and #name > 5 and
-            #name < length - 4 and random(5) ~= 0 then
-            added = " "
-        elseif consonant_lookup[previous] or
-            (#name > 1 and not consonant_lookup[previous] and
-                consonant_lookup[penultimate] and random(5) <= 1) then
-            added = next_vowel(random, name, length)
-        else
-            added = next_consonant(random, name, length)
-
-            if #added > 2 then
-                length = length + #added - 2
-            end
-        end
-
-        if added then
-            name = name .. added
-            has_space = has_space or added == " "
-        end
-    end
-
-    local last = name:sub(-1)
-
-    if last ~= "" and last ~= " " and last ~= "y" and
-        not consonant_lookup[last] and
-        (#name < length or
-            (length < 8 and random(3) ~= 0)) then
-        name = name .. choice(random, consonants)
-    end
-
-    name = name:gsub("%s+$", "")
-
-    if #name < 4 then
-        name = "plog"
-    end
-
-    return (name:gsub("(%f[%a]%a)", string.upper))
-end
-
 -- The saved artefact seed must reproduce the same name after load.
 function names.generate(ctx, definition, details)
     details = details or {}
     local seed = ctx:random(streams.ITEM_GENERATION, 2147483647)
     local random = seeded_random(seed)
+
+    -- Source make_name draws one seed from gameplay RNG before spelling
+    -- privately. Phrase choices still use the item-local cosmetic stream;
+    -- each fallback word spends its own saved item-generation draw.
+    local function make_word()
+        local word_seed = ctx:random(streams.ITEM_GENERATION, 4294967296)
+
+        return source_names.from_seed(ctx, word_seed,
+            name_modes.ORDINARY)
+    end
+
     local group, appearance_group, shape = name_groups(definition)
     local facts = {
         ctx = ctx,
@@ -316,13 +185,13 @@ function names.generate(ctx, definition, details)
     local full_name
 
     if details.book then
-        full_name = book_names.title(random, word, details.book, facts)
+        full_name = book_names.title(random, make_word, details.book, facts)
     elseif group then
         full_name = source_database_name(random, definition, group, facts)
     end
 
     if not full_name then
-        local title = word(random)
+        local title = make_word()
 
         if random(3) == 0 then
             full_name = definition.name .. " of " .. title

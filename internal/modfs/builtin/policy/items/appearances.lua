@@ -1,14 +1,11 @@
 local source = require("data.item_appearances")
 local classes = require("ids.object_classes")
 local pools = require("constants.appearance_pools")
+local name_seeds = require("constants.name_seeds")
+local name_modes = require("constants.name_modes")
+local names = require("policy.names.source")
 
 local appearances = {}
-local syllables = {
-    "A", "BE", "CO", "DU", "FA", "GI", "HU", "IR",
-    "JO", "KA", "LU", "MU", "NE", "OX", "PU", "QI",
-    "RA", "SE", "TO", "UL", "VO", "WE", "XI", "YO",
-    "ZA",
-}
 
 -- Honor an explicit pool first, then use item class so unidentified descriptors stay in the right family.
 -- Example: appearances.pool(potion_kind) maps an unidentified potion to the potion descriptor pool.
@@ -90,7 +87,7 @@ end
 -- Use each pool's real combinations so assignment never runs past available appearances.
 function appearances.capacity(pool)
     if pool == pools.SCROLL then
-        return 151 * 151
+        return name_seeds.SCROLL_SIDE * name_seeds.SCROLL_SIDE
     end
 
     local descriptors = source[pool]
@@ -106,10 +103,10 @@ function appearances.capacity(pool)
     return #descriptors.primary * #descriptors.secondary
 end
 
--- Source: item-name.cc. The higher seed values enable
--- secondary adjectives or potion qualifiers. Scroll labels still need
--- the exact make_name generator from item-name.cc.
-function appearances.name(pool, seed)
+-- Source: item-name.cc. The higher seed values enable secondary adjectives
+-- or potion qualifiers. Scroll indices unpack into the source's two random
+-- bytes, followed by the pinned scroll class byte for private PCG spelling.
+function appearances.name(ctx, pool, seed)
     local capacity = appearances.capacity(pool)
 
     if seed < 0 or seed >= capacity or seed ~= math.floor(seed) then
@@ -117,14 +114,14 @@ function appearances.name(pool, seed)
     end
 
     if pool == pools.SCROLL then
-        local label = ""
+        local first = seed % name_seeds.SCROLL_SIDE
+        local second = math.floor(seed / name_seeds.SCROLL_SIDE)
+        local source_seed = first +
+            second * name_seeds.SECOND_BYTE +
+            name_seeds.SCROLL_CLASS * name_seeds.CLASS_BYTE
 
-        for _ = 1, 4 do
-            label = syllables[seed % #syllables + 1] .. label
-            seed = math.floor(seed / #syllables)
-        end
-
-        return "scroll labelled " .. label
+        return "scroll labelled " .. names.from_seed(ctx,
+            source_seed, name_modes.SCROLL)
     end
 
     local descriptors = source[pool]

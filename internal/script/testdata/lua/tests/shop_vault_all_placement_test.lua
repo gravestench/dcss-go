@@ -12,8 +12,8 @@ local test = {}
 
 -- A full open grid gives every standalone shop map enough room; the seeded
 -- builder still checks source fit and protected-cell rules.
-local function open_builder()
-    local builder = grid.new({})
+local function open_builder(ctx)
+    local builder = grid.new(ctx)
     local draw = 0
 
     for y = 1, 68 do
@@ -35,7 +35,7 @@ end
 
 -- Parse and place every committed shop vault; checking materialized records
 -- catches directives that parse successfully but lose stock during placement.
-function test.run()
+function test.run(ctx)
     local placed_count = 0
     local stock_errors = {}
 
@@ -48,7 +48,7 @@ function test.run()
         -- The dead-tree helper has only tree cells. Its parent embeds it;
         -- it is not a standalone secondary vault.
         if #vault.rows > 0 and not vault.tags.nico_deadtrees then
-            local builder = open_builder()
+            local builder = open_builder(ctx)
             local placed, reason = extra.place(nil, builder, vault, {
                 protected = {},
                 required = {},

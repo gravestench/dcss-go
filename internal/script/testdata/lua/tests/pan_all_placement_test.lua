@@ -27,9 +27,9 @@ local lord_rune_ids = {
 
 -- Give each map an independent seeded layout stream. File traversal does
 -- not influence one map's choices or consume another map's random state.
-local function random_context()
+local function random_context(ctx)
     local state = 83
-    local context = {}
+    local context = setmetatable({}, { __index = ctx })
 
     function context:random_u64()
         state = (state * 48271) % 2147483647
@@ -104,7 +104,7 @@ end
 
 -- A dummy contributes only to source weighted choice and has no useful
 -- terrain to place. Every other map executes on a connected base grid.
-local function place_one(id, is_entry)
+local function place_one(ctx, id, is_entry)
     local definition = vaults.get(id)
 
     if definition.tags.dummy then
@@ -124,7 +124,7 @@ local function place_one(id, is_entry)
         collected_runes = {},
         pan_rune_count = 0,
     }
-    local builder = grid.new(random_context())
+    local builder = grid.new(random_context(ctx))
 
     open_baseline(builder)
 
@@ -144,7 +144,7 @@ end
 
 -- Place the full source family at its authored branch and depth, with
 -- saved rune facts supplied in the same shape as live Pan generation.
-function test.run()
+function test.run(ctx)
     local count = 0
     local lord_count = 0
 
@@ -152,7 +152,7 @@ function test.run()
         for _, path in ipairs(mod.paths("vaults/" .. family, ".des")) do
             local id = path:match("([^/]+)%.des$")
 
-            local placed, named_lord = place_one(id,
+            local placed, named_lord = place_one(ctx, id,
                 family == "pan_entry")
 
             if placed then

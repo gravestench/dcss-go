@@ -226,6 +226,14 @@ local function validate(ctx)
     demonspawn.validate(ctx, entity, species.id, progress.level)
     vampire.validate(ctx, entity)
 
+    local jiyva_name = ctx:get(entity, component.JIYVA_SECOND_NAME)
+
+    if not jiyva_name or #jiyva_name.name < 4 or
+        #jiyva_name.name > 8 or
+        not jiyva_name.name:match("^J%l+$") then
+        error("invalid saved Jiyva second name")
+    end
+
     local worship = religion_validation.check(ctx, entity)
 
     if worship.god_id ~= gods.NO_GOD and
