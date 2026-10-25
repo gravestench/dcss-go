@@ -4,9 +4,11 @@
 -- queued count and samples an angry god through the existing effect owner.
 -- The queue belongs to the player, so restoring a game cannot reroll debt.
 local component = require("constants.component")
+local catalog = require("policy.catalog")
+local categories = require("constants.catalog")
 local experience_limit = require("policy.character.experience_limit")
 local gods = require("constants.gods")
-local alignments = require("constants.god_alignments")
+local alignments = require("policy.religion.alignments")
 local retribution = require("policy.religion.wrath.retribution")
 local streams = require("constants.rng_streams")
 
@@ -88,30 +90,45 @@ end
 function timer.good_god_conversion(ctx, player, old_god)
     local state = ctx:get(player, component.RELIGION_WORSHIP)
     local active = {}
+    local warnings = {}
+    local source_good = {}
+    local ordered_active = retribution.active_gods(ctx, player)
 
-    for _, god_id in ipairs(retribution.active_gods(ctx, player)) do
+    for _, god_id in ipairs(ordered_active) do
         active[god_id] = true
     end
 
     -- Preserve the source's warning order when several former good gods
-    -- become angry at the same conversion; only the first seeds the timer.
+    -- become angry at the same conversion. Modded good gods follow in
+    -- stable ID order, just as they do in the timed wrath roster.
     for _, god_id in ipairs(good_wrath_order) do
-        if active[god_id] and god_id ~= old_god then
+        source_good[god_id] = true
+
+        if active[god_id] then
+            warnings[#warnings + 1] = god_id
+        end
+    end
+
+    for _, god_id in ipairs(ordered_active) do
+        if not source_good[god_id] and alignments.good(god_id) then
+            warnings[#warnings + 1] = god_id
+        end
+    end
+
+    for _, god_id in ipairs(warnings) do
+        if god_id ~= old_god then
             timer.start_timeout(ctx, player)
 
-            if god_id == gods.ZIN then
-                local kind = alignments.CHAOTIC[state.god_id] and
-                    "chaos" or "evil"
+            local definition = catalog.get(categories.GODS, god_id)
+            local warning = definition.wrath_warning or
+                definition.name .. " warns you of divine wrath!"
 
-                ctx:emit("religion", "Zin says: You will suffer for " ..
-                    "embracing such " .. kind .. "!")
-            elseif god_id == gods.SHINING_ONE then
-                ctx:emit("religion", "The Shining One says: You will " ..
-                    "pay for your evil ways, mortal!")
-            elseif god_id == gods.ELYVILON then
-                ctx:emit("religion", "Elyvilon says: Your evil deeds " ..
-                    "will not go unpunished!")
+            if alignments.chaotic(state.god_id) and
+                definition.wrath_warning_chaos then
+                warning = definition.wrath_warning_chaos
             end
+
+            ctx:emit("religion", warning)
         end
     end
 end

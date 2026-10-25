@@ -12,6 +12,8 @@ local definition = {
     starting_piety = 100,
     wrath_penance = 50,
     piety_mode = modes.XOM,
+    wrath_module = "policy.religion.wrath.xom",
+    chaotic = true,
     behavior_module = "policy.religion.gods.xom",
 }
 

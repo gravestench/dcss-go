@@ -1965,9 +1965,10 @@ god. A mod-added god supplies its ID in its own definition. The owner checks
 live eligibility, leaves the old god, sets the new starting piety, applies a
 first-god Monk bonus and good-god transfer, invokes named behavior, and
 increments the saved worship count. Renunciation runs the same leave path and
-records source `wrath_penance` on `religion.worship`. The later wrath system
-will consume that debt. The calling prayer command still owns confirmation
-and turn time; invoking `join` directly does not spend a turn.
+records source `wrath_penance` on `religion.worship`. Credited XP queues
+timed wrath, and a god-time check may deliver punishment and reduce that
+debt. The calling prayer command still owns confirmation and turn time;
+invoking `join` directly does not spend a turn.
 Voluntary renunciation or conversion can transfer saved devotion between
 good gods. Conduct offenses and timed decay call `excommunicate` instead;
 forced expulsion clears that temporary bridge before another god can use it.
@@ -1983,6 +1984,40 @@ actually uses. The shared owner supplies 35 piety to a first-god Monk and
 exception method. For example, `policy/religion/gods/ru.lua` schedules a
 saved sacrifice offer instead of pretending Ru earns ordinary piety;
 `gozag.lua` deducts the source service fee from the saved wallet when joining.
+
+#### Adding a god's retribution
+
+Set `wrath_module = "policy.religion.wrath.<name>"` in the god's
+`content/gods/<name>.lua` file and add
+`policy/religion/wrath/<name>.lua` in the same mod tree. Return a local table
+with an `apply(ctx, player)` function. The function carries out one divine
+punishment and returns whether the common retribution rule may apply its
+bonus confusion or slowing. The common rule also reduces that god's saved
+penance after the effect. Both ordinary timed wrath and Nemelex's Divine
+Wrath card call this method. The runtime checks the module path and method
+when the effective mod loads, so a typo is reported before play.
+
+Omit `wrath_module` when a god has no active punishment. Its penance may
+still be paid by another rule, but it does not enter the timed wrath roster
+or produce a punishment from the Wrath card. The five source gods with
+passive debt use this form. Put `good = true`, `evil = true`, or
+`chaotic = true` on a god definition when that relationship applies. Good
+gods spare one another's worshippers; Zin also hates chaotic patrons. A
+modded god with no alignment flag behaves like a non-good god in the source
+hatred rule. Xom's protection of god-aligned monsters reads these same
+effective fields. A good god may set `wrath_warning` for the text shown
+when a later conversion activates its penance. Set
+`wrath_warning_chaos` as well if the text changes for a chaotic new
+patron; otherwise the ordinary warning is reused. Without either field,
+the game uses a plain warning with that god's display name.
+
+The 26 source gods retain source enum order for seeded wrath draws. Added
+gods follow in sorted ID order; renaming a mod file cannot change the draw
+order. Saveable punishment state belongs on ECS components through `ctx`,
+not in module locals. See the source god and handler pair
+`content/gods/nemelex_xobeh.lua` and
+`policy/religion/wrath/nemelex_xobeh.lua` for a handler that delegates to
+another Lua catalog.
 
 Fedhas and Okawaru show two actor-facing entry hooks. Fedhas' `join` ends an
 awakened forest on the current floor; its `neutralise` method changes an

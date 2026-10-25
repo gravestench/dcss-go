@@ -16,6 +16,7 @@ local definition = {
     conduct_module = "policy.religion.conduct.elyvilon",
     behavior_module = "policy.religion.gods.elyvilon",
     good = true,
+    wrath_warning = "Elyvilon says: Your evil deeds will not go unpunished!",
 }
 
 register.definition(categories.GODS, definition)

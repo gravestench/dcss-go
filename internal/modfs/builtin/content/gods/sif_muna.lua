@@ -12,6 +12,7 @@ local definition = {
     starting_piety = 15,
     wrath_penance = 30,
     piety_mode = modes.ORDINARY,
+    wrath_module = "policy.religion.wrath.sif_muna",
     piety_decay_chance = 17,
     conduct_module = "policy.religion.conduct.sif_muna",
     gift_module = "policy.religion.gifts.sif_muna",

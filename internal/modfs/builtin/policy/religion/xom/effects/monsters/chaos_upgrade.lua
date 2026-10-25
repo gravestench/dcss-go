@@ -10,7 +10,7 @@ local confusion = require("policy.religion.xom.confusion")
 local equipment = require("policy.combat.equipment")
 local events = require("ids.xom_events")
 local gods = require("constants.gods")
-local alignments = require("constants.god_alignments")
+local alignments = require("policy.religion.alignments")
 local holiness = require("constants.monster_holiness")
 local item_use = require("constants.monster_item_use")
 local items = require("ids.items")
@@ -60,12 +60,12 @@ local function protected_by_god(ctx, monster, definition)
         god_id = gods.NO_GOD
     end
 
-    if alignments.GOOD[god_id] then
+    if alignments.good(god_id) then
         return true
     end
 
     if has_holiness(definition, holiness.HOLY) and
-        not alignments.CHAOTIC[god_id] then
+        not alignments.chaotic(god_id) then
         return true
     end
 

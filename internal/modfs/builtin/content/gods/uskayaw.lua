@@ -12,6 +12,7 @@ local definition = {
     starting_piety = 15,
     wrath_penance = 25,
     piety_mode = modes.ORDINARY,
+    wrath_module = "policy.religion.wrath.uskayaw",
     conduct_module = "policy.religion.conduct.uskayaw",
     behavior_module = "policy.religion.gods.uskayaw",
 }

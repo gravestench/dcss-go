@@ -12,6 +12,8 @@ local definition = {
     starting_piety = 15,
     wrath_penance = 25,
     piety_mode = modes.ORDINARY,
+    wrath_module = "policy.religion.wrath.dithmenos",
+    evil = true,
     piety_decay_chance = 17,
     conduct_module = "policy.religion.conduct.dithmenos",
 }

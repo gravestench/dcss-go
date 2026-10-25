@@ -12,6 +12,7 @@ local definition = {
     starting_piety = 130,
     wrath_penance = 15,
     piety_mode = modes.ORDINARY,
+    wrath_module = "policy.religion.wrath.ignis",
 }
 
 register.definition(categories.GODS, definition)

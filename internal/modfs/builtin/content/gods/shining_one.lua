@@ -12,10 +12,12 @@ local definition = {
     starting_piety = 15,
     wrath_penance = 30,
     piety_mode = modes.ORDINARY,
+    wrath_module = "policy.religion.wrath.shining_one",
     piety_decay_chance = 35,
     conduct_module = "policy.religion.conduct.shining_one",
     kill_recovery_module = "policy.religion.kill_recovery.shining_one",
     good = true,
+    wrath_warning = "The Shining One says: You will pay for your evil ways, mortal!",
 }
 
 register.definition(categories.GODS, definition)

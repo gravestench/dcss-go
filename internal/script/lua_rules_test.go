@@ -33,6 +33,18 @@ func TestLuaRules(t *testing.T) {
 	}
 }
 
+// A sparse god mod must participate in both timed wrath and the source
+// Wrath card without editing a central source-god dispatcher.
+func TestGodWrathSparseMod(t *testing.T) {
+	rules, err := modfs.Load("testdata/lua", "testdata/god-wrath-mod")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	runLuaRule(t, rules, "tests/god_wrath_mod_test.lua")
+}
+
 // A layered Abyss mod adds one map and replaces one source path without a
 // branch-specific Go registry or a copied base mod directory.
 func TestAbyssSparseMod(t *testing.T) {

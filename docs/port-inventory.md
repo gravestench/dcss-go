@@ -488,7 +488,10 @@ for burn, cloud, terrain, and summon attribution through save and restore.
 Ordinary timed wrath now accumulates saved retribution counts from credited
 XP while an eligible god has active penance. Each god-time check spends one
 count, rolls against the number of eligible gods, and reuses that god's Lua
-wrath handler. Paying off the last active penance clears the XP timer and
+wrath handler named by its effective god definition. Source gods retain
+enum draw order, and mod-added gods follow in stable ID order. God
+alignment and Xom's protection checks read the same effective definitions.
+Paying off the last active penance clears the XP timer and
 queued counts; save and restore preserve both until then. Other god
 abilities and remaining passives remain separate religion slices.
 Credited XP kills now run conduct before mutation and divine recovery.

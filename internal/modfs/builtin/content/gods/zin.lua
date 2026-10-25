@@ -12,9 +12,12 @@ local definition = {
     starting_piety = 15,
     wrath_penance = 25,
     piety_mode = modes.ORDINARY,
+    wrath_module = "policy.religion.wrath.zin",
     piety_decay_chance = 17,
     conduct_module = "policy.religion.conduct.zin",
     good = true,
+    wrath_warning = "Zin says: You will suffer for embracing such evil!",
+    wrath_warning_chaos = "Zin says: You will suffer for embracing such chaos!",
     rejects_all_forms = true,
     behavior_module = "policy.religion.gods.zin",
 }

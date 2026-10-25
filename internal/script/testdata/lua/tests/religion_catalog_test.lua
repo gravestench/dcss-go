@@ -5,6 +5,7 @@ local gods = require("constants.gods")
 local harness = require("tests.harness")
 local modes = require("constants.god_piety_modes")
 local names = require("policy.religion.names")
+local alignments = require("policy.religion.alignments")
 local temple = require("policy.generation.temple.plan")
 
 local test = {}
@@ -14,6 +15,7 @@ local test = {}
 function test.run()
     local ids = register.ids(categories.GODS)
     local expected = {}
+    local active_wrath = 0
 
     for key, id in pairs(gods) do
         if key ~= "NO_GOD" and key ~= "NAMELESS" and
@@ -33,6 +35,10 @@ function test.run()
         harness.truthy(definition.name ~= "", "god has a display name")
         harness.truthy(definition.starting_piety >= 0)
 
+        if definition.wrath_module then
+            active_wrath = active_wrath + 1
+        end
+
         if index > 1 then
             harness.truthy(ids[index - 1] < id, "stable ID order")
         end
@@ -41,7 +47,12 @@ function test.run()
     end
 
     harness.equal(next(expected), nil)
+    harness.equal(active_wrath, 21)
     harness.equal(names[gods.ECUMENICAL], "an unknown god")
+    harness.truthy(alignments.good(gods.ZIN))
+    harness.truthy(alignments.evil(gods.MAKHLEB))
+    harness.truthy(alignments.chaotic(gods.XOM))
+    harness.falsy(alignments.good(gods.NO_GOD))
 
     local temple_ids = temple.god_ids()
 

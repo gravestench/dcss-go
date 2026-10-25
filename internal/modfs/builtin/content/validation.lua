@@ -923,6 +923,38 @@ local function validate_conduct_module(definition)
     end
 end
 
+-- A god's named wrath effect must be present in the winning VFS layer.
+-- Its single apply method is the contract shared by ordinary timed wrath
+-- and Nemelex's Divine Wrath card.
+local function validate_wrath_module(definition)
+    local module_id = definition.wrath_module
+
+    if module_id == nil then
+        return
+    end
+
+    if type(module_id) ~= "string" or
+        not module_id:match("^policy%.religion%.wrath%.[a-z0-9_]+$") then
+        fail(categories.GODS, definition.id,
+            "wrath_module must name policy.religion.wrath.<god>")
+    end
+
+    local path = module_id:gsub("%.", "/") .. ".lua"
+
+    if not pcall(mod.read, path) then
+        fail(categories.GODS, definition.id,
+            "missing wrath module " .. path)
+    end
+
+    local loaded, handler = pcall(require, module_id)
+
+    if not loaded or type(handler) ~= "table" or
+        type(handler.apply) ~= "function" then
+        fail(categories.GODS, definition.id,
+            "invalid wrath module " .. path .. ": " .. tostring(handler))
+    end
+end
+
 local function validate_god(definition)
     local category = categories.GODS
     local id = definition.id
@@ -988,10 +1020,20 @@ local function validate_god(definition)
     end
 
     validate_conduct_module(definition)
+    validate_wrath_module(definition)
+
+    for _, field in ipairs({ "wrath_warning",
+        "wrath_warning_chaos" }) do
+        if definition[field] ~= nil and
+            (type(definition[field]) ~= "string" or
+                definition[field] == "") then
+            fail(category, id, field .. " must be nonempty text")
+        end
+    end
 
     for _, field in ipairs({
         "good", "rejects_innate_caster", "requires_orc", "requires_love",
-        "rejects_all_forms",
+        "rejects_all_forms", "evil", "chaotic",
     }) do
         if definition[field] ~= nil and type(definition[field]) ~= "boolean" then
             fail(category, id, field .. " must be boolean")

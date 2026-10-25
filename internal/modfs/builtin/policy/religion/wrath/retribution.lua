@@ -2,74 +2,44 @@
 -- owner keeps source eligibility, bonus debilitation, and penance in one place.
 local component = require("constants.component")
 local confusion = require("policy.magic.player_confusion")
+local catalog = require("policy.catalog")
+local categories = require("constants.catalog")
 local gods = require("constants.gods")
 local jiyva_life = require("policy.religion.jiyva.life")
-local alignments = require("constants.god_alignments")
+local alignments = require("policy.religion.alignments")
 local roster = require("policy.religion.wrath.roster")
 local slow = require("policy.character.slow")
 local streams = require("constants.rng_streams")
 
 local retribution = {}
 
-local handlers = {
-    [gods.BEOGH] = require("policy.religion.wrath.beogh"),
-    [gods.CHEIBRIADOS] = require("policy.religion.wrath.cheibriados"),
-    [gods.DITHMENOS] = require("policy.religion.wrath.dithmenos"),
-    [gods.FEDHAS] = require("policy.religion.wrath.fedhas"),
-    [gods.IGNIS] = require("policy.religion.wrath.ignis"),
-    [gods.JIYVA] = require("policy.religion.wrath.jiyva"),
-    [gods.KIKUBAAQUDGHA] = require("policy.religion.wrath.kikubaaqudgha"),
-    [gods.LUGONU] = require("policy.religion.wrath.lugonu"),
-    [gods.MAKHLEB] = require("policy.religion.wrath.makhleb"),
-    [gods.NEMELEX_XOBEH] = require("policy.religion.wrath.nemelex_xobeh"),
-    [gods.OKAWARU] = require("policy.religion.wrath.okawaru"),
-    [gods.QAZLAL] = require("policy.religion.wrath.qazlal"),
-    [gods.SHINING_ONE] = require("policy.religion.wrath.shining_one"),
-    [gods.SIF_MUNA] = require("policy.religion.wrath.sif_muna"),
-    [gods.TROG] = require("policy.religion.wrath.trog"),
-    [gods.USKAYAW] = require("policy.religion.wrath.uskayaw"),
-    [gods.VEHUMET] = require("policy.religion.wrath.vehumet"),
-    [gods.WU_JIAN] = require("policy.religion.wrath.wu_jian"),
-    [gods.XOM] = require("policy.religion.wrath.xom"),
-    [gods.YREDELEMNUL] = require("policy.religion.wrath.yredelemnul"),
-    [gods.ZIN] = require("policy.religion.wrath.zin"),
-}
+-- Keep the pinned source gods in enum order so vanilla card draws retain
+-- their source sequence. New gods append in sorted stable ID order, so a
+-- mod's filename and load order cannot change selection.
+local function god_roster()
+    local ids = {}
+    local source = {}
+    local effective = register.ids(categories.GODS)
+    local available = {}
 
--- These source switch entries return false without bonus or penance loss.
--- They still occupy a random_god draw before decks.cc tries again.
-local no_retribution = {
-    [gods.ASHENZARI] = true,
-    [gods.ELYVILON] = true,
-    [gods.GOZAG] = true,
-    [gods.RU] = true,
-    [gods.HEPLIAKLQANA] = true,
-}
-
-local evil = {
-    [gods.KIKUBAAQUDGHA] = true,
-    [gods.MAKHLEB] = true,
-    [gods.YREDELEMNUL] = true,
-    [gods.BEOGH] = true,
-    [gods.LUGONU] = true,
-    [gods.DITHMENOS] = true,
-}
-
--- Source god_hates_your_god treats non-good gods as hostile to every other
--- patron. Zin hates chaos and other good gods spare Nemelex worshippers.
-local function hates(god_id, worship_id)
-    if god_id == gods.RU or god_id == worship_id then
-        return false
+    for _, god_id in ipairs(effective) do
+        available[god_id] = true
     end
 
-    if not alignments.GOOD[god_id] then
-        return true
+    for _, god_id in ipairs(roster) do
+        if available[god_id] then
+            ids[#ids + 1] = god_id
+            source[god_id] = true
+        end
     end
 
-    if god_id == gods.ZIN and alignments.CHAOTIC[worship_id] then
-        return true
+    for _, god_id in ipairs(effective) do
+        if not source[god_id] then
+            ids[#ids + 1] = god_id
+        end
     end
 
-    return evil[worship_id] == true
+    return ids
 end
 
 -- One possible aftereffect follows each successful retribution. Confusion
@@ -129,20 +99,21 @@ function retribution.invoke_god(ctx, player, god_id, options)
     end
 
     if not force and
-        ((god_id == current and alignments.GOOD[god_id]) or
-            (god_id ~= current and not hates(god_id, current))) then
+        ((god_id == current and alignments.good(god_id)) or
+            (god_id ~= current and
+                not alignments.hates(god_id, current))) then
         return false
     end
 
-    if no_retribution[god_id] then
+    local definition = catalog.get(categories.GODS, god_id)
+
+    -- Passive XP-penance gods have no module and still consume their card
+    -- sampling attempt, just as their source switch entries do.
+    if not definition.wrath_module then
         return false
     end
 
-    local handler = handlers[god_id]
-
-    if not handler then
-        error("unimplemented divine retribution for " .. god_id)
-    end
+    local handler = require(definition.wrath_module)
 
     local do_more = handler.apply(ctx, player)
 
@@ -181,13 +152,13 @@ function retribution.active_gods(ctx, player)
     local worship = ctx:get(player, component.RELIGION_WORSHIP)
     local active = {}
 
-    for _, god_id in ipairs(roster) do
+    for _, god_id in ipairs(god_roster()) do
         if (worship.penance[god_id] or 0) > 0 and
-            not no_retribution[god_id] and
+            catalog.get(categories.GODS, god_id).wrath_module and
             not unavailable(ctx, player, god_id) and
             ((god_id == worship.god_id and
-                not alignments.GOOD[god_id]) or
-                hates(god_id, worship.god_id)) then
+                not alignments.good(god_id)) or
+                alignments.hates(god_id, worship.god_id)) then
             active[#active + 1] = god_id
         end
     end
@@ -198,9 +169,11 @@ end
 -- religion.cc:random_god redraws unavailable gods inside one card attempt,
 -- preserving the outer hundred tries for gods who decline retribution.
 local function random_god(ctx, player)
+    local ids = god_roster()
+
     while true do
-        local index = ctx:random(streams.CARDS, #roster) + 1
-        local god_id = roster[index]
+        local index = ctx:random(streams.CARDS, #ids) + 1
+        local god_id = ids[index]
 
         if not unavailable(ctx, player, god_id) then
             return god_id

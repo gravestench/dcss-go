@@ -12,6 +12,7 @@ local definition = {
     starting_piety = 15,
     wrath_penance = 30,
     piety_mode = modes.ORDINARY,
+    wrath_module = "policy.religion.wrath.fedhas",
     piety_decay_chance = 35,
     conduct_module = "policy.religion.conduct.fedhas",
     requires_love = true,
