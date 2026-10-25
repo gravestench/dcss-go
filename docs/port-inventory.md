@@ -341,9 +341,10 @@ Dungeon entry vault, uses its
 saved source map and god partition, and returns through reciprocal stairs.
 The Abyss window and transit grid use reserved high level IDs; the branch
 allocator rejects that range, so Slime:1 cannot alias the transit grid.
-The longer Jiyva-to-Slime restore scenario now reaches Slime:5 but exposes
-an XP/level mismatch after a later turn; player advancement must reconcile
-that saved state in a separate gameplay pass.
+The longer Jiyva-to-Slime restore scenario now reaches Slime:5 and
+round-trips the player after XP credited during monster actions. Training
+and level advancement reconcile that XP before a save; a pending stat
+choice can validly sit at the completed turn boundary.
 Vaults opens from its scheduled Dungeon entrance. Vaults:1–4 use eleven
 source primary layouts and tagged DES room pools. Vaults:5 uses the authored
 `vaults_vault` end map with four source quadrants and one silver rune. The

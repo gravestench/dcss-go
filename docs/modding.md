@@ -865,6 +865,15 @@ regardless of file discovery or registration order. Use `after` and `before`
 when one system must observe another system's changes. Keep state that must
 survive a save in components, not Lua module globals.
 
+An `active` system sees both player and monster actions. Its `actor`
+argument is the one acting now; `ctx:player()` identifies the separate
+player owner. A monster action can still award player XP or defensive
+practice. `systems/character_training.lua` and
+`systems/character_advancement.lua` therefore reconcile that player's
+state after `actor.death` on either kind of action. A player-time effect
+such as `systems/religion_jiyva_ecology.lua` instead checks
+`actor == ctx:player()` so each monster action does not advance its timer.
+
 The callback receives `ctx`, the entity handle, and `delta`, the elapsed
 action time in **aut** (the game's time unit). A normal move usually costs
 10 aut; other actions can differ. `ctx:aut()` is the absolute game clock in

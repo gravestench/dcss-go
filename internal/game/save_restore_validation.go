@@ -193,11 +193,12 @@ func (v *savedEntityValidator) validateFinalState() error {
 		return fmt.Errorf("save requires exactly one player, found %d", v.playerCount)
 	}
 
-	// A stat prompt pauses before the monster phase at the start of the
-	// player's spent turn. Its next turn clock is therefore still in the future.
+	// A player-action award pauses before the monster phase, leaving the
+	// next turn clock in the future. An allied kill during the monster phase
+	// can prompt at the completed turn boundary, when the clocks are equal.
 	if v.player.alive {
 		if v.player.pendingStat {
-			if v.player.nextAut <= v.snapshot.CurrentAut {
+			if v.player.nextAut < v.snapshot.CurrentAut {
 				return fmt.Errorf("invalid pending player turn clock")
 			}
 		} else if v.player.nextAut != v.snapshot.CurrentAut {

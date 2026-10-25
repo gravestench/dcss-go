@@ -9,6 +9,46 @@ import (
 	"crawl/internal/vault"
 )
 
+const structuralTravelHP = 10000
+
+// A structural branch test protects its player from incidental monsters.
+// Level advancement can replace the boosted cap during travel; retain that
+// new derived cap instead of resetting it to an obsolete starting value.
+func restoreStructuralTravelHealth(g *Game, previousMax int) {
+	health, _ := g.stores.Health.Get(g.player)
+
+	if health.Max == structuralTravelHP {
+		health.Max = previousMax
+	}
+
+	health.Current = health.Max
+}
+
+// An allied kill can earn enough XP for a stat choice during the monster
+// phase. Complete the same free prompt a player would see before testing
+// another action on the restored floor.
+func chooseStructuralTravelStats(t *testing.T, g *Game) {
+	t.Helper()
+
+	for choice := 0; choice < 27; choice++ {
+		progress, found := g.stores.Progression.Get(g.player)
+
+		if !found {
+			t.Fatal("structural travel player has no progression")
+		}
+
+		if progress.PendingStatLevel == 0 {
+			return
+		}
+
+		if _, err := g.ChooseStat("dex"); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	t.Fatal("structural travel never cleared stat choices")
+}
+
 // A sixth-star reward earned before Slime:5 must open the authored walls
 // on first entry. The saved worship bit survives the branch journey and
 // restore without rerunning the C++ vault script.
@@ -34,8 +74,9 @@ func TestJiyvaRewardOpensSlimePitOnEntryAfterRestore(t *testing.T) {
 	descendGeneratedTo(t, g, lairParent)
 
 	health, _ := g.stores.Health.Get(g.player)
+	firstMax := health.Max
 
-	health.Max = 10000
+	health.Max = structuralTravelHP
 	health.Current = health.Max
 
 	lair := followBranch(t, g, g.levels[lairParent], "BRANCH_LAIR")
@@ -63,8 +104,7 @@ func TestJiyvaRewardOpensSlimePitOnEntryAfterRestore(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	health.Max = 18
-	health.Current = health.Max
+	restoreStructuralTravelHealth(g, firstMax)
 
 	loaded, err := Restore(g.Snapshot())
 
@@ -73,10 +113,12 @@ func TestJiyvaRewardOpensSlimePitOnEntryAfterRestore(t *testing.T) {
 	}
 
 	defer loaded.Close()
+	chooseStructuralTravelStats(t, loaded)
 
 	loadedHealth, _ := loaded.stores.Health.Get(loaded.player)
+	loadedMax := loadedHealth.Max
 
-	loadedHealth.Max = 10000
+	loadedHealth.Max = structuralTravelHP
 	loadedHealth.Current = loadedHealth.Max
 
 	parent = loaded.levels[parent.ID]
@@ -153,8 +195,7 @@ func TestJiyvaRewardOpensSlimePitOnEntryAfterRestore(t *testing.T) {
 		t.Fatal("stair result omitted Jiyva's Slime announcement")
 	}
 
-	loadedHealth.Max = 18
-	loadedHealth.Current = loadedHealth.Max
+	restoreStructuralTravelHealth(loaded, loadedMax)
 
 	before := loaded.Snapshot()
 	restored, err := Restore(before)
@@ -168,6 +209,7 @@ func TestJiyvaRewardOpensSlimePitOnEntryAfterRestore(t *testing.T) {
 	if !reflect.DeepEqual(before, restored.Snapshot()) {
 		t.Fatal("Jiyva-unsealed Slime floor changed across restore")
 	}
+	chooseStructuralTravelStats(t, restored)
 
 	protected := 0
 
@@ -193,23 +235,33 @@ func TestJiyvaRewardOpensSlimePitOnEntryAfterRestore(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// Incidental Slime combat during the structural descent may accumulate
+	// penance. Exercise the reward and timer while this saved worshipper is
+	// deliberately in good standing, as the scenario intends.
+	worshipState, _ := restored.scripts.Components()["religion.worship"].Get(restored.player)
+
+	if err := worshipState.Set("penance", map[string]any{}); err != nil {
+		t.Fatal(err)
+	}
+
 	forceJiyvaSpawnRoll(t, restored)
 
 	restoredHealth, _ := restored.stores.Health.Get(restored.player)
+	restoredMax := restoredHealth.Max
 
-	restoredHealth.Max = 10000
+	restoredHealth.Max = structuralTravelHP
 	restoredHealth.Current = restoredHealth.Max
 
 	if _, err := restored.Step(Command{Kind: CommandWait}); err != nil {
 		t.Fatal(err)
 	}
+	chooseStructuralTravelStats(t, restored)
 
 	if len(restored.scripts.Components()["religion.jiyva_spawn"].Entities()) == 0 {
 		t.Fatal("Jiyva timer created no jelly on unsealed Slime:5")
 	}
 
-	restoredHealth.Max = 18
-	restoredHealth.Current = restoredHealth.Max
+	restoreStructuralTravelHealth(restored, restoredMax)
 
 	spawnedSave, err := Restore(restored.Snapshot())
 

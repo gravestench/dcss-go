@@ -2,11 +2,15 @@ local training = require("policy.character.training")
 
 local system = {}
 
--- Theory of operation: Training commits skill XP before level advancement derives the player’s new thresholds.
--- Training spends gained experience after death rewards and before level advancement.
-function system.update(ctx, actor)
-    if actor == ctx:player() then
-        training.update(ctx, actor)
+-- Theory of operation: An active monster can die, credit player XP, or
+-- strike the player for defensive practice. Run after that actor's death
+-- phase so every earned award reaches the player's skill ledger before
+-- level advancement, even if the player is not the acting entity.
+function system.update(ctx)
+    local player = ctx:player()
+
+    if player then
+        training.update(ctx, player)
     end
 end
 

@@ -7,23 +7,33 @@ import (
 	"crawl/internal/ecs"
 )
 
-// Choose a real saved RNG stream state whose next source one-in-ten Jiyva
-// check succeeds. This leaves all later species and cell draws to the game.
+// Choose a real saved RNG stream state whose first three one-in-ten draws
+// succeed. Player training or conduct may spend one or two religion draws
+// earlier in the same action; this keeps the Jiyva check deterministic
+// without replacing the production RNG or mocking the periodic policy.
 func forceJiyvaSpawnRoll(t *testing.T, g *Game) {
 	t.Helper()
 
-	for candidate := uint64(0); candidate < 1000; candidate++ {
+	for candidate := uint64(0); candidate < 100000; candidate++ {
 		probe := RestoreRNGStreams(g.rng.seed, map[string]uint64{
 			"religion": candidate,
 		})
+		allZero := true
 
-		roll, err := probe.Intn("religion", 10)
+		for draw := 0; draw < 3; draw++ {
+			roll, err := probe.Intn("religion", 10)
 
-		if err != nil {
-			t.Fatal(err)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if roll != 0 {
+				allZero = false
+				break
+			}
 		}
 
-		if roll == 0 {
+		if allZero {
 			g.rng.states["religion"] = candidate
 
 			return
