@@ -100,6 +100,30 @@ func (r *Runtime) DefinitionIDs(category string) []string {
 	return ids
 }
 
+// Definition returns a detached value from the effective Lua content tree.
+// This lets Go inspect immutable content without maintaining another catalog.
+func (r *Runtime) Definition(category string, id string) (map[string]any, error) {
+	table, found := r.definitions[category][id]
+
+	if !found {
+		return nil, fmt.Errorf("unknown %s ID %s", category, id)
+	}
+
+	value, err := luaDefinitionValue(table, make(map[*lua.LTable]bool))
+
+	if err != nil {
+		return nil, fmt.Errorf("invalid %s %s: %w", category, id, err)
+	}
+
+	definition, ok := value.(map[string]any)
+
+	if !ok {
+		return nil, fmt.Errorf("invalid %s %s definition", category, id)
+	}
+
+	return definition, nil
+}
+
 func (r *Runtime) luaRegisteredIDs(state *lua.LState) int {
 	category := state.CheckString(1)
 

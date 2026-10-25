@@ -2,7 +2,6 @@
 -- It has no fixed starting item grants; its old stats remain catalog data.
 
 -- Source: crawl-ref/source/job-data.h
--- Starting grants: internal/content/generated/starting-gear.json
 
 local categories = require("constants.catalog")
 

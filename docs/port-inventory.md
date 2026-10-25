@@ -24,9 +24,9 @@ Species and job files own their menu descriptions and ordering; the shared
 presentation module retains only startup modes, skill columns, and version.
 Each job file includes its fixed starting grants. Wanderer keeps an explicit
 dynamic marker; its generated equipment comes from its Lua starting rule.
-Normal launch and restore read neither the C++ checkout nor the generated
-JSON artifacts. Some JSON remains embedded by legacy Go catalog code and
-cross-check tests; Lua content is now edited directly.
+Normal launch, restore, and tests read neither the C++ checkout nor generated
+JSON artifacts. Lua content is the single runtime catalog and is edited
+directly; committed `data` modules hold other source-shaped tables.
 The effective registered book definitions determine player-book spell
 membership through `policy/magic/player_book_catalog.lua`. The separate
 committed `data/player_invoked_spells.lua` holds source player spells that

@@ -1682,13 +1682,13 @@ separate behavior file, as described under each feature type.
 
 | Content you are adding | Bundled examples | Field and reference contract |
 | --- | --- | --- |
-| Species or job | `content/species/`, `content/jobs/` | [`species.go`](../internal/content/species.go), [`job.go`](../internal/content/job.go) |
+| Species or job | `content/species/`, `content/jobs/` | [`content/validation.lua`](../internal/modfs/builtin/content/validation.lua) and [`policy/character/start.lua`](../internal/modfs/builtin/policy/character/start.lua) |
 | God | `content/gods/` | `content/validation.lua`, `policy/religion/eligibility.lua`, and optional `policy/religion/gods/<name>.lua` |
-| Monster or spellbook | `content/monsters/`, `content/monster_spellbooks/` | [`monster.go`](../internal/content/monster.go), [`monster_spellbook.go`](../internal/content/monster_spellbook.go) |
+| Monster or spellbook | `content/monsters/`, `content/monster_spellbooks/` | [`content/validation.lua`](../internal/modfs/builtin/content/validation.lua) and the nearby Lua AI and spell policies |
 | Monster beam profile | `content/monster_beams/` | A nearby beam definition and `policy/combat/monster_beams.lua` for its resolution path |
-| Item, weapon, or artefact | `content/items/`, `content/artefacts/` | [`item.go`](../internal/content/item.go), the relevant Lua policy under `policy/inventory/` or `policy/item_generation/` |
-| Player spell | `content/spells/` | [`spell.go`](../internal/content/spell.go), then its effect registry under `policy/magic/effects/` |
-| Branch | `content/branches/` | [`branch.go`](../internal/content/branch.go) and the generation policy that consumes its fields |
+| Item, weapon, or artefact | `content/items/`, `content/artefacts/` | [`content/validation.lua`](../internal/modfs/builtin/content/validation.lua), then the relevant Lua policy under `policy/inventory/` or `policy/item_generation/` |
+| Player spell | `content/spells/` | A nearby spell definition and its effect registry under `policy/magic/effects/` |
+| Branch | `content/branches/` | A nearby branch definition and the generation policy that consumes its fields |
 | Mutation | `content/mutations/` | Its nearby Lua definition and `policy/mutations/effects/registry.lua` for any new capability |
 | Cloud, trap, or shop | `content/clouds/`, `content/traps/`, `content/shops/` | Their Lua `policy/<category>/catalog.lua` and effect or stock policy |
 

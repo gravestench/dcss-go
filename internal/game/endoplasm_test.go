@@ -1,7 +1,6 @@
 package game
 
 import (
-	"crawl/internal/content"
 	"crawl/internal/ecs"
 	"github.com/gravestench/akara"
 	"reflect"
@@ -204,11 +203,7 @@ func seedForSpellRoll(t *testing.T, target int) uint64 {
 }
 
 func TestEndoplasmSourceSpellbookMatchesCatalog(t *testing.T) {
-	catalog, err := content.LoadDefault()
-
-	if err != nil {
-		t.Fatal(err)
-	}
+	catalog := testCatalog(t)
 
 	definition, _ := catalog.Monster("MONS_ENDOPLASM")
 	slots, err := catalog.MonsterSpellbook(definition.SpellbookID)

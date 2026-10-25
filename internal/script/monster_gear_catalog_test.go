@@ -4,19 +4,26 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 	"testing"
 
-	"crawl/internal/content"
 	"crawl/internal/modfs"
 	"github.com/gravestench/akara"
-	lua "github.com/yuin/gopher-lua"
 )
 
+type gearChoice struct {
+	ID     string `json:"id"`
+	Weight int    `json:"weight"`
+}
+
+type gearSpec struct {
+	Weapons []gearChoice `json:"weapons"`
+	Brands  []gearChoice `json:"brands"`
+}
+
 type ownedGear struct {
-	Primary   *content.MonsterWeaponSpec `json:"primary"`
-	Secondary *content.MonsterWeaponSpec `json:"secondary"`
+	Primary   *gearSpec `json:"primary"`
+	Secondary *gearSpec `json:"secondary"`
 }
 
 type ownedMonster struct {
@@ -30,14 +37,13 @@ func registeredMonsterGear(
 ) *ownedGear {
 	t.Helper()
 
-	raw, err := luaDefinitionValue(
-		runtime.definitions["monsters"][id], make(map[*lua.LTable]bool))
+	definition, err := runtime.Definition("monsters", id)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	data, err := json.Marshal(raw)
+	data, err := json.Marshal(definition)
 
 	if err != nil {
 		t.Fatal(err)
@@ -52,40 +58,7 @@ func registeredMonsterGear(
 	return monster.WeaponGear
 }
 
-func withoutGearProvenance(spec content.MonsterWeaponSpec) content.MonsterWeaponSpec {
-	spec.MonsterID = ""
-	spec.SourceLine = 0
-	spec.SpecLine = 0
-	spec.WeaponListLine = 0
-	spec.BrandListLine = 0
-
-	return spec
-}
-
-func TestBundledMonsterGearMatchesPinnedImport(t *testing.T) {
-	data, err := os.ReadFile("../content/generated/monster-weapons.json")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	var artifact content.MonsterWeaponArtifact
-
-	if err := json.Unmarshal(data, &artifact); err != nil {
-		t.Fatal(err)
-	}
-
-	primaryByID := make(map[string]content.MonsterWeaponSpec)
-	secondaryByID := make(map[string]content.MonsterWeaponSpec)
-
-	for _, spec := range artifact.Primary {
-		primaryByID[spec.MonsterID] = spec
-	}
-
-	for _, spec := range artifact.Secondary {
-		secondaryByID[spec.MonsterID] = spec
-	}
-
+func TestBundledMonsterGearUsesEffectiveLuaCatalog(t *testing.T) {
 	rules, err := modfs.Load()
 
 	if err != nil {
@@ -107,52 +80,48 @@ func TestBundledMonsterGearMatchesPinnedImport(t *testing.T) {
 	secondaryCount := 0
 
 	for _, id := range runtime.DefinitionIDs("monsters") {
-		owned := registeredMonsterGear(t, runtime, id)
+		gear := registeredMonsterGear(t, runtime, id)
 
-		for _, slot := range []struct {
+		if gear == nil {
+			continue
+		}
+
+		for _, entry := range []struct {
 			name string
-			rows map[string]content.MonsterWeaponSpec
+			spec *gearSpec
 		}{
 			{
 				name: "primary",
-				rows: primaryByID,
+				spec: gear.Primary,
 			},
 
 			{
 				name: "secondary",
-				rows: secondaryByID,
+				spec: gear.Secondary,
 			},
 		} {
-			pinned, found := slot.rows[id]
-			var actual *content.MonsterWeaponSpec
-
-			if owned != nil {
-				if slot.name == "secondary" {
-					actual = owned.Secondary
-				} else {
-					actual = owned.Primary
-				}
-			}
-
-			if found != (actual != nil) {
-				t.Fatalf("%s %s gear presence differs", id, slot.name)
-			}
-
-			if !found {
+			if entry.spec == nil {
 				continue
 			}
 
-			expected := withoutGearProvenance(pinned)
-
-			if !reflect.DeepEqual(*actual, expected) {
-				t.Fatalf("%s %s gear differs: actual=%#v expected=%#v",
-					id, slot.name, *actual, expected)
+			if len(entry.spec.Weapons) == 0 {
+				t.Fatalf("%s has empty %s gear", id, entry.name)
 			}
 
-			if slot.name == "secondary" {
-				secondaryCount++
-			} else {
+			for _, choice := range append(
+				append([]gearChoice(nil), entry.spec.Weapons...),
+				entry.spec.Brands...,
+			) {
+				if choice.ID == "" || choice.Weight <= 0 {
+					t.Fatalf("%s has invalid %s choice: %+v",
+						id, entry.name, choice)
+				}
+			}
+
+			if entry.name == "primary" {
 				primaryCount++
+			} else {
+				secondaryCount++
 			}
 		}
 	}

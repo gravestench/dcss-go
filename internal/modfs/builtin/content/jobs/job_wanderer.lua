@@ -4,7 +4,6 @@
 -- components; the catalog stays unchanged.
 
 -- Source: crawl-ref/source/job-data.h
--- Starting grants: internal/content/generated/starting-gear.json
 
 local categories = require("constants.catalog")
 local groups = require("constants.menu_groups")

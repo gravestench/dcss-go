@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	"crawl/internal/content"
 	"github.com/gravestench/akara"
 )
 
@@ -271,13 +270,7 @@ func TestRestoreRejectsMonsterOnlyPlayerSpell(t *testing.T) {
 	}
 }
 
-func TestPlayerSpellScopeCoversPinnedCatalog(t *testing.T) {
-	catalog, err := content.LoadDefaultSpells()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
+func TestPlayerSpellScopeCoversEffectiveLuaCatalog(t *testing.T) {
 	g, err := NewDungeonGame(43, "SP_HUMAN", "JOB_FIGHTER", "WPN_FLAIL", "Tester")
 
 	if err != nil {
@@ -292,7 +285,7 @@ func TestPlayerSpellScopeCoversPinnedCatalog(t *testing.T) {
 		"none":    0,
 	}
 
-	for _, id := range catalog.SpellIDs() {
+	for _, id := range g.scripts.DefinitionIDs("spells") {
 		result, policyErr := g.scripts.Policy(
 			"magic.player_scope",
 			map[string]any{"spell_id": id},

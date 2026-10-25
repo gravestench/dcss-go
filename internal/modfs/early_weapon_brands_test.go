@@ -1,27 +1,34 @@
 package modfs_test
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 
-	"crawl/internal/content"
 	"crawl/internal/modfs"
+	"crawl/internal/script"
+	"github.com/gravestench/akara"
 )
 
-// Every positive-weight early weapon brand must have a Lua effect module.
-// The check follows the committed import rather than a handwritten list.
-func TestGeneratedEarlyWeaponBrandsHaveLuaEffects(t *testing.T) {
-	catalog, err := content.LoadDefault()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
+// Every positive-weight early weapon brand in the effective Lua content
+// needs an effect module; an added or overridden item is checked as loaded.
+func TestEarlyWeaponBrandsHaveLuaEffects(t *testing.T) {
 	rules, err := modfs.Load()
 
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	world := akara.NewWorld()
+	defer world.Close()
+
+	runtime, err := script.NewCatalog(world, rules)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer runtime.Close()
 
 	for _, weaponID := range []string{
 		"WPN_CLUB",
@@ -30,9 +37,28 @@ func TestGeneratedEarlyWeaponBrandsHaveLuaEffects(t *testing.T) {
 		"WPN_SHORT_SWORD",
 		"WPN_SLING",
 	} {
-		weapon, err := catalog.Item(weaponID)
+		definition, err := runtime.Definition("items", weaponID)
 
 		if err != nil {
+			t.Fatal(err)
+		}
+
+		encoded, err := json.Marshal(definition)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		var weapon struct {
+			Weapon struct {
+				BrandWeights []struct {
+					BrandID string `json:"brand_id"`
+					Weight  int    `json:"weight"`
+				} `json:"brand_weights"`
+			} `json:"weapon"`
+		}
+
+		if err := json.Unmarshal(encoded, &weapon); err != nil {
 			t.Fatal(err)
 		}
 

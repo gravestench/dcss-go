@@ -1,76 +1,41 @@
 package script
 
 import (
-	"encoding/json"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 	"testing"
 
-	"crawl/internal/content"
 	"crawl/internal/modfs"
 	"github.com/gravestench/akara"
-	lua "github.com/yuin/gopher-lua"
 )
 
-func registeredSpecies(t *testing.T, runtime *Runtime, id string) content.SpeciesDef {
-	t.Helper()
-
-	raw, err := luaDefinitionValue(
-		runtime.definitions["species"][id], make(map[*lua.LTable]bool))
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	data, err := json.Marshal(raw)
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	var definition content.SpeciesDef
-
-	if err := json.Unmarshal(data, &definition); err != nil {
-		t.Fatal(err)
-	}
-
-	return definition
+type speciesView struct {
+	ID         string
+	Name       string
+	Selectable bool
 }
 
-func registeredJob(t *testing.T, runtime *Runtime, id string) content.JobDef {
+func registeredSpecies(t *testing.T, runtime *Runtime, id string) speciesView {
 	t.Helper()
 
-	raw, err := luaDefinitionValue(
-		runtime.definitions["jobs"][id], make(map[*lua.LTable]bool))
+	definition, err := runtime.Definition("species", id)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	data, err := json.Marshal(raw)
+	name, _ := definition["name"].(string)
+	selectable, _ := definition["selectable"].(bool)
 
-	if err != nil {
-		t.Fatal(err)
+	return speciesView{
+		ID:         id,
+		Name:       name,
+		Selectable: selectable,
 	}
-
-	var definition content.JobDef
-
-	if err := json.Unmarshal(data, &definition); err != nil {
-		t.Fatal(err)
-	}
-
-	return definition
 }
 
-func TestBundledLuaCharacterCatalogMatchesPinnedImport(t *testing.T) {
-	base, err := content.LoadDefault()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
+func TestBundledLuaCharacterCatalogAndChoices(t *testing.T) {
 	rules, err := modfs.Load()
 
 	if err != nil {
@@ -88,48 +53,16 @@ func TestBundledLuaCharacterCatalogMatchesPinnedImport(t *testing.T) {
 
 	defer runtime.Close()
 
-	if len(runtime.DefinitionIDs("species")) != 43 ||
-		len(runtime.DefinitionIDs("jobs")) != 31 {
-		t.Fatalf(
-			"incomplete Lua character catalog: %d species, %d jobs",
-			len(runtime.DefinitionIDs("species")),
-			len(runtime.DefinitionIDs("jobs")),
-		)
+	speciesIDs := runtime.DefinitionIDs("species")
+	jobIDs := runtime.DefinitionIDs("jobs")
+
+	if len(speciesIDs) != 43 || len(jobIDs) != 31 {
+		t.Fatalf("incomplete Lua character catalog: %d species, %d jobs",
+			len(speciesIDs), len(jobIDs))
 	}
 
-	for _, id := range runtime.DefinitionIDs("species") {
-		definition := registeredSpecies(t, runtime, id)
-		pinned, err := base.Species(id)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		// Runtime Lua declarations keep source locations in comments.
-		pinned.SourcePath = ""
-
-		if !reflect.DeepEqual(definition, pinned) {
-			t.Fatalf("Lua species %s differs from pinned import", id)
-		}
-	}
-
-	for _, id := range runtime.DefinitionIDs("jobs") {
-		definition := registeredJob(t, runtime, id)
-		pinned, err := base.Job(id)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		pinned.SourcePath = ""
-
-		if !reflect.DeepEqual(definition, pinned) {
-			t.Fatalf("Lua job %s differs from pinned import", id)
-		}
-	}
-
-	for _, speciesID := range base.SpeciesIDs() {
-		for _, jobID := range base.JobIDs() {
+	for _, speciesID := range speciesIDs {
+		for _, jobID := range jobIDs {
 			for _, speciesFirst := range []bool{false, true} {
 				choice, err := runtime.CharacterChoice(
 					speciesID, jobID, speciesFirst,
@@ -139,31 +72,23 @@ func TestBundledLuaCharacterCatalogMatchesPinnedImport(t *testing.T) {
 					t.Fatal(err)
 				}
 
-				if choice.Restriction == "" {
-					t.Fatalf("missing Lua choice for %s/%s", speciesID, jobID)
-				}
+				switch choice.Restriction {
+				case "banned", "restricted", "recommended":
 
-				if choice.Restriction != "banned" &&
-					choice.Restriction != "restricted" &&
-					choice.Restriction != "recommended" {
+				default:
 					t.Fatalf("invalid Lua restriction %q", choice.Restriction)
 				}
 
 				if choice.Playable && choice.Restriction == "banned" {
-					t.Fatalf("banned Lua choice %s/%s is playable", speciesID, jobID)
+					t.Fatalf("banned Lua choice %s/%s is playable",
+						speciesID, jobID)
 				}
 			}
 		}
 	}
 }
 
-func TestBundledCharacterMenuMatchesPinnedPresentation(t *testing.T) {
-	base, err := content.LoadDefault()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
+func TestBundledCharacterMenuUsesEffectiveDefinitions(t *testing.T) {
 	rules, err := modfs.Load()
 
 	if err != nil {
@@ -176,32 +101,67 @@ func TestBundledCharacterMenuMatchesPinnedPresentation(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	pinned := base.Presentation()
+	world := akara.NewWorld()
+	defer world.Close()
 
-	if len(menu.SpeciesGroups) != len(pinned.SpeciesGroups) ||
-		len(menu.JobGroups) != len(pinned.JobGroups) {
-		t.Fatal("bundled menu group counts differ from the pinned source")
+	runtime, err := NewCatalog(world, rules)
+
+	if err != nil {
+		t.Fatal(err)
 	}
 
-	for index, group := range pinned.SpeciesGroups {
-		actual := menu.SpeciesGroups[index]
+	defer runtime.Close()
 
-		if actual.Label != group.Label || !reflect.DeepEqual(actual.IDs, group.IDs) {
-			t.Fatalf("species group %d differs from pinned source: %+v", index, actual)
+	for _, entry := range []struct {
+		category     string
+		ids          []string
+		descriptions map[string]string
+	}{
+		{
+			category:     "species",
+			ids:          menu.SpeciesIDs(),
+			descriptions: menu.SpeciesDescriptions,
+		},
+
+		{
+			category:     "jobs",
+			ids:          menu.JobIDs(),
+			descriptions: menu.JobDescriptions,
+		},
+	} {
+		seen := make(map[string]bool)
+
+		for _, id := range entry.ids {
+			if seen[id] {
+				t.Fatalf("duplicate %s menu ID %s", entry.category, id)
+			}
+
+			seen[id] = true
+
+			definition, err := runtime.Definition(entry.category, id)
+
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if definition["selectable"] != true || entry.descriptions[id] == "" {
+				t.Fatalf("%s %s lacks selectable definition or description",
+					entry.category, id)
+			}
 		}
-	}
 
-	for index, group := range pinned.JobGroups {
-		actual := menu.JobGroups[index]
+		for _, id := range runtime.DefinitionIDs(entry.category) {
+			definition, err := runtime.Definition(entry.category, id)
 
-		if actual.Label != group.Label || !reflect.DeepEqual(actual.IDs, group.IDs) {
-			t.Fatalf("job group %d differs from pinned source: %+v", index, actual)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if definition["selectable"] == true && !seen[id] {
+				t.Fatalf("selectable %s %s is absent from menu",
+					entry.category, id)
+			}
 		}
-	}
-
-	if !reflect.DeepEqual(menu.SpeciesDescriptions, pinned.SpeciesDescriptions) ||
-		!reflect.DeepEqual(menu.JobDescriptions, pinned.JobDescriptions) {
-		t.Fatal("bundled menu descriptions differ from the pinned source")
 	}
 }
 
