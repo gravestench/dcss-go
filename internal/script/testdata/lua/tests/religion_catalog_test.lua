@@ -16,7 +16,8 @@ function test.run()
     local expected = {}
 
     for key, id in pairs(gods) do
-        if key ~= "NO_GOD" and key ~= "ECUMENICAL" then
+        if key ~= "NO_GOD" and key ~= "NAMELESS" and
+            key ~= "ECUMENICAL" then
             expected[id] = true
         end
     end

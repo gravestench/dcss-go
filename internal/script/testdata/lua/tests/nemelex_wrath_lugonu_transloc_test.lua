@@ -52,6 +52,15 @@ local function banishment_route()
         }
     end
 
+    -- This route starts on an ordinary floor. The source's Arena guard
+    -- must see no saved visit before the banishment reaches Abyss entry.
+    function ctx:has(entity, name)
+        harness.equal(entity, player)
+        harness.equal(name, component.PLAYER_ARENA_VISIT)
+
+        return false
+    end
+
     function ctx:random(stream, bound)
         harness.equal(stream, streams.CARDS)
         draws = draws + 1
