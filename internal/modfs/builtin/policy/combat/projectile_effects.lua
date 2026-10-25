@@ -17,13 +17,21 @@ local missile_egos = require("constants.missile_egos")
 local silver = require("policy.combat.monster_missile_egos.silver")
 local item_ids = require("ids.items")
 local skills = require("ids.skills")
+local catalog = require("policy.catalog")
+local categories = require("constants.catalog")
+local component = require("constants.component")
+local monster_stats = require("policy.combat.monster_stats")
 
 local effects = {}
 
 -- Example: with poisoned dart hit,
 -- effects.missile(ctx, ego, missile, monster, defender, damage, remaining_hp) -> ego damage and poison handling
--- Dispatch a missile ego only after base damage, preserving its remaining-HP contact context.
-function effects.missile(ctx, ego, missile, monster, defender, damage, remaining_hp)
+-- Dispatch an ego after base damage, using the actual thrower for poison,
+-- displacement, and Chaos credit when Ru redirects a monster's shot.
+function effects.missile(ctx, ego, missile, monster, defender, damage,
+    remaining_hp, source)
+    source = source or ctx:player()
+
     -- Chaos chooses a fresh ordinary missile ego after this particular
     -- contact. The item itself stays Chaos for its next shot or save.
     if ego == missile_egos.CHAOS then
@@ -31,7 +39,16 @@ function effects.missile(ctx, ego, missile, monster, defender, damage, remaining
     end
 
     if missile.id == item_ids.MI_DART then
-        local power = fighter.skill(ctx, skills.SK_THROWING, 1)
+        local power
+
+        if source == ctx:player() then
+            power = fighter.skill(ctx, skills.SK_THROWING, 1)
+        else
+            local actor = ctx:get(source, component.ACTOR)
+            local definition = catalog.get(categories.MONSTERS, actor.kind_id)
+
+            power = monster_stats.hit_dice(ctx, source, definition)
+        end
 
         if ego == missile_egos.POISONED then
             damage = roll.melee(ctx, 3 + power * 2)
@@ -58,7 +75,7 @@ function effects.missile(ctx, ego, missile, monster, defender, damage, remaining
                 roll.melee(ctx, math.floor(damage * 3 / 2))
         end
 
-        poison.apply(ctx, monster, defender, levels, ctx:player())
+        poison.apply(ctx, monster, defender, levels, source)
 
         return 0
     end
@@ -66,7 +83,7 @@ function effects.missile(ctx, ego, missile, monster, defender, damage, remaining
     if ego == missile_egos.CURARE then
         -- beam.cc poisons, deals 2d6 asphyxiation damage, then
         -- slows a surviving non-resistant monster.
-        if not poison.apply(ctx, monster, defender, 2, ctx:player()) then
+        if not poison.apply(ctx, monster, defender, 2, source) then
             return 0
         end
 
@@ -82,7 +99,7 @@ function effects.missile(ctx, ego, missile, monster, defender, damage, remaining
 
     if ego == missile_egos.DISPERSAL then
         if damage > 0 and remaining_hp > 0 then
-            dispersal.blink(ctx, ctx:player(), monster, defender)
+            dispersal.blink(ctx, source, monster, defender)
         end
 
         return 0
@@ -123,6 +140,7 @@ function effects.missile(ctx, ego, missile, monster, defender, damage, remaining
 
     if ego == missile_egos.CHAOS then
         chaos_effects.apply(ctx, {
+            attacker = source,
             defender = monster,
             definition = defender,
             damage_done = damage,

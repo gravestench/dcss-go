@@ -12,8 +12,6 @@ local player_health = require("policy.combat.player_health")
 local jelly = require("policy.mutations.effects.projectiles.jelly_missile")
 local classes = require("constants.item_classes")
 local categories = require("constants.catalog")
-local artefact_properties = require("policy.item_generation.artefacts.properties")
-local artefact_ids = require("ids.artefact_properties")
 local monster_flags = require("constants.monster_flags")
 local missile_egos = require("constants.missile_egos")
 local item_ids = require("ids.items")
@@ -23,27 +21,12 @@ local target_brands = require("policy.combat.monster_target_brands")
 local exploding = require(
     "policy.combat.monster_missile_egos.exploding")
 local projectile_effects = require("policy.combat.projectile_effects")
+local ranged_equipment = require(
+    "policy.combat.monster_ranged_equipment")
+local monster_target_projectiles = require(
+    "policy.combat.monster_target_projectiles")
 
 local actions = {}
-
--- Copy the weapon profile before applying artefact properties so catalog data stays immutable.
-local function launcher_profile(ctx, launcher)
-    local source = launcher.definition.weapon
-    local profile = {}
-
-    for name, value in pairs(source) do
-        profile[name] = value
-    end
-
-    profile.damage = profile.damage + artefact_properties.value(ctx,
-        launcher.entity, artefact_ids.BASE_DAMAGE)
-    profile.hit = profile.hit + artefact_properties.value(ctx,
-        launcher.entity, artefact_ids.BASE_ACCURACY)
-    profile.speed = profile.speed + artefact_properties.value(ctx,
-        launcher.entity, artefact_ids.BASE_DELAY)
-
-    return profile
-end
 
 -- A monster in melee reach uses melee policy, even on a diagonal.
 local function adjacent(a, b)
@@ -151,7 +134,7 @@ local function return_launcher(ctx, attacker, launcher, definition,
 
     reflection.begin(ctx, projectile.name)
 
-    local weapon = launcher_profile(ctx, launcher)
+    local weapon = ranged_equipment.launcher_profile(ctx, launcher)
     local rebound = effect.resolve_launcher(ctx, attacker, definition,
         defense, weapon, launcher.item, projectile)
     local remaining = reflection.return_outcome(ctx, ctx:player(), attacker,
@@ -230,7 +213,7 @@ end
 
 -- Validate ammo against the equipped launcher before resolving damage and after-death brand effects.
 local function launcher_attack(ctx, attacker, launcher, definition, defense, health)
-    local weapon = launcher_profile(ctx, launcher)
+    local weapon = ranged_equipment.launcher_profile(ctx, launcher)
     local projectile = catalog.get(categories.ITEMS, weapon.ammo_id)
     local brand = launcher.ego or ""
 
@@ -317,20 +300,14 @@ local function missile_attack(ctx, attacker, missile, definition, defense, healt
     end
 end
 
--- The weapon swap updates both equipped entities to keep the two slots mutually consistent.
-local function swap_launcher(ctx, worn)
-    local alternate = worn.alternate_weapon
-
-    ctx:set(alternate.entity, "core.equipped", { slot = "weapon" })
-
-    if worn.weapon then
-        ctx:set(worn.weapon.entity, "core.equipped", { slot = "alternate_weapon" })
-    end
-end
-
 -- Example: actions.monster(ctx, attacker, intent) with monster with equipped Sling -> launcher shot path
 -- Monster ranged actions choose equipped launchers or thrown missiles before spending the attack.
 function actions.monster(ctx, attacker, intent, options)
+    if options and options.target then
+        return monster_target_projectiles.attack(ctx,
+            attacker, intent, options.target)
+    end
+
     local definition, defense, health = target(ctx, attacker, options)
     local worn = equipment.worn(ctx, attacker, {
         weapon = true,
@@ -345,7 +322,7 @@ function actions.monster(ctx, attacker, intent, options)
     end
 
     if worn.alternate_weapon and worn.alternate_weapon.entity == intent.item_id then
-        swap_launcher(ctx, worn)
+        ranged_equipment.swap_launcher(ctx, worn)
         launcher_attack(ctx, attacker, worn.alternate_weapon,
             definition, defense, health)
 

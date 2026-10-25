@@ -9,6 +9,7 @@ local enfeeble = require("policy.magic.effects.statuses.enfeeble")
 local spell_flags = require("constants.monster_spell_flags")
 local component = require("constants.component")
 local breath = require("policy.combat.monster_breath")
+local interference = require("policy.religion.ru.interference")
 
 local system = {}
 
@@ -20,6 +21,13 @@ function system.update(ctx, caster)
     local intent = ctx:get(caster, "core.intent")
 
     if not intent or intent.kind ~= intents.SPELL then
+        return
+    end
+
+    if intent.interrupted then
+        interference.message_block_spell(ctx, caster,
+            spellbook.for_actor(ctx, caster))
+
         return
     end
 
@@ -59,6 +67,7 @@ function system.update(ctx, caster)
     end
 
     effect.resolve(ctx, caster, foe, slot, plan)
+    interference.clear_target(ctx, caster)
 
     -- A successful monster conjuration may queue its own battlesphere.
     -- Keep the event tied to completed book casts, never construct abilities.

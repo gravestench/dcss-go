@@ -1,6 +1,11 @@
 -- Source Ru power costs and effect bounds. Keeping them named lets ability
 -- files explain the rule without scattering unexplained integer literals.
 local powers = {
+    INTERFERENCE_RANK = 1,
+    INTERFERENCE_ROLL_BOUND = 100,
+    INTERFERENCE_CHANCE_DIVISOR = 16,
+    INTERFERENCE_REDIRECT_DIVISOR = 2,
+
     DRAW_RANK = 3,
     DRAW_DRAIN_POWER = 30,
     DRAW_EXHAUST_TURNS = 12,

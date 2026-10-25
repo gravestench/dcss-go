@@ -512,8 +512,12 @@ monsters with a rolled continuing effect. Exhaustion is saved and shared
 with the Berserk gate. Ru's two-star damage retaliation now runs from the
 shared after-HP reaction: a successful piety roll applies source-ranked
 antimagic, paralysis, slow, blindness, or corona to the damaging monster.
-It uses saved status owners and live rank and penance checks. Ru's attack
-interference and detailed sacrifice-count effects remain separate work.
+It uses saved status owners and live rank and penance checks. Ru's one-star
+attack interference now blocks or redirects hostile melee, thrown and
+launched missiles, and book spells before their hit or target roll. A
+redirected monster uses existing monster combat owners, with an action-scoped
+same-side target override; interrupted spells still cost spell energy.
+Detailed sacrifice-count effects remain separate work.
 The saved Ru component is version 2 because choices now hold stable string
 IDs and quoted prices; earlier Go saves containing version 1 Ru state do not
 restore under this schema. The source's Frail exclusion for a Demonspawn

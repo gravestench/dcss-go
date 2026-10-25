@@ -235,4 +235,5 @@ type Intent struct {
 	TargetID        string
 	Cancelled       bool
 	Forced          bool
+	Interrupted     bool
 }

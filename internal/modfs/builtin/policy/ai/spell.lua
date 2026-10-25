@@ -11,6 +11,8 @@ local spell_flags = require("constants.spell_flags")
 local brilliance = require("policy.combat.monster_support.brilliance")
 local roll = require("policy.combat.monster_roll")
 local breath = require("policy.combat.monster_breath")
+local interference = require("policy.religion.ru.interference")
+local interference_kind = require("constants.ru_interference")
 
 local spell = {}
 
@@ -122,12 +124,36 @@ function spell.choose(ctx, entity, foe, fleeing)
         return nil
     end
 
+    -- Ru acts after a usable book is known but before choosing its final
+    -- spell. A blocked cast keeps the spell intent and pays spell energy.
+    if foe == ctx:player() then
+        local ru = interference.choose(ctx, entity,
+            interference_kind.DISTANT)
+
+        if ru.kind == interference_kind.BLOCK then
+            return {
+                kind = intents.SPELL,
+                interrupted = true,
+                foe_entity = foe,
+            }
+        end
+
+        if ru.target then
+            interference.force_target(ctx, entity, ru.target)
+            interference.message_redirect(ctx, entity)
+            foe = ru.target
+            foe_position = ctx:get(foe, component.POSITION)
+        end
+    end
+
     local condition = condition_for(ctx, entity, position, foe_position,
         fleeing)
     local slot, index, plan = select_targetable(ctx, entity, foe, book,
         condition)
 
     if not slot or statuses.enfeeble_antimagic(ctx, entity, slot.flags) then
+        interference.clear_target(ctx, entity)
+
         return nil
     end
 

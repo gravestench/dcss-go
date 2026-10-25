@@ -1775,6 +1775,26 @@ owner; the Ru policy should choose the effect and supply its rolled
 duration. Test the modified policy in a `_test.lua` file against the
 production monster catalog and component schemas.
 
+#### Ru attack interference
+
+The one-star passive is in `policy/religion/ru/interference.lua`. Melee,
+thrown and launched missiles, and book spells ask it for a decision just
+before the attack. It reads live worship, penance, monster allegiance,
+visibility, and submerged state. The policy draws from the named religion
+RNG stream in source order: block first, then a chance to redirect. The
+selected monster may be the attacker itself. A blocked spell still uses a
+spell intent, so the ordinary scheduler charges its spell energy.
+
+The `combat.forced_target` component is temporary. It lets the shared
+target predicate accept the one monster Ru picked, even if caster and
+victim normally belong to the same side. Attack systems remove it after
+resolving; spell choice removes it if no targetable spell is found. A mod
+that changes this policy should keep that action scope and use the same
+monster combat, projectile, and spell owners for the redirected action.
+For example, to change Ru's interference odds, replace
+`policy/religion/ru/interference.lua` in a mod layer and adjust the draws
+inside `choose`; do not change generic Go intent or energy code.
+
 #### Divine gifts
 
 Set `gift_module = "policy.religion.gifts.<name>"` in a god definition to

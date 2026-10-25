@@ -3,6 +3,9 @@ local ranged = require("policy.combat.ranged_actions")
 local player_projectiles = require("policy.combat.player_projectiles")
 local roll = require("policy.combat.monster_roll")
 local reach = require("policy.combat.monster_reach")
+local intents = require("constants.intent")
+local interference = require("policy.religion.ru.interference")
+local interference_kind = require("constants.ru_interference")
 
 local system = {}
 
@@ -15,9 +18,29 @@ function system.update(ctx, attacker)
         return
     end
 
-    if intent.kind == 13 then
+    if intent.kind == intents.RANGED then
         if attacker == ctx:player() then
             player_projectiles.resolve(ctx, attacker, intent)
+
+            return
+        end
+
+        local ru = interference.choose(ctx, attacker,
+            interference_kind.DISTANT)
+
+        if ru.kind == interference_kind.BLOCK then
+            interference.message_block(ctx, attacker)
+
+            return
+        end
+
+        if ru.target then
+            interference.force_target(ctx, attacker, ru.target)
+            interference.message_redirect(ctx, attacker)
+            ranged.monster(ctx, attacker, intent, {
+                target = ru.target,
+            })
+            interference.clear_target(ctx, attacker)
 
             return
         end
@@ -27,7 +50,7 @@ function system.update(ctx, attacker)
         return
     end
 
-    if intent.kind ~= 2 then
+    if intent.kind ~= intents.MELEE then
         return
     end
 
@@ -56,7 +79,23 @@ function system.update(ctx, attacker)
     if attacker == ctx:player() then
         melee.player(ctx, target)
     elseif target == ctx:player() then
-        melee.monster(ctx, attacker)
+        local ru = interference.choose(ctx, attacker,
+            interference_kind.MELEE)
+
+        if ru.kind == interference_kind.BLOCK then
+            interference.message_block(ctx, attacker)
+
+            return
+        end
+
+        if ru.target then
+            interference.force_target(ctx, attacker, ru.target)
+            interference.message_redirect(ctx, attacker)
+            melee.monster_target(ctx, attacker, ru.target)
+            interference.clear_target(ctx, attacker)
+        else
+            melee.monster(ctx, attacker)
+        end
     else
         melee.monster_target(ctx, attacker, target)
     end

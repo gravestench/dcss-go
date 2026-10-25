@@ -1,6 +1,8 @@
 -- These are the persisted ECS component keys shared by schemas, policies, and systems.
 
 local component = {
+    COMBAT_FORCED_TARGET = "combat.forced_target",
+    MONSTER_SUBMERGED = "monster.submerged",
     -- Core identity and location are shared by movement, combat, and saves.
     CORPSE = "core.corpse",
     ACTOR = "core.actor",

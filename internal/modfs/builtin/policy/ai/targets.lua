@@ -118,6 +118,15 @@ end
 -- Frenzy overrides normal allegiance; neutral actors and same-side actors otherwise remain untargetable.
 -- Example: targets.enemy(ctx, monster, player) checks allegiance before choosing an attack.
 function targets.enemy(ctx, attacker, defender)
+    -- Ru can force one same-side actor, including the attacker itself,
+    -- to be the victim of this action. The component is removed when
+    -- that action ends; normal allegiance remains unchanged.
+    local forced = ctx:get(attacker, component.COMBAT_FORCED_TARGET)
+
+    if forced and forced.target == defender then
+        return true
+    end
+
     if attacker == defender then
         return false
     end
