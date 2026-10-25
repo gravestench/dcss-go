@@ -6,10 +6,15 @@ local ru = {}
 
 -- Reset the five source candidate vectors and the first-offer timer.
 function ru.prepare(ctx, player)
+    local previous = ctx:get(player, component.RELIGION_RU)
+
     local state = {
         sacrifice_progress = 0,
         sacrifice_delay = 50,
         sacrifice_penalty = 0,
+        -- Source join resets the offer clock, not the lifetime count.
+        sacrifice_mutations = previous and
+            previous.sacrifice_mutations or 0,
         available = {},
         health = {},
         essence = {},
@@ -18,7 +23,7 @@ function ru.prepare(ctx, player)
         quoted_piety = {},
     }
 
-    if ctx:get(player, component.RELIGION_RU) then
+    if previous then
         ctx:set(player, component.RELIGION_RU, state)
     else
         ctx:add(player, component.RELIGION_RU, state)

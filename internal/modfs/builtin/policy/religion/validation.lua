@@ -96,7 +96,7 @@ function validation.check(ctx, player)
     local ru = ctx:get(player, component.RELIGION_RU)
 
     if ru and (ru.sacrifice_progress < 0 or ru.sacrifice_delay < 0 or
-        ru.sacrifice_penalty < 0) then
+        ru.sacrifice_penalty < 0 or ru.sacrifice_mutations < 0) then
         error("invalid Ru sacrifice progress")
     end
 

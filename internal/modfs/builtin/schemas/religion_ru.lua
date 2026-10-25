@@ -4,7 +4,7 @@ local component = require("constants.component")
 
 local schema = {
     id = component.RELIGION_RU,
-    version = 2,
+    version = 3,
     fields = {
         sacrifice_progress = {
             type = "int64",
@@ -15,6 +15,12 @@ local schema = {
             default = 50,
         },
         sacrifice_penalty = {
+            type = "int64",
+            default = 0,
+        },
+        -- The count records accepted mutation grants, not current ranks.
+        -- Silver damage needs the history after a later mutation change.
+        sacrifice_mutations = {
             type = "int64",
             default = 0,
         },

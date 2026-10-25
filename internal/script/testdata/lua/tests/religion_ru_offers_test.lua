@@ -38,6 +38,7 @@ function test.run(ctx)
         sacrifice_progress = 50,
         sacrifice_delay = 50,
         sacrifice_penalty = 0,
+        sacrifice_mutations = 4,
         available = {},
         health = {},
         essence = {},
@@ -63,6 +64,7 @@ function test.run(ctx)
     local seen = {}
 
     harness.equal(#state.available, 3)
+    harness.equal(state.sacrifice_mutations, 4)
 
     for _, id in ipairs(state.available) do
         harness.truthy(not seen[id], "Ru choices must be distinct")

@@ -55,6 +55,19 @@ local function mutation_levels(ctx, player)
     local innate = choice.species_id == species.SP_DEMONSPAWN
     local total = 0
 
+    -- In the pinned source, player::how_mutated subtracts the saved Ru
+    -- count inside its loop over every mutation enum value. A positive
+    -- count therefore suppresses the mutation-based silver term for a
+    -- Demonspawn. Keep that observable rule without repeating a large
+    -- source loop in every projectile hit.
+    if innate then
+        local ru = ctx:get(player, component.RELIGION_RU)
+
+        if ru and ru.sacrifice_mutations > 0 then
+            return 0
+        end
+    end
+
     for _, entry in ipairs(records.list(ctx, player)) do
         local state = entry.state
 

@@ -16,6 +16,7 @@ local transition = require("policy.mutations.transition")
 local classes = require("constants.mutation_classes")
 local commands = require("policy.commands.abilities")
 local resolution = require("policy.religion.ru.resolution")
+local ru_god = require("policy.religion.gods.ru")
 local experience_limit = require("policy.character.experience_limit")
 
 local test = {}
@@ -55,6 +56,7 @@ function test.run(ctx)
     harness.equal(state.sacrifice_progress, 0)
     harness.equal(state.sacrifice_delay, 189)
     harness.equal(state.sacrifice_penalty, 33)
+    harness.equal(state.sacrifice_mutations, 0)
     harness.equal(#state.available, 0)
     harness.equal(#state.health, 0)
     harness.truthy(next(state.quoted_piety) == nil)
@@ -98,6 +100,7 @@ function test.run(ctx)
     harness.equal(state.sacrifice_progress, 0)
     harness.equal(state.sacrifice_delay, 90)
     harness.equal(state.sacrifice_penalty, 0)
+    harness.equal(state.sacrifice_mutations, 1)
     harness.equal(#state.available, 0)
     harness.truthy(not abilities.usable_now(ctx, player, option))
 
@@ -113,12 +116,36 @@ function test.run(ctx)
         mutations.MUT_READ_SAFETY), 2)
     harness.equal(ctx:get(player,
         component.RELIGION_WORSHIP).piety, 72)
+    harness.equal(ctx:get(player,
+        component.RELIGION_RU).sacrifice_mutations, 2)
 
     local rejected = pcall(resolution.accept,
         game, player, ids.WORDS)
 
     harness.truthy(not rejected,
         "a stale Ru command cannot repeat a sacrifice")
+
+    -- Arcana counts its three school mutations, not one menu choice.
+    state = ctx:get(player, component.RELIGION_RU)
+    state.available = { ids.ARCANA }
+    state.arcana = {
+        mutations.MUT_NO_AIR_MAGIC,
+        mutations.MUT_NO_HEXES_MAGIC,
+        mutations.MUT_NO_CONJURATION_MAGIC,
+    }
+    state.quoted_piety = {
+        [ids.ARCANA] = 30,
+    }
+    ctx:set(player, component.RELIGION_RU, state)
+    resolution.accept(game, player, ids.ARCANA)
+    harness.equal(ctx:get(player,
+        component.RELIGION_RU).sacrifice_mutations, 5)
+
+    -- The source resets offers and waiting time on rejoining Ru, but
+    -- lifetime mutation history remains part of the player's record.
+    ru_god.prepare(game, player)
+    harness.equal(ctx:get(player,
+        component.RELIGION_RU).sacrifice_mutations, 5)
 
     -- Both a terminal confirmation and a direct command use the ordinary
     -- ability path. Cancel is free; a confirmed rejection owns one intent.
@@ -152,6 +179,8 @@ function test.run(ctx)
     abilities.resolve(game, player, confirmed.intent, 10)
     harness.equal(#ctx:get(player,
         component.RELIGION_RU).available, 0)
+    harness.equal(ctx:get(player,
+        component.RELIGION_RU).sacrifice_mutations, 5)
 
     -- A missing hand cannot leave a shield or a ring in the lost slot.
     -- With the other ring slot filled, the removed ring stays carried.

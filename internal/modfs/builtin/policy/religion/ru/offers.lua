@@ -141,6 +141,7 @@ function offers.new(ctx, player, piety)
         sacrifice_progress = state.sacrifice_progress,
         sacrifice_delay = state.sacrifice_delay,
         sacrifice_penalty = state.sacrifice_penalty,
+        sacrifice_mutations = state.sacrifice_mutations,
         available = {},
         health = {},
         essence = {},

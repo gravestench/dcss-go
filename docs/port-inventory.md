@@ -517,10 +517,14 @@ attack interference now blocks or redirects hostile melee, thrown and
 launched missiles, and book spells before their hit or target roll. A
 redirected monster uses existing monster combat owners, with an action-scoped
 same-side target override; interrupted spells still cost spell energy.
-Detailed sacrifice-count effects remain separate work.
-The saved Ru component is version 2 because choices now hold stable string
-IDs and quoted prices; earlier Go saves containing version 1 Ru state do not
-restore under this schema. The source's Frail exclusion for a Demonspawn
+Ru now saves the lifetime number of mutation grants from accepted
+sacrifices. Arcana contributes three; rejection, rejoining, and new
+offers keep the count. Demonspawn with a positive Ru history receive
+only the minimum silver fragment in the source's mutation-based silver
+path, while shapechange keeps its separate damage rule.
+The saved Ru component is version 3 because it now carries sacrifice
+history. Earlier Go saves with older Ru schemas do not restore under this
+schema. The source's Frail exclusion for a Demonspawn
 whose future facet includes Robust remains pending until that scheduled
 trait is represented in the port's saved character state.
 Okawaru's Heroism, Finesse, and Duel are now playable Lua powers with the

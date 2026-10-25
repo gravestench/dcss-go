@@ -182,6 +182,10 @@ function resolution.accept(ctx, player, offer_id)
         consequence.apply(ctx, player, previous)
     end
 
+    -- The source records the number of mutation grants in this choice.
+    -- Arcana is one menu acceptance but contributes three schools.
+    state.sacrifice_mutations = state.sacrifice_mutations + #selected
+
     local worship = ctx:get(player, component.RELIGION_WORSHIP)
     local points = piety.award_ru_sacrifice(ctx, player, gain)
 

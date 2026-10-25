@@ -1727,6 +1727,17 @@ clears the set and lengthens the next wait. These operations live in
 `policy/religion/ru/offers.lua`, `resolution.lua`, and
 `policy/abilities/ru/sacrifices.lua`.
 
+The same saved component keeps `sacrifice_mutations`, a lifetime count of
+mutation grants from accepted Ru choices. An ordinary acceptance adds one;
+Arcana adds three even though it is one menu choice. Rejection, rejoining
+Ru, and new offer generation preserve the count. Demonspawn silver damage
+reads this history from `policy/combat/monster_missile_egos/silver.lua`. The pinned
+DCSS source subtracts Ru's count inside its scan of mutation types, so a
+positive count suppresses the mutation-based silver bonus for a
+Demonspawn; the ordinary minimum silver fragment still applies. A mod
+that changes sacrifice acceptance should update the count after applying
+all selected mutations and keep it in the player-owned component.
+
 For an exception, add a focused module and name it with
 `offer_rule_module`, `price_module`, or `accept_module` on your definition.
 The offer module exports `eligible(ctx, player)`; the price module exports
