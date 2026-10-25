@@ -4,6 +4,7 @@ local spirit_shield = require("policy.combat.spirit_shield")
 local causes = require("constants.damage_causes")
 local reactions = require("policy.combat.player_damage_reactions")
 local jiyva_retaliation = require("policy.religion.jiyva.retaliation")
+local ru_retaliation = require("policy.religion.ru.retaliation")
 local xom_hit = require("policy.religion.gods.xom_hit")
 local hit_fog = require("policy.combat.player_hit_fog")
 local artefact_hit = require("policy.combat.player_artefact_hit")
@@ -18,6 +19,7 @@ local health_policy = {}
 -- Each owner supplies a sorted callback and reads the final saved HP loss;
 -- health itself does not branch on a specific god or equipped item.
 jiyva_retaliation.register()
+ru_retaliation.register()
 xom_hit.register()
 hit_fog.register()
 artefact_hit.register()

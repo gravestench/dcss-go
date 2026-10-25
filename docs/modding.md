@@ -1756,6 +1756,25 @@ Draw Out Power and Apocalypse use the player drain owner for their temporary
 maximum-HP cost. A new power should reuse these owners so saves and other
 abilities see one authoritative status rather than a private timer.
 
+#### Ru damage retaliation
+
+The two-star Ru passive lives in `policy/religion/ru/retaliation.lua`.
+`policy.combat.player_health` registers it with the shared after-HP
+reaction list, so ordinary monster melee, ranged attacks, and spells all
+reach the same rule after their actual HP loss is known. It reads current
+worship and penance; no passive flag is stored on the player. The chance
+roll precedes source validation, and the effect strength uses the
+monster's current HD. Antimagic, Paralysis, Slow, Blind, and Corona are
+written through their existing monster status owners.
+
+To change this passive in a mod, replace its Lua policy at the same
+relative path. Keep `retaliation.register()` connected to the shared
+reaction owner and preserve a stable reaction ID and order. When adding a
+new status branch, put its duration and save behavior in that status's
+owner; the Ru policy should choose the effect and supply its rolled
+duration. Test the modified policy in a `_test.lua` file against the
+production monster catalog and component schemas.
+
 #### Divine gifts
 
 Set `gift_module = "policy.religion.gifts.<name>"` in a god definition to

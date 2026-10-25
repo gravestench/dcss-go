@@ -509,8 +509,11 @@ Ru's active powers now use Lua ability modules: Draw Out Power restores HP
 and MP while curing urgent restraints, Power Leap moves to a chosen nearby
 cell and damages adjacent foes, and Apocalypse damages visible nonfriendly
 monsters with a rolled continuing effect. Exhaustion is saved and shared
-with the Berserk gate. Ru's attack interference, retaliation, and detailed
-sacrifice-count effects remain separate work.
+with the Berserk gate. Ru's two-star damage retaliation now runs from the
+shared after-HP reaction: a successful piety roll applies source-ranked
+antimagic, paralysis, slow, blindness, or corona to the damaging monster.
+It uses saved status owners and live rank and penance checks. Ru's attack
+interference and detailed sacrifice-count effects remain separate work.
 The saved Ru component is version 2 because choices now hold stable string
 IDs and quoted prices; earlier Go saves containing version 1 Ru state do not
 restore under this schema. The source's Frail exclusion for a Demonspawn

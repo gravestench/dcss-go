@@ -167,9 +167,15 @@ function enchant.corroded(ctx, monster)
     return value ~= nil and (value.corrosion_aut or 0) > 0
 end
 
+-- Keep the species immunity check in the status owner so other callers
+-- can avoid consuming a duration roll for an impossible blind effect.
+function enchant.can_blind(definition)
+    return not flag(definition, monster_flags.UNBLINDABLE)
+end
+
 -- beam.cc adds ENCH_BLIND once with a HD-scaled duration.
 function enchant.blind(ctx, monster, definition)
-    if flag(definition, "M_UNBLINDABLE") then
+    if not enchant.can_blind(definition) then
         return false
     end
 
@@ -186,6 +192,22 @@ function enchant.blind(ctx, monster, definition)
     if senses.player_sees_actor(ctx, monster) then
         ctx:emit("spell", "The " .. definition.name .. " is blinded.")
     end
+
+    return true
+end
+
+-- Ru already rolled the enchantment duration from piety, damage, and HD.
+-- Keep that value and extend a prior blind timer as monster::add_ench does;
+-- an unblindable species lets Ru try its lower-power Corona fallback.
+function enchant.apply_fixed_blind(ctx, monster, definition, duration_aut)
+    if not enchant.can_blind(definition) then
+        return false
+    end
+
+    local value = state(ctx, monster)
+
+    value.blind_aut = value.blind_aut + duration_aut
+    save(ctx, monster, value)
 
     return true
 end
