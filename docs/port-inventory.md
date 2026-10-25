@@ -485,8 +485,12 @@ Wrath card draw. Royal Jelly death now has a saved player flag; after
 Jiyva is mollified and no longer worshipped, a Wrath draw skips him.
 A lingering god spell now retains an inert Lua ECS source
 for burn, cloud, terrain, and summon attribution through save and restore.
-Other god abilities, remaining passives, and ordinary timed wrath remain
-separate religion slices.
+Ordinary timed wrath now accumulates saved retribution counts from credited
+XP while an eligible god has active penance. Each god-time check spends one
+count, rolls against the number of eligible gods, and reuses that god's Lua
+wrath handler. Paying off the last active penance clears the XP timer and
+queued counts; save and restore preserve both until then. Other god
+abilities and remaining passives remain separate religion slices.
 Credited XP kills now run conduct before mutation and divine recovery.
 Makhleb restores HP, Vehumet restores MP, and The Shining One restores both
 against evil victims after the source piety gate. Conjured and source object

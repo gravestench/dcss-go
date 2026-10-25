@@ -6,6 +6,9 @@ local harness = require("tests.harness")
 local piety = require("policy.religion.piety")
 local branches = require("ids.branches")
 local kinds = require("constants.religion_conduct")
+local jobs = require("ids.jobs")
+local species = require("ids.species")
+local streams = require("constants.rng_streams")
 
 local test = {}
 
@@ -13,6 +16,13 @@ local test = {}
 local function owner(ctx, god_id, points)
     local player = ctx:create()
 
+    ctx:add(player, component.PLAYER, {
+        species_id = species.SP_HUMAN,
+        job_id = jobs.JOB_FIGHTER,
+    })
+    ctx:add(player, component.PROGRESSION, {
+        level = 1,
+    })
     ctx:add(player, component.RELIGION_WORSHIP, {
         god_id = god_id,
         piety = points,
@@ -81,8 +91,11 @@ local function trog_cast(ctx)
         return player
     end
 
-    function observed:random()
-        error("Trog's fixed cast punishment must not draw RNG")
+    function observed:random(stream, bound)
+        harness.equal(stream, streams.RELIGION)
+        harness.equal(bound, 200)
+
+        return 0
     end
 
     harness.truthy(conduct.record(observed, {

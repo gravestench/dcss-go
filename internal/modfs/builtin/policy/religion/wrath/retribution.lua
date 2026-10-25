@@ -21,6 +21,7 @@ local handlers = {
     [gods.KIKUBAAQUDGHA] = require("policy.religion.wrath.kikubaaqudgha"),
     [gods.LUGONU] = require("policy.religion.wrath.lugonu"),
     [gods.MAKHLEB] = require("policy.religion.wrath.makhleb"),
+    [gods.NEMELEX_XOBEH] = require("policy.religion.wrath.nemelex_xobeh"),
     [gods.OKAWARU] = require("policy.religion.wrath.okawaru"),
     [gods.QAZLAL] = require("policy.religion.wrath.qazlal"),
     [gods.SHINING_ONE] = require("policy.religion.wrath.shining_one"),
@@ -101,10 +102,18 @@ end
 local function mollify(ctx, player, god_id)
     local state = ctx:get(player, component.RELIGION_WORSHIP)
     local amount = 1 + ctx:random(streams.CARDS, 3)
+    local old_penance = state.penance[god_id] or 0
 
     state.penance[god_id] = math.max(0,
-        (state.penance[god_id] or 0) - amount)
+        old_penance - amount)
     ctx:set(player, component.RELIGION_WORSHIP, state)
+
+    -- A Wrath card can punish a god with no debt. Source dec_penance does
+    -- not treat that draw as mollification of another queued wrath event.
+    if old_penance > 0 and state.penance[god_id] == 0 then
+        require("policy.religion.wrath.timer")
+            .clear_if_mollified(ctx, player)
+    end
 end
 
 -- Return false only when the source rejects a god. A missing eligible
@@ -115,7 +124,7 @@ function retribution.invoke_god(ctx, player, god_id, options)
     local current = state.god_id
     local force = options and options.force
 
-    if god_id == gods.NO_GOD or god_id == gods.NEMELEX_XOBEH then
+    if god_id == gods.NO_GOD then
         return false
     end
 
@@ -164,6 +173,26 @@ local function unavailable(ctx, player, god_id)
     return (worship.worshipped[gods.IGNIS] or 0) > 0 and
         worship.god_id ~= gods.IGNIS and
         (worship.penance[gods.IGNIS] or 0) == 0
+end
+
+-- Source active_penance excludes passive XP debt and gods that cannot act.
+-- The source god iterator has stable enum order; the roster preserves it.
+function retribution.active_gods(ctx, player)
+    local worship = ctx:get(player, component.RELIGION_WORSHIP)
+    local active = {}
+
+    for _, god_id in ipairs(roster) do
+        if (worship.penance[god_id] or 0) > 0 and
+            not no_retribution[god_id] and
+            not unavailable(ctx, player, god_id) and
+            ((god_id == worship.god_id and
+                not alignments.GOOD[god_id]) or
+                hates(god_id, worship.god_id)) then
+            active[#active + 1] = god_id
+        end
+    end
+
+    return active
 end
 
 -- religion.cc:random_god redraws unavailable gods inside one card attempt,

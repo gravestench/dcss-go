@@ -51,6 +51,9 @@ function test.run(ctx)
         species_id = species.SP_HUMAN,
         job_id = jobs.JOB_FIGHTER,
     })
+    ctx:add(player, component.PROGRESSION, {
+        level = 1,
+    })
     ctx:add(player, component.POSITION, {
         level_id = 1,
         x = 20,

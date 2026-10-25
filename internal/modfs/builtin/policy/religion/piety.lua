@@ -281,6 +281,12 @@ function piety.gain(ctx, player, numerator, denominator, scale)
         end
     end
 
+    if old_penance > 0 and
+        (state.penance[state.god_id] or 0) == 0 then
+        require("policy.religion.wrath.timer")
+            .clear_if_mollified(ctx, player)
+    end
+
     return true
 end
 
@@ -374,6 +380,9 @@ function piety.offend(ctx, player, loss, penance)
         state.penance[god_id] = math.min(limits.MAX_PENANCE,
             (state.penance[god_id] or 0) + penance)
         ctx:set(player, component.RELIGION_WORSHIP, state)
+
+        require("policy.religion.wrath.timer")
+            .start_timeout(ctx, player)
 
         -- Source penance starts by cancelling temporary patron gifts.
         -- Let the winning god behavior own that cleanup, once per debt.

@@ -13,6 +13,7 @@ local piety = require("policy.religion.piety")
 local signals = require("constants.religion_signals")
 local sources = require("constants.religion_sources")
 local streams = require("constants.rng_streams")
+local wrath_timer = require("policy.religion.wrath.timer")
 
 local worship = {}
 
@@ -254,6 +255,7 @@ function worship.join(ctx, player, god_id, source)
     end
 
     local was_first = first_patrons(state)
+    local old_god = state.god_id
 
     if state.god_id ~= gods.NO_GOD then
         state = leave(ctx, player, state, god_id, true)
@@ -287,6 +289,8 @@ function worship.join(ctx, player, god_id, source)
     state.worshipped[god_id] = math.min(100,
         (state.worshipped[god_id] or 0) + 1)
     ctx:set(player, component.RELIGION_WORSHIP, state)
+
+    wrath_timer.good_god_conversion(ctx, player, old_god)
 
     return true
 end

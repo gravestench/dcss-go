@@ -6,7 +6,7 @@ local gods = require("constants.gods")
 
 local schema = {
     id = component.RELIGION_WORSHIP,
-    version = 4,
+    version = 5,
     fields = {
         god_id = {
             type = "string",
@@ -49,6 +49,18 @@ local schema = {
         -- time a mod contributes another god definition.
         penance = {
             type = "map<string,int64>",
+        },
+
+        -- Credited XP queues possible ordinary wrath. God time spends at
+        -- most one count per firing, even when the god lottery misses.
+        wrath_xp_remaining = {
+            type = "int64",
+            default = 0,
+        },
+
+        wrath_count = {
+            type = "int64",
+            default = 0,
         },
 
         worshipped = {

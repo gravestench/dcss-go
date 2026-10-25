@@ -12,6 +12,7 @@ local limits = require("constants.religion_upkeep")
 local piety = require("policy.religion.piety")
 local streams = require("constants.rng_streams")
 local worship = require("policy.religion.worship")
+local wrath_timer = require("policy.religion.wrath.timer")
 
 local upkeep = {}
 
@@ -109,6 +110,8 @@ function upkeep.tick(ctx, player, elapsed_aut)
     while state.next_god_time_aut <= end_aut do
         local due = state.next_god_time_aut
 
+        wrath_timer.god_time(ctx, player)
+        state = ctx:get(player, component.RELIGION_WORSHIP)
         state = decay_check(ctx, player, state)
         god_time_action(ctx, player, state)
         state.next_god_time_aut = due + limits.MIN_INTERVAL_AUT +

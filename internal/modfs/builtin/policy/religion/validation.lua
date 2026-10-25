@@ -58,6 +58,8 @@ function validation.check(ctx, player)
         state.piety_hysteresis > limits.HYSTERESIS_LIMIT or
         state.gift_timeout < 0 or
         state.next_god_time_aut < 0 or
+        state.wrath_xp_remaining < 0 or
+        state.wrath_count < 0 or
         (state.next_god_time_aut > 0 and
             (state.next_god_time_aut <= ctx:aut() or
                 state.next_god_time_aut > ctx:aut() + 300)) or

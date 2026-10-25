@@ -8,6 +8,7 @@ local evokers = require("policy.inventory.evokers")
 local evolution = require("policy.mutations.evolution")
 local stat_loss = require("policy.character.stat_loss")
 local temporary_mutations = require("policy.mutations.temporary")
+local wrath_timer = require("policy.religion.wrath.timer")
 
 local awards = {}
 
@@ -26,6 +27,7 @@ function awards.monster(ctx, player, xp)
     training.available_xp = training.available_xp + 10 * xp
     ctx:set(player, component.PROGRESSION, progress)
     ctx:set(player, component.SKILL_TRAINING, training)
+    wrath_timer.gain_experience(ctx, player, xp)
     abyss_exits.award(ctx, player, xp)
     evokers.award_xp(ctx, player, xp)
     temporary_mutations.gain_experience(ctx, player, xp)

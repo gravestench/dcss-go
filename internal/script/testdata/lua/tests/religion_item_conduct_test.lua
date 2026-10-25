@@ -19,8 +19,12 @@ local function quaff(ctx, known)
         return player
     end
 
-    function observed:random(stream)
-        harness.equal(stream, "potion")
+    function observed:random(stream, bound)
+        if stream == "religion" then
+            harness.equal(bound, 200)
+        else
+            harness.equal(stream, "potion")
+        end
 
         return 0
     end
@@ -28,6 +32,9 @@ local function quaff(ctx, known)
     ctx:add(player, component.PLAYER, {
         species_id = species.SP_HUMAN,
         job_id = jobs.JOB_FIGHTER,
+    })
+    ctx:add(player, component.PROGRESSION, {
+        level = 1,
     })
     ctx:add(player, component.DURATIONS, {
         haste_aut = 0,

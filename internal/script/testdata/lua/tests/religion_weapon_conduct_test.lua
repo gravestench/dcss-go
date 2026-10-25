@@ -6,7 +6,9 @@ local component = require("constants.component")
 local gods = require("constants.gods")
 local harness = require("tests.harness")
 local items = require("ids.items")
+local jobs = require("ids.jobs")
 local missile_egos = require("constants.missile_egos")
+local species = require("ids.species")
 local chaos = require("policy.combat.monster_target_brands.chaos")
 local projectiles = require("policy.religion.conduct.projectiles")
 
@@ -31,6 +33,13 @@ local function player(ctx, god_id)
     ctx:add(entity, component.RELIGION_WORSHIP, {
         god_id = god_id,
         piety = 50,
+    })
+    ctx:add(entity, component.PLAYER, {
+        species_id = species.SP_HUMAN,
+        job_id = jobs.JOB_FIGHTER,
+    })
+    ctx:add(entity, component.PROGRESSION, {
+        level = 1,
     })
     ctx:add(entity, component.ITEM_KNOWLEDGE, {})
 
